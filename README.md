@@ -1,1 +1,1 @@
-# SmallSuiteTest
+# SmallSuiteGenerator
