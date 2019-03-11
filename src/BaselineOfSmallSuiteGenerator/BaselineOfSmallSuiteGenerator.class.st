@@ -15,6 +15,6 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		spec 
 		package: 'SmallSuiteGenerator' with: [ spec requires: 'Spy2' ];
 		package: 'SmallSuiteGeneratorAssert' with: [ spec requires: 'SmallSuiteGenerator' ];
-		package: 'SmallSuiteGeneratorTest' with: [ spec requires: #('SmallSuiteGenerator' 'SmallSuiteTestGenerator') ]
+		package: 'SmallSuiteGeneratorTest' with: [ spec requires: #('SmallSuiteGenerator' 'SmallSuiteGeneratorAssert') ]
 	]
 ]
