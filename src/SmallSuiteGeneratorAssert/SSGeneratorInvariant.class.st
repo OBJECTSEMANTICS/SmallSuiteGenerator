@@ -32,13 +32,18 @@ SSGeneratorInvariant class >> resetNumTest [
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> generateAssert: aCollection [
-	| node |
+	| node temporaries collectAsSet |
 	node := RBParser parseExpression: '[]'.
+	temporaries := Set new.
 	aCollection ifNotEmpty: [ 
-		aCollection asSet do: [ :invariant | 
+		collectAsSet := (aCollection collect: [ :invariant | invariant statement ]) asSet.
+		collectAsSet do: [ :statement | node body addNode: (RBParser parseExpression: statement) ].
+		aCollection do: [ :invariant | 
+			temporaries add: (RBParser parseExpression: invariant nameValue).
 			node body addNode: (RBParser parseExpression: invariant asString).	
 		].
-		SSGeneratorInvariantTest compile: 'test', self class numTest asString, '
+		node body temporaries: temporaries asOrderedCollection.
+		SSAssertionGeneratorTest compile: 'test', self class numTest asString, '
 		', node body formattedCode.
 		self class incrementNumTest 
 	].

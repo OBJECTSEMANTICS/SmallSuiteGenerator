@@ -1,7 +1,7 @@
 Class {
 	#name : #SSGeneratorTest,
 	#superclass : #TestCase,
-	#category : #SmallSuiteGeneratorTest
+	#category : #'SmallSuiteGeneratorTest-Generator'
 }
 
 { #category : #'generator-tests' }

@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'score'
 	],
-	#category : #SmallSuiteGeneratorTest
+	#category : #'SmallSuiteGeneratorTest-Generator'
 }
 
 { #category : #accessing }
@@ -23,6 +23,34 @@ SStudent >> initialize [
 { #category : #accessing }
 SStudent >> return: aType [
 	^ aType.
+]
+
+{ #category : #handling }
+SStudent >> returnCollection [
+	| a |
+	a := OrderedCollection new.
+	^ a
+]
+
+{ #category : #handling }
+SStudent >> returnFloat [
+	| a |
+	a := 2.3.
+	^ a
+]
+
+{ #category : #handling }
+SStudent >> returnNum [ 
+	| a |
+	a := 4.
+	^ a
+]
+
+{ #category : #handling }
+SStudent >> returnString [
+	| a |
+	a := 'Hello'.
+	^ a
 ]
 
 { #category : #accessing }

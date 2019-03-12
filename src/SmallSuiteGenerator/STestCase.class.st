@@ -110,7 +110,11 @@ STestCase >> addMethod [
 
 { #category : #generation }
 STestCase >> addPrimitive [
+	"| col |
+	col := OrderedCollection new." "Refactor to consider the valid subclasss and classes in profile"
+	"col add: #Array; addAll: (Array allSubclasses collect: [:subC | subC name])."
 	^ "#(#ByteString #SmallInteger #False #True #Character )"
+		
 		#(#Array #Boolean #ByteArray #Character #Float #Integer #ScaledDecimal #String #UndefinedObject) shuffle
 		detect: [ :className | self addPrimitive: className ]
 		ifFound: [ true ]
