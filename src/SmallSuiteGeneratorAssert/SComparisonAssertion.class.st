@@ -7,7 +7,6 @@ Class {
 { #category : #'as yet unclassified' }
 SComparisonAssertion class >> applyOn: aName with: aObject [
 	| instance |
-	"(self preconditionChecking: aObject) ifFalse:[ ^ #()]."
 	instance := self new 
 	nameValue: aName;
 	valueAssert: aObject; 
@@ -28,5 +27,5 @@ SComparisonAssertion class >> preconditionChecking: aObject [
 SComparisonAssertion >> printString [ 
 	^ 'self assert: ', nameValue asString, (
 	(self class preconditionChecking: comparableValue) ifTrue: [ ' equals: ', comparableValue storeString ] 
-	ifFalse: [ ' className equals: ', comparableValue className ]).
+	ifFalse: [ ' className equals: ''', comparableValue className, '''' ]).
 ]

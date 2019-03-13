@@ -11,7 +11,7 @@ SSAssertionTest >> setUp [
 ]
 
 { #category : #tests }
-SSAssertionTest >> testGenerateComparisonAssertions [
+SSAssertionTest >> testGenerateInvariantCollections [
 	| profile testCase invariants |
 	profile := SSGenerator
 		profile: [ Stack new; yourself]
@@ -19,8 +19,8 @@ SSAssertionTest >> testGenerateComparisonAssertions [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 1.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion }.
+	self assert: invariants size equals: 3.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SCollectionSizeAssertion. SStringAssertion. SComparisonAssertion }.
 	
 	profile := SSGenerator
 		profile: [ SStudent new ]
@@ -28,26 +28,26 @@ SSAssertionTest >> testGenerateComparisonAssertions [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 3.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion }.
+	self assert: invariants size equals: 2.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SInspectorAssertion. SComparisonAssertion }.
 	
 	profile := SSGenerator
 		profile: [ Array new]
 		onClass: Array.
 	testCase := STestCase seed: profile.
-	testCase addPrimitive.
+	testCase addConstructor.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 1.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion }.
+	self assert: invariants size equals: 5.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion. SCollectionSizeAssertion  }.
 	
 	profile := SSGenerator
 		profile: [ OrderedCollection new ]
 		onClass: OrderedCollection.
 	testCase := STestCase seed: profile.
-	testCase addPrimitive.
+	testCase addConstructor.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 1.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion }.
+	self assert: invariants size equals: 4.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SCollectionSizeAssertion. SInspectorAssertion. SStringAssertion. SComparisonAssertion }.
 ]
 
 { #category : #tests }
@@ -75,15 +75,6 @@ SSAssertionTest >> testGenerateInvariantsArray [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsStack [
 	| profile testCase invariants |
-	"profile := SSGenerator
-		profile: [ Stack new push: 1; yourself. ]
-		onClass: Stack.
-	testCase := STestCase seed: profile.
-	testCase addConstructor.
-	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 1.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. }."
-	
 	profile := SSGenerator
 		profile: [ Stack new. ]
 		onClass: Stack.
@@ -100,8 +91,9 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	testCase addConstructor.
 	testCase addMethod.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 5.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion. SPrimitiveAssertion. SStringAssertion. SComparisonAssertion }.
+	self assert: invariants size equals: 9.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion. SPrimitiveAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion. SPrimitiveAssertion. SComparisonAssertion. SPrimitiveAssertion  }.
+  
 ]
 
 { #category : #tests }

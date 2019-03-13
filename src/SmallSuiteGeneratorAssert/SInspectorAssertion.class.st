@@ -16,12 +16,16 @@ SInspectorAssertion class >> applyOn: aName with: aObject [
 	^ { instance }
 ]
 
-{ #category : #preconditions }
+{ #category : #'as yet unclassified' }
 SInspectorAssertion class >> preconditionChecking: aObject [
-	| method |
+	| method copyObject |
+	copyObject := aObject deepCopy.
 	(aObject class methods reject: [:meth | meth isQuick or: [meth selector includes: $: ]]) shuffle
 	detect: [ :aCompileMethod | 
-		[(aObject perform: aCompileMethod selector) isLiteral] on: Exception do: [ false ]
+		[ | result |
+		result := copyObject perform: aCompileMethod selector.
+		copyObject := aObject deepCopy.
+		result isLiteral] on: Error do: [ false ]
 	] ifFound: [ :aCompileMethod | method := aCompileMethod selector ].
 	^ method
 ]
