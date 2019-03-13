@@ -93,6 +93,7 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	invariants := testCase generateInvariants.
 	self assert: invariants size equals: 9.
 	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion. SPrimitiveAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion. SPrimitiveAssertion. SComparisonAssertion. SPrimitiveAssertion  }.
+  
 ]
 
 { #category : #tests }
