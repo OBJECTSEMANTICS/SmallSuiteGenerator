@@ -110,8 +110,7 @@ STestCase >> addMethod [
 
 { #category : #generation }
 STestCase >> addPrimitive [
-	^ "#(#ByteString #SmallInteger #False #True #Character )"
-		#(#Array #Boolean #ByteArray #Character #Float #Integer #ScaledDecimal #String #UndefinedObject) shuffle
+	^ #(#Array #Boolean #ByteArray #Character #Float #Integer #ScaledDecimal #String #UndefinedObject) shuffle
 		detect: [ :className | self addPrimitive: className ]
 		ifFound: [ true ]
 		ifNone: [ false ]

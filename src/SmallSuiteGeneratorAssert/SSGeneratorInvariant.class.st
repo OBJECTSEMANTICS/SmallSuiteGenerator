@@ -32,13 +32,18 @@ SSGeneratorInvariant class >> resetNumTest [
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> generateAssert: aCollection [
-	| node |
+	| node temporaries collectAsSet |
 	node := RBParser parseExpression: '[]'.
+	temporaries := Set new.
 	aCollection ifNotEmpty: [ 
-		aCollection asSet do: [ :invariant | 
+		collectAsSet := (aCollection collect: [ :invariant | invariant statement ]) asSet.
+		collectAsSet do: [ :statement | node body addNode: (RBParser parseExpression: statement) ].
+		aCollection do: [ :invariant | 
+			temporaries add: (RBParser parseExpression: invariant nameValue).
 			node body addNode: (RBParser parseExpression: invariant asString).	
 		].
-		SSGeneratorInvariantTest compile: 'test', self class numTest asString, '
+		node body temporaries: temporaries asOrderedCollection.
+		SSAssertionGeneratorTest compile: 'test', self class numTest asString, '
 		', node body formattedCode.
 		self class incrementNumTest 
 	].
@@ -50,13 +55,6 @@ SSGeneratorInvariant >> generateInvariants: aSTestCase [
 	compiler compile: (self transformToNode: aSTestCase statements).
 	invariants := compiler executeMethodTest.
 	self generateAssert: invariants.
-	"| node |
-	node := self transformToNode: aSTestCase statements.
-	node ifNotNil: [ 
-		STIEvaluatorTest compile: 'test', self class numTest asString, '
-		', node body formattedCode.
-		self class incrementNumTest 
-	]."
 	^ invariants
 	
 	
@@ -67,36 +65,21 @@ SSGeneratorInvariant >> initialize [
 	compiler := SSCompilerInvariant new.
 ]
 
-{ #category : #'as yet unclassified' }
-SSGeneratorInvariant >> invariantsOfStatements: statements [
-	"| collectionInvariants |
-	collectionInvariants := OrderedCollection new.
-	statements do: [ :statement | 
-		collectionInvariants addAll: (evaluator applyRule: statement varName to: )	
-	].
-	^ collectionInvariants "
-]
-
 { #category : #accessing }
 SSGeneratorInvariant >> transformToNode: statements [
-	"invariants := self invariantsOfStatements: statements.
-	invariants ifNotEmpty: [ "
-		| node temporaries stringStatements |
-		node := RBParser parseExpression: '[]'.
-		stringStatements := OrderedCollection new.
-		temporaries := OrderedCollection new.
-		statements collect: [ :statement | statement varName ] 
-		thenDo: [ :varName | 
-			temporaries add: (RBParser parseExpression: varName ).
-		].
-		node body temporaries: temporaries.
-		stringStatements := statements collect: [ :statement | statement printString ].
-		"stringStatements addAll: (invariants collect: [ :invariant | invariant printString ])."
-		stringStatements do: [ :aString | 
-			node body addNode: (RBParser parseExpression: aString)
-		].
-		node body addNode: (RBParser parseExpression: '^ self analyze: thisContext').
-		^ node
-	"].
-	^ nil"
+	| node temporaries stringStatements |
+	node := RBParser parseExpression: '[]'.
+	stringStatements := OrderedCollection new.
+	temporaries := OrderedCollection new.
+	statements collect: [ :statement | statement varName ] 
+	thenDo: [ :varName | 
+		temporaries add: (RBParser parseExpression: varName ).
+	].
+	node body temporaries: temporaries.
+	stringStatements := statements collect: [ :statement | statement printString ].
+	stringStatements do: [ :aString | 
+		node body addNode: (RBParser parseExpression: aString)
+	].
+	node body addNode: (RBParser parseExpression: '^ self analyze: thisContext').
+	^ node
 ]

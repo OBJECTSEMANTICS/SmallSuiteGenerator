@@ -9,6 +9,7 @@ SCollectionSimilarityAssertion class >> applyOn: aName with: aCollection [
 	| instance |
 	(self preconditionChecking: aCollection) ifFalse:[ ^ #()].
 	instance := self new 
+	nameValue: aName;
 	valueAssert: aCollection; 
 	comparableValue: aCollection first.
 	^ { instance }
@@ -24,5 +25,5 @@ SCollectionSimilarityAssertion class >> preconditionChecking: aObject [
 
 { #category : #printing }
 SCollectionSimilarityAssertion >> printString [ 
-	^ 'self assert: ( ', valueAssert storeString, ' allButFirst anySatisfy: [:element | element = ', comparableValue asString, '])'
+	^ 'self assert: ( ', nameValue asString, ' allButFirst anySatisfy: [:element | element = ', comparableValue storeString, '])'.
 ]

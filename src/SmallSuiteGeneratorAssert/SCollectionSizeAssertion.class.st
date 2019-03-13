@@ -22,5 +22,6 @@ SCollectionSizeAssertion class >> preconditionChecking: aObject [
 
 { #category : #printing }
 SCollectionSizeAssertion >> printString [ 
-	^ 'self assert: ', valueAssert storeString, ' size = ', comparableValue storeString 
+	^ 'self assert: ', nameValue asString, (comparableValue = 0 ifTrue: [ ' isEmpty' ] 
+	ifFalse: [ ' size equals: ', comparableValue storeString ]).
 ]
