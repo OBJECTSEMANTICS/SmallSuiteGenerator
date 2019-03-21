@@ -5,7 +5,7 @@ Class {
 		'instrumentedClasses',
 		'scalars'
 	],
-	#category : #'SmallSuiteGenerator-Model'
+	#category : #'SmallSuiteGenerator-Profiler'
 }
 
 { #category : #hooks }

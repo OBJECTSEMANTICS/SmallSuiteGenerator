@@ -5,7 +5,7 @@ Class {
 		'returnType',
 		'argTypes'
 	],
-	#category : #'SmallSuiteGenerator-Model'
+	#category : #'SmallSuiteGenerator-Profiler'
 }
 
 { #category : #accessing }
