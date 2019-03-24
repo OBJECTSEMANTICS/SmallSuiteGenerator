@@ -30,57 +30,19 @@ SConstructorStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SConstructorStatement >> insertMethodCallUsing: aTestcase [
-	^ -1
+	^ nil
 ]
 
 { #category : #'as yet unclassified' }
-SConstructorStatement >> insertParameterUsing: aTestcase [
-	args
-		ifNotEmpty: [ | varNames position argsCopy index newStatement |
-			argsCopy := args deepCopy.
-			varNames := aTestcase statements collect: #varName.
-			index := 0.
-			argsCopy
-				detect: [ :aArg | 
-					index := index + 1.
-					(varNames includes: aArg)
-						ifTrue: [ | interval |
-							newStatement := (aTestcase statementAt: aArg)
-								createNewStatement.
-							interval := (1 to: (aTestcase indexOf: self varName) - 1).
-							position := interval ifEmpty: [ 1 ] ifNotEmpty: [ interval atRandom ].
-							aTestcase addStatement: newStatement at: position ]
-						ifFalse: [ false ] ]
-				ifFound: [ args at: index put: newStatement varName.
-						^ position
-					 ] ifNone: [ ^ -1 ] ].
-			
-	^ -1
+SConstructorStatement >> insertParameterUsing: aTestCase [
+	^ self insertParametersOf: self using: aTestCase
 ]
 
 { #category : #accessing }
-SConstructorStatement >> insertRandomCallAt: position using: aTestCase [
-	| argsNewConstructor newPosition |
-	argsNewConstructor := self
-		satisfyParameters: aTestCase
-		before: position
-		allowingNull: true
-		of: self.
-	argsNewConstructor
-		ifNotNil: [ 
-			| index |
-			index := aTestCase indexOf: argsNewConstructor last.
-			newPosition := index > 0 ifTrue: [ (index + 1 to: aTestCase statements size) atRandom] ifFalse: [(1 to: aTestCase statements size) atRandom].
-			(aTestCase
-				addStatement:
-					(SConstructorStatement create
-						args: argsNewConstructor;
-						selector: self selector;
-						theClassName: self theClassName;
-						yourself)
-				at: newPosition)
-				ifTrue: [ ^ newPosition ] ].
-	^ -1
+SConstructorStatement >> insertRandomCallUsing: aTestCase [
+	^ aTestCase
+		insertStatementWithArgs: self
+		before: aTestCase statements size + 1
 ]
 
 { #category : #accessing }
@@ -108,30 +70,25 @@ SConstructorStatement >> printOn: aStream [
 { #category : #mutation }
 SConstructorStatement >> repairOn: aTestCase changing: aStatement [
 	| collection |
-	self varName = aStatement varName ifFalse: [ ^ #() ].
-	collection := self change: args using: aTestCase of: aStatement.
-	(aTestCase statements at: (aTestCase indexOf: self varName))
-		args: collection first.
+	self varName = aStatement varName
+		ifFalse: [ ^ #() ].
+	collection := STransformValue changeArgsOf: self using: aTestCase.
+	(aTestCase statementAt: self varName) args: collection first.
 	^ collection second
 ]
 
 { #category : #mutation }
 SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
-	"aStatement varName = self varName
-		ifFalse: [ ^ self ]"
-
-	| collection |
-	collection := self
-		removeStatementsOf: aStatement
-		using: aTestCase
-		in: args.
-	(aTestCase statements at: (aTestCase indexOf: self varName)) args: collection first.
-	^ collection second
-	"aTestCase statements
-		select: [ :statement | 
-			(statement isField or: [ statement isMethod ])
-				and: [ statement receiverVarName = aStatement varName ] ]
-		thenDo: [ :statement | aTestCase remove: statement varName ]"
+	(args includes: aStatement varName)
+		ifTrue: [ | collection |
+			collection := STransformValue
+				removeOrRepairArgs: args
+				of: aStatement
+				with: self varName
+				using: aTestCase.
+			(aTestCase statementAt: self varName) args: collection first.
+			^ collection second]
+		ifFalse: [ ^ #() ]
 ]
 
 { #category : #accessing }

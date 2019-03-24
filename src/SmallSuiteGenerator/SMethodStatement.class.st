@@ -19,66 +19,70 @@ SMethodStatement >> args: anObject [
 	args := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SMethodStatement >> changeUsing: aTestCase [
+	| methods calledMethods constructStatement |
+	constructStatement := aTestCase statementAt: self receiverVarName.
+	calledMethods := (aTestCase statements
+		select: #isMethod
+		thenCollect: [ :method | method selector ]) asSet.
+	methods := (aTestCase
+		methodsOrAccessors: constructStatement
+		toSelect: false)
+		reject: [ :method | 
+			((calledMethods includes: method selector) not
+				and: [ method returnType name ~= self returnTypeName ])
+				or: [ method returnType name = constructStatement theClassName ] ].
+	methods
+		ifNotEmpty: [ | selected newArgs |
+			selected := methods shuffle
+				detect: [ :accessor | accessor selector ~= self selector ]
+				ifFound: [ :accessor | accessor ]
+				ifNone: [ methods first ].
+			selected selector = self selector
+				ifTrue:
+					[ newArgs := (STransformValue changeArgsOf: self using: aTestCase) first ]
+				ifFalse: [ newArgs := selected argTypes
+						collect: [ :class | 
+							aTestCase
+								createArg: class name
+								before: (aTestCase indexOf: self varName)
+								avoiding: nil ].
+					(newArgs anySatisfy: #isNil)
+						ifTrue: [ ^ self ] ].
+			(aTestCase statementAt: self varName)
+				selector: selected selector;
+				args: newArgs ]
+]
+
 { #category : #private }
 SMethodStatement >> createNewStatement [
 	^ self class create
 		selector: self selector;
 		args: self args;
 		returnTypeName: self returnTypeName;
+		receiverVarName: self receiverVarName;
 		yourself
 ]
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> insertMethodCallUsing: aTestcase [
-	^ self insertRandomCallAt: aTestcase statements size using: aTestcase
+	^ self insertRandomCallUsing: aTestcase
 ]
 
 { #category : #'as yet unclassified' }
-SMethodStatement >> insertParameterUsing: aTestcase [
-	args
-		ifNotEmpty: [ | varNames position argsCopy index newStatement |
-			argsCopy := args deepCopy.
-			varNames := aTestcase statements collect: #varName.
-			index := 0.
-			argsCopy
-				detect: [ :aArg | 
-					index := index + 1.
-					(varNames includes: aArg)
-						ifTrue: [ newStatement := (aTestcase statementAt: aArg) createNewStatement.
-							position := (1 to: (aTestcase indexOf: self varName) - 1)
-								atRandom.
-							aTestcase addStatement: newStatement at: position ]
-						ifFalse: [ false ] ]
-				ifFound: [ args at: index put: newStatement varName.
-					^ position ]
-				ifNone: [ ^ -1 ] ].
-	^ -1
+SMethodStatement >> insertParameterUsing: aTestCase [
+	^ self insertParametersOf: self using: aTestCase
 ]
 
 { #category : #accessing }
-SMethodStatement >> insertRandomCallAt: position using: aTestCase [
-	| aPosition argsNewMethod interval |
-	interval := (aTestCase indexOf: self receiverVarName) + 1 to: aTestCase statements size.
-	aPosition := interval
-		ifEmpty: [ aTestCase statements size + 1 ]
-		ifNotEmpty: [ interval atRandom ].
-	argsNewMethod := self
-		satisfyParameters: aTestCase
-		before: aPosition
-		allowingNull: true
-		of: self.
-	argsNewMethod
-		ifNotNil: [ (aTestCase
-				addStatement:
-					(SMethodStatement create
-						args: argsNewMethod;
-						selector: self selector;
-						receiverVarName: self receiverVarName;
-						returnTypeName: self returnTypeName;
-						yourself)
-				at: aPosition)
-				ifTrue: [ ^ aPosition ] ].
-	^ -1
+SMethodStatement >> insertRandomCallUsing: aTestCase [
+	| position |
+	position := STransformValue
+		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
+		to: aTestCase statements size
+		default: aTestCase statements size + 1.
+	^ aTestCase insertStatementWithArgs: self before: position
 ]
 
 { #category : #accessing }
@@ -117,24 +121,34 @@ SMethodStatement >> receiverVarName: anObject [
 SMethodStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
-	aTestCase changeMethod: aStatement.
+	self changeUsing: aTestCase.
 	^ #()
 ]
 
 { #category : #mutation }
 SMethodStatement >> repairOn: aTestCase deleting: aStatement [
-	| varNamesToRemove collectResult |
-	collectResult := self
-		removeStatementsOf: aStatement
-		using: aTestCase
-		in: args.
-	(aTestCase statements at: (aTestCase indexOf: self varName))
-		args: collectResult first.
-	varNamesToRemove := collectResult second.
+	| varNamesToRemove |
+	varNamesToRemove := OrderedCollection new.
+	(args includes: aStatement varName)
+		ifTrue: [ | collectResult |
+			collectResult := STransformValue
+				removeOrRepairArgs: args
+				of: aStatement
+				with: self varName
+				using: aTestCase.
+			(aTestCase statementAt: self varName) args: collectResult first.
+			varNamesToRemove := collectResult second ].
+	"if the receiverVarName must be deleted"
 	aStatement varName = self receiverVarName
-		ifFalse: [ ^ varNamesToRemove ].
-	(aTestCase addConstructorMethod: aStatement before: self varName)
-		ifFalse: [ varNamesToRemove add: self varName ].
+		ifTrue: [ | constructStatement |
+			constructStatement := aTestCase
+				addConstructor: aStatement
+				before: self varName
+				forField: false.
+			constructStatement
+				ifNil: [ varNamesToRemove add: self varName ]
+				ifNotNil: [ (aTestCase statementAt: self varName)
+						receiverVarName: constructStatement varName ] ].
 	^ varNamesToRemove
 ]
 

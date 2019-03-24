@@ -17,17 +17,17 @@ SPrimitiveStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SPrimitiveStatement >> insertMethodCallUsing: aTestcase [
-	^ -1
+	^ nil
 ]
 
 { #category : #'as yet unclassified' }
 SPrimitiveStatement >> insertParameterUsing: aTestcase [
-	^ -1
+	^ nil
 ]
 
 { #category : #accessing }
-SPrimitiveStatement >> insertRandomCallAt: position using: aTestCase [
-	^ -1
+SPrimitiveStatement >> insertRandomCallUsing: aTestCase [
+	^ nil
 ]
 
 { #category : #accessing }
@@ -49,10 +49,8 @@ SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
 	result := aTestCase createScalar: aStatement returnTypeName.
-	(aTestCase statements at: (aTestCase indexOf: aStatement varName))
-		value:
-			(self
-				change: (self transform: result first)).
+	(aTestCase statementAt: self varName)
+		value: (STransformValue changeAndTransform: result first).
 	^ #()
 ]
 

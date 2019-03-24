@@ -8,6 +8,20 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #'as yet unclassified' }
+SFieldStatement >> changeUsing: aTestCase [
+	| accessors selected |
+	accessors := (aTestCase
+		methodsOrAccessors: (aTestCase statementAt: self receiverVarName)
+		toSelect: true)
+		select: [ :m | m returnType name = self returnTypeName ].
+			selected := accessors shuffle
+				detect: [ :accessor | accessor selector ~= self fieldName ]
+				ifFound: [ :accessor | accessor selector ]
+				ifNone: [ self fieldName ].
+			(aTestCase statementAt: self varName) fieldName: selected.
+]
+
 { #category : #private }
 SFieldStatement >> createNewStatement [
 	^ self class create
@@ -29,29 +43,25 @@ SFieldStatement >> fieldName: anObject [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> insertMethodCallUsing: aTestcase [
-	^ -1
+	^ nil
 ]
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> insertParameterUsing: aTestcase [
-	^ -1
+	^ nil
 ]
 
 { #category : #accessing }
-SFieldStatement >> insertRandomCallAt: position using: aTestCase [
-	| aPosition interval |
-	interval := ((aTestCase indexOf: self receiverVarName) + 1 to: aTestCase statements size).
-	aPosition := interval ifEmpty: [ aTestCase statements size + 1 ] ifNotEmpty: [ interval atRandom ].
-	(aTestCase
-		addStatement:
-			(SFieldStatement create
-				returnTypeName: self returnTypeName;
-				receiverVarName: self receiverVarName;
-				fieldName: self fieldName;
-				yourself)
-		at: aPosition)
-		ifTrue: [ ^ aPosition ].
-	^ -1
+SFieldStatement >> insertRandomCallUsing: aTestCase [
+	| aPosition newStatement |
+	aPosition := STransformValue
+		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
+		to: aTestCase statements size
+		default: aTestCase statements size + 1.
+	newStatement := self createNewStatement.
+	(aTestCase addStatement: newStatement at: aPosition)
+		ifTrue: [ ^ {newStatement varName} ].
+	^ nil
 ]
 
 { #category : #accessing }
@@ -83,17 +93,23 @@ SFieldStatement >> receiverVarName: anObject [
 SFieldStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
-	aTestCase changeField: aStatement.
+	"aTestCase changeField: aStatement."
+	self changeUsing: aTestCase.
 	^ #()
 ]
 
 { #category : #mutation }
 SFieldStatement >> repairOn: aTestCase deleting: aStatement [
-	| varNamesToDelete |
+	| varNamesToDelete constructStatement |
 	varNamesToDelete := #().
 	aStatement varName = self receiverVarName
 		ifFalse: [ ^ varNamesToDelete ].
-	(aTestCase addConstructorField: aStatement before: self varName)
-		ifFalse: [ varNamesToDelete := {self varName} ].
+	constructStatement := aTestCase
+		addConstructor: aStatement
+		before: self varName
+		forField: true.
+	constructStatement
+		ifNil: [ varNamesToDelete := {self varName} ]
+		ifNotNil: [ (aTestCase statementAt: self varName) receiverVarName: constructStatement varName ].
 	^ varNamesToDelete
 ]
