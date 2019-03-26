@@ -19,6 +19,28 @@ SConstructorStatement >> args: anObject [
 	args := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> changeUsing: aTestCase [
+	| classSpy method result |
+	classSpy := aTestCase profile classAt: self theClassName.
+	method := classSpy factoryMethods shuffle
+		detect: [ :aMethod | aMethod selector ~= self selector ]
+		ifFound: [ :aMethod | aMethod ]
+		ifNone: [  ].
+	method
+		ifNil: [ result := STransformValue changeArgsOf: self using: aTestCase.
+			(aTestCase statementAt: self varName) args: result first.
+			result := result second. ]
+		ifNotNil:
+			[ | newArgs |
+			newArgs := method argTypes collect: [ :class | aTestCase createArg: class name before: (aTestCase indexOf: self varName) avoiding: nil ].
+			(aTestCase statementAt: self varName)
+				args: newArgs;
+				selector: method selector.
+			result := newArgs ].
+	^ result
+]
+
 { #category : #private }
 SConstructorStatement >> createNewStatement [
 	^ self class create 
@@ -69,12 +91,12 @@ SConstructorStatement >> printOn: aStream [
 
 { #category : #mutation }
 SConstructorStatement >> repairOn: aTestCase changing: aStatement [
-	| collection |
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
-	collection := STransformValue changeArgsOf: self using: aTestCase.
+	^ self changeUsing: aTestCase
+	"collection := STransformValue changeArgsOf: self using: aTestCase.
 	(aTestCase statementAt: self varName) args: collection first.
-	^ collection second
+	^ collection second"
 ]
 
 { #category : #mutation }
@@ -89,6 +111,21 @@ SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
 			(aTestCase statementAt: self varName) args: collection first.
 			^ collection second]
 		ifFalse: [ ^ #() ]
+]
+
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	| newConstructor class |
+	class := aTestCase profile
+		classAt: theClassName
+		ifNone: [ otherTestCase profile classAt: theClassName ].
+	newConstructor := aTestCase
+		newConstructorStatement: theClassName
+		of: class factoryMethods
+		before: nil.
+	newConstructor
+		ifNotNil: [ ^ aTestCase addStatement: newConstructor].
+	^ false
 ]
 
 { #category : #accessing }

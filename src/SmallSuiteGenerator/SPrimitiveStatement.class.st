@@ -59,6 +59,11 @@ SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
 	^ #()
 ]
 
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	^ aTestCase addStatement: self createNewStatement
+]
+
 { #category : #evaluating }
 SPrimitiveStatement >> value [ 	
 	^ value

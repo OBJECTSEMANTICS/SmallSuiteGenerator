@@ -62,11 +62,10 @@ SStatement >> insertParametersOf: aStatement using: aTestCase [
 	| args |
 	args := aStatement args.
 	args
-		ifNotEmpty: [ | varNames position argsCopy index newStatement |
-			argsCopy := args deepCopy.
+		ifNotEmpty: [ | varNames position index newStatement |
 			varNames := aTestCase varNames.
 			index := 0.
-			argsCopy
+			args
 				detect: [ :aArg | 
 					index := index + 1.
 					(varNames includes: aArg)
@@ -77,8 +76,10 @@ SStatement >> insertParametersOf: aStatement using: aTestCase [
 								default: 1.
 							aTestCase addStatement: newStatement at: position ]
 						ifFalse: [ false ] ]
-				ifFound: [ args at: index put: newStatement varName.
-					^ newStatement varName ]
+				ifFound: [ (aTestCase statementAt: aStatement varName) args
+						at: index
+						put: newStatement varName.
+					^ {newStatement varName} ]
 				ifNone: [ ^ nil ] ].
 	^ nil
 ]
@@ -131,6 +132,11 @@ SStatement >> returnTypeName [
 { #category : #accessing }
 SStatement >> returnTypeName: anObject [
 	returnTypeName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }

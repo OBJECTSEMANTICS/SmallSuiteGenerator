@@ -152,6 +152,19 @@ SMethodStatement >> repairOn: aTestCase deleting: aStatement [
 	^ varNamesToRemove
 ]
 
+{ #category : #'as yet unclassified' }
+SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	| blockCondition |
+	blockCondition := [ :testCase :stmOfCollection :aStatement | 
+	((testCase methodsOrAccessors: stmOfCollection toSelect: false)
+		collect: #selector) includes: aStatement selector ].
+	^ STransformValue
+		satisfyParameters: aTestCase
+		with: otherTestCase
+		of: self
+		withCondition: blockCondition
+]
+
 { #category : #accessing }
 SMethodStatement >> selector [
 	^ selector

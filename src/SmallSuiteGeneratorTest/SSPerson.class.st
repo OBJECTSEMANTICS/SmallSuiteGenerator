@@ -10,6 +10,16 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+SSPerson class >> name: aString [ 
+	| inst |
+	inst := self new
+		name: aString;
+		id: 1;
+		nickname: aString.
+	^ inst
+]
+
+{ #category : #'as yet unclassified' }
 SSPerson class >> name: aString with: aNumber [
 	| inst |
 	inst := self new name: aString; id: aNumber; nickname: aString.

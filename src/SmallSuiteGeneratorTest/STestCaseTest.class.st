@@ -4,6 +4,71 @@ Class {
 	#category : #'SmallSuiteGeneratorTest-Mutation'
 }
 
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> generateTestCase: aBlock with: aClass [
+	| profile testCase |
+	SStatement reset.
+	profile := SSGenerator profile: aBlock onClass: aClass.
+	testCase := STestCase seed: profile.
+	^ testCase
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCase [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self generateTestCase: [ SStudent score: 34 ] with: SStudent)
+				generateStatements;
+		add:
+			(self generateTestCase: [ (SStudent score: 2) score ] with: SStudent)
+				generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SStudent score: 2) return: 2 ]
+				with: SStudent) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SSPerson name: 'Ann' with: 34)
+						name;
+						nickname;
+						id ]
+				with: SSPerson) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SSPerson name: 'Ann' with: 34)
+						age: 34;
+						identifier;
+						nickname: 'Ann34';
+						fullIdentifier ]
+				with: SSPerson) generateStatements;
+		add:
+			(self
+				generateTestCase: [ SSPerson name: 'Peter'.
+					SSPerson name: 'Ann' with: 2 ]
+				with: SSPerson) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCaseStudent [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self generateTestCase: [ SStudent score: 34 ] with: SStudent)
+				generateStatements;
+		add:
+			(self generateTestCase: [ (SStudent score: 2) score ] with: SStudent)
+				generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SStudent score: 2) return: 2 ]
+				with: SStudent) generateStatements.
+	^ list
+]
+
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeConstructor [
 	| profile testCase |
@@ -163,6 +228,37 @@ STestCaseTest >> testChangePrimitive [
 	self assert: testCase statements first value equals: '#(1 4 5 )'
 ]
 
+{ #category : #'mutation-change' }
+STestCaseTest >> testChangeWithTwoConstructor [
+	| profile testCase oldSelector |
+	SStatement reset.
+	profile := SSGenerator
+		profile: [ SSPerson name: 'Peter'.
+			SSPerson name: 'Ann' with: 2 ]
+		onClass: SSPerson.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.
+	oldSelector := testCase statements first selector.
+	testCase change.
+	self deny: testCase statements first selector equals: oldSelector
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToSStudent [
+	| listTestCase offSprings offSpring1 offSpring2 |
+	listTestCase := self class listTestCaseStudent shuffle.
+	offSprings := listTestCase first crossOverWith: listTestCase second.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 class equals: STestCase.
+	self
+		assert:
+			(offSpring1 statements size - offSpring2 statements size) abs
+				<=
+					(listTestCase first statements size
+						- listTestCase second statements size) abs
+]
+
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertMethodCall [
 	| profile testCase varNames stm |
@@ -208,7 +304,7 @@ STestCaseTest >> testInsertMethodCall [
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertParameter [
-	| profile testCase varName |
+	| profile testCase varNames |
 	"if is primitive, parameter is not added"
 	"parameter is added if any statement has args"
 	SStatement reset.
@@ -226,11 +322,11 @@ STestCaseTest >> testInsertParameter [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	varName := testCase insertParameter.
-	varName ifNotNil: [ self
+	varNames := testCase insertParameter.
+	varNames ifNotNil: [ self
 				assert:
 					((testCase statements select: #isConstructor) first args
-						includes: varName) ].
+						includes: varNames first) ].
 	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
@@ -239,11 +335,11 @@ STestCaseTest >> testInsertParameter [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
-	varName := testCase insertParameter.
-	varName ifNotNil: [ self
+	varNames := testCase insertParameter.
+	varNames ifNotNil: [ self
 				assert:
 					((testCase statements select: #isConstructor) first args
-						includes: varName) ].
+						includes: varNames first) ].
 	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
@@ -252,13 +348,13 @@ STestCaseTest >> testInsertParameter [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
-	varName := testCase insertParameter.
-	varName ifNotNil: [ self
+	varNames := testCase insertParameter.
+	varNames ifNotNil: [ self
 				assert:
 					((OrderedCollection new
 						addAll: (testCase statements select: #isConstructor thenCollect: #args) first;
 						addAll: (testCase statements select: #isMethod thenCollect: #args) first;
-						yourself) includes: varName) ]
+						yourself) includes: varNames first) ]
 ]
 
 { #category : #'mutation-insert' }

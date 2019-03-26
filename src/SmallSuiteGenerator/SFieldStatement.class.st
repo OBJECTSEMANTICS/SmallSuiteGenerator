@@ -10,16 +10,15 @@ Class {
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> changeUsing: aTestCase [
-	| accessors selected |
+	| accessors |
 	accessors := (aTestCase
 		methodsOrAccessors: (aTestCase statementAt: self receiverVarName)
 		toSelect: true)
 		select: [ :m | m returnType name = self returnTypeName ].
-			selected := accessors shuffle
-				detect: [ :accessor | accessor selector ~= self fieldName ]
-				ifFound: [ :accessor | accessor selector ]
-				ifNone: [ self fieldName ].
-			(aTestCase statementAt: self varName) fieldName: selected.
+	accessors shuffle
+		detect: [ :accessor | accessor selector ~= self fieldName ]
+		ifFound: [ :accessor | 
+			(aTestCase statementAt: self varName) fieldName: accessor selector ]
 ]
 
 { #category : #private }
@@ -112,4 +111,17 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 		ifNil: [ varNamesToDelete := {self varName} ]
 		ifNotNil: [ (aTestCase statementAt: self varName) receiverVarName: constructStatement varName ].
 	^ varNamesToDelete
+]
+
+{ #category : #'as yet unclassified' }
+SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	| blockCondition |
+	blockCondition := [ :testCase :stmOfCollection :aStatement | 
+	((testCase methodsOrAccessors: stmOfCollection toSelect: true)
+		collect: #selector) includes: aStatement fieldName ].
+	^ STransformValue
+		satisfyParameters: aTestCase
+		with: otherTestCase
+		of: self
+		withCondition: blockCondition
 ]

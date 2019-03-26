@@ -62,6 +62,23 @@ STransformValue class >> changeArgsOf: aStatement using: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
+STransformValue class >> detectConstructor: aTestCase of: aStatement withCondition: aBlock [
+	aTestCase statements
+		detect: [ :aStm | 
+			aStm isConstructor
+				and: [ "((aTestCase methodsOrAccessors: aStm toSelect: true)
+						collect: #selector) includes: self fieldName "
+					aBlock
+						valueWithArguments:
+							{aTestCase.
+							aStm.
+							aStatement} ] ]
+		ifFound: [ :aStm | ^ aStm ]
+		ifNone: [ ^ nil ].
+	^ nil
+]
+
+{ #category : #'as yet unclassified' }
 STransformValue class >> randomNumberFrom: aNumber1 to: aNumber2 default: aNumber3 [
 	| interval |
 	interval := aNumber1 to: aNumber2.
@@ -90,6 +107,33 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 				collect: [ :arg | replace at: arg ifAbsent: [ arg ] ] ].
 	^ {argsResult.
 	varToDelete}
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> satisfyParameters: aTestCase with: otherTestCase of: aStatement withCondition: aBlock [
+	| constructor |
+	constructor := self detectConstructor: aTestCase of: aStatement withCondition: aBlock.
+	constructor ifNotNil: [ ^ aTestCase
+				addStatement:
+					(aStatement createNewStatement
+						receiverVarName: constructor varName;
+						yourself)  ] 
+		ifNil: [ 
+	constructor := self detectConstructor: otherTestCase of: aStatement withCondition: aBlock.
+	constructor ifNotNil: [ 
+		constructor := aTestCase
+						newConstructorStatement: constructor theClassName
+						of: (aTestCase profile classAt: constructor theClassName) factoryMethods
+						before: nil.
+		constructor
+						ifNotNil: [ aTestCase addStatement: constructor.
+							^ aTestCase
+								addStatement:
+									(aStatement createNewStatement
+										receiverVarName: constructor varName;
+										yourself) ]
+		 ] ifNil: [ ^ false ]].
+	^ false
 ]
 
 { #category : #accessing }

@@ -185,6 +185,13 @@ STestCase >> addStatement: aStatement at: position [
 	^ true
 ]
 
+{ #category : #adding }
+STestCase >> addStatement: aStatement satisfyingParameters: otherTestCase [
+	aStatement
+		satisfyParameters: self
+		with: otherTestCase
+]
+
 { #category : #'as yet unclassified' }
 STestCase >> applyMutator [
 	^ statements isNotEmpty 
@@ -234,12 +241,14 @@ STestCase >> createArg: aClassName [
 
 { #category : #generation }
 STestCase >> createArg: aClassName before: stop avoiding: varName [
+	| selectedList |
+	selectedList := OrderedCollection new.
 	statements
 		withIndexDo: [ :stm :index | 
 			index < stop
 				ifTrue: [ (stm returnTypeName = aClassName and: [ stm varName ~= varName ])
-						ifTrue: [ ^ stm varName ] ] ].
-	^ (self createScalar: aClassName) first
+						ifTrue: [ selectedList add: stm varName ] ] ].
+	selectedList ifNotEmpty: [ ^ selectedList shuffle anyOne ] ifEmpty: [ ^ (self createScalar: aClassName) first ]
 ]
 
 { #category : #generation }
@@ -259,6 +268,32 @@ STestCase >> createScalar: aClassName [
 				ifNone: [ ^ nil ] ].
 	^ {scalars asOrderedCollection shuffle anyOne.
 	returnTypeName}
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> crossOverWith: otherTestCase [
+	| alpha offSpring1 offSpring2 size sizeOther |
+	alpha := (0.1 to: 0.9 by: 0.1) atRandom round: 1.
+	size := statements size.
+	sizeOther := otherTestCase statements size.
+	offSpring1 := STestCase seed: otherTestCase profile.
+	(statements copyFrom: 1 to: (size * alpha) asInteger)
+		do: [ :aStm | offSpring1 addStatement: aStm ].	"first alpha(P1)"
+	(otherTestCase statements
+		copyFrom: (alpha * sizeOther) asInteger + 1
+		to: sizeOther)
+		do:
+			[ :aStm | offSpring1 addStatement: aStm satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
+	offSpring2 := STestCase seed: self profile.
+	(otherTestCase statements
+		copyFrom: 1
+		to: (sizeOther * alpha) asInteger)
+		do: [ :aStm | offSpring2 addStatement: aStm ].	"first alpha(P2)"
+	(statements copyFrom: (alpha * size) asInteger + 1 to: size) "last (1-alpha)(P1)"
+		do:
+			[ :aStm |  offSpring2 addStatement: aStm satisfyingParameters: self ].
+	^ {offSpring1.
+	offSpring2}
 ]
 
 { #category : #'as yet unclassified' }
@@ -296,7 +331,7 @@ STestCase >> initialize [
 
 { #category : #'accessing untypeable characters' }
 STestCase >> insert [
-	| l L varName alpha count random varNamesInserted |
+	| l L varNames alpha count random varNamesInserted |
 	self applyMutator
 		ifFalse: [ ^ #() ].
 	l := 1.
@@ -306,8 +341,8 @@ STestCase >> insert [
 	varNamesInserted := OrderedCollection new.
 	random := Random new seed: DateAndTime current nanoSecond / 100.
 	[ l < L and: [ random next <= (alpha raisedTo: count) ] ]
-		whileTrue: [ varName := self insertRandomStatement.
-			varName ifNotNil: [ varNamesInserted add: varName ].
+		whileTrue: [ varNames := self insertRandomStatement.
+			varNames ifNotNil: [ varNamesInserted addAll: varNames ].
 			l := l + 1.
 			count := count + 1 ].
 	^ varNamesInserted
@@ -315,31 +350,33 @@ STestCase >> insert [
 
 { #category : #'as yet unclassified' }
 STestCase >> insertMethodCall [
-	| varName |
-	statements shuffle
+	| varNames copyStatements |
+	copyStatements := statements deepCopy.
+	copyStatements shuffle
 		detect: [ :stmToInsert | 
-			varName := stmToInsert
-				insertMethodCallUsing: self.
-			varName isNotNil ]
-		ifFound: [ ^ varName ].
+			varNames := stmToInsert insertMethodCallUsing: self.
+			varNames isNotNil ]
+		ifFound: [ ^ varNames ].
 	^ nil
 ]
 
 { #category : #'as yet unclassified' }
 STestCase >> insertParameter [
-	| varName |
-	statements shuffle
+	| varNames copyStatements |
+	copyStatements := statements deepCopy.
+	copyStatements shuffle
 		detect: [ :stmToInsert | 
-			varName := stmToInsert insertParameterUsing: self.
-			varName isNotNil ]
-		ifFound: [ ^ varName ].
+			varNames := stmToInsert insertParameterUsing: self.
+			varNames isNotNil ]
+		ifFound: [ ^ varNames ].
 	^ nil
 ]
 
 { #category : #'as yet unclassified' }
 STestCase >> insertRandomCall [
-	| varNames |
-	statements shuffle
+	| varNames copyStatements |
+	copyStatements := statements deepCopy.
+	copyStatements shuffle
 		detect: [ :stmToInsert | 
 			varNames := stmToInsert insertRandomCallUsing: self.
 			varNames isNotNil ]
@@ -349,12 +386,12 @@ STestCase >> insertRandomCall [
 
 { #category : #'as yet unclassified' }
 STestCase >> insertRandomStatement [
-	| varNameInserted |
+	| varNamesInserted |
 	self methodsToInsert shuffle
 		detect: [ :method | 
-			varNameInserted := self perform: method.
-			varNameInserted isNotNil ]
-		ifFound: [ ^ varNameInserted ]
+			varNamesInserted := self perform: method.
+			varNamesInserted isNotNil ]
+		ifFound: [ ^ varNamesInserted ]
 		ifNone: [ ^ -1 ]
 ]
 
