@@ -52,6 +52,132 @@ STestCaseTest class >> listTestCase [
 ]
 
 { #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCaseRTAMItem [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self
+				generateTestCase: [ RTAMItem basicNew
+						itemName: 'Bonus Card';
+						color: Color lightCyan ]
+				with: RTAMItem) generateStatements;
+		add:
+			(self
+				generateTestCase: [ RTAMItem basicNew
+						itemName: 'Contract Management';
+						row: 'Australia';
+						column: 'Corporate Services';
+						color: Color red ]
+				with: RTAMItem) generateStatements;
+		add:
+			(self
+				generateTestCase: [ RTAMItem basicNew
+						itemName: 'Bonus Card';
+						row: 'France';
+						column: 'Customer Relationship';
+						color: Color lightGreen ]
+				with: RTAMItem) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCaseRTBorderAttachPoint [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self
+				generateTestCase: [ (RTBorderAttachPoint instance) offset: 4  ]
+				with: RTBorderAttachPoint) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (RTBorderAttachPoint instance) offset: 19  ]
+				with: RTBorderAttachPoint) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (RTBorderAttachPoint instance) offset: 4  ]
+				with: RTBorderAttachPoint) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCaseRTBox [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self
+				generateTestCase: [ RTBox instance
+						defaultWidth;
+						borderStyle ]
+				with: RTBox) generateStatements;
+		add:
+			(self
+				generateTestCase: [ RTBox instance
+						borderStyle ]
+				with: RTBox) generateStatements;
+		add:
+			(self
+				generateTestCase: [ RTBox instance
+						defaultWidth;
+						height;
+						borderStyle ]
+				with: RTBox) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCaseRTDirectedLine [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self
+				generateTestCase: [ RTDirectedLine instance offset: 6.5 ]
+				with: RTDirectedLine) generateStatements;
+		add:
+			(self
+				generateTestCase: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
+				with: RTDirectedLine) generateStatements;
+		add:
+			(self
+				generateTestCase: [ RTDirectedLine instance
+						offset: 56; offset: 2.4 ]
+				with: RTDirectedLine) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseTest class >> listTestCaseRTLineSegment [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self
+				generateTestCase: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
+				with: RTLineSegment) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
+						from;
+						to;
+						a;
+						b;
+						c ]
+				with: RTLineSegment) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+						angleInDeg;
+						angleInRad;
+						cotan;
+						bottom ]
+				with: RTLineSegment) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
 STestCaseTest class >> listTestCaseStudent [
 	| list |
 	list := OrderedCollection new.
@@ -244,6 +370,90 @@ STestCaseTest >> testChangeWithTwoConstructor [
 ]
 
 { #category : #crossover }
+STestCaseTest >> testCrossOverToRTAMItem [
+	| listTestCase offSprings offSpring1 offSpring2 |
+	listTestCase := self class listTestCaseRTAMItem shuffle.
+	self halt." error because RTAMItem does not have factoryMethods"
+	offSprings := listTestCase first crossOverWith: listTestCase second.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 class equals: STestCase.
+	self
+		assert:
+			(offSpring1 statements size - offSpring2 statements size) abs
+				<=
+					(listTestCase first statements size
+						- listTestCase second statements size) abs
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTBorderAttachPoint [
+	| listTestCase offSprings offSpring1 offSpring2 |
+	listTestCase := self class listTestCaseRTBorderAttachPoint shuffle.
+	self halt. "error because the metaClassSpy does not have factoryMethods"
+	offSprings := listTestCase first crossOverWith: listTestCase second.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 class equals: STestCase.
+	self
+		assert:
+			(offSpring1 statements size - offSpring2 statements size) abs
+				<=
+					(listTestCase first statements size
+						- listTestCase second statements size) abs
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTBox [
+	| listTestCase offSprings offSpring1 offSpring2 |
+	listTestCase := self class listTestCaseRTBox shuffle.
+	self halt.	"error because the metaClassSpy does not have factoryMethods"
+	offSprings := listTestCase first crossOverWith: listTestCase second.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 class equals: STestCase.
+	self
+		assert:
+			(offSpring1 statements size - offSpring2 statements size) abs
+				<=
+					(listTestCase first statements size
+						- listTestCase second statements size) abs
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTDirectedLine [
+	| listTestCase offSprings offSpring1 offSpring2 |
+	listTestCase := self class listTestCaseRTDirectedLine shuffle.
+	self halt.	"error because the metaClassSpy does not have factoryMethods"
+	offSprings := listTestCase first crossOverWith: listTestCase second.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 class equals: STestCase.
+	self
+		assert:
+			(offSpring1 statements size - offSpring2 statements size) abs
+				<=
+					(listTestCase first statements size
+						- listTestCase second statements size) abs
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTLineSegment [
+	| listTestCase offSprings offSpring1 offSpring2 |
+	listTestCase := self class listTestCaseRTLineSegment shuffle.
+	offSprings := listTestCase first crossOverWith: listTestCase second.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 class equals: STestCase.
+	self
+		assert:
+			(offSpring1 statements size - offSpring2 statements size) abs
+				<=
+					(listTestCase first statements size
+						- listTestCase second statements size) abs
+]
+
+{ #category : #crossover }
 STestCaseTest >> testCrossOverToSStudent [
 	| listTestCase offSprings offSpring1 offSpring2 |
 	listTestCase := self class listTestCaseStudent shuffle.
@@ -256,7 +466,8 @@ STestCaseTest >> testCrossOverToSStudent [
 			(offSpring1 statements size - offSpring2 statements size) abs
 				<=
 					(listTestCase first statements size
-						- listTestCase second statements size) abs
+						- listTestCase second statements size) abs.
+	
 ]
 
 { #category : #'mutation-insert' }
