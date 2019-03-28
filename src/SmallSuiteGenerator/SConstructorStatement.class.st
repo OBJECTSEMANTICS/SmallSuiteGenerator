@@ -28,17 +28,26 @@ SConstructorStatement >> changeUsing: aTestCase [
 		ifFound: [ :aMethod | aMethod ]
 		ifNone: [  ].
 	method
-		ifNil: [ result := STransformValue changeArgsOf: self using: aTestCase.
+		ifNil: [ result := STransformValue changeArgsOf: args using: aTestCase.
 			(aTestCase statementAt: self varName) args: result first.
-			result := result second. ]
-		ifNotNil:
-			[ | newArgs |
-			newArgs := method argTypes collect: [ :class | aTestCase createArg: class name before: (aTestCase indexOf: self varName) avoiding: nil ].
+			result := result second ]
+		ifNotNil: [ | newArgs |
+			newArgs := method argTypes
+				collect: [ :class | 
+					aTestCase
+						createArg: class name
+						before: (aTestCase indexOf: self varName)
+						avoiding: nil ].
 			(aTestCase statementAt: self varName)
 				args: newArgs;
 				selector: method selector.
 			result := newArgs ].
 	^ result
+]
+
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> collectDependencies [
+	^ STransformValue selectVarNames: args
 ]
 
 { #category : #private }
@@ -122,9 +131,8 @@ SConstructorStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	newConstructor := aTestCase
 		newConstructorStatement: theClassName
 		of: class factoryMethods
-		before: nil.
-	newConstructor
-		ifNotNil: [ ^ aTestCase addStatement: newConstructor].
+		before: self varName.
+	newConstructor ifNotNil: [ ^ aTestCase addStatement: newConstructor ].
 	^ false
 ]
 

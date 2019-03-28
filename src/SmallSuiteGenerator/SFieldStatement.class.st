@@ -21,6 +21,11 @@ SFieldStatement >> changeUsing: aTestCase [
 			(aTestCase statementAt: self varName) fieldName: accessor selector ]
 ]
 
+{ #category : #'as yet unclassified' }
+SFieldStatement >> collectDependencies [
+	^ { receiverVarName }
+]
+
 { #category : #private }
 SFieldStatement >> createNewStatement [
 	^ self class create

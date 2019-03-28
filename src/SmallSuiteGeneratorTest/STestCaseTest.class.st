@@ -390,7 +390,7 @@ STestCaseTest >> testCrossOverToRTAMItem [
 STestCaseTest >> testCrossOverToRTBorderAttachPoint [
 	| listTestCase offSprings offSpring1 offSpring2 |
 	listTestCase := self class listTestCaseRTBorderAttachPoint shuffle.
-	self halt. "error because the metaClassSpy does not have factoryMethods"
+	"self halt."	"error because the metaClassSpy does not have factoryMethods"
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
@@ -407,7 +407,6 @@ STestCaseTest >> testCrossOverToRTBorderAttachPoint [
 STestCaseTest >> testCrossOverToRTBox [
 	| listTestCase offSprings offSpring1 offSpring2 |
 	listTestCase := self class listTestCaseRTBox shuffle.
-	self halt.	"error because the metaClassSpy does not have factoryMethods"
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
@@ -424,7 +423,6 @@ STestCaseTest >> testCrossOverToRTBox [
 STestCaseTest >> testCrossOverToRTDirectedLine [
 	| listTestCase offSprings offSpring1 offSpring2 |
 	listTestCase := self class listTestCaseRTDirectedLine shuffle.
-	self halt.	"error because the metaClassSpy does not have factoryMethods"
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
@@ -450,7 +448,9 @@ STestCaseTest >> testCrossOverToRTLineSegment [
 			(offSpring1 statements size - offSpring2 statements size) abs
 				<=
 					(listTestCase first statements size
-						- listTestCase second statements size) abs
+						- listTestCase second statements size) abs.
+	self assert: offSpring1 hasValidDependencies.
+	self assert: offSpring2 hasValidDependencies
 ]
 
 { #category : #crossover }

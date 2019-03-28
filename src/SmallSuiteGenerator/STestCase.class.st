@@ -283,15 +283,14 @@ STestCase >> crossOverWith: otherTestCase [
 		copyFrom: (alpha * sizeOther) asInteger + 1
 		to: sizeOther)
 		do:
-			[ :aStm | offSpring1 addStatement: aStm satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
+			[ :aStm | offSpring1 addStatement: aStm  satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
 	offSpring2 := STestCase seed: self profile.
 	(otherTestCase statements
 		copyFrom: 1
 		to: (sizeOther * alpha) asInteger)
 		do: [ :aStm | offSpring2 addStatement: aStm ].	"first alpha(P2)"
-	(statements copyFrom: (alpha * size) asInteger + 1 to: size) "last (1-alpha)(P1)"
-		do:
-			[ :aStm |  offSpring2 addStatement: aStm satisfyingParameters: self ].
+	(statements copyFrom: (alpha * size) asInteger + 1 to: size)
+		do: [ :aStm | offSpring2 addStatement: aStm satisfyingParameters: self ].	"last (1-alpha)(P1)"
 	^ {offSpring1.
 	offSpring2}
 ]
@@ -308,6 +307,22 @@ STestCase >> generateStatements [
 				perform: #(#addConstructor #addField #addMethod #addPrimitive) shuffle anyOne ]
 				on: Error
 				do: [  ] ]
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> hasValidDependencies [
+	| currentVarNames |
+	currentVarNames := OrderedCollection new.
+	statements
+		detect: [ :aStm | 
+			(self
+				validDependencies: aStm collectDependencies
+				with: currentVarNames)
+				ifTrue: [ currentVarNames add: aStm varName.
+					false ]
+				ifFalse: [ true ] ]
+		ifFound: [ ^ false ].
+	^ true
 ]
 
 { #category : #accessing }
@@ -444,7 +459,8 @@ STestCase >> methodsToInsert [
 
 { #category : #generation }
 STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
-	| selected args |
+	| selected args selector |
+	methodList ifEmpty: [ args := #(). selector := 'new' ] ifNotEmpty: [ 
 	selected := methodList shuffle anyOne.
 	args := selected argTypes
 		collect: [ :class | 
@@ -456,9 +472,11 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 						avoiding: nil ] ].
 	(args anySatisfy: #isNil)
 		ifTrue: [ ^ nil ].
+		selector := selected selector.
+		].
 	^ SConstructorStatement create
 		theClassName: (classSpy isSymbol ifTrue: [ classSpy ] ifFalse: [classSpy className]);
-		selector: selected selector;
+		selector: selector;
 		args: args;
 		yourself
 ]
@@ -549,6 +567,27 @@ STestCase >> statementAt: varName [
 { #category : #accessing }
 STestCase >> statements [
 	^ statements
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> validDependencies [
+	| isValid currentVarNames |
+	isValid := true.
+	currentVarNames := OrderedCollection new.
+	statements detect: [ :aStm | 
+		| collectDependencies |
+		collectDependencies := aStm collectDependencies.
+		(self validDependencies: collectDependencies with: currentVarNames) 
+		ifTrue: [ currentVarNames addAll: collectDependencies; add: aStm varName. false ] ifFalse: [ true ]
+		 ] ifFound: [ ^ false ]
+	ifNone: [ ^ true ].
+	^ true
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> validDependencies: dependencies with: varNames [
+	^ varNames includesAll: dependencies
+	
 ]
 
 { #category : #'as yet unclassified' }

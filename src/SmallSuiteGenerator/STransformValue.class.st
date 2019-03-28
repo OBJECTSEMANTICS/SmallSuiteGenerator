@@ -46,9 +46,8 @@ STransformValue class >> changeArg: aArg before: position using: aTestCase allow
 ]
 
 { #category : #'as yet unclassified' }
-STransformValue class >> changeArgsOf: aStatement using: aTestCase [
-	| varToChange argsResult varNames args |
-	args := aStatement args.
+STransformValue class >> changeArgsOf: args using: aTestCase [
+	| varToChange argsResult varNames  |
 	argsResult := args deepCopy.
 	varToChange := OrderedCollection new.
 	varNames := aTestCase varNames.
@@ -112,28 +111,41 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 { #category : #'as yet unclassified' }
 STransformValue class >> satisfyParameters: aTestCase with: otherTestCase of: aStatement withCondition: aBlock [
 	| constructor |
-	constructor := self detectConstructor: aTestCase of: aStatement withCondition: aBlock.
-	constructor ifNotNil: [ ^ aTestCase
+	constructor := self
+		detectConstructor: aTestCase
+		of: aStatement
+		withCondition: aBlock.
+	constructor
+		ifNotNil: [ ^ aTestCase
 				addStatement:
 					(aStatement createNewStatement
 						receiverVarName: constructor varName;
-						yourself)  ] 
-		ifNil: [ 
-	constructor := self detectConstructor: otherTestCase of: aStatement withCondition: aBlock.
-	constructor ifNotNil: [ 
-		constructor := aTestCase
+						yourself) ]
+		ifNil: [ constructor := self
+				detectConstructor: otherTestCase
+				of: aStatement
+				withCondition: aBlock.
+			constructor
+				ifNotNil: [ constructor := aTestCase
 						newConstructorStatement: constructor theClassName
-						of: (aTestCase profile classAt: constructor theClassName) factoryMethods
-						before: nil.
-		constructor
+						of:
+							(otherTestCase profile classAt: constructor theClassName)
+								factoryMethods
+						before: constructor varName.
+					constructor
 						ifNotNil: [ aTestCase addStatement: constructor.
 							^ aTestCase
 								addStatement:
 									(aStatement createNewStatement
 										receiverVarName: constructor varName;
-										yourself) ]
-		 ] ifNil: [ ^ false ]].
+										yourself) ] ]
+				ifNil: [ ^ false ] ].
 	^ false
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> selectVarNames: args [
+	^ args select: [ :aArg | (aArg beginsWith: '_var') and: [ aArg endsWithDigit ] ]
 ]
 
 { #category : #accessing }

@@ -40,8 +40,8 @@ SMethodStatement >> changeUsing: aTestCase [
 				ifFound: [ :accessor | accessor ]
 				ifNone: [ methods first ].
 			selected selector = self selector
-				ifTrue:
-					[ newArgs := (STransformValue changeArgsOf: self using: aTestCase) first ]
+				ifTrue: [ newArgs := (STransformValue changeArgsOf: args using: aTestCase)
+						first ]
 				ifFalse: [ newArgs := selected argTypes
 						collect: [ :class | 
 							aTestCase
@@ -53,6 +53,11 @@ SMethodStatement >> changeUsing: aTestCase [
 			(aTestCase statementAt: self varName)
 				selector: selected selector;
 				args: newArgs ]
+]
+
+{ #category : #'as yet unclassified' }
+SMethodStatement >> collectDependencies [
+	^ {receiverVarName} , (STransformValue selectVarNames: args)
 ]
 
 { #category : #private }

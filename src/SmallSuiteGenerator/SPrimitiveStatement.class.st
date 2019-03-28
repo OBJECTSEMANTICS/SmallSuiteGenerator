@@ -7,6 +7,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> collectDependencies [
+	^ #()
+]
+
 { #category : #private }
 SPrimitiveStatement >> createNewStatement [
 	^ self class create

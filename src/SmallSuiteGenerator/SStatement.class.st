@@ -32,6 +32,11 @@ SStatement class >> reset [
 	counter := 0.
 ]
 
+{ #category : #'as yet unclassified' }
+SStatement >> collectDependencies [
+	^ self subclassResponsibility 
+]
+
 { #category : #private }
 SStatement >> createNewStatement [
 	^ self subclassResponsibility
