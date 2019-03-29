@@ -78,6 +78,21 @@ STransformValue class >> detectConstructor: aTestCase of: aStatement withConditi
 ]
 
 { #category : #'as yet unclassified' }
+STransformValue class >> getTypeArgs: aClassName of: selector with: aTestCase [
+	(aTestCase profile >> aClassName) methods
+		detect: [ :method | method selector = selector ]
+		ifFound: [ :method | ^ aTestCase classOfArgs: method ]
+		ifNone: [ ^ nil ]
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> getTypeArgs: aClassName of: selector with: aTestCase and: otherTestCase [	
+	| typeArgs |
+	typeArgs := self getTypeArgs: aClassName of: selector with: aTestCase.
+	typeArgs ifNotNil: [ ^ typeArgs  ] ifNil: [ ^ self getTypeArgs: aClassName of: selector with: otherTestCase ].
+]
+
+{ #category : #'as yet unclassified' }
 STransformValue class >> randomNumberFrom: aNumber1 to: aNumber2 default: aNumber3 [
 	| interval |
 	interval := aNumber1 to: aNumber2.
@@ -109,46 +124,33 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 ]
 
 { #category : #'as yet unclassified' }
-STransformValue class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement [
-	| args varNames otherVarNames arg resultArgs |
-	aStatement args ifEmpty: [ ^ #() ].
-	args := self selectVarNames: aStatement args.
-	varNames := aTestCase varNames.
-	otherVarNames := otherTestCase varNames.
-	resultArgs := OrderedCollection new.
-	args
-		do: [ :aArg | 
-			arg := aArg.
-			(varNames includes: aArg)
-				ifTrue: [  ]
-				ifFalse: [ (otherVarNames includes: aArg)
-						ifTrue: [ arg := aTestCase
-								createArg: (otherTestCase statementAt: aArg) returnTypeName
-								before: aTestCase statements size + 1
-								avoiding: nil ] ].
-			resultArgs add: arg ].
-	^ resultArgs
-]
-
-{ #category : #'as yet unclassified' }
 STransformValue class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement and: constructor [
-	| args varNames otherVarNames arg resultArgs argTypes |
+	| args varNames otherVarNames resultArgs argTypes |
 	aStatement args ifEmpty: [ ^ #() ].
-	args := self selectVarNames: aStatement args.
+	args := aStatement args.
 	varNames := aTestCase varNames.
 	otherVarNames := otherTestCase varNames.
 	resultArgs := OrderedCollection new.
-	args
-		do: [ :aArg | 
-			arg := aArg.
+	argTypes := self
+		getTypeArgs: constructor theClassName
+		of: aStatement selector
+		with: aTestCase
+		and: otherTestCase.
+	argTypes
+		doWithIndex: [ :argType :index | 
+			| aArg found |
+			found := false.
+			aArg := args at: index.
 			(varNames includes: aArg)
-				ifTrue: [ (aTestCase profile >> constructor theClassName) ] "falta revisar que el parametro sea del mismo tipo que del argumento que recibe el metodo"
+				ifTrue: [ (self satisfyTypeArg: aArg ofType: argType with: aTestCase)
+						ifTrue: [ found := true ] ].
+			found
 				ifFalse: [ (otherVarNames includes: aArg)
-						ifTrue: [ arg := aTestCase
-								createArg: (otherTestCase statementAt: aArg) returnTypeName
+						ifTrue: [ aArg := aTestCase
+								createArg: argType
 								before: aTestCase statements size + 1
 								avoiding: nil ] ].
-			resultArgs add: arg ].
+			resultArgs add: aArg ].
 	^ resultArgs
 ]
 
@@ -191,13 +193,18 @@ STransformValue class >> satisfyParameters: aTestCase with: otherTestCase of: aS
 							{aTestCase.
 							aStatement.
 							constructor.
-							(self satisfyArgs: aTestCase with: otherTestCase of: aStatement)} ]
+							(self satisfyArgs: aTestCase with: otherTestCase of: aStatement and: constructor)} ]
 				ifFalse: [ ^ blocks second
 						valueWithArguments:
 							{aTestCase.
 							aStatement.
 							constructor} ] ].
 	^ false
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> satisfyTypeArg: aArg ofType: argType with: aTestCase [
+	^ (aTestCase statementAt: aArg) returnTypeName = argType
 ]
 
 { #category : #'as yet unclassified' }

@@ -375,7 +375,7 @@ STestCaseTest >> testCrossOver: listTestCase [
 	self assert: listTestCase size >= 2.
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.self halt.
+	offSpring2 := offSprings second.
 	self assert: offSpring1 class equals: STestCase.
 	self assert: offSpring2 class equals: STestCase.
 	self assert: offSpring1 hasValidDependencies.

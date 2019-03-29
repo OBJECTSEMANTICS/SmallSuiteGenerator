@@ -231,6 +231,12 @@ STestCase >> classLiterals [
 		shuffle
 ]
 
+{ #category : #'as yet unclassified' }
+STestCase >> classOfArgs: method [
+	^ method argTypes
+						collect: [ :class | class name ]
+]
+
 { #category : #generation }
 STestCase >> createArg: aClassName [
 	^ self
