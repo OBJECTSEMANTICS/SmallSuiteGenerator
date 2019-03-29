@@ -109,18 +109,57 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 ]
 
 { #category : #'as yet unclassified' }
-STransformValue class >> satisfyParameters: aTestCase with: otherTestCase of: aStatement withCondition: aBlock [
+STransformValue class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement [
+	| args varNames otherVarNames arg resultArgs |
+	aStatement args ifEmpty: [ ^ #() ].
+	args := self selectVarNames: aStatement args.
+	varNames := aTestCase varNames.
+	otherVarNames := otherTestCase varNames.
+	resultArgs := OrderedCollection new.
+	args
+		do: [ :aArg | 
+			arg := aArg.
+			(varNames includes: aArg)
+				ifTrue: [  ]
+				ifFalse: [ (otherVarNames includes: aArg)
+						ifTrue: [ arg := aTestCase
+								createArg: (otherTestCase statementAt: aArg) returnTypeName
+								before: aTestCase statements size + 1
+								avoiding: nil ] ].
+			resultArgs add: arg ].
+	^ resultArgs
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement and: constructor [
+	| args varNames otherVarNames arg resultArgs argTypes |
+	aStatement args ifEmpty: [ ^ #() ].
+	args := self selectVarNames: aStatement args.
+	varNames := aTestCase varNames.
+	otherVarNames := otherTestCase varNames.
+	resultArgs := OrderedCollection new.
+	args
+		do: [ :aArg | 
+			arg := aArg.
+			(varNames includes: aArg)
+				ifTrue: [ (aTestCase profile >> constructor theClassName) ] "falta revisar que el parametro sea del mismo tipo que del argumento que recibe el metodo"
+				ifFalse: [ (otherVarNames includes: aArg)
+						ifTrue: [ arg := aTestCase
+								createArg: (otherTestCase statementAt: aArg) returnTypeName
+								before: aTestCase statements size + 1
+								avoiding: nil ] ].
+			resultArgs add: arg ].
+	^ resultArgs
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> satisfyConstructor: aTestCase with: otherTestCase of: aStatement and: aBlock [
 	| constructor |
 	constructor := self
 		detectConstructor: aTestCase
 		of: aStatement
 		withCondition: aBlock.
 	constructor
-		ifNotNil: [ ^ aTestCase
-				addStatement:
-					(aStatement createNewStatement
-						receiverVarName: constructor varName;
-						yourself) ]
 		ifNil: [ constructor := self
 				detectConstructor: otherTestCase
 				of: aStatement
@@ -132,14 +171,32 @@ STransformValue class >> satisfyParameters: aTestCase with: otherTestCase of: aS
 							(otherTestCase profile classAt: constructor theClassName)
 								factoryMethods
 						before: constructor varName.
-					constructor
-						ifNotNil: [ aTestCase addStatement: constructor.
-							^ aTestCase
-								addStatement:
-									(aStatement createNewStatement
-										receiverVarName: constructor varName;
-										yourself) ] ]
-				ifNil: [ ^ false ] ].
+						constructor ifNotNil: [ aTestCase addStatement: constructor ]
+						 ] ].
+	^ constructor
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> satisfyParameters: aTestCase with: otherTestCase of: aStatement withBlocks: blocks [
+	| constructor |
+	constructor := self
+		satisfyConstructor: aTestCase
+		with: otherTestCase
+		of: aStatement
+		and: blocks first.
+	constructor
+		ifNotNil: [ aStatement isMethod
+				ifTrue: [ ^ blocks second
+						valueWithArguments:
+							{aTestCase.
+							aStatement.
+							constructor.
+							(self satisfyArgs: aTestCase with: otherTestCase of: aStatement)} ]
+				ifFalse: [ ^ blocks second
+						valueWithArguments:
+							{aTestCase.
+							aStatement.
+							constructor} ] ].
 	^ false
 ]
 

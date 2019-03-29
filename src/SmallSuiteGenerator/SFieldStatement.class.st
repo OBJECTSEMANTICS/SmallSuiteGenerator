@@ -120,13 +120,16 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
-	| blockCondition |
+	| blockCondition blockInsertion |
 	blockCondition := [ :testCase :stmOfCollection :aStatement | 
 	((testCase methodsOrAccessors: stmOfCollection toSelect: true)
 		collect: #selector) includes: aStatement fieldName ].
+	blockInsertion := [ :testCase :aStatement :constructor | 
+		^ testCase addStatement: (aStatement createNewStatement receiverVarName: constructor varName; yourself)
+		 ].
 	^ STransformValue
 		satisfyParameters: aTestCase
 		with: otherTestCase
 		of: self
-		withCondition: blockCondition
+		withBlocks: {blockCondition. blockInsertion}
 ]

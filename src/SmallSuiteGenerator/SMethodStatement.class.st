@@ -159,15 +159,24 @@ SMethodStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
-	| blockCondition |
+	| blockCondition blockInsertion |
 	blockCondition := [ :testCase :stmOfCollection :aStatement | 
 	((testCase methodsOrAccessors: stmOfCollection toSelect: false)
 		collect: #selector) includes: aStatement selector ].
+	blockInsertion := [ :testCase :aStatement :constructor :aArgs |
+	^ testCase
+		addStatement:
+			(aStatement createNewStatement
+				receiverVarName: constructor varName;
+				args: aArgs;
+				yourself) ].
 	^ STransformValue
 		satisfyParameters: aTestCase
 		with: otherTestCase
 		of: self
-		withCondition: blockCondition
+		withBlocks:
+			{blockCondition.
+			blockInsertion}
 ]
 
 { #category : #accessing }

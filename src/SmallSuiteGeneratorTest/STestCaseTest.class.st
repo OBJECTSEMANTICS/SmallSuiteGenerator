@@ -370,104 +370,46 @@ STestCaseTest >> testChangeWithTwoConstructor [
 ]
 
 { #category : #crossover }
-STestCaseTest >> testCrossOverToRTAMItem [
-	| listTestCase offSprings offSpring1 offSpring2 |
-	listTestCase := self class listTestCaseRTAMItem shuffle.
-	self halt." error because RTAMItem does not have factoryMethods"
+STestCaseTest >> testCrossOver: listTestCase [
+	| offSprings offSpring1 offSpring2 |
+	self assert: listTestCase size >= 2.
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
+	offSpring2 := offSprings second.self halt.
 	self assert: offSpring1 class equals: STestCase.
-	self
-		assert:
-			(offSpring1 statements size - offSpring2 statements size) abs
-				<=
-					(listTestCase first statements size
-						- listTestCase second statements size) abs
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTBorderAttachPoint [
-	| listTestCase offSprings offSpring1 offSpring2 |
-	listTestCase := self class listTestCaseRTBorderAttachPoint shuffle.
-	"self halt."	"error because the metaClassSpy does not have factoryMethods"
-	offSprings := listTestCase first crossOverWith: listTestCase second.
-	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
-	self assert: offSpring1 class equals: STestCase.
-	self
-		assert:
-			(offSpring1 statements size - offSpring2 statements size) abs
-				<=
-					(listTestCase first statements size
-						- listTestCase second statements size) abs
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTBox [
-	| listTestCase offSprings offSpring1 offSpring2 |
-	listTestCase := self class listTestCaseRTBox shuffle.
-	offSprings := listTestCase first crossOverWith: listTestCase second.
-	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
-	self assert: offSpring1 class equals: STestCase.
-	self
-		assert:
-			(offSpring1 statements size - offSpring2 statements size) abs
-				<=
-					(listTestCase first statements size
-						- listTestCase second statements size) abs
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTDirectedLine [
-	| listTestCase offSprings offSpring1 offSpring2 |
-	listTestCase := self class listTestCaseRTDirectedLine shuffle.
-	offSprings := listTestCase first crossOverWith: listTestCase second.
-	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
-	self assert: offSpring1 class equals: STestCase.
-	self
-		assert:
-			(offSpring1 statements size - offSpring2 statements size) abs
-				<=
-					(listTestCase first statements size
-						- listTestCase second statements size) abs
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTLineSegment [
-	| listTestCase offSprings offSpring1 offSpring2 |
-	listTestCase := self class listTestCaseRTLineSegment shuffle.
-	offSprings := listTestCase first crossOverWith: listTestCase second.
-	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
-	self assert: offSpring1 class equals: STestCase.
-	self
-		assert:
-			(offSpring1 statements size - offSpring2 statements size) abs
-				<=
-					(listTestCase first statements size
-						- listTestCase second statements size) abs.
+	self assert: offSpring2 class equals: STestCase.
 	self assert: offSpring1 hasValidDependencies.
 	self assert: offSpring2 hasValidDependencies
 ]
 
 { #category : #crossover }
+STestCaseTest >> testCrossOverToRTAMItem [
+	self testCrossOver: self class listTestCaseRTAMItem shuffle.
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTBorderAttachPoint [
+	self testCrossOver: self class listTestCaseRTBorderAttachPoint shuffle.
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTBox [
+	self testCrossOver: self class listTestCaseRTBox shuffle.
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTDirectedLine [
+	self testCrossOver: self class listTestCaseRTDirectedLine shuffle.
+]
+
+{ #category : #crossover }
+STestCaseTest >> testCrossOverToRTLineSegment [
+	self testCrossOver: self class listTestCaseRTLineSegment shuffle.
+]
+
+{ #category : #crossover }
 STestCaseTest >> testCrossOverToSStudent [
-	| listTestCase offSprings offSpring1 offSpring2 |
-	listTestCase := self class listTestCaseStudent shuffle.
-	offSprings := listTestCase first crossOverWith: listTestCase second.
-	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
-	self assert: offSpring1 class equals: STestCase.
-	self
-		assert:
-			(offSpring1 statements size - offSpring2 statements size) abs
-				<=
-					(listTestCase first statements size
-						- listTestCase second statements size) abs.
-	
+	self testCrossOver: self class listTestCaseStudent shuffle.
 ]
 
 { #category : #'mutation-insert' }
