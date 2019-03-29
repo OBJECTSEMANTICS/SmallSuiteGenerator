@@ -195,6 +195,23 @@ STestCaseTest class >> listTestCaseStudent [
 	^ list
 ]
 
+{ #category : #'as yet unclassified' }
+STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
+	^ (aTestCase statements select: selector thenCollect: #args) includes: varNames
+]
+
+{ #category : #'mutation-insert' }
+STestCaseTest >> assertInsertParameter: listTestCase [
+	| testCase varNames |
+	testCase := listTestCase shuffle anyOne.
+	varNames := testCase insertParameter.
+	varNames
+		ifNotNil: [ self
+				assert:
+					((self argsInclude: varNames filteringBy: #isConstructor and: testCase)
+						or: [ self argsInclude: varNames filteringBy: #isMethod and: testCase ]) ].
+]
+
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeConstructor [
 	| profile testCase |
@@ -508,6 +525,20 @@ STestCaseTest >> testInsertParameter [
 						addAll: (testCase statements select: #isConstructor thenCollect: #args) first;
 						addAll: (testCase statements select: #isMethod thenCollect: #args) first;
 						yourself) includes: varNames first) ]
+]
+
+{ #category : #'mutation-insert' }
+STestCaseTest >> testInsertParameterRTAMItem [
+	self assertInsertParameter: self class listTestCaseRTAMItem. 
+]
+
+{ #category : #'mutation-insert' }
+STestCaseTest >> testInsertParameterRoassal [
+	self assertInsertParameter: self class listTestCaseRTAMItem.
+	self assertInsertParameter: self class listTestCaseRTBorderAttachPoint.
+	self assertInsertParameter: self class listTestCaseRTBox.
+	self assertInsertParameter: self class listTestCaseRTDirectedLine.
+	self assertInsertParameter: self class listTestCaseRTLineSegment.
 ]
 
 { #category : #'mutation-insert' }

@@ -22,9 +22,7 @@ SStatement class >> create [
 
 { #category : #'class initialization' }
 SStatement class >> initialize [
-	super initialize.
-	counter := 0.
-	
+	counter := 0
 ]
 
 { #category : #'class initialization' }
