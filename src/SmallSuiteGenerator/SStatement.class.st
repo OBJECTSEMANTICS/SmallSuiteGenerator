@@ -11,6 +11,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #accessing }
+SStatement class >> counter [ 
+	^ counter
+]
+
 { #category : #'class initialization' }
 SStatement class >> create [
 	| inst |
@@ -72,7 +77,7 @@ SStatement >> insertParametersOf: aStatement using: aTestCase [
 				detect: [ :aArg | 
 					index := index + 1.
 					(varNames includes: aArg)
-						ifTrue: [ newStatement := (aTestCase statementAt: aArg) createNewStatement.
+						ifTrue: [ self halt.newStatement := (aTestCase statementAt: aArg) createNewStatement.
 							position := STransformValue
 								randomNumberFrom: 1
 								to: (aTestCase indexOf: aStatement varName) - 1

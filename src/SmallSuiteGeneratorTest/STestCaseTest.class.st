@@ -200,6 +200,23 @@ STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
 	^ (aTestCase statements select: selector thenCollect: #args) includes: varNames
 ]
 
+{ #category : #'mutation-change' }
+STestCaseTest >> assertChange: listTestCase [
+	| testCase varNames statementsOld |
+	testCase := listTestCase shuffle anyOne.
+	statementsOld := Dictionary new.
+	testCase statements
+		do:
+			[ :aStm | statementsOld at: aStm varName put: aStm returnTypeName ].
+	varNames := testCase change.
+	varNames
+		ifNotNil: [ varNames
+				do: [ :varName | 
+					self
+						assert: (testCase statementAt: varName) returnTypeName
+						equals: (statementsOld at: varName) ] ]
+]
+
 { #category : #'mutation-insert' }
 STestCaseTest >> assertInsertParameter: listTestCase [
 	| testCase varNames |
@@ -210,6 +227,25 @@ STestCaseTest >> assertInsertParameter: listTestCase [
 				assert:
 					((self argsInclude: varNames filteringBy: #isConstructor and: testCase)
 						or: [ self argsInclude: varNames filteringBy: #isMethod and: testCase ]) ].
+]
+
+{ #category : #'mutation-remove' }
+STestCaseTest >> assertRemove: listTestCase [
+	| testCase removedVarNames |
+	testCase := listTestCase shuffle anyOne.
+	removedVarNames := testCase remove.
+	(removedVarNames isNotNil and: [ removedVarNames isNotEmpty ])
+		ifTrue: [ 
+			| varNames referencedArgs |
+			varNames := testCase varNames.
+			referencedArgs := OrderedCollection new.
+			testCase statements
+				select: [ :aStm | aStm isConstructor or: [ aStm isMethod ] ]
+				thenDo: [ :aStm | referencedArgs addAll: aStm args ].
+			removedVarNames
+				do: [ :varName | 
+					self deny: (varNames includes: varName).
+					self deny: (referencedArgs includes: varName) ] ]
 ]
 
 { #category : #'mutation-change' }
@@ -372,6 +408,16 @@ STestCaseTest >> testChangePrimitive [
 ]
 
 { #category : #'mutation-change' }
+STestCaseTest >> testChangeRoassal [
+	self assertChange: self class listTestCaseRTAMItem.
+	self
+		assertChange: self class listTestCaseRTBorderAttachPoint.
+	self assertChange: self class listTestCaseRTBox.
+	self assertChange: self class listTestCaseRTDirectedLine.
+	self assertChange: self class listTestCaseRTLineSegment
+]
+
+{ #category : #'mutation-change' }
 STestCaseTest >> testChangeWithTwoConstructor [
 	| profile testCase oldSelector |
 	SStatement reset.
@@ -528,17 +574,13 @@ STestCaseTest >> testInsertParameter [
 ]
 
 { #category : #'mutation-insert' }
-STestCaseTest >> testInsertParameterRTAMItem [
-	self assertInsertParameter: self class listTestCaseRTAMItem. 
-]
-
-{ #category : #'mutation-insert' }
 STestCaseTest >> testInsertParameterRoassal [
 	self assertInsertParameter: self class listTestCaseRTAMItem.
-	self assertInsertParameter: self class listTestCaseRTBorderAttachPoint.
+	self
+		assertInsertParameter: self class listTestCaseRTBorderAttachPoint.
 	self assertInsertParameter: self class listTestCaseRTBox.
 	self assertInsertParameter: self class listTestCaseRTDirectedLine.
-	self assertInsertParameter: self class listTestCaseRTLineSegment.
+	self assertInsertParameter: self class listTestCaseRTLineSegment
 ]
 
 { #category : #'mutation-insert' }
@@ -742,4 +784,13 @@ STestCaseTest >> testRemovePrimitive [
 	testCase addPrimitive.
 	testCase remove.
 	self assert: testCase statements isEmpty
+]
+
+{ #category : #'mutation-remove' }
+STestCaseTest >> testRemoveRoassal [
+	self assertRemove: self class listTestCaseRTAMItem.
+	self assertRemove: self class listTestCaseRTBorderAttachPoint.
+	self assertRemove: self class listTestCaseRTBox.
+	self assertRemove: self class listTestCaseRTDirectedLine.
+	self assertRemove: self class listTestCaseRTLineSegment
 ]
