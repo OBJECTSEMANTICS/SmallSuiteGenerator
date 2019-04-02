@@ -421,17 +421,50 @@ STestCaseTest >> testChangeWithTwoConstructor [
 	self deny: testCase statements first selector equals: oldSelector
 ]
 
-{ #category : #crossover }
+{ #category : #coverage }
+STestCaseTest >> testCoverage [
+	| testCase |
+	testCase := self class listTestCaseRTAMItem first.
+	testCase addPrimitive.
+	self assert: testCase statementCoverage equals: 1.
+	self assert: testCase methodCoverage equals: 0.
+	self assert: testCase numberOfExecutedMethods equals: 0.
+]
+
+{ #category : #coverage }
+STestCaseTest >> testCoverageRoassal [
+	| testCase |
+	testCase := self class listTestCaseRTAMItem first.
+	testCase addPrimitive.
+	self assert: testCase methodCoverage equals: 0.
+	self assert: testCase numberOfExecutedMethods equals: 0.
+]
+
+{ #category : #coverage }
+STestCaseTest >> testCoverageSStudent [
+	| profile testCase coverage |
+	profile := SSGenerator profile: [ SStudent score: 34 ] onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addPrimitive.
+	coverage := testCase coverage.
+	S2Lock value: false.
+	S2Context value: nil.
+	self assert: coverage first equals: 1.
+	self assert: coverage second equals: 1.
+	self assert: coverage third equals: 0.
+	self assert: coverage fourth equals: 1.
+	
+]
+
+{ #category : #coverage }
 STestCaseTest >> testCrossOver: listTestCase [
 	| offSprings offSpring1 offSpring2 |
 	self assert: listTestCase size >= 2.
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
-	self assert: offSpring1 class equals: STestCase.
-	self assert: offSpring2 class equals: STestCase.
-	self assert: offSpring1 hasValidDependencies.
-	self assert: offSpring2 hasValidDependencies
+	self assert: offSpring1 coverage equals: 4.
+	self assert: offSpring2 coverage equals: 5.
 ]
 
 { #category : #crossover }

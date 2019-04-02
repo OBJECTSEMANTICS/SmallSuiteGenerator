@@ -244,6 +244,23 @@ STestCase >> classOfArgs: method [
 						collect: [ :class | class name ]
 ]
 
+{ #category : #metric }
+STestCase >> coverage [ 
+	| profiler node temporaries varNames |
+	node := RBParser parseExpression: '[]'.
+	varNames := self varNames.
+	temporaries := varNames collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statements collect: [ :statement | statement printString ]
+	thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	STestCaseCompiler compile: 'testCaseCompiled', String cr, node body formattedCode.
+	profiler := SBProfiler profile: [ 
+		STestCaseCompiler new testCaseCompiled.	
+	] onPackagesMatching: 'SmallSuiteCompil*'.
+	^ {profiler numberOfAllStatements. profiler numberOfExecutedStatements. profiler numberOfMethods. profiler numberOfExecutedMethods}
+	
+]
+
 { #category : #generation }
 STestCase >> createArg: aClassName [
 	^ self
