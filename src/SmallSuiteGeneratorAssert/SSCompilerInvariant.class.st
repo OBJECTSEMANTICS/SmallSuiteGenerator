@@ -25,8 +25,8 @@ SSCompilerInvariant >> compile: aBlock [
 
 { #category : #'as yet unclassified' }
 SSCompilerInvariant >> compiledTest [
-		| _var3 |
-_var3 := OrderedCollection new.
+		| _var2 |
+_var2 := Array new.
 ^ self analyze: thisContext
 ]
 

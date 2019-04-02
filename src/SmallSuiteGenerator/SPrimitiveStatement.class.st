@@ -4,8 +4,41 @@ Class {
 	#instVars : [
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-Statement'
+	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> collectDependencies [
+	^ #()
+]
+
+{ #category : #private }
+SPrimitiveStatement >> createNewStatement: aId [
+	^ (self class create: aId)
+		value: self value;
+		returnTypeName: self returnTypeName;
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> insertMethodCallUsing: aTestcase [
+	^ nil
+]
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> insertParameterUsing: aTestcase [
+	^ nil
+]
+
+{ #category : #accessing }
+SPrimitiveStatement >> insertRandomCallUsing: aTestCase [
+	^ nil
+]
+
+{ #category : #accessing }
+SPrimitiveStatement >> isPrimitive [ 
+	^ true
+]
 
 { #category : #printing }
 SPrimitiveStatement >> printOn: aStream [
@@ -13,6 +46,32 @@ SPrimitiveStatement >> printOn: aStream [
 	aStream nextPutAll: ' := '.
 	aStream nextPutAll: value asString.
 	aStream nextPut: $.
+]
+
+{ #category : #mutation }
+SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
+	| result |
+	self varName = aStatement varName
+		ifFalse: [ ^ #() ].
+	result := aTestCase createScalar: aStatement returnTypeName.
+	(aTestCase statementAt: self varName)
+		value: (STransformValue changeAndTransform: result first).
+	^ #()
+]
+
+{ #category : #mutation }
+SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
+	^ #()
+]
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	^ aTestCase addStatement: (self createNewStatement: aTestCase assignedId)
+]
+
+{ #category : #evaluating }
+SPrimitiveStatement >> value [ 	
+	^ value
 ]
 
 { #category : #accessing }

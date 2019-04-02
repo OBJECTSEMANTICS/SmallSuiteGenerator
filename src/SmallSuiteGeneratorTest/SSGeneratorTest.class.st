@@ -7,22 +7,21 @@ Class {
 { #category : #'generator-tests' }
 SSGeneratorTest >> testConstructorGenerator [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	self
-		assert: testCase statements first printString equals: '_var0 := SStudent score: 2.'
+		assert: testCase statements first printString
+		equals: '_var0 := SStudent score: 2.'
 ]
 
 { #category : #tests }
 SSGeneratorTest >> testFieldGenerator [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
-		profile: [ (SStudent score: 2) score. ]
+		profile: [ (SStudent score: 2) score ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
@@ -51,7 +50,6 @@ SSGeneratorTest >> testMergeTypes [
 { #category : #tests }
 SSGeneratorTest >> testMethodGenerator [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) return: 2 ]
 		onClass: SStudent.
@@ -59,20 +57,21 @@ SSGeneratorTest >> testMethodGenerator [
 	testCase addConstructor.
 	testCase addMethod.
 	self
-		assert: ((testCase printString =
-		
-			'_var0 := SStudent score: 2.
-_var1 := _var0 return: 2') or:[testCase printString =
-		
-			'_var0 := SStudent score: 2.
+		assert:
+			(testCase printString
+				=
+					'_var0 := SStudent score: 2.
+_var1 := _var0 return: 2'
+				or: [ testCase printString
+						=
+							'_var0 := SStudent score: 2.
 _var1 := _var0 initialize.
-']).
+' ])
 ]
 
 { #category : #'generator-tests' }
 SSGeneratorTest >> testMultipleConstructorGenerator [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2.
 			SStudent score: 5.
@@ -86,13 +85,14 @@ SSGeneratorTest >> testMultipleConstructorGenerator [
 { #category : #tests }
 SSGeneratorTest >> testPrimitiveGenerator [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	self assert: testCase statements first printString equals: '_var0 := 2.'
+	self
+		assert: testCase statements first printString
+		equals: '_var0 := 2.'
 ]
 
 { #category : #tests }

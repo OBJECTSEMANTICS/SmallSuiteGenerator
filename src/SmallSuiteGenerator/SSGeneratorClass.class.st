@@ -1,7 +1,7 @@
 Class {
 	#name : #SSGeneratorClass,
 	#superclass : #S2Class,
-	#category : #'SmallSuiteGenerator-Model'
+	#category : #'SmallSuiteGenerator-Profiler'
 }
 
 { #category : #hooks }

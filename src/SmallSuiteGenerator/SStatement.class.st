@@ -5,31 +5,25 @@ Class {
 		'id',
 		'returnTypeName'
 	],
-	#classVars : [
-		'counter'
-	],
-	#category : #'SmallSuiteGenerator-Statement'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'class initialization' }
-SStatement class >> create [
+SStatement class >> create: id [
 	| inst |
 	inst := self new.
-	inst id: counter.
-	counter := counter + 1.
+	inst id: id.
 	^ inst
 ]
 
-{ #category : #'class initialization' }
-SStatement class >> initialize [
-	super initialize.
-	counter := 0.
-	
+{ #category : #'as yet unclassified' }
+SStatement >> collectDependencies [
+	^ self subclassResponsibility 
 ]
 
-{ #category : #'class initialization' }
-SStatement class >> reset [
-	counter := 0.
+{ #category : #private }
+SStatement >> createNewStatement: aId [
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
@@ -40,6 +34,50 @@ SStatement >> id [
 { #category : #accessing }
 SStatement >> id: anInteger [
 	id:= anInteger.
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> insertMethodCallUsing: aTestcase [
+	^ self subclassResponsibility 
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> insertParameterUsing: aTestcase [
+	^ self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> insertParametersOf: aStatement using: aTestCase [
+	| args |
+	args := aStatement args.
+	args
+		ifNotEmpty: [ | varNames position index newStatement |
+			varNames := aTestCase varNames.
+			index := 0.
+			args
+				detect: [ :aArg | 
+					index := index + 1.
+					(varNames includes: aArg)
+						ifTrue: [ 
+							newStatement := (aTestCase statementAt: aArg)
+								createNewStatement: aTestCase assignedId.
+							position := STransformValue
+								randomNumberFrom: 1
+								to: (aTestCase indexOf: aStatement varName) - 1
+								default: 1.
+							aTestCase addStatement: newStatement at: position ]
+						ifFalse: [ false ] ]
+				ifFound: [ (aTestCase statementAt: aStatement varName) args
+						at: index
+						put: newStatement varName.
+					^ {newStatement varName} ]
+				ifNone: [ ^ nil ] ].
+	^ nil
+]
+
+{ #category : #accessing }
+SStatement >> insertRandomCallUsing: aTestCase [
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
@@ -67,6 +105,16 @@ SStatement >> printOn: aStream [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #mutation }
+SStatement >> repairOn: aTestCase changing: aStatement [
+	^ self subclassResponsibility
+]
+
+{ #category : #mutation }
+SStatement >> repairOn: aTestCase deleting: aStatement [
+	^ self subclassResponsibility.
+]
+
 { #category : #accessing }
 SStatement >> returnTypeName [
 	^ returnTypeName
@@ -75,6 +123,11 @@ SStatement >> returnTypeName [
 { #category : #accessing }
 SStatement >> returnTypeName: anObject [
 	returnTypeName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> satisfyParameters: aTestCase with: otherTestCase [
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
