@@ -13,8 +13,8 @@ SPrimitiveStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SPrimitiveStatement >> createNewStatement [
-	^ self class create
+SPrimitiveStatement >> createNewStatement: aId [
+	^ (self class create: aId)
 		value: self value;
 		returnTypeName: self returnTypeName;
 		yourself
@@ -66,7 +66,7 @@ SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
-	^ aTestCase addStatement: self createNewStatement
+	^ aTestCase addStatement: (self createNewStatement: aTestCase assignedId)
 ]
 
 { #category : #evaluating }

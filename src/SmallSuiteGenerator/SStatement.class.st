@@ -5,34 +5,15 @@ Class {
 		'id',
 		'returnTypeName'
 	],
-	#classVars : [
-		'counter'
-	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #accessing }
-SStatement class >> counter [ 
-	^ counter
-]
-
 { #category : #'class initialization' }
-SStatement class >> create [
+SStatement class >> create: id [
 	| inst |
 	inst := self new.
-	inst id: counter.
-	counter := counter + 1.
+	inst id: id.
 	^ inst
-]
-
-{ #category : #'class initialization' }
-SStatement class >> initialize [
-	counter := 0
-]
-
-{ #category : #'class initialization' }
-SStatement class >> reset [
-	counter := 0.
 ]
 
 { #category : #'as yet unclassified' }
@@ -41,7 +22,7 @@ SStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SStatement >> createNewStatement [
+SStatement >> createNewStatement: aId [
 	^ self subclassResponsibility
 ]
 
@@ -77,7 +58,9 @@ SStatement >> insertParametersOf: aStatement using: aTestCase [
 				detect: [ :aArg | 
 					index := index + 1.
 					(varNames includes: aArg)
-						ifTrue: [ self halt.newStatement := (aTestCase statementAt: aArg) createNewStatement.
+						ifTrue: [ 
+							newStatement := (aTestCase statementAt: aArg)
+								createNewStatement: aTestCase assignedId.
 							position := STransformValue
 								randomNumberFrom: 1
 								to: (aTestCase indexOf: aStatement varName) - 1

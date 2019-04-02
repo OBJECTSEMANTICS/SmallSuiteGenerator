@@ -27,8 +27,8 @@ SFieldStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SFieldStatement >> createNewStatement [
-	^ self class create
+SFieldStatement >> createNewStatement: aId [
+	^ (self class create: aId)
 		fieldName: self fieldName;
 		receiverVarName: self receiverVarName;
 		returnTypeName: self returnTypeName;
@@ -62,7 +62,7 @@ SFieldStatement >> insertRandomCallUsing: aTestCase [
 		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
 		to: aTestCase statements size
 		default: aTestCase statements size + 1.
-	newStatement := self createNewStatement.
+	newStatement := self createNewStatement: aTestCase assignedId.
 	(aTestCase addStatement: newStatement at: aPosition)
 		ifTrue: [ ^ {newStatement varName} ].
 	^ nil
@@ -125,11 +125,16 @@ SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	((testCase methodsOrAccessors: stmOfCollection toSelect: true)
 		collect: #selector) includes: aStatement fieldName ].
 	blockInsertion := [ :testCase :aStatement :constructor | 
-		^ testCase addStatement: (aStatement createNewStatement receiverVarName: constructor varName; yourself)
-		 ].
+	^ testCase
+		addStatement:
+			((aStatement createNewStatement: aTestCase assignedId)
+				receiverVarName: constructor varName;
+				yourself) ].
 	^ STransformValue
 		satisfyParameters: aTestCase
 		with: otherTestCase
 		of: self
-		withBlocks: {blockCondition. blockInsertion}
+		withBlocks:
+			{blockCondition.
+			blockInsertion}
 ]

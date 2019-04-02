@@ -5,9 +5,8 @@ Class {
 }
 
 { #category : #running }
-SSAssertionTest >> setUp [ 
-	SStatement reset.
-	SSGeneratorInvariant resetNumTest.
+SSAssertionTest >> setUp [
+	SSGeneratorInvariant resetNumTest
 ]
 
 { #category : #tests }

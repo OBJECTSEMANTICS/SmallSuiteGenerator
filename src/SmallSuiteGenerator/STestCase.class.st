@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'statements',
 		'profile',
-		'generatorInvariant'
+		'generatorInvariant',
+		'counter'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -73,13 +74,12 @@ STestCase >> addConstructor: aStatement before: varName forField: toField [
 { #category : #generation }
 STestCase >> addDefaultConstructor: classSpy [
 	| statement |
-	statement := SConstructorStatement create
-				theClassName: classSpy className;
-				selector: 'new';
-				args: #();
-				yourself.
-	self
-		addStatement: statement.
+	statement := (SConstructorStatement create: self assignedId)
+		theClassName: classSpy className;
+		selector: 'new';
+		args: #();
+		yourself.
+	self addStatement: statement.
 	^ statement
 ]
 
@@ -97,7 +97,7 @@ STestCase >> addField [
 					selected := accessors shuffle anyOne.
 					^ self
 						addStatement:
-							(SFieldStatement create
+							((SFieldStatement create: self assignedId)
 								returnTypeName: selected returnType name;
 								receiverVarName: stm varName;
 								fieldName: selected selector;
@@ -122,7 +122,7 @@ STestCase >> addMethod [
 					(args anySatisfy: #isNil)
 						ifFalse: [ ^ self
 								addStatement:
-									(SMethodStatement create
+									((SMethodStatement create: self assignedId)
 										receiverVarName: stm varName;
 										returnTypeName: selected returnType name;
 										selector: selected selector;
@@ -147,7 +147,7 @@ STestCase >> addPrimitive: aClassName [
 	scalar := result first.
 	^ self
 		addStatement:
-			(SPrimitiveStatement create
+			((SPrimitiveStatement create: self assignedId)
 				returnTypeName: result second;
 				value: scalar;
 				yourself)
@@ -159,14 +159,13 @@ STestCase >> addPrimitive: aClassName at: position [
 	result := self createScalar: aClassName.
 	result ifNil: [ ^ nil ].
 	scalar := result first.
-	primitive := SPrimitiveStatement create
-				returnTypeName: result second;
-				value: scalar;
-				yourself.
-	^ (self
-		addStatement:
-			primitive
-		at: position) ifTrue: [ primitive varName ] ifFalse: [ nil ]
+	primitive := (SPrimitiveStatement create: self assignedId)
+		returnTypeName: result second;
+		value: scalar;
+		yourself.
+	^ (self addStatement: primitive at: position)
+		ifTrue: [ primitive varName ]
+		ifFalse: [ nil ]
 ]
 
 { #category : #accessing }
@@ -195,6 +194,14 @@ STestCase >> addStatement: aStatement satisfyingParameters: otherTestCase [
 { #category : #'as yet unclassified' }
 STestCase >> applyMutator [
 	^ statements isNotEmpty 
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> assignedId [
+	| idToAssign |
+	idToAssign := counter.
+	counter := counter + 1.
+	^ idToAssign 
 ]
 
 { #category : #mutation }
@@ -346,8 +353,9 @@ STestCase >> indexOf: varName [
 { #category : #initialization }
 STestCase >> initialize [
 	super initialize.
+	counter := 0.
 	statements := OrderedCollection new.
-	generatorInvariant := SSGeneratorInvariant new.
+	generatorInvariant := SSGeneratorInvariant new
 ]
 
 { #category : #'accessing untypeable characters' }
@@ -441,7 +449,7 @@ STestCase >> insertStatementWithArgs: aStatement before: aPosition [
 						to: size
 						default: indexFrom ]
 				ifEmpty: [ size + 1 ] ].
-	newStatement := aStatement createNewStatement
+	newStatement := (aStatement createNewStatement: self assignedId)
 		args: newArgs asArray;
 		yourself.
 	(self addStatement: newStatement at: newPosition)
@@ -466,22 +474,26 @@ STestCase >> methodsToInsert [
 { #category : #generation }
 STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 	| selected args selector |
-	methodList ifEmpty: [ args := #(). selector := 'new' ] ifNotEmpty: [ 
-	selected := methodList shuffle anyOne.
-	args := selected argTypes
-		collect: [ :class | 
-			varName
-				ifNil: [ self createArg: class name ]
-				ifNotNil: [ self
-						createArg: class name
-						before: (self indexOf: varName)
-						avoiding: nil ] ].
-	(args anySatisfy: #isNil)
-		ifTrue: [ ^ nil ].
-		selector := selected selector.
-		].
-	^ SConstructorStatement create
-		theClassName: (classSpy isSymbol ifTrue: [ classSpy ] ifFalse: [classSpy className]);
+	methodList
+		ifEmpty: [ args := #().
+			selector := 'new' ]
+		ifNotEmpty: [ selected := methodList shuffle anyOne.
+			args := selected argTypes
+				collect: [ :class | 
+					varName
+						ifNil: [ self createArg: class name ]
+						ifNotNil: [ self
+								createArg: class name
+								before: (self indexOf: varName)
+								avoiding: nil ] ].
+			(args anySatisfy: #isNil)
+				ifTrue: [ ^ nil ].
+			selector := selected selector ].
+	^ (SConstructorStatement create: self assignedId)
+		theClassName:
+			(classSpy isSymbol
+				ifTrue: [ classSpy ]
+				ifFalse: [ classSpy className ]);
 		selector: selector;
 		args: args;
 		yourself

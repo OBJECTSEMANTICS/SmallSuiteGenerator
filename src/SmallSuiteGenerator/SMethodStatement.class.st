@@ -61,8 +61,8 @@ SMethodStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SMethodStatement >> createNewStatement [
-	^ self class create
+SMethodStatement >> createNewStatement: aId [
+	^ (self class create: aId)
 		selector: self selector;
 		args: self args;
 		returnTypeName: self returnTypeName;
@@ -163,10 +163,10 @@ SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	blockCondition := [ :testCase :stmOfCollection :aStatement | 
 	((testCase methodsOrAccessors: stmOfCollection toSelect: false)
 		collect: #selector) includes: aStatement selector ].
-	blockInsertion := [ :testCase :aStatement :constructor :aArgs |
+	blockInsertion := [ :testCase :aStatement :constructor :aArgs | 
 	^ testCase
 		addStatement:
-			(aStatement createNewStatement
+			((aStatement createNewStatement: aTestCase assignedId)
 				receiverVarName: constructor varName;
 				args: aArgs;
 				yourself) ].

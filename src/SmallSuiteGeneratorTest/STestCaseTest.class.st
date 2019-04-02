@@ -7,7 +7,6 @@ Class {
 { #category : #'as yet unclassified' }
 STestCaseTest class >> generateTestCase: aBlock with: aClass [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator profile: aBlock onClass: aClass.
 	testCase := STestCase seed: profile.
 	^ testCase
@@ -197,7 +196,12 @@ STestCaseTest class >> listTestCaseStudent [
 
 { #category : #'as yet unclassified' }
 STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
-	^ (aTestCase statements select: selector thenCollect: #args) includes: varNames
+	| selectedStatements |
+	selectedStatements := aTestCase statements select: selector.
+	selectedStatements detect: [ :aStm | aStm args includesAnyOf: varNames ]
+	ifFound: [ ^ true ]
+	ifNone: [ ^ false ].
+	"^ (aTestCase statements select: selector thenCollect: #args) includes: varNames"
 ]
 
 { #category : #'mutation-change' }
@@ -251,7 +255,6 @@ STestCaseTest >> assertRemove: listTestCase [
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeConstructor [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -259,7 +262,6 @@ STestCaseTest >> testChangeConstructor [
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('2').
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 3.56 ]
 		onClass: SStudent.
@@ -267,7 +269,6 @@ STestCaseTest >> testChangeConstructor [
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('3.56').
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: $a ]
 		onClass: SStudent.
@@ -275,7 +276,6 @@ STestCaseTest >> testChangeConstructor [
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('$a').
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: true ]
 		onClass: SStudent.
@@ -283,7 +283,6 @@ STestCaseTest >> testChangeConstructor [
 	testCase addConstructor.
 	testCase change.
 	self assert: testCase statements first args equals: #('false').
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 'hello' ]
 		onClass: SStudent.
@@ -291,7 +290,6 @@ STestCaseTest >> testChangeConstructor [
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('hello').
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: #(1 4 5) ]
 		onClass: SStudent.
@@ -304,7 +302,6 @@ STestCaseTest >> testChangeConstructor [
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeField [
 	| profile testCase oldStatement |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SSPerson name: 'Ann' with: 34)
 				name;
@@ -331,7 +328,6 @@ STestCaseTest >> testChangeField [
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeMethod [
 	| profile testCase oldStatement currentStatement |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SSPerson name: 'Ann' with: 34)
 				age: 34;
@@ -357,7 +353,6 @@ STestCaseTest >> testChangeMethod [
 { #category : #'mutation-change' }
 STestCaseTest >> testChangePrimitive [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -365,7 +360,6 @@ STestCaseTest >> testChangePrimitive [
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: '2'.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 3.56 ]
 		onClass: SStudent.
@@ -373,7 +367,6 @@ STestCaseTest >> testChangePrimitive [
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: '3.56'.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: $a ]
 		onClass: SStudent.
@@ -381,7 +374,6 @@ STestCaseTest >> testChangePrimitive [
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: '$a'.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: true ]
 		onClass: SStudent.
@@ -389,7 +381,6 @@ STestCaseTest >> testChangePrimitive [
 	testCase addPrimitive.
 	testCase change.
 	self assert: testCase statements first value equals: 'false'.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 'hello' ]
 		onClass: SStudent.
@@ -397,7 +388,6 @@ STestCaseTest >> testChangePrimitive [
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 'hello'.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: #(1 4 5) ]
 		onClass: SStudent.
@@ -420,7 +410,6 @@ STestCaseTest >> testChangeRoassal [
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeWithTwoConstructor [
 	| profile testCase oldSelector |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SSPerson name: 'Peter'.
 			SSPerson name: 'Ann' with: 2 ]
@@ -478,14 +467,12 @@ STestCaseTest >> testCrossOverToSStudent [
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertMethodCall [
 	| profile testCase varNames stm |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) return: 3 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	self assert: testCase insertMethodCall equals: nil.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) return: 2 ]
 		onClass: SStudent.
@@ -493,7 +480,6 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: testCase insertMethodCall equals: nil.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) score ]
 		onClass: SStudent.
@@ -502,7 +488,6 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addConstructor.
 	testCase addField.
 	self assert: testCase insertMethodCall equals: nil.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2)
 				score;
@@ -523,7 +508,6 @@ STestCaseTest >> testInsertParameter [
 	| profile testCase varNames |
 	"if is primitive, parameter is not added"
 	"parameter is added if any statement has args"
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -531,7 +515,6 @@ STestCaseTest >> testInsertParameter [
 	testCase addPrimitive.
 	testCase insertParameter.
 	self assert: testCase statements size equals: 1.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -539,11 +522,11 @@ STestCaseTest >> testInsertParameter [
 	testCase addPrimitive.
 	testCase addConstructor.
 	varNames := testCase insertParameter.
-	varNames ifNotNil: [ self
+	varNames
+		ifNotNil: [ self
 				assert:
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first) ].
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -552,11 +535,11 @@ STestCaseTest >> testInsertParameter [
 	testCase addConstructor.
 	testCase addField.
 	varNames := testCase insertParameter.
-	varNames ifNotNil: [ self
+	varNames
+		ifNotNil: [ self
 				assert:
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first) ].
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -565,7 +548,8 @@ STestCaseTest >> testInsertParameter [
 	testCase addConstructor.
 	testCase addMethod.
 	varNames := testCase insertParameter.
-	varNames ifNotNil: [ self
+	varNames
+		ifNotNil: [ self
 				assert:
 					((OrderedCollection new
 						addAll: (testCase statements select: #isConstructor thenCollect: #args) first;
@@ -586,14 +570,12 @@ STestCaseTest >> testInsertParameterRoassal [
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertRandomCall [
 	| profile testCase stm varNames |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	self assert: testCase insertRandomCall isNil.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -603,7 +585,6 @@ STestCaseTest >> testInsertRandomCall [
 	varNames := testCase insertRandomCall.
 	self assert: testCase statements size equals: 4.
 	self assertCollection: varNames equals: {'_var2' . '_var3'}.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) score ]
 		onClass: SStudent.
@@ -619,7 +600,6 @@ STestCaseTest >> testInsertRandomCall [
 	self assert: (stm isField or: [ stm isConstructor ]).
 	"stm := testCase statementAt: varNames.
 	self assert: (stm isConstructor or: [ stm isField ])."
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) return: 2 ]
 		onClass: SStudent.
@@ -637,20 +617,18 @@ STestCaseTest >> testInsertRandomCall [
 { #category : #mutation }
 STestCaseTest >> testMutateConstructor [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase remove.
-	self assert: testCase statements isEmpty.
+	self assert: testCase statements isEmpty
 ]
 
 { #category : #mutation }
 STestCaseTest >> testMutatePrimitive [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -658,7 +636,6 @@ STestCaseTest >> testMutatePrimitive [
 	testCase addPrimitive.
 	testCase remove.
 	self assert: testCase statements isEmpty.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2)
 				return: 3;
@@ -692,7 +669,6 @@ STestCaseTest >> testRemove [
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveConstructor [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -700,7 +676,6 @@ STestCaseTest >> testRemoveConstructor [
 	testCase addConstructor.
 	testCase remove.
 	self assert: testCase statements isEmpty.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
@@ -716,7 +691,6 @@ STestCaseTest >> testRemoveConstructor [
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveField [
 	| profile testCase varNamesDeleted statement |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) score ]
 		onClass: SStudent.
@@ -726,7 +700,6 @@ STestCaseTest >> testRemoveField [
 	varNamesDeleted := testCase remove: '_var1'.	"remove the fieldStatement"
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
 	self assert: testCase statements size equals: 1.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) score ]
 		onClass: SStudent.
@@ -739,14 +712,14 @@ STestCaseTest >> testRemoveField [
 		assertCollection: (testCase statements collect: #varName)
 		hasSameElements: #('_var2' '_var1').
 	statement := testCase statements first.
-	self assert: (statement isConstructor and: [statement varName = '_var2']).
+	self
+		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'
 ]
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveMethod [
 	| profile testCase varNamesDeleted statement |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) return: 2 ]
 		onClass: SStudent.
@@ -756,7 +729,6 @@ STestCaseTest >> testRemoveMethod [
 	varNamesDeleted := testCase remove: '_var1'.	"remove the methodStatement"
 	self assert: testCase statements size equals: 1.
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ (SStudent score: 2) return: 2 ]
 		onClass: SStudent.
@@ -769,14 +741,14 @@ STestCaseTest >> testRemoveMethod [
 		assertCollection: (testCase statements collect: #varName)
 		includesAll: #('_var1' '_var2').
 	statement := testCase statements first.
-	self assert: (statement isConstructor and: [ statement varName = '_var2' ]).
+	self
+		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'
 ]
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemovePrimitive [
 	| profile testCase |
-	SStatement reset.
 	profile := SSGenerator
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.

@@ -51,12 +51,12 @@ SConstructorStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SConstructorStatement >> createNewStatement [
-	^ self class create 
-	args: self args;
-	selector: self selector;
-	theClassName: self theClassName; yourself
-	
+SConstructorStatement >> createNewStatement: aId [
+	^ (self class create: aId)
+		args: self args;
+		selector: self selector;
+		theClassName: self theClassName;
+		yourself
 ]
 
 { #category : #'as yet unclassified' }
