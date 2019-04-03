@@ -81,21 +81,19 @@ SConstructorStatement >> isConstructor [
 	^ true.
 ]
 
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
+	| varName |
+	varName := self varName.
+	^ (referencedVarNames includes: varName) not
+		and: [ ((dictStringStatement at: self stringBody) first ~= varName) ]
+]
+
 { #category : #printing }
 SConstructorStatement >> printOn: aStream [
 	aStream nextPutAll: self varName.
 	aStream nextPutAll: ' := '.
-	aStream nextPutAll: self theClassName.
-	aStream nextPutAll: ' '.
-	self args size = 0
-		ifTrue: [ aStream nextPutAll: self selector ]
-		ifFalse: [ (self selector substrings: ':')
-				with: self args
-				do: [ :selectorPart :arg | 
-					aStream nextPutAll: selectorPart.
-					aStream nextPutAll: ': '.
-					aStream nextPutAll: arg ] ].
-	aStream nextPut: $.
+	aStream nextPutAll: self stringBody
 ]
 
 { #category : #mutation }
@@ -144,6 +142,24 @@ SConstructorStatement >> selector [
 { #category : #accessing }
 SConstructorStatement >> selector: anObject [
 	selector := anObject
+]
+
+{ #category : #printing }
+SConstructorStatement >> stringBody [
+	^ String
+		streamContents: [ :aStream | 
+			aStream
+				nextPutAll: self theClassName;
+				nextPutAll: ' '.
+			self args
+				ifEmpty: [ aStream nextPutAll: self selector ]
+				ifNotEmpty: [ (self selector substrings: ':')
+						with: self args
+						do: [ :selectorPart :arg | 
+							aStream nextPutAll: selectorPart;
+							nextPutAll: ': ';
+							nextPutAll: arg ] ].
+			aStream nextPut: $. ]
 ]
 
 { #category : #accessing }

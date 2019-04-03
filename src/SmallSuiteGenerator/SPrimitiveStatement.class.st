@@ -40,12 +40,16 @@ SPrimitiveStatement >> isPrimitive [
 	^ true
 ]
 
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
+	^ (referencedVarNames includes: self varName) not
+]
+
 { #category : #printing }
 SPrimitiveStatement >> printOn: aStream [
 	aStream nextPutAll: self varName.
 	aStream nextPutAll: ' := '.
-	aStream nextPutAll: value asString.
-	aStream nextPut: $.
+	aStream nextPutAll: self stringBody
 ]
 
 { #category : #mutation }
@@ -67,6 +71,11 @@ SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
 { #category : #'as yet unclassified' }
 SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	^ aTestCase addStatement: (self createNewStatement: aTestCase assignedId)
+]
+
+{ #category : #printing }
+SPrimitiveStatement >> stringBody [
+	^ value asString, $. asString
 ]
 
 { #category : #evaluating }

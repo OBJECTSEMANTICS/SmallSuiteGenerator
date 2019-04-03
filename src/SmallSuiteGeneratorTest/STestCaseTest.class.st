@@ -421,6 +421,79 @@ STestCaseTest >> testChangeWithTwoConstructor [
 	self deny: testCase statements first selector equals: oldSelector
 ]
 
+{ #category : #cleaning }
+STestCaseTest >> testCleanIrrelevantStatementsGeneratedRandomly [
+	| profile testCase removedStatements oldSize |
+	profile := SSGenerator
+		profile: [ (SSPerson name: 'Ann' with: 34)
+				age: 34;
+				identifier;
+				nickname: 'Ann34';
+				fullIdentifier;
+				name;
+				id;
+				nickname ]
+		onClass: SSPerson.
+	testCase := STestCase seed: profile.
+	testCase generateStatements.
+	oldSize := testCase statements size.
+	removedStatements := testCase cleanIrrelevantStatements.
+	self assert: testCase hasValidDependencies.
+	self
+		assert: testCase statements size
+		equals: oldSize - removedStatements size
+]
+
+{ #category : #cleaning }
+STestCaseTest >> testCleanIrrelevantStatementsNonRepeated [
+	| profile testCase removedStatements |
+	profile := SSGenerator profile: [ SStudent score: 34 ] onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor. "_var0 := SStudent score: 34"
+	testCase addPrimitive.	"_var1 := 34"
+	testCase addMethod.		"_var2 := _var0 initialize"
+	testCase addConstructor.	"_var3 := SStudent score: _var1"
+	removedStatements := testCase cleanIrrelevantStatements.
+	self assert: removedStatements isEmpty
+]
+
+{ #category : #cleaning }
+STestCaseTest >> testCleanIrrelevantStatementsRepeated [
+	| profile testCase removedStatements |
+	profile := SSGenerator
+		profile: [ SStudent score: 34 ]
+		onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.	"_var0 := SStudent score: 34"
+	testCase addPrimitive.	"_var1 := 34"
+	testCase addMethod.	"_var2 := _var0 initialize"
+	testCase addConstructor.	"_var3 := SStudent score: _var1"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
+	testCase addPrimitive.	"_var5 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var6 := SStudent score: _var5"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var7 := SStudent score: _var5"
+	testCase addConstructor.
+	testCase statements last args: {'_var1'}.	"_var8 := SStudent score: _var1"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var9 := SStudent score: _var5"
+	testCase addPrimitive.	"_var10 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var11 := SStudent score: _var5"
+	testCase addPrimitive.	"_var12 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var13 := SStudent score: _var5"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
+	removedStatements := testCase cleanIrrelevantStatements.
+	self
+		assertCollection: removedStatements
+		hasSameElements: {'_var4' . '_var8' . '_var9' . '_var10' . '_var11' . '_var12' . '_var13'}.
+	self assert: testCase hasValidDependencies 
+]
+
 { #category : #coverage }
 STestCaseTest >> testCoverage [
 	| testCase |
@@ -495,6 +568,66 @@ STestCaseTest >> testCrossOverToRTLineSegment [
 { #category : #crossover }
 STestCaseTest >> testCrossOverToSStudent [
 	self testCrossOver: self class listTestCaseStudent shuffle.
+]
+
+{ #category : #grouping }
+STestCaseTest >> testGroupedStatementsNonRepeated [
+	| profile testCase groups |
+	profile := SSGenerator
+		profile: [ SStudent score: 34 ]
+		onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.	"_var0 := SStudent score: 34"
+	testCase addPrimitive.	"_var1 := 34"
+	testCase addMethod.	"_var2 := _var0 initialize"
+	testCase addConstructor.	"_var3 := SStudent score: _var1"
+	groups := testCase statementsGroupedByDependencies.
+	self assertCollection: groups hasSameElements: { { '_var0'. '_var2' } asOrderedCollection. { '_var1'. '_var3' } asOrderedCollection }
+]
+
+{ #category : #grouping }
+STestCaseTest >> testGroupedStatementsRepeated [
+	| profile testCase groups |
+	profile := SSGenerator
+		profile: [ SStudent score: 34 ]
+		onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.	"_var0 := SStudent score: 34"
+	testCase addPrimitive.	"_var1 := 34"
+	testCase addMethod.	"_var2 := _var0 initialize"
+	testCase addConstructor.	"_var3 := SStudent score: _var1"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
+	testCase addPrimitive.	"_var5 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var6 := SStudent score: _var5"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var7 := SStudent score: _var5"
+	testCase addConstructor.
+	testCase statements last args: {'_var1'}.	"_var8 := SStudent score: _var1"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var9 := SStudent score: _var5"
+	testCase addPrimitive.	"_var10 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var11 := SStudent score: _var5"
+	testCase addPrimitive.	"_var12 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var13 := SStudent score: _var5"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
+	groups := testCase statementsGroupedByDependencies.
+	self
+		assertCollection: groups
+		hasSameElements:
+			{{'_var0' . '_var2'} asOrderedCollection.
+			{'_var1' . '_var3'} asOrderedCollection.
+			{'_var0' . '_var4'} asOrderedCollection.
+			{'_var5' . '_var6'} asOrderedCollection.
+			{'_var5' . '_var7' . '_var14'} asOrderedCollection.
+			{'_var1' . '_var8'} asOrderedCollection.
+			{'_var5' . '_var9'} asOrderedCollection.
+			{'_var5' . '_var11'} asOrderedCollection.
+			{'_var5' . '_var13'} asOrderedCollection}
 ]
 
 { #category : #'mutation-insert' }
@@ -798,4 +931,49 @@ STestCaseTest >> testRemoveRoassal [
 	self assertRemove: self class listTestCaseRTBox.
 	self assertRemove: self class listTestCaseRTDirectedLine.
 	self assertRemove: self class listTestCaseRTLineSegment
+]
+
+{ #category : #grouping }
+STestCaseTest >> testStatementsGroupedByDependencies [
+	| profile testCase groups |
+	profile := SSGenerator
+		profile: [ SStudent score: 34 ]
+		onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.	"_var0 := SStudent score: 34"
+	testCase addPrimitive.	"_var1 := 34"
+	testCase addMethod.	"_var2 := _var0 initialize"
+	testCase addConstructor.	"_var3 := SStudent score: _var1"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
+	testCase addPrimitive.	"_var5 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var6 := SStudent score: _var5"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var7 := SStudent score: _var5"
+	testCase addConstructor.
+	testCase statements last args: {'_var1'}.	"_var8 := SStudent score: _var1"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var9 := SStudent score: _var5"
+	testCase addPrimitive.	"_var10 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var11 := SStudent score: _var5"
+	testCase addPrimitive.	"_var12 := 34"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var13 := SStudent score: _var5"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
+	groups := testCase statementsGroupedByDependencies.
+	self
+		assertCollection: groups
+		hasSameElements:
+			{{'_var0' . '_var2'} asOrderedCollection.
+			{'_var1' . '_var3'} asOrderedCollection.
+			{'_var0' . '_var4'} asOrderedCollection.
+			{'_var5' . '_var6'} asOrderedCollection.
+			{'_var5' . '_var7' . '_var14'} asOrderedCollection.
+			{'_var1' . '_var8'} asOrderedCollection.
+			{'_var5' . '_var9'} asOrderedCollection.
+			{'_var5' . '_var11'} asOrderedCollection.
+			{'_var5' . '_var13'} asOrderedCollection}
 ]

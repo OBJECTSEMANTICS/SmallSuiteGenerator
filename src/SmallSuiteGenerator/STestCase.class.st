@@ -244,6 +244,25 @@ STestCase >> classOfArgs: method [
 						collect: [ :class | class name ]
 ]
 
+{ #category : #'as yet unclassified' }
+STestCase >> cleanIrrelevantStatements [
+	| dataStatements varNamesToRemove dictStringStatement referencedVarNames removedVarNames |
+	dataStatements := STransformValue dataStatements: statements.
+	dictStringStatement := dataStatements first.
+	referencedVarNames := dataStatements second.
+	varNamesToRemove := OrderedCollection new.
+	removedVarNames := OrderedCollection new.
+	statements
+		do: [ :aStatement | 
+			(aStatement
+				notReferenced: referencedVarNames
+				orIrrelevant: dictStringStatement)
+				ifTrue: [ varNamesToRemove add: aStatement varName ] ].
+	varNamesToRemove
+		do: [ :varName | removedVarNames addAll: (self remove: varName) ].
+	^ removedVarNames
+]
+
 { #category : #metric }
 STestCase >> coverage [ 
 	| profiler node temporaries varNames |

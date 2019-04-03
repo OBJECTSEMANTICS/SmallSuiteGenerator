@@ -95,11 +95,19 @@ SMethodStatement >> isMethod [
 	^ true
 ]
 
+{ #category : #'as yet unclassified' }
+SMethodStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
+	| varName |
+	varName := self varName.
+	^ (referencedVarNames includes: varName) not
+		and: [ (dictStringStatement at: self stringBody) first ~= varName ]
+]
+
 { #category : #printing }
 SMethodStatement >> printOn: aStream [
 	aStream nextPutAll: self varName.
 	aStream nextPutAll: ' := '.
-	aStream nextPutAll: self receiverVarName.
+	aStream nextPutAll: self stringBody. "self receiverVarName.
 	aStream nextPutAll: ' '.
 	self args size = 0
 		ifTrue: [ aStream nextPutAll: self selector ]
@@ -109,7 +117,7 @@ SMethodStatement >> printOn: aStream [
 					aStream nextPutAll: selectorPart.
 					aStream nextPutAll: ': '.
 					aStream nextPutAll: arg ] ].
-	aStream nextPut: $.
+	aStream nextPut: $."
 ]
 
 { #category : #accessing }
@@ -187,4 +195,22 @@ SMethodStatement >> selector [
 { #category : #accessing }
 SMethodStatement >> selector: anObject [
 	selector := anObject
+]
+
+{ #category : #printing }
+SMethodStatement >> stringBody [
+	^ String
+		streamContents: [ :aStream | 
+			aStream
+				nextPutAll: self receiverVarName;
+				nextPutAll: ' '.
+			self args
+				ifEmpty: [ aStream nextPutAll: self selector ]
+				ifNotEmpty: [ (self selector substrings: ':')
+						with: self args
+						do: [ :selectorPart :arg | 
+							aStream nextPutAll: selectorPart;
+							nextPutAll: ': ';
+							nextPutAll: arg ] ].
+			aStream nextPut: $. ]
 ]

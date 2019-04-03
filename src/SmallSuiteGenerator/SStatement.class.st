@@ -100,6 +100,11 @@ SStatement >> isPrimitive [
 	^ false
 ]
 
+{ #category : #'as yet unclassified' }
+SStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
+	^ self subclassResponsibility 
+]
+
 { #category : #printing }
 SStatement >> printOn: aStream [
 	^ self subclassResponsibility.
@@ -128,6 +133,11 @@ SStatement >> returnTypeName: anObject [
 { #category : #'as yet unclassified' }
 SStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	^ self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> stringBody [ 
+	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }

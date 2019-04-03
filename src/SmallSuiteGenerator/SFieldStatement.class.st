@@ -73,14 +73,19 @@ SFieldStatement >> isField [
 	^ true
 ]
 
+{ #category : #'as yet unclassified' }
+SFieldStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
+| varName |
+	varName := self varName.
+	^ (referencedVarNames includes: varName) not
+		and: [ (dictStringStatement at: self stringBody) first ~= varName ]
+]
+
 { #category : #printing }
 SFieldStatement >> printOn: aStream [
 	aStream nextPutAll: self varName.
 	aStream nextPutAll: ' := '.
-	aStream nextPutAll: self receiverVarName asString.
-	aStream nextPutAll: ' '.
-	aStream nextPutAll: self fieldName.
-	aStream nextPut: $.
+	aStream nextPutAll: self stringBody
 ]
 
 { #category : #accessing }
@@ -137,4 +142,13 @@ SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
 		withBlocks:
 			{blockCondition.
 			blockInsertion}
+]
+
+{ #category : #printing }
+SFieldStatement >> stringBody [
+	^ String streamContents: [ :aStream | 
+		aStream nextPutAll: self receiverVarName asString;
+		nextPutAll: ' ';
+		nextPutAll: self fieldName;
+		nextPut: $.]
 ]

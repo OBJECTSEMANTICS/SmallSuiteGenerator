@@ -61,6 +61,24 @@ STransformValue class >> changeArgsOf: args using: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
+STransformValue class >> dataStatements: statements [
+	| dictStringBody referencedVarNames |
+	dictStringBody := Dictionary new.
+	referencedVarNames := Set new.
+	statements
+		do: [ :aStatement | 
+			dictStringBody
+				at: aStatement stringBody
+				ifPresent: [ :coll | coll add: aStatement varName ]
+				ifAbsentPut: [ OrderedCollection new
+						add: aStatement varName;
+						yourself ].
+			referencedVarNames addAll: aStatement collectDependencies ].
+	^ {dictStringBody.
+	referencedVarNames asOrderedCollection}
+]
+
+{ #category : #'as yet unclassified' }
 STransformValue class >> detectConstructor: aTestCase of: aStatement withCondition: aBlock [
 	aTestCase statements
 		detect: [ :aStm | 
