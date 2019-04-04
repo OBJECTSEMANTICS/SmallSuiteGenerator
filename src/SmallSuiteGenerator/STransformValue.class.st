@@ -61,6 +61,18 @@ STransformValue class >> changeArgsOf: args using: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
+STransformValue class >> collectDependenciesStatements: statements [
+	| dictCollectedDependencies dependencies |
+	dictCollectedDependencies := OrderedDictionary new.
+	statements
+		do: [ :aStatement | 
+			dependencies := aStatement collectDependencies.
+			dependencies
+				ifNotEmpty: [ dictCollectedDependencies at: aStatement varName put: dependencies ] ].
+	^ dictCollectedDependencies
+]
+
+{ #category : #'as yet unclassified' }
 STransformValue class >> dataStatements: statements [
 	| dictStringBody referencedVarNames |
 	dictStringBody := Dictionary new.

@@ -624,6 +624,35 @@ STestCase >> statements [
 ]
 
 { #category : #'as yet unclassified' }
+STestCase >> statementsGroupedByDependencies [
+	| groups dependencies referencedVarNames |
+	groups := Dictionary new.
+	referencedVarNames := Set new.
+	dependencies := STransformValue
+		collectDependenciesStatements: statements.
+	dependencies associations
+		do: [ :assoc | 
+			| group |
+			group := OrderedCollection new.
+			assoc value
+				do: [ :varName | 
+					groups
+						at: varName
+						ifPresent: [ :groupVarName | 
+							group addAll: groupVarName.
+							referencedVarNames add: varName ]
+						ifAbsent: [ group add: varName ] ].
+			groups
+				at: assoc key
+				put:
+					(group
+						add: assoc key;
+						yourself) ].
+	^ {groups.
+	referencedVarNames asOrderedCollection}
+]
+
+{ #category : #'as yet unclassified' }
 STestCase >> validDependencies [
 	| isValid currentVarNames |
 	isValid := true.

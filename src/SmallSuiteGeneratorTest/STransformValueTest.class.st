@@ -34,21 +34,21 @@ STransformValueTest >> testCollectDependenciesStatementsComplex [
 	testCase statements last args: {'_var5'}.	"_var13 := SStudent score: _var5"
 	testCase addMethod.
 	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
-	dictDependencies := STransformValue collectDependenciesStatements: testCase statements.
-	self assert: dictDependencies size equals: 6.
+	dictDependencies := STransformValue
+		collectDependenciesStatements: testCase statements.
+	self assert: dictDependencies size equals: 10.
 	self
 		assertCollection: dictDependencies associations
-		hasSameElements:
-			{('_var2' -> '_var0').
-			('_var1' -> '_var3').
-			('_var4' -> '_var0').
-			('_var6' -> '_var5').
-			('_var7' -> '_var5').
-			('_var8' -> '_var1').
-			('_var9' -> '_var5').
-			('_var11' -> '_var5').
-			('_var13' -> '_var5').
-			('_var14' -> '_var7')}.
+		hasSameElements: {('_var2' -> {'_var0'}).
+			('_var3' -> {'_var1'}).
+			('_var4' -> {'_var0'}).
+			('_var6' -> {'_var5'}).
+			('_var7' -> {'_var5'}).
+			('_var8' -> {'_var1'}).
+			('_var9' -> {'_var5'}).
+			('_var11' -> {'_var5'}).
+			('_var13' -> {'_var5'}).
+			('_var14' -> {'_var7'})}
 ]
 
 { #category : #tests }
@@ -64,12 +64,12 @@ STransformValueTest >> testCollectDependenciesStatementsSimple [
 	testCase addConstructor.
 	dependenciesStatements := STransformValue
 		collectDependenciesStatements: testCase statements.
-	self assert: dependenciesStatements size equals: 4.
+	self assert: dependenciesStatements size equals: 2.
 	self
 		assertCollection: dependenciesStatements associations
 		hasSameElements:
-			{('_var2' -> '_var0').
-			('_var3' -> '_var1')}
+			{('_var2' -> {'_var0'}).
+			('_var3' -> {'_var1'})}
 ]
 
 { #category : #tests }
