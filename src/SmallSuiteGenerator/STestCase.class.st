@@ -264,20 +264,57 @@ STestCase >> cleanIrrelevantStatements [
 ]
 
 { #category : #metric }
-STestCase >> coverage [ 
-	| profiler node temporaries varNames |
+STestCase >> coverage [
+	^ SCalculatorCoverage coverageOf: statements using: self varNames
+	"| profiler node temporaries varNames |
 	node := RBParser parseExpression: '[]'.
 	varNames := self varNames.
-	temporaries := varNames collect: [ :varName | RBParser parseExpression: varName ].
+	temporaries := varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
 	node body temporaries: temporaries.
-	statements collect: [ :statement | statement printString ]
-	thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler compile: 'testCaseCompiled', String cr, node body formattedCode.
-	profiler := SBProfiler profile: [ 
-		STestCaseCompiler new testCaseCompiled.	
-	] onPackagesMatching: 'SmallSuiteCompil*'.
-	^ {profiler numberOfAllStatements. profiler numberOfExecutedStatements. profiler numberOfMethods. profiler numberOfExecutedMethods}
-	
+	statements
+		collect: [ :statement | statement printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , node body formattedCode.
+	profiler := SBProfiler
+		profile: [ STestCaseCompiler new testCaseCompiled ]
+		onPackagesMatching: 'SmallSuiteCompil*'.
+	^ {profiler numberOfAllStatements.
+	profiler numberOfExecutedStatements.
+	profiler numberOfMethods.
+	profiler numberOfExecutedMethods}"
+]
+
+{ #category : #metric }
+STestCase >> coverageOnClass: aClass [
+	^ SCalculatorCoverage
+		coverageOf: statements
+		using: self varNames
+		onClass: aClass
+]
+
+{ #category : #metric }
+STestCase >> coverageWithRegex: regex [
+	^ SCalculatorCoverage coverageOf: statements using: self varNames onPackagesMatching: regex
+	"| profiler node temporaries varNames |
+	node := RBParser parseExpression: '[]'.
+	varNames := self varNames.
+	temporaries := varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statements
+		collect: [ :statement | statement printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , node body formattedCode.
+	profiler := SBProfiler
+		profile: [ STestCaseCompiler new testCaseCompiled ]
+		onPackagesMatching: 'SmallSuiteCompil*'.
+	^ {profiler numberOfAllStatements.
+	profiler numberOfExecutedStatements.
+	profiler numberOfMethods.
+	profiler numberOfExecutedMethods}"
 ]
 
 { #category : #generation }
@@ -327,17 +364,21 @@ STestCase >> crossOverWith: otherTestCase [
 	sizeOther := otherTestCase statements size.
 	offSpring1 := STestCase seed: otherTestCase profile.
 	(statements copyFrom: 1 to: (size * alpha) asInteger)
-		do: [ :aStm | offSpring1 addStatement: aStm ].	"first alpha(P1)"
+		do: [ :aStm | 
+			offSpring1 addStatement: aStm.
+			offSpring1 assignedId ].	"first alpha(P1)"
 	(otherTestCase statements
 		copyFrom: (alpha * sizeOther) asInteger + 1
 		to: sizeOther)
 		do:
-			[ :aStm | offSpring1 addStatement: aStm  satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
+			[ :aStm | offSpring1 addStatement: aStm satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
 	offSpring2 := STestCase seed: self profile.
 	(otherTestCase statements
 		copyFrom: 1
 		to: (sizeOther * alpha) asInteger)
-		do: [ :aStm | offSpring2 addStatement: aStm ].	"first alpha(P2)"
+		do: [ :aStm | 
+			offSpring2 addStatement: aStm.
+			offSpring2 assignedId ].	"first alpha(P2)"
 	(statements copyFrom: (alpha * size) asInteger + 1 to: size)
 		do: [ :aStm | offSpring2 addStatement: aStm satisfyingParameters: self ].	"last (1-alpha)(P1)"
 	^ {offSpring1.
@@ -351,7 +392,12 @@ STestCase >> generateInvariants [
 
 { #category : #'as yet unclassified' }
 STestCase >> generateStatements [
-	20
+	self generateStatements: 63
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> generateStatements: aNumber [
+	aNumber
 		timesRepeat: [ [ self
 				perform: #(#addConstructor #addField #addMethod #addPrimitive) shuffle anyOne ]
 				on: Error

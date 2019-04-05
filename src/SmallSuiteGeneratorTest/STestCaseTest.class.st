@@ -56,11 +56,11 @@ STestCaseTest class >> listTestCaseRTAMItem [
 	list := OrderedCollection new.
 	list
 		add:
-			(self
+			((self
 				generateTestCase: [ RTAMItem basicNew
 						itemName: 'Bonus Card';
 						color: Color lightCyan ]
-				with: RTAMItem) generateStatements;
+				with: RTAMItem) generateStatements: 50);
 		add:
 			(self
 				generateTestCase: [ RTAMItem basicNew
@@ -516,17 +516,18 @@ STestCaseTest >> testCoverageRoassal [
 { #category : #coverage }
 STestCaseTest >> testCoverageSStudent [
 	| profile testCase coverage |
-	profile := SSGenerator profile: [ SStudent score: 34 ] onClass: SStudent.
+	profile := SSGenerator
+		profile: [ SStudent score: 34 ]
+		onClass: SStudent.
 	testCase := STestCase seed: profile.
-	testCase addPrimitive.
+	testCase addPrimitive. self halt.
 	coverage := testCase coverage.
 	S2Lock value: false.
 	S2Context value: nil.
-	self assert: coverage first equals: 1.
-	self assert: coverage second equals: 1.
-	self assert: coverage third equals: 0.
-	self assert: coverage fourth equals: 1.
-	
+	self assert: (coverage at: 'noOfExecutedMethods') equals: 1.
+	self assert: (coverage at: 'noOfExecutedStatents') equals: 1
+	"self assert: coverage third equals: 0.
+	self assert: coverage fourth equals: 1"
 ]
 
 { #category : #coverage }
