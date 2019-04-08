@@ -287,6 +287,21 @@ STestCase >> coverage [
 ]
 
 { #category : #metric }
+STestCase >> coverageNoInstrument [
+	^ SCalculatorCoverage
+		coverageNoInstrumentOf: statements
+		using: self varNames
+]
+
+{ #category : #metric }
+STestCase >> coverageNoInstrument: profiler [
+	^ SCalculatorCoverage
+		coverage: profiler 
+		of: statements
+		using: self varNames
+]
+
+{ #category : #metric }
 STestCase >> coverageOnClass: aClass [
 	^ SCalculatorCoverage
 		coverageOf: statements

@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-SStack class >> newStack [ 	
+SStack class >> newStack [
 	^ self new
 ]
 
@@ -17,7 +17,9 @@ SStack class >> newStack [
 SStack class >> newStackWith: aList [
 	| inst |
 	inst := self new.
-	aList do: [ :element | inst push: element ].
+	aList
+		do: [ :element | 
+			inst push: element ].
 	^ inst
 ]
 
@@ -33,9 +35,11 @@ SStack >> lastLinkStack [
 
 { #category : #removing }
 SStack >> pop [
-	self isEmpty 
-	ifTrue: [ ^ nil ]
-	ifFalse: [ ^ self removeFirst ]
+	self isEmpty
+		ifTrue: [ 
+			^ nil ]
+		ifFalse: [
+			^ self removeFirst ]
 ]
 
 { #category : #adding }
@@ -43,7 +47,7 @@ SStack >> push: aObject [
 	| aLink |
 	aLink := aObject asLink.
 	self isEmpty
-		ifTrue: [
+		ifTrue: [ 
 			lastLink := aLink ].
 	aLink nextLink: firstLink.
 	firstLink := aLink.
@@ -51,7 +55,10 @@ SStack >> push: aObject [
 ]
 
 { #category : #accessing }
-SStack >> top [ 
-	self isEmpty ifTrue: [ ^ nil ] 
-	ifFalse: [ ^ self firstLink value ]
+SStack >> top [
+	self isEmpty
+		ifTrue: [ 
+			^ nil ]
+		ifFalse: [ 
+			^ self firstLink value ]
 ]

@@ -122,3 +122,78 @@ SCalculatorCoverage >> calculateCoverage: aBlock onClass: aClass [
 	coverageTestCase := testCase coverage.
 	^ {originProfiler dictCoverage. coverageTestCase}
 ]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> calculateCoverage: aBlock onClass: aClass inTestSuiteOfSize: aNumber [
+	| profiler coverageTestSuite formattedNodes testCaseProfiler |
+	testCaseProfiler := SSGenerator profile: aBlock onClass: aClass.
+	formattedNodes := self
+		formattedNodes: testCaseProfiler
+		ofSize: aNumber.
+	profiler := SBProfiler new.
+	profiler profileInstrumented: aBlock onClass: aClass.
+	coverageTestSuite := self
+		coverageTestSuite: formattedNodes
+		using: profiler.
+	profiler cleanInstrumentation.
+	^ coverageTestSuite
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> calculateCoverage: aBlock onPackagesMatching: regex inTestSuiteOfSize: aNumber [
+	| profiler coverageTestSuite formattedNodes testCaseProfiler |
+	testCaseProfiler := SSGenerator
+		profile: aBlock
+		onPackagesMatching: regex.
+	formattedNodes := self
+		formattedNodes: testCaseProfiler
+		ofSize: aNumber.
+	profiler := SBProfiler new.
+	profiler profileInstrumented: aBlock onPackagesMatching: regex.
+	coverageTestSuite := self
+		coverageTestSuite: formattedNodes
+		using: profiler.
+	profiler cleanInstrumentation.
+	^ coverageTestSuite
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverageTestSuite: formattedNodes using: profiler [
+	| listCoverage |
+	listCoverage := OrderedCollection new.
+	listCoverage add: profiler dictCoverage.
+	listCoverage addAll: (formattedNodes
+				collect: [ :formattedNode | 
+					STestCaseCompiler
+						compile: 'testCaseCompiled' , String cr , formattedNode.
+					profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ].
+					profiler dictCoverage ]).
+	^ listCoverage 
+	
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> formattedNodes: profiler ofSize: aNumber [
+	| collection |
+	collection := OrderedCollection new.
+	1 to: aNumber do: [ :index | 
+		| testCase |
+		testCase := STestCase seed: profiler.
+		testCase generateStatements: (10 to: 63) atRandom.
+		collection
+			add: (self nodeFormattedOf: testCase statements and: testCase varNames) ].
+	^ collection
+]
+
+{ #category : #compiling }
+SCalculatorCoverage >> nodeFormattedOf: statements and: varNames [
+	| node temporaries |
+	node := RBParser parseExpression: '[]'.
+	temporaries := varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statements
+		collect: [ :statement | statement printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	^ node body formattedCode
+]
