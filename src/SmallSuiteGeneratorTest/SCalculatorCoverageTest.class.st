@@ -20,35 +20,22 @@ SCalculatorCoverageTest >> tearDown [
 
 { #category : #tests }
 SCalculatorCoverageTest >> testCalculateCoverage [
-	| aBlock result originProfiler offSpring1Profiler offSpring2Profiler noExecMethods noExecStmts |
+	| aBlock result originProfiler testCaseProfiler |
 	aBlock := [ | aStack |
 	aStack := SStack newStackWith: {2 . 4 . 6 . 1}.
 	aStack push: 8.
 	aStack pop.
 	aStack top ].
-	result := calculatorCoverage calculateCoverage: aBlock.
+	result := calculatorCoverage calculateCoverage: aBlock onClass: SStack.
 	originProfiler := result first.
-	offSpring1Profiler := result second.
-	offSpring2Profiler := result third.
-	noExecMethods := originProfiler at: 'noOfExecutedMethods'.
-	self assert: noExecMethods equals: 4.
+	testCaseProfiler := result second.
+	self assert: (originProfiler at: 'noOfExecutedMethods') equals: 4.
 	self
-		assert:
-			(noExecMethods <= (offSpring1Profiler at: 'noOfExecutedMethods')
-				or: [ noExecMethods <= (offSpring2Profiler at: 'noOfExecutedMethods') ]).
+		assert: (testCaseProfiler at: 'noOfExecutedMethods') > 0.
 	self assert: (originProfiler at: 'noAllStatements') equals: 19.
-	noExecStmts := originProfiler at: 'noOfExecutedStatements'.
-	self assert: noExecStmts equals: 14.
-	self
-		assert:
-			(noExecStmts < (offSpring1Profiler at: 'noOfExecutedStatements')
-				or: [ noExecStmts <= (offSpring2Profiler at: 'noOfExecutedStatements') ]).
-	self
-		assert:
-			((originProfiler at: 'statementCoverage')
-				<= (offSpring1Profiler at: 'statementCoverage')
-				or: [ (originProfiler at: 'statementCoverage')
-						<= (offSpring2Profiler at: 'statementCoverage') ])
+	self assert: (testCaseProfiler at: 'noAllStatements') > 0.
+	self assert: (originProfiler at: 'noOfExecutedStatements') equals: 14.
+	self assert: (testCaseProfiler at: 'noOfExecutedStatements') > 0.
 ]
 
 { #category : #tests }

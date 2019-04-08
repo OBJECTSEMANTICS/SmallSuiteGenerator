@@ -109,3 +109,16 @@ SCalculatorCoverage >> calculateCoverage: aBlock [
 	coverageTestCase := testCase coverage.
 	^ {originProfiler dictCoverage. coverageTestCase}
 ]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> calculateCoverage: aBlock onClass: aClass [
+	| originProfiler testCaseProfiler testCase coverageTestCase |
+	originProfiler := SBProfiler
+		profile: aBlock
+		onClass: aClass.
+	testCaseProfiler := SSGenerator profile: aBlock onClass: SStack.
+	testCase := STestCase seed: testCaseProfiler.
+	testCase generateStatements.
+	coverageTestCase := testCase coverage.
+	^ {originProfiler dictCoverage. coverageTestCase}
+]
