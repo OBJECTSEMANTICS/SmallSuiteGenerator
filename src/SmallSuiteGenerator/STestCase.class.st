@@ -31,7 +31,7 @@ STestCase >> addConstructor [
 STestCase >> addConstructor: classSpy [
 	| methods newStatement |
 	methods := classSpy factoryMethods.
-	methods ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNil ].
+	methods ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
 	newStatement := self
 		newConstructorStatement: classSpy
 		of: methods
@@ -412,8 +412,8 @@ STestCase >> generateStatements [
 
 { #category : #'as yet unclassified' }
 STestCase >> generateStatements: aNumber [
-	aNumber
-		timesRepeat: [ [ self
+	[ self statements size <= aNumber ]
+		whileTrue: [ [ self
 				perform: #(#addConstructor #addField #addMethod #addPrimitive) shuffle anyOne ]
 				on: Error
 				do: [  ] ]
@@ -639,6 +639,19 @@ STestCase >> remove: varName [
 	statements remove: statementToDelete.
 	varNamesToDelete do: [ :aName | self remove: aName ].
 	^ {varName}, varNamesToDelete
+]
+
+{ #category : #removing }
+STestCase >> removeStatementsOfClassName: aClassName [
+	| constructors removed |
+	removed := false.
+	constructors := self statements select: #isConstructor.
+	constructors ifEmpty: [ ^ removed ].
+	removed := true.
+	constructors
+		select: [ :aStm | aStm theClassName = aClassName ]
+		thenDo: [ :aStm | removed := removed and: [(self remove: aStm varName) isNotEmpty ]].
+	^ removed
 ]
 
 { #category : #'as yet unclassified' }

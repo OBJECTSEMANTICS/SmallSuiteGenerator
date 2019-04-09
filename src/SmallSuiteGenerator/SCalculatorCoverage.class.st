@@ -141,20 +141,47 @@ SCalculatorCoverage >> calculateCoverage: aBlock onClass: aClass inTestSuiteOfSi
 
 { #category : #'as yet unclassified' }
 SCalculatorCoverage >> calculateCoverage: aBlock onPackagesMatching: regex inTestSuiteOfSize: aNumber [
-	| profiler coverageTestSuite formattedNodes testCaseProfiler |
+	| profiler coverageTestSuite testCaseProfiler |
 	testCaseProfiler := SSGenerator
 		profile: aBlock
 		onPackagesMatching: regex.
-	formattedNodes := self
+	"formattedNodes := self
 		formattedNodes: testCaseProfiler
-		ofSize: aNumber.
+		ofSize: aNumber."
 	profiler := SBProfiler new.
 	profiler profileInstrumented: aBlock onPackagesMatching: regex.
 	coverageTestSuite := self
-		coverageTestSuite: formattedNodes
-		using: profiler.
+		coverage: testCaseProfiler
+		using: profiler
+		inTestSuiteOfSize: aNumber.
 	profiler cleanInstrumentation.
 	^ coverageTestSuite
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverage: testCaseProfiler using: profiler inTestSuiteOfSize: aNumber [
+	| listCoverage testSuite |
+	listCoverage := OrderedCollection new.
+	listCoverage add: profiler dictCoverage.
+	testSuite := self testSuite: testCaseProfiler ofSize: aNumber.
+	testSuite do: [ :aTestCase | 
+		"| formattedNode |
+		formattedNode := self nodeFormattedOf: aTestCase statements and: aTestCase varNames.
+		STestCaseCompiler
+						compile: 'testCaseCompiled' , String cr , formattedNode.
+		[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ]] 
+		on: ShouldNotImplement do: [ :e | e signaler name ]"
+		(self executedStatementsOf: aTestCase with: profiler) ifTrue: [ listCoverage add: profiler dictCoverage ]
+	].
+	"listCoverage
+		addAll:
+			(formattedNodes
+				collect: [ :formattedNode | 
+					STestCaseCompiler
+						compile: 'testCaseCompiled' , String cr , formattedNode.
+					profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ].
+					profiler dictCoverage ])."
+	^ listCoverage
 ]
 
 { #category : #'as yet unclassified' }
@@ -170,6 +197,22 @@ SCalculatorCoverage >> coverageTestSuite: formattedNodes using: profiler [
 					profiler dictCoverage ]).
 	^ listCoverage 
 	
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler [
+	| formattedNode |
+	formattedNode := self
+		nodeFormattedOf: aTestCase statements
+		and: aTestCase varNames.
+	STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , formattedNode.
+	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
+		on: ShouldNotImplement
+		do: [ :e | 
+			^ (aTestCase removeStatementsOfClassName: e signaler name)
+				and: [ self executedStatementsOf: aTestCase with: profiler ] ].
+	^ true
 ]
 
 { #category : #'as yet unclassified' }
@@ -196,4 +239,16 @@ SCalculatorCoverage >> nodeFormattedOf: statements and: varNames [
 		collect: [ :statement | statement printString ]
 		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
 	^ node body formattedCode
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> testSuite: profiler ofSize: aNumber [
+	| collection |
+	collection := OrderedCollection new.
+	1 to: aNumber do: [ :index | 
+		| testCase |
+		testCase := STestCase seed: profiler.
+		testCase generateStatements: (10 to: 63) atRandom.
+		collection add: testCase ].
+	^ collection
 ]

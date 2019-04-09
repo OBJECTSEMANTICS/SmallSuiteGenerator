@@ -11,7 +11,7 @@ SSGeneratorTest >> testConstructorGenerator [
 		profile: [ SStudent score: 2 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
-	testCase addConstructor.
+	testCase addConstructor.self halt.
 	self
 		assert: testCase statements first printString
 		equals: '_var0 := SStudent score: 2.'
