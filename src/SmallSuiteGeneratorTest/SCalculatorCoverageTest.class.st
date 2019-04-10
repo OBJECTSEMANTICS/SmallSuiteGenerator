@@ -74,7 +74,7 @@ SCalculatorCoverageTest >> testCalculateCoverageOnPackagesMatchingSimple [
 	result := calculatorCoverage
 		calculateCoverage: aBlock
 		onPackagesMatching: 'Roassal2'
-		inTestSuiteOfSize: 20. self halt.
+		inTestSuiteOfSize: 20.
 	originProfiler := result first.
 	testSuiteProfiler := result allButFirst.
 	self assert: testSuiteProfiler isNotEmpty.

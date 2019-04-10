@@ -3,7 +3,9 @@ Class {
 	#superclass : #S2Profiler,
 	#instVars : [
 		'instrumentedClasses',
-		'scalars'
+		'scalars',
+		'regexPackages',
+		'packagesToInstrument'
 	],
 	#category : #'SmallSuiteGenerator-Profiler'
 }
@@ -35,6 +37,23 @@ SSGenerator >> isScalar: anObject [
 		at: anObject class name
 		ifAbsent: [ ^ true ].
 	^ false
+]
+
+{ #category : #accessing }
+SSGenerator >> packages [
+	regexPackages ifNil: [ ^ super packages ].
+	packagesToInstrument ifNil: [ packagesToInstrument := packages values
+		reject: [ :p | 
+			(p classes
+				select: [ :c | (c methods reject: #isNotMethodExtension) isNotEmpty ])
+				isNotEmpty and: [ (regexPackages match: p packageName) not ] ] ].
+	^ packagesToInstrument 
+]
+
+{ #category : #profiling }
+SSGenerator >> profile: aBlock onPackagesMatching: regex [
+	super profile: aBlock onPackagesMatching: regex.
+	regexPackages := regex
 ]
 
 { #category : #initialization }
