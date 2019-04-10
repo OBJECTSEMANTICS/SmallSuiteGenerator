@@ -78,18 +78,36 @@ SCalculatorCoverageTest >> testCalculateCoverageOnPackagesMatchingSimple [
 	originProfiler := result first.
 	testSuiteProfiler := result allButFirst.
 	self assert: testSuiteProfiler isNotEmpty.
-	self assert: (originProfiler at: 'methodCoverage') equals: 1.22.	"(56/4607) * 100 round: 2"
 	self
 		assert:
 			(testSuiteProfiler
-				select: [ :dict | (dict at: 'methodCoverage') >= 1.22 ])
-				isNotEmpty.
-	self assert: (originProfiler at: 'statementCoverage') equals: 0.31.	"(60/19108) * 100 round: 2"
+				collect: [ :dict | (dict at: 'methodCoverage')]) max  >= (originProfiler at: 'methodCoverage').
 	self
 		assert:
 			(testSuiteProfiler
-				select: [ :dict | (dict at: 'statementCoverage') >= 0.31 ])
-				isNotEmpty
+				collect: [ :dict | (dict at: 'statementCoverage')]) max >= (originProfiler at: 'statementCoverage')
+]
+
+{ #category : #'coverage-onPackages' }
+SCalculatorCoverageTest >> testCalculateCoverageOnPackagesRTAMItem [
+	| aBlock result originProfiler testSuiteProfiler |
+	aBlock := [ RTAMItem new itemName: 'Bonus Card';
+	color: Color lightCyan ].
+	result := calculatorCoverage
+		calculateCoverage: aBlock
+		onPackagesMatching: 'Roassal2'
+		inTestSuiteOfSize: 20.
+	originProfiler := result first.
+	testSuiteProfiler := result allButFirst.
+	self assert: testSuiteProfiler isNotEmpty.
+	self
+		assert:
+			(testSuiteProfiler
+				collect: [ :dict | (dict at: 'methodCoverage')]) max  >= (originProfiler at: 'methodCoverage').
+	self
+		assert:
+			(testSuiteProfiler
+				collect: [ :dict | (dict at: 'statementCoverage')]) max >= (originProfiler at: 'statementCoverage')
 ]
 
 { #category : #'coverage-onClass' }

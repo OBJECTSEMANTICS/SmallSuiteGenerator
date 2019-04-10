@@ -5,7 +5,8 @@ Class {
 		'statements',
 		'profile',
 		'generatorInvariant',
-		'counter'
+		'counter',
+		'classesToInstrument'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -20,36 +21,24 @@ STestCase class >> seed: aGeneratorProfile [
 
 { #category : #generation }
 STestCase >> addConstructor [
-	^ self profile allClasses shuffle 
-	detect: [ :classSpy | self addConstructor: classSpy ] 
-	ifFound:[true] 
-	ifNone:[false].
-	
+	^ self classesToInstrument shuffle
+		detect: [ :classSpy | self addConstructor: classSpy ]
+		ifFound: [ true ]
+		ifNone: [ false ]
 ]
 
 { #category : #generation }
 STestCase >> addConstructor: classSpy [
 	| methods newStatement |
 	methods := classSpy factoryMethods.
-	methods ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
+	methods
+		ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
 	newStatement := self
 		newConstructorStatement: classSpy
 		of: methods
 		before: nil.
 	newStatement ifNil: [ ^ false ].
 	^ self addStatement: newStatement
-	"factoryMethod := methods shuffle anyOne.
-	args := factoryMethod argTypes
-		collect: [ :class | self createArg: class name ].
-	(args anySatisfy: #isNil)
-		ifTrue: [ ^ false ].
-	^ self
-		addStatement:
-			(SConstructorStatement create
-				theClassName: classSpy className;
-				selector: factoryMethod selector;
-				args: args;
-				yourself)"
 ]
 
 { #category : #accessing }
@@ -244,6 +233,15 @@ STestCase >> classOfArgs: method [
 						collect: [ :class | class name ]
 ]
 
+{ #category : #accessing }
+STestCase >> classesToInstrument [
+	classesToInstrument ifNil: [
+		classesToInstrument := self profile allClasses reject: [:aClass | 
+		(aClass methods reject: #isNotMethodExtension) isNotEmpty
+	]].
+	^ classesToInstrument
+]
+
 { #category : #'as yet unclassified' }
 STestCase >> cleanIrrelevantStatements [
 	| dataStatements varNamesToRemove dictStringStatement referencedVarNames removedVarNames |
@@ -287,21 +285,6 @@ STestCase >> coverage [
 ]
 
 { #category : #metric }
-STestCase >> coverageNoInstrument [
-	^ SCalculatorCoverage
-		coverageNoInstrumentOf: statements
-		using: self varNames
-]
-
-{ #category : #metric }
-STestCase >> coverageNoInstrument: profiler [
-	^ SCalculatorCoverage
-		coverage: profiler 
-		of: statements
-		using: self varNames
-]
-
-{ #category : #metric }
 STestCase >> coverageOnClass: aClass [
 	^ SCalculatorCoverage
 		coverageOf: statements
@@ -311,25 +294,10 @@ STestCase >> coverageOnClass: aClass [
 
 { #category : #metric }
 STestCase >> coverageWithRegex: regex [
-	^ SCalculatorCoverage coverageOf: statements using: self varNames onPackagesMatching: regex
-	"| profiler node temporaries varNames |
-	node := RBParser parseExpression: '[]'.
-	varNames := self varNames.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: 'SmallSuiteCompil*'.
-	^ {profiler numberOfAllStatements.
-	profiler numberOfExecutedStatements.
-	profiler numberOfMethods.
-	profiler numberOfExecutedMethods}"
+	^ SCalculatorCoverage
+		coverageOf: statements
+		using: self varNames
+		onPackagesMatching: regex
 ]
 
 { #category : #generation }
@@ -407,7 +375,7 @@ STestCase >> generateInvariants [
 
 { #category : #'as yet unclassified' }
 STestCase >> generateStatements [
-	self generateStatements: 63
+	self generateStatements: 54
 ]
 
 { #category : #'as yet unclassified' }
@@ -642,6 +610,16 @@ STestCase >> remove: varName [
 ]
 
 { #category : #removing }
+STestCase >> removeNumStatements: aNumber [
+	| removed |
+	removed := true.
+	1 to: aNumber do: [ :number | 
+		removed := removed and: [self remove].	
+	].
+	^ removed
+]
+
+{ #category : #removing }
 STestCase >> removeStatementsOfClassName: aClassName [
 	| constructors removed |
 	removed := false.
@@ -724,21 +702,6 @@ STestCase >> statementsGroupedByDependencies [
 						yourself) ].
 	^ {groups.
 	referencedVarNames asOrderedCollection}
-]
-
-{ #category : #'as yet unclassified' }
-STestCase >> validDependencies [
-	| isValid currentVarNames |
-	isValid := true.
-	currentVarNames := OrderedCollection new.
-	statements detect: [ :aStm | 
-		| collectDependencies |
-		collectDependencies := aStm collectDependencies.
-		(self validDependencies: collectDependencies with: currentVarNames) 
-		ifTrue: [ currentVarNames addAll: collectDependencies; add: aStm varName. false ] ifFalse: [ true ]
-		 ] ifFound: [ ^ false ]
-	ifNone: [ ^ true ].
-	^ true
 ]
 
 { #category : #'as yet unclassified' }

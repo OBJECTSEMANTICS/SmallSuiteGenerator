@@ -205,8 +205,10 @@ SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler [
 	formattedNode := self
 		nodeFormattedOf: aTestCase statements
 		and: aTestCase varNames.
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , formattedNode.
+	[STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , formattedNode] on: Error do: [
+		^ (aTestCase removeNumStatements: 5) and: [ self executedStatementsOf: aTestCase with: profiler].
+	].
 	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
 		on: ShouldNotImplement
 		do: [ :e | 
@@ -248,7 +250,7 @@ SCalculatorCoverage >> testSuite: profiler ofSize: aNumber [
 	1 to: aNumber do: [ :index | 
 		| testCase |
 		testCase := STestCase seed: profiler.
-		testCase generateStatements: (10 to: 63) atRandom.
+		testCase generateStatements: (10 to: 54) atRandom.
 		collection add: testCase ].
 	^ collection
 ]
