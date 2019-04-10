@@ -614,7 +614,7 @@ STestCase >> removeNumStatements: aNumber [
 	| removed |
 	removed := true.
 	1 to: aNumber do: [ :number | 
-		removed := removed and: [self remove].	
+		removed := removed and: [self remove isNotEmpty].	
 	].
 	^ removed
 ]
