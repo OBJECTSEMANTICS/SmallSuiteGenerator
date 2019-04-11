@@ -60,7 +60,7 @@ STestCaseTest class >> listTestCaseRTAMItem [
 				generateTestCase: [ RTAMItem basicNew
 						itemName: 'Bonus Card';
 						color: Color lightCyan ]
-				with: RTAMItem) generateStatements: 50);
+				with: RTAMItem) generateStatements);
 		add:
 			(self
 				generateTestCase: [ RTAMItem basicNew
@@ -239,8 +239,10 @@ STestCaseTest >> assertRemove: listTestCase [
 	testCase := listTestCase shuffle anyOne.
 	removedVarNames := testCase remove.
 	(removedVarNames isNotNil and: [ removedVarNames isNotEmpty ])
-		ifTrue: [ 
-			| varNames referencedArgs |
+		ifFalse: [ self assert: false ]
+		ifTrue: [
+			self assert: testCase hasValidDependencies.
+			 "| varNames referencedArgs |
 			varNames := testCase varNames.
 			referencedArgs := OrderedCollection new.
 			testCase statements
@@ -249,7 +251,7 @@ STestCaseTest >> assertRemove: listTestCase [
 			removedVarNames
 				do: [ :varName | 
 					self deny: (varNames includes: varName).
-					self deny: (referencedArgs includes: varName) ] ]
+					self deny: (referencedArgs includes: varName) ]" ]
 ]
 
 { #category : #'mutation-change' }
@@ -495,22 +497,22 @@ STestCaseTest >> testCleanIrrelevantStatementsRepeated [
 ]
 
 { #category : #coverage }
-STestCaseTest >> testCoverage [
-	| testCase |
-	testCase := self class listTestCaseRTAMItem first.
+STestCaseTest >> testCoverageRTAMItem [
+	| profile testCase coverage |
+	profile := SSGenerator
+		profile: [ RTAMItem basicNew
+				itemName: 'Bonus Card';
+				color: Color lightCyan ]
+		onClass: RTAMItem.
+	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	self assert: testCase statementCoverage equals: 1.
-	self assert: testCase methodCoverage equals: 0.
-	self assert: testCase numberOfExecutedMethods equals: 0.
-]
-
-{ #category : #coverage }
-STestCaseTest >> testCoverageRoassal [
-	| testCase |
-	testCase := self class listTestCaseRTAMItem first.
-	testCase addPrimitive.
-	self assert: testCase methodCoverage equals: 0.
-	self assert: testCase numberOfExecutedMethods equals: 0.
+	testCase addConstructor.
+	testCase addMethod.
+	coverage := testCase coverageOnClass: RTAMItem.
+	S2Lock value: false.
+	S2Context value: nil.
+	self assert: (coverage at: 'noOfExecutedMethods') equals: 2.
+	self assert: (coverage at: 'noOfExecutedStatements') equals: 7
 ]
 
 { #category : #coverage }
@@ -520,25 +522,24 @@ STestCaseTest >> testCoverageSStudent [
 		profile: [ SStudent score: 34 ]
 		onClass: SStudent.
 	testCase := STestCase seed: profile.
-	testCase addPrimitive. self halt.
-	coverage := testCase coverage.
+	testCase addPrimitive.
+	testCase addConstructor.
+	coverage := testCase coverageOnClass: SStudent.
 	S2Lock value: false.
 	S2Context value: nil.
-	self assert: (coverage at: 'noOfExecutedMethods') equals: 1.
-	self assert: (coverage at: 'noOfExecutedStatents') equals: 1
-	"self assert: coverage third equals: 0.
-	self assert: coverage fourth equals: 1"
+	self assert: (coverage at: 'noOfExecutedMethods') equals: 3.
+	self assert: (coverage at: 'noOfExecutedStatements') equals: 4.
 ]
 
-{ #category : #coverage }
+{ #category : #crossover }
 STestCaseTest >> testCrossOver: listTestCase [
 	| offSprings offSpring1 offSpring2 |
 	self assert: listTestCase size >= 2.
 	offSprings := listTestCase first crossOverWith: listTestCase second.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
-	self assert: offSpring1 coverage equals: 4.
-	self assert: offSpring2 coverage equals: 5.
+	self assert: offSpring1 hasValidDependencies.
+	self assert: offSpring2 hasValidDependencies
 ]
 
 { #category : #crossover }
@@ -821,7 +822,8 @@ STestCaseTest >> testRemoveField [
 	statement := testCase statements first.
 	self
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
-	self assert: testCase statements last receiverVarName equals: '_var2'
+	self assert: testCase statements last receiverVarName equals: '_var2'.
+	self assert: testCase hasValidDependencies.
 ]
 
 { #category : #'mutation-remove' }
@@ -850,7 +852,8 @@ STestCaseTest >> testRemoveMethod [
 	statement := testCase statements first.
 	self
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
-	self assert: testCase statements last receiverVarName equals: '_var2'
+	self assert: testCase statements last receiverVarName equals: '_var2'.
+	self assert: testCase hasValidDependencies.
 ]
 
 { #category : #'mutation-remove' }

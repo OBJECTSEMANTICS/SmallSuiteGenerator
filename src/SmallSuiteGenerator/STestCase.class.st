@@ -6,7 +6,8 @@ Class {
 		'profile',
 		'generatorInvariant',
 		'counter',
-		'classesToInstrument'
+		'classesToInstrument',
+		'coverage'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -50,24 +51,24 @@ STestCase >> addConstructor: aStatement before: varName forField: toField [
 		ifFalse: [ | classSpy |
 			classSpy := profile classAt: aStatement theClassName.
 			list := classSpy factoryMethods.
-			list ifEmpty: [ ^ self addDefaultConstructor: classSpy ] ].
+			list ifEmpty: [ 
+				| constructor |
+				constructor := self defaultConstructor: classSpy.
+				(self addStatement: constructor at: (self indexOf: varName) -1) ifTrue: [ ^ constructor ]. ^ nil ] ].
 	newStatement := self
 		newConstructorStatement: aStatement theClassName
 		of: list
 		before: varName.
-	(newStatement isNotNil and: [self addStatement: newStatement at: (self indexOf: varName) - 1])
-				ifTrue: [ ^ newStatement ].
+	(newStatement isNotNil
+		and: [ self addStatement: newStatement at: (self indexOf: varName) - 1 ])
+		ifTrue: [ ^ newStatement ].
 	^ nil
 ]
 
 { #category : #generation }
 STestCase >> addDefaultConstructor: classSpy [
 	| statement |
-	statement := (SConstructorStatement create: self assignedId)
-		theClassName: classSpy className;
-		selector: 'new';
-		args: #();
-		yourself.
+	statement := self defaultConstructor: classSpy.
 	self addStatement: statement.
 	^ statement
 ]
@@ -221,6 +222,19 @@ STestCase >> change: varName [
 	^ { varName }, varNamesToChange 
 ]
 
+{ #category : #removing }
+STestCase >> changeStatementsOfClassName: aClassName [
+	| constructors changed |
+	constructors := self statements select: #isConstructor.
+	constructors ifEmpty: [ ^ false ].
+	changed := true.
+	constructors
+		select: [ :aStm | aStm theClassName = aClassName ]
+		thenDo:
+			[ :aStm | changed := changed and: [ (self change: aStm varName) isNotEmpty ] ].
+	^ changed
+]
+
 { #category : #'as yet unclassified' }
 STestCase >> classLiterals [
 	^ #(#Array #Boolean #ByteArray #Character #Float #Integer #ScaledDecimal #String #UndefinedObject)
@@ -263,7 +277,13 @@ STestCase >> cleanIrrelevantStatements [
 
 { #category : #metric }
 STestCase >> coverage [
-	^ SCalculatorCoverage coverageOf: statements using: self varNames
+	| calculatorCoverage profiler |
+	calculatorCoverage := SCalculatorCoverage new.
+	(calculatorCoverage executedStatementsOf: self with: profiler) ifTrue: [ 
+		coverage := profiler dictCoverage	
+	].
+	^ coverage
+	"^ SCalculatorCoverage coverageOf: statements using: self varNames"
 	"| profiler node temporaries varNames |
 	node := RBParser parseExpression: '[]'.
 	varNames := self varNames.
@@ -286,17 +306,15 @@ STestCase >> coverage [
 
 { #category : #metric }
 STestCase >> coverageOnClass: aClass [
-	^ SCalculatorCoverage
-		coverageOf: statements
-		using: self varNames
+	^ SCalculatorCoverage new
+		coverageTestCase: self
 		onClass: aClass
 ]
 
 { #category : #metric }
-STestCase >> coverageWithRegex: regex [
-	^ SCalculatorCoverage
-		coverageOf: statements
-		using: self varNames
+STestCase >> coverageOnPackagesMatching: regex [
+	^ SCalculatorCoverage new
+		coverageTestCase: self
 		onPackagesMatching: regex
 ]
 
@@ -366,6 +384,15 @@ STestCase >> crossOverWith: otherTestCase [
 		do: [ :aStm | offSpring2 addStatement: aStm satisfyingParameters: self ].	"last (1-alpha)(P1)"
 	^ {offSpring1.
 	offSpring2}
+]
+
+{ #category : #generation }
+STestCase >> defaultConstructor: classSpy [
+	^ (SConstructorStatement create: self assignedId)
+		theClassName: classSpy className;
+		selector: 'new';
+		args: #();
+		yourself.
 ]
 
 { #category : #'as yet unclassified' }
@@ -622,13 +649,13 @@ STestCase >> removeNumStatements: aNumber [
 { #category : #removing }
 STestCase >> removeStatementsOfClassName: aClassName [
 	| constructors removed |
-	removed := false.
 	constructors := self statements select: #isConstructor.
-	constructors ifEmpty: [ ^ removed ].
+	constructors ifEmpty: [ ^ false ].
 	removed := true.
 	constructors
 		select: [ :aStm | aStm theClassName = aClassName ]
-		thenDo: [ :aStm | removed := removed and: [(self remove: aStm varName) isNotEmpty ]].
+		thenDo:
+			[ :aStm | removed := removed and: [ (self remove: aStm varName) isNotEmpty ] ].
 	^ removed
 ]
 

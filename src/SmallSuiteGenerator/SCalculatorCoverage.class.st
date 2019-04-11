@@ -22,56 +22,9 @@ SCalculatorCoverage class >> coverageOf: statements using: varNames [
 	^ profiler dictCoverage
 ]
 
-{ #category : #compiling }
-SCalculatorCoverage class >> coverageOf: statements using: varNames and: aBlock [
-	| profiler node temporaries |
-	node := RBParser parseExpression: '[]'.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := aBlock value: [ STestCaseCompiler new testCaseCompiled ].
-	^ profiler dictCoverage
-]
-
-{ #category : #compiling }
-SCalculatorCoverage class >> coverageOf: statements using: varNames onClass: aClass [
-	| profiler node temporaries |
-	node := RBParser parseExpression: '[]'.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onClass: aClass.
-	^ profiler dictCoverage
-]
-
-{ #category : #compiling }
-SCalculatorCoverage class >> coverageOf: statements using: varNames onPackagesMatching: regex [
-	| profiler node temporaries |
-	node := RBParser parseExpression: '[]'.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: regex.
-	^ profiler dictCoverage
+{ #category : #accessing }
+SCalculatorCoverage class >> maxNumberOfIterations [
+	^ 5
 ]
 
 { #category : #'as yet unclassified' }
@@ -145,44 +98,77 @@ SCalculatorCoverage >> coverage: testCaseProfiler using: profiler inTestSuiteOfS
 	| listCoverage testSuite |
 	listCoverage := OrderedCollection new.
 	listCoverage add: profiler dictCoverage.
-	testSuite := self testSuite: testCaseProfiler ofSize: aNumber.
+	[ testSuite := self testSuite: testCaseProfiler ofSize: aNumber.
 	testSuite
 		do: [ :aTestCase | 
 			(self executedStatementsOf: aTestCase with: profiler)
-				ifTrue: [ listCoverage add: profiler dictCoverage ] ].
+				ifTrue: [ listCoverage add: profiler dictCoverage ] ] ]
+		on: Exception
+		do: [ profiler cleanInstrumentation ].
 	^ listCoverage
 ]
 
 { #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestSuite: formattedNodes using: profiler [
-	| listCoverage |
-	listCoverage := OrderedCollection new.
-	listCoverage add: profiler dictCoverage.
-	listCoverage addAll: (formattedNodes
-				collect: [ :formattedNode | 
-					STestCaseCompiler
-						compile: 'testCaseCompiled' , String cr , formattedNode.
-					profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ].
-					profiler dictCoverage ]).
-	^ listCoverage 
-	
+SCalculatorCoverage >> coverageTestCase: testCase onClass: aClass [
+	| profiler coverage |
+	profiler := SBProfiler new.
+	profiler profileInstrumented: [  ] onClass: aClass.
+	(self executedStatementsOf: testCase with: profiler)
+		ifTrue: [ coverage := profiler dictCoverage ].
+	profiler cleanInstrumentation.
+	^ coverage
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverageTestCase: testCase onPackagesMatching: regex [
+	| profiler coverage |
+	profiler := SBProfiler new.
+	profiler profileInstrumented: [  ] onPackagesMatching: regex.
+	(self executedStatementsOf: testCase with: profiler)
+		ifTrue: [ coverage := profiler dictCoverage ].
+	profiler cleanInstrumentation.
+	^ coverage
 ]
 
 { #category : #'as yet unclassified' }
 SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler [
-	| formattedNode |
+	^ self executedStatementsOf: aTestCase with: profiler inLevel: 1
+	"| formattedNode |
 	formattedNode := self
 		nodeFormattedOf: aTestCase statements
 		and: aTestCase varNames.
-	[STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , formattedNode] on: Error do: [
-		^ (aTestCase removeNumStatements: 5) and: [ self executedStatementsOf: aTestCase with: profiler].
-	].
+	[ STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , formattedNode ]
+		on: Error
+		do: [ :e | 
+			^ (aTestCase removeNumStatements: 5)
+				and: [ self executedStatementsOf: aTestCase with: profiler ] ].
 	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
 		on: ShouldNotImplement
 		do: [ :e | 
 			^ (aTestCase removeStatementsOfClassName: e signaler name)
 				and: [ self executedStatementsOf: aTestCase with: profiler ] ].
+	^ true"
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler inLevel: numLevel [
+	| formattedNode |
+	numLevel > self class maxNumberOfIterations ifTrue: [ ^ false  ].
+	formattedNode := self
+		nodeFormattedOf: aTestCase statements
+		and: aTestCase varNames.
+	[ STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , formattedNode ]
+		on: Error
+		do: [ :e | 
+			^ (aTestCase removeNumStatements: 5)
+				and: [ self executedStatementsOf: aTestCase with: profiler inLevel: numLevel + 1] ].
+	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
+		on: Exception
+		do: [ :exception | 
+			^ (aTestCase changeStatementsOfClassName: ([exception signaler name] on: MessageNotUnderstood do: [exception signaler className]))
+				and: [ self executedStatementsOf: aTestCase with: profiler inLevel: numLevel + 1 ] ].
 	^ true
 ]
 

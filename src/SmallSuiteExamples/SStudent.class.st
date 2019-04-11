@@ -9,15 +9,14 @@ Class {
 
 { #category : #accessing }
 SStudent class >> score: aNumber [
-	|ins|
-	ins := self new.
-	^ ins.
+	| ins |
+	ins := self new scoreStudent: aNumber.
+	^ ins
 ]
 
 { #category : #'initailize-release' }
 SStudent >> initialize [
-	super initialize.
-	score:=0.
+	score := 0
 ]
 
 { #category : #accessing }
@@ -56,4 +55,9 @@ SStudent >> returnString [
 { #category : #accessing }
 SStudent >> score [
 	^ score
+]
+
+{ #category : #accessing }
+SStudent >> scoreStudent: aNumber [
+	score := aNumber
 ]

@@ -209,8 +209,10 @@ SMethodStatement >> stringBody [
 				ifNotEmpty: [ (self selector substrings: ':')
 						with: self args
 						do: [ :selectorPart :arg | 
-							aStream nextPutAll: selectorPart;
-							nextPutAll: ': ';
-							nextPutAll: arg ] ].
+							aStream
+								nextPutAll: selectorPart;
+								nextPutAll: ': ';
+								nextPutAll: arg;
+								nextPut: Character space ] ].
 			aStream nextPut: $. ]
 ]
