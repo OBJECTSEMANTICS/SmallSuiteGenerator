@@ -21,7 +21,8 @@ SMethodStatement >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> changeUsing: aTestCase [
-	| methods calledMethods constructStatement |
+	| methods calledMethods constructStatement result |
+	result := #().
 	constructStatement := aTestCase statementAt: self receiverVarName.
 	calledMethods := (aTestCase statements
 		select: #isMethod
@@ -40,8 +41,11 @@ SMethodStatement >> changeUsing: aTestCase [
 				ifFound: [ :accessor | accessor ]
 				ifNone: [ methods first ].
 			selected selector = self selector
-				ifTrue: [ newArgs := (STransformValue changeArgsOf: args using: aTestCase)
-						first ]
+				ifTrue: [ result := STransformValue
+						changeArgsOf: args
+						using: aTestCase.
+					newArgs := result first.
+					result := result second ]
 				ifFalse: [ newArgs := selected argTypes
 						collect: [ :class | 
 							aTestCase
@@ -49,10 +53,11 @@ SMethodStatement >> changeUsing: aTestCase [
 								before: (aTestCase indexOf: self varName)
 								avoiding: nil ].
 					(newArgs anySatisfy: #isNil)
-						ifTrue: [ ^ self ] ].
+						ifTrue: [ ^ result ] ].
 			(aTestCase statementAt: self varName)
 				selector: selected selector;
-				args: newArgs ]
+				args: newArgs ].
+	^ result
 ]
 
 { #category : #'as yet unclassified' }
@@ -134,8 +139,7 @@ SMethodStatement >> receiverVarName: anObject [
 SMethodStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
-	self changeUsing: aTestCase.
-	^ #()
+	^ self changeUsing: aTestCase.
 ]
 
 { #category : #mutation }

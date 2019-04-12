@@ -6,8 +6,7 @@ Class {
 		'profile',
 		'generatorInvariant',
 		'counter',
-		'classesToInstrument',
-		'coverage'
+		'dictSubclasses'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -22,7 +21,7 @@ STestCase class >> seed: aGeneratorProfile [
 
 { #category : #generation }
 STestCase >> addConstructor [
-	^ self classesToInstrument shuffle
+	^ self profile allClasses shuffle
 		detect: [ :classSpy | self addConstructor: classSpy ]
 		ifFound: [ true ]
 		ifNone: [ false ]
@@ -247,15 +246,6 @@ STestCase >> classOfArgs: method [
 						collect: [ :class | class name ]
 ]
 
-{ #category : #accessing }
-STestCase >> classesToInstrument [
-	classesToInstrument ifNil: [
-		classesToInstrument := self profile allClasses reject: [:aClass | 
-		(aClass methods reject: #isNotMethodExtension) isNotEmpty
-	]].
-	^ classesToInstrument
-]
-
 { #category : #'as yet unclassified' }
 STestCase >> cleanIrrelevantStatements [
 	| dataStatements varNamesToRemove dictStringStatement referencedVarNames removedVarNames |
@@ -273,35 +263,6 @@ STestCase >> cleanIrrelevantStatements [
 	varNamesToRemove
 		do: [ :varName | removedVarNames addAll: (self remove: varName) ].
 	^ removedVarNames
-]
-
-{ #category : #metric }
-STestCase >> coverage [
-	| calculatorCoverage profiler |
-	calculatorCoverage := SCalculatorCoverage new.
-	(calculatorCoverage executedStatementsOf: self with: profiler) ifTrue: [ 
-		coverage := profiler dictCoverage	
-	].
-	^ coverage
-	"^ SCalculatorCoverage coverageOf: statements using: self varNames"
-	"| profiler node temporaries varNames |
-	node := RBParser parseExpression: '[]'.
-	varNames := self varNames.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: 'SmallSuiteCompil*'.
-	^ {profiler numberOfAllStatements.
-	profiler numberOfExecutedStatements.
-	profiler numberOfMethods.
-	profiler numberOfExecutedMethods}"
 ]
 
 { #category : #metric }
@@ -344,14 +305,18 @@ STestCase >> createScalar: aClassName [
 	returnTypeName := aClassName.
 	scalars := self profile scalars
 		at: aClassName
-		ifAbsent: [ | subclasses |
-			subclasses := (Smalltalk classNamed: aClassName) allSubclasses
-				collect: [ :aClass | aClass name asString ].
-			self profile scalars keys
-				detect: [ :aString | subclasses includes: aString ]
-				ifFound: [ :aString | 
-					returnTypeName := aString.
-					self profile scalars at: aString ]
+		ifAbsent: [ | subclasses keyScalars |
+			keyScalars := STransformValue
+				listShuffle: self profile scalars keys.
+			subclasses := (Smalltalk classNamed: aClassName) subclasses
+				collect: [ :aClass | aClass name ].
+			subclasses ifEmpty: [ ^ nil ].
+			dictSubclasses at: aClassName ifAbsentPut: [ subclasses asSet ].
+			keyScalars
+				detect: [ :aName | subclasses includes: aName ]
+				ifFound: [ :aName | 
+					returnTypeName := aName.
+					self profile scalars at: aName ]
 				ifNone: [ ^ nil ] ].
 	^ {scalars asOrderedCollection shuffle anyOne.
 	returnTypeName}
@@ -447,7 +412,8 @@ STestCase >> initialize [
 	super initialize.
 	counter := 0.
 	statements := OrderedCollection new.
-	generatorInvariant := SSGeneratorInvariant new
+	generatorInvariant := SSGeneratorInvariant new.
+	dictSubclasses := Dictionary new
 ]
 
 { #category : #'accessing untypeable characters' }

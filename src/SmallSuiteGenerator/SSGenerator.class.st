@@ -2,7 +2,6 @@ Class {
 	#name : #SSGenerator,
 	#superclass : #S2Profiler,
 	#instVars : [
-		'instrumentedClasses',
 		'scalars'
 	],
 	#category : #'SmallSuiteGenerator-Profiler'
@@ -25,8 +24,7 @@ SSGenerator >> addScalar: anObject [
 { #category : #initialization }
 SSGenerator >> initialize [
 	super initialize.
-	instrumentedClasses := Dictionary new.
-	scalars := Dictionary new.
+	scalars := Dictionary new
 ]
 
 { #category : #initialization }

@@ -7,31 +7,29 @@ Class {
 { #category : #tests }
 STransformValueTest >> testCollectDependenciesStatementsComplex [
 	| profile testCase dictDependencies |
-	profile := SSGenerator
-		profile: [ SStudent score: 34 ]
-		onClass: SStudent.
+	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
-	testCase addConstructor.	"_var0 := SStudent score: 34"
+	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
 	testCase addMethod.	"_var2 := _var0 initialize"
-	testCase addConstructor.	"_var3 := SStudent score: _var1"
+	testCase addConstructor.	"_var3 := SFoo score: _var1"
 	testCase addMethod.
 	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
 	testCase addPrimitive.	"_var5 := 34"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var6 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var6 := SFoo score: _var5"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var7 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var7 := SFoo score: _var5"
 	testCase addConstructor.
-	testCase statements last args: {'_var1'}.	"_var8 := SStudent score: _var1"
+	testCase statements last args: {'_var1'}.	"_var8 := SFoo score: _var1"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var9 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var9 := SFoo score: _var5"
 	testCase addPrimitive.	"_var10 := 34"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var11 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var11 := SFoo score: _var5"
 	testCase addPrimitive.	"_var12 := 34"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var13 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var13 := SFoo score: _var5"
 	testCase addMethod.
 	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
 	dictDependencies := STransformValue
@@ -39,7 +37,8 @@ STransformValueTest >> testCollectDependenciesStatementsComplex [
 	self assert: dictDependencies size equals: 10.
 	self
 		assertCollection: dictDependencies associations
-		hasSameElements: {('_var2' -> {'_var0'}).
+		hasSameElements:
+			{('_var2' -> {'_var0'}).
 			('_var3' -> {'_var1'}).
 			('_var4' -> {'_var0'}).
 			('_var6' -> {'_var5'}).
@@ -55,8 +54,8 @@ STransformValueTest >> testCollectDependenciesStatementsComplex [
 STransformValueTest >> testCollectDependenciesStatementsSimple [
 	| profile testCase dependenciesStatements |
 	profile := SSGenerator
-		profile: [ SStudent score: 34 ]
-		onClass: SStudent.
+		profile: [ SFoo score: 34 ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addPrimitive.
@@ -75,9 +74,7 @@ STransformValueTest >> testCollectDependenciesStatementsSimple [
 { #category : #tests }
 STransformValueTest >> testDataStatementsNonRepeatedStatements [
 	| profile testCase dataStatements dictBodyStatement referencedVarNames |
-	profile := SSGenerator
-		profile: [ SStudent score: 34 ]
-		onClass: SStudent.
+	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addPrimitive.
@@ -89,8 +86,11 @@ STransformValueTest >> testDataStatementsNonRepeatedStatements [
 	self assert: dictBodyStatement size equals: 4.
 	self
 		assertCollection: dictBodyStatement keys
-		includesAll:
-			{'SStudent score: 34.' . '34.' . '_var0 initialize.' . 'SStudent score: _var1.'}.
+		includesAll: {'SFoo score: 34 .' . '34.' . 'SFoo score: _var1 .'}.
+	self
+		assert:
+			(dictBodyStatement keys
+				includesAnyOf: {'_var0 score: _var1 .' . '_var0 initialize.'}).
 	self
 		assertCollection: dictBodyStatement values
 		hasSameElements:
@@ -107,41 +107,61 @@ STransformValueTest >> testDataStatementsNonRepeatedStatements [
 { #category : #tests }
 STransformValueTest >> testDataStatementsRepeatedStatements [
 	| profile testCase dataStatements dictBodyStatement referencedVarNames |
-	profile := SSGenerator profile: [ SStudent score: 34 ] onClass: SStudent.
+	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
-	testCase addConstructor. "_var0 := SStudent score: 34"
+	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
-	testCase addMethod.		"_var2 := _var0 initialize"
-	testCase addConstructor.	"_var3 := SStudent score: _var1"
-	testCase addMethod.		
-	testCase statements last receiverVarName: '_var0'. "_var4 := _var0 initialize"
+	testCase addMethod.	"_var2 := _var0 initialize"
+	testCase addConstructor.	"_var3 := SFoo score: _var1"
+	testCase addMethod.
+	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
 	testCase addPrimitive.	"_var5 := 34"
-	testCase addConstructor.	
-	testCase statements last args: {'_var5'}.	"_var6 := SStudent score: _var5"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var7 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var6 := SFoo score: _var5"
 	testCase addConstructor.
-	testCase statements last args: {'_var1'}.	"_var8 := SStudent score: _var1"
+	testCase statements last args: {'_var5'}.	"_var7 := SFoo score: _var5"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var9 := SStudent score: _var5"
+	testCase statements last args: {'_var1'}.	"_var8 := SFoo score: _var1"
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var9 := SFoo score: _var5"
 	testCase addPrimitive.	"_var10 := 34"
 	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var11 := SStudent score: _var5"
+	testCase statements last args: {'_var5'}.	"_var11 := SFoo score: _var5"
 	testCase addPrimitive.	"_var12 := 34"
-	testCase addConstructor.	
-	testCase statements last args: {'_var5'}.	"_var13 := SStudent score: _var5"
-	testCase addMethod.		
+	testCase addConstructor.
+	testCase statements last args: {'_var5'}.	"_var13 := SFoo score: _var5"
+	testCase addMethod.
 	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
 	dataStatements := STransformValue dataStatements: testCase statements.
 	dictBodyStatement := dataStatements first.
 	referencedVarNames := dataStatements second.
-	self assert: dictBodyStatement size equals: 6.
-	self assertCollection: dictBodyStatement associations hasSameElements: 
-	{ ('SStudent score: 34.' -> {'_var0'} asOrderedCollection). 
-	('34.' -> {'_var1'. '_var5'. '_var10'. '_var12'} asOrderedCollection). 
-	('_var0 initialize.' -> {'_var2'. '_var4' } asOrderedCollection ). 	('SStudent score: _var1.' -> {'_var3'. '_var8'} asOrderedCollection).
-	('SStudent score: _var5.' -> {'_var6'. '_var7'. '_var9'. '_var11'. '_var13'} asOrderedCollection).
-	('_var7 initialize.' -> {'_var14'} asOrderedCollection)}.
+	self
+		assertCollection: dictBodyStatement associations
+		includesAll:
+			{('SFoo score: 34 .' -> {'_var0'} asOrderedCollection).
+			('34.'
+				-> {'_var1' . '_var5' . '_var10' . '_var12'} asOrderedCollection).
+			('SFoo score: _var1 .' -> {'_var3' . '_var8'} asOrderedCollection).
+			('SFoo score: _var5 .'
+				->
+					{'_var6' . '_var7' . '_var9' . '_var11' . '_var13'}
+						asOrderedCollection)}.
+	"self
+		assert:
+			(dictBodyStatement
+				at: '_var7 initialize.'
+				ifPresent: [ :val | val includes: {'_var14'} ]
+				ifAbsent:
+					[ (dictBodyStatement at: '_var7 score: _var10 .') includes: {'_var14'} ]).
+	self
+		assert:
+			(dictBodyStatement
+				at: '_var0 initialize.'
+				ifPresent: [ :val | val includes: {'_var2' . '_var4'} ]
+				ifAbsent: [ (dictBodyStatement at: '_var0 score: _var1 .')
+						includes: {'_var2' . '_var4'} ])."
 	self assert: referencedVarNames size equals: 4.
-	self assertCollection: referencedVarNames hasSameElements: { '_var0'. '_var1'. '_var5'. '_var7' }.
+	self
+		assertCollection: referencedVarNames
+		hasSameElements: {'_var0' . '_var1' . '_var5' . '_var7'}
 ]
