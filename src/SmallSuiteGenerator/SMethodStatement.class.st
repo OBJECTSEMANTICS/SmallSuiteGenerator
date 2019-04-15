@@ -41,9 +41,7 @@ SMethodStatement >> changeUsing: aTestCase [
 				ifFound: [ :accessor | accessor ]
 				ifNone: [ methods first ].
 			selected selector = self selector
-				ifTrue: [ result := STransformValue
-						changeArgsOf: args
-						using: aTestCase.
+				ifTrue: [ result := STransformValue change: args ofTypes: selected argTypes using: aTestCase.
 					newArgs := result first.
 					result := result second ]
 				ifFalse: [ newArgs := selected argTypes

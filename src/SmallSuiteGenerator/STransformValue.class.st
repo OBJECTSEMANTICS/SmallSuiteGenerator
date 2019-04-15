@@ -25,43 +25,20 @@ STransformValue class >> change: aScalar [
 ]
 
 { #category : #mutation }
-STransformValue class >> change: aScalar ofTypes: types using: aTestCase [
-	aScalar isNumber
-		ifTrue: [ ^ (aScalar + (1 to: 100) atRandom) printString ].
-	aScalar isCharacter
-		ifTrue: [ ^ (Character value: (33 to: 127) atRandom) printString ].
-	aScalar class superclass = Boolean
-		ifTrue: [ aScalar
-				ifTrue: [ ^ false printString ]
-				ifFalse: [ ^ true printString ] ].
-	(aScalar isString
-		and: [ ((aScalar beginsWith: '#(') and: [ aScalar endsWith: ')' ]) not ])
-		ifTrue: [ | interval |
-			interval := 33 to: 127.
-			^ ((Character value: interval atRandom) asString
-				, (aScalar copyFrom: 2 to: aScalar size - 1)
-				, (Character value: interval atRandom) asString) printString ].
-	^ aScalar
-]
-
-{ #category : #mutation }
-STransformValue class >> change: aScalar using: aTestCase [
-	aScalar isNumber
-		ifTrue: [ ^ (aScalar + (1 to: 100) atRandom) printString ].
-	aScalar isCharacter
-		ifTrue: [ ^ (Character value: (33 to: 127) atRandom) printString ].
-	aScalar class superclass = Boolean
-		ifTrue: [ aScalar
-				ifTrue: [ ^ false printString ]
-				ifFalse: [ ^ true printString ] ].
-	(aScalar isString
-		and: [ ((aScalar beginsWith: '#(') and: [ aScalar endsWith: ')' ]) not ])
-		ifTrue: [ | interval |
-			interval := 33 to: 127.
-			^ ((Character value: interval atRandom) asString
-				, (aScalar copyFrom: 2 to: aScalar size - 1)
-				, (Character value: interval atRandom) asString) printString ].
-	^ aScalar
+STransformValue class >> change: args ofTypes: types using: aTestCase [
+	| varToChange argsResult varNames |
+	argsResult := args deepCopy.
+	varToChange := OrderedCollection new.
+	varNames := aTestCase varNames.
+	args
+		withIndexDo: [ :aArg :index | 
+			(varNames includes: aArg)
+				ifTrue: [ varToChange add: aArg ]
+				ifFalse: [ argsResult
+						at: index
+						put: (self changeAndTransform: aArg ofType: (types at: index) using: aTestCase) ] ].
+	^ {argsResult.
+	varToChange}
 ]
 
 { #category : #'as yet unclassified' }
@@ -70,8 +47,23 @@ STransformValue class >> changeAndTransform: aObject [
 ]
 
 { #category : #'as yet unclassified' }
-STransformValue class >> changeAndTransform: aObject using: aTestCase [
-	^ self change: (self transform: aObject) using: aTestCase
+STransformValue class >> changeAndTransform: aObject ofType: aType using: aTestCase [
+	aType isLiteral
+		ifTrue: [ ^ self changeAndTransform: aObject ].
+	aTestCase dictSubclasses
+		at: aType name
+		ifPresent: [ :subClasses | 
+			| otherValues |
+			otherValues := OrderedCollection new.
+			aTestCase profile scalars associations
+				select: [ :assoc | subClasses includes: assoc key ]
+				thenDo: [ :assoc | otherValues addAll: assoc value ].
+			otherValues := self listShuffle: otherValues.
+			otherValues
+				detect: [ :str | str ~= aObject ]
+				ifFound: [ :str | ^ str ]
+				ifNone: [ ^ aObject ] ]
+		ifAbsent: [ "^ self change: (self transform: aObject) using: aTestCase" ^ nil ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -88,21 +80,6 @@ STransformValue class >> changeArg: aArg before: position using: aTestCase allow
 				ifNone: [ aBoolean
 						ifTrue: [ argToUse := nil ] ] ].
 	^ argToUse
-]
-
-{ #category : #'as yet unclassified' }
-STransformValue class >> changeArgsOf: args using: aTestCase [
-	| varToChange argsResult varNames |
-	argsResult := args deepCopy.
-	varToChange := OrderedCollection new.
-	varNames := aTestCase varNames.
-	args
-		withIndexDo: [ :aArg :index | 
-			(varNames includes: aArg)
-				ifTrue: [ varToChange add: aArg ]
-				ifFalse: [ argsResult at: index put: (self changeAndTransform: aArg using: aTestCase) ] ].
-	^ {argsResult.
-	varToChange}
 ]
 
 { #category : #'as yet unclassified' }

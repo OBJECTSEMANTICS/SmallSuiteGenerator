@@ -307,6 +307,8 @@ STestCaseTest >> testChangeField [
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
+				yearsWorkExperience;
+				idTeacher;
 				id ]
 		onClass: SSTeacher.
 	testCase := STestCase seed: profile.
@@ -349,6 +351,30 @@ STestCaseTest >> testChangeMethod [
 		ifTrue: [ oldStatement args
 				ifNotEmpty: [ self deny: oldStatement args equals: currentStatement args ] ]
 		ifFalse: [ self deny: oldStatement selector equals: currentStatement selector ]
+]
+
+{ #category : #'mutation-change' }
+STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
+	| profile testCase oldStatement currentStatement |
+	profile := SSGenerator
+		profile: [ (SFoo score: 2)
+				person:
+					(SStudent new
+						name: 'Peter';
+						nickname: 'peter';
+						score: 5).
+			(SFoo score: 6)
+				person: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+		onClass: SFoo.
+	testCase := STestCase seed: profile.
+	testCase generateStatements.
+	oldStatement := testCase statements
+		detect: [ :stm | stm isMethod and: [ stm selector = #person: ] ]
+		ifFound: [ :stm | stm deepCopy ]
+		ifNone: [ ^ self assert: true ].
+	testCase change: oldStatement varName.	"change the methodStatement"
+	currentStatement := testCase statementAt: oldStatement varName.
+	self denyCollection: currentStatement args equals: oldStatement args
 ]
 
 { #category : #'mutation-change' }

@@ -80,9 +80,19 @@ SSGeneratorTest >> testMethodGeneratorInAbstractClass [
 			(SFoo score: 6)
 				person: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
 		onClass: SFoo.
-	testCase := STestCase seed: profile. self halt.
-	testCase addConstructor.
-	testCase addMethod
+	testCase := STestCase seed: profile.
+	testCase generateStatements.
+	testCase statements
+		detect: [ :stm | stm isMethod and: [ stm selector = #person: ] ]
+		ifFound: [ :stm | 
+			self
+				assert: ((stm args includes: 
+					((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)
+						storeString) or: [ stm args includes: (SStudent new
+						name: 'Peter';
+						nickname: 'peter';
+						score: 5) storeString ]) ]
+		ifNone: [ self assert: true ]
 ]
 
 { #category : #'generator-tests' }

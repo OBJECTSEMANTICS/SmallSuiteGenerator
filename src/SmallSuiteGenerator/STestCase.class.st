@@ -360,6 +360,11 @@ STestCase >> defaultConstructor: classSpy [
 		yourself.
 ]
 
+{ #category : #accessing }
+STestCase >> dictSubclasses [
+	^ dictSubclasses 
+]
+
 { #category : #'as yet unclassified' }
 STestCase >> generateInvariants [
 	^ generatorInvariant generateInvariants: self

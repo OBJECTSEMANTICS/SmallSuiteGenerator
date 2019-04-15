@@ -28,7 +28,7 @@ SConstructorStatement >> changeUsing: aTestCase [
 		ifFound: [ :aMethod | aMethod ]
 		ifNone: [  ].
 	method
-		ifNil: [ result := STransformValue changeArgsOf: args using: aTestCase.
+		ifNil: [ result := STransformValue change: args ofTypes: method argTypes  using: aTestCase.
 			(aTestCase statementAt: self varName) args: result first.
 			result := result second ]
 		ifNotNil: [ | newArgs |

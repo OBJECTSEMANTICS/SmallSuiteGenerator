@@ -2,15 +2,21 @@ Class {
 	#name : #SSTeacher,
 	#superclass : #SSPerson,
 	#instVars : [
-		'yearsWorkExperience'
+		'yearsWorkExperience',
+		'idTeacher'
 	],
 	#category : #SmallSuiteExamples
 }
 
+{ #category : #accessing }
+SSTeacher >> idTeacher [
+	^ idTeacher
+]
+
 { #category : #initialization }
-SSTeacher >> initialize [ 
-	id := 100.
-	yearsWorkExperience := 0.
+SSTeacher >> initialize [
+	idTeacher := 100 + (id ifNil: [0]).
+	yearsWorkExperience := 0
 ]
 
 { #category : #accessing }
