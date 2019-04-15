@@ -29,16 +29,23 @@ STestCase >> addConstructor [
 
 { #category : #generation }
 STestCase >> addConstructor: classSpy [
-	| methods newStatement |
-	methods := classSpy factoryMethods.
-	methods
-		ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
-	newStatement := self
-		newConstructorStatement: classSpy
-		of: methods
-		before: nil.
-	newStatement ifNil: [ ^ false ].
-	^ self addStatement: newStatement
+	(classSpy methods select: #isAbstract) isNotEmpty 
+		ifTrue: [ classSpy subclasses
+				ifEmpty: [ ^ false ]
+				ifNotEmpty: [ dictSubclasses
+						at: classSpy name
+						ifAbsentPut: (classSpy subclasses collect: [ :subc | subc name ]) asSet.
+					^ self addConstructor: classSpy subclasses shuffle anyOne ] ]
+		ifFalse: [ | methods newStatement |
+			methods := classSpy factoryMethods.
+			methods
+				ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
+			newStatement := self
+				newConstructorStatement: classSpy
+				of: methods
+				before: nil.
+			newStatement ifNil: [ ^ false ].
+			^ self addStatement: newStatement ]
 ]
 
 { #category : #accessing }
