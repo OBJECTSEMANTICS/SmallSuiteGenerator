@@ -19,11 +19,6 @@ SFoo >> initialize [
 	score := 0
 ]
 
-{ #category : #'as yet unclassified' }
-SFoo >> person: aPerson [
-	^ aPerson
-]
-
 { #category : #accessing }
 SFoo >> return: aType [
 	^ aType.

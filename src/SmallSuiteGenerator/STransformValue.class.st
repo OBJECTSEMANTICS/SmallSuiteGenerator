@@ -147,8 +147,8 @@ STransformValue class >> getTypeArgs: aClassName of: selector with: aTestCase an
 { #category : #'as yet unclassified' }
 STransformValue class >> listShuffle: aCollection [
 	aCollection
-		ifEmpty: [ ^ aCollection ]
-		ifNotEmpty: [ ^ aCollection shuffle ]
+		ifEmpty: [ ^ aCollection  ]
+		ifNotEmpty: [ ^ aCollection asArray shuffle ]
 ]
 
 { #category : #'as yet unclassified' }

@@ -358,18 +358,18 @@ STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
 	| profile testCase oldStatement currentStatement |
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
-				person:
+				return:
 					(SStudent new
 						name: 'Peter';
 						nickname: 'peter';
-						score: 5).
+						scoreStudent: 5).
 			(SFoo score: 6)
-				person: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase generateStatements.
 	oldStatement := testCase statements
-		detect: [ :stm | stm isMethod and: [ stm selector = #person: ] ]
+		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
 		ifFound: [ :stm | stm deepCopy ]
 		ifNone: [ ^ self assert: true ].
 	testCase change: oldStatement varName.	"change the methodStatement"

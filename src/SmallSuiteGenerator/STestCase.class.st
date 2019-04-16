@@ -33,8 +33,8 @@ STestCase >> addConstructor: classSpy [
 		ifTrue: [ classSpy subclasses
 				ifEmpty: [ ^ false ]
 				ifNotEmpty: [ dictSubclasses
-						at: classSpy name
-						ifAbsentPut: (classSpy subclasses collect: [ :subc | subc name ]) asSet.
+						at: classSpy className
+						ifAbsentPut: (classSpy subclasses collect: [ :subc | subc className ]) asSet.
 					^ self addConstructor: classSpy subclasses shuffle anyOne ] ]
 		ifFalse: [ | methods newStatement |
 			methods := classSpy factoryMethods.
@@ -296,37 +296,23 @@ STestCase >> createArg: aClassName [
 
 { #category : #generation }
 STestCase >> createArg: aClassName before: stop avoiding: varName [
-	| selectedList |
-	selectedList := OrderedCollection new.
-	statements
-		withIndexDo: [ :stm :index | 
-			index < stop
-				ifTrue: [ (stm returnTypeName = aClassName and: [ stm varName ~= varName ])
-						ifTrue: [ selectedList add: stm varName ] ] ].
-	selectedList ifNotEmpty: [ ^ selectedList shuffle anyOne ] ifEmpty: [ ^ (self createScalar: aClassName) first ]
+	| result |
+	result := self
+		statementOfType: aClassName
+		before: stop
+		noCalledEqualTo: varName.
+	result ifNil: [ result := self createScalar: aClassName	 ].
+	^ result ifNil: [ ^ nil ] ifNotNil: [ result first ]
 ]
 
 { #category : #generation }
 STestCase >> createScalar: aClassName [
-	| scalars returnTypeName |
-	returnTypeName := aClassName.
-	scalars := self profile scalars
+	self profile scalars
 		at: aClassName
-		ifAbsent: [ | subclasses keyScalars |
-			keyScalars := STransformValue
-				listShuffle: self profile scalars keys.
-			subclasses := (Smalltalk classNamed: aClassName) subclasses
-				collect: [ :aClass | aClass name ].
-			subclasses ifEmpty: [ ^ nil ].
-			dictSubclasses at: aClassName ifAbsentPut: [ subclasses asSet ].
-			keyScalars
-				detect: [ :aName | subclasses includes: aName ]
-				ifFound: [ :aName | 
-					returnTypeName := aName.
-					self profile scalars at: aName ]
-				ifNone: [ ^ nil ] ].
-	^ {scalars asOrderedCollection shuffle anyOne.
-	returnTypeName}
+		ifPresent: [ :value | 
+			^ {(STransformValue listShuffle: value) first.
+			aClassName} ]
+		ifAbsent: [ ^ self valueOfType: aClassName using: self profile scalars]
 ]
 
 { #category : #'as yet unclassified' }
@@ -675,6 +661,30 @@ STestCase >> statementAt: varName [
 	^ nil
 ]
 
+{ #category : #'as yet unclassified' }
+STestCase >> statementOfType: aClassName before: stop noCalledEqualTo: varName [
+	| dictionary candidates |
+	dictionary := Dictionary new.
+	candidates := OrderedCollection new.
+	statements
+		withIndexDo: [ :stm :index | 
+			(index < stop
+				and: [ stm varName ~= varName ])
+				ifTrue: [ candidates add: stm ] ].
+	candidates
+		do: [ :stm | 
+			dictionary
+				at:
+					(stm isConstructor
+						ifTrue: [ stm theClassName ]
+						ifFalse: [ stm returnTypeName ])
+				ifPresent: [ :aSet | aSet add: stm varName ]
+				ifAbsentPut: [ {stm varName} asSet ] ].
+	dictionary
+		ifNotEmpty: [ ^ self valueOfType: aClassName using: dictionary ].
+	^ nil
+]
+
 { #category : #accessing }
 STestCase >> statements [
 	^ statements
@@ -713,6 +723,28 @@ STestCase >> statementsGroupedByDependencies [
 STestCase >> validDependencies: dependencies with: varNames [
 	^ varNames includesAll: dependencies
 	
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> valueOfType: aClassName using: aDictionary [
+	aDictionary at: aClassName 
+	ifPresent: [ :value | ^ {(STransformValue listShuffle: value) first. aClassName} ] 
+	ifAbsent: [ 
+	| subclasses |
+	dictSubclasses at: aClassName 
+	ifPresent: [:value | subclasses := value  ]
+	ifAbsent: [ 
+	subclasses := (Smalltalk classNamed: aClassName) subclasses
+		collect: [ :aClass | aClass name ].
+	subclasses ifEmpty: [ ^ nil ].
+		dictSubclasses at: aClassName put: subclasses asSet ].
+	(STransformValue listShuffle: aDictionary keys)
+		detect: [ :aName | subclasses includes: aName ]
+		ifFound: [ :aName | 
+			^ {(STransformValue
+				listShuffle: (aDictionary at: aName) asOrderedCollection) first.
+			aName} ].
+	^ nil]
 ]
 
 { #category : #'as yet unclassified' }

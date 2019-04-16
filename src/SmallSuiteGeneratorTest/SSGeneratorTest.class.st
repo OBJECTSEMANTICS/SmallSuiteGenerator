@@ -68,30 +68,64 @@ _var1 := _var0 initialize.
 ]
 
 { #category : #tests }
-SSGeneratorTest >> testMethodGeneratorInAbstractClass [
+SSGeneratorTest >> testMethodGeneratorOnClass [
 	| profile testCase |
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
-				person:
+				return:
 					(SStudent new
 						name: 'Peter';
 						nickname: 'peter';
-						score: 5).
+						scoreStudent: 5).
 			(SFoo score: 6)
-				person: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase generateStatements.
 	testCase statements
-		detect: [ :stm | stm isMethod and: [ stm selector = #person: ] ]
+		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
 		ifFound: [ :stm | 
 			self
-				assert: ((stm args includes: 
-					((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)
-						storeString) or: [ stm args includes: (SStudent new
+				assert:
+					((stm args
+						includes:
+							((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)
+								storeString)
+						or: [ stm args
+								includes:
+									(SStudent new
+										name: 'Peter';
+										nickname: 'peter';
+										scoreStudent: 5) storeString ]) ]
+		ifNone: [ self assert: true ]
+]
+
+{ #category : #tests }
+SSGeneratorTest >> testMethodGeneratorOnClasses [
+	| profile testCase |
+	profile := SSGenerator
+		profile: [ (SFoo score: 2)
+				return:
+					(SStudent new
 						name: 'Peter';
 						nickname: 'peter';
-						score: 5) storeString ]) ]
+						scoreStudent: 5).
+			(SFoo score: 6)
+				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+		onClasses: {SFoo. SStudent. SSPerson. SSTeacher}.
+	testCase := STestCase seed: profile.
+	testCase generateStatements.
+	testCase statements
+		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
+		ifFound: [ :stm | 
+			| statement possibleValues |
+			statement := testCase statementAt: stm args first.
+			possibleValues := {#SSTeacher . #SStudent}.
+			self
+				assert:
+					((statement isConstructor
+						and: [ possibleValues includes: statement theClassName ])
+						or: [ possibleValues includes: statement returnTypeName ]) ]
 		ifNone: [ self assert: true ]
 ]
 
