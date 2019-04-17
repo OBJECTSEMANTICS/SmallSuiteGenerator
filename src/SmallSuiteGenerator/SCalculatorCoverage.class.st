@@ -118,6 +118,14 @@ SCalculatorCoverage >> coverageTestCase: testCase onPackagesMatching: regex [
 ]
 
 { #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverageTestCase: testCase using: profiler [
+	| coverage |
+	(self executedStatementsOf: testCase with: profiler)
+		ifTrue: [ coverage := profiler dictCoverage ].
+	^ coverage
+]
+
+{ #category : #'as yet unclassified' }
 SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler [
 	^ self executedStatementsOf: aTestCase with: profiler inLevel: 1
 	"| formattedNode |

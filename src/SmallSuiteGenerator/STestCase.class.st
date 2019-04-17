@@ -6,10 +6,23 @@ Class {
 		'profile',
 		'generatorInvariant',
 		'counter',
-		'dictSubclasses'
+		'dictSubclasses',
+		'fitness'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'instance creation' }
+STestCase class >> createTestSuite: aGeneratorProfile ofSize: aNumber [
+	| collection testCase |
+	collection := OrderedCollection new.
+	1 to: aNumber do: [ :index | 
+		testCase := self new.
+		testCase profile: aGeneratorProfile.
+		testCase generateStatements: (10 to: 54) atRandom.
+		collection add: testCase ].
+	^ collection
+]
 
 { #category : #'instance creation' }
 STestCase class >> seed: aGeneratorProfile [
@@ -272,6 +285,11 @@ STestCase >> cleanIrrelevantStatements [
 	^ removedVarNames
 ]
 
+{ #category : #'as yet unclassified' }
+STestCase >> computeFitnessUsing: fitnessBlock [
+	fitness := fitnessBlock value: statements
+]
+
 { #category : #metric }
 STestCase >> coverageOnClass: aClass [
 	^ SCalculatorCoverage new
@@ -280,10 +298,20 @@ STestCase >> coverageOnClass: aClass [
 ]
 
 { #category : #metric }
+STestCase >> coverageOnClass: aClass using: profiler [
+	^ SCalculatorCoverage new coverageTestCase: self onClass: aClass
+]
+
+{ #category : #metric }
 STestCase >> coverageOnPackagesMatching: regex [
 	^ SCalculatorCoverage new
 		coverageTestCase: self
 		onPackagesMatching: regex
+]
+
+{ #category : #metric }
+STestCase >> coverageUsing: profiler [
+	^ SCalculatorCoverage new coverageTestCase: self using: profiler
 ]
 
 { #category : #generation }
@@ -356,6 +384,11 @@ STestCase >> defaultConstructor: classSpy [
 { #category : #accessing }
 STestCase >> dictSubclasses [
 	^ dictSubclasses 
+]
+
+{ #category : #accessing }
+STestCase >> fitness [
+	^ fitness
 ]
 
 { #category : #'as yet unclassified' }
@@ -553,6 +586,11 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 		selector: selector;
 		args: args;
 		yourself
+]
+
+{ #category : #accessing }
+STestCase >> numberOfStatements [
+	^ statements size
 ]
 
 { #category : #printing }
