@@ -200,6 +200,12 @@ STestCase >> addStatement: aStatement satisfyingParameters: otherTestCase [
 		with: otherTestCase
 ]
 
+{ #category : #accessing }
+STestCase >> addStatements: collectionStatement [
+	statements addAll: collectionStatement.
+	^ true
+]
+
 { #category : #'as yet unclassified' }
 STestCase >> applyMutator [
 	^ statements isNotEmpty 

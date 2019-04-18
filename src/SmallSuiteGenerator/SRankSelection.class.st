@@ -1,7 +1,7 @@
 Class {
 	#name : #SRankSelection,
 	#superclass : #Object,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
 
 { #category : #'as yet unclassified' }

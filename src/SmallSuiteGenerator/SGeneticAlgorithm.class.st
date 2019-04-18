@@ -1,7 +1,7 @@
 Class {
 	#name : #SGeneticAlgorithm,
 	#superclass : #Object,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
 
 { #category : #'as yet unclassified' }
@@ -11,32 +11,22 @@ SGeneticAlgorithm >> crossover: aTestCase1 with: aTestCase2 [
 
 { #category : #'as yet unclassified' }
 SGeneticAlgorithm >> elitism: population [
-	^ population first
+	^ {population first}
 ]
 
 { #category : #'as yet unclassified' }
 SGeneticAlgorithm >> geneticAlgorithm: aBlock onClass: aClass usingTestSuiteOfSize: aNumber [
-	| profiler testCaseProfiler fitnessBlock |
+	| profiler testCaseProfiler fitnessBlock population newPopulation |
 	testCaseProfiler := SSGenerator profile: aBlock onClass: aClass.
-	profiler := SBProfiler new.
-	profiler profileInstrumented: aBlock onClass: aClass.
-	fitnessBlock := [ :testCase | testCase coverageUsing: profiler ].
-	self
-		geneticAlgorithmUsing: testCaseProfiler
-		and: fitnessBlock
-		inTestSuiteOfSize: aNumber.
-	profiler cleanInstrumentation
-]
-
-{ #category : #'as yet unclassified' }
-SGeneticAlgorithm >> geneticAlgorithmUsing: testCaseProfiler and: fitnessBlock inTestSuiteOfSize: aNumber [
-	| population numIterations |
-	numIterations := 10.
 	population := STestCase
 		createTestSuite: testCaseProfiler
 		ofSize: aNumber.
-	1 to: numIterations do: [ :numIter | population := self newGeneration: population with: fitnessBlock  ].
-	^ population
+	profiler := SBProfiler new.
+	profiler profileInstrumented: aBlock onClass: aClass.
+	fitnessBlock := [ :testCase | testCase computeFitnessUsing: profiler ].
+	newPopulation := self populationUsingGA: population and: fitnessBlock.
+	profiler cleanInstrumentation.
+	^ newPopulation
 ]
 
 { #category : #testing }
@@ -46,7 +36,7 @@ SGeneticAlgorithm >> isNextPopulationFull: collection [
 
 { #category : #testing }
 SGeneticAlgorithm >> isTooLong: aTestCase [
-	^ aTestCase numberOfStatements > 56 "si el numero de statements sobrepasa el maximo"
+	^ aTestCase numberOfStatements > 54	"si el numero de statements sobrepasa el maximo"
 ]
 
 { #category : #'instance creation' }
@@ -70,6 +60,16 @@ SGeneticAlgorithm >> newGeneration: population with: aFitnessBlock [
 				ifTrue: [ newGeneration add: p2 ]
 				ifFalse: [ newGeneration add: o2 ] ].
 	^ newGeneration
+]
+
+{ #category : #'as yet unclassified' }
+SGeneticAlgorithm >> populationUsingGA: population and: fitnessBlock [
+	| newPopulation numIterations |
+	numIterations := 10.
+	newPopulation := population.
+	1 to: numIterations do:
+		[ :numIter | newPopulation := self newGeneration: newPopulation with: fitnessBlock ].
+	^ newPopulation
 ]
 
 { #category : #'as yet unclassified' }
