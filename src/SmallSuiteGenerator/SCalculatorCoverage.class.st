@@ -4,6 +4,10 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage class >> calculateCoverage: testCase using: coverageProfiler [
+]
+
 { #category : #compiling }
 SCalculatorCoverage class >> coverageOf: statements using: varNames [
 	| profiler node temporaries |
@@ -38,7 +42,7 @@ SCalculatorCoverage >> calculateCoverage2: aBlock [
 	testCase1 generateStatements.
 	testCase2 := STestCase seed: testCaseProfiler.
 	testCase2 generateStatements.
-	offSprings := testCase1 crossOverWith: testCase2.
+	offSprings := SGACrossoverOperation new crossover: testCase1 with: testCase2.
 	offSpring1Profiler := self class
 		coverageOf: offSprings first statements
 		using: offSprings first varNames.

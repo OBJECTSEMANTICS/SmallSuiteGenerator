@@ -1,7 +1,7 @@
 Class {
 	#name : #STestCaseTest,
 	#superclass : #TestCase,
-	#category : #'SmallSuiteGeneratorTest-Mutation'
+	#category : #'SmallSuiteGeneratorTest-GeneticAlgorithm'
 }
 
 { #category : #'as yet unclassified' }
@@ -256,37 +256,27 @@ STestCaseTest >> assertRemove: listTestCase [
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeConstructor [
 	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('2').
-	profile := SSGenerator
-		profile: [ SFoo score: 3.56 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('3.56').
-	profile := SSGenerator
-		profile: [ SFoo score: $a ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('$a').
-	profile := SSGenerator
-		profile: [ SFoo score: true ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
 	self assert: testCase statements first args equals: #('false').
-	profile := SSGenerator
-		profile: [ SFoo score: 'hello' ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
@@ -438,9 +428,9 @@ STestCaseTest >> testChangeRoassal [
 STestCaseTest >> testChangeWithTwoConstructor [
 	| profile testCase oldSelector |
 	profile := SSGenerator
-		profile: [ SSTeacher name: 'Peter'.
-			SSTeacher name: 'Ann' with: 2 ]
-		onClass: SSTeacher.
+		profile: [ SStack newStack.
+			SStack newStackWith: { 1. 5. 7. 8 } ]
+		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	oldSelector := testCase statements first selector.
@@ -555,45 +545,13 @@ STestCaseTest >> testCoverageSStudent [
 	self assert: (coverage at: 'noOfExecutedStatements') equals: 4.
 ]
 
-{ #category : #crossover }
-STestCaseTest >> testCrossOver: listTestCase [
-	| offSprings offSpring1 offSpring2 |
-	self assert: listTestCase size >= 2.
-	offSprings := listTestCase first crossOverWith: listTestCase second.
-	offSpring1 := offSprings first.
-	offSpring2 := offSprings second.
-	self assert: offSpring1 hasValidDependencies.
-	self assert: offSpring2 hasValidDependencies
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTAMItem [
-	self testCrossOver: self class listTestCaseRTAMItem shuffle.
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTBorderAttachPoint [
-	self testCrossOver: self class listTestCaseRTBorderAttachPoint shuffle.
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTBox [
-	self testCrossOver: self class listTestCaseRTBox shuffle.
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTDirectedLine [
-	self testCrossOver: self class listTestCaseRTDirectedLine shuffle.
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToRTLineSegment [
-	self testCrossOver: self class listTestCaseRTLineSegment shuffle.
-]
-
-{ #category : #crossover }
-STestCaseTest >> testCrossOverToSStudent [
-	self testCrossOver: self class listTestCaseStudent shuffle.
+{ #category : #'mutation-change' }
+STestCaseTest >> testCreateTestCases [
+	| profile testSuite |
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
+	testSuite := STestCase create: 10 testCasesAndInitialize: 15 statementsUsing: profile.
+	self assert: testSuite size equals: 10.
+	self assertCollection: (testSuite collect: #numberOfStatements) asSet hasSameElements: #(15).
 ]
 
 { #category : #'mutation-insert' }

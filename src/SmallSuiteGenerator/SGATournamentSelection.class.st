@@ -1,5 +1,5 @@
 Class {
-	#name : #STournamentSelection,
+	#name : #SGATournamentSelection,
 	#superclass : #SGAObject,
 	#instVars : [
 		'population',
@@ -15,12 +15,12 @@ Class {
 }
 
 { #category : #accessing }
-STournamentSelection >> compareFitness: aTwoArgBlock [
+SGATournamentSelection >> compareFitness: aTwoArgBlock [
 	compareFitness := aTwoArgBlock
 ]
 
 { #category : #'as yet unclassified' }
-STournamentSelection >> createNewPopulation [
+SGATournamentSelection >> createNewPopulation [
 	"Return a new population made of newly breed testCase"
 
 	| parentA parentB offsprings offspringA offspringB |
@@ -32,18 +32,18 @@ STournamentSelection >> createNewPopulation [
 			offspringA := self mutate: offsprings first.
 			offspringB := self mutate: offsprings second.
 			(self isTooLong: offspringA)
-				ifFalse: [ population add: offspringA ].
+				ifFalse: [ population add: offspringA. ].
 			(self isTooLong: offspringB)
 				ifFalse: [ population add: offspringB ] ]
 ]
 
 { #category : #'as yet unclassified' }
-STournamentSelection >> crossover: testCaseA with: testCaseB [
+SGATournamentSelection >> crossover: testCaseA with: testCaseB [
 	^ engine crossover: testCaseA with: testCaseB
 ]
 
 { #category : #'as yet unclassified' }
-STournamentSelection >> doSelection [
+SGATournamentSelection >> doSelection [
 	populationSize := initialPopulation size.
 	fittest := initialPopulation first.
 	initialPopulation
@@ -56,17 +56,32 @@ STournamentSelection >> doSelection [
 ]
 
 { #category : #accessing }
-STournamentSelection >> engine: aEngine [
+SGATournamentSelection >> engine [ 
+	^ engine
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> engine: aEngine [
 	engine := aEngine
 ]
 
 { #category : #accessing }
-STournamentSelection >> fitnessBlock: aBlock [
+SGATournamentSelection >> fitnessBlock [
+	^ fitnessBlock 
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> fitnessBlock: aBlock [
 	fitnessBlock := aBlock
 ]
 
+{ #category : #accessing }
+SGATournamentSelection >> fittest [
+	^ fittest
+]
+
 { #category : #'as yet unclassified' }
-STournamentSelection >> getGoodTestCase [
+SGATournamentSelection >> getGoodTestCase [
 	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
 	| best testCase |
 	best := nil.
@@ -80,16 +95,42 @@ STournamentSelection >> getGoodTestCase [
 ]
 
 { #category : #accessing }
-STournamentSelection >> initialPopulation: aPopulation [
+SGATournamentSelection >> initialPopulation: aPopulation [
 	initialPopulation := aPopulation 
 ]
 
 { #category : #initialization }
-STournamentSelection >> initialize [
-	population := OrderedCollection new
+SGATournamentSelection >> initialize [
+	population := OrderedCollection new.
+	tournamentSize := 5
 ]
 
 { #category : #testing }
-STournamentSelection >> isTestCase: testCase betterThan: fittestTestCase [
+SGATournamentSelection >> isTestCase: testCase betterThan: fittestTestCase [
 	^ engine isTestCase: testCase betterThan: fittestTestCase
+]
+
+{ #category : #testing }
+SGATournamentSelection >> isTooLong: aTestCase [
+	^ aTestCase numberOfStatements > 54	"si el numero de statements sobrepasa el maximo"
+]
+
+{ #category : #'as yet unclassified' }
+SGATournamentSelection >> mutate: child [
+	^ engine mutate: child
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> population [
+	^ population 
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> populationSize [
+	^ initialPopulation size
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> populationSize: aInteger [
+	populationSize := aInteger
 ]

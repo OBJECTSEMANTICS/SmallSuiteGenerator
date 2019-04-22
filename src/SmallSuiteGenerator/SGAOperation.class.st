@@ -1,5 +1,5 @@
 Class {
-	#name : #SCrossoverOperation,
+	#name : #SGAOperation,
 	#superclass : #SGAObject,
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }

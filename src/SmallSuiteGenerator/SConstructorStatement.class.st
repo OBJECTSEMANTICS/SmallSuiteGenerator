@@ -21,14 +21,15 @@ SConstructorStatement >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SConstructorStatement >> changeUsing: aTestCase [
-	| classSpy method result |
+	| classSpy method result methods |
 	classSpy := aTestCase profile classAt: self theClassName.
-	method := classSpy factoryMethods shuffle
+	methods := classSpy factoryMethods shuffle.
+	method := methods
 		detect: [ :aMethod | aMethod selector ~= self selector ]
 		ifFound: [ :aMethod | aMethod ]
-		ifNone: [  ].
+		ifNone: [ ].
 	method
-		ifNil: [ result := STransformValue change: args ofTypes: method argTypes  using: aTestCase.
+		ifNil: [ result := STransformValue change: args ofTypes: (methods ifEmpty: [ #() ] ifNotEmpty: [methods first argTypes])  using: aTestCase.
 			(aTestCase statementAt: self varName) args: result first.
 			result := result second ]
 		ifNotNil: [ | newArgs |

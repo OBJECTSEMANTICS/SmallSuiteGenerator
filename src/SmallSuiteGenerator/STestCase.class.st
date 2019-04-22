@@ -13,6 +13,18 @@ Class {
 }
 
 { #category : #'instance creation' }
+STestCase class >> create: numberOfTestCases testCasesAndInitialize: numberOfStatements statementsUsing: profiler [
+	| collection testCase |
+	collection := OrderedCollection new.
+	1 to: numberOfTestCases do: [ :index | 
+		testCase := self new.
+		testCase profile: profiler.
+		testCase generateStatements: numberOfStatements.
+		collection add: testCase ].
+	^ collection
+]
+
+{ #category : #'instance creation' }
 STestCase class >> createTestSuite: aGeneratorProfile ofSize: aNumber [
 	| collection testCase |
 	collection := OrderedCollection new.
@@ -203,6 +215,7 @@ STestCase >> addStatement: aStatement satisfyingParameters: otherTestCase [
 { #category : #accessing }
 STestCase >> addStatements: collectionStatement [
 	statements addAll: collectionStatement.
+	counter := collectionStatement size.
 	^ true
 ]
 
@@ -293,7 +306,7 @@ STestCase >> cleanIrrelevantStatements [
 
 { #category : #'as yet unclassified' }
 STestCase >> computeFitnessUsing: fitnessBlock [
-	fitness := fitnessBlock value: statements
+	fitness := fitnessBlock value: self
 ]
 
 { #category : #metric }
@@ -349,35 +362,6 @@ STestCase >> createScalar: aClassName [
 		ifAbsent: [ ^ self valueOfType: aClassName using: self profile scalars]
 ]
 
-{ #category : #'as yet unclassified' }
-STestCase >> crossOverWith: otherTestCase [
-	| alpha offSpring1 offSpring2 size sizeOther |
-	alpha := (0.1 to: 0.9 by: 0.1) atRandom round: 1.
-	size := statements size.
-	sizeOther := otherTestCase statements size.
-	offSpring1 := STestCase seed: otherTestCase profile.
-	(statements copyFrom: 1 to: (size * alpha) asInteger)
-		do: [ :aStm | 
-			offSpring1 addStatement: aStm.
-			offSpring1 assignedId ].	"first alpha(P1)"
-	(otherTestCase statements
-		copyFrom: (alpha * sizeOther) asInteger + 1
-		to: sizeOther)
-		do:
-			[ :aStm | offSpring1 addStatement: aStm satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
-	offSpring2 := STestCase seed: self profile.
-	(otherTestCase statements
-		copyFrom: 1
-		to: (sizeOther * alpha) asInteger)
-		do: [ :aStm | 
-			offSpring2 addStatement: aStm.
-			offSpring2 assignedId ].	"first alpha(P2)"
-	(statements copyFrom: (alpha * size) asInteger + 1 to: size)
-		do: [ :aStm | offSpring2 addStatement: aStm satisfyingParameters: self ].	"last (1-alpha)(P1)"
-	^ {offSpring1.
-	offSpring2}
-]
-
 { #category : #generation }
 STestCase >> defaultConstructor: classSpy [
 	^ (SConstructorStatement create: self assignedId)
@@ -409,7 +393,7 @@ STestCase >> generateStatements [
 
 { #category : #'as yet unclassified' }
 STestCase >> generateStatements: aNumber [
-	[ self statements size <= aNumber ]
+	[ self statements size < aNumber ]
 		whileTrue: [ [ self
 				perform: #(#addConstructor #addField #addMethod #addPrimitive) shuffle anyOne ]
 				on: Error

@@ -15,11 +15,11 @@ STransformValue class >> change: aScalar [
 				ifTrue: [ ^ false printString ]
 				ifFalse: [ ^ true printString ] ].
 	(aScalar isString
-		and: [ ((aScalar beginsWith: '#(') and: [ aScalar endsWith: ')' ]) not ])
+		and: [ (aScalar beginsWith: '#(') not ])
 		ifTrue: [ | interval |
 			interval := 33 to: 127.
 			^ ((Character value: interval atRandom) asString
-				, (aScalar copyFrom: 2 to: aScalar size - 1)
+				, (aScalar copyFrom: 1 to: aScalar size - 1)
 				, (Character value: interval atRandom) asString) printString ].
 	^ aScalar
 ]
@@ -48,8 +48,10 @@ STransformValue class >> changeAndTransform: aObject [
 
 { #category : #'as yet unclassified' }
 STransformValue class >> changeAndTransform: aObject ofType: aType using: aTestCase [
-	aType isLiteral
-		ifTrue: [ ^ self changeAndTransform: aObject ].
+	| transformation |
+	transformation := self transform: aObject.
+	transformation isLiteral
+		ifTrue: [ ^ self change: transformation ].
 	aTestCase dictSubclasses
 		at: aType name
 		ifPresent: [ :subClasses | 
