@@ -14,7 +14,8 @@ Class {
 		'logs',
 		'blockToExecute',
 		'coverageProfiler',
-		'generatorProfiler'
+		'generatorProfiler',
+		'valueToCompare'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -23,7 +24,8 @@ Class {
 SGAEngine >> beforeRun [
 	self checkIfReadyToRun.
 	selection fitnessBlock: fitnessBlock.
-	selection populationSize: populationSize
+	selection populationSize: populationSize.
+	selection random: random
 ]
 
 { #category : #accessing }
@@ -121,6 +123,7 @@ SGAEngine >> initialize [
 	super initialize.
 	logs := OrderedCollection new.
 	random := Random new.
+	valueToCompare := 'statementCoverage'.
 	self endForMaxNumberOfGeneration: 10.
 	populationSize := 100.
 	self maximizeComparator.
@@ -159,7 +162,8 @@ SGAEngine >> logs [
 { #category : #'as yet unclassified' }
 SGAEngine >> maximizeComparator [
 	"change by statementCoverage or methodCoverage"
-	compareFitness := [ :f1 :f2 | f1 > f2 ]
+
+	compareFitness := [ :f1 :f2 | (f1 at: valueToCompare) > (f2 at: valueToCompare)]
 ]
 
 { #category : #'as yet unclassified' }
@@ -261,4 +265,9 @@ SGAEngine >> selection: aSelection [
 SGAEngine >> shouldTerminate [
 	logs ifEmpty: [ ^ false ].
 	^ terminationBlock value
+]
+
+{ #category : #accessing }
+SGAEngine >> valueToCompare: keyValue [
+	valueToCompare := keyValue 
 ]

@@ -175,6 +175,30 @@ SUtilityTest class >> listTestCaseRTLineSegment [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTest class >> listTestCaseSStack [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			((self
+				generateTestCase: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+						push: 8;
+						pop;
+						top ]
+				with: SStack) generateStatements:10);
+		add:
+			((self generateTestCase: [ SStack newStack push: 2 ] with: SStack)
+				generateStatements: 10);
+		add:
+			((self
+				generateTestCase: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+						pop;
+						top ]
+				with: SStack) generateStatements:10).
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTest class >> listTestCaseStudent [
 	| list |
 	list := OrderedCollection new.

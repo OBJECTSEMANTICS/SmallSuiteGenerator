@@ -522,7 +522,8 @@ STestCase >> insertStatementWithArgs: aStatement before: aPosition [
 			addedList := newArgs asArray.
 			newPosition := newArgs
 				ifNotEmpty: [ | indexFrom |
-					indexFrom := (self indexOf: newArgs last) + 1.
+					indexFrom := self indexOf: newArgs last.
+					indexFrom := indexFrom < 0 ifTrue: [size] ifFalse: [indexFrom + 1].
 					STransformValue
 						randomNumberFrom: indexFrom
 						to: size
@@ -576,6 +577,11 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 		selector: selector;
 		args: args;
 		yourself
+]
+
+{ #category : #accessing }
+STestCase >> nextId [
+	^ counter
 ]
 
 { #category : #accessing }

@@ -7,21 +7,19 @@ Class {
 { #category : #mutation }
 STransformValue class >> change: aScalar [
 	aScalar isNumber
-		ifTrue: [ ^ (aScalar + (1 to: 100) atRandom) printString ].
+		ifTrue: [ ^ STON toString: aScalar + (1 to: 100) atRandom ].
 	aScalar isCharacter
-		ifTrue: [ ^ (Character value: (33 to: 127) atRandom) printString ].
+		ifTrue:
+			[ ^ STON toString: (Character value: (self randomValueCharacter: aScalar)) ].
 	aScalar class superclass = Boolean
-		ifTrue: [ aScalar
-				ifTrue: [ ^ false printString ]
-				ifFalse: [ ^ true printString ] ].
-	(aScalar isString
-		and: [ (aScalar beginsWith: '#(') not ])
+		ifTrue: [ ^ STON toString: aScalar not ].
+	aScalar isString
 		ifTrue: [ | interval |
 			interval := 33 to: 127.
 			^ ((Character value: interval atRandom) asString
 				, (aScalar copyFrom: 1 to: aScalar size - 1)
 				, (Character value: interval atRandom) asString) printString ].
-	^ aScalar
+	^ STON toString: aScalar
 ]
 
 { #category : #mutation }
@@ -160,6 +158,16 @@ STransformValue class >> randomNumberFrom: aNumber1 to: aNumber2 default: aNumbe
 	^ interval ifEmpty: [ aNumber3 ] ifNotEmpty: [ interval atRandom ]
 ]
 
+{ #category : #'as yet unclassified' }
+STransformValue class >> randomValueCharacter: aCharacter [
+	| value interval |
+	interval := 33 to: 127.
+	value := interval atRandom.
+	[ value == aCharacter asInteger ]
+		whileTrue: [ value := interval atRandom ].
+	^ value
+]
+
 { #category : #removing }
 STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName using: aTestCase [
 	| varToDelete replace argsResult |
@@ -275,16 +283,5 @@ STransformValue class >> selectVarNames: args [
 
 { #category : #accessing }
 STransformValue class >> transform: aString [
-	| value |
-	[ value := aString asNumber.
-	^ value ]
-		on: Error
-		do: [  ].
-	aString = 'true'
-		ifTrue: [ ^ true ].
-	aString = 'false'
-		ifTrue: [ ^ false ].
-	((aString beginsWith: '$') and: [ aString size = 2 ])
-		ifTrue: [ ^ aString second ].
-	^ aString
+	^ [STON fromString: aString] on: STONReaderError do: [ aString ]
 ]

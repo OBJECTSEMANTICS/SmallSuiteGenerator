@@ -6,6 +6,57 @@ Class {
 
 { #category : #'as yet unclassified' }
 SCalculatorCoverage class >> calculateCoverage: testCase using: coverageProfiler [
+	| profiler node temporaries |
+	node := RBParser parseExpression: '[]'.
+	temporaries := testCase varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	testCase statements
+		collect: [ :statement | statement printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , node body formattedCode.
+	profiler := SBProfiler
+		profile: [ STestCaseCompiler new testCaseCompiled ]
+		onPackagesMatching: 'SmallSuiteExampl*'.
+	^ profiler dictCoverage
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage class >> calculateCoverageOf: aTestCase using: profiler [
+	^ self calculateCoverageOf: aTestCase using: profiler inLevel: 1
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage class >> calculateCoverageOf: aTestCase using: profiler inLevel: numLevel [
+	| formattedNode |
+	numLevel > self maxNumberOfIterations
+		ifTrue: [ ^ profiler dictCoverage ].
+	formattedNode := self
+		nodeFormattedOf: aTestCase statements
+		and: aTestCase varNames.
+	[ STestCaseCompiler
+		compile: 'testCaseCompiled' , String cr , formattedNode ]
+		on: Error
+		do: [ :e | 
+			(aTestCase removeNumStatements: 5) ifTrue: [ ^ self
+						calculateCoverageOf: aTestCase
+						using: profiler
+						inLevel: numLevel + 1 ]
+			ifFalse: [ ^ profiler dictCoverage ]].
+	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
+		on: Exception
+		do: [ :exception | 
+			 (aTestCase
+				changeStatementsOfClassName:
+					([ exception signaler name ]
+						on: MessageNotUnderstood
+						do: [ exception signaler className ])) ifTrue: [ ^ self
+						calculateCoverageOf: aTestCase
+						using: profiler
+						inLevel: numLevel + 1 ]
+		 ].
+	^ profiler dictCoverage 
 ]
 
 { #category : #compiling }
@@ -29,6 +80,19 @@ SCalculatorCoverage class >> coverageOf: statements using: varNames [
 { #category : #accessing }
 SCalculatorCoverage class >> maxNumberOfIterations [
 	^ 5
+]
+
+{ #category : #compiling }
+SCalculatorCoverage class >> nodeFormattedOf: statements and: varNames [
+	| node temporaries |
+	node := RBParser parseExpression: '[]'.
+	temporaries := varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statements
+		collect: [ :statement | statement printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	^ node body formattedCode
 ]
 
 { #category : #'as yet unclassified' }
@@ -85,53 +149,8 @@ SCalculatorCoverage >> calculateCoverage: aBlock onPackagesMatching: regex inTes
 ]
 
 { #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverage: testCaseProfiler using: profiler inTestSuiteOfSize: aNumber [
-	| listCoverage testSuite |
-	listCoverage := OrderedCollection new.
-	listCoverage add: profiler dictCoverage.
-	[ testSuite := self testSuite: testCaseProfiler ofSize: aNumber.
-	testSuite
-		do: [ :aTestCase | 
-			(self executedStatementsOf: aTestCase with: profiler)
-				ifTrue: [ listCoverage add: profiler dictCoverage ] ] ]
-		on: Exception
-		do: [ profiler cleanInstrumentation ].
-	^ listCoverage
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestCase: testCase onClass: aClass [
-	| profiler coverage |
-	profiler := SBProfiler new.
-	profiler profileInstrumented: [  ] onClass: aClass.
-	(self executedStatementsOf: testCase with: profiler)
-		ifTrue: [ coverage := profiler dictCoverage ].
-	profiler cleanInstrumentation.
-	^ coverage
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestCase: testCase onPackagesMatching: regex [
-	| profiler coverage |
-	profiler := SBProfiler new.
-	profiler profileInstrumented: [  ] onPackagesMatching: regex.
-	(self executedStatementsOf: testCase with: profiler)
-		ifTrue: [ coverage := profiler dictCoverage ].
-	profiler cleanInstrumentation.
-	^ coverage
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestCase: testCase using: profiler [
-	| coverage |
-	(self executedStatementsOf: testCase with: profiler)
-		ifTrue: [ coverage := profiler dictCoverage ].
-	^ coverage
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler [
-	^ self executedStatementsOf: aTestCase with: profiler inLevel: 1
+SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler [
+	^ self calculateCoverageOf: aTestCase using: profiler inLevel: 1
 	"| formattedNode |
 	formattedNode := self
 		nodeFormattedOf: aTestCase statements
@@ -151,7 +170,7 @@ SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler [
 ]
 
 { #category : #'as yet unclassified' }
-SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler inLevel: numLevel [
+SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: numLevel [
 	| formattedNode |
 	numLevel > self class maxNumberOfIterations ifTrue: [ ^ false  ].
 	formattedNode := self
@@ -162,13 +181,58 @@ SCalculatorCoverage >> executedStatementsOf: aTestCase with: profiler inLevel: n
 		on: Error
 		do: [ :e | 
 			^ (aTestCase removeNumStatements: 5)
-				and: [ self executedStatementsOf: aTestCase with: profiler inLevel: numLevel + 1] ].
+				and: [ self calculateCoverageOf: aTestCase using: profiler inLevel: numLevel + 1] ].
 	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
 		on: Exception
 		do: [ :exception | 
 			^ (aTestCase changeStatementsOfClassName: ([exception signaler name] on: MessageNotUnderstood do: [exception signaler className]))
-				and: [ self executedStatementsOf: aTestCase with: profiler inLevel: numLevel + 1 ] ].
+				and: [ self calculateCoverageOf: aTestCase using: profiler inLevel: numLevel + 1 ] ].
 	^ true
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverage: testCaseProfiler using: profiler inTestSuiteOfSize: aNumber [
+	| listCoverage testSuite |
+	listCoverage := OrderedCollection new.
+	listCoverage add: profiler dictCoverage.
+	[ testSuite := self testSuite: testCaseProfiler ofSize: aNumber.
+	testSuite
+		do: [ :aTestCase | 
+			(self calculateCoverageOf: aTestCase using: profiler)
+				ifTrue: [ listCoverage add: profiler dictCoverage ] ] ]
+		on: Exception
+		do: [ profiler cleanInstrumentation ].
+	^ listCoverage
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverageTestCase: testCase onClass: aClass [
+	| profiler coverage |
+	profiler := SBProfiler new.
+	profiler profileInstrumented: [  ] onClass: aClass.
+	(self calculateCoverageOf: testCase using: profiler)
+		ifTrue: [ coverage := profiler dictCoverage ].
+	profiler cleanInstrumentation.
+	^ coverage
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverageTestCase: testCase onPackagesMatching: regex [
+	| profiler coverage |
+	profiler := SBProfiler new.
+	profiler profileInstrumented: [  ] onPackagesMatching: regex.
+	(self calculateCoverageOf: testCase using: profiler)
+		ifTrue: [ coverage := profiler dictCoverage ].
+	profiler cleanInstrumentation.
+	^ coverage
+]
+
+{ #category : #'as yet unclassified' }
+SCalculatorCoverage >> coverageTestCase: testCase using: profiler [
+	| coverage |
+	(self calculateCoverageOf: testCase using: profiler)
+		ifTrue: [ coverage := profiler dictCoverage ].
+	^ coverage
 ]
 
 { #category : #compiling }

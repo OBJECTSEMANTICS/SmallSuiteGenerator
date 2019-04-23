@@ -5,6 +5,27 @@ Class {
 }
 
 { #category : #tests }
+STransformValueTest >> testChange [
+	self assert: (STransformValue change: true) equals: 'false'.
+	self assert: (STransformValue change: false) equals: 'true'.
+	self deny: (STransformValue change: 1234) equals: '1234'.
+	self deny: (STransformValue change: 23.34) equals: '23.34'.
+	self deny: (STransformValue change: $e) equals: $e.
+	self
+		deny: (STransformValue change: '$character')
+		equals: '$character'.
+	self deny: (STransformValue change: 'hello') equals: 'hello'.
+	self assert: (STransformValue change: #(1 2 5 6)) equals: '[1,2,5,6]'.
+	self deny: (STransformValue change: '#(1 2 5 6') equals: '#(1 2 5 6'.
+	self
+		assert: (STransformValue change: (SStack newStackWith: #(1 6 2 4)))
+		equals: (STON toString: (SStack newStackWith: #(1 6 2 4))).
+	self
+		assert: (STransformValue change: (SStudent new name: 'Pedro'; id: 5))
+		equals: (STON toString: (SStudent new name: 'Pedro'; id: 5))
+]
+
+{ #category : #tests }
 STransformValueTest >> testCollectDependenciesStatementsComplex [
 	| profile testCase dictDependencies |
 	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
@@ -164,4 +185,27 @@ STransformValueTest >> testDataStatementsRepeatedStatements [
 	self
 		assertCollection: referencedVarNames
 		hasSameElements: {'_var0' . '_var1' . '_var5' . '_var7'}
+]
+
+{ #category : #tests }
+STransformValueTest >> testTransform [
+	self assert: (STransformValue transform: 'true') equals: true.
+	self assert: (STransformValue transform: 'false') equals: false.
+	self assert: (STransformValue transform: '1234') equals: 1234.
+	self assert: (STransformValue transform: '23.34') equals: 23.34.
+	self
+		assert: (STransformValue transform: (STON toString: $e))
+		equals: $e.
+	self
+		assert: (STransformValue transform: '$character')
+		equals: '$character'.
+	self assert: (STransformValue transform: 'hello') equals: 'hello'.
+	self
+		assert: (STransformValue transform: '#(1 2 5 6)')
+		equals: '#(1 2 5 6)'.
+	self
+		assert:
+			(STransformValue
+				transform: (STON toString: (SStack newStackWith: #(1 6 2 4))))
+		equals: ((SStack newStackWith: #(1 6 2 4)))
 ]

@@ -21,6 +21,7 @@ SGAEngineTest >> tearDown [
 
 { #category : #tests }
 SGAEngineTest >> testExampleStackOnClass [
+	| fitness |
 	engine
 		populationSize: 30;
 		numberOfStatements: 10;
@@ -37,17 +38,15 @@ SGAEngineTest >> testExampleStackOnClass [
 		fitnessBlock: [ :coverageProfiler | 
 			[ :testCase | 
 			SCalculatorCoverage
-				calculateCoverage: testCase
+				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
 		run.
+	fitness := engine logs first fittestTestCase fitness.
 	self
-		assertCollection: engine logs first fittestTestCase fitness associations
-		hasSameElements:
-			{('methodCoverage' -> 0.54).
-			('statementCoverage' -> 0.4)}.
+		assert: (fitness at: 'methodCoverage') >= 57.14.
+	self assert: (fitness at: 'statementCoverage') >= 73.68.
+	fitness := engine logs last fittestTestCase fitness.
 	self
-		assertCollection: (engine logs at: 10) fittestTestCase fitness associations
-		hasSameElements:
-			{('methodCoverage' -> 0.54).
-			('statementCoverage' -> 0.4)}
+		assert: (fitness at: 'methodCoverage') >= 57.14.
+	self assert: (fitness at: 'statementCoverage') >= 84.21
 ]

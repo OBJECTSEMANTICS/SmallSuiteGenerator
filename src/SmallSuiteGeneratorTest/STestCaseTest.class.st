@@ -364,7 +364,9 @@ STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
 		ifNone: [ ^ self assert: true ].
 	testCase change: oldStatement varName.	"change the methodStatement"
 	currentStatement := testCase statementAt: oldStatement varName.
-	self denyCollection: currentStatement args equals: oldStatement args
+	self denyCollection: currentStatement args equals: oldStatement args.
+	self assert: testCase hasValidDependencies.
+	self assert: testCase numberOfStatements equals: testCase varNames asSet size.
 ]
 
 { #category : #'mutation-change' }
@@ -598,53 +600,56 @@ STestCaseTest >> testInsertParameter [
 	| profile testCase varNames |
 	"if is primitive, parameter is not added"
 	"parameter is added if any statement has args"
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase insertParameter.
 	self assert: testCase statements size equals: 1.
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
 	varNames := testCase insertParameter.
 	varNames
-		ifNotNil: [ self
+		ifNotNil: [ 
+			self
 				assert:
 					((testCase statements select: #isConstructor) first args
-						includes: varNames first) ].
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+						includes: varNames first).
+			self assert: testCase hasValidDependencies ].
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
 	varNames := testCase insertParameter.
 	varNames
-		ifNotNil: [ self
+		ifNotNil: [ 
+			self
 				assert:
 					((testCase statements select: #isConstructor) first args
-						includes: varNames first) ].
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+						includes: varNames first).
+			self assert: testCase hasValidDependencies ].
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
 	varNames := testCase insertParameter.
 	varNames
-		ifNotNil: [ self
+		ifNotNil: [ 
+			self
 				assert:
 					((OrderedCollection new
 						addAll: (testCase statements select: #isConstructor thenCollect: #args) first;
 						addAll: (testCase statements select: #isMethod thenCollect: #args) first;
-						yourself) includes: varNames first) ]
+						yourself) includes: varNames first).
+			self assert: testCase hasValidDependencies ].
+	profile := SSGenerator profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				push: 8;
+				pop;
+				top ] onClass: SStack.
+	testCase := STestCase seed: profile.
+	testCase generateStatements.
+	testCase insertParameter.
+	self assert: testCase hasValidDependencies.
 ]
 
 { #category : #'mutation-insert' }
@@ -810,7 +815,7 @@ STestCaseTest >> testRemoveField [
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveMethod [
-	| profile testCase varNamesDeleted statement |
+	| profile testCase varNamesDeleted statement referencedVarName |
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.
@@ -820,9 +825,6 @@ STestCaseTest >> testRemoveMethod [
 	varNamesDeleted := testCase remove: '_var1'.	"remove the methodStatement"
 	self assert: testCase statements size equals: 1.
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addMethod.
@@ -836,6 +838,17 @@ STestCaseTest >> testRemoveMethod [
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'.
 	self assert: testCase hasValidDependencies.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.
+	testCase addConstructor.
+	testCase addMethod.	"_var2"
+	referencedVarName := (testCase statementAt: '_var2') receiverVarName.
+	varNamesDeleted := testCase remove: referencedVarName.	"remove the constructorStatement"
+	self assertCollection: varNamesDeleted equals: {referencedVarName}.
+	self
+		assert: (testCase statementAt: '_var2') receiverVarName
+		equals: '_var3'.
+	self assert: testCase hasValidDependencies
 ]
 
 { #category : #'mutation-remove' }

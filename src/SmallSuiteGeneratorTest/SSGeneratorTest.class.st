@@ -47,24 +47,36 @@ SSGeneratorTest >> testMergeTypes [
 
 { #category : #tests }
 SSGeneratorTest >> testMethodGenerator [
-	| profile testCase |
+	| profile testCase collectString |
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addMethod.
+	collectString := testCase statements collect: #printString.
 	self
 		assert:
-			(testCase printString
-				=
-					'_var0 := SFoo score: 2 .
-_var1 := _var0 return: 2 '
-				or: [ testCase printString
-						=
-							'_var0 := SFoo score: 2 .
-_var1 := _var0 initialize.
-' ])
+			((collectString
+				includesAll: {'_var0 := SFoo score: 2 .' . '_var1 := _var0 return: 2 .'})
+				or: [ (collectString
+						includesAll: {'_var0 := SFoo score: 2 .' . '_var1 := _var0 initialize.'}) or: [ collectString includesAll: { '_var0 := SFoo score: 2 .' . '_var1 := _var0 score: 2 .' } ] ]).
+	profile := SSGenerator
+		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
+		onClass: SFoo.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.
+	testCase addMethod.
+	collectString := testCase statements collect: #printString.
+	self
+		assert:
+			((collectString
+				includesAll:
+					{'_var0 := SFoo score: 4 .' . '_var1 := _var0 return: ((SStack new) add: 7; add: 6; add: 2; yourself) .'})
+				or: [ (collectString
+						includesAll: {'_var0 := SFoo score: 4 .' . '_var1 := _var0 initialize.'})
+						or: [ collectString
+								includesAll: {'_var0 := SFoo score: 4 .' . '_var1 := _var0 score: 4 .'} ] ])
 ]
 
 { #category : #tests }
