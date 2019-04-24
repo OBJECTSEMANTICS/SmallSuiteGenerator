@@ -17,8 +17,9 @@ SFieldStatement >> changeUsing: aTestCase [
 		select: [ :m | m returnType name = self returnTypeName ].
 	accessors shuffle
 		detect: [ :accessor | accessor selector ~= self fieldName ]
-		ifFound: [ :accessor | 
-			(aTestCase statementAt: self varName) fieldName: accessor selector ]
+		ifFound:
+			[ :accessor | (aTestCase statementAt: self varName) fieldName: accessor selector.
+			aTestCase hasValidDependencies ifFalse: [ self halt ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -27,8 +28,8 @@ SFieldStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SFieldStatement >> createNewStatement: aId [
-	^ (self class create: aId)
+SFieldStatement >> createNewStatement [
+	^ (self class create)
 		fieldName: self fieldName;
 		receiverVarName: self receiverVarName;
 		returnTypeName: self returnTypeName;
@@ -60,9 +61,9 @@ SFieldStatement >> insertRandomCallUsing: aTestCase [
 	| aPosition newStatement |
 	aPosition := STransformValue
 		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
-		to: aTestCase statements size
+		to: aTestCase numberOfStatements
 		default: aTestCase statements size + 1.
-	newStatement := self createNewStatement: aTestCase assignedId.
+	newStatement := self createNewStatement.
 	(aTestCase addStatement: newStatement at: aPosition)
 		ifTrue: [ ^ {newStatement varName} ].
 	^ nil
@@ -119,7 +120,9 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 		forField: true.
 	constructStatement
 		ifNil: [ varNamesToDelete := {self varName} ]
-		ifNotNil: [ (aTestCase statementAt: self varName) receiverVarName: constructStatement varName ].
+		ifNotNil: [ (aTestCase statementAt: self varName)
+				receiverVarName: constructStatement varName ].
+	aTestCase hasValidDependencies ifFalse: [ self halt ].
 	^ varNamesToDelete
 ]
 
@@ -132,7 +135,7 @@ SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	blockInsertion := [ :testCase :aStatement :constructor | 
 	^ testCase
 		addStatement:
-			((aStatement createNewStatement: aTestCase assignedId)
+			((aStatement createNewStatement)
 				receiverVarName: constructor varName;
 				yourself) ].
 	^ STransformValue

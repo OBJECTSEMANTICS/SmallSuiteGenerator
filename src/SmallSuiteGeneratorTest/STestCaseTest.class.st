@@ -287,7 +287,7 @@ STestCaseTest >> testChangeConstructor [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self assert: testCase statements first args equals: #('#(1 4 5 )')
+	self assert: testCase statements first args equals: #('[1,4,5]')
 ]
 
 { #category : #'mutation-change' }
@@ -366,43 +366,34 @@ STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
 	currentStatement := testCase statementAt: oldStatement varName.
 	self denyCollection: currentStatement args equals: oldStatement args.
 	self assert: testCase hasValidDependencies.
-	self assert: testCase numberOfStatements equals: testCase varNames asSet size.
+	self
+		assert: testCase hasUniqueStatements 
 ]
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangePrimitive [
 	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: '2'.
-	profile := SSGenerator
-		profile: [ SFoo score: 3.56 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: '3.56'.
-	profile := SSGenerator
-		profile: [ SFoo score: $a ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: '$a'.
-	profile := SSGenerator
-		profile: [ SFoo score: true ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
 	self assert: testCase statements first value equals: 'false'.
-	profile := SSGenerator
-		profile: [ SFoo score: 'hello' ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
@@ -413,7 +404,7 @@ STestCaseTest >> testChangePrimitive [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
-	self assert: testCase statements first value equals: '#(1 4 5 )'
+	self assert: testCase statements first value equals: '[1,4,5]'
 ]
 
 { #category : #'mutation-change' }
@@ -458,6 +449,7 @@ STestCaseTest >> testCleanIrrelevantStatementsGeneratedRandomly [
 	oldSize := testCase statements size.
 	removedStatements := testCase cleanIrrelevantStatements.
 	self assert: testCase hasValidDependencies.
+	self assert: testCase hasUniqueStatements.
 	self
 		assert: testCase statements size
 		equals: oldSize - removedStatements size
@@ -610,46 +602,49 @@ STestCaseTest >> testInsertParameter [
 	testCase addConstructor.
 	varNames := testCase insertParameter.
 	varNames
-		ifNotNil: [ 
-			self
+		ifNotNil: [ self
 				assert:
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first).
-			self assert: testCase hasValidDependencies ].
+			self assert: testCase hasValidDependencies.
+			self assert: testCase hasUniqueStatements  ].
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
 	varNames := testCase insertParameter.
 	varNames
-		ifNotNil: [ 
-			self
+		ifNotNil: [ self
 				assert:
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first).
-			self assert: testCase hasValidDependencies ].
+			self assert: testCase hasValidDependencies.
+			self assert: testCase hasUniqueStatements  ].
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
 	varNames := testCase insertParameter.
 	varNames
-		ifNotNil: [ 
-			self
+		ifNotNil: [ self
 				assert:
 					((OrderedCollection new
 						addAll: (testCase statements select: #isConstructor thenCollect: #args) first;
 						addAll: (testCase statements select: #isMethod thenCollect: #args) first;
 						yourself) includes: varNames first).
-			self assert: testCase hasValidDependencies ].
-	profile := SSGenerator profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+			self assert: testCase hasValidDependencies.
+			self assert: testCase hasUniqueStatements  ].
+	profile := SSGenerator
+		profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
 				push: 8;
 				pop;
-				top ] onClass: SStack.
+				top ]
+		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase generateStatements.
 	testCase insertParameter.
 	self assert: testCase hasValidDependencies.
+	self assert: testCase hasUniqueStatements 
 ]
 
 { #category : #'mutation-insert' }

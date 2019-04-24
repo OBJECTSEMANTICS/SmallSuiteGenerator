@@ -41,7 +41,10 @@ SMethodStatement >> changeUsing: aTestCase [
 				ifFound: [ :accessor | accessor ]
 				ifNone: [ methods first ].
 			selected selector = self selector
-				ifTrue: [ result := STransformValue change: args ofTypes: selected argTypes using: aTestCase.
+				ifTrue: [ result := STransformValue
+						change: args
+						ofTypes: selected argTypes
+						using: aTestCase.
 					newArgs := result first.
 					result := result second ]
 				ifFalse: [ newArgs := selected argTypes
@@ -54,7 +57,8 @@ SMethodStatement >> changeUsing: aTestCase [
 						ifTrue: [ ^ result ] ].
 			(aTestCase statementAt: self varName)
 				selector: selected selector;
-				args: newArgs ].
+				args: newArgs.
+			aTestCase hasValidDependencies ifFalse: [ self halt ] ].
 	^ result
 ]
 
@@ -64,8 +68,8 @@ SMethodStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SMethodStatement >> createNewStatement: aId [
-	^ (self class create: aId)
+SMethodStatement >> createNewStatement [
+	^ (self class create)
 		selector: self selector;
 		args: self args;
 		returnTypeName: self returnTypeName;
@@ -85,12 +89,12 @@ SMethodStatement >> insertParameterUsing: aTestCase [
 
 { #category : #accessing }
 SMethodStatement >> insertRandomCallUsing: aTestCase [
-	| position |
+	"| position |
 	position := STransformValue
 		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
 		to: aTestCase statements size
-		default: aTestCase statements size + 1.
-	^ aTestCase insertStatementWithArgs: self before: position
+		default: aTestCase statements size + 1."
+	^ aTestCase insertStatementWithArgs: self from: (aTestCase indexOf: self receiverVarName) + 1
 ]
 
 { #category : #accessing }
@@ -164,6 +168,7 @@ SMethodStatement >> repairOn: aTestCase deleting: aStatement [
 				ifNil: [ varNamesToRemove add: self varName ]
 				ifNotNil: [ (aTestCase statementAt: self varName)
 						receiverVarName: constructStatement varName ] ].
+		aTestCase hasValidDependencies ifFalse: [ self halt ].
 	^ varNamesToRemove
 ]
 
@@ -176,7 +181,7 @@ SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	blockInsertion := [ :testCase :aStatement :constructor :aArgs | 
 	^ testCase
 		addStatement:
-			((aStatement createNewStatement: aTestCase assignedId)
+			((aStatement createNewStatement)
 				receiverVarName: constructor varName;
 				args: aArgs;
 				yourself) ].

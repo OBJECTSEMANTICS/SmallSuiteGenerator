@@ -1,13 +1,17 @@
 Class {
 	#name : #SGACrossoverOperationTest,
 	#superclass : #SGAOperationTest,
+	#instVars : [
+		'mutationOperation'
+	],
 	#category : #'SmallSuiteGeneratorTest-GeneticAlgorithm'
 }
 
 { #category : #running }
 SGACrossoverOperationTest >> setUp [
 	super setUp.
-	operation := SGACrossoverOperation new
+	operation := SGACrossoverOperation new.
+	mutationOperation := SGAMutationOperation new random: Random new
 ]
 
 { #category : #tests }
@@ -16,19 +20,13 @@ SGACrossoverOperationTest >> testCrossOver: listTestCase [
 	self assert: listTestCase size >= 2.
 	offSprings := operation
 		crossover: listTestCase first
-		with: listTestCase second. self halt.
+		with: listTestCase second.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
 	self assert: offSpring1 hasValidDependencies.
-	self assert: offSpring1 nextId equals: offSpring1 numberOfStatements.
-	self
-		assert: offSpring1 numberOfStatements
-		equals: offSpring1 varNames asSet size.
+	self assert: offSpring1 hasUniqueStatements.
 	self assert: offSpring2 hasValidDependencies.
-	self assert: offSpring2 nextId equals: offSpring2 numberOfStatements.
-	self
-		assert: offSpring2 numberOfStatements
-		equals: offSpring2 varNames asSet size
+	self assert: offSpring2 hasUniqueStatements
 ]
 
 { #category : #tests }
@@ -59,10 +57,28 @@ SGACrossoverOperationTest >> testCrossOverToRTLineSegment [
 
 { #category : #tests }
 SGACrossoverOperationTest >> testCrossOverToSStack [
-	self testCrossOver: SUtilityTest listTestCaseSStack shuffle
+	self testCrossOver: SUtilityTest listTestCaseSStack shuffle.
+	self testCrossOverWithMutation: SUtilityTest listTestCaseSStack shuffle
 ]
 
 { #category : #tests }
 SGACrossoverOperationTest >> testCrossOverToSStudent [
 	self testCrossOver: SUtilityTest listTestCaseStudent shuffle
+]
+
+{ #category : #tests }
+SGACrossoverOperationTest >> testCrossOverWithMutation: listTestCase [
+	| offSprings offSpring1 offSpring2 |
+	self assert: listTestCase size >= 2.
+	offSpring1 := mutationOperation mutate: listTestCase first.
+	offSpring2 := mutationOperation mutate: listTestCase second.
+	offSprings := operation
+		crossover: offSpring1 
+		with: offSpring2.
+	offSpring1 := offSprings first.
+	offSpring2 := offSprings second.
+	self assert: offSpring1 hasValidDependencies.
+	self assert: offSpring1 hasUniqueStatements.
+	self assert: offSpring2 hasValidDependencies.
+	self assert: offSpring2 hasUniqueStatements
 ]

@@ -99,16 +99,15 @@ SSGeneratorTest >> testMethodGeneratorOnClass [
 		ifFound: [ :stm | 
 			self
 				assert:
-					((stm args
-						includes:
-							((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)
-								storeString)
-						or: [ stm args
-								includes:
-									(SStudent new
+					(stm args
+						includesAny:
+							{(STON toString:((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)).
+							 (STON toString: (SStudent new
 										name: 'Peter';
 										nickname: 'peter';
-										scoreStudent: 5) storeString ]) ]
+										scoreStudent: 5))
+							}
+						) ]
 		ifNone: [ self assert: true ]
 ]
 
@@ -124,7 +123,11 @@ SSGeneratorTest >> testMethodGeneratorOnClasses [
 						scoreStudent: 5).
 			(SFoo score: 6)
 				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClasses: {SFoo. SStudent. SSPerson. SSTeacher}.
+		onClasses:
+			{SFoo.
+			SStudent.
+			SSPerson.
+			SSTeacher}.
 	testCase := STestCase seed: profile.
 	testCase generateStatements.
 	testCase statements
@@ -135,9 +138,9 @@ SSGeneratorTest >> testMethodGeneratorOnClasses [
 			possibleValues := {#SSTeacher . #SStudent}.
 			self
 				assert:
-					((statement isConstructor
-						and: [ possibleValues includes: statement theClassName ])
-						or: [ possibleValues includes: statement returnTypeName ]) ]
+					(statement isConstructor
+						and: [ possibleValues includesAny: {statement theClassName. statement returnTypeName} ])
+						 ]
 		ifNone: [ self assert: true ]
 ]
 

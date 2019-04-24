@@ -13,8 +13,8 @@ SPrimitiveStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SPrimitiveStatement >> createNewStatement: aId [
-	^ (self class create: aId)
+SPrimitiveStatement >> createNewStatement [
+	^ (self class create)
 		value: self value;
 		returnTypeName: self returnTypeName;
 		yourself
@@ -60,6 +60,7 @@ SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
 	result := aTestCase createScalar: aStatement returnTypeName.
 	(aTestCase statementAt: self varName)
 		value: (STransformValue changeAndTransform: result first).
+	aTestCase hasValidDependencies ifFalse: [ self halt ].
 	^ #()
 ]
 
@@ -70,7 +71,8 @@ SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
-	^ aTestCase addStatement: (self createNewStatement: aTestCase assignedId)
+	^ aTestCase
+		addStatement: self createNewStatement
 ]
 
 { #category : #printing }

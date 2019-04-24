@@ -24,6 +24,7 @@ SGAMutationOperationTest >> testMutation [
 	testCase := STestCase seed: profile.
 	testCase generateStatements.
 	mutatedTestCase := operation mutate: testCase.
+	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase hasValidDependencies.
-	self assert: testCase numberOfStatements equals: testCase varNames asSet size.
+	self assert: mutatedTestCase hasUniqueStatements
 ]

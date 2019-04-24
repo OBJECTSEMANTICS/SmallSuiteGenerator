@@ -47,6 +47,8 @@ SConstructorStatement >> changeUsing: aTestCase [
 				args: newArgs;
 				selector: method selector.
 			result := newArgs ].
+	aTestCase hasValidDependencies
+				ifFalse: [ self halt ].
 	^ result
 ]
 
@@ -56,8 +58,8 @@ SConstructorStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SConstructorStatement >> createNewStatement: aId [
-	^ (self class create: aId)
+SConstructorStatement >> createNewStatement [
+	^ (self class create)
 		args: self args;
 		selector: self selector;
 		theClassName: self theClassName;
@@ -71,6 +73,7 @@ SConstructorStatement >> insertMethodCallUsing: aTestcase [
 
 { #category : #'as yet unclassified' }
 SConstructorStatement >> insertParameterUsing: aTestCase [
+	"insert its parameters"
 	^ self insertParametersOf: self using: aTestCase
 ]
 
@@ -78,7 +81,7 @@ SConstructorStatement >> insertParameterUsing: aTestCase [
 SConstructorStatement >> insertRandomCallUsing: aTestCase [
 	^ aTestCase
 		insertStatementWithArgs: self
-		before: aTestCase statements size + 1
+		from: 1
 ]
 
 { #category : #accessing }
@@ -121,7 +124,8 @@ SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
 				with: self varName
 				using: aTestCase.
 			(aTestCase statementAt: self varName) args: collection first.
-			^ collection second]
+			aTestCase hasValidDependencies ifFalse: [ self halt ].
+			^ collection second ]
 		ifFalse: [ ^ #() ]
 ]
 
