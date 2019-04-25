@@ -413,9 +413,7 @@ STestCase >> hasValidDependencies [
 	currentVarNames := OrderedCollection new.
 	statements
 		detect: [ :aStm | 
-			(self
-				validDependencies: aStm collectDependencies
-				with: currentVarNames)
+			(currentVarNames includesAll: aStm collectDependencies)
 				ifTrue: [ currentVarNames add: aStm varName.
 					false ]
 				ifFalse: [ true ] ]
@@ -487,8 +485,7 @@ STestCase >> insertParameter [
 		detect: [ :stmToInsert | 
 			varNames := stmToInsert insertParameterUsing: self.
 			varNames isNotNil ]
-		ifFound: [ self hasValidDependencies
-				ifFalse: [ self halt ].
+		ifFound: [ 
 			^ varNames ].
 	^ nil
 ]
@@ -501,8 +498,8 @@ STestCase >> insertRandomCall [
 		detect: [ :stmToInsert | 
 			varNames := stmToInsert insertRandomCallUsing: self.
 			varNames isNotNil ]
-		ifFound: [ self hasValidDependencies
-				ifFalse: [ self halt ].^ varNames ].
+		ifFound: [ 
+			^ varNames ].
 	^ nil
 ]
 
@@ -534,7 +531,7 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 				before: newPosition
 				allowingNull: true.
 			addedList := newArgs asArray.
-			newPosition := newArgs
+			newPosition := {newArgs
 				ifNotEmpty: [ | indexFrom |
 					indexFrom := -1.
 					newArgs
@@ -547,13 +544,12 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 					STransformValue
 						randomNumberFrom: indexFrom
 						to: size
-						default: indexFrom ] ].
+						default: indexFrom ]. newPosition} max ].
 	newStatement := aStatement createNewStatement
 		args: newArgs asArray;
 		yourself.
 	(self addStatement: newStatement at: newPosition)
-		ifTrue: [ 
-			^ addedList , {newStatement varName} ].
+		ifTrue: [ ^ addedList , {newStatement varName} ].
 	^ nil
 ]
 
@@ -766,12 +762,6 @@ STestCase >> statementsGroupedByDependencies [
 						yourself) ].
 	^ {groups.
 	referencedVarNames asOrderedCollection}
-]
-
-{ #category : #'as yet unclassified' }
-STestCase >> validDependencies: dependencies with: varNames [
-	^ varNames includesAll: dependencies
-	
 ]
 
 { #category : #'as yet unclassified' }

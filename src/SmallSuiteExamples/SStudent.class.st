@@ -2,15 +2,22 @@ Class {
 	#name : #SStudent,
 	#superclass : #SSPerson,
 	#instVars : [
-		'scoreStudent'
+		'scoreStudent',
+		'idStudent'
 	],
 	#category : #SmallSuiteExamples
 }
 
+{ #category : #accessing }
+SStudent >> idStudent [
+	^ idStudent
+]
+
 { #category : #initialization }
 SStudent >> initialize [
 	id := 1.
-	scoreStudent := 1
+	scoreStudent := 1.
+	idStudent := id
 ]
 
 { #category : #accessing }

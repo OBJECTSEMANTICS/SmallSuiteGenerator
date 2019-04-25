@@ -107,9 +107,6 @@ SConstructorStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
 	^ self changeUsing: aTestCase
-	"collection := STransformValue changeArgsOf: self using: aTestCase.
-	(aTestCase statementAt: self varName) args: collection first.
-	^ collection second"
 ]
 
 { #category : #mutation }

@@ -41,18 +41,19 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 
 { #category : #'as yet unclassified' }
 SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
-	| sizeA sizeB offSpring |
+	| sizeA sizeB offSpring limit |
 	sizeA := parentA numberOfStatements.
 	sizeB := parentB numberOfStatements.
 	offSpring := STestCase seed: parentB profile.
+	limit := (sizeA * alpha) asInteger.
 	offSpring
 		add:
-			(parentA statements copyFrom: 1 to: (sizeA * alpha) asInteger)
+			(parentA statements copyFrom: 1 to: limit)
 				deepCopy
-		fromParentWith: (parentA assignedIds copyFrom: 1 to: (sizeA * alpha) asInteger).
-	(parentB statements deepCopy
+		fromParentWith: (parentA assignedIds copyFrom: 1 to: limit).
+	(parentB statements
 		copyFrom: (alpha * sizeB) asInteger + 1
-		to: sizeB)
+		to: sizeB) deepCopy
 		do: [ :aStm | aStm satisfyParameters: offSpring with: parentB ].
 	^ offSpring
 ]

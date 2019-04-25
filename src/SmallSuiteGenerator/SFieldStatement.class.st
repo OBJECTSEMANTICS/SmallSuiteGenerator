@@ -57,11 +57,12 @@ SFieldStatement >> insertParameterUsing: aTestcase [
 
 { #category : #accessing }
 SFieldStatement >> insertRandomCallUsing: aTestCase [
-	| aPosition newStatement |
+	| aPosition newStatement size |
+	size := aTestCase numberOfStatements.
 	aPosition := STransformValue
 		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
-		to: aTestCase numberOfStatements
-		default: aTestCase statements size + 1.
+		to: size
+		default: size + 1.
 	newStatement := self createNewStatement.
 	(aTestCase addStatement: newStatement at: aPosition)
 		ifTrue: [ ^ {newStatement varName} ].

@@ -88,11 +88,6 @@ SMethodStatement >> insertParameterUsing: aTestCase [
 
 { #category : #accessing }
 SMethodStatement >> insertRandomCallUsing: aTestCase [
-	"| position |
-	position := STransformValue
-		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
-		to: aTestCase statements size
-		default: aTestCase statements size + 1."
 	^ aTestCase
 		insertStatementWithArgs: self
 		from: (aTestCase indexOf: self receiverVarName) + 1

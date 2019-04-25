@@ -26,12 +26,11 @@ SGAMutationOperation >> initialize [
 
 { #category : #'as yet unclassified' }
 SGAMutationOperation >> mutate: aTestCase [
-	| newTestCase newStatements |
+	| newTestCase |
 	newTestCase := STestCase seed: aTestCase profile.
-	newTestCase add: aTestCase statements deepCopy fromParentWith: aTestCase assignedIds.
-	"newStatements := aTestCase statements deepCopy do: #cleanId."
-	"newStatements
-		do: [ :stm | newTestCase addStatement: stm ]."
+	newTestCase
+		add: aTestCase statements deepCopy
+		fromParentWith: aTestCase assignedIds.
 	self doMutate: newTestCase.
 	^ newTestCase
 ]

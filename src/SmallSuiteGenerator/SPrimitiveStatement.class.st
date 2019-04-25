@@ -77,7 +77,7 @@ SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 
 { #category : #printing }
 SPrimitiveStatement >> stringBody [
-	^ (STON fromString: value) storeString , $. asString
+	^ ([(STON fromString: value) storeString] on: STONReaderError do: [value storeString]) , $. asString
 ]
 
 { #category : #evaluating }
