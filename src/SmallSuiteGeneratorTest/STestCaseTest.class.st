@@ -176,7 +176,7 @@ STestCaseTest class >> listTestCaseRTLineSegment [
 ]
 
 { #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseStudent [
+STestCaseTest class >> listTestCaseSStudent [
 	| list |
 	list := OrderedCollection new.
 	list

@@ -63,7 +63,7 @@ SGACrossoverOperationTest >> testCrossOverToSStack [
 
 { #category : #tests }
 SGACrossoverOperationTest >> testCrossOverToSStudent [
-	self testCrossOver: SUtilityTest listTestCaseStudent shuffle
+	self testCrossOver: SUtilityTest listTestCaseSStudent shuffle
 ]
 
 { #category : #tests }

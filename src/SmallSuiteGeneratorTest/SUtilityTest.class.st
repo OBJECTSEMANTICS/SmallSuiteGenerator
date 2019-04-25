@@ -175,6 +175,56 @@ SUtilityTest class >> listTestCaseRTLineSegment [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTest class >> listTestCaseSFoo [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self generateTestCase: [ SFoo score: 34 ] with: SFoo)
+				generateStatements;
+		add:
+			(self generateTestCase: [ (SFoo score: 2) score ] with: SFoo)
+				generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SFoo score: 2) return: 2 ]
+				with: SFoo) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTest class >> listTestCaseSSTeacher [
+	| list |
+	list := OrderedCollection new.
+	list
+		add:
+			(self
+				generateTestCase: [ (SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5 ]
+				with: SSTeacher) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ]
+				with: SSTeacher) generateStatements;
+		add:
+			(self
+				generateTestCase: [ (SSTeacher name: 'Ann' with: 34)
+				age: 34;
+				identifier;
+				nickname: 'Ann34';
+				fullIdentifier;
+				name;
+				id;
+				nickname ]
+				with: SSTeacher) generateStatements.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTest class >> listTestCaseSStack [
 	| list |
 	list := OrderedCollection new.
@@ -199,18 +249,32 @@ SUtilityTest class >> listTestCaseSStack [
 ]
 
 { #category : #'as yet unclassified' }
-SUtilityTest class >> listTestCaseStudent [
+SUtilityTest class >> listTestCaseSStudent [
 	| list |
 	list := OrderedCollection new.
 	list
 		add:
-			(self generateTestCase: [ SFoo score: 34 ] with: SFoo)
-				generateStatements;
+			(self
+				generateTestCase: [ SStudent new
+						name: 'Peter';
+						nickname: 'peter';
+						scoreStudent: 5 ]
+				with: SStudent) generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) score ] with: SFoo)
-				generateStatements;
+			(self
+				generateTestCase: [ (SStudent name: 'Ann' with: 34)
+						age: 34;
+						identifier;
+						nickname: 'Ann34';
+						fullIdentifier ]
+				with: SStudent) generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) return: 2 ] with: SFoo)
-				generateStatements.
+			(self
+				generateTestCase: [ (SStudent name: 'Jane')
+						age: 19;
+						identifier;
+						nickname: 'Jane5';
+						fullIdentifier ]
+				with: SStudent) generateStatements.
 	^ list
 ]
