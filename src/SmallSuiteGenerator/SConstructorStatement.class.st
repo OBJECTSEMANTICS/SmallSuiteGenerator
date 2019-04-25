@@ -47,8 +47,6 @@ SConstructorStatement >> changeUsing: aTestCase [
 				args: newArgs;
 				selector: method selector.
 			result := newArgs ].
-	aTestCase hasValidDependencies
-				ifFalse: [ self halt ].
 	^ result
 ]
 
@@ -124,7 +122,6 @@ SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
 				with: self varName
 				using: aTestCase.
 			(aTestCase statementAt: self varName) args: collection first.
-			aTestCase hasValidDependencies ifFalse: [ self halt ].
 			^ collection second ]
 		ifFalse: [ ^ #() ]
 ]

@@ -90,16 +90,18 @@ STestCase >> addConstructor: aStatement before: varName forField: toField [
 		ifFalse: [ | classSpy |
 			classSpy := profile classAt: aStatement theClassName.
 			list := classSpy factoryMethods.
-			list ifEmpty: [ 
-				| constructor |
-				constructor := self defaultConstructor: classSpy.
-				(self addStatement: constructor at: (self indexOf: varName) -1) ifTrue: [ ^ constructor ]. ^ nil ] ].
+			list
+				ifEmpty: [ | constructor |
+					constructor := self defaultConstructor: classSpy.
+					(self addStatement: constructor at: (self indexOf: varName))
+						ifTrue: [ ^ constructor ].
+					^ nil ] ].
 	newStatement := self
 		newConstructorStatement: aStatement theClassName
 		of: list
 		before: varName.
 	(newStatement isNotNil
-		and: [ self addStatement: newStatement at: (self indexOf: varName) - 1 ])
+		and: [ self addStatement: newStatement at: (self indexOf: varName) ])
 		ifTrue: [ ^ newStatement ].
 	^ nil
 ]
@@ -348,7 +350,7 @@ STestCase >> createArg: aClassName before: stop avoiding: varName [
 		statementOfType: aClassName
 		before: stop
 		noCalledEqualTo: varName.
-	result ifNil: [ result := self createScalar: aClassName	 ].
+	result ifNil: [ result := self createScalar: aClassName 	 ].
 	^ result ifNil: [ ^ nil ] ifNotNil: [ result first ]
 ]
 
@@ -473,7 +475,6 @@ STestCase >> insertMethodCall [
 			varNames := stmToInsert insertMethodCallUsing: self.
 			varNames isNotNil ]
 		ifFound: [ 
-			self hasValidDependencies ifFalse: [ self halt ].
 			^ varNames ].
 	^ nil
 ]
@@ -533,7 +534,7 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 				before: newPosition
 				allowingNull: true.
 			addedList := newArgs asArray.
-			"newPosition := newArgs
+			newPosition := newArgs
 				ifNotEmpty: [ | indexFrom |
 					indexFrom := -1.
 					newArgs
@@ -541,17 +542,18 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 							indexFrom := {indexFrom.
 							(self indexOf: aArg)} max ].
 					indexFrom := indexFrom < 0
-						ifTrue: [ size ]
+						ifTrue: [ newPosition ]
 						ifFalse: [ indexFrom + 1 ].
 					STransformValue
 						randomNumberFrom: indexFrom
 						to: size
-						default: indexFrom ]" ].
+						default: indexFrom ] ].
 	newStatement := aStatement createNewStatement
 		args: newArgs asArray;
 		yourself.
 	(self addStatement: newStatement at: newPosition)
-		ifTrue: [ ^ addedList , {newStatement varName} ].
+		ifTrue: [ 
+			^ addedList , {newStatement varName} ].
 	^ nil
 ]
 
@@ -685,7 +687,7 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 							(STransformValue
 								randomNumberFrom: 1
 								to: position - 1
-								default: position).
+								default: position - 1).
 					argsResult
 						at: index
 						put:

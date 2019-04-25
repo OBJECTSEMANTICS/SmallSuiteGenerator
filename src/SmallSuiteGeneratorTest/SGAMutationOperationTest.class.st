@@ -14,6 +14,23 @@ SGAMutationOperationTest >> setUp [
 SGAMutationOperationTest >> testMutation [
 	| profile testCase mutatedTestCase |
 	profile := SSGenerator
+		profile:  [ (SStack newStackWith: {2 . 4 . 6 . 1})
+						push: 8;
+						pop;
+						top ]
+		onClass: SStack.
+	testCase := STestCase seed: profile.
+	testCase generateStatements.
+	mutatedTestCase := operation mutate: testCase.
+	mutatedTestCase := operation mutate: mutatedTestCase.
+	self assert: mutatedTestCase hasValidDependencies.
+	self assert: mutatedTestCase hasUniqueStatements
+]
+
+{ #category : #tests }
+SGAMutationOperationTest >> testMutationSSteacher [
+	| profile testCase mutatedTestCase |
+	profile := SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;

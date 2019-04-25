@@ -60,7 +60,7 @@ SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
 	result := aTestCase createScalar: aStatement returnTypeName.
 	(aTestCase statementAt: self varName)
 		value: (STransformValue changeAndTransform: result first).
-	aTestCase hasValidDependencies ifFalse: [ self halt ].
+
 	^ #()
 ]
 

@@ -61,18 +61,18 @@ SStatement >> insertParametersOf: aStatement using: aTestCase [
 	| args |
 	args := aStatement args.
 	args
-		ifNotEmpty: [ | varNames position index newStatement |
+		ifNotEmpty: [ | varNames index newStatement |
 			varNames := aTestCase varNames.
 			index := 0.
 			args
 				detect: [ :aArg | 
-					| defaultPosition |
+					| defaultPosition position |
 					index := index + 1.
 					(varNames includes: aArg)
 						ifTrue: [ newStatement := (aTestCase statementAt: aArg) createNewStatement.
 							defaultPosition := (aTestCase indexOf: aArg) + 1.
 							position := STransformValue
-								randomNumberFrom: defaultPosition 
+								randomNumberFrom: defaultPosition
 								to: (aTestCase indexOf: aStatement varName) - 1
 								default: defaultPosition.
 							aTestCase addStatement: newStatement at: position ]

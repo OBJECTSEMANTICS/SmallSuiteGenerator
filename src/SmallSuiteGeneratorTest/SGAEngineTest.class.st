@@ -42,11 +42,9 @@ SGAEngineTest >> testExampleStackOnClass [
 				using: coverageProfiler ] ];
 		run.
 	fitness := engine logs first fittestTestCase fitness.
-	self
-		assert: (fitness at: 'methodCoverage') >= 57.14.
+	self assert: (fitness at: 'methodCoverage') >= 57.14.
 	self assert: (fitness at: 'statementCoverage') >= 73.68.
 	fitness := engine logs last fittestTestCase fitness.
-	self
-		assert: (fitness at: 'methodCoverage') >= 57.14.
+	self assert: (fitness at: 'methodCoverage') >= 57.14.
 	self assert: (fitness at: 'statementCoverage') >= 84.21
 ]

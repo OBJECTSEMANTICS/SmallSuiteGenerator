@@ -57,8 +57,7 @@ SMethodStatement >> changeUsing: aTestCase [
 						ifTrue: [ ^ result ] ].
 			(aTestCase statementAt: self varName)
 				selector: selected selector;
-				args: newArgs.
-			aTestCase hasValidDependencies ifFalse: [ self halt ] ].
+				args: newArgs ].
 	^ result
 ]
 
@@ -94,7 +93,9 @@ SMethodStatement >> insertRandomCallUsing: aTestCase [
 		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
 		to: aTestCase statements size
 		default: aTestCase statements size + 1."
-	^ aTestCase insertStatementWithArgs: self from: (aTestCase indexOf: self receiverVarName) + 1
+	^ aTestCase
+		insertStatementWithArgs: self
+		from: (aTestCase indexOf: self receiverVarName) + 1
 ]
 
 { #category : #accessing }
@@ -168,7 +169,6 @@ SMethodStatement >> repairOn: aTestCase deleting: aStatement [
 				ifNil: [ varNamesToRemove add: self varName ]
 				ifNotNil: [ (aTestCase statementAt: self varName)
 						receiverVarName: constructStatement varName ] ].
-		aTestCase hasValidDependencies ifFalse: [ self halt ].
 	^ varNamesToRemove
 ]
 

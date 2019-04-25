@@ -18,8 +18,7 @@ SFieldStatement >> changeUsing: aTestCase [
 	accessors shuffle
 		detect: [ :accessor | accessor selector ~= self fieldName ]
 		ifFound:
-			[ :accessor | (aTestCase statementAt: self varName) fieldName: accessor selector.
-			aTestCase hasValidDependencies ifFalse: [ self halt ] ]
+			[ :accessor | (aTestCase statementAt: self varName) fieldName: accessor selector ].
 ]
 
 { #category : #'as yet unclassified' }
@@ -122,7 +121,6 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 		ifNil: [ varNamesToDelete := {self varName} ]
 		ifNotNil: [ (aTestCase statementAt: self varName)
 				receiverVarName: constructStatement varName ].
-	aTestCase hasValidDependencies ifFalse: [ self halt ].
 	^ varNamesToDelete
 ]
 
