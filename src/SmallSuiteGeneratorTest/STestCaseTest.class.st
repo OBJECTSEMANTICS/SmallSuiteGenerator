@@ -1,7 +1,7 @@
 Class {
 	#name : #STestCaseTest,
 	#superclass : #TestCase,
-	#category : #'SmallSuiteGeneratorTest-GeneticAlgorithm'
+	#category : #'SmallSuiteGeneratorTest-Core'
 }
 
 { #category : #'as yet unclassified' }

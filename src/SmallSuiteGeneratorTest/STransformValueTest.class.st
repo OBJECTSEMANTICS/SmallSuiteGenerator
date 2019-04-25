@@ -1,7 +1,7 @@
 Class {
 	#name : #STransformValueTest,
 	#superclass : #TestCase,
-	#category : #'SmallSuiteGeneratorTest-GeneticAlgorithm'
+	#category : #'SmallSuiteGeneratorTest-Core'
 }
 
 { #category : #tests }

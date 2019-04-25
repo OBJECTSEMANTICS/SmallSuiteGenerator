@@ -20,6 +20,73 @@ SGAEngineTest >> tearDown [
 ]
 
 { #category : #tests }
+SGAEngineTest >> testExampleRTAMItemOnClass [
+	| fitness |
+	engine
+		populationSize: 30;
+		numberOfStatements: 10;
+		blockToExecute: [ RTAMItem new
+				itemName: 'Bonus Card';
+				row: 'France';
+				column: 'Customer Relationship';
+				color: Color lightGreen ];
+		generatorProfiler:
+				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: RTAMItem ];
+		coverageProfiler: [ :blockToExecute | 
+			SBProfiler new
+				profileInstrumented: blockToExecute onClass: RTAMItem;
+				yourself ];
+		fitnessBlock: [ :coverageProfiler | 
+			[ :testCase | 
+			SCalculatorCoverage
+				calculateCoverageOf: testCase
+				using: coverageProfiler ] ];
+		run.
+	fitness := engine logs first fittestTestCase fitness.
+	self assert: (fitness at: 'methodCoverage') >= 7.14.
+	self assert: (fitness at: 'statementCoverage') >= 31.57.
+	fitness := engine logs last fittestTestCase fitness.
+	self assert: (fitness at: 'methodCoverage') >= 35.71.
+	self assert: (fitness at: 'statementCoverage') >= 52.63
+]
+
+{ #category : #tests }
+SGAEngineTest >> testExampleRTAMItemOnPackage [
+	| fitnessFirst fitnessLast regex |
+	regex := 'Roassal2'.
+	engine
+		populationSize: 30;
+		numberOfStatements: 10;
+		blockToExecute: [ RTAMItem new
+				itemName: 'Bonus Card';
+				row: 'France';
+				column: 'Customer Relationship';
+				color: Color lightGreen ];
+		generatorProfiler:
+				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
+		coverageProfiler: [ :blockToExecute | 
+			SBProfiler new
+				profileInstrumented: blockToExecute onPackagesMatching: regex;
+				yourself ];
+		fitnessBlock: [ :coverageProfiler | 
+			[ :testCase | 
+			SCalculatorCoverage
+				calculateCoverageOf: testCase
+				using: coverageProfiler ] ];
+		run.
+	fitnessFirst := engine logs first fittestTestCase fitness.
+	fitnessLast := engine logs last fittestTestCase fitness.
+	self
+		assert:
+			(fitnessFirst at: 'methodCoverage')
+				<= (fitnessLast at: 'methodCoverage').
+	self
+		assert:
+			(fitnessFirst at: 'statementCoverage')
+				<= (fitnessLast at: 'statementCoverage')
+]
+
+{ #category : #tests }
 SGAEngineTest >> testExampleSSTeacherOnClass [
 	| fitness |
 	engine
@@ -47,8 +114,43 @@ SGAEngineTest >> testExampleSSTeacherOnClass [
 	self assert: (fitness at: 'methodCoverage') >= 20.
 	self assert: (fitness at: 'statementCoverage') >= 37.5.
 	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 100.
-	self assert: (fitness at: 'statementCoverage') >= 100
+	self assert: (fitness at: 'methodCoverage') >= 80.
+	self assert: (fitness at: 'statementCoverage') >= 87.5
+]
+
+{ #category : #tests }
+SGAEngineTest >> testExampleSStackOnPackage [
+	| fitnessFirst fitnessLast regex |
+	regex := 'SmallSuiteExamp*'.
+	engine
+		populationSize: 30;
+		numberOfStatements: 10;
+		blockToExecute: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				push: 8;
+				pop;
+				top ];
+		generatorProfiler:
+				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
+		coverageProfiler: [ :blockToExecute | 
+			SBProfiler new
+				profileInstrumented: blockToExecute onPackagesMatching: regex;
+				yourself ];
+		fitnessBlock: [ :coverageProfiler | 
+			[ :testCase | 
+			SCalculatorCoverage
+				calculateCoverageOf: testCase
+				using: coverageProfiler ] ];
+		run.
+	fitnessFirst := engine logs first fittestTestCase fitness.
+	fitnessLast := engine logs last fittestTestCase fitness.
+	self
+		assert:
+			(fitnessFirst at: 'methodCoverage')
+				<= (fitnessLast at: 'methodCoverage').
+	self
+		assert:
+			(fitnessFirst at: 'statementCoverage')
+			<= (fitnessLast at: 'statementCoverage')
 ]
 
 { #category : #tests }

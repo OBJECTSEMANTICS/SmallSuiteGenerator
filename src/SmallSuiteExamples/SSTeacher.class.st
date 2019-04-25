@@ -21,7 +21,11 @@ SSTeacher >> initialize [
 
 { #category : #accessing }
 SSTeacher >> nickname [
-	^ 'teacher_' , (nickname ifNil: [ '1' ])
+	^ 'teacher_'
+		,
+			(nickname
+				ifNil: [ 
+					'1' ])
 ]
 
 { #category : #accessing }
