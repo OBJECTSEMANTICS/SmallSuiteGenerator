@@ -52,10 +52,10 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
 		description: 'testCase must have valid dependencies'.
 	offSpring := STestCase seed: parentB profile.
 	"corregir el copiado de los primeros statements, ya que al agregarse con su nuevo id, pierde las referencias que tenia"
-	(parentA statements deepCopy
+	offSpring add: (parentA statements
 		copyFrom: 1
-		to: (sizeA * alpha) asInteger)
-		do: [ :aStm | offSpring addStatement: aStm ].
+		to: (sizeA * alpha) asInteger) deepCopy fromParentWith: (parentA assignedIds copyFrom: 1 to: (sizeA * alpha) asInteger).
+		"do: [ :aStm | offSpring addStatement: aStm ]".
 	(parentB statements deepCopy
 		copyFrom: (alpha * sizeB) asInteger + 1
 		to: sizeB)

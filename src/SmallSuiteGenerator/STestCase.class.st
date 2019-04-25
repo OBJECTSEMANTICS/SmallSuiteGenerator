@@ -7,7 +7,6 @@ Class {
 		'generatorInvariant',
 		'dictSubclasses',
 		'fitness',
-		'assignedIds',
 		'nextId'
 	],
 	#category : #'SmallSuiteGenerator-Core'
@@ -43,6 +42,14 @@ STestCase class >> seed: aGeneratorProfile [
 	ins := self new.
 	ins profile: aGeneratorProfile.
 	^ ins
+]
+
+{ #category : #adding }
+STestCase >> add: collStatements fromParentWith: collIds. [
+	self assert: statements isEmpty description: 'Statements must be empty'.
+	"self assert: assignedIds isEmpty description: 'AssignedIds must be empty'."
+	statements addAll: collStatements.
+	"assignedIds addAll: collIds."
 ]
 
 { #category : #generation }
@@ -216,12 +223,18 @@ STestCase >> applyMutator [
 
 { #category : #'as yet unclassified' }
 STestCase >> assignId [
-	| idToAssign |
+	| idToAssign assignedIds |
+	assignedIds := self assignedIds.
 	[ assignedIds includes: nextId ] whileTrue: [ nextId := nextId + 1 ].
 	idToAssign := nextId.
-	assignedIds add: idToAssign.
+	"assignedIds add: idToAssign."
 	nextId := nextId + 1.
 	^ idToAssign
+]
+
+{ #category : #accessing }
+STestCase >> assignedIds [
+	^ statements collect: #id 
 ]
 
 { #category : #mutation }
@@ -430,7 +443,6 @@ STestCase >> initialize [
 	statements := OrderedCollection new.
 	generatorInvariant := SSGeneratorInvariant new.
 	dictSubclasses := Dictionary new.
-	assignedIds := Set new
 ]
 
 { #category : #'accessing untypeable characters' }
