@@ -214,7 +214,10 @@ SMethodStatement >> stringBody [
 							aStream
 								nextPutAll: selectorPart;
 								nextPutAll: ': ';
-								nextPutAll: ([(STON fromString: arg) storeString] on: STONReaderError do: [arg]);
+								nextPutAll:
+									([ (STON fromString: arg asString) storeString ]
+										on: STONReaderError
+										do: [ arg ]);
 								nextPut: Character space ] ].
 			aStream nextPut: $. ]
 ]

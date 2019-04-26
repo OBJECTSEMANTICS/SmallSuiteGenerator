@@ -163,7 +163,7 @@ SConstructorStatement >> stringBody [
 								nextPutAll: selectorPart;
 								nextPutAll: ': ';
 								nextPutAll:
-									([ (STON fromString: arg) storeString ]
+									([ (STON fromString: arg asString) storeString ]
 										on: STONReaderError
 										do: [ 
 											arg ]);

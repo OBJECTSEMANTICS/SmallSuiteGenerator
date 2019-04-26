@@ -278,10 +278,10 @@ STransformValue class >> satisfyTypeArg: aArg ofType: argType with: aTestCase [
 
 { #category : #'as yet unclassified' }
 STransformValue class >> selectVarNames: args [
-	^ args select: [ :aArg | (aArg beginsWith: '_var') and: [ aArg endsWithDigit ] ]
+	^ args select: [ :aArg | [(aArg beginsWith: '_var') and: [ aArg endsWithDigit ]] on: Error do: [ false ] ]
 ]
 
 { #category : #accessing }
 STransformValue class >> transform: aString [
-	^ [STON fromString: aString] on: STONReaderError do: [ aString ]
+	^ [STON fromString: aString asString] on: STONReaderError do: [ aString ]
 ]
