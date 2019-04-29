@@ -14,7 +14,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				with: [ spec repository: 'github://ObjectProfile/Spy2/src' ].
 			spec
 				baseline: 'SBTestCoverage'
-				with: [ spec requires: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
+				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
 			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('Spy2' 'SBTestCoverage') ];
