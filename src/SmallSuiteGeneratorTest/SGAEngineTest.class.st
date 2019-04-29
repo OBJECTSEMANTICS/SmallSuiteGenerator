@@ -9,6 +9,11 @@ Class {
 
 { #category : #tests }
 SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize and: numStatements [
+	self runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: 10
+]
+
+{ #category : #tests }
+SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: numGenerations [
 	engine
 		populationSize: populationSize;
 		numberOfStatements: numStatements;
@@ -24,11 +29,17 @@ SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populati
 			SCalculatorCoverage
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
+		endForMaxNumberOfGeneration: numGenerations;
 		run.
 ]
 
 { #category : #tests }
 SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize: populationSize and: numStatements [
+	self runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: 10
+]
+
+{ #category : #tests }
+SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: numGenerations [
 	engine
 		populationSize: populationSize;
 		numberOfStatements: numStatements;
@@ -44,6 +55,7 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize
 			SCalculatorCoverage
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
+		endForMaxNumberOfGeneration: numGenerations;
 		run
 ]
 
@@ -153,7 +165,8 @@ SGAEngineTest >> testExampleRTBoxOnClass [
 				defaultWidth;
 				borderStyle ]
 		ofPopulationSize: 30
-		and: 10.
+		numStatements: 10
+		and: 15.
 	fitness := engine logs first fittestTestCase fitness.
 	self assert: (fitness at: 'methodCoverage') equals: 20.
 	self assert: (fitness at: 'statementCoverage') equals: 22.22.
@@ -195,7 +208,8 @@ SGAEngineTest >> testExampleRTDirectedLineOnClass [
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
 		ofPopulationSize: 30
-		and: 10.
+		numStatements: 10
+		and: 15.
 		"20 = (1/5) * 100 round: 2"
 	"18.18 = (2/11) * 100 round: 2"
 	fitness := engine logs first fittestTestCase fitness.
@@ -217,7 +231,8 @@ SGAEngineTest >> testExampleRTDirectedLineOnPackage [
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
 		ofPopulationSize: 30
-		and: 10.
+		numStatements: 10
+		and: 15.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
 	self
@@ -241,7 +256,7 @@ SGAEngineTest >> testExampleRTLineSegmentOnClass [
 				cotan;
 				bottom ]
 		ofPopulationSize: 30
-		and: 10.
+		and: 15.
 	"2.94 = (1/34) * 100 round: 2"
 	"2.88 = (3/104) * 100 round: 2"
 	fitness := engine logs first fittestTestCase fitness.
