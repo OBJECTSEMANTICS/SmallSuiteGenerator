@@ -206,14 +206,19 @@ SMethodStatement >> stringBody [
 			aStream
 				nextPutAll: self receiverVarName;
 				nextPutAll: ' '.
+			"refactor para que se use directamente los valores y no el string del valor"
 			self args
 				ifEmpty: [ aStream nextPutAll: self selector ]
-				ifNotEmpty: [ (self selector substrings: ':')
+				ifNotEmpty: [ 
+					| withColon |
+					withColon := self selector includes: $:.
+					(self selector substrings: ':')
 						with: self args
 						do: [ :selectorPart :arg | 
 							aStream
-								nextPutAll: selectorPart;
-								nextPutAll: ': ';
+								nextPutAll: selectorPart.
+							withColon ifTrue: [ aStream nextPutAll: ': ' ].
+							aStream	
 								nextPutAll:
 									([ (STON fromString: arg asString) storeString ]
 										on: STONReaderError

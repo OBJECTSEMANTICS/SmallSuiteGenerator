@@ -14,9 +14,13 @@ SSGenerator class >> spyClassForPackage [
 
 { #category : #initialization }
 SSGenerator >> addScalar: anObject [
-	| value |
-	value := scalars at: anObject class name ifAbsentPut: [ Set new ].
-	value add: (STON toString: anObject)
+	| value stringObject |
+	stringObject := [ STON toString: anObject ]
+				on: STONWriterError
+				do: [ nil ].
+	stringObject ifNotNil: [ value := scalars at: anObject class name ifAbsentPut: [ Set new ].
+	value
+		add: stringObject ].
 ]
 
 { #category : #initialization }

@@ -350,8 +350,9 @@ STestCase >> createArg: aClassName before: stop avoiding: varName [
 		statementOfType: aClassName
 		before: stop
 		noCalledEqualTo: varName.
-	result ifNil: [ result := self createScalar: aClassName 	 ].
-	^ result ifNil: [ ^ nil ] ifNotNil: [ result first ]
+	result ifNil: [ result := self createScalar: aClassName ].
+	result ifNotNil: [ ^ result first ].
+	^ result
 ]
 
 { #category : #generation }
@@ -531,7 +532,7 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 				before: newPosition
 				allowingNull: true.
 			addedList := newArgs asArray.
-			newPosition := {newArgs
+			newPosition := {(newArgs
 				ifNotEmpty: [ | indexFrom |
 					indexFrom := -1.
 					newArgs
@@ -540,11 +541,12 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 							(self indexOf: aArg)} max ].
 					indexFrom := indexFrom < 0
 						ifTrue: [ newPosition ]
-						ifFalse: [ indexFrom + 1 ].
+						ifFalse: [ (indexFrom + (newArgs size)) < size ifTrue: [ indexFrom + (newArgs size) ] ifFalse: [ size ] ].
 					STransformValue
 						randomNumberFrom: indexFrom
 						to: size
-						default: indexFrom ]. newPosition} max ].
+						default: indexFrom ]).
+			newPosition} max ].
 	newStatement := aStatement createNewStatement
 		args: newArgs asArray;
 		yourself.
@@ -676,9 +678,10 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 	args
 		withIndexDo: [ :aArg :index | 
 			(varNames includes: aArg)
-				ifTrue: [ | newArg |
+				ifTrue: [ | newArg stm |
+					stm := self statementAt: aArg.
 					newArg := self
-						addPrimitive: (self statementAt: aArg) returnTypeName
+						addPrimitive: (stm isConstructor ifTrue: [ stm theClassName ] ifFalse: [stm returnTypeName])
 						at:
 							(STransformValue
 								randomNumberFrom: 1

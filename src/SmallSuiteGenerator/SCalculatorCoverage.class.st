@@ -172,7 +172,8 @@ SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler [
 { #category : #'as yet unclassified' }
 SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: numLevel [
 	| formattedNode |
-	numLevel > self class maxNumberOfIterations ifTrue: [ ^ false  ].
+	numLevel > self class maxNumberOfIterations
+		ifTrue: [ ^ false ].
 	formattedNode := self
 		nodeFormattedOf: aTestCase statements
 		and: aTestCase varNames.
@@ -180,13 +181,24 @@ SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: n
 		compile: 'testCaseCompiled' , String cr , formattedNode ]
 		on: Error
 		do: [ :e | 
+			self halt.
 			^ (aTestCase removeNumStatements: 5)
-				and: [ self calculateCoverageOf: aTestCase using: profiler inLevel: numLevel + 1] ].
+				and: [ self
+						calculateCoverageOf: aTestCase
+						using: profiler
+						inLevel: numLevel + 1 ] ].
 	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
 		on: Exception
 		do: [ :exception | 
-			^ (aTestCase changeStatementsOfClassName: ([exception signaler name] on: MessageNotUnderstood do: [exception signaler className]))
-				and: [ self calculateCoverageOf: aTestCase using: profiler inLevel: numLevel + 1 ] ].
+			^ (aTestCase
+				changeStatementsOfClassName:
+					([ exception signaler name ]
+						on: MessageNotUnderstood
+						do: [ exception signaler className ]))
+				and: [ self
+						calculateCoverageOf: aTestCase
+						using: profiler
+						inLevel: numLevel + 1 ] ].
 	^ true
 ]
 

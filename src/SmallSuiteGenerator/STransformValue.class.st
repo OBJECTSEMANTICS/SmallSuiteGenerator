@@ -179,7 +179,10 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 		thenDo: [ :stringArg | 
 			| newArg |
 			newArg := aTestCase
-				createArg: aStatement returnTypeName
+				createArg:
+					(aStatement isConstructor
+						ifTrue: [ aStatement theClassName ]
+						ifFalse: [ aStatement returnTypeName ])
 				before: (aTestCase indexOf: varName)
 				avoiding: aStatement varName.
 			newArg
@@ -188,6 +191,7 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 	varToDelete
 		ifEmpty: [ argsResult := args
 				collect: [ :arg | replace at: arg ifAbsent: [ arg ] ] ].
+	self assert: aTestCase hasValidDependencies description: 'Test case must have valid dependencies'.
 	^ {argsResult.
 	varToDelete}
 ]
