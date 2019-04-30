@@ -21,7 +21,8 @@ SMethodStatement >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> changeUsing: aTestCase [
-	| methods calledMethods constructStatement |
+	| methods calledMethods constructStatement result |
+	result := #().
 	constructStatement := aTestCase statementAt: self receiverVarName.
 	calledMethods := (aTestCase statements
 		select: #isMethod
@@ -40,8 +41,12 @@ SMethodStatement >> changeUsing: aTestCase [
 				ifFound: [ :accessor | accessor ]
 				ifNone: [ methods first ].
 			selected selector = self selector
-				ifTrue: [ newArgs := (STransformValue changeArgsOf: args using: aTestCase)
-						first ]
+				ifTrue: [ result := STransformValue
+						change: args
+						ofTypes: selected argTypes
+						using: aTestCase.
+					newArgs := result first.
+					result := result second ]
 				ifFalse: [ newArgs := selected argTypes
 						collect: [ :class | 
 							aTestCase
@@ -49,10 +54,11 @@ SMethodStatement >> changeUsing: aTestCase [
 								before: (aTestCase indexOf: self varName)
 								avoiding: nil ].
 					(newArgs anySatisfy: #isNil)
-						ifTrue: [ ^ self ] ].
+						ifTrue: [ ^ result ] ].
 			(aTestCase statementAt: self varName)
 				selector: selected selector;
-				args: newArgs ]
+				args: newArgs ].
+	^ result
 ]
 
 { #category : #'as yet unclassified' }
@@ -61,8 +67,8 @@ SMethodStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SMethodStatement >> createNewStatement: aId [
-	^ (self class create: aId)
+SMethodStatement >> createNewStatement [
+	^ (self class create)
 		selector: self selector;
 		args: self args;
 		returnTypeName: self returnTypeName;
@@ -82,12 +88,9 @@ SMethodStatement >> insertParameterUsing: aTestCase [
 
 { #category : #accessing }
 SMethodStatement >> insertRandomCallUsing: aTestCase [
-	| position |
-	position := STransformValue
-		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
-		to: aTestCase statements size
-		default: aTestCase statements size + 1.
-	^ aTestCase insertStatementWithArgs: self before: position
+	^ aTestCase
+		insertStatementWithArgs: self
+		from: (aTestCase indexOf: self receiverVarName) + 1
 ]
 
 { #category : #accessing }
@@ -134,8 +137,7 @@ SMethodStatement >> receiverVarName: anObject [
 SMethodStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
-	self changeUsing: aTestCase.
-	^ #()
+	^ self changeUsing: aTestCase.
 ]
 
 { #category : #mutation }
@@ -174,7 +176,7 @@ SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	blockInsertion := [ :testCase :aStatement :constructor :aArgs | 
 	^ testCase
 		addStatement:
-			((aStatement createNewStatement: aTestCase assignedId)
+			((aStatement createNewStatement)
 				receiverVarName: constructor varName;
 				args: aArgs;
 				yourself) ].
@@ -204,13 +206,23 @@ SMethodStatement >> stringBody [
 			aStream
 				nextPutAll: self receiverVarName;
 				nextPutAll: ' '.
+			"refactor para que se use directamente los valores y no el string del valor"
 			self args
 				ifEmpty: [ aStream nextPutAll: self selector ]
-				ifNotEmpty: [ (self selector substrings: ':')
+				ifNotEmpty: [ | withColon |
+					withColon := self selector includes: $:.
+					(self selector substrings: ':')
 						with: self args
 						do: [ :selectorPart :arg | 
-							aStream nextPutAll: selectorPart;
-							nextPutAll: ': ';
-							nextPutAll: arg ] ].
+							aStream nextPutAll: selectorPart.
+							withColon
+								ifTrue: [ aStream nextPutAll: ':' ].
+							aStream
+								nextPut: Character space;
+								nextPutAll: arg storeString;
+								nextPut: Character space
+							"([ (STON fromString: arg asString) storeString ]
+										on: STONReaderError
+										do: [ arg ])" ] ].
 			aStream nextPut: $. ]
 ]

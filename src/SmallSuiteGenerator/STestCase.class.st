@@ -5,10 +5,36 @@ Class {
 		'statements',
 		'profile',
 		'generatorInvariant',
-		'counter'
+		'dictSubclasses',
+		'fitness',
+		'nextId'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'instance creation' }
+STestCase class >> create: numberOfTestCases testCasesAndInitialize: numberOfStatements statementsUsing: profiler [
+	| collection testCase |
+	collection := OrderedCollection new.
+	1 to: numberOfTestCases do: [ :index | 
+		testCase := self new.
+		testCase profile: profiler.
+		testCase generateStatements: numberOfStatements.
+		collection add: testCase ].
+	^ collection
+]
+
+{ #category : #'instance creation' }
+STestCase class >> createTestSuite: aGeneratorProfile ofSize: aNumber [
+	| collection testCase |
+	collection := OrderedCollection new.
+	1 to: aNumber do: [ :index | 
+		testCase := self new.
+		testCase profile: aGeneratorProfile.
+		testCase generateStatements: (10 to: 54) atRandom.
+		collection add: testCase ].
+	^ collection
+]
 
 { #category : #'instance creation' }
 STestCase class >> seed: aGeneratorProfile [
@@ -18,38 +44,41 @@ STestCase class >> seed: aGeneratorProfile [
 	^ ins
 ]
 
+{ #category : #adding }
+STestCase >> add: collStatements fromParentWith: collIds. [
+	self assert: statements isEmpty description: 'Statements must be empty'.
+	"self assert: assignedIds isEmpty description: 'AssignedIds must be empty'."
+	statements addAll: collStatements.
+	"assignedIds addAll: collIds."
+]
+
 { #category : #generation }
 STestCase >> addConstructor [
-	^ self profile allClasses shuffle 
-	detect: [ :classSpy | self addConstructor: classSpy ] 
-	ifFound:[true] 
-	ifNone:[false].
-	
+	^ self profile allClasses shuffle
+		detect: [ :classSpy | self addConstructor: classSpy ]
+		ifFound: [ true ]
+		ifNone: [ false ]
 ]
 
 { #category : #generation }
 STestCase >> addConstructor: classSpy [
-	| methods newStatement |
-	methods := classSpy factoryMethods.
-	methods ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNil ].
-	newStatement := self
-		newConstructorStatement: classSpy
-		of: methods
-		before: nil.
-	newStatement ifNil: [ ^ false ].
-	^ self addStatement: newStatement
-	"factoryMethod := methods shuffle anyOne.
-	args := factoryMethod argTypes
-		collect: [ :class | self createArg: class name ].
-	(args anySatisfy: #isNil)
-		ifTrue: [ ^ false ].
-	^ self
-		addStatement:
-			(SConstructorStatement create
-				theClassName: classSpy className;
-				selector: factoryMethod selector;
-				args: args;
-				yourself)"
+	(classSpy methods select: #isAbstract) isNotEmpty 
+		ifTrue: [ classSpy subclasses
+				ifEmpty: [ ^ false ]
+				ifNotEmpty: [ dictSubclasses
+						at: classSpy className
+						ifAbsentPut: (classSpy subclasses collect: [ :subc | subc className ]) asSet.
+					^ self addConstructor: classSpy subclasses shuffle anyOne ] ]
+		ifFalse: [ | methods newStatement |
+			methods := classSpy factoryMethods.
+			methods
+				ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
+			newStatement := self
+				newConstructorStatement: classSpy
+				of: methods
+				before: nil.
+			newStatement ifNil: [ ^ false ].
+			^ self addStatement: newStatement ]
 ]
 
 { #category : #accessing }
@@ -61,24 +90,26 @@ STestCase >> addConstructor: aStatement before: varName forField: toField [
 		ifFalse: [ | classSpy |
 			classSpy := profile classAt: aStatement theClassName.
 			list := classSpy factoryMethods.
-			list ifEmpty: [ ^ self addDefaultConstructor: classSpy ] ].
+			list
+				ifEmpty: [ | constructor |
+					constructor := self defaultConstructor: classSpy.
+					(self addStatement: constructor at: (self indexOf: varName))
+						ifTrue: [ ^ constructor ].
+					^ nil ] ].
 	newStatement := self
 		newConstructorStatement: aStatement theClassName
 		of: list
 		before: varName.
-	(newStatement isNotNil and: [self addStatement: newStatement at: (self indexOf: varName) - 1])
-				ifTrue: [ ^ newStatement ].
+	(newStatement isNotNil
+		and: [ self addStatement: newStatement at: (self indexOf: varName) ])
+		ifTrue: [ ^ newStatement ].
 	^ nil
 ]
 
 { #category : #generation }
 STestCase >> addDefaultConstructor: classSpy [
 	| statement |
-	statement := (SConstructorStatement create: self assignedId)
-		theClassName: classSpy className;
-		selector: 'new';
-		args: #();
-		yourself.
+	statement := self defaultConstructor: classSpy.
 	self addStatement: statement.
 	^ statement
 ]
@@ -97,7 +128,7 @@ STestCase >> addField [
 					selected := accessors shuffle anyOne.
 					^ self
 						addStatement:
-							((SFieldStatement create: self assignedId)
+							(SFieldStatement new
 								returnTypeName: selected returnType name;
 								receiverVarName: stm varName;
 								fieldName: selected selector;
@@ -122,7 +153,7 @@ STestCase >> addMethod [
 					(args anySatisfy: #isNil)
 						ifFalse: [ ^ self
 								addStatement:
-									((SMethodStatement create: self assignedId)
+									(SMethodStatement new
 										receiverVarName: stm varName;
 										returnTypeName: selected returnType name;
 										selector: selected selector;
@@ -147,7 +178,7 @@ STestCase >> addPrimitive: aClassName [
 	scalar := result first.
 	^ self
 		addStatement:
-			((SPrimitiveStatement create: self assignedId)
+			(SPrimitiveStatement new
 				returnTypeName: result second;
 				value: scalar;
 				yourself)
@@ -159,7 +190,7 @@ STestCase >> addPrimitive: aClassName at: position [
 	result := self createScalar: aClassName.
 	result ifNil: [ ^ nil ].
 	scalar := result first.
-	primitive := (SPrimitiveStatement create: self assignedId)
+	primitive := SPrimitiveStatement new
 		returnTypeName: result second;
 		value: scalar;
 		yourself.
@@ -170,25 +201,21 @@ STestCase >> addPrimitive: aClassName at: position [
 
 { #category : #accessing }
 STestCase >> addStatement: aStatement [
-	statements add: aStatement.
-	^ true.
+	^ self addStatement: aStatement at: self numberOfStatements + 1
+	"statements add: aStatement.
+	^ true"
 ]
 
 { #category : #accessing }
 STestCase >> addStatement: aStatement at: position [
+	self assert: aStatement id isNil description: 'The id of new statement must be nil to assign a new one'.
+	aStatement id: self assignId.
 	statements isEmpty
 		ifTrue: [ statements add: aStatement ]
-		ifFalse: [[ statements add: aStatement afterIndex: position - 1 ]
+		ifFalse: [ [ statements add: aStatement afterIndex: position - 1 ]
 				on: Error
 				do: [ ^ false ] ].
 	^ true
-]
-
-{ #category : #adding }
-STestCase >> addStatement: aStatement satisfyingParameters: otherTestCase [
-	aStatement
-		satisfyParameters: self
-		with: otherTestCase
 ]
 
 { #category : #'as yet unclassified' }
@@ -197,11 +224,19 @@ STestCase >> applyMutator [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> assignedId [
-	| idToAssign |
-	idToAssign := counter.
-	counter := counter + 1.
-	^ idToAssign 
+STestCase >> assignId [
+	| idToAssign assignedIds |
+	assignedIds := self assignedIds.
+	[ assignedIds includes: nextId ] whileTrue: [ nextId := nextId + 1 ].
+	idToAssign := nextId.
+	"assignedIds add: idToAssign."
+	nextId := nextId + 1.
+	^ idToAssign
+]
+
+{ #category : #accessing }
+STestCase >> assignedIds [
+	^ statements collect: #id 
 ]
 
 { #category : #mutation }
@@ -230,6 +265,19 @@ STestCase >> change: varName [
 				addAll: (statement repairOn: self changing: statementToChange) ].
 	varNamesToChange do: [ :aName | self change: aName ].
 	^ { varName }, varNamesToChange 
+]
+
+{ #category : #removing }
+STestCase >> changeStatementsOfClassName: aClassName [
+	| constructors changed |
+	constructors := self statements select: #isConstructor.
+	constructors ifEmpty: [ ^ false ].
+	changed := true.
+	constructors
+		select: [ :aStm | aStm theClassName = aClassName ]
+		thenDo:
+			[ :aStm | changed := changed and: [ (self change: aStm varName) isNotEmpty ] ].
+	^ changed
 ]
 
 { #category : #'as yet unclassified' }
@@ -263,73 +311,28 @@ STestCase >> cleanIrrelevantStatements [
 	^ removedVarNames
 ]
 
-{ #category : #metric }
-STestCase >> coverage [
-	^ SCalculatorCoverage coverageOf: statements using: self varNames
-	"| profiler node temporaries varNames |
-	node := RBParser parseExpression: '[]'.
-	varNames := self varNames.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: 'SmallSuiteCompil*'.
-	^ {profiler numberOfAllStatements.
-	profiler numberOfExecutedStatements.
-	profiler numberOfMethods.
-	profiler numberOfExecutedMethods}"
-]
-
-{ #category : #metric }
-STestCase >> coverageNoInstrument [
-	^ SCalculatorCoverage
-		coverageNoInstrumentOf: statements
-		using: self varNames
-]
-
-{ #category : #metric }
-STestCase >> coverageNoInstrument: profiler [
-	^ SCalculatorCoverage
-		coverage: profiler 
-		of: statements
-		using: self varNames
+{ #category : #'as yet unclassified' }
+STestCase >> computeFitnessUsing: fitnessBlock [
+	fitness := fitnessBlock value: self
 ]
 
 { #category : #metric }
 STestCase >> coverageOnClass: aClass [
-	^ SCalculatorCoverage
-		coverageOf: statements
-		using: self varNames
+	^ SCalculatorCoverage new
+		coverageTestCase: self
 		onClass: aClass
 ]
 
 { #category : #metric }
-STestCase >> coverageWithRegex: regex [
-	^ SCalculatorCoverage coverageOf: statements using: self varNames onPackagesMatching: regex
-	"| profiler node temporaries varNames |
-	node := RBParser parseExpression: '[]'.
-	varNames := self varNames.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: 'SmallSuiteCompil*'.
-	^ {profiler numberOfAllStatements.
-	profiler numberOfExecutedStatements.
-	profiler numberOfMethods.
-	profiler numberOfExecutedMethods}"
+STestCase >> coverageOnClass: aClass using: profiler [
+	^ SCalculatorCoverage new coverageTestCase: self onClass: aClass
+]
+
+{ #category : #metric }
+STestCase >> coverageOnPackagesMatching: regex [
+	^ SCalculatorCoverage new
+		coverageTestCase: self
+		onPackagesMatching: regex
 ]
 
 { #category : #generation }
@@ -342,62 +345,43 @@ STestCase >> createArg: aClassName [
 
 { #category : #generation }
 STestCase >> createArg: aClassName before: stop avoiding: varName [
-	| selectedList |
-	selectedList := OrderedCollection new.
-	statements
-		withIndexDo: [ :stm :index | 
-			index < stop
-				ifTrue: [ (stm returnTypeName = aClassName and: [ stm varName ~= varName ])
-						ifTrue: [ selectedList add: stm varName ] ] ].
-	selectedList ifNotEmpty: [ ^ selectedList shuffle anyOne ] ifEmpty: [ ^ (self createScalar: aClassName) first ]
+	| result |
+	result := self
+		statementOfType: aClassName
+		before: stop
+		noCalledEqualTo: varName.
+	result ifNil: [ result := self createScalar: aClassName ].
+	result ifNotNil: [ ^ result first ].
+	^ result
 ]
 
 { #category : #generation }
 STestCase >> createScalar: aClassName [
-	| scalars returnTypeName |
-	returnTypeName := aClassName.
-	scalars := self profile scalars
+	self profile scalars
 		at: aClassName
-		ifAbsent: [ | subclasses |
-			subclasses := (Smalltalk classNamed: aClassName) allSubclasses
-				collect: [ :aClass | aClass name asString ].
-			self profile scalars keys
-				detect: [ :aString | subclasses includes: aString ]
-				ifFound: [ :aString | 
-					returnTypeName := aString.
-					self profile scalars at: aString ]
-				ifNone: [ ^ nil ] ].
-	^ {scalars asOrderedCollection shuffle anyOne.
-	returnTypeName}
+		ifPresent: [ :value | 
+			^ {(STransformValue listShuffle: value) first.
+			aClassName} ]
+		ifAbsent: [ ^ self valueOfType: aClassName using: self profile scalars]
 ]
 
-{ #category : #'as yet unclassified' }
-STestCase >> crossOverWith: otherTestCase [
-	| alpha offSpring1 offSpring2 size sizeOther |
-	alpha := (0.1 to: 0.9 by: 0.1) atRandom round: 1.
-	size := statements size.
-	sizeOther := otherTestCase statements size.
-	offSpring1 := STestCase seed: otherTestCase profile.
-	(statements copyFrom: 1 to: (size * alpha) asInteger)
-		do: [ :aStm | 
-			offSpring1 addStatement: aStm.
-			offSpring1 assignedId ].	"first alpha(P1)"
-	(otherTestCase statements
-		copyFrom: (alpha * sizeOther) asInteger + 1
-		to: sizeOther)
-		do:
-			[ :aStm | offSpring1 addStatement: aStm satisfyingParameters: otherTestCase ].	"last (1-alpha)(P2)"
-	offSpring2 := STestCase seed: self profile.
-	(otherTestCase statements
-		copyFrom: 1
-		to: (sizeOther * alpha) asInteger)
-		do: [ :aStm | 
-			offSpring2 addStatement: aStm.
-			offSpring2 assignedId ].	"first alpha(P2)"
-	(statements copyFrom: (alpha * size) asInteger + 1 to: size)
-		do: [ :aStm | offSpring2 addStatement: aStm satisfyingParameters: self ].	"last (1-alpha)(P1)"
-	^ {offSpring1.
-	offSpring2}
+{ #category : #generation }
+STestCase >> defaultConstructor: classSpy [
+	^ (SConstructorStatement new)
+		theClassName: classSpy className;
+		selector: 'new';
+		args: #();
+		yourself
+]
+
+{ #category : #accessing }
+STestCase >> dictSubclasses [
+	^ dictSubclasses 
+]
+
+{ #category : #accessing }
+STestCase >> fitness [
+	^ fitness
 ]
 
 { #category : #'as yet unclassified' }
@@ -407,16 +391,21 @@ STestCase >> generateInvariants [
 
 { #category : #'as yet unclassified' }
 STestCase >> generateStatements [
-	self generateStatements: 63
+	self generateStatements: 54
 ]
 
 { #category : #'as yet unclassified' }
 STestCase >> generateStatements: aNumber [
-	aNumber
-		timesRepeat: [ [ self
+	[ self statements size < aNumber ]
+		whileTrue: [ [ self
 				perform: #(#addConstructor #addField #addMethod #addPrimitive) shuffle anyOne ]
 				on: Error
 				do: [  ] ]
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> hasUniqueStatements [
+	^ self numberOfStatements = self varNames asSet size
 ]
 
 { #category : #'as yet unclassified' }
@@ -425,9 +414,7 @@ STestCase >> hasValidDependencies [
 	currentVarNames := OrderedCollection new.
 	statements
 		detect: [ :aStm | 
-			(self
-				validDependencies: aStm collectDependencies
-				with: currentVarNames)
+			(currentVarNames includesAll: aStm collectDependencies)
 				ifTrue: [ currentVarNames add: aStm varName.
 					false ]
 				ifFalse: [ true ] ]
@@ -437,36 +424,40 @@ STestCase >> hasValidDependencies [
 
 { #category : #accessing }
 STestCase >> indexOf: varName [
-	| index |
-	index := 0.
+	self varNames withIndexDo: [ :aVar :index | 
+		aVar = varName ifTrue: [ ^ index ]	
+	].
+	^ -1
+	"index := 0.
 	statements
 		detect: [ :statement | 
 			index := index + 1.
 			statement varName = varName ]
 		ifFound: [ ^ index ]
-		ifNone: [ ^ -1 ].
+		ifNone: [ ^ -1 ]"
 ]
 
 { #category : #initialization }
 STestCase >> initialize [
 	super initialize.
-	counter := 0.
+	nextId := 0.
 	statements := OrderedCollection new.
-	generatorInvariant := SSGeneratorInvariant new
+	generatorInvariant := SSGeneratorInvariant new.
+	dictSubclasses := Dictionary new.
 ]
 
 { #category : #'accessing untypeable characters' }
 STestCase >> insert [
-	| l L varNames alpha count random varNamesInserted |
+	| l stop varNames alpha count random varNamesInserted |
 	self applyMutator
 		ifFalse: [ ^ #() ].
 	l := 1.
 	count := 0.
-	L := statements size.
+	stop := self numberOfStatements.
 	alpha := 0.5.
 	varNamesInserted := OrderedCollection new.
 	random := Random new seed: DateAndTime current nanoSecond / 100.
-	[ l < L and: [ random next <= (alpha raisedTo: count) ] ]
+	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
 		whileTrue: [ varNames := self insertRandomStatement.
 			varNames ifNotNil: [ varNamesInserted addAll: varNames ].
 			l := l + 1.
@@ -482,7 +473,8 @@ STestCase >> insertMethodCall [
 		detect: [ :stmToInsert | 
 			varNames := stmToInsert insertMethodCallUsing: self.
 			varNames isNotNil ]
-		ifFound: [ ^ varNames ].
+		ifFound: [ 
+			^ varNames ].
 	^ nil
 ]
 
@@ -494,7 +486,8 @@ STestCase >> insertParameter [
 		detect: [ :stmToInsert | 
 			varNames := stmToInsert insertParameterUsing: self.
 			varNames isNotNil ]
-		ifFound: [ ^ varNames ].
+		ifFound: [ 
+			^ varNames ].
 	^ nil
 ]
 
@@ -506,7 +499,8 @@ STestCase >> insertRandomCall [
 		detect: [ :stmToInsert | 
 			varNames := stmToInsert insertRandomCallUsing: self.
 			varNames isNotNil ]
-		ifFound: [ ^ varNames ].
+		ifFound: [ 
+			^ varNames ].
 	^ nil
 ]
 
@@ -522,10 +516,10 @@ STestCase >> insertRandomStatement [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> insertStatementWithArgs: aStatement before: aPosition [
+STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 	| args newArgs newStatement size newPosition addedList |
 	args := aStatement args.
-	size := statements size.
+	size := self numberOfStatements.
 	newArgs := args deepCopy.
 	addedList := #().
 	newPosition := STransformValue
@@ -535,18 +529,25 @@ STestCase >> insertStatementWithArgs: aStatement before: aPosition [
 	args
 		ifNotEmpty: [ newArgs := self
 				satisfyParametersOf: args
-				before: size + 1
+				before: newPosition
 				allowingNull: true.
 			addedList := newArgs asArray.
-			newPosition := newArgs
+			newPosition := {(newArgs
 				ifNotEmpty: [ | indexFrom |
-					indexFrom := (self indexOf: newArgs last) + 1.
+					indexFrom := -1.
+					newArgs
+						do: [ :aArg | 
+							indexFrom := {indexFrom.
+							(self indexOf: aArg)} max ].
+					indexFrom := indexFrom < 0
+						ifTrue: [ newPosition ]
+						ifFalse: [ (indexFrom + (newArgs size)) < size ifTrue: [ indexFrom + (newArgs size) ] ifFalse: [ size ] ].
 					STransformValue
 						randomNumberFrom: indexFrom
 						to: size
-						default: indexFrom ]
-				ifEmpty: [ size + 1 ] ].
-	newStatement := (aStatement createNewStatement: self assignedId)
+						default: indexFrom ]).
+			newPosition} max ].
+	newStatement := aStatement createNewStatement
 		args: newArgs asArray;
 		yourself.
 	(self addStatement: newStatement at: newPosition)
@@ -586,7 +587,7 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 			(args anySatisfy: #isNil)
 				ifTrue: [ ^ nil ].
 			selector := selected selector ].
-	^ (SConstructorStatement create: self assignedId)
+	^ (SConstructorStatement new)
 		theClassName:
 			(classSpy isSymbol
 				ifTrue: [ classSpy ]
@@ -594,6 +595,11 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 		selector: selector;
 		args: args;
 		yourself
+]
+
+{ #category : #accessing }
+STestCase >> numberOfStatements [
+	^ statements size
 ]
 
 { #category : #printing }
@@ -641,6 +647,29 @@ STestCase >> remove: varName [
 	^ {varName}, varNamesToDelete
 ]
 
+{ #category : #removing }
+STestCase >> removeNumStatements: aNumber [
+	| removed |
+	removed := true.
+	1 to: aNumber do: [ :number | 
+		removed := removed and: [self remove isNotEmpty].	
+	].
+	^ removed
+]
+
+{ #category : #removing }
+STestCase >> removeStatementsOfClassName: aClassName [
+	| constructors removed |
+	constructors := self statements select: #isConstructor.
+	constructors ifEmpty: [ ^ false ].
+	removed := true.
+	constructors
+		select: [ :aStm | aStm theClassName = aClassName ]
+		thenDo:
+			[ :aStm | removed := removed and: [ (self remove: aStm varName) isNotEmpty ] ].
+	^ removed
+]
+
 { #category : #'as yet unclassified' }
 STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 	| argsResult varNames |
@@ -649,14 +678,18 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 	args
 		withIndexDo: [ :aArg :index | 
 			(varNames includes: aArg)
-				ifTrue: [ | newArg |
+				ifTrue: [ | newArg stm |
+					stm := self statementAt: aArg.
 					newArg := self
-						addPrimitive: (self statementAt: aArg) returnTypeName
+						addPrimitive:
+							(stm isConstructor
+								ifTrue: [ stm theClassName ]
+								ifFalse: [ stm returnTypeName ])
 						at:
 							(STransformValue
 								randomNumberFrom: 1
 								to: position - 1
-								default: position).
+								default: position - 1).
 					argsResult
 						at: index
 						put:
@@ -666,7 +699,7 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 										ifTrue: [ nil ]
 										ifFalse: [ aArg ] ]) ]
 				ifFalse:
-					[ argsResult at: index put: (STransformValue changeAndTransform: aArg) ] ].
+					[ argsResult at: index put: aArg mutateToChange ] ].
 	^ argsResult
 ]
 
@@ -676,6 +709,30 @@ STestCase >> statementAt: varName [
 		detect: [ :aStm | 
 			aStm varName = varName ]
 		ifFound: [ :aStm | ^ aStm ].
+	^ nil
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> statementOfType: aClassName before: stop noCalledEqualTo: varName [
+	| dictionary candidates |
+	dictionary := Dictionary new.
+	candidates := OrderedCollection new.
+	statements
+		withIndexDo: [ :stm :index | 
+			(index < stop
+				and: [ stm varName ~= varName ])
+				ifTrue: [ candidates add: stm ] ].
+	candidates
+		do: [ :stm | 
+			dictionary
+				at:
+					(stm isConstructor
+						ifTrue: [ stm theClassName ]
+						ifFalse: [ stm returnTypeName ])
+				ifPresent: [ :aSet | aSet add: stm varName ]
+				ifAbsentPut: [ {stm varName} asSet ] ].
+	dictionary
+		ifNotEmpty: [ ^ self valueOfType: aClassName using: dictionary ].
 	^ nil
 ]
 
@@ -714,24 +771,25 @@ STestCase >> statementsGroupedByDependencies [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> validDependencies [
-	| isValid currentVarNames |
-	isValid := true.
-	currentVarNames := OrderedCollection new.
-	statements detect: [ :aStm | 
-		| collectDependencies |
-		collectDependencies := aStm collectDependencies.
-		(self validDependencies: collectDependencies with: currentVarNames) 
-		ifTrue: [ currentVarNames addAll: collectDependencies; add: aStm varName. false ] ifFalse: [ true ]
-		 ] ifFound: [ ^ false ]
-	ifNone: [ ^ true ].
-	^ true
-]
-
-{ #category : #'as yet unclassified' }
-STestCase >> validDependencies: dependencies with: varNames [
-	^ varNames includesAll: dependencies
-	
+STestCase >> valueOfType: aClassName using: aDictionary [
+	aDictionary at: aClassName 
+	ifPresent: [ :value | ^ {(STransformValue listShuffle: value) first. aClassName} ] 
+	ifAbsent: [ 
+	| subclasses |
+	dictSubclasses at: aClassName 
+	ifPresent: [:value | subclasses := value  ]
+	ifAbsent: [ 
+	subclasses := (Smalltalk classNamed: aClassName) subclasses
+		collect: [ :aClass | aClass name ].
+	subclasses ifEmpty: [ ^ nil ].
+		dictSubclasses at: aClassName put: subclasses asSet ].
+	(STransformValue listShuffle: aDictionary keys)
+		detect: [ :aName | subclasses includes: aName ]
+		ifFound: [ :aName | 
+			^ {(STransformValue
+				listShuffle: (aDictionary at: aName) asOrderedCollection) first.
+			aName} ].
+	^ nil]
 ]
 
 { #category : #'as yet unclassified' }

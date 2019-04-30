@@ -26,15 +26,16 @@ SPrimitiveAssertionTest >> testPrintString [
 { #category : #tests }
 SPrimitiveAssertionTest >> testPrintStringNoLiterals [
 	| assertions |
-	assertions := SPrimitiveAssertion applyOn: 'coll' with: OrderedCollection new.
+	assertions := SPrimitiveAssertion
+		applyOn: 'coll'
+		with: OrderedCollection new.
 	self assert: assertions isEmpty.
-		
 	assertions := SPrimitiveAssertion applyOn: 'stack' with: Stack new.
 	self assert: assertions isEmpty.
-	
-	assertions := SPrimitiveAssertion applyOn: 'dict' with: Dictionary new.
+	assertions := SPrimitiveAssertion
+		applyOn: 'dict'
+		with: Dictionary new.
 	self assert: assertions isEmpty.
-	
-	assertions := SPrimitiveAssertion applyOn: 'sstudent' with: SStudent new.
-	self assert: assertions isEmpty.
+	assertions := SPrimitiveAssertion applyOn: 'foo' with: SFoo new.
+	self assert: assertions isEmpty
 ]

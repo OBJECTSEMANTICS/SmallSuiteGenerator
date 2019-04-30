@@ -5,28 +5,40 @@ Class {
 }
 
 { #category : #mutation }
-STransformValue class >> change: aScalar [
-	aScalar isNumber
-		ifTrue: [ ^ (aScalar + (1 to: 100) atRandom) printString ].
-	aScalar isCharacter
-		ifTrue: [ ^ (Character value: (33 to: 127) atRandom) printString ].
-	aScalar class superclass = Boolean
-		ifTrue: [ aScalar
-				ifTrue: [ ^ false printString ]
-				ifFalse: [ ^ true printString ] ].
-	(aScalar isString
-		and: [ ((aScalar beginsWith: '#(') and: [ aScalar endsWith: ')' ]) not ])
-		ifTrue: [ | interval |
-			interval := 33 to: 127.
-			^ ((Character value: interval atRandom) asString
-				, (aScalar copyFrom: 2 to: aScalar size - 1)
-				, (Character value: interval atRandom) asString) printString ].
-	^ aScalar
+STransformValue class >> change: args ofTypes: types using: aTestCase [
+	| varToChange argsResult varNames |
+	argsResult := args deepCopy.
+	varToChange := OrderedCollection new.
+	varNames := aTestCase varNames.
+	args
+		withIndexDo: [ :aArg :index | 
+			(varNames includes: aArg)
+				ifTrue: [ varToChange add: aArg ]
+				ifFalse: [ argsResult
+						at: index
+						put: (self changeAndTransform: aArg ofType: (types at: index) using: aTestCase) ] ].
+	^ {argsResult.
+	varToChange}
 ]
 
 { #category : #'as yet unclassified' }
-STransformValue class >> changeAndTransform: aObject [
-	^ self change: (self transform: aObject)
+STransformValue class >> changeAndTransform: aObject ofType: aType using: aTestCase [
+	aObject isLiteral
+		ifTrue: [ ^ aObject mutateToChange ].
+	aTestCase dictSubclasses
+		at: aType name
+		ifPresent: [ :subClasses | 
+			| otherValues |
+			otherValues := OrderedCollection new.
+			aTestCase profile scalars associations
+				select: [ :assoc | subClasses includes: assoc key ]
+				thenDo: [ :assoc | otherValues addAll: assoc value ].
+			otherValues := self listShuffle: otherValues.
+			otherValues
+				detect: [ :str | str ~= aObject ]
+				ifFound: [ :str | ^ str ]
+				ifNone: [ ^ aObject ] ]
+		ifAbsent: [ "^ self change: (self transform: aObject) using: aTestCase" ^ nil ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -43,21 +55,6 @@ STransformValue class >> changeArg: aArg before: position using: aTestCase allow
 				ifNone: [ aBoolean
 						ifTrue: [ argToUse := nil ] ] ].
 	^ argToUse
-]
-
-{ #category : #'as yet unclassified' }
-STransformValue class >> changeArgsOf: args using: aTestCase [
-	| varToChange argsResult varNames  |
-	argsResult := args deepCopy.
-	varToChange := OrderedCollection new.
-	varNames := aTestCase varNames.
-	args
-		withIndexDo: [ :aArg :index | 
-			(varNames includes: aArg)
-				ifTrue: [ varToChange add: aArg ]
-				ifFalse: [ argsResult at: index put: (self change: (self transform: aArg)) ] ].
-	^ {argsResult.
-	varToChange}
 ]
 
 { #category : #'as yet unclassified' }
@@ -123,10 +120,27 @@ STransformValue class >> getTypeArgs: aClassName of: selector with: aTestCase an
 ]
 
 { #category : #'as yet unclassified' }
+STransformValue class >> listShuffle: aCollection [
+	aCollection
+		ifEmpty: [ ^ aCollection  ]
+		ifNotEmpty: [ ^ aCollection asArray shuffle ]
+]
+
+{ #category : #'as yet unclassified' }
 STransformValue class >> randomNumberFrom: aNumber1 to: aNumber2 default: aNumber3 [
 	| interval |
 	interval := aNumber1 to: aNumber2.
 	^ interval ifEmpty: [ aNumber3 ] ifNotEmpty: [ interval atRandom ]
+]
+
+{ #category : #'as yet unclassified' }
+STransformValue class >> randomValueCharacter: aCharacter [
+	| value interval |
+	interval := 33 to: 127.
+	value := interval atRandom.
+	[ value == aCharacter asInteger ]
+		whileTrue: [ value := interval atRandom ].
+	^ value
 ]
 
 { #category : #removing }
@@ -140,7 +154,10 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 		thenDo: [ :stringArg | 
 			| newArg |
 			newArg := aTestCase
-				createArg: aStatement returnTypeName
+				createArg:
+					(aStatement isConstructor
+						ifTrue: [ aStatement theClassName ]
+						ifFalse: [ aStatement returnTypeName ])
 				before: (aTestCase indexOf: varName)
 				avoiding: aStatement varName.
 			newArg
@@ -149,6 +166,7 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 	varToDelete
 		ifEmpty: [ argsResult := args
 				collect: [ :arg | replace at: arg ifAbsent: [ arg ] ] ].
+	self assert: aTestCase hasValidDependencies description: 'Test case must have valid dependencies'.
 	^ {argsResult.
 	varToDelete}
 ]
@@ -239,21 +257,5 @@ STransformValue class >> satisfyTypeArg: aArg ofType: argType with: aTestCase [
 
 { #category : #'as yet unclassified' }
 STransformValue class >> selectVarNames: args [
-	^ args select: [ :aArg | (aArg beginsWith: '_var') and: [ aArg endsWithDigit ] ]
-]
-
-{ #category : #accessing }
-STransformValue class >> transform: aString [
-	| value |
-	[ value := aString asNumber.
-	^ value ]
-		on: Error
-		do: [  ].
-	aString = 'true'
-		ifTrue: [ ^ true ].
-	aString = 'false'
-		ifTrue: [ ^ false ].
-	((aString beginsWith: '$') and: [ aString size = 2 ])
-		ifTrue: [ ^ aString second ].
-	^ aString
+	^ args select: [ :aArg | [(aArg beginsWith: '_var') and: [ aArg endsWithDigit ]] on: Error do: [ false ] ]
 ]

@@ -44,7 +44,7 @@ SSGeneratorMethod >> mergeTypes: listOfArguments [
 		a := argTypes at: index.
 		b := listOfArguments at: index.
 		argTypes at: index put: (a commonSuperclassWith: b class) ].
-	^ argTypes.
+	^ argTypes
 ]
 
 { #category : #accessing }

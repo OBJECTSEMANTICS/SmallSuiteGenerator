@@ -1,59 +1,36 @@
 Class {
 	#name : #SStudent,
-	#superclass : #Object,
+	#superclass : #SSPerson,
 	#instVars : [
-		'score'
+		'scoreStudent',
+		'idStudent'
 	],
 	#category : #SmallSuiteExamples
 }
 
 { #category : #accessing }
-SStudent class >> score: aNumber [
-	|ins|
-	ins := self new.
-	^ ins.
+SStudent >> idStudent [
+	^ idStudent
 ]
 
-{ #category : #'initailize-release' }
+{ #category : #initialization }
 SStudent >> initialize [
-	super initialize.
-	score:=0.
+	id := 1.
+	scoreStudent := 1.
+	idStudent := id
 ]
 
 { #category : #accessing }
-SStudent >> return: aType [
-	^ aType.
-]
-
-{ #category : #handling }
-SStudent >> returnCollection [
-	| a |
-	a := OrderedCollection new.
-	^ a
-]
-
-{ #category : #handling }
-SStudent >> returnFloat [
-	| a |
-	a := 2.3.
-	^ a
-]
-
-{ #category : #handling }
-SStudent >> returnNum [ 
-	| a |
-	a := 4.
-	^ a
-]
-
-{ #category : #handling }
-SStudent >> returnString [
-	| a |
-	a := 'Hello'.
-	^ a
+SStudent >> nickname [
+	^ 'student_' , (nickname ifNil: ['1'])
 ]
 
 { #category : #accessing }
-SStudent >> score [
-	^ score
+SStudent >> scoreStudent [
+	^ scoreStudent
+]
+
+{ #category : #accessing }
+SStudent >> scoreStudent: aNumber [
+	scoreStudent := aNumber
 ]

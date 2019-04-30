@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : #'class initialization' }
+SStatement class >> create [
+	^ self new.
+]
+
+{ #category : #'class initialization' }
 SStatement class >> create: id [
 	| inst |
 	inst := self new.
@@ -17,12 +22,17 @@ SStatement class >> create: id [
 ]
 
 { #category : #'as yet unclassified' }
+SStatement >> cleanId [
+	id := nil
+]
+
+{ #category : #'as yet unclassified' }
 SStatement >> collectDependencies [
 	^ self subclassResponsibility 
 ]
 
 { #category : #private }
-SStatement >> createNewStatement: aId [
+SStatement >> createNewStatement [
 	^ self subclassResponsibility
 ]
 
@@ -51,20 +61,20 @@ SStatement >> insertParametersOf: aStatement using: aTestCase [
 	| args |
 	args := aStatement args.
 	args
-		ifNotEmpty: [ | varNames position index newStatement |
+		ifNotEmpty: [ | varNames index newStatement |
 			varNames := aTestCase varNames.
 			index := 0.
 			args
 				detect: [ :aArg | 
+					| defaultPosition position |
 					index := index + 1.
 					(varNames includes: aArg)
-						ifTrue: [ 
-							newStatement := (aTestCase statementAt: aArg)
-								createNewStatement: aTestCase assignedId.
+						ifTrue: [ newStatement := (aTestCase statementAt: aArg) createNewStatement.
+							defaultPosition := (aTestCase indexOf: aArg) + 1.
 							position := STransformValue
-								randomNumberFrom: 1
+								randomNumberFrom: defaultPosition
 								to: (aTestCase indexOf: aStatement varName) - 1
-								default: 1.
+								default: defaultPosition.
 							aTestCase addStatement: newStatement at: position ]
 						ifFalse: [ false ] ]
 				ifFound: [ (aTestCase statementAt: aStatement varName) args

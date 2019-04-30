@@ -63,7 +63,7 @@ SSPerson >> name: anObject [
 
 { #category : #accessing }
 SSPerson >> nickname [
-	^ nickname
+	self subclassResponsibility 
 ]
 
 { #category : #accessing }

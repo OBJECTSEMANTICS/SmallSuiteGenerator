@@ -27,7 +27,7 @@ SSAssertionTest >> testGenerateInvariantCollections [
 			{SCollectionSizeAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	profile := SSGenerator profile: [ SStudent new ] onClass: SStudent.
+	profile := SSGenerator profile: [ SFoo new ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	invariants := testCase generateInvariants.
@@ -49,7 +49,7 @@ SSAssertionTest >> testGenerateInvariantCollections [
 			SStringAssertion.
 			SComparisonAssertion.
 			SInspectorAssertion.
-			SCollectionSizeAssertion}.
+			SCollectionSizeAssertion}
 	"profile := SSGenerator
 		profile: [ OrderedCollection new ]
 		onClass: OrderedCollection.
@@ -70,8 +70,8 @@ SSAssertionTest >> testGenerateInvariantCollections [
 SSAssertionTest >> testGenerateInvariantsArray [
 	| profile testCase invariants |
 	profile := SSGenerator
-		profile: [ (SStudent score: #(2 4)) ]
-		onClass: SStudent.
+		profile: [ (SFoo score: #(2 4)) ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	invariants := testCase generateInvariants.
@@ -79,8 +79,8 @@ SSAssertionTest >> testGenerateInvariantsArray [
 	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion. SPrimitiveAssertion. SInspectorAssertion. SStringAssertion. SComparisonAssertion }.
 	
 	profile := SSGenerator
-		profile: [ (SStudent score: #()) ]
-		onClass: SStudent.
+		profile: [ (SFoo score: #()) ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	invariants := testCase generateInvariants.
@@ -125,8 +125,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SComparisonAssertion. SStringAssertion. SInspectorAssertion }.
 	
 	profile := SSGenerator
-		profile: [ SStudent new return: 'hello World' ]
-		onClass: SStudent.
+		profile: [ SFoo new return: 'hello World' ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	invariants := testCase generateInvariants.
@@ -134,8 +134,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion. SStringAssertion. SInspectorAssertion. SComparisonAssertion }.
 	
 	profile := SSGenerator
-		profile: [ SStudent new return: 2.34 ]
-		onClass: SStudent.
+		profile: [ SFoo new return: 2.34 ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	invariants := testCase generateInvariants.
@@ -143,11 +143,11 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion }.
 	
 	profile := SSGenerator
-		profile: [ SStudent new return: true ]
-		onClass: SStudent.
+		profile: [ SFoo new return: true ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 3.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SStringAssertion. SComparisonAssertion }.
+	self assert: invariants size equals: 4.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion }.
 ]

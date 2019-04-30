@@ -21,14 +21,19 @@ SConstructorStatement >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SConstructorStatement >> changeUsing: aTestCase [
-	| classSpy method result |
+	| classSpy method result methods |
+	result := nil.
 	classSpy := aTestCase profile classAt: self theClassName.
-	method := classSpy factoryMethods shuffle
+	methods := classSpy factoryMethods shuffle.
+	method := methods
 		detect: [ :aMethod | aMethod selector ~= self selector ]
 		ifFound: [ :aMethod | aMethod ]
 		ifNone: [  ].
 	method
-		ifNil: [ result := STransformValue changeArgsOf: args using: aTestCase.
+		ifNil: [ result := STransformValue
+				change: args
+				ofTypes: (methods ifEmpty: [ #() ] ifNotEmpty: [ methods first argTypes ])
+				using: aTestCase.
 			(aTestCase statementAt: self varName) args: result first.
 			result := result second ]
 		ifNotNil: [ | newArgs |
@@ -51,8 +56,8 @@ SConstructorStatement >> collectDependencies [
 ]
 
 { #category : #private }
-SConstructorStatement >> createNewStatement: aId [
-	^ (self class create: aId)
+SConstructorStatement >> createNewStatement [
+	^ (self class create)
 		args: self args;
 		selector: self selector;
 		theClassName: self theClassName;
@@ -66,6 +71,7 @@ SConstructorStatement >> insertMethodCallUsing: aTestcase [
 
 { #category : #'as yet unclassified' }
 SConstructorStatement >> insertParameterUsing: aTestCase [
+	"insert its parameters"
 	^ self insertParametersOf: self using: aTestCase
 ]
 
@@ -73,7 +79,7 @@ SConstructorStatement >> insertParameterUsing: aTestCase [
 SConstructorStatement >> insertRandomCallUsing: aTestCase [
 	^ aTestCase
 		insertStatementWithArgs: self
-		before: aTestCase statements size + 1
+		from: 1
 ]
 
 { #category : #accessing }
@@ -101,9 +107,6 @@ SConstructorStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
 	^ self changeUsing: aTestCase
-	"collection := STransformValue changeArgsOf: self using: aTestCase.
-	(aTestCase statementAt: self varName) args: collection first.
-	^ collection second"
 ]
 
 { #category : #mutation }
@@ -116,7 +119,7 @@ SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
 				with: self varName
 				using: aTestCase.
 			(aTestCase statementAt: self varName) args: collection first.
-			^ collection second]
+			^ collection second ]
 		ifFalse: [ ^ #() ]
 ]
 
@@ -153,12 +156,21 @@ SConstructorStatement >> stringBody [
 				nextPutAll: ' '.
 			self args
 				ifEmpty: [ aStream nextPutAll: self selector ]
-				ifNotEmpty: [ (self selector substrings: ':')
+				ifNotEmpty: [ | withColon |
+					withColon := self selector includes: $:.
+					(self selector substrings: ':')
 						with: self args
 						do: [ :selectorPart :arg | 
-							aStream nextPutAll: selectorPart;
-							nextPutAll: ': ';
-							nextPutAll: arg ] ].
+							aStream nextPutAll: selectorPart.
+							withColon
+								ifTrue: [ aStream nextPutAll: ':' ].
+							aStream
+								nextPut: Character space;
+								nextPutAll: arg storeString;
+								nextPut: Character space
+							"([ (STON fromString: arg asString) storeString ]
+										on: STONReaderError
+										do: [ arg ])" ] ].
 			aStream nextPut: $. ]
 ]
 
