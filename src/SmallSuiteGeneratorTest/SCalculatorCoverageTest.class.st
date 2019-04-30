@@ -139,8 +139,9 @@ SCalculatorCoverageTest >> testCoverageClassRTLineSegment [
 
 { #category : #'coverage-onClass' }
 SCalculatorCoverageTest >> testCoverageClassSStack [
-	"57.14 = (4/7) * 100 round: 2"
-	"73.68 = (14/19) * 100 round: 2"
+	"57.14 = (4/7) * 100 round: 2
+	73.68 = (14/19) * 100 round: 2"
+
 	self
 		assertCoverage: [ | aStack |
 			aStack := SStack newStackWith: {2 . 4 . 6 . 1}.

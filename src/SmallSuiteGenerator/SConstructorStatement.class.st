@@ -4,10 +4,16 @@ Class {
 	#instVars : [
 		'theClassName',
 		'selector',
-		'args'
+		'args',
+		'references'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> argToString: aArg [
+	^ (references isNotNil and: [ references includes: aArg ]) ifTrue: [ aArg asString ] ifFalse: [ aArg storeString ]
+]
 
 { #category : #accessing }
 SConstructorStatement >> args [
@@ -102,6 +108,15 @@ SConstructorStatement >> printOn: aStream [
 	aStream nextPutAll: self stringBody
 ]
 
+{ #category : #printing }
+SConstructorStatement >> printStringWith: varNames [
+]
+
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> referencesToArgs: varNames [
+	references := varNames
+]
+
 { #category : #mutation }
 SConstructorStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
@@ -166,11 +181,8 @@ SConstructorStatement >> stringBody [
 								ifTrue: [ aStream nextPutAll: ':' ].
 							aStream
 								nextPut: Character space;
-								nextPutAll: arg storeString;
-								nextPut: Character space
-							"([ (STON fromString: arg asString) storeString ]
-										on: STONReaderError
-										do: [ arg ])" ] ].
+								nextPutAll: (self argToString: arg);
+								nextPut: Character space ] ].
 			aStream nextPut: $. ]
 ]
 

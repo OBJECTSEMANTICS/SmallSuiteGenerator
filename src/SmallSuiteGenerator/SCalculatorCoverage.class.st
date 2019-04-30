@@ -175,8 +175,7 @@ SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: n
 	numLevel > self class maxNumberOfIterations
 		ifTrue: [ ^ false ].
 	formattedNode := self
-		nodeFormattedOf: aTestCase statements
-		and: aTestCase varNames.
+		nodeFormattedOf: aTestCase.
 	[ STestCaseCompiler
 		compile: 'testCaseCompiled' , String cr , formattedNode ]
 		on: Error
@@ -245,6 +244,21 @@ SCalculatorCoverage >> coverageTestCase: testCase using: profiler [
 	(self calculateCoverageOf: testCase using: profiler)
 		ifTrue: [ coverage := profiler dictCoverage ].
 	^ coverage
+]
+
+{ #category : #compiling }
+SCalculatorCoverage >> nodeFormattedOf: testCase [
+	| statements varNames node temporaries |
+	statements := testCase statements.
+	varNames := testCase varNames.
+	node := RBParser parseExpression: '[]'.
+	temporaries := varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statements
+		collect: [ :statement | statement referencesToArgs: varNames; printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	^ node body formattedCode
 ]
 
 { #category : #compiling }

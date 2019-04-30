@@ -224,7 +224,7 @@ STestCaseTest >> assertChange: listTestCase [
 STestCaseTest >> assertInsertParameter: listTestCase [
 	| testCase varNames |
 	testCase := listTestCase shuffle anyOne.
-	varNames := testCase insertParameter.
+	varNames := testCase insert: #insertParameterUsing:.
 	varNames
 		ifNotNil: [ self
 				assert:
@@ -504,41 +504,6 @@ STestCaseTest >> testCleanIrrelevantStatementsRepeated [
 	self assert: testCase hasValidDependencies
 ]
 
-{ #category : #coverage }
-STestCaseTest >> testCoverageRTAMItem [
-	| profile testCase coverage |
-	profile := SSGenerator
-		profile: [ RTAMItem basicNew
-				itemName: 'Bonus Card';
-				color: Color lightCyan ]
-		onClass: RTAMItem.
-	testCase := STestCase seed: profile.
-	testCase addPrimitive.
-	testCase addConstructor.
-	testCase addMethod.
-	coverage := testCase coverageOnClass: RTAMItem.
-	S2Lock value: false.
-	S2Context value: nil.
-	self assert: (coverage at: 'noOfExecutedMethods') equals: 2.
-	self assert: (coverage at: 'noOfExecutedStatements') equals: 7
-]
-
-{ #category : #coverage }
-STestCaseTest >> testCoverageSStudent [
-	| profile testCase coverage |
-	profile := SSGenerator
-		profile: [ SFoo score: 34 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addPrimitive.
-	testCase addConstructor.
-	coverage := testCase coverageOnClass: SFoo.
-	S2Lock value: false.
-	S2Context value: nil.
-	self assert: (coverage at: 'noOfExecutedMethods') equals: 3.
-	self assert: (coverage at: 'noOfExecutedStatements') equals: 4.
-]
-
 { #category : #'mutation-change' }
 STestCaseTest >> testCreateTestCases [
 	| profile testSuite |
@@ -556,14 +521,14 @@ STestCaseTest >> testInsertMethodCall [
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	self assert: testCase insertMethodCall equals: nil.
+	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	self assert: testCase insertMethodCall equals: nil.
+	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) score ]
 		onClass: SFoo.
@@ -571,7 +536,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
-	self assert: testCase insertMethodCall equals: nil.
+	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
 				score;
@@ -581,7 +546,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
-	varNames := testCase insertMethodCall.
+	varNames := testCase insert: #insertMethodCallUsing:.
 	self assert: testCase statements size > 3.
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isMethod or: [ stm isConstructor ])
@@ -595,12 +560,12 @@ STestCaseTest >> testInsertParameter [
 	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	testCase insertParameter.
+	testCase insert: #insertParameterUsing:.
 	self assert: testCase statements size equals: 1.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	varNames := testCase insertParameter.
+	varNames := testCase insert: #insertParameterUsing:.
 	varNames
 		ifNotNil: [ self
 				assert:
@@ -612,7 +577,7 @@ STestCaseTest >> testInsertParameter [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
-	varNames := testCase insertParameter.
+	varNames := testCase insert: #insertParameterUsing:.
 	varNames
 		ifNotNil: [ self
 				assert:
@@ -624,7 +589,7 @@ STestCaseTest >> testInsertParameter [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
-	varNames := testCase insertParameter.
+	varNames := testCase insert: #insertParameterUsing:.
 	varNames
 		ifNotNil: [ self
 				assert:
@@ -642,7 +607,7 @@ STestCaseTest >> testInsertParameter [
 		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase generateStatements.
-	testCase insertParameter.
+	testCase insert: #insertParameterUsing:.
 	self assert: testCase hasValidDependencies.
 	self assert: testCase hasUniqueStatements 
 ]
@@ -665,15 +630,15 @@ STestCaseTest >> testInsertRandomCall [
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	self assert: testCase insertRandomCall isNil.
+	self assert: (testCase insert: #insertRandomCallUsing:)isNil.
 	profile := SSGenerator
 		profile: [ SFoo score: 2 ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	varNames := testCase insertRandomCall.
-	self assert: testCase statements size equals: 4.
+	varNames := (testCase insert: #insertRandomCallUsing:).
+	self assert: testCase statements size > 2.
 	self assertCollection: varNames equals: {'_var2' . '_var3'}.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) score ]
@@ -682,7 +647,7 @@ STestCaseTest >> testInsertRandomCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
-	varNames := testCase insertRandomCall.
+	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 3.
 	self assert: (varNames includesAny: {'_var3' . '_var4'}).
 	"self assert: (testCase statementAt: '_var3') isPrimitive."
@@ -697,7 +662,7 @@ STestCaseTest >> testInsertRandomCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
-	varNames := testCase insertRandomCall.
+	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 3.
 	self assert: (varNames includesAny: {'_var3' . '_var4'}).
 	stm := testCase statementAt: varNames last.
