@@ -156,18 +156,21 @@ SConstructorStatement >> stringBody [
 				nextPutAll: ' '.
 			self args
 				ifEmpty: [ aStream nextPutAll: self selector ]
-				ifNotEmpty: [ (self selector substrings: ':')
+				ifNotEmpty: [ | withColon |
+					withColon := self selector includes: $:.
+					(self selector substrings: ':')
 						with: self args
 						do: [ :selectorPart :arg | 
+							aStream nextPutAll: selectorPart.
+							withColon
+								ifTrue: [ aStream nextPutAll: ':' ].
 							aStream
-								nextPutAll: selectorPart;
-								nextPutAll: ': ';
-								nextPutAll:
-									([ (STON fromString: arg asString) storeString ]
+								nextPut: Character space;
+								nextPutAll: arg storeString;
+								nextPut: Character space
+							"([ (STON fromString: arg asString) storeString ]
 										on: STONReaderError
-										do: [ 
-											arg ]);
-								nextPut: Character space ] ].
+										do: [ arg ])" ] ].
 			aStream nextPut: $. ]
 ]
 

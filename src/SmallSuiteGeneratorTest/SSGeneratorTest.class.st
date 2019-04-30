@@ -55,12 +55,8 @@ SSGeneratorTest >> testMethodGenerator [
 	testCase addConstructor.
 	testCase addMethod.
 	collectString := testCase statements collect: #printString.
-	self
-		assert:
-			((collectString
-				includesAll: {'_var0 := SFoo score: 2 .' . '_var1 := _var0 return: 2 .'})
-				or: [ (collectString
-						includesAll: {'_var0 := SFoo score: 2 .' . '_var1 := _var0 initialize.'}) or: [ collectString includesAll: { '_var0 := SFoo score: 2 .' . '_var1 := _var0 score: 2 .' } ] ]).
+	self assert: collectString first equals: '_var0 := SFoo score: 2 .'.
+	self assert: ({collectString second} includesAny: { '_var1 := _var0 return: 2 .'. '_var1 := _var0 initialize.'. '_var1 := _var0 score: 2 .' }).
 	profile := SSGenerator
 		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
 		onClass: SFoo.
@@ -68,15 +64,8 @@ SSGeneratorTest >> testMethodGenerator [
 	testCase addConstructor.
 	testCase addMethod.
 	collectString := testCase statements collect: #printString.
-	self
-		assert:
-			((collectString
-				includesAll:
-					{'_var0 := SFoo score: 4 .' . '_var1 := _var0 return: ((SStack new) add: 7; add: 6; add: 2; yourself) .'})
-				or: [ (collectString
-						includesAll: {'_var0 := SFoo score: 4 .' . '_var1 := _var0 initialize.'})
-						or: [ collectString
-								includesAll: {'_var0 := SFoo score: 4 .' . '_var1 := _var0 score: 4 .'} ] ])
+	self assert: collectString first equals: '_var0 := SFoo score: 4 .'.
+	self assert: ({ collectString second } includesAny: {'_var1 := _var0 return: ((SStack new) add: 7; add: 6; add: 2; yourself) .'. '_var1 := _var0 initialize.'. '_var1 := _var0 score: 4 .'}).
 ]
 
 { #category : #tests }
@@ -99,15 +88,13 @@ SSGeneratorTest >> testMethodGeneratorOnClass [
 		ifFound: [ :stm | 
 			self
 				assert:
-					(stm args
+					((stm args collect: #storeString)
 						includesAny:
-							{(STON toString:((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)).
-							 (STON toString: (SStudent new
+							{((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) storeString.
+							(SStudent new
 										name: 'Peter';
 										nickname: 'peter';
-										scoreStudent: 5))
-							}
-						) ]
+										scoreStudent: 5) storeString}) ]
 		ifNone: [ self assert: true ]
 ]
 
@@ -138,8 +125,8 @@ SSGeneratorTest >> testMethodGeneratorOnClasses [
 			possibleValues := {#SSTeacher . #SStudent}.
 			self
 				assert:
-					(statement isConstructor
-						and: [ possibleValues includesAny: {statement theClassName. statement returnTypeName} ])
+					((statement isConstructor and: [ possibleValues includes: statement theClassName ])
+						or: [ (statement isMethod) and: [ possibleValues includes: statement returnTypeName ]])
 						 ]
 		ifNone: [ self assert: true ]
 ]

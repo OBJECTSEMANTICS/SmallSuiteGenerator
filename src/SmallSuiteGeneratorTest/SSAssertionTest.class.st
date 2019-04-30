@@ -148,6 +148,6 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 3.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SStringAssertion. SComparisonAssertion }.
+	self assert: invariants size equals: 4.
+	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: { SPrimitiveAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion }.
 ]

@@ -681,7 +681,10 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 				ifTrue: [ | newArg stm |
 					stm := self statementAt: aArg.
 					newArg := self
-						addPrimitive: (stm isConstructor ifTrue: [ stm theClassName ] ifFalse: [stm returnTypeName])
+						addPrimitive:
+							(stm isConstructor
+								ifTrue: [ stm theClassName ]
+								ifFalse: [ stm returnTypeName ])
 						at:
 							(STransformValue
 								randomNumberFrom: 1
@@ -696,7 +699,7 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 										ifTrue: [ nil ]
 										ifFalse: [ aArg ] ]) ]
 				ifFalse:
-					[ argsResult at: index put: (STransformValue changeAndTransform: aArg) ] ].
+					[ argsResult at: index put: aArg mutateToChange ] ].
 	^ argsResult
 ]
 

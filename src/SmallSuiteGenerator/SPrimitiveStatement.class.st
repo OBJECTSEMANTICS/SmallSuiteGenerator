@@ -59,8 +59,7 @@ SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
 		ifFalse: [ ^ #() ].
 	result := aTestCase createScalar: aStatement returnTypeName.
 	(aTestCase statementAt: self varName)
-		value: (STransformValue changeAndTransform: result first).
-
+		value: result first mutateToChange.
 	^ #()
 ]
 
@@ -77,7 +76,9 @@ SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 
 { #category : #printing }
 SPrimitiveStatement >> stringBody [
-	^ ([(STON fromString: value) storeString] on: STONReaderError do: [value storeString]) , $. asString
+	^ "([ (STON fromString: value) storeString ]
+		on: STONReaderError
+		do: [ value storeString ])" value storeString , $. asString
 ]
 
 { #category : #evaluating }

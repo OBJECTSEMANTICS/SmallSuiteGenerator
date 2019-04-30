@@ -260,22 +260,22 @@ STestCaseTest >> testChangeConstructor [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self deny: testCase statements first args equals: #('2').
+	self deny: testCase statements first args equals: #(2).
 	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self deny: testCase statements first args equals: #('3.56').
+	self deny: testCase statements first args equals: #(3.56).
 	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self deny: testCase statements first args equals: #('$a').
+	self deny: testCase statements first args equals: {$a}.
 	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self assert: testCase statements first args equals: #('false').
+	self assert: testCase statements first args equals: #(false).
 	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
@@ -287,7 +287,7 @@ STestCaseTest >> testChangeConstructor [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self assert: testCase statements first args equals: #('[1,4,5]')
+	self assert: testCase statements first args equals: {#(1 4 5)}
 ]
 
 { #category : #'mutation-change' }
@@ -377,22 +377,22 @@ STestCaseTest >> testChangePrimitive [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
-	self deny: testCase statements first value equals: '2'.
+	self deny: testCase statements first value equals: 2.
 	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
-	self deny: testCase statements first value equals: '3.56'.
+	self deny: testCase statements first value equals: 3.56.
 	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
-	self deny: testCase statements first value equals: '$a'.
+	self deny: testCase statements first value equals: $a.
 	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
-	self assert: testCase statements first value equals: 'false'.
+	self assert: testCase statements first value equals: false.
 	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
@@ -404,7 +404,7 @@ STestCaseTest >> testChangePrimitive [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase change.
-	self assert: testCase statements first value equals: '[1,4,5]'
+	self assert: testCase statements first value equals: #(1 4 5)
 ]
 
 { #category : #'mutation-change' }

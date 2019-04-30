@@ -5,24 +5,6 @@ Class {
 }
 
 { #category : #mutation }
-STransformValue class >> change: aScalar [
-	aScalar isNumber
-		ifTrue: [ ^ STON toString: aScalar + (1 to: 100) atRandom ].
-	aScalar isCharacter
-		ifTrue:
-			[ ^ STON toString: (Character value: (self randomValueCharacter: aScalar)) ].
-	aScalar class superclass = Boolean
-		ifTrue: [ ^ STON toString: aScalar not ].
-	aScalar isString
-		ifTrue: [ | interval |
-			interval := 33 to: 127.
-			^ ((Character value: interval atRandom) asString
-				, (aScalar copyFrom: 1 to: aScalar size - 1)
-				, (Character value: interval atRandom) asString) printString ].
-	^ STON toString: aScalar
-]
-
-{ #category : #mutation }
 STransformValue class >> change: args ofTypes: types using: aTestCase [
 	| varToChange argsResult varNames |
 	argsResult := args deepCopy.
@@ -40,16 +22,9 @@ STransformValue class >> change: args ofTypes: types using: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
-STransformValue class >> changeAndTransform: aObject [
-	^ self change: (self transform: aObject)
-]
-
-{ #category : #'as yet unclassified' }
 STransformValue class >> changeAndTransform: aObject ofType: aType using: aTestCase [
-	| transformation |
-	transformation := self transform: aObject.
-	transformation isLiteral
-		ifTrue: [ ^ self change: transformation ].
+	aObject isLiteral
+		ifTrue: [ ^ aObject mutateToChange ].
 	aTestCase dictSubclasses
 		at: aType name
 		ifPresent: [ :subClasses | 
@@ -283,9 +258,4 @@ STransformValue class >> satisfyTypeArg: aArg ofType: argType with: aTestCase [
 { #category : #'as yet unclassified' }
 STransformValue class >> selectVarNames: args [
 	^ args select: [ :aArg | [(aArg beginsWith: '_var') and: [ aArg endsWithDigit ]] on: Error do: [ false ] ]
-]
-
-{ #category : #accessing }
-STransformValue class >> transform: aString [
-	^ [STON fromString: aString asString] on: STONReaderError do: [ aString ]
 ]
