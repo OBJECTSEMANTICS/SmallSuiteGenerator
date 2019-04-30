@@ -99,6 +99,10 @@ SFieldStatement >> receiverVarName: anObject [
 	receiverVarName := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SFieldStatement >> referencesToArgs: varNames [
+]
+
 { #category : #mutation }
 SFieldStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName

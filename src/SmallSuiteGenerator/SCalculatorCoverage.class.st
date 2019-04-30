@@ -174,13 +174,11 @@ SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: n
 	| formattedNode |
 	numLevel > self class maxNumberOfIterations
 		ifTrue: [ ^ false ].
-	formattedNode := self
-		nodeFormattedOf: aTestCase.
+	formattedNode := self nodeFormattedOf: aTestCase.
 	[ STestCaseCompiler
 		compile: 'testCaseCompiled' , String cr , formattedNode ]
 		on: Error
 		do: [ :e | 
-			self halt.
 			^ (aTestCase removeNumStatements: 5)
 				and: [ self
 						calculateCoverageOf: aTestCase
@@ -212,7 +210,8 @@ SCalculatorCoverage >> coverage: testCaseProfiler using: profiler inTestSuiteOfS
 			(self calculateCoverageOf: aTestCase using: profiler)
 				ifTrue: [ listCoverage add: profiler dictCoverage ] ] ]
 		on: Exception
-		do: [ profiler cleanInstrumentation ].
+		do: [ :e | 
+			profiler cleanInstrumentation ].
 	^ listCoverage
 ]
 

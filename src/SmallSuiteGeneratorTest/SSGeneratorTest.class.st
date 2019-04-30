@@ -140,7 +140,7 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	testCase addMethod. self halt.
+	testCase addMethod.
 	collectString := testCase statements collect: #printString.
 	self assert: ({collectString first} includesAny: {'_var0 := 2.'. '_var0 := 3.'}).
 	self assert: collectString second equals: '_var1 := SFoo score: _var0 .'.

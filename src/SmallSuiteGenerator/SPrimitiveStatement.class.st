@@ -52,6 +52,10 @@ SPrimitiveStatement >> printOn: aStream [
 	aStream nextPutAll: self stringBody
 ]
 
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> referencesToArgs: varNames [
+]
+
 { #category : #mutation }
 SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
 	| result |
