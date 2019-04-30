@@ -1,4 +1,5 @@
-# SmallSuiteGenerator
+# SmallSuiteGenerator 
+ [![master branch:](https://travis-ci.org/OBJECTSEMANTICS/SmallSuiteGenerator.svg?branch=master)](https://travis-ci.org/OBJECTSEMANTICS/SmallSuiteGenerator/branches)
 Generation Asserts for Pharo
 
 ## Installation 
