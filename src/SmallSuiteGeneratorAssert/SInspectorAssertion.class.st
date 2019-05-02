@@ -19,6 +19,8 @@ SInspectorAssertion class >> applyOn: aName with: aObject [
 { #category : #'as yet unclassified' }
 SInspectorAssertion class >> preconditionChecking: aObject [
 	| method copyObject |
+	method := nil.
+	aObject ifNotNil: [ 
 	copyObject := aObject deepCopy.
 	(aObject class methods reject: [:meth | meth isQuick or: [meth selector includes: $: ]]) shuffle
 	detect: [ :aCompileMethod | 
@@ -26,7 +28,7 @@ SInspectorAssertion class >> preconditionChecking: aObject [
 		result := copyObject perform: aCompileMethod selector.
 		copyObject := aObject deepCopy.
 		result isLiteral] on: Error do: [ false ]
-	] ifFound: [ :aCompileMethod | method := aCompileMethod selector ].
+	] ifFound: [ :aCompileMethod | method := aCompileMethod selector ]].
 	^ method
 ]
 
