@@ -257,7 +257,7 @@ SGAEngineTest >> testExampleRTLineSegmentOnClass [
 				cotan;
 				bottom ]
 		ofPopulationSize: 30
-		and: 15.self halt.
+		and: 15.
 	"2.94 = (1/34) * 100 round: 2"
 	"2.88 = (3/104) * 100 round: 2"
 	fitness := engine logs first fittestTestCase fitness.
@@ -306,7 +306,7 @@ SGAEngineTest >> testExampleSSTeacherOnClass [
 				idTeacher;
 				id ]
 		ofPopulationSize: 30
-		and: 10.self halt.
+		and: 10.
 	"20 = (1/5) * 100"
 	"37.5 = (3/8) * 100"
 	fitness := engine logs first fittestTestCase fitness.
