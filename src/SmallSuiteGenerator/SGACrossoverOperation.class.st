@@ -10,31 +10,33 @@ SGACrossoverOperation >> alpha [
 ]
 
 { #category : #'as yet unclassified' }
+SGACrossoverOperation >> checkDependenciesOf: testCase withDescription: aString [
+	self
+		assert: testCase hasValidDependencies
+		description: aString, ' must have valid dependencies'
+]
+
+{ #category : #'as yet unclassified' }
+SGACrossoverOperation >> checkUniqueStatementsOf: offSpring [
+	self
+		assert: offSpring hasUniqueStatements
+		description: 'offspring must have unique statements'
+]
+
+{ #category : #'as yet unclassified' }
 SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	| alpha offSpring1 offSpring2 |
-	self
-		assert: testCaseA hasValidDependencies
-		description: 'testCase must have valid dependencies'.
-	self
-		assert: testCaseB hasValidDependencies
-		description: 'testCase must have valid dependencies'.
+	self checkDependenciesOf: testCaseA withDescription: 'testCase'.
+	self checkDependenciesOf: testCaseB withDescription: 'testCase'.
 	alpha := self alpha.
 	"first alpha(P1) and last (1-alpha)(P2)"
 	offSpring1 := self offSpringOf: testCaseA and: testCaseB using: alpha.
-	self
-		assert: offSpring1 hasValidDependencies
-		description: 'offspring must have valid dependencies'.
-	self
-		assert: offSpring1 hasUniqueStatements
-		description: 'offspring must have unique statements'.
+	self checkDependenciesOf: offSpring1 withDescription: 'offspring'.
+	self checkUniqueStatementsOf: offSpring1.
 	"first alpha(P2) and last (1-alpha)(P1)"
 	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: alpha.
-	self
-		assert: offSpring2 hasValidDependencies
-		description: 'offspring must have valid dependencies'.
-	self
-		assert: offSpring2 hasUniqueStatements
-		description: 'offspring must have unique statements'.
+	self checkDependenciesOf: offSpring2 withDescription: 'offspring'.
+	self checkUniqueStatementsOf: offSpring2.
 	^ {offSpring1.
 	offSpring2}
 ]
