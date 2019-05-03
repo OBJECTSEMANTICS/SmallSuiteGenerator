@@ -5,14 +5,15 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SPrimitiveAssertion class >> applyOn: aName with: aLiteral [
+SPrimitiveAssertion class >> applyOn: aName with: aLiteral of: testCase [
 	| instance |
-	(self preconditionChecking: aLiteral) ifFalse:[ ^ #()].
-	instance := self new 
-	nameValue: aName;
-	valueAssert: aLiteral; 
-	comparableValue: aLiteral.
-	^ { instance }
+	(self preconditionChecking: aLiteral)
+		ifFalse: [ ^ #() ].
+	instance := self new
+		nameValue: aName;
+		valueAssert: aLiteral;
+		comparableValue: aLiteral.
+	^ {instance}
 ]
 
 { #category : #preconditions }

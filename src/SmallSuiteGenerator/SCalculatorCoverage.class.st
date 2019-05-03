@@ -5,24 +5,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SCalculatorCoverage class >> calculateCoverage: testCase using: coverageProfiler [
-	| profiler node temporaries |
-	node := RBParser parseExpression: '[]'.
-	temporaries := testCase varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	testCase statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: 'SmallSuiteExampl*'.
-	^ profiler dictCoverage
-]
-
-{ #category : #'as yet unclassified' }
 SCalculatorCoverage class >> calculateCoverageOf: aTestCase using: profiler [
 	^ self calculateCoverageOf: aTestCase using: profiler inLevel: 1
 ]
@@ -32,48 +14,29 @@ SCalculatorCoverage class >> calculateCoverageOf: aTestCase using: profiler inLe
 	| formattedNode |
 	numLevel > self maxNumberOfIterations
 		ifTrue: [ ^ profiler dictCoverage ].
-	formattedNode := self
-		nodeFormattedOf: aTestCase statements
-		and: aTestCase varNames.
+	formattedNode := (self nodeFormattedOf: aTestCase) body formattedCode.
 	[ STestCaseCompiler
 		compile: 'testCaseCompiled' , String cr , formattedNode ]
 		on: Error
 		do: [ :e | 
-			(aTestCase removeNumStatements: 5) ifTrue: [ ^ self
+			(aTestCase removeNumStatements: 5)
+				ifTrue: [ ^ self
 						calculateCoverageOf: aTestCase
 						using: profiler
 						inLevel: numLevel + 1 ]
-			ifFalse: [ ^ profiler dictCoverage ]].
+				ifFalse: [ ^ profiler dictCoverage ] ].
 	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
 		on: Exception
 		do: [ :exception | 
-			 (aTestCase
+			(aTestCase
 				changeStatementsOfClassName:
 					([ exception signaler name ]
 						on: MessageNotUnderstood
-						do: [ exception signaler className ])) ifTrue: [ ^ self
+						do: [ exception signaler className ]))
+				ifTrue: [ ^ self
 						calculateCoverageOf: aTestCase
 						using: profiler
-						inLevel: numLevel + 1 ]
-		 ].
-	^ profiler dictCoverage 
-]
-
-{ #category : #compiling }
-SCalculatorCoverage class >> coverageOf: statements using: varNames [
-	| profiler node temporaries |
-	node := RBParser parseExpression: '[]'.
-	temporaries := varNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	statements
-		collect: [ :statement | statement printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	STestCaseCompiler
-		compile: 'testCaseCompiled' , String cr , node body formattedCode.
-	profiler := SBProfiler
-		profile: [ STestCaseCompiler new testCaseCompiled ]
-		onPackagesMatching: 'SmallSuiteExampl*'.
+						inLevel: numLevel + 1 ] ].
 	^ profiler dictCoverage
 ]
 
@@ -83,39 +46,21 @@ SCalculatorCoverage class >> maxNumberOfIterations [
 ]
 
 { #category : #compiling }
-SCalculatorCoverage class >> nodeFormattedOf: statements and: varNames [
-	| node temporaries |
+SCalculatorCoverage class >> nodeFormattedOf: testCase [
+	| statements varNames node temporaries |
+	statements := testCase statements.
+	varNames := testCase varNames.
 	node := RBParser parseExpression: '[]'.
 	temporaries := varNames
 		collect: [ :varName | RBParser parseExpression: varName ].
 	node body temporaries: temporaries.
 	statements
-		collect: [ :statement | statement printString ]
+		collect: [ :statement | 
+			statement
+				referencesToArgs: varNames;
+				printString ]
 		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	^ node body formattedCode
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> calculateCoverage2: aBlock [
-	| originProfiler testCaseProfiler testCase1 testCase2 offSprings offSpring1Profiler offSpring2Profiler |
-	originProfiler := SBProfiler
-		profile: aBlock
-		onPackagesMatching: 'SmallSuiteExam*'.
-	testCaseProfiler := SSGenerator profile: aBlock onClass: SStack.
-	testCase1 := STestCase seed: testCaseProfiler.
-	testCase1 generateStatements.
-	testCase2 := STestCase seed: testCaseProfiler.
-	testCase2 generateStatements.
-	offSprings := SGACrossoverOperation new crossover: testCase1 with: testCase2.
-	offSpring1Profiler := self class
-		coverageOf: offSprings first statements
-		using: offSprings first varNames.
-	offSpring2Profiler := self class
-		coverageOf: offSprings second statements
-		using: offSprings second varNames.
-	^ {originProfiler dictCoverage.
-	offSpring1Profiler.
-	offSpring2Profiler}
+	^ node
 ]
 
 { #category : #'as yet unclassified' }
@@ -174,14 +119,11 @@ SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: n
 	| formattedNode |
 	numLevel > self class maxNumberOfIterations
 		ifTrue: [ ^ false ].
-	formattedNode := self
-		nodeFormattedOf: aTestCase statements
-		and: aTestCase varNames.
+	formattedNode := (STransformValue nodeFormattedOf: aTestCase) body formattedCode.
 	[ STestCaseCompiler
 		compile: 'testCaseCompiled' , String cr , formattedNode ]
 		on: Error
 		do: [ :e | 
-			self halt.
 			^ (aTestCase removeNumStatements: 5)
 				and: [ self
 						calculateCoverageOf: aTestCase
@@ -213,49 +155,22 @@ SCalculatorCoverage >> coverage: testCaseProfiler using: profiler inTestSuiteOfS
 			(self calculateCoverageOf: aTestCase using: profiler)
 				ifTrue: [ listCoverage add: profiler dictCoverage ] ] ]
 		on: Exception
-		do: [ profiler cleanInstrumentation ].
+		do: [ :e | 
+			profiler cleanInstrumentation ].
 	^ listCoverage
 ]
 
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestCase: testCase onClass: aClass [
-	| profiler coverage |
-	profiler := SBProfiler new.
-	profiler profileInstrumented: [  ] onClass: aClass.
-	(self calculateCoverageOf: testCase using: profiler)
-		ifTrue: [ coverage := profiler dictCoverage ].
-	profiler cleanInstrumentation.
-	^ coverage
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestCase: testCase onPackagesMatching: regex [
-	| profiler coverage |
-	profiler := SBProfiler new.
-	profiler profileInstrumented: [  ] onPackagesMatching: regex.
-	(self calculateCoverageOf: testCase using: profiler)
-		ifTrue: [ coverage := profiler dictCoverage ].
-	profiler cleanInstrumentation.
-	^ coverage
-]
-
-{ #category : #'as yet unclassified' }
-SCalculatorCoverage >> coverageTestCase: testCase using: profiler [
-	| coverage |
-	(self calculateCoverageOf: testCase using: profiler)
-		ifTrue: [ coverage := profiler dictCoverage ].
-	^ coverage
-]
-
 { #category : #compiling }
-SCalculatorCoverage >> nodeFormattedOf: statements and: varNames [
-	| node temporaries |
+SCalculatorCoverage >> nodeFormattedOf: testCase [
+	| statements varNames node temporaries |
+	statements := testCase statements.
+	varNames := testCase varNames.
 	node := RBParser parseExpression: '[]'.
 	temporaries := varNames
 		collect: [ :varName | RBParser parseExpression: varName ].
 	node body temporaries: temporaries.
 	statements
-		collect: [ :statement | statement printString ]
+		collect: [ :statement | statement referencesToArgs: varNames; printString ]
 		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
 	^ node body formattedCode
 ]

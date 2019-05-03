@@ -5,22 +5,23 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SComparisonAssertion class >> applyOn: aName with: aObject [
+SComparisonAssertion class >> applyOn: aName with: aObject of: testCase [
 	| instance |
-	instance := self new 
-	nameValue: aName;
-	valueAssert: aObject; 
-	comparableValue: aObject.
-	^ { instance }
+	instance := self new
+		nameValue: aName;
+		valueAssert: aObject;
+		comparableValue: aObject.
+	^ {instance}
 ]
 
 { #category : #preconditions }
 SComparisonAssertion class >> preconditionChecking: aObject [
-	aObject isLiteral ifTrue: [ ^ true ].
-	^ (aObject class allSelectorsBelow: Object) 
-	detect: [:selector | selector = #= ]
-	ifFound: [ true ]
-	ifNone: [ false ].
+	aObject isLiteral
+		ifTrue: [ ^ false ].
+	^ (aObject class allSelectorsBelow: Object)
+		detect: [ :selector | selector = #= ]
+		ifFound: [ true ]
+		ifNone: [ false ]
 ]
 
 { #category : #printing }

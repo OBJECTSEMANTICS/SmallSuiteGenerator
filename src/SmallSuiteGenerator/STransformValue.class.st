@@ -126,6 +126,24 @@ STransformValue class >> listShuffle: aCollection [
 		ifNotEmpty: [ ^ aCollection asArray shuffle ]
 ]
 
+{ #category : #compiling }
+STransformValue class >> nodeFormattedOf: testCase [
+	| statements varNames node temporaries |
+	statements := testCase statements.
+	varNames := testCase varNames.
+	node := RBParser parseExpression: '[]'.
+	temporaries := varNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statements
+		collect: [ :statement | 
+			statement
+				referencesToArgs: varNames;
+				printString ]
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	^ node
+]
+
 { #category : #'as yet unclassified' }
 STransformValue class >> randomNumberFrom: aNumber1 to: aNumber2 default: aNumber3 [
 	| interval |

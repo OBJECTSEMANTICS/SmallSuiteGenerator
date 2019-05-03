@@ -5,14 +5,15 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SCollectionSizeAssertion class >> applyOn: aName with: aCollection [
+SCollectionSizeAssertion class >> applyOn: aName with: aCollection of: testCase [
 	| instance |
-	(self preconditionChecking: aCollection) ifFalse:[ ^ #()].
-	instance := self new 
-	nameValue: aName;
-	valueAssert: aCollection; 
-	comparableValue: aCollection size.
-	^ { instance }
+	(self preconditionChecking: aCollection)
+		ifFalse: [ ^ #() ].
+	instance := self new
+		nameValue: aName;
+		valueAssert: aCollection;
+		comparableValue: aCollection size.
+	^ {instance}
 ]
 
 { #category : #preconditions }

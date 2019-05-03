@@ -47,10 +47,9 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
 	offSpring := STestCase seed: parentB profile.
 	limit := (sizeA * alpha) asInteger.
 	offSpring
-		add:
+		addFromParents:
 			(parentA statements copyFrom: 1 to: limit)
-				deepCopy
-		fromParentWith: (parentA assignedIds copyFrom: 1 to: limit).
+				deepCopy.
 	(parentB statements
 		copyFrom: (alpha * sizeB) asInteger + 1
 		to: sizeB) deepCopy

@@ -5,14 +5,15 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SCollectionSimilarityAssertion class >> applyOn: aName with: aCollection [
+SCollectionSimilarityAssertion class >> applyOn: aName with: aCollection of: testCase [
 	| instance |
-	(self preconditionChecking: aCollection) ifFalse:[ ^ #()].
-	instance := self new 
-	nameValue: aName;
-	valueAssert: aCollection; 
-	comparableValue: aCollection first.
-	^ { instance }
+	(self preconditionChecking: aCollection)
+		ifFalse: [ ^ #() ].
+	instance := self new
+		nameValue: aName;
+		valueAssert: aCollection;
+		comparableValue: aCollection first.
+	^ {instance}
 ]
 
 { #category : #preconditions }

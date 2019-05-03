@@ -44,14 +44,6 @@ STestCase class >> seed: aGeneratorProfile [
 	^ ins
 ]
 
-{ #category : #adding }
-STestCase >> add: collStatements fromParentWith: collIds. [
-	self assert: statements isEmpty description: 'Statements must be empty'.
-	"self assert: assignedIds isEmpty description: 'AssignedIds must be empty'."
-	statements addAll: collStatements.
-	"assignedIds addAll: collIds."
-]
-
 { #category : #generation }
 STestCase >> addConstructor [
 	^ self profile allClasses shuffle
@@ -62,7 +54,7 @@ STestCase >> addConstructor [
 
 { #category : #generation }
 STestCase >> addConstructor: classSpy [
-	(classSpy methods select: #isAbstract) isNotEmpty 
+	(classSpy methods select: #isAbstract) isNotEmpty
 		ifTrue: [ classSpy subclasses
 				ifEmpty: [ ^ false ]
 				ifNotEmpty: [ dictSubclasses
@@ -136,6 +128,12 @@ STestCase >> addField [
 	^ false
 ]
 
+{ #category : #adding }
+STestCase >> addFromParents: collStatements [
+	self assert: statements isEmpty description: 'Statements must be empty'.
+	statements addAll: collStatements.
+]
+
 { #category : #generation }
 STestCase >> addMethod [
 	| constructStatements |
@@ -165,23 +163,9 @@ STestCase >> addMethod [
 { #category : #generation }
 STestCase >> addPrimitive [
 	^ self classLiterals
-		detect: [ :className | self addPrimitive: className ]
+		detect: [ :className | (self addPrimitive: className at: self numberOfStatements + 1) isNotNil  ]
 		ifFound: [ true ]
 		ifNone: [ false ]
-]
-
-{ #category : #generation }
-STestCase >> addPrimitive: aClassName [
-	| result scalar |
-	result := self createScalar: aClassName.
-	result ifNil: [ ^ false ].
-	scalar := result first.
-	^ self
-		addStatement:
-			(SPrimitiveStatement new
-				returnTypeName: result second;
-				value: scalar;
-				yourself)
 ]
 
 { #category : #generation }
@@ -202,8 +186,7 @@ STestCase >> addPrimitive: aClassName at: position [
 { #category : #accessing }
 STestCase >> addStatement: aStatement [
 	^ self addStatement: aStatement at: self numberOfStatements + 1
-	"statements add: aStatement.
-	^ true"
+
 ]
 
 { #category : #accessing }
@@ -212,7 +195,7 @@ STestCase >> addStatement: aStatement at: position [
 	aStatement id: self assignId.
 	statements isEmpty
 		ifTrue: [ statements add: aStatement ]
-		ifFalse: [ [ statements add: aStatement afterIndex: position - 1 ]
+		ifFalse: [ [ statements add: aStatement afterIndex: (position > 1 ifTrue: [position - 1] ifFalse: [0]) ]
 				on: Error
 				do: [ ^ false ] ].
 	^ true
@@ -316,25 +299,6 @@ STestCase >> computeFitnessUsing: fitnessBlock [
 	fitness := fitnessBlock value: self
 ]
 
-{ #category : #metric }
-STestCase >> coverageOnClass: aClass [
-	^ SCalculatorCoverage new
-		coverageTestCase: self
-		onClass: aClass
-]
-
-{ #category : #metric }
-STestCase >> coverageOnClass: aClass using: profiler [
-	^ SCalculatorCoverage new coverageTestCase: self onClass: aClass
-]
-
-{ #category : #metric }
-STestCase >> coverageOnPackagesMatching: regex [
-	^ SCalculatorCoverage new
-		coverageTestCase: self
-		onPackagesMatching: regex
-]
-
 { #category : #generation }
 STestCase >> createArg: aClassName [
 	^ self
@@ -428,13 +392,6 @@ STestCase >> indexOf: varName [
 		aVar = varName ifTrue: [ ^ index ]	
 	].
 	^ -1
-	"index := 0.
-	statements
-		detect: [ :statement | 
-			index := index + 1.
-			statement varName = varName ]
-		ifFound: [ ^ index ]
-		ifNone: [ ^ -1 ]"
 ]
 
 { #category : #initialization }
@@ -466,38 +423,12 @@ STestCase >> insert [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> insertMethodCall [
+STestCase >> insert: selector [
 	| varNames copyStatements |
 	copyStatements := statements deepCopy.
 	copyStatements shuffle
 		detect: [ :stmToInsert | 
-			varNames := stmToInsert insertMethodCallUsing: self.
-			varNames isNotNil ]
-		ifFound: [ 
-			^ varNames ].
-	^ nil
-]
-
-{ #category : #'as yet unclassified' }
-STestCase >> insertParameter [
-	| varNames copyStatements |
-	copyStatements := statements deepCopy.
-	copyStatements shuffle
-		detect: [ :stmToInsert | 
-			varNames := stmToInsert insertParameterUsing: self.
-			varNames isNotNil ]
-		ifFound: [ 
-			^ varNames ].
-	^ nil
-]
-
-{ #category : #'as yet unclassified' }
-STestCase >> insertRandomCall [
-	| varNames copyStatements |
-	copyStatements := statements deepCopy.
-	copyStatements shuffle
-		detect: [ :stmToInsert | 
-			varNames := stmToInsert insertRandomCallUsing: self.
+			varNames := stmToInsert perform: selector with: self.
 			varNames isNotNil ]
 		ifFound: [ 
 			^ varNames ].
@@ -507,9 +438,9 @@ STestCase >> insertRandomCall [
 { #category : #'as yet unclassified' }
 STestCase >> insertRandomStatement [
 	| varNamesInserted |
-	self methodsToInsert shuffle
-		detect: [ :method | 
-			varNamesInserted := self perform: method.
+	self selectorsToInsert shuffle
+		detect: [ :selector | 
+			varNamesInserted := self insert: selector.
 			varNamesInserted isNotNil ]
 		ifFound: [ ^ varNamesInserted ]
 		ifNone: [ ^ -1 ]
@@ -562,11 +493,6 @@ STestCase >> methodsOrAccessors: aStatement toSelect: aBoolean [
 	methods := aBoolean ifTrue: [ methods select: #isQuick ] ifFalse: [ methods reject: #isQuick ].
 	methods := methods select: [ :m | m returnType notNil ].
 	^ methods
-]
-
-{ #category : #'as yet unclassified' }
-STestCase >> methodsToInsert [
-	^ #(#insertRandomCall #insertMethodCall #insertParameter)
 ]
 
 { #category : #generation }
@@ -657,19 +583,6 @@ STestCase >> removeNumStatements: aNumber [
 	^ removed
 ]
 
-{ #category : #removing }
-STestCase >> removeStatementsOfClassName: aClassName [
-	| constructors removed |
-	constructors := self statements select: #isConstructor.
-	constructors ifEmpty: [ ^ false ].
-	removed := true.
-	constructors
-		select: [ :aStm | aStm theClassName = aClassName ]
-		thenDo:
-			[ :aStm | removed := removed and: [ (self remove: aStm varName) isNotEmpty ] ].
-	^ removed
-]
-
 { #category : #'as yet unclassified' }
 STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 	| argsResult varNames |
@@ -701,6 +614,11 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 				ifFalse:
 					[ argsResult at: index put: aArg mutateToChange ] ].
 	^ argsResult
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> selectorsToInsert [
+	^ #(#insertRandomCallUsing: #insertMethodCallUsing: #insertParameterUsing:)
 ]
 
 { #category : #accessing }

@@ -6,13 +6,28 @@ Class {
 
 { #category : #tests }
 SInspectorAssertionTest >> testPrintString [
-	| assertions result possibleResults |
-	assertions := SInspectorAssertion applyOn: 'foo' with: SFoo new.
+	| assertions result possibleResults profile testCase |
+	assertions := SInspectorAssertion
+		applyOn: 'foo'
+		with: SFoo new
+		of: nil.
+	self assert: assertions isEmpty.
+	profile := SSGenerator
+		profile: [ SFoo score: 4 ]
+		onClass: SFoo.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.
+	testCase addMethod.
+	assertions := SInspectorAssertion
+		applyOn: 'foo'
+		with: SFoo new
+		of: testCase.
 	result := assertions first printString.
 	possibleResults := OrderedCollection new
 		add: 'self assert: foo returnNum equals: 4';
 		add: 'self assert: foo returnString equals: ''Hello''';
 		add: 'self assert: foo returnFloat equals: 2.3';
+		add: 'self assert: foo score equals: 0';
 		yourself.
 	self assert: (possibleResults includes: result)
 ]

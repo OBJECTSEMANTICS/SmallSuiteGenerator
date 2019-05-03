@@ -4,10 +4,18 @@ Class {
 	#instVars : [
 		'selector',
 		'args',
-		'receiverVarName'
+		'receiverVarName',
+		'references'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'as yet unclassified' }
+SMethodStatement >> argToString: aArg [
+	^ (references isNotNil and: [ references includes: aArg ])
+		ifTrue: [ aArg asString ]
+		ifFalse: [ aArg storeString ]
+]
 
 { #category : #accessing }
 SMethodStatement >> args [
@@ -133,6 +141,11 @@ SMethodStatement >> receiverVarName: anObject [
 	receiverVarName := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SMethodStatement >> referencesToArgs: varNames [
+	references := varNames
+]
+
 { #category : #mutation }
 SMethodStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
@@ -206,7 +219,6 @@ SMethodStatement >> stringBody [
 			aStream
 				nextPutAll: self receiverVarName;
 				nextPutAll: ' '.
-			"refactor para que se use directamente los valores y no el string del valor"
 			self args
 				ifEmpty: [ aStream nextPutAll: self selector ]
 				ifNotEmpty: [ | withColon |
@@ -219,10 +231,7 @@ SMethodStatement >> stringBody [
 								ifTrue: [ aStream nextPutAll: ':' ].
 							aStream
 								nextPut: Character space;
-								nextPutAll: arg storeString;
-								nextPut: Character space
-							"([ (STON fromString: arg asString) storeString ]
-										on: STONReaderError
-										do: [ arg ])" ] ].
+								nextPutAll: (self argToString: arg);
+								nextPut: Character space ] ].
 			aStream nextPut: $. ]
 ]

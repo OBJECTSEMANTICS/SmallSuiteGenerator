@@ -120,6 +120,11 @@ SStatement >> printOn: aStream [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #'as yet unclassified' }
+SStatement >> referencesToArgs: varNames [
+	self subclassResponsibility 
+]
+
 { #category : #mutation }
 SStatement >> repairOn: aTestCase changing: aStatement [
 	^ self subclassResponsibility

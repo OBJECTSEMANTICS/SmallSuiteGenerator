@@ -9,6 +9,11 @@ Class {
 	#category : #'SmallSuiteGeneratorAssert-Assertion'
 }
 
+{ #category : #'as yet unclassified' }
+SSAssertion class >> applyOn: aName with: aCollection of: aTestCase [
+	self subclassResponsibility 
+]
+
 { #category : #accessing }
 SSAssertion >> comparableValue [
 	^ comparableValue

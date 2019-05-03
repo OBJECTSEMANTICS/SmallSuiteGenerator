@@ -52,6 +52,10 @@ SPrimitiveStatement >> printOn: aStream [
 	aStream nextPutAll: self stringBody
 ]
 
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> referencesToArgs: varNames [
+]
+
 { #category : #mutation }
 SPrimitiveStatement >> repairOn: aTestCase changing: aStatement [
 	| result |
@@ -76,9 +80,7 @@ SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 
 { #category : #printing }
 SPrimitiveStatement >> stringBody [
-	^ "([ (STON fromString: value) storeString ]
-		on: STONReaderError
-		do: [ value storeString ])" value storeString , $. asString
+	^ value storeString , $. asString
 ]
 
 { #category : #evaluating }

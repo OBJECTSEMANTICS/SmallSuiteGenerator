@@ -5,14 +5,15 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SStringAssertion class >> applyOn: aName with: aObject [
+SStringAssertion class >> applyOn: aName with: aObject of: testCase [
 	| instance |
-	(self preconditionChecking: aObject) ifFalse:[ ^ #()].
-	instance := self new 
-	nameValue: aName;
-	valueAssert: aObject; 
-	comparableValue: aObject.
-	^ { instance }
+	(self preconditionChecking: aObject)
+		ifFalse: [ ^ #() ].
+	instance := self new
+		nameValue: aName;
+		valueAssert: aObject;
+		comparableValue: aObject.
+	^ {instance}
 ]
 
 { #category : #preconditions }

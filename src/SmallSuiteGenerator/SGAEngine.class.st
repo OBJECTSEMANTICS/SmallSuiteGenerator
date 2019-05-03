@@ -88,34 +88,18 @@ SGAEngine >> fitnessBlock: aBlock [
 	fitnessBlock := aBlock value: coverageProfiler 
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> generateInvariantsFittest [
+	self assert: logs isNotEmpty description: 'In this point the logs must not be empty'.
+	self logs do: [ :log | log fittestTestCase generateInvariants ].
+]
+
 { #category : #accessing }
 SGAEngine >> generatorProfiler: generatorBlock [
 	self
 		assert: [ blockToExecute notNil ]
 		description: 'Need to set the block to analyze'.
 	generatorProfiler := generatorBlock value: blockToExecute
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> initialPopulationOnClass: aClass [
-	| testCaseProfiler |
-	population := OrderedCollection new.
-	testCaseProfiler := SSGenerator
-		profile: blockToExecute
-		onClass: aClass.
-	populationSize
-		timesRepeat: [ | testCase |
-			testCase := STestCase new.
-			population
-				add:
-					(testCase
-						profile: testCaseProfiler;
-						generateStatements: numberOfStatements) ]
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> initialPopulationOnPackage: regex [
-	
 ]
 
 { #category : #initialization }
@@ -232,21 +216,7 @@ SGAEngine >> run [
 					log fittestTestCase: selection fittest.
 					log timeToProduceGeneration: Time now asSeconds - t.
 					logs add: log ].
-			coverageProfiler cleanInstrumentation ]
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> runOnClass: aClass [
-	self beforeRun.
-	self initialPopulationOnClass: aClass.
-	self run.
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> runOnPackage: regex [
-	self beforeRun.
-	self initialPopulationOnClass: regex.
-	self run
+			coverageProfiler cleanInstrumentation ].
 ]
 
 { #category : #accessing }
