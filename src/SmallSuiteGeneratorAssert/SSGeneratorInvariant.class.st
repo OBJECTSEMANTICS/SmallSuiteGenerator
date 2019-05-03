@@ -30,6 +30,24 @@ SSGeneratorInvariant class >> resetNumTest [
 	numTest := 0
 ]
 
+{ #category : #accessing }
+SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
+	| node selector |
+	node := SCalculatorCoverage nodeFormattedOf: testCase.
+	invariants
+		do:
+			[ :invariant | node body addNode: (RBParser parseExpression: invariant asString) ].
+	selector := [ SSAssertionGeneratorTest
+		compile:
+			'test' , self class numTest asString, String cr , node body formattedCode ]
+		on: Error
+		do: [ nil ].
+	selector
+		ifNotNil: [ self class incrementNumTest.
+			^ true ].
+	^ false
+]
+
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> generateAssert: aCollection [
 	| node temporaries collectAsSet |
@@ -51,11 +69,14 @@ SSGeneratorInvariant >> generateAssert: aCollection [
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> generateInvariants: aSTestCase [
-	| invariants |
+	| invariants compiled |
 	compiler compile: (self transformToNode: aSTestCase).
-	invariants := compiler executeMethodTest.
-	self generateAssert: invariants.
-	^ invariants
+	invariants := compiler executeMethodUsing: aSTestCase.
+	"self generateAssert: invariants."
+	compiled := self compileStatementsOf: aSTestCase with: invariants.
+	compiled
+		ifTrue: [ ^ invariants ].
+	^ nil
 ]
 
 { #category : #initialization }

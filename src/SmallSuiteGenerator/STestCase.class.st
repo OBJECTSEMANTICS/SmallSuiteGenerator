@@ -54,7 +54,7 @@ STestCase >> addConstructor [
 
 { #category : #generation }
 STestCase >> addConstructor: classSpy [
-	(classSpy methods select: #isAbstract) isNotEmpty 
+	(classSpy methods select: #isAbstract) isNotEmpty
 		ifTrue: [ classSpy subclasses
 				ifEmpty: [ ^ false ]
 				ifNotEmpty: [ dictSubclasses

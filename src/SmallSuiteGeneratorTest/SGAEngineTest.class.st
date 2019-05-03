@@ -354,7 +354,7 @@ SGAEngineTest >> testExampleSStackOnClass [
 				pop;
 				top ]
 		ofPopulationSize: 30
-		and: 10.self halt.
+		and: 10.
 	"14.28 = (1/7) * 100 round: 2"
 	"21.05 = (4/19) * 100 round: 2"
 	fitness := engine logs first fittestTestCase fitness.

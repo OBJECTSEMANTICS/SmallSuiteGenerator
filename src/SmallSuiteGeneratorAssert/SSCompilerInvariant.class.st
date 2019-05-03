@@ -2,7 +2,8 @@ Class {
 	#name : #SSCompilerInvariant,
 	#superclass : #Object,
 	#instVars : [
-		'evaluator'
+		'evaluator',
+		'testCase'
 	],
 	#category : #'SmallSuiteGeneratorAssert-Invariant'
 }
@@ -11,9 +12,10 @@ Class {
 SSCompilerInvariant >> analyze: aContext [
 	| invariants |
 	invariants := OrderedCollection new.
-	aContext tempNames doWithIndex: [ :title :index | 
-		invariants addAll: (evaluator applyRule: title to: (aContext namedTempAt: index)).
-	].
+	aContext tempNames
+		doWithIndex: [ :title :index | 
+			invariants
+				addAll: (evaluator applyRule: title to: (aContext namedTempAt: index) of: testCase) ].
 	^ invariants
 ]
 
@@ -33,6 +35,12 @@ _var0 := true.
 { #category : #'as yet unclassified' }
 SSCompilerInvariant >> executeMethodTest [
 	^ self compiledTest 
+]
+
+{ #category : #'as yet unclassified' }
+SSCompilerInvariant >> executeMethodUsing: aTestCase [
+	testCase := aTestCase.
+	^ self compiledTest
 ]
 
 { #category : #initialization }
