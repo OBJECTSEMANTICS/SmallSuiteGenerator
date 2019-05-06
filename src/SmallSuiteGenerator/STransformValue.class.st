@@ -23,9 +23,12 @@ STransformValue class >> change: args ofTypes: types using: aTestCase [
 
 { #category : #'as yet unclassified' }
 STransformValue class >> changeAndTransform: aObject ofType: aType using: aTestCase [
+	| dictOfClasses |
 	aObject isLiteral
 		ifTrue: [ ^ aObject mutateToChange ].
-	aTestCase dictSubclasses
+	dictOfClasses := Dictionary newFromKeys: (aTestCase dictSubclasses keys, aTestCase profile scalars keys) andValues: (aTestCase dictSubclasses values, aTestCase profile scalars values).
+	dictOfClasses 
+	"aTestCase dictSubclasses"
 		at: aType name
 		ifPresent: [ :subClasses | 
 			| otherValues |
@@ -216,6 +219,7 @@ STransformValue class >> satisfyArgs: aTestCase with: otherTestCase of: aStateme
 								createArg: argType
 								before: aTestCase statements size + 1
 								avoiding: nil ] ].
+			self assert: aArg isNotNil description: 'The arg must not be nil'.
 			resultArgs add: aArg ].
 	^ resultArgs
 ]

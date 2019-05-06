@@ -461,7 +461,7 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 		ifNotEmpty: [ newArgs := self
 				satisfyParametersOf: args
 				before: newPosition
-				allowingNull: true.
+				allowingNull: false.
 			addedList := newArgs asArray.
 			newPosition := {(newArgs
 				ifNotEmpty: [ | indexFrom |
@@ -472,7 +472,9 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 							(self indexOf: aArg)} max ].
 					indexFrom := indexFrom < 0
 						ifTrue: [ newPosition ]
-						ifFalse: [ (indexFrom + (newArgs size)) < size ifTrue: [ indexFrom + (newArgs size) ] ifFalse: [ size ] ].
+						ifFalse: [ indexFrom + newArgs size < size
+								ifTrue: [ indexFrom + newArgs size ]
+								ifFalse: [ size ] ].
 					STransformValue
 						randomNumberFrom: indexFrom
 						to: size

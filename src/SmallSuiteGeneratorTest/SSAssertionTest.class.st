@@ -195,5 +195,17 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 	"self halt."
 	invariants := testCase generateInvariants.
 	self assert: invariants isNotNil.
+	self deny: invariants isEmpty.
+	profile := SSGenerator
+		profile: [ (SStack newStackWith: {'abcd' . 'efg' . 'hij' . 'klmn'})
+				push: 'opqr';
+				pop;
+				top ]
+		onClass: SStack.
+	testCase := STestCase seed: profile.
+	testCase generateStatements: 15.
+	self halt.
+	invariants := testCase generateInvariants.
+	self assert: invariants isNotNil.
 	self deny: invariants isEmpty
 ]

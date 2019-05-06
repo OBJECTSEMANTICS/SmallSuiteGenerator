@@ -24,7 +24,12 @@ SStringAssertion class >> preconditionChecking: aObject [
 	ifNone: [ false ].
 ]
 
+{ #category : #'as yet unclassified' }
+SStringAssertion >> adjust: aString [
+	^ aString copyWithRegex: '''+' matchesReplacedWith: ''''''
+]
+
 { #category : #printing }
 SStringAssertion >> printString [ 
-	^ 'self assert: ', nameValue asString, ' asString equals: ''', comparableValue asString, ''''
+	^ 'self assert: ', nameValue asString, ' asString equals: ''', (self adjust: comparableValue asString), ''''
 ]
