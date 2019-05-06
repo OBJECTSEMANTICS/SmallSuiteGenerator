@@ -56,7 +56,8 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
 		endForMaxNumberOfGeneration: numGenerations;
-		run
+		run;
+		generateInvariantsFittest
 ]
 
 { #category : #running }
@@ -430,7 +431,7 @@ SGAEngineTest >> testExampleSStudentOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages fitness' }
+{ #category : #'tests-packages unfunctional' }
 SGAEngineTest >> testRTCalendarExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -490,7 +491,7 @@ SGAEngineTest >> testRTCalendarExampleOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages fitness' }
+{ #category : #'tests-packages unfunctional' }
 SGAEngineTest >> testRTMondrianExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -594,7 +595,7 @@ b normalizer distinctColor.
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages fitness' }
+{ #category : #'tests-packages unfunctional' }
 SGAEngineTest >> testRTSVGExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -653,7 +654,7 @@ v ]
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages fitness' }
+{ #category : #'tests-packages unfunctional' }
 SGAEngineTest >> testRTSpectrographExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -683,7 +684,7 @@ SGAEngineTest >> testRTSpectrographExampleOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages fitness' }
+{ #category : #'tests-packages unfunctional' }
 SGAEngineTest >> testRTUMLExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self

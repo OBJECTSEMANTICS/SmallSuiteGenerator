@@ -24,7 +24,7 @@ SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 		ifTrue: [ ^ selector ].
 	class := aTestCase profile classAt: aObject class name ifNone: [  ].
 	class ifNil: [ ^ selector ].
-	copyObject := aObject deepCopy.
+	[copyObject := aObject deepCopy.] on: Error do: [ ^ selector ].
 	(class methods
 		select: [ :method | 
 			(method argTypes isNil and: ((method selector includes: $:) not

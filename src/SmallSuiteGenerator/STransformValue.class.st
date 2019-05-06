@@ -187,7 +187,6 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 	varToDelete
 		ifEmpty: [ argsResult := args
 				collect: [ :arg | replace at: arg ifAbsent: [ arg ] ] ].
-	self assert: aTestCase hasValidDependencies description: 'Test case must have valid dependencies'.
 	^ {argsResult.
 	varToDelete}
 ]
