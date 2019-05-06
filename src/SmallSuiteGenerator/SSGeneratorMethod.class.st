@@ -19,9 +19,13 @@ SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 		ifNil: [ listOfArguments collect: #class ]
 		ifNotNil: [ self mergeTypes: listOfArguments ].
 	listOfArguments
-		do: [ :arg | 
-			(self profiler isScalar: arg)
-				ifTrue: [ self profiler addScalar: arg ] ]
+		do: [ :arg | self checkIfArgIsScalar: arg ]
+]
+
+{ #category : #hooks }
+SSGeneratorMethod >> checkIfArgIsScalar: arg [
+	(self profiler isScalar: arg)
+		ifTrue: [ self profiler addScalar: arg ]
 ]
 
 { #category : #hooks }
@@ -57,6 +61,5 @@ SSGeneratorMethod >> returnValue: value [
 	returnType := returnType
 		ifNil: [ value class ]
 		ifNotNil: [ returnType commonSuperclassWith: value class ].
-	(self profiler isScalar: value)
-		ifTrue: [ self profiler addScalar: value ]
+	self checkIfArgIsScalar: value
 ]

@@ -227,6 +227,13 @@ STestCase >> assignedIds [
 	^ statements collect: #id 
 ]
 
+{ #category : #accessing }
+STestCase >> calledMethods [
+	^ self statements
+		select: #isMethod
+		thenCollect: [ :method | method selector ]
+]
+
 { #category : #mutation }
 STestCase >> change [
 	self applyMutator
