@@ -462,29 +462,30 @@ STestCase >> insertStatementWithArgs: aStatement from: aPosition [
 				satisfyParametersOf: args
 				before: newPosition
 				allowingNull: false.
+			self assert: (newArgs anySatisfy: #isNil) not description: 'Any arg must not be nil'.
 			addedList := newArgs asArray.
-			newPosition := {(newArgs
+			newArgs
 				ifNotEmpty: [ | indexFrom |
 					indexFrom := -1.
 					newArgs
 						do: [ :aArg | 
 							indexFrom := {indexFrom.
 							(self indexOf: aArg)} max ].
-					indexFrom := indexFrom < 0
+					indexFrom < 0
 						ifTrue: [ newPosition ]
-						ifFalse: [ indexFrom + newArgs size < size
-								ifTrue: [ indexFrom + newArgs size ]
-								ifFalse: [ size ] ].
-					STransformValue
+						ifFalse: [ size := size + newArgs size.
+							indexFrom := {indexFrom. aPosition} max + newArgs size ].
+			newPosition := { (STransformValue
 						randomNumberFrom: indexFrom
 						to: size
-						default: indexFrom ]).
-			newPosition} max ].
+						default: indexFrom).
+			newPosition } max ]].
 	newStatement := aStatement createNewStatement
-		args: newArgs asArray;
+		args: addedList;
 		yourself.
 	(self addStatement: newStatement at: newPosition)
-		ifTrue: [ ^ addedList , {newStatement varName} ].
+		ifTrue: [ 
+			^ addedList , {newStatement varName} ].
 	^ nil
 ]
 
@@ -612,7 +613,7 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 								ifNotNil: [ newArg ]
 								ifNil: [ aBoolean
 										ifTrue: [ nil ]
-										ifFalse: [ aArg ] ]) ]
+										ifFalse: [ aArg ] ]). ]
 				ifFalse:
 					[ argsResult at: index put: aArg mutateToChange ] ].
 	^ argsResult

@@ -549,7 +549,20 @@ STestCaseTest >> testInsertMethodCall [
 	varNames := testCase insert: #insertMethodCallUsing:.
 	self assert: testCase statements size > 3.
 	stm := testCase statementAt: varNames last.
-	self assert: (stm isMethod or: [ stm isConstructor ])
+	self assert: (stm isMethod or: [ stm isConstructor ]).
+	profile := SSGenerator
+		profile: [ (SFoo score: 2)
+				score;
+				return: 3 ]
+		onClass: SFoo.
+	testCase := STestCase seed: profile.
+	testCase addPrimitive.
+	testCase addConstructor.
+	testCase addMethod.
+	testCase addMethod.
+	varNames := testCase insert: #insertMethodCallUsing:.
+	self assert: testCase statements size > 4.
+	self assert: testCase hasValidDependencies.
 ]
 
 { #category : #'mutation-insert' }
