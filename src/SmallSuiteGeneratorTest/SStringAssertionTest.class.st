@@ -15,6 +15,10 @@ SStringAssertionTest >> testPrintString [
 	self
 		assert: assertions first printString
 		equals: 'self assert: number asString equals: ''1'''.
+	assertions := SStringAssertion applyOn: 'string' with: '<asdf>!213$' of: nil.
+	self
+		assert: assertions first printString
+		equals: ('self assert: string asString equals: ', '''<asdf>!213$''').
 	assertions := SStringAssertion applyOn: 'float' with: 23.56 of: nil.
 	self
 		assert: assertions first printString
@@ -71,5 +75,11 @@ SStringAssertionTest >> testPrintStringComplexObject [
 	assertions := SStringAssertion applyOn: 'stack' with: value of: nil.
 	self
 		assert: assertions first printString
-		equals: 'self assert: stack asString equals: ''' , value asString , ''''
+		equals: 'self assert: stack asString equals: ''' , value asString , ''''.
+	value := Array with: 'abc' with: 'def' with: 'ghij'.
+	assertions := SStringAssertion applyOn: 'array' with: value of: nil.
+	self
+		assert: assertions first printString
+		equals:
+			'self assert: array asString equals: ''#(''''abc'''' ''''def'''' ''''ghij'''')'''
 ]

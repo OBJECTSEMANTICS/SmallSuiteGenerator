@@ -24,9 +24,12 @@ SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 		ifTrue: [ ^ selector ].
 	class := aTestCase profile classAt: aObject class name ifNone: [  ].
 	class ifNil: [ ^ selector ].
-	copyObject := aObject deepCopy.
+	[copyObject := aObject deepCopy.] on: Error do: [ ^ selector ].
 	(class methods
-		select: [ :method | method argTypes isNil or: [ method argTypes isEmpty ] ])
+		select: [ :method | 
+			(method argTypes isNil and: ((method selector includes: $:) not
+				and: [ method returnType isNotNil ]))
+				or: [ method argTypes isNotNil and: [ method argTypes isEmpty ] ] ])
 		shuffle
 		detect: [ :aCompileMethod | 
 			[ | result |
