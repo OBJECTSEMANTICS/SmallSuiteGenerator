@@ -23,9 +23,12 @@ STransformValue class >> change: args ofTypes: types using: aTestCase [
 
 { #category : #'as yet unclassified' }
 STransformValue class >> changeAndTransform: aObject ofType: aType using: aTestCase [
+	| dictOfClasses |
 	aObject isLiteral
 		ifTrue: [ ^ aObject mutateToChange ].
-	aTestCase dictSubclasses
+	dictOfClasses := Dictionary newFromKeys: (aTestCase dictSubclasses keys, aTestCase profile scalars keys) andValues: (aTestCase dictSubclasses values, aTestCase profile scalars values).
+	dictOfClasses 
+	"aTestCase dictSubclasses"
 		at: aType name
 		ifPresent: [ :subClasses | 
 			| otherValues |
@@ -184,7 +187,6 @@ STransformValue class >> removeOrRepairArgs: args of: aStatement with: varName u
 	varToDelete
 		ifEmpty: [ argsResult := args
 				collect: [ :arg | replace at: arg ifAbsent: [ arg ] ] ].
-	self assert: aTestCase hasValidDependencies description: 'Test case must have valid dependencies'.
 	^ {argsResult.
 	varToDelete}
 ]
@@ -216,6 +218,7 @@ STransformValue class >> satisfyArgs: aTestCase with: otherTestCase of: aStateme
 								createArg: argType
 								before: aTestCase statements size + 1
 								avoiding: nil ] ].
+			self assert: aArg isNotNil description: 'The arg must not be nil'.
 			resultArgs add: aArg ].
 	^ resultArgs
 ]
