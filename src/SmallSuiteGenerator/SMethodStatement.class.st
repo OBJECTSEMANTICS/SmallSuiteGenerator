@@ -1,6 +1,6 @@
 Class {
 	#name : #SMethodStatement,
-	#superclass : #SAbstractMethodStatement,
+	#superclass : #SAbstractStatementWithArgs,
 	#instVars : [
 		'receiverVarName'
 	],

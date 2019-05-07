@@ -1,6 +1,6 @@
 Class {
 	#name : #SConstructorStatement,
-	#superclass : #SAbstractMethodStatement,
+	#superclass : #SAbstractStatementWithArgs,
 	#instVars : [
 		'theClassName'
 	],
