@@ -34,30 +34,51 @@ SGAEngine >> blockToExecute: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> checkIfReadyToRun [
+SGAEngine >> checkBlockToExecute [
 	self
 		assert: [ blockToExecute notNil ]
-		description: 'Need to set the block to analyze'.
+		description: 'Need to set the block to analyze'
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> checkCoverageProfiler [
 	self
 		assert: [ coverageProfiler notNil ]
-		description: 'Need to set a coverageProfiler'.
-	self
-		assert: [ generatorProfiler notNil ]
-		description: 'Need to set a generatorProfiler'.
+		description: 'Need to set a coverageProfiler'
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> checkFitnessBlock [
 	self
 		assert: [ fitnessBlock notNil ]
-		description: 'Need to set a fitnessBlock'.
+		description: 'Need to set a fitnessBlock'
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> checkGeneratorProfiler [
+	self
+		assert: [ generatorProfiler notNil ]
+		description: 'Need to set a generatorProfiler'
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> checkIfReadyToRun [
+	self checkBlockToExecute.
+	self checkCoverageProfiler.
+	self checkGeneratorProfiler.
+	self checkFitnessBlock.
+	self checkLogs
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> checkLogs [
 	self assert: [ logs isEmpty ] description: 'Already been run'
 ]
 
 { #category : #accessing }
 SGAEngine >> coverageProfiler: aCoverageBlock [
-	self
-		assert: [ blockToExecute notNil ]
-		description: 'Need to set the block to analyze'.
-	self
-		assert: [ generatorProfiler notNil ]
-		description: 'Need to set the generatorProfiler'.
+	self checkBlockToExecute.
+	self checkGeneratorProfiler.
 	coverageProfiler := aCoverageBlock value: blockToExecute
 ]
 
@@ -98,9 +119,7 @@ SGAEngine >> generateInvariantsFittest [
 
 { #category : #accessing }
 SGAEngine >> generatorProfiler: generatorBlock [
-	self
-		assert: [ blockToExecute notNil ]
-		description: 'Need to set the block to analyze'.
+	self checkBlockToExecute.
 	generatorProfiler := generatorBlock value: blockToExecute
 ]
 
@@ -113,23 +132,32 @@ SGAEngine >> initialize [
 	self endForMaxNumberOfGeneration: 10.
 	populationSize := 100.
 	self maximizeComparator.
+	self initializeMutationOperator.
+	self initializeCrossoverOperator.
+	self selection: SGATournamentSelection new
+]
+
+{ #category : #initialization }
+SGAEngine >> initializeCrossoverOperator [
+	crossoverOperator := SGACrossoverOperation new.
+	crossoverOperator random: random.
+]
+
+{ #category : #initialization }
+SGAEngine >> initializeMutationOperator [
 	mutationOperator := SGAMutationOperation new.
 	mutationOperator mutationRate: (1 / 3) asFloat.
 	mutationOperator random: random.
-	crossoverOperator := SGACrossoverOperation new.
-	crossoverOperator random: random.
-	self selection: SGATournamentSelection new
 ]
 
 { #category : #'as yet unclassified' }
 SGAEngine >> initializePopulation [
 	population := OrderedCollection new.
 	populationSize
-		timesRepeat: [ | testCase |
-			testCase := STestCase new.
+		timesRepeat: [ 
 			population
 				add:
-					(testCase
+					(STestCase new
 						profile: generatorProfiler;
 						generateStatements: numberOfStatements) ]
 ]
@@ -138,6 +166,16 @@ SGAEngine >> initializePopulation [
 SGAEngine >> isTestCase: aTestCase betterThan: aFittestTestCase [
 	"Compare an testCase against the fittest testCase of the population"
 	^ compareFitness value: aTestCase fitness value: aFittestTestCase fitness
+]
+
+{ #category : #running }
+SGAEngine >> logWithGenerationNumber: gen atTime: t [
+	| log |
+	log := SGALog new.
+	log generationNumber: gen.
+	log fittestTestCase: selection fittest.
+	log timeToProduceGeneration: Time now asSeconds - t.
+	^ log
 ]
 
 { #category : #accessing }
@@ -198,7 +236,7 @@ SGAEngine >> result [
 
 { #category : #running }
 SGAEngine >> run [
-	| t log |
+	| t |
 	self beforeRun.
 	self initializePopulation.
 	selection initialPopulation: population.
@@ -213,11 +251,7 @@ SGAEngine >> run [
 					self microPause.
 					t := Time now asSeconds.
 					self produceNewPopulation.
-					log := SGALog new.
-					log generationNumber: gen.
-					log fittestTestCase: selection fittest.
-					log timeToProduceGeneration: Time now asSeconds - t.
-					logs add: log ].
+					logs add: (self logWithGenerationNumber: gen atTime: t) ].
 			coverageProfiler cleanInstrumentation ]
 ]
 

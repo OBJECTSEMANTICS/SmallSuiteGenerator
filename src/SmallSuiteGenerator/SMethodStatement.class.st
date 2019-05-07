@@ -1,40 +1,18 @@
 Class {
 	#name : #SMethodStatement,
-	#superclass : #SStatement,
+	#superclass : #SAbstractMethodStatement,
 	#instVars : [
-		'selector',
-		'args',
-		'receiverVarName',
-		'references'
+		'receiverVarName'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
-
-{ #category : #'as yet unclassified' }
-SMethodStatement >> argToString: aArg [
-	^ (references isNotNil and: [ references includes: aArg ])
-		ifTrue: [ aArg asString ]
-		ifFalse: [ aArg storeString ]
-]
-
-{ #category : #accessing }
-SMethodStatement >> args [
-	^ args
-]
-
-{ #category : #accessing }
-SMethodStatement >> args: anObject [
-	args := anObject
-]
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> changeUsing: aTestCase [
 	| methods calledMethods constructStatement result |
 	result := #().
 	constructStatement := aTestCase statementAt: self receiverVarName.
-	calledMethods := (aTestCase statements
-		select: #isMethod
-		thenCollect: [ :method | method selector ]) asSet.
+	calledMethods := aTestCase calledMethods asSet.
 	methods := (aTestCase
 		methodsOrAccessors: constructStatement
 		toSelect: false)
@@ -76,9 +54,7 @@ SMethodStatement >> collectDependencies [
 
 { #category : #private }
 SMethodStatement >> createNewStatement [
-	^ (self class create)
-		selector: self selector;
-		args: self args;
+	^ super createNewStatement
 		returnTypeName: self returnTypeName;
 		receiverVarName: self receiverVarName;
 		yourself
@@ -87,11 +63,6 @@ SMethodStatement >> createNewStatement [
 { #category : #'as yet unclassified' }
 SMethodStatement >> insertMethodCallUsing: aTestcase [
 	^ self insertRandomCallUsing: aTestcase
-]
-
-{ #category : #'as yet unclassified' }
-SMethodStatement >> insertParameterUsing: aTestCase [
-	^ self insertParametersOf: self using: aTestCase
 ]
 
 { #category : #accessing }
@@ -106,29 +77,9 @@ SMethodStatement >> isMethod [
 	^ true
 ]
 
-{ #category : #'as yet unclassified' }
-SMethodStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
-	| varName |
-	varName := self varName.
-	^ (referencedVarNames includes: varName) not
-		and: [ (dictStringStatement at: self stringBody) first ~= varName ]
-]
-
 { #category : #printing }
-SMethodStatement >> printOn: aStream [
-	aStream nextPutAll: self varName.
-	aStream nextPutAll: ' := '.
-	aStream nextPutAll: self stringBody. "self receiverVarName.
-	aStream nextPutAll: ' '.
-	self args size = 0
-		ifTrue: [ aStream nextPutAll: self selector ]
-		ifFalse: [ (self selector substrings: ':')
-				with: self args
-				do: [ :selectorPart :arg | 
-					aStream nextPutAll: selectorPart.
-					aStream nextPutAll: ': '.
-					aStream nextPutAll: arg ] ].
-	aStream nextPut: $."
+SMethodStatement >> name [
+	^ self receiverVarName
 ]
 
 { #category : #accessing }
@@ -139,18 +90,6 @@ SMethodStatement >> receiverVarName [
 { #category : #accessing }
 SMethodStatement >> receiverVarName: anObject [
 	receiverVarName := anObject
-]
-
-{ #category : #'as yet unclassified' }
-SMethodStatement >> referencesToArgs: varNames [
-	references := varNames
-]
-
-{ #category : #mutation }
-SMethodStatement >> repairOn: aTestCase changing: aStatement [
-	self varName = aStatement varName
-		ifFalse: [ ^ #() ].
-	^ self changeUsing: aTestCase.
 ]
 
 { #category : #mutation }
@@ -200,38 +139,4 @@ SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
 		withBlocks:
 			{blockCondition.
 			blockInsertion}
-]
-
-{ #category : #accessing }
-SMethodStatement >> selector [
-	^ selector
-]
-
-{ #category : #accessing }
-SMethodStatement >> selector: anObject [
-	selector := anObject
-]
-
-{ #category : #printing }
-SMethodStatement >> stringBody [
-	^ String
-		streamContents: [ :aStream | 
-			aStream
-				nextPutAll: self receiverVarName;
-				nextPutAll: ' '.
-			self args
-				ifEmpty: [ aStream nextPutAll: self selector ]
-				ifNotEmpty: [ | withColon |
-					withColon := self selector includes: $:.
-					(self selector substrings: ':')
-						with: self args
-						do: [ :selectorPart :arg | 
-							aStream nextPutAll: selectorPart.
-							withColon
-								ifTrue: [ aStream nextPutAll: ':' ].
-							aStream
-								nextPut: Character space;
-								nextPutAll: (self argToString: arg);
-								nextPut: Character space ] ].
-			aStream nextPut: $. ]
 ]

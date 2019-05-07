@@ -12,11 +12,9 @@ SGAMutationOperation >> doMutate: aTestCase [
 	self randomNumber <= mutationRate
 		ifTrue: [ aTestCase remove ].
 	self randomNumber <= mutationRate
-		ifTrue: [ 
-			aTestCase change ].
+		ifTrue: [ aTestCase change ].
 	self randomNumber <= mutationRate
-		ifTrue: [
-			aTestCase insert ]
+		ifTrue: [ aTestCase insert ]
 ]
 
 { #category : #initialization }

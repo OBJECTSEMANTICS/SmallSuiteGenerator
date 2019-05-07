@@ -14,26 +14,31 @@ Class {
 
 { #category : #'instance creation' }
 STestCase class >> create: numberOfTestCases testCasesAndInitialize: numberOfStatements statementsUsing: profiler [
-	| collection testCase |
+	| collection |
 	collection := OrderedCollection new.
 	1 to: numberOfTestCases do: [ :index | 
-		testCase := self new.
-		testCase profile: profiler.
-		testCase generateStatements: numberOfStatements.
-		collection add: testCase ].
+		collection add: (self createTestWithProfile: profiler 
+		numberOfStatements: numberOfStatements) ].
 	^ collection
 ]
 
 { #category : #'instance creation' }
 STestCase class >> createTestSuite: aGeneratorProfile ofSize: aNumber [
-	| collection testCase |
+	| collection |
 	collection := OrderedCollection new.
 	1 to: aNumber do: [ :index | 
-		testCase := self new.
-		testCase profile: aGeneratorProfile.
-		testCase generateStatements: (10 to: 54) atRandom.
-		collection add: testCase ].
+		collection add: (self createTestWithProfile: aGeneratorProfile 
+		numberOfStatements: (10 to: 54) atRandom) ].
 	^ collection
+]
+
+{ #category : #'instance creation' }
+STestCase class >> createTestWithProfile: aProfile numberOfStatements: aNumber [
+	| testCase |
+	testCase := self new.
+	testCase profile: aProfile.
+	testCase generateStatements: aNumber.
+	^ testCase
 ]
 
 { #category : #'instance creation' }
@@ -220,6 +225,13 @@ STestCase >> assignId [
 { #category : #accessing }
 STestCase >> assignedIds [
 	^ statements collect: #id 
+]
+
+{ #category : #accessing }
+STestCase >> calledMethods [
+	^ self statements
+		select: #isMethod
+		thenCollect: [ :method | method selector ]
 ]
 
 { #category : #mutation }

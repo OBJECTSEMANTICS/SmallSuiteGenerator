@@ -5,6 +5,13 @@ Class {
 }
 
 { #category : #tests }
+SExtensionsTest >> createStudent [
+	^ (SStudent new
+				name: 'Pedro';
+				id: 5)
+]
+
+{ #category : #tests }
 SExtensionsTest >> testMutateToChange [
 	self assert: true mutateToChange equals: false.
 	self assert: false mutateToChange equals: true.
@@ -19,12 +26,6 @@ SExtensionsTest >> testMutateToChange [
 		assert: (SStack newStackWith: #(1 6 2 4)) mutateToChange
 		equals: (SStack newStackWith: #(1 6 2 4)).
 	self
-		assert:
-			(SStudent new
-				name: 'Pedro';
-				id: 5) mutateToChange storeString
-		equals:
-			(SStudent new
-				name: 'Pedro';
-				id: 5) storeString
+		assert: self createStudent mutateToChange storeString
+		equals: self createStudent storeString
 ]
