@@ -90,8 +90,10 @@ SGAEngine >> fitnessBlock: aBlock [
 
 { #category : #'as yet unclassified' }
 SGAEngine >> generateInvariantsFittest [
-	self assert: logs isNotEmpty description: 'In this point the logs must not be empty'.
-	self logs do: [ :log | log fittestTestCase generateInvariants ].
+	self
+		assert: logs isNotEmpty
+		description: 'In this point the logs must not be empty'.
+	self logs do: [ :log | log fittestTestCase generateInvariants ]
 ]
 
 { #category : #accessing }
@@ -216,7 +218,7 @@ SGAEngine >> run [
 					log fittestTestCase: selection fittest.
 					log timeToProduceGeneration: Time now asSeconds - t.
 					logs add: log ].
-			coverageProfiler cleanInstrumentation ].
+			coverageProfiler cleanInstrumentation ]
 ]
 
 { #category : #accessing }

@@ -560,27 +560,27 @@ b ]
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages fitness' }
+{ #category : #'tests-packages unfunctional' }
 SGAEngineTest >> testRTPieExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ | b |
-b := RTPieBuilder new.
-b interaction popup.
-b shape current
-	innerRadius: 70;
-	externalRadius: 100.
-b
-	objects:
-		(Array
-			with: Dictionary
-			with: Collection
-			with: Set
-			with: OrderedCollection).
-b slice: #numberOfMethods.
-b normalizer distinctColor.
-^ b]
+			b := RTPieBuilder new.
+			b interaction popup.
+			b shape current
+				innerRadius: 70;
+				externalRadius: 100.
+			b
+				objects:
+					(Array
+						with: Dictionary
+						with: Collection
+						with: Set
+						with: OrderedCollection).
+			b slice: #numberOfMethods.
+			b normalizer distinctColor.
+			b ]
 		ofPopulationSize: 30
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.

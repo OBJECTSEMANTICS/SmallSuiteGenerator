@@ -13,7 +13,7 @@ SInspectorAssertionTest >> testPrintString [
 		of: nil.
 	self assert: assertions isEmpty.
 	profile := SSGenerator
-		profile: [ SFoo score: 4 ]
+		profile: [ (SFoo score: 4) returnNum; returnString; returnFloat; score ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.

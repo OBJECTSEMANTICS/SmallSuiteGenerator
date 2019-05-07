@@ -141,18 +141,20 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
+	testCase statements second referencesToArgs: testCase varNames.
+	testCase statements third referencesToArgs: testCase varNames.
 	collectString := testCase statements collect: #printString.
 	self
 		assert: ({collectString first} includesAny: {'_var0 := 2.' . '_var0 := 3.'}).
 	self
 		assert: collectString second
-		equals: '_var1 := SFoo score: ''_var0'' .'.
+		equals: '_var1 := SFoo score: _var0 .'.
 	self
 		assert:
 			({collectString third}
 				includesAny:
-					{'_var2 := _var1 return: ''_var0'' .' . '_var2 := _var1 initialize.'.
-					'_var2 := _var1 score: ''_var0'' .'}).
+					{'_var2 := _var1 return: _var0 .' . '_var2 := _var1 initialize.'.
+					'_var2 := _var1 score: _var0 .'}).
 	profile := SSGenerator
 		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
 		onClass: SFoo.
@@ -160,6 +162,8 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
+	testCase statements second referencesToArgs: testCase varNames.
+	testCase statements third referencesToArgs: testCase varNames.
 	collectString := testCase statements collect: #printString.
 	self assert: collectString first equals: '_var0 := 4.'.
 	self

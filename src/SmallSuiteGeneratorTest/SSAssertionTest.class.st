@@ -27,7 +27,11 @@ SSAssertionTest >> testGenerateInvariantCollections [
 			{SCollectionSizeAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	profile := SSGenerator profile: [ SFoo new ] onClass: SFoo.
+	profile := SSGenerator
+		profile: [ SFoo new
+				returnString;
+				returnFloat ]
+		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	invariants := testCase generateInvariants.
@@ -41,14 +45,13 @@ SSAssertionTest >> testGenerateInvariantCollections [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	invariants := testCase generateInvariants.
-	self assert: invariants size equals: 5.
+	self assert: invariants size equals: 4.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
 		hasSameElements:
 			{SPrimitiveAssertion.
 			SStringAssertion.
 			SComparisonAssertion.
-			SInspectorAssertion.
 			SCollectionSizeAssertion}
 	"profile := SSGenerator
 		profile: [ OrderedCollection new ]
@@ -99,25 +102,39 @@ SSAssertionTest >> testGenerateInvariantsArray [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsStack [
 	| profile testCase invariants |
-	profile := SSGenerator
-		profile: [ Stack new. ]
-		onClass: Stack.
+	profile := SSGenerator profile: [ Stack new ] onClass: Stack.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	invariants := testCase generateInvariants.
 	self assert: invariants size equals: 3.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. SStringAssertion. SComparisonAssertion }.
-	
+	self
+		assertCollection: (invariants collect: [ :i | i class ])
+		hasSameElements:
+			{SCollectionSizeAssertion.
+			SStringAssertion.
+			SComparisonAssertion}.
 	profile := SSGenerator
-		profile: [ Stack new push: 1; yourself. ]
+		profile: [ Stack new
+				push: 1;
+				push: 3; pop;
+				yourself ]
 		onClass: Stack.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addMethod.
 	invariants := testCase generateInvariants.
 	self assert: invariants size equals: 8.
-	self assertCollection: (invariants collect: [:i | i class]) hasSameElements: {SCollectionSizeAssertion. SCollectionTypeSimilarityAssertion. SStringAssertion. SComparisonAssertion. SInspectorAssertion. SPrimitiveAssertion. SComparisonAssertion. SPrimitiveAssertion  }.
-  
+	self
+		assertCollection: (invariants collect: [ :i | i class ])
+		hasSameElements:
+			{SCollectionSizeAssertion.
+			SCollectionTypeSimilarityAssertion.
+			SStringAssertion.
+			SComparisonAssertion.
+			SInspectorAssertion.
+			SPrimitiveAssertion.
+			SComparisonAssertion.
+			SPrimitiveAssertion}
 ]
 
 { #category : #tests }
@@ -204,7 +221,6 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase generateStatements: 15.
-	self halt.
 	invariants := testCase generateInvariants.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty
