@@ -1,6 +1,6 @@
 Class {
 	#name : #SConstructorStatement,
-	#superclass : #SAbstractMethodStatement,
+	#superclass : #SAbstractStatementWithArgs,
 	#instVars : [
 		'theClassName'
 	],
@@ -9,35 +9,17 @@ Class {
 
 { #category : #'as yet unclassified' }
 SConstructorStatement >> changeUsing: aTestCase [
-	| classSpy method result methods |
-	result := nil.
+	| classSpy method methods newArgs |
+	newArgs := nil.
 	classSpy := aTestCase profile classAt: self theClassName.
 	methods := classSpy factoryMethods shuffle.
-	method := self findMethodIn: methods.
-	method
-		ifNil: [ result := STransformValue
-				change: args
-				ofTypes: (methods ifEmpty: [ #() ] ifNotEmpty: [ methods first argTypes ])
-				using: aTestCase.
-			(aTestCase statementAt: self varName) args: result first.
-			result := result second ]
-		ifNotNil: [ | newArgs |
-			newArgs := method argTypes
-				collect: [ :class | 
-					aTestCase
-						createArg: class name
-						before: (aTestCase indexOf: self varName)
-						avoiding: nil ].
-			(aTestCase statementAt: self varName)
-				args: newArgs;
-				selector: method selector.
-			result := newArgs ].
-	^ result
-]
-
-{ #category : #'as yet unclassified' }
-SConstructorStatement >> collectDependencies [
-	^ STransformValue selectVarNames: args
+	method := self alternativeMethodIn: methods.
+	method ifNil: [ ^ self statementsToChange: methods using: aTestCase ].
+	newArgs := self newArgsOf: aTestCase using: method.
+	(aTestCase statementAt: self varName)
+		args: newArgs;
+		selector: method selector.
+	^ newArgs
 ]
 
 { #category : #private }
@@ -48,11 +30,8 @@ SConstructorStatement >> createNewStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SConstructorStatement >> findMethodIn: methods [
-	^ methods
-		detect: [ :aMethod | aMethod selector ~= self selector ]
-		ifFound: [ :aMethod | aMethod ]
-		ifNone: [  ].
+SConstructorStatement >> dependenciesConsidering: varNames [
+	^ args select: [ :arg | varNames includes: arg ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -62,9 +41,7 @@ SConstructorStatement >> insertMethodCallUsing: aTestcase [
 
 { #category : #accessing }
 SConstructorStatement >> insertRandomCallUsing: aTestCase [
-	^ aTestCase
-		insertStatementWithArgs: self
-		from: 1
+	^ aTestCase insert: self statementWithArgsBefore: nil	"1"
 ]
 
 { #category : #accessing }
@@ -77,15 +54,25 @@ SConstructorStatement >> name [
 	^ self theClassName
 ]
 
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> newArgsOf: aTestCase using: method [
+	^ method argTypes
+		collect: [ :class | 
+			aTestCase
+				createArg: class name
+				before: (aTestCase indexOf: self varName)
+				avoiding: nil ]
+]
+
 { #category : #mutation }
 SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
 	(args includes: aStatement varName)
 		ifTrue: [ | collection |
-			collection := STransformValue
-				removeOrRepairArgs: args
-				of: aStatement
-				with: self varName
-				using: aTestCase.
+			collection := SAuxiliar
+				removeOrRepair: args
+				argsOf: aStatement
+				statementWith: self varName
+				varNameUsing: aTestCase.
 			(aTestCase statementAt: self varName) args: collection first.
 			^ collection second ]
 		ifFalse: [ ^ #() ]
@@ -103,6 +90,18 @@ SConstructorStatement >> satisfyParameters: aTestCase with: otherTestCase [
 		before: self varName.
 	newConstructor ifNotNil: [ ^ aTestCase addStatement: newConstructor ].
 	^ false
+]
+
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> statementsToChange: methods using: aTestCase [
+	| result |
+	methods ifEmpty: [ ^ #() ].
+	result := SAuxiliar
+		change: args
+		ofTypes: methods first argTypes
+		using: aTestCase.
+	(aTestCase statementAt: self varName) args: result first.
+	^ result second
 ]
 
 { #category : #accessing }

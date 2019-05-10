@@ -5,8 +5,31 @@ Class {
 		'receiverVarName',
 		'fieldName'
 	],
+	#classInstVars : [
+		'blockCondition',
+		'blockInsertion'
+	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #accessing }
+SFieldStatement class >> blockCondition [
+	blockCondition ifNil: [ blockCondition := [ :testCase :stmOfCollection :aStatement | 
+	((testCase methodsOrAccessors: stmOfCollection toSelect: true)
+		collect: #selector) includes: aStatement fieldName ] ].
+	^ blockCondition
+]
+
+{ #category : #accessing }
+SFieldStatement class >> blockInsertion [
+	blockInsertion ifNil: [ blockInsertion := [ :testCase :aStatement :constructor | 
+	^ testCase
+		addStatement:
+			(aStatement createNewStatement
+				receiverVarName: constructor varName;
+				yourself) ] ].
+	^ blockInsertion
+]
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> changeUsing: aTestCase [
@@ -21,11 +44,6 @@ SFieldStatement >> changeUsing: aTestCase [
 			[ :accessor | (aTestCase statementAt: self varName) fieldName: accessor selector ].
 ]
 
-{ #category : #'as yet unclassified' }
-SFieldStatement >> collectDependencies [
-	^ { receiverVarName }
-]
-
 { #category : #private }
 SFieldStatement >> createNewStatement [
 	^ (self class create)
@@ -33,6 +51,11 @@ SFieldStatement >> createNewStatement [
 		receiverVarName: self receiverVarName;
 		returnTypeName: self returnTypeName;
 		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SFieldStatement >> dependenciesConsidering: varNames [
+	^ {receiverVarName}
 ]
 
 { #category : #accessing }
@@ -59,7 +82,7 @@ SFieldStatement >> insertParameterUsing: aTestcase [
 SFieldStatement >> insertRandomCallUsing: aTestCase [
 	| aPosition newStatement size |
 	size := aTestCase numberOfStatements.
-	aPosition := STransformValue
+	aPosition := SAuxiliar
 		randomNumberFrom: (aTestCase indexOf: self receiverVarName) + 1
 		to: size
 		default: size + 1.
@@ -107,7 +130,6 @@ SFieldStatement >> referencesToArgs: varNames [
 SFieldStatement >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
-	"aTestCase changeField: aStatement."
 	self changeUsing: aTestCase.
 	^ #()
 ]
@@ -131,23 +153,13 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
-	| blockCondition blockInsertion |
-	blockCondition := [ :testCase :stmOfCollection :aStatement | 
-	((testCase methodsOrAccessors: stmOfCollection toSelect: true)
-		collect: #selector) includes: aStatement fieldName ].
-	blockInsertion := [ :testCase :aStatement :constructor | 
-	^ testCase
-		addStatement:
-			((aStatement createNewStatement)
-				receiverVarName: constructor varName;
-				yourself) ].
-	^ STransformValue
+	^ SAuxiliar
 		satisfyParameters: aTestCase
 		with: otherTestCase
 		of: self
 		withBlocks:
-			{blockCondition.
-			blockInsertion}
+			{self class blockCondition.
+			self class blockInsertion}
 ]
 
 { #category : #printing }

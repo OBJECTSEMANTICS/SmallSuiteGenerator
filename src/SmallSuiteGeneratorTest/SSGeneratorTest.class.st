@@ -49,14 +49,14 @@ SSGeneratorTest >> testMergeTypes [
 SSGeneratorTest >> testMethodGenerator [
 	| profile testCase collectString |
 	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 2 ]
+		profile: [ (SFoo score: 2) return: 2; score ]
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addMethod.
 	collectString := testCase statements collect: #printString.
 	self assert: collectString first equals: '_var0 := SFoo score: 2 .'.
-	self assert: ({collectString second} includesAny: { '_var1 := _var0 return: 2 .'. '_var1 := _var0 initialize.'. '_var1 := _var0 score: 2 .' }).
+	self assert: ({collectString second} includesAny: { '_var1 := _var0 return: 2 .'. '_var1 := _var0 initialize.'. '_var1 := _var0 score: 2 .'. '_var1 := _var0 score.' }).
 	profile := SSGenerator
 		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
 		onClass: SFoo.

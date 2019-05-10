@@ -8,51 +8,43 @@ Class {
 }
 
 { #category : #'coverage-onClass' }
-SCalculatorCoverageTest >> assertCoverage: aBlock onClass: aClass withValues: coverages [
-	| result originProfiler testSuiteProfiler |
-	result := calculatorCoverage
-		calculateCoverage: aBlock
-		onClass: aClass
-		inTestSuiteOfSize: 20.
-	originProfiler := result first.
-	testSuiteProfiler := result allButFirst.
-	self assert: testSuiteProfiler isNotEmpty.
-	self
-		assert: (originProfiler at: 'methodCoverage')
-		equals: coverages first.
-	self
-		assert:
-			(testSuiteProfiler
-				select: [ :dict | (dict at: 'methodCoverage') >= coverages first ])
-				isNotEmpty.
-	self
-		assert: (originProfiler at: 'statementCoverage')
-		equals: coverages second.
-	self
-		assert:
-			(testSuiteProfiler
-				select: [ :dict | (dict at: 'statementCoverage') >= coverages second ])
-				isNotEmpty
+SCalculatorCoverageTest >> assertCoverageB: aBlock onClass: aClass withValues: coverages [
+	| result coverageProfiler |
+	coverageProfiler := SBProfiler new
+		profileInstrumented: aBlock onClass: aClass;
+		yourself.
+	result := coverageProfiler dictCoverage.
+	coverageProfiler cleanInstrumentation.
+	self assert: (result at: 'methodCoverage') equals: coverages first.
+	self assert: (result at: 'statementCoverage') equals: coverages second
 ]
 
 { #category : #'coverage-onPackages' }
-SCalculatorCoverageTest >> assertCoverage: aBlock onPackages: regex [
-	| result coverageOfOrigin coverageTestSuite |
-	result := calculatorCoverage
-		calculateCoverage: aBlock
-		onPackagesMatching: regex
-		inTestSuiteOfSize: 20.
-	coverageOfOrigin := result first.
-	coverageTestSuite := result allButFirst.
-	self assert: coverageTestSuite isNotEmpty.
+SCalculatorCoverageTest >> assertCoverageOfTestSuite: aBlock onPackages: regex [
+	| listCoverage coverageProfiler generatorProfiler testSuite coverageBlock |
+	generatorProfiler := SSGenerator
+		profile: aBlock
+		onPackagesMatching: regex.
+	coverageProfiler := SBProfiler new
+		profileInstrumented: aBlock onPackagesMatching: regex;
+		yourself.
+	coverageBlock := coverageProfiler dictCoverage.
+	testSuite := self testSuite: generatorProfiler ofSize: 20.
+	listCoverage := testSuite
+		collect: [ :testCase | 
+			SCalculatorCoverage
+				calculateCoverageOf: testCase
+				using: coverageProfiler ].
+	coverageProfiler cleanInstrumentation.
+	self assert: listCoverage isNotEmpty.
 	self
 		assert:
-			(coverageTestSuite collect: [ :dict | dict at: 'methodCoverage' ]) max
-				>= (coverageOfOrigin at: 'methodCoverage').
+			(listCoverage collect: [ :dict | dict at: 'methodCoverage' ]) max
+				>= (coverageBlock at: 'methodCoverage').
 	self
 		assert:
-			(coverageTestSuite collect: [ :dict | dict at: 'statementCoverage' ])
-				max >= (coverageOfOrigin at: 'statementCoverage')
+			(listCoverage collect: [ :dict | dict at: 'statementCoverage' ]) max
+				>= (coverageBlock at: 'statementCoverage')
 ]
 
 { #category : #running }
@@ -78,7 +70,7 @@ SCalculatorCoverageTest >> testCoverageClassRTAMItem [
 	"28.57 = (4/14) * 100"
 	"21.05 = (4/19) * 100"
 	self
-		assertCoverage: aBlock
+		assertCoverageB: aBlock
 		onClass: RTAMItem
 		withValues: {28.57 . 21.05}
 ]
@@ -86,9 +78,11 @@ SCalculatorCoverageTest >> testCoverageClassRTAMItem [
 { #category : #'coverage-onClass' }
 SCalculatorCoverageTest >> testCoverageClassRTBorderAttachPoint [
 	"25 = (2/8) * 100 round: 2"
+
 	"9.68 = (3/31) * 100 round: 2"
+
 	self
-		assertCoverage: [ RTBorderAttachPoint new offset: 4 ]
+		assertCoverageB: [ RTBorderAttachPoint new offset: 4 ]
 		onClass: RTBorderAttachPoint
 		withValues: {25 . 9.68}
 ]
@@ -100,7 +94,7 @@ SCalculatorCoverageTest >> testCoverageClassRTBox [
 	"(2/9) * 100 round: 2"
 
 	self
-		assertCoverage: [ RTBox new
+		assertCoverageB: [ RTBox new
 				defaultWidth;
 				borderStyle ]
 		onClass: RTBox
@@ -114,7 +108,7 @@ SCalculatorCoverageTest >> testCoverageClassRTDirectedLine [
 	"54.55 = (6/11) * 100 round: 2"
 
 	self
-		assertCoverage: [ RTDirectedLine instance
+		assertCoverageB: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
 		onClass: RTDirectedLine
@@ -128,11 +122,11 @@ SCalculatorCoverageTest >> testCoverageClassRTLineSegment [
 	"13.46 = (14/104) * 100 round: 2"
 
 	self
-		assertCoverage: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
-						angleInDeg;
-						angleInRad;
-						cotan;
-						bottom ]
+		assertCoverageB: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+				angleInDeg;
+				angleInRad;
+				cotan;
+				bottom ]
 		onClass: RTLineSegment
 		withValues: {23.53 . 13.46}
 ]
@@ -143,7 +137,7 @@ SCalculatorCoverageTest >> testCoverageClassSStack [
 	73.68 = (14/19) * 100 round: 2"
 
 	self
-		assertCoverage: [ | aStack |
+		assertCoverageB: [ | aStack |
 			aStack := SStack newStackWith: {2 . 4 . 6 . 1}.
 			aStack push: 8.
 			aStack pop.
@@ -155,7 +149,7 @@ SCalculatorCoverageTest >> testCoverageClassSStack [
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesRTAMItem [
 	self
-		assertCoverage: [ RTAMItem new
+		assertCoverageOfTestSuite: [ RTAMItem new
 				itemName: 'Bonus Card';
 				color: Color lightCyan ]
 		onPackages: 'Roassal2'
@@ -163,29 +157,29 @@ SCalculatorCoverageTest >> testCoverageOnPackagesRTAMItem [
 
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesRTAMItemSimpleInstruction [
-	self assertCoverage: [ RTAMItem basicNew ] onPackages: 'Roassal2'.
+	self assertCoverageOfTestSuite: [ RTAMItem basicNew ] onPackages: 'Roassal2'
 ]
 
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesRTBorderAttachPoint [
 	self
-		assertCoverage: [ RTBorderAttachPoint new offset: 4 ]
+		assertCoverageOfTestSuite: [ RTBorderAttachPoint new offset: 4 ]
 		onPackages: 'Roassal2-Cor*'
 ]
 
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesRTBox [
 	self
-		assertCoverage: [RTBox new
+		assertCoverageOfTestSuite: [ RTBox new
 				defaultWidth;
-				borderStyle  ]
+				borderStyle ]
 		onPackages: 'Roassal2-Cor*'
 ]
 
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesRTDirectedLine [
 	self
-		assertCoverage: [ RTDirectedLine instance
+		assertCoverageOfTestSuite: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
 		onPackages: 'Roassal2-Cor*'
@@ -194,7 +188,7 @@ SCalculatorCoverageTest >> testCoverageOnPackagesRTDirectedLine [
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesRTLineSegment [
 	self
-		assertCoverage: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+		assertCoverageOfTestSuite: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 				angleInDeg;
 				angleInRad;
 				cotan;
@@ -204,8 +198,22 @@ SCalculatorCoverageTest >> testCoverageOnPackagesRTLineSegment [
 
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> testCoverageOnPackagesSStack [
-	self assertCoverage: [ (SStack newStackWith: {2 . 4 . 6 . 1})
-		push: 8;
-		pop;
-		top ] onPackages: 'SmallSuiteExamp*'.
+	self
+		assertCoverageOfTestSuite: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				push: 8;
+				pop;
+				top ]
+		onPackages: 'SmallSuiteExamp*'
+]
+
+{ #category : #tests }
+SCalculatorCoverageTest >> testSuite: profiler ofSize: aNumber [
+	| collection |
+	collection := OrderedCollection new.
+	1 to: aNumber do: [ :index | 
+		| testCase |
+		testCase := STestCase seed: profiler.
+		testCase generateStatements: (10 to: 54) atRandom.
+		collection add: testCase ].
+	^ collection
 ]

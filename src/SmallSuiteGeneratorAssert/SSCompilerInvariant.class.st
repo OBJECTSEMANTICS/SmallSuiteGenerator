@@ -27,17 +27,9 @@ SSCompilerInvariant >> compile: aBlock [
 
 { #category : #'as yet unclassified' }
 SSCompilerInvariant >> compiledTest [
-		| _var0 _var1 _var3 _var4 _var5 _var6 _var7 _var2 _var8 _var9 |
-_var0 := 45.
-_var1 := SStudent new.
-_var3 := _var1 idStudent.
-_var4 := _var1 scoreStudent: _var0.
-_var5 := _var1 scoreStudent.
-_var6 := _var1 nickname.
-_var7 := _var1 scoreStudent: _var0.
-_var2 := _var1 scoreStudent: _var5.
-_var8 := _var1 scoreStudent.
-_var9 := '''$student_An\'''.
+		| _var0 _var1 |
+_var0 := Stack new.
+_var1 := _var0 pop.
 ^ self analyze: thisContext
 ]
 
@@ -49,7 +41,9 @@ SSCompilerInvariant >> executeMethodTest [
 { #category : #'as yet unclassified' }
 SSCompilerInvariant >> executeMethodUsing: aTestCase [
 	testCase := aTestCase.
-	^ self compiledTest
+	^ [self compiledTest] on: Exception do: [ 
+		#()	
+	]
 ]
 
 { #category : #initialization }
