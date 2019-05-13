@@ -30,7 +30,7 @@ SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populati
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
 		endForMaxNumberOfGeneration: numGenerations;
-		run; generateInvariantsFittest
+		run"; generateInvariantsFittest"
 ]
 
 { #category : #tests }
@@ -56,8 +56,8 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
 		endForMaxNumberOfGeneration: numGenerations;
-		run;
-		generateInvariantsFittest
+		run";
+		generateInvariantsFittest"
 ]
 
 { #category : #running }
