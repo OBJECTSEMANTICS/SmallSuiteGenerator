@@ -440,6 +440,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.
@@ -447,6 +448,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) score ]
 		onClass: SFoo.
@@ -455,6 +457,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addConstructor.
 	testCase addField.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
 				score;
@@ -468,6 +471,7 @@ STestCaseTest >> testInsertMethodCall [
 	self assert: testCase statements size > 3.
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isMethod or: [ stm isConstructor ]).
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
 				score;

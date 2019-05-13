@@ -24,7 +24,7 @@ SSmallSuiteGeneratorTest >> tearDown [
 ]
 
 { #category : #tests }
-SSmallSuiteGeneratorTest >> testGenerateTestsSStack [
+SSmallSuiteGeneratorTest >> testGenerateTestsOnClassSStack [
 	|  prevFitness postFitness |
 	smallSuiteGenerator
 		generateTestsOf: [ (SStack newStackWith: {1 . 5 . 3 . 2})
@@ -32,10 +32,11 @@ SSmallSuiteGeneratorTest >> testGenerateTestsSStack [
 				top;
 				push: 4 ]
 		blockOnClass: SStack.
+	smallSuiteGenerator runGeneration.
 	self assert: smallSuiteGenerator engine populationSize equals: 30.
 	self assert:smallSuiteGenerator  engine logs size equals: 15.	"numberOfGenerations"
-	prevFitness := smallSuiteGenerator engine logs first fittest fitness.
-	postFitness := (smallSuiteGenerator engine logs at: 7) fittest fitness.
+	prevFitness := smallSuiteGenerator engine logs first fittestTestCase fitness.
+	postFitness := (smallSuiteGenerator engine logs at: 7) fittestTestCase fitness.
 	self
 		assert:
 			(prevFitness at: 'methodCoverage')
@@ -45,7 +46,42 @@ SSmallSuiteGeneratorTest >> testGenerateTestsSStack [
 			(prevFitness at: 'statementCoverage')
 				<= (postFitness at: 'statementCoverage').
 	prevFitness := postFitness.
-	postFitness := smallSuiteGenerator engine logs last fittest fitness.
+	postFitness := smallSuiteGenerator engine logs last fittestTestCase fitness.
+	self
+		assert:
+			(prevFitness at: 'methodCoverage')
+				<= (postFitness at: 'methodCoverage').
+	self
+		assert:
+			(prevFitness at: 'statementCoverage')
+				<= (postFitness at: 'statementCoverage')
+]
+
+{ #category : #tests }
+SSmallSuiteGeneratorTest >> testGenerateTestsOnClassSStudent [
+	|  prevFitness postFitness |
+	smallSuiteGenerator
+		generateTestsOf: [ (SStudent name: 'Ann' with: 34)
+				nickname;
+				idStudent;
+				scoreStudent: 45;
+				scoreStudent ]
+		blockOnClass: SStudent.
+	smallSuiteGenerator runGeneration.
+	self assert: smallSuiteGenerator engine populationSize equals: 30.
+	self assert:smallSuiteGenerator  engine logs size equals: 15.	"numberOfGenerations"
+	prevFitness := smallSuiteGenerator engine logs first fittestTestCase fitness.
+	postFitness := (smallSuiteGenerator engine logs at: 7) fittestTestCase fitness.
+	self
+		assert:
+			(prevFitness at: 'methodCoverage')
+				<= (postFitness at: 'methodCoverage').
+	self
+		assert:
+			(prevFitness at: 'statementCoverage')
+				<= (postFitness at: 'statementCoverage').
+	prevFitness := postFitness.
+	postFitness := smallSuiteGenerator engine logs last fittestTestCase fitness.
 	self
 		assert:
 			(prevFitness at: 'methodCoverage')

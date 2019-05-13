@@ -473,11 +473,11 @@ STestCase >> insert: aStatement statementWithArgsBefore: varName [
 		to: self numberOfStatements.
 	args
 		ifNotEmpty: [ | newArgs |
-			addedList := args deepCopy asArray.
 			newArgs := self
 				satisfyParametersOf: args
 				before: newPosition
 				allowingNull: allowNullParameters.
+			addedList := newArgs asArray.
 			newPosition := SAuxiliar 
 				positionToInsertAfter: block value
 				indexStatementOf: self

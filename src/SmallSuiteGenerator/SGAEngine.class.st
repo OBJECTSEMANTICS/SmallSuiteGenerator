@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'fitnessBlock',
 		'populationSize',
-		'compareFitness',
 		'mutationOperator',
+		'compareFitness',
 		'crossoverOperator',
 		'selection',
 		'numberOfStatements',
@@ -26,6 +26,11 @@ SGAEngine >> beforeRun [
 	selection fitnessBlock: fitnessBlock.
 	selection populationSize: populationSize.
 	selection random: random
+]
+
+{ #category : #accessing }
+SGAEngine >> blockToExecute [
+	^ blockToExecute
 ]
 
 { #category : #accessing }
@@ -76,6 +81,11 @@ SGAEngine >> checkLogs [
 ]
 
 { #category : #accessing }
+SGAEngine >> coverageProfiler [
+	^ coverageProfiler
+]
+
+{ #category : #accessing }
 SGAEngine >> coverageProfiler: aCoverageBlock [
 	self checkBlockToExecute.
 	self checkGeneratorProfiler.
@@ -115,6 +125,11 @@ SGAEngine >> generateInvariantsFittest [
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
 	self logs do: [ :log | log fittestTestCase generateInvariants ]
+]
+
+{ #category : #accessing }
+SGAEngine >> generatorProfiler [
+	^ generatorProfiler
 ]
 
 { #category : #accessing }
@@ -214,8 +229,18 @@ SGAEngine >> mutationRate: aFloat [
 ]
 
 { #category : #accessing }
+SGAEngine >> numberOfStatements [
+	^ numberOfStatements
+]
+
+{ #category : #accessing }
 SGAEngine >> numberOfStatements: aInt [
 	numberOfStatements := aInt
+]
+
+{ #category : #accessing }
+SGAEngine >> population [
+	^ population
 ]
 
 { #category : #accessing }
