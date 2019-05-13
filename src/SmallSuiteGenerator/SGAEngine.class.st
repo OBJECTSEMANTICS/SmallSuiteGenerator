@@ -219,6 +219,11 @@ SGAEngine >> numberOfStatements: aInt [
 ]
 
 { #category : #accessing }
+SGAEngine >> populationSize [ 	
+	^ populationSize 
+]
+
+{ #category : #accessing }
 SGAEngine >> populationSize: aInteger [
 	populationSize := aInteger
 ]

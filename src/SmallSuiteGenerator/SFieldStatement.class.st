@@ -22,12 +22,13 @@ SFieldStatement class >> blockCondition [
 
 { #category : #accessing }
 SFieldStatement class >> blockInsertion [
-	blockInsertion ifNil: [ blockInsertion := [ :testCase :aStatement :constructor | 
-	^ testCase
-		addStatement:
-			(aStatement createNewStatement
-				receiverVarName: constructor varName;
-				yourself) ] ].
+	blockInsertion
+		ifNil: [ blockInsertion := [ :testCase :aStatement :constructor | 
+			testCase
+				addStatement:
+					(aStatement createNewStatement
+						receiverVarName: constructor varName;
+						yourself) ] ].
 	^ blockInsertion
 ]
 

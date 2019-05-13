@@ -25,7 +25,7 @@ SMethodStatement class >> blockCondition [
 SMethodStatement class >> blockInsertion [
 
 	blockInsertion ifNil: [ blockInsertion := [ :testCase :aStatement :constructor :aArgs | 
-	^ testCase
+	testCase
 		addStatement:
 			(aStatement createNewStatement
 				receiverVarName: constructor varName;

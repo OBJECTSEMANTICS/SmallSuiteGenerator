@@ -61,7 +61,8 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize
 ]
 
 { #category : #running }
-SGAEngineTest >> setUp [ 
+SGAEngineTest >> setUp [
+	super setUp.
 	engine := SGAEngine new.
 	SSGeneratorInvariant resetNumTest
 ]
@@ -70,7 +71,8 @@ SGAEngineTest >> setUp [
 SGAEngineTest >> tearDown [
 	S2Lock value: false.
 	S2Context value: nil.
-	S2Profiler remove
+	S2Profiler remove.
+	super tearDown.
 ]
 
 { #category : #'tests-class fitness' }
@@ -355,7 +357,7 @@ SGAEngineTest >> testExampleSStackOnClass [
 				pop;
 				top ]
 		ofPopulationSize: 30
-		and: 10.
+		and: 20.
 	"14.28 = (1/7) * 100 round: 2"
 	"21.05 = (4/19) * 100 round: 2"
 	fitness := engine logs first fittestTestCase fitness.

@@ -31,7 +31,8 @@ SGACrossoverOperationTest >> testCrossOver: listTestCase [
 
 { #category : #tests }
 SGACrossoverOperationTest >> testCrossOverToRTAMItem [
-	self testCrossOver: SUtilityTest listTestCaseRTAMItem shuffle
+	self testCrossOver: SUtilityTest listTestCaseRTAMItem shuffle.
+	self testCrossOverWithMutation: SUtilityTest listTestCaseRTAMItem shuffle.
 ]
 
 { #category : #tests }
@@ -72,11 +73,12 @@ SGACrossoverOperationTest >> testCrossOverWithMutation: listTestCase [
 	self assert: listTestCase size >= 2.
 	offSpring1 := mutationOperation mutate: listTestCase first.
 	offSpring2 := mutationOperation mutate: listTestCase second.
-	offSprings := operation
-		crossover: offSpring1 
-		with: offSpring2.
+	offSprings := operation crossover: offSpring1 with: offSpring2.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.
+	offSpring1 := mutationOperation mutate: listTestCase first.
+	offSpring2 := mutationOperation mutate: listTestCase second.
+	offSprings := operation crossover: offSpring1 with: offSpring2.
 	self assert: offSpring1 hasValidDependencies.
 	self assert: offSpring1 hasUniqueStatements.
 	self assert: offSpring2 hasValidDependencies.
