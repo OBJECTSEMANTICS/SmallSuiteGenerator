@@ -41,9 +41,10 @@ SSCompilerInvariant >> executeMethodTest [
 { #category : #'as yet unclassified' }
 SSCompilerInvariant >> executeMethodUsing: aTestCase [
 	testCase := aTestCase.
-	^ [self compiledTest] on: Exception do: [ 
-		#()	
-	]
+	^ self compiledTest
+	"^ [ self compiledTest ]
+		on: Exception
+		do: [ #() ]"
 ]
 
 { #category : #initialization }

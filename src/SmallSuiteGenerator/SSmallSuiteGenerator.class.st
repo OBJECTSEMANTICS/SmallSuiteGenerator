@@ -41,8 +41,13 @@ SSmallSuiteGenerator >> generateInvariants [
 
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
-	self assert: aClass isNotNil description: 'Need to provide a class to generate the tests'.
-	^ engine
+	self
+		assert: aBlock isNotNil
+		description: 'Need to provide a block to generate the tests'.
+	self
+		assert: aClass isNotNil
+		description: 'Need to provide a class to generate the tests'.
+	engine
 		blockToExecute: aBlock;
 		generatorProfiler:
 				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: aClass ];
@@ -59,7 +64,12 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
-	self assert: (regex isNotNil and: [regex isNotEmpty]) description: 'Need to provide a valid regex to generate the tests'.
+	self
+		assert: aBlock isNotNil
+		description: 'Need to provide a block to generate the tests'.
+	self
+		assert: (regex isNotNil and: [ regex isNotEmpty ])
+		description: 'Need to provide a valid regex to generate the tests'.
 	^ engine
 		blockToExecute: aBlock;
 		generatorProfiler:
@@ -101,10 +111,20 @@ SSmallSuiteGenerator >> pupulationSize: aInt [
 
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> runGeneration [
-	self assert: engine generatorProfiler isNotNil description: 'Need to provide generatorProfiler'.
-	self assert: engine coverageProfiler isNotNil description: 'Need to provide coverageProfiler'.
-	self assert: engine fitnessBlock isNotNil description: 'Need to provide a block to calculate the fitness'.
-	self assert: engine blockToExecute isNotNil description: 'Need to provide a block to execute and create the tests'.
-	self assert: engine numberOfStatements > 0 description: 'Need to provide a number greater than 0 '.
-	engine run
+	self
+		assert: engine generatorProfiler isNotNil
+		description: 'Need to provide generatorProfiler'.
+	self
+		assert: engine coverageProfiler isNotNil
+		description: 'Need to provide coverageProfiler'.
+	self
+		assert: engine fitnessBlock isNotNil
+		description: 'Need to provide a block to calculate the fitness'.
+	self
+		assert: engine blockToExecute isNotNil
+		description: 'Need to provide a block to execute and create the tests'.
+	self
+		assert: engine numberOfStatements > 0
+		description: 'Need to provide a number greater than 0 '.
+	^ engine run
 ]
