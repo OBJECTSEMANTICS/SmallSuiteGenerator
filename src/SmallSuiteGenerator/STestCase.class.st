@@ -332,8 +332,10 @@ STestCase >> fitness [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> generateInvariants [
-	^ generatorInvariant generateInvariants: self
+STestCase >> generateInvariants: classInvariants [
+	^ generatorInvariant
+		generateInvariantsOf: self
+		testCaseUsing: classInvariants
 ]
 
 { #category : #'as yet unclassified' }

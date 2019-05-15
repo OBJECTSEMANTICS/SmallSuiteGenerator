@@ -34,9 +34,11 @@ SSmallSuiteGenerator >> fitnessBlock: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateInvariants [
-	self assert: (engine isNotNil and: [ engine logs isNotEmpty ]) description: 'Before must execute ''runGeneration''.'.
-	engine generateInvariantsFittest
+SSmallSuiteGenerator >> generateInvariants: selectedInvariants [
+	self
+		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
+		description: 'Before must execute ''runGeneration''.'.
+	engine generateInvariantsFittest: selectedInvariants 
 ]
 
 { #category : #'as yet unclassified' }
