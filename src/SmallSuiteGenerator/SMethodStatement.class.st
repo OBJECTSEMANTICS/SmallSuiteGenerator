@@ -102,7 +102,9 @@ SMethodStatement >> insertMethodCallUsing: aTestcase [
 
 { #category : #accessing }
 SMethodStatement >> insertRandomCallUsing: aTestCase [
-	^ aTestCase insert: self statementWithArgsBefore: self receiverVarName	"(aTestCase indexOf:"	") + 1"
+	^ aTestCase
+		insert: self
+		statementWithArgsBefore: self receiverVarName
 ]
 
 { #category : #accessing }

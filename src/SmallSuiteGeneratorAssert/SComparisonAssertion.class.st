@@ -7,7 +7,6 @@ Class {
 { #category : #'as yet unclassified' }
 SComparisonAssertion class >> applyOn: aName with: aObject of: testCase [
 	| instance |
-	"mejorar para que se genere el constructor del profile y no el storeString"
 	instance := self new
 		nameValue: aName;
 		valueAssert: aObject;

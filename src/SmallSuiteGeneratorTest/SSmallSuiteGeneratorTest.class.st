@@ -24,22 +24,18 @@ SSmallSuiteGeneratorTest >> tearDown [
 
 { #category : #'test-class invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingClass: aClass [
-	smallSuiteGenerator
-		generateTestsOf: block
-		blockOnClass: aClass.
+	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
 	smallSuiteGenerator runGeneration.
-	self
-		shouldnt: [ smallSuiteGenerator generateInvariants ]
-		raise: Error
+	smallSuiteGenerator generateInvariants
 ]
 
 { #category : #'test-packages invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingPackagesMatching: regex [
-	smallSuiteGenerator generateTestsOf: block blockOnPackagesMatching: regex.
+	smallSuiteGenerator
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
 	smallSuiteGenerator runGeneration.
-	self
-		shouldnt: [ smallSuiteGenerator generateInvariants ]
-		raise: Error
+	smallSuiteGenerator generateInvariants
 ]
 
 { #category : #'test-class invariants' }

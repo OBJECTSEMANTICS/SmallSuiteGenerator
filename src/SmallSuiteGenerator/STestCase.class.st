@@ -31,33 +31,14 @@ STestCase >> addConstructor [
 
 { #category : #generation }
 STestCase >> addConstructor: classSpy [
-	(classSpy methods select: #isAbstract) ifEmpty: [ 
-		^ self addFactoryOrDefaultConstructor: classSpy	
-	] ifNotEmpty: [ 
-		classSpy subclasses
-				ifEmpty: [ ^ false ]
-				ifNotEmpty: [ dictSubclasses
-						at: classSpy className
-						ifAbsentPut: (classSpy subclasses collect: [ :subc | subc className ]) asSet.
-					^ self addConstructor: classSpy subclasses shuffle anyOne ]
-	].
-	"(classSpy methods select: #isAbstract) isNotEmpty
-		ifTrue: [ classSpy subclasses
+	(classSpy methods select: #isAbstract)
+		ifEmpty: [ ^ self addFactoryOrDefaultConstructor: classSpy ]
+		ifNotEmpty: [ classSpy subclasses
 				ifEmpty: [ ^ false ]
 				ifNotEmpty: [ dictSubclasses
 						at: classSpy className
 						ifAbsentPut: (classSpy subclasses collect: [ :subc | subc className ]) asSet.
 					^ self addConstructor: classSpy subclasses shuffle anyOne ] ]
-		ifFalse: [ | methods newStatement |
-			methods := classSpy factoryMethods.
-			methods
-				ifEmpty: [ ^ (self addDefaultConstructor: classSpy) isNotNil ].
-			newStatement := self
-				newConstructorStatement: classSpy
-				of: methods
-				before: nil.
-			newStatement ifNil: [ ^ false ].
-			^ self addStatement: newStatement ]"
 ]
 
 { #category : #accessing }
@@ -117,25 +98,8 @@ STestCase >> addField [
 						returnTypeName: accessor returnType name;
 						receiverVarName: stm varName;
 						fieldName: accessor selector;
-						yourself) ] blockAnd: true
-	"| constructStatements |
-	constructStatements := statements select: #isConstructor.
-	constructStatements ifEmpty: [ ^ false ].
-	constructStatements shuffle
-		do: [ :stm | 
-			| accessors |
-			accessors := self methodsOrAccessors: stm toSelect: true.
-			accessors
-				ifNotEmpty: [ | selected |
-					selected := accessors shuffle anyOne.
-					^ self
-						addStatement:
-							(SFieldStatement new
-								returnTypeName: selected returnType name;
-								receiverVarName: stm varName;
-								fieldName: selected selector;
-								yourself) ] ].
-	^ false"
+						yourself) ]
+		blockAnd: true
 ]
 
 { #category : #generation }
@@ -339,10 +303,6 @@ STestCase >> createArg: aClassName before: stop avoiding: varName [
 		createStatementOf: aClassName
 		typeIn: self
 		testCaseUsing: candidates.
-	" self
-		statementOfType: aClassName
-		before: stop
-		noCalledEqualTo: varName."
 	result ifNil: [ result := self createScalar: aClassName ].
 	result ifNotNil: [ ^ result first ].
 	^ result
@@ -355,11 +315,10 @@ STestCase >> createScalar: aClassName [
 		ifPresent: [ :value | 
 			^ {(SAuxiliar listShuffle: value) first.
 			aClassName} ]
-		ifAbsent: [ ^ SAuxiliar 
+		ifAbsent: [ ^ SAuxiliar
 				valueOf: aClassName
 				typeIn: self
-				testCaseUsing: self profile scalars
-			"^ self valueOfType: aClassName using: self profile scalars" ]
+				testCaseUsing: self profile scalars ]
 ]
 
 { #category : #accessing }
@@ -398,17 +357,9 @@ STestCase >> hasUniqueStatements [
 
 { #category : #'as yet unclassified' }
 STestCase >> hasValidDependencies [
-	^ SAuxiliar validDependenciesOf: statements statementsUsing: self varNames
-	"| currentVarNames |
-	currentVarNames := OrderedCollection new.
-	statements
-		detect: [ :aStm | 
-			(currentVarNames includesAll: aStm collectDependencies)
-				ifTrue: [ currentVarNames add: aStm varName.
-					false ]
-				ifFalse: [ true ] ]
-		ifFound: [ ^ false ].
-	^ true"
+	^ SAuxiliar
+		validDependenciesOf: statements
+		statementsUsing: self varNames
 ]
 
 { #category : #accessing }
@@ -529,18 +480,10 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 				ifFalse: [ (args anySatisfy: #isNil)
 						ifTrue: [ ^ nil ] ].
 			selector := selected selector ].
-	^ SAuxiliar 
+	^ SAuxiliar
 		newConstructorOf: classSpy
 		classNameWith: selector
 		selectorAnd: args
-	"SConstructorStatement new
-		theClassName:
-			(classSpy isSymbol
-				ifTrue: [ classSpy ]
-				ifFalse: [ classSpy className ]);
-		selector: selector;
-		args: args;
-		yourself"
 ]
 
 { #category : #accessing }
@@ -612,17 +555,6 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 			(varNames includes: aArg)
 				ifTrue: [ | newArg |
 					newArg := self create: aArg argBefore: position.
-					"stm := self statementAt: aArg.
-					newArg := self
-						addPrimitive:
-							(stm isConstructor
-								ifTrue: [ stm theClassName ]
-								ifFalse: [ stm returnTypeName ])
-						at:
-							(STransformValue
-								randomNumberFrom: 1
-								to: position - 1
-								default: position - 1)."
 					argsResult
 						at: index
 						put:
