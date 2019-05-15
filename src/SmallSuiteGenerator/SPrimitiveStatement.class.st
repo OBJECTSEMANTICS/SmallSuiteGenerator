@@ -7,17 +7,17 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
-SPrimitiveStatement >> collectDependencies [
-	^ #()
-]
-
 { #category : #private }
 SPrimitiveStatement >> createNewStatement [
 	^ (self class create)
 		value: self value;
 		returnTypeName: self returnTypeName;
 		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> dependenciesConsidering: varNames [
+	^ #()
 ]
 
 { #category : #'as yet unclassified' }

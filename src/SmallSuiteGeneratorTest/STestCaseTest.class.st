@@ -431,88 +431,6 @@ STestCaseTest >> testChangeWithTwoConstructor [
 	self deny: testCase statements first selector equals: oldSelector
 ]
 
-{ #category : #cleaning }
-STestCaseTest >> testCleanIrrelevantStatementsGeneratedRandomly [
-	| profile testCase removedStatements oldSize |
-	profile := SSGenerator
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				age: 34;
-				identifier;
-				nickname: 'Ann34';
-				fullIdentifier;
-				name;
-				id;
-				nickname ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
-	testCase generateStatements.
-	oldSize := testCase statements size.
-	removedStatements := testCase cleanIrrelevantStatements.
-	self assert: testCase hasValidDependencies.
-	self assert: testCase hasUniqueStatements.
-	self
-		assert: testCase statements size
-		equals: oldSize - removedStatements size
-]
-
-{ #category : #cleaning }
-STestCaseTest >> testCleanIrrelevantStatementsNonRepeated [
-	| profile testCase removedStatements |
-	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addConstructor.	"_var0 := SFoo score: 34"
-	testCase addPrimitive.	"_var1 := 34"
-	testCase addMethod.	"_var2 := _var0 initialize"
-	testCase addConstructor.	"_var3 := SFoo score: _var1"
-	removedStatements := testCase cleanIrrelevantStatements.
-	self assert: removedStatements isEmpty
-]
-
-{ #category : #cleaning }
-STestCaseTest >> testCleanIrrelevantStatementsRepeated [
-	| profile testCase removedStatements |
-	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addConstructor.	"_var0 := SFoo score: 34"
-	testCase addPrimitive.	"_var1 := 34"
-	testCase addMethod.	"_var2 := _var0 initialize"
-	testCase addConstructor.	"_var3 := SFoo score: _var1"
-	testCase addMethod.
-	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
-	testCase addPrimitive.	"_var5 := 34"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var6 := SFoo score: _var5"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var7 := SFoo score: _var5"
-	testCase addConstructor.
-	testCase statements last args: {'_var1'}.	"_var8 := SFoo score: _var1"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var9 := SFoo score: _var5"
-	testCase addPrimitive.	"_var10 := 34"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var11 := SFoo score: _var5"
-	testCase addPrimitive.	"_var12 := 34"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var13 := SFoo score: _var5"
-	testCase addMethod.
-	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
-	removedStatements := testCase cleanIrrelevantStatements.
-	self
-		assertCollection: removedStatements
-		hasSameElements:
-			{'_var4' . '_var8' . '_var9' . '_var10' . '_var11' . '_var12' . '_var13'}.
-	self assert: testCase hasValidDependencies
-]
-
-{ #category : #'mutation-change' }
-STestCaseTest >> testCreateTestCases [
-	| profile testSuite |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testSuite := STestCase create: 10 testCasesAndInitialize: 15 statementsUsing: profile.
-	self assert: testSuite size equals: 10.
-	self assertCollection: (testSuite collect: #numberOfStatements) asSet hasSameElements: #(15).
-]
-
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertMethodCall [
 	| profile testCase varNames stm |
@@ -522,6 +440,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.
@@ -529,6 +448,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) score ]
 		onClass: SFoo.
@@ -537,6 +457,7 @@ STestCaseTest >> testInsertMethodCall [
 	testCase addConstructor.
 	testCase addField.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
 				score;
@@ -550,6 +471,7 @@ STestCaseTest >> testInsertMethodCall [
 	self assert: testCase statements size > 3.
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isMethod or: [ stm isConstructor ]).
+	self assert: testCase hasValidDependencies.
 	profile := SSGenerator
 		profile: [ (SFoo score: 2)
 				score;
@@ -682,58 +604,6 @@ STestCaseTest >> testInsertRandomCall [
 	self assert: (stm isConstructor or: [ stm isMethod ])
 ]
 
-{ #category : #mutation }
-STestCaseTest >> testMutateConstructor [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addConstructor.
-	testCase remove.
-	self assert: testCase statements isEmpty
-]
-
-{ #category : #mutation }
-STestCaseTest >> testMutatePrimitive [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addPrimitive.
-	testCase remove.
-	self assert: testCase statements isEmpty.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2)
-				return: 3;
-				return: 18 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase
-		addPrimitive;
-		addPrimitive;
-		addPrimitive;
-		addPrimitive;
-		addPrimitive.
-	testCase change.
-	self assert: testCase statements first value isLiteral
-]
-
-{ #category : #'mutation-remove' }
-STestCaseTest >> testRemove [
-	"| profile testCase |
-	SStatement reset.
-	profile := SSGenerator
-		profile: [ (SStudent score: 2)
-				return: 2;
-				score ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
-	testCase generateStatements.
-	testCase remove"
-]
-
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveConstructor [
 	| profile testCase |
@@ -843,91 +713,4 @@ STestCaseTest >> testRemoveRoassal [
 	self assertRemove: self class listTestCaseRTBox.
 	self assertRemove: self class listTestCaseRTDirectedLine.
 	self assertRemove: self class listTestCaseRTLineSegment
-]
-
-{ #category : #grouping }
-STestCaseTest >> testStatementsGroupedByDependenciesGeneratedRandomly [
-	| profile testCase result groups referencedVarNames |
-	profile := SSGenerator
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				age: 34;
-				identifier;
-				nickname: 'Ann34';
-				fullIdentifier;
-				name;
-				id;
-				nickname ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
-	testCase generateStatements.
-	testCase cleanIrrelevantStatements.
-	result := testCase statementsGroupedByDependencies.
-	groups := result first.
-	referencedVarNames := result second.
-	self assert: (groups keys includesAll: referencedVarNames)
-]
-
-{ #category : #grouping }
-STestCaseTest >> testStatementsGroupedByDependenciesNonRepeated [
-	| profile testCase result groups referencedVarNames |
-	profile := SSGenerator
-		profile: [ SFoo score: 34 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addConstructor.	"_var0 := SStudent score: 34"
-	testCase addPrimitive.	"_var1 := 34"
-	testCase addMethod.	"_var2 := _var0 initialize"
-	testCase addConstructor.	"_var3 := SStudent score: _var1"
-	result := testCase statementsGroupedByDependencies.
-	groups := result first.
-	self
-		assertCollection: groups associations
-		hasSameElements:
-			{('_var2' -> {'_var0' . '_var2'} asOrderedCollection).
-			('_var3' -> {'_var1' . '_var3'} asOrderedCollection)}.
-	referencedVarNames := result second.
-	self assert: referencedVarNames isEmpty
-]
-
-{ #category : #grouping }
-STestCaseTest >> testStatementsGroupedByDependenciesRepeated [
-	| profile testCase result groups referencedVarNames |
-	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
-	testCase addConstructor.	"_var0 := SFoo score: 34"
-	testCase addPrimitive.	"_var1 := 34"
-	testCase addMethod.	"_var2 := _var0 initialize"
-	testCase addConstructor.	"_var3 := SFoo score: _var1"
-	testCase addMethod.
-	testCase statements last receiverVarName: '_var0'.	"_var4 := _var0 initialize"
-	testCase addPrimitive.	"_var5 := 34"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var6 := SFoo score: _var5"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var7 := SFoo score: _var5"
-	testCase addConstructor.
-	testCase statements last args: {'_var1'}.	"_var8 := SFoo score: _var1"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var9 := SFoo score: _var5"
-	testCase addPrimitive.	"_var10 := 34"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var11 := SFoo score: _var5"
-	testCase addPrimitive.	"_var12 := 34"
-	testCase addConstructor.
-	testCase statements last args: {'_var5'}.	"_var13 := SFoo score: _var5"
-	testCase addMethod.
-	testCase statements last receiverVarName: '_var7'.	"_var14 := _var7 initialize"
-	testCase cleanIrrelevantStatements.
-	result := testCase statementsGroupedByDependencies.
-	groups := result first.
-	self
-		assertCollection: groups associations
-		hasSameElements:
-			{('_var2' -> {'_var0' . '_var2'} asOrderedCollection).
-			('_var3' -> {'_var1' . '_var3'} asOrderedCollection).
-			('_var6' -> {'_var5' . '_var6'} asOrderedCollection).
-			('_var7' -> {'_var5' . '_var7'} asOrderedCollection).
-			('_var14' -> {'_var5' . '_var7' . '_var14'} asOrderedCollection)}.
-	referencedVarNames := result second.
-	self assertCollection: referencedVarNames hasSameElements: {'_var7'}
 ]

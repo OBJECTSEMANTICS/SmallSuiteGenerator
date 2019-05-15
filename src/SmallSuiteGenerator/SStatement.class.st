@@ -26,13 +26,13 @@ SStatement >> cleanId [
 	id := nil
 ]
 
-{ #category : #'as yet unclassified' }
-SStatement >> collectDependencies [
-	^ self subclassResponsibility 
-]
-
 { #category : #private }
 SStatement >> createNewStatement [
+	^ self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> dependenciesConsidering: varNames [
 	^ self subclassResponsibility
 ]
 
@@ -58,30 +58,23 @@ SStatement >> insertParameterUsing: aTestcase [
 
 { #category : #'as yet unclassified' }
 SStatement >> insertParametersOf: aStatement using: aTestCase [
-	| args |
+	| args varNames |
 	args := aStatement args.
+	args ifEmpty: [ ^ nil ].
+	varNames := aTestCase varNames.
 	args
-		ifNotEmpty: [ | varNames index newStatement |
-			varNames := aTestCase varNames.
-			index := 0.
-			args
-				detect: [ :aArg | 
-					| defaultPosition position |
-					index := index + 1.
-					(varNames includes: aArg)
-						ifTrue: [ newStatement := (aTestCase statementAt: aArg) createNewStatement.
-							defaultPosition := (aTestCase indexOf: aArg) + 1.
-							position := STransformValue
-								randomNumberFrom: defaultPosition
-								to: (aTestCase indexOf: aStatement varName) - 1
-								default: defaultPosition.
-							aTestCase addStatement: newStatement at: position ]
-						ifFalse: [ false ] ]
-				ifFound: [ (aTestCase statementAt: aStatement varName) args
-						at: index
-						put: newStatement varName.
-					^ {newStatement varName} ]
-				ifNone: [ ^ nil ] ].
+		withIndexDo: [ :aArg :index | 
+			(varNames includes: aArg)
+				ifTrue: [ | position newStatement |
+					newStatement := (aTestCase statementAt: aArg) createNewStatement.
+					position := SAuxiliar
+						randomNumberFrom: (aTestCase indexOf: aArg) + 1
+						to: (aTestCase indexOf: aStatement varName) - 1.
+					(aTestCase addStatement: newStatement at: position)
+						ifTrue: [ (aTestCase statementAt: aStatement varName) args
+								at: index
+								put: newStatement varName.
+							^ {newStatement varName} ] ] ].
 	^ nil
 ]
 

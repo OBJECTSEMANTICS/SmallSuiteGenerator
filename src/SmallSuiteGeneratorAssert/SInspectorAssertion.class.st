@@ -18,19 +18,26 @@ SInspectorAssertion class >> applyOn: aName with: aObject of: testCase [
 
 { #category : #'as yet unclassified' }
 SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
-	| class copyObject selector |
+	| class  selector methods |
 	selector := nil.
 	(aObject isNil or: [ aTestCase isNil ])
 		ifTrue: [ ^ selector ].
-	class := aTestCase profile classAt: aObject class name ifNone: [  ].
-	class ifNil: [ ^ selector ].
-	[copyObject := aObject deepCopy.] on: Error do: [ ^ selector ].
-	(class methods
+	class := aTestCase profile
+		classAt: aObject class name
+		ifNone: [ ^ selector ].
+	"copyObject := aObject."
+	"[ self halt.
+	copyObject := aObject deepCopy ]
+		on: Error
+		do: [ ^ selector ]."
+	"(class methods
 		select: [ :method | 
-			(method argTypes isNil and: ((method selector includes: $:) not
-				and: [ method returnType isNotNil ]))
+			(method argTypes isNil
+				and:
+					((method selector includes: $:) not
+						and: [ method returnType isNotNil ]))
 				or: [ method argTypes isNotNil and: [ method argTypes isEmpty ] ] ])
-		shuffle
+		shuffle 
 		detect: [ :aCompileMethod | 
 			[ | result |
 			result := copyObject perform: aCompileMethod selector.
@@ -38,7 +45,16 @@ SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 			result isLiteral ]
 				on: Error
 				do: [ false ] ]
-		ifFound: [ :aCompileMethod | selector := aCompileMethod selector ].
+		ifFound: [ :aCompileMethod | selector := aCompileMethod selector ]."
+	methods := (class methods
+		select: [ :method | 
+			(method argTypes isNil
+				and:
+					((method selector includes: $:) not
+						and: [ method returnType isNotNil ]))
+				or: [ method argTypes isNotNil and: [ method argTypes isEmpty ] ] ])
+		shuffle reject: [ :meth | meth selector = #initialize ].
+	methods ifNotEmpty: [ selector := methods first selector ].
 	^ selector
 ]
 

@@ -110,7 +110,7 @@ SGATournamentSelection >> isTestCase: testCase betterThan: fittestTestCase [
 
 { #category : #testing }
 SGATournamentSelection >> isTooLong: aTestCase [
-	^ aTestCase numberOfStatements > 54	"si el numero de statements sobrepasa el maximo"
+	^ aTestCase numberOfStatements > 54	"if number statements exceeds the number max of statements"
 ]
 
 { #category : #'as yet unclassified' }

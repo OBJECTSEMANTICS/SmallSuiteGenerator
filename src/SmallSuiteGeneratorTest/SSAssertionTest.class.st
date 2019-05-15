@@ -116,13 +116,16 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	profile := SSGenerator
 		profile: [ Stack new
 				push: 1;
-				push: 3; pop;
+				push: 3;
+				pop;
 				yourself ]
 		onClass: Stack.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addMethod.
 	invariants := testCase generateInvariants.
+	"invariants is empty if the compiled method has failed"
+	self deny: invariants isEmpty.
 	self assert: invariants size equals: 8.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])

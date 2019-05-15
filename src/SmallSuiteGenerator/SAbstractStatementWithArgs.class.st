@@ -1,5 +1,5 @@
 Class {
-	#name : #SAbstractMethodStatement,
+	#name : #SAbstractStatementWithArgs,
 	#superclass : #SStatement,
 	#instVars : [
 		'selector',
@@ -9,25 +9,38 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #'as yet unclassified' }
+SAbstractStatementWithArgs >> alternativeMethodIn: methods [
+	^ methods
+		detect: [ :aMethod | aMethod selector ~= self selector ]
+		ifFound: [ :aMethod | aMethod ]
+		ifNone: [  ]
+]
+
 { #category : #accessing }
-SAbstractMethodStatement >> argToString: aArg [
+SAbstractStatementWithArgs >> argToString: aArg [
 	^ (references isNotNil and: [ references includes: aArg ])
 		ifTrue: [ aArg asString ]
 		ifFalse: [ aArg storeString ]
 ]
 
 { #category : #accessing }
-SAbstractMethodStatement >> args [
+SAbstractStatementWithArgs >> args [
 	^ args
 ]
 
 { #category : #accessing }
-SAbstractMethodStatement >> args: anObject [
+SAbstractStatementWithArgs >> args: anObject [
 	args := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SAbstractStatementWithArgs >> changeUsing: aTestCase [
+	self subclassResponsibility 
+]
+
 { #category : #private }
-SAbstractMethodStatement >> createNewStatement [
+SAbstractStatementWithArgs >> createNewStatement [
 	^ (self class create)
 		args: self args;
 		selector: self selector;
@@ -35,18 +48,18 @@ SAbstractMethodStatement >> createNewStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMethodStatement >> insertParameterUsing: aTestCase [
+SAbstractStatementWithArgs >> insertParameterUsing: aTestCase [
 	"insert its parameters"
 	^ self insertParametersOf: self using: aTestCase
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMethodStatement >> name [
+SAbstractStatementWithArgs >> name [
 	self subclassResponsibility 
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMethodStatement >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
+SAbstractStatementWithArgs >> notReferenced: referencedVarNames orIrrelevant: dictStringStatement [
 	| varName |
 	varName := self varName.
 	^ (referencedVarNames includes: varName) not
@@ -54,46 +67,36 @@ SAbstractMethodStatement >> notReferenced: referencedVarNames orIrrelevant: dict
 ]
 
 { #category : #private }
-SAbstractMethodStatement >> printOn: aStream [
+SAbstractStatementWithArgs >> printOn: aStream [
 	aStream nextPutAll: self varName.
 	aStream nextPutAll: ' := '.
-	aStream nextPutAll: self stringBody. "self receiverVarName.
-	aStream nextPutAll: ' '.
-	self args size = 0
-		ifTrue: [ aStream nextPutAll: self selector ]
-		ifFalse: [ (self selector substrings: ':')
-				with: self args
-				do: [ :selectorPart :arg | 
-					aStream nextPutAll: selectorPart.
-					aStream nextPutAll: ': '.
-					aStream nextPutAll: arg ] ].
-	aStream nextPut: $."
+	aStream nextPutAll: self stringBody
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMethodStatement >> referencesToArgs: varNames [
+SAbstractStatementWithArgs >> referencesToArgs: varNames [
 	references := varNames
 ]
 
 { #category : #mutation }
-SAbstractMethodStatement >> repairOn: aTestCase changing: aStatement [
+SAbstractStatementWithArgs >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
 	^ self changeUsing: aTestCase.
 ]
 
 { #category : #accessing }
-SAbstractMethodStatement >> selector [
+SAbstractStatementWithArgs >> selector [
 	^ selector
 ]
 
 { #category : #accessing }
-SAbstractMethodStatement >> selector: anObject [
+SAbstractStatementWithArgs >> selector: anObject [
 	selector := anObject
 ]
 
 { #category : #accessing }
-SAbstractMethodStatement >> stream: aStream withSpacesOf: arg [
+SAbstractStatementWithArgs >> stream: aStream withSpacesOf: arg [
 	aStream
 			nextPut: Character space;
 			nextPutAll: (self argToString: arg);
@@ -101,7 +104,7 @@ SAbstractMethodStatement >> stream: aStream withSpacesOf: arg [
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMethodStatement >> stringBody [
+SAbstractStatementWithArgs >> stringBody [
 	^ String
 		streamContents: [ :aStream | 
 			aStream
