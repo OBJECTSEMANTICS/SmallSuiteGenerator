@@ -3,20 +3,26 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'evaluator',
-		'testCase'
+		'testCase',
+		'invariants'
 	],
 	#category : #'SmallSuiteGeneratorAssert-Invariant'
 }
 
 { #category : #testing }
 SSCompilerInvariant >> analyze: aContext [
-	| invariants |
-	invariants := OrderedCollection new.
+	| filteredInvariants |
+	filteredInvariants := OrderedCollection new.
 	aContext tempNames
-		doWithIndex: [ :title :index | 
-			invariants
-				addAll: (evaluator applyRule: title to: (aContext namedTempAt: index) of: testCase) ].
-	^ invariants
+		doWithIndex: [ :varName :index | 
+			filteredInvariants
+				addAll:
+					(evaluator
+						apply: invariants
+						invariantsTo: varName
+						varNameWith: (aContext namedTempAt: index)
+						valueIn: testCase) ].
+	^ filteredInvariants
 ]
 
 { #category : #compiling }
@@ -30,13 +36,9 @@ SSCompilerInvariant >> compiledTest [
 ]
 
 { #category : #'as yet unclassified' }
-SSCompilerInvariant >> executeMethodTest [
-	^ self compiledTest 
-]
-
-{ #category : #'as yet unclassified' }
-SSCompilerInvariant >> executeMethodUsing: aTestCase [
+SSCompilerInvariant >> executeMethodUsing: aTestCase testCaseAnd: classInvariants [
 	testCase := aTestCase.
+	invariants := classInvariants.
 	^ self compiledTest
 	"^ [ self compiledTest ]
 		on: Exception
@@ -44,6 +46,7 @@ SSCompilerInvariant >> executeMethodUsing: aTestCase [
 ]
 
 { #category : #initialization }
-SSCompilerInvariant >> initialize [ 
+SSCompilerInvariant >> initialize [
 	evaluator := SSEvaluatorInvariant new.
+	invariants := OrderedCollection new.
 ]

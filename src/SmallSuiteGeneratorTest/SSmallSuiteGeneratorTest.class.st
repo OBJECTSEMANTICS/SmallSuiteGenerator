@@ -23,19 +23,19 @@ SSmallSuiteGeneratorTest >> tearDown [
 ]
 
 { #category : #'test-class invariants' }
-SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingClass: aClass [
+SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsing: aClass classAnd: invariants [
 	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator generateInvariants
+	smallSuiteGenerator generateInvariants: invariants
 ]
 
 { #category : #'test-packages invariants' }
-SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingPackagesMatching: regex [
+SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingPackagesMatching: regex regexAnd: invariants [
 	smallSuiteGenerator
 		generateTestsOf: block
 		blockOnPackagesMatching: regex.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator generateInvariants
+	smallSuiteGenerator generateInvariants: invariants
 ]
 
 { #category : #'test-class invariants' }
@@ -46,14 +46,14 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTAMItem [
 				row: 'F;ranceAmklsd-@sdf';
 				column: 'Customer (R*elatio%$nship';
 				color: Color lightGreen ]
-		blockUsingClass: RTAMItem
+		blockUsing: RTAMItem classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTBorderAttachPoint [
 	self
 		testGenerateInvariantsOf: [ RTBorderAttachPoint instance offset: -4.12 ]
-		blockUsingClass: RTBorderAttachPoint
+		blockUsing: RTBorderAttachPoint classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -61,8 +61,8 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTBox [
 	self
 		testGenerateInvariantsOf: [ RTBox new
 				defaultWidth;
-				borderStyle  ]
-		blockUsingClass: RTBox
+				borderStyle ]
+		blockUsing: RTBox classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -71,7 +71,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTDirectedLine [
 		testGenerateInvariantsOf: [ RTDirectedLine instance
 				pointsFrom: -1 @ 3 To: 3 @ -5;
 				offset: 6.512341234 ]
-		blockUsingClass: RTDirectedLine
+		blockUsing: RTDirectedLine classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -82,7 +82,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTLineSegment [
 				angleInRad;
 				cotan;
 				bottom ]
-		blockUsingClass: RTLineSegment
+		blockUsing: RTLineSegment classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -94,7 +94,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassSSTeacher [
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		blockUsingClass: SSTeacher
+		blockUsing: SSTeacher classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -104,7 +104,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassSStack [
 				pop;
 				top;
 				push: 4 ]
-		blockUsingClass: SStack
+		blockUsing: SStack classAnd: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -115,7 +115,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassSStudent [
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]
-		blockUsingClass: SStudent
+		blockUsing: SStudent classAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
@@ -126,14 +126,14 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingRTAMItem [
 				row: ':>France';
 				column: 'Customer.Relationship?';
 				color: Color transparent ]
-		blockUsingPackagesMatching: 'Roassal2'
+		blockUsingPackagesMatching: 'Roassal2' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingRTBorderAttachPoint [
 	self
 		testGenerateInvariantsOf: [ RTBorderAttachPoint instance offset: 4 ]
-		blockUsingPackagesMatching: 'Roassal2-Cor*'
+		blockUsingPackagesMatching: 'Roassal2-Cor*' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
@@ -142,7 +142,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingRTBox [
 		testGenerateInvariantsOf: [ RTBox new
 				defaultWidth;
 				borderStyle ]
-		blockUsingPackagesMatching: 'Roassal2-Cor*'
+		blockUsingPackagesMatching: 'Roassal2-Cor*' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
@@ -153,7 +153,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingRTDLineSegme
 				angleInRad;
 				cotan;
 				bottom ]
-		blockUsingPackagesMatching: 'Roassal2-Cor*'
+		blockUsingPackagesMatching: 'Roassal2-Cor*' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
@@ -162,7 +162,7 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingRTDirectedLi
 		testGenerateInvariantsOf: [ RTDirectedLine instance
 				pointsFrom: 1 @ -3 To: 3.312 @ -5;
 				offset: 6.5 ]
-		blockUsingPackagesMatching: 'Roassal2-Cor*'
+		blockUsingPackagesMatching: 'Roassal2-Cor*' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
@@ -174,28 +174,34 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingSSTeacher [
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		blockUsingPackagesMatching: 'SmallSuiteExamp*'
+		blockUsingPackagesMatching: 'SmallSuiteExamp*' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingSStack [
 	self
-		testGenerateInvariantsOf: [ (SStack newStackWith: {Color veryDarkGray. Color transparent. 3. 6.5. -8 })
+		testGenerateInvariantsOf: [ (SStack
+				newStackWith:
+				{Color veryDarkGray.
+			Color transparent.
+			3.
+			6.5.
+			-8})
 				pop;
 				top;
 				push: 4 ]
-		blockUsingPackagesMatching: 'SmallSuiteExamp*'
+		blockUsingPackagesMatching: 'SmallSuiteExamp*' regexAnd: {  }
 ]
 
 { #category : #'test-packages invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingSStudent [
 	self
 		testGenerateInvariantsOf: [ (SStudent name: 'Ann@323' with: -34)
-		nickname;
-		idStudent;
-		scoreStudent: -45.12;
-		scoreStudent ]
-		blockUsingPackagesMatching: 'SmallSuiteExamp*'
+				nickname;
+				idStudent;
+				scoreStudent: -45.12;
+				scoreStudent ]
+		blockUsingPackagesMatching: 'SmallSuiteExamp*' regexAnd: {  }
 ]
 
 { #category : #'tests-class' }

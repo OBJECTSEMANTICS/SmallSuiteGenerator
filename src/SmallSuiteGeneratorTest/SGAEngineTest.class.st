@@ -8,11 +8,6 @@ Class {
 }
 
 { #category : #tests }
-SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize and: numStatements [
-	self runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: 10
-]
-
-{ #category : #tests }
 SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: numGenerations [
 	engine
 		populationSize: populationSize;
@@ -30,12 +25,7 @@ SGAEngineTest >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populati
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
 		endForMaxNumberOfGeneration: numGenerations;
-		run"; generateInvariantsFittest"
-]
-
-{ #category : #tests }
-SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize: populationSize and: numStatements [
-	self runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: 10
+			run
 ]
 
 { #category : #tests }
@@ -56,8 +46,7 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize
 				calculateCoverageOf: testCase
 				using: coverageProfiler ] ];
 		endForMaxNumberOfGeneration: numGenerations;
-		run";
-		generateInvariantsFittest"
+			run
 ]
 
 { #category : #running }
@@ -86,6 +75,7 @@ SGAEngineTest >> testExampleRTAMItemOnClass [
 				column: 'Customer Relationship';
 				color: Color lightGreen ]
 		ofPopulationSize: 30
+		numStatements: 10
 		and: 10.
 	"7.14 = (1/14) * 100"
 	"31.58 = (6/19) * 100"
@@ -102,11 +92,16 @@ SGAEngineTest >> testExampleRTAMItemOnClass [
 { #category : #'tests-packages fitness' }
 SGAEngineTest >> testExampleRTAMItemOnPackage [
 	| fitnessFirst fitnessLast |
-	self runOnPackagesMatching: 'Roassal2' withBlock: [ RTAMItem new
+	self
+		runOnPackagesMatching: 'Roassal2'
+		withBlock: [ RTAMItem new
 				itemName: 'Bonus Card';
 				row: 'France';
 				column: 'Customer Relationship';
-				color: Color lightGreen ] ofPopulationSize: 30 and: 10. 
+				color: Color lightGreen ]
+		ofPopulationSize: 30
+		numStatements: 15
+		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
 	self
@@ -126,6 +121,7 @@ SGAEngineTest >> testExampleRTBorderAttachPointOnClass [
 		runOnClass: RTBorderAttachPoint
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
 		ofPopulationSize: 30
+		numStatements: 10
 		and: 10.
 	"At least the constructor must be initialized"
 	"12.5 = (1/8) * 100"
@@ -147,6 +143,7 @@ SGAEngineTest >> testExampleRTBorderAttachPointPackage [
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -190,6 +187,7 @@ SGAEngineTest >> testExampleRTBoxOnPackage [
 				defaultWidth;
 				borderStyle ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -260,6 +258,7 @@ SGAEngineTest >> testExampleRTLineSegmentOnClass [
 				cotan;
 				bottom ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 15.
 	"2.94 = (1/34) * 100 round: 2"
 	"2.88 = (3/104) * 100 round: 2"
@@ -284,6 +283,7 @@ SGAEngineTest >> testExampleRTLineSegmentOnPackage [
 				cotan;
 				bottom ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -309,6 +309,7 @@ SGAEngineTest >> testExampleSSTeacherOnClass [
 				idTeacher;
 				id ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	"20 = (1/5) * 100"
 	"37.5 = (3/8) * 100"
@@ -332,8 +333,9 @@ SGAEngineTest >> testExampleSSTeacherOnPackage [
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
-				id  ]
+				id ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -357,6 +359,7 @@ SGAEngineTest >> testExampleSStackOnClass [
 				pop;
 				top ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 20.
 	"14.28 = (1/7) * 100 round: 2"
 	"21.05 = (4/19) * 100 round: 2"
@@ -373,10 +376,15 @@ SGAEngineTest >> testExampleSStackOnClass [
 { #category : #'tests-packages fitness' }
 SGAEngineTest >> testExampleSStackOnPackage [
 	| fitnessFirst fitnessLast |
-	self runOnPackagesMatching: 'SmallSuiteExamp*' withBlock: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+	self
+		runOnPackagesMatching: 'SmallSuiteExamp*'
+		withBlock: [ (SStack newStackWith: {2 . 4 . 6 . 1})
 				push: 8;
 				pop;
-				top ] ofPopulationSize: 30 and: 10.
+				top ]
+		ofPopulationSize: 30
+		numStatements: 15
+		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
 	self
@@ -400,6 +408,7 @@ SGAEngineTest >> testExampleSStudentOnClass [
 				scoreStudent: 45;
 				scoreStudent ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	fitness := engine logs first fittestTestCase fitness.
 	self assert: (fitness at: 'methodCoverage') >= 20.
@@ -420,6 +429,7 @@ SGAEngineTest >> testExampleSStudentOnPackage [
 				scoreStudent: 45;
 				scoreStudent ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 10.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -480,6 +490,7 @@ SGAEngineTest >> testRTCalendarExampleOnPackage [
 			b dates: (dictByDate keys min to: dictByDate keys max).
 			b ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -499,25 +510,26 @@ SGAEngineTest >> testRTMondrianExampleOnPackage [
 	self
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ | nbOfNodes nbOfRandomEdges nodes edges b |
-nbOfNodes := 40.
-nbOfRandomEdges := 40.
-nodes := 1 to: nbOfNodes.
-edges := (1 to: nbOfRandomEdges)
-	collect: [ :notUsed | nodes atRandom -> nodes atRandom ].
+			nbOfNodes := 40.
+			nbOfRandomEdges := 40.
+			nodes := 1 to: nbOfNodes.
+			edges := (1 to: nbOfRandomEdges)
+				collect: [ :notUsed | nodes atRandom -> nodes atRandom ].
 
-"
+			"
 In case you do not wish random data. You can set it manually. 
 nodes := #(1 2 3 4 5).
 edges := { 1 -> 2 . 1 -> 4 . 4 -> 3 }.
 "
-b := RTMondrian new.
-b shape circle color: (Color black alpha: 0.5).
-b nodes: nodes.
-b shape line color: (Color gray alpha: 0.3).
-b edges source: edges connectFrom: #key to: #value.
-b layout force.
-b ]
+			b := RTMondrian new.
+			b shape circle color: (Color black alpha: 0.5).
+			b nodes: nodes.
+			b shape line color: (Color gray alpha: 0.3).
+			b edges source: edges connectFrom: #key to: #value.
+			b layout force.
+			b ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -537,9 +549,9 @@ SGAEngineTest >> testRTNameCloudExampleOnPackage [
 	self
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ | b |
-b := RTNameCloud new
-	addString:
-		'open
+			b := RTNameCloud new
+				addString:
+					'open
 
 		| v shape |
 		v := RTView new.
@@ -547,8 +559,9 @@ b := RTNameCloud new
 		v addAll: (shape elementsOn: table associations).
 		RTFlowLayout on: v elements.
 		v open'.
-b ]
+			b ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -584,6 +597,7 @@ SGAEngineTest >> testRTPieExampleOnPackage [
 			b normalizer distinctColor.
 			b ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -603,11 +617,11 @@ SGAEngineTest >> testRTSVGExampleOnPackage [
 	self
 		runOnPackagesMatching: 'Roassal2-C*'
 		withBlock: [ | v s elements |
-v := RTView new.
-v @ RTDraggableView.
-s := RTSVGPath new
-	path:
-		'M397.49,222.581c-31.734-6.53-70.661,22.749-95.237,63.244c-11.35-13.957-25.565-26.455-42.892-37.536
+			v := RTView new.
+			v @ RTDraggableView.
+			s := RTSVGPath new
+				path:
+					'M397.49,222.581c-31.734-6.53-70.661,22.749-95.237,63.244c-11.35-13.957-25.565-26.455-42.892-37.536
 	c-10.193-6.521-16.261-13.093-16.63-18.03c-0.771-10.444,18.708-27.653,32.917-40.218c10.427-9.212,20.284-17.913,27.594-27.234
 	c13.411-17.141,16.73-38.533,8.684-55.842c-6.17-13.261-18.105-22.246-33.025-25.314c-2.146-6.379-5.666-12.339-10.353-17.351
 	C259.932,55.08,248.297,50,235.757,50c-14.669,0-37.167,6.974-61.005,40.184c-7.159,9.958-12.422,19.791-17.083,28.475
@@ -637,12 +651,13 @@ s := RTSVGPath new
 	s13.479,9.673,11.803,17.888c-1.711,8.181-9.707,13.479-17.904,11.785C360.794,359.402,355.514,351.389,357.206,343.208z
 	 M413.518,370.232c-8.197-1.643-13.479-9.689-11.785-17.854c1.693-8.215,9.689-13.496,17.887-11.819
 	c8.182,1.692,13.479,9.706,11.786,17.904C429.712,366.645,421.699,371.942,413.518,370.232z'.
-s color: Color black.
-elements := s elementsOn: (1 to: 40).
-v addAll: elements.
-RTGridLayout on: elements.
-v ]
+			s color: Color black.
+			elements := s elementsOn: (1 to: 40).
+			v addAll: elements.
+			RTGridLayout on: elements.
+			v ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -673,6 +688,7 @@ SGAEngineTest >> testRTSpectrographExampleOnPackage [
 			b build.
 			b view ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.
@@ -692,18 +708,19 @@ SGAEngineTest >> testRTUMLExampleOnPackage [
 	self
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ | someClasses allMethodCategories b n |
-someClasses := RTShape withAllSubclasses.
-allMethodCategories := (someClasses flatCollect: #protocols) asSet
-	asArray.
-b := RTUMLClassBuilder new.
-n := RTMultiLinearColorForIdentity new objects: allMethodCategories.
-b methodShape color: [ :m | n rtValue: m protocol ].
-b methodsNames: [ :cls | cls rtmethods sortedAs: #protocol ].
-b addObjects: someClasses.
-b treeLayout.
-b build.
-b view ]
+			someClasses := RTShape withAllSubclasses.
+			allMethodCategories := (someClasses flatCollect: #protocols) asSet
+				asArray.
+			b := RTUMLClassBuilder new.
+			n := RTMultiLinearColorForIdentity new objects: allMethodCategories.
+			b methodShape color: [ :m | n rtValue: m protocol ].
+			b methodsNames: [ :cls | cls rtmethods sortedAs: #protocol ].
+			b addObjects: someClasses.
+			b treeLayout.
+			b build.
+			b view ]
 		ofPopulationSize: 30
+		numStatements: 15
 		and: 30.
 	fitnessFirst := engine logs first fittestTestCase fitness.
 	fitnessLast := engine logs last fittestTestCase fitness.

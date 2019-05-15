@@ -68,14 +68,15 @@ SSGeneratorInvariant >> generateAssert: aCollection [
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant >> generateInvariants: aSTestCase [
-	| invariants compiled |
+SSGeneratorInvariant >> generateInvariantsOf: aSTestCase testCaseUsing: selectedInvariants [
+	| filteredInvariants compiled |
 	compiler compile: (self transformToNode: aSTestCase).
-	invariants := compiler executeMethodUsing: aSTestCase.
-	"self generateAssert: invariants."
-	compiled := self compileStatementsOf: aSTestCase with: invariants.
+	filteredInvariants := compiler executeMethodUsing: aSTestCase testCaseAnd: selectedInvariants.
+	compiled := self
+		compileStatementsOf: aSTestCase
+		with: filteredInvariants.
 	compiled
-		ifTrue: [ ^ invariants ].
+		ifTrue: [ ^ filteredInvariants ].
 	^ nil
 ]
 
