@@ -9,7 +9,7 @@ MIT Licensed.
 SmallSuiteGenerator can be used to discover bugs in the code, because it generates automatically test cases
 
 ## Installation 
-You can load SmallSuiteGenerator into Pharo image typing this instruction in the playground:
+You can load SmallSuiteGenerator into Pharo image executing the following code in the playground:
 
 ```Smalltalk
 Metacello new
@@ -19,27 +19,35 @@ Metacello new
 ```
 ## Usage
 
-### Configuration
-To generate test cases of a piece of code, you have two options:
- * Execute the code using the class
- * Execute the code using the regex of package matching
- 
-First you have to initialize the class `SSmallSuiteGenerator`.
-``` | smallSuiteGenerator |
+Before you have to initialize the class `SSmallSuiteGenerator`.
+
+``` Smalltalk
+| smallSuiteGenerator |
 smallSuiteGenerator := SSmallSuiteGenerator new.
 ```
-If you want generate test cases using the class, you must type this instruction with the block to analize and the class
 
-``` smallSuiteGenerator 
+### Configuration
+To generate test cases of code within the block, you have two options:
+ * Execute the code using the class
+ * Execute the code using the regular expression of package matching
+ 
+#### Configuration with class
+
+If you want generate test cases using the class, you must send the block to analize and the class. In this example we send the block and the class `SStudent`
+
+```Smalltalk
+smallSuiteGenerator 
  generateTestsOf: [ (SStudent name: 'Ann' with: -34.234)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]  blockOnClass: SStudent. 
  ```
-But if you want to generate test cases using the package, you must type this instruction with the block and the regex of the package:
+#### Configuration with regular expression of package matching
 
-```
+On the other hand if you want to generate test cases using packages, you have to type the following code with the block to analize and the regular expression of the package:
+
+```Smalltalk
 smallSuiteGenerator generateTestsOf: [ (SStudent name: 'Ann@323' with: -34)
 				nickname;
 				idStudent;
@@ -48,16 +56,27 @@ smallSuiteGenerator generateTestsOf: [ (SStudent name: 'Ann@323' with: -34)
 		blockOnPackagesMatching: 'SmallSuiteExamp*'.
 ```
 
-To generate the testCase with the statements that have higher fitness, you must type: 
+### Execution
+Either using the class or regular expression you must execute the following code to generate the testCases: 
 
-```
+```Smalltalk
 smallSuiteGenerator runGeneration.
 ```
 
-This instruction will generate the testCases with the higher fitness, and to generate the asserts of this test cases you must type: 
+This instruction will generate the testCases with the higher fitness of one population. You can see these testCases debugging in `smallSuiteGenerator engine logs`. Usually the last log contains the testCase with the highest fitness.
+By other side, you can configure some parameters before to generate test cases, e.g:
 
+```Smalltalk 
+smallSuiteGenerator populationSize: 30.
+smallSuiteGenerator numberOfGenerations: 20. "number of testCases to generate"
+smallSuiteGenerator numberOfStatements. "number of statements that each testCase will have "
 ```
+
+### Generation of invariants
+To generate the assertios of each testCase execute:
+
+```Smalltalk
 smallSuiteGenerator generateInvariants: {}
 ```
-
-By default if you type this instruction with a empty list, all invariants will be used to analyze the code.
+If you execute the code with an empty list, by default all the invariants of the project will be considered to generate the assertions. You can configure this list.
+The class which contains the generated assertions is `SSAssertionGeneratorTest`
