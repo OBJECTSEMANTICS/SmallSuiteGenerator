@@ -21,7 +21,7 @@ SAbstractStatementWithArgs >> alternativeMethodIn: methods [
 SAbstractStatementWithArgs >> argToString: aArg [
 	^ (references isNotNil and: [ references includes: aArg ])
 		ifTrue: [ aArg asString ]
-		ifFalse: [ aArg storeString ]
+		ifFalse: [ aArg isLiteral ifTrue: [ aArg ] ifFalse: [(SAuxiliar isVeryDeep: aArg) ifTrue: [ '' ] ifFalse: [aArg storeString] ]]
 ]
 
 { #category : #accessing }

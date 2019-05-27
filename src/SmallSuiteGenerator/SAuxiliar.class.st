@@ -1,6 +1,9 @@
 Class {
 	#name : #SAuxiliar,
 	#superclass : #Object,
+	#classInstVars : [
+		'level'
+	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
@@ -85,6 +88,19 @@ SAuxiliar class >> createStatementOf: aClassName typeIn: testCase testCaseUsing:
 	^ self valueOf: aClassName typeIn: testCase testCaseUsing: dictionary
 ]
 
+{ #category : #testing }
+SAuxiliar class >> deepOf: aObject objectGreaterThan: level [
+	level < 0
+		ifTrue: [ ^ true ].
+	aObject class instSize = 0
+		ifTrue: [ ^ false ].
+	1 to: aObject class instSize do: [ :n | 
+		(self deepOf: (aObject instVarAt: n) objectGreaterThan: level - 1)
+			ifTrue: [
+				^ true ] ].
+	^ false
+]
+
 { #category : #generation }
 SAuxiliar class >> defaultConstructor: classSpy [
 	"returns a new constructor with the selector 'new'"
@@ -93,6 +109,21 @@ SAuxiliar class >> defaultConstructor: classSpy [
 		selector: 'new';
 		args: #();
 		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> initLevel: aInt [
+	level := aInt
+]
+
+{ #category : #testing }
+SAuxiliar class >> isVeryDeep: aObject [
+	^ self deepOf: aObject objectGreaterThan: 3
+]
+
+{ #category : #accessing }
+SAuxiliar class >> level [ 
+	^ level
 ]
 
 { #category : #'as yet unclassified' }
@@ -148,6 +179,11 @@ SAuxiliar class >> randomValueCharacter: aCharacter [
 	[ value == aCharacter asInteger ]
 		whileTrue: [ value := interval atRandom ].
 	^ value
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> reduceLevel [
+	level := level - 1.
 ]
 
 { #category : #removing }
