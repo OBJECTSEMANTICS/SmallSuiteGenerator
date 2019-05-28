@@ -116,6 +116,11 @@ SAuxiliar class >> initLevel: aInt [
 	level := aInt
 ]
 
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> initLevelDefault [
+	level := 10
+]
+
 { #category : #testing }
 SAuxiliar class >> isVeryDeep: aObject [
 	^ self deepOf: aObject objectGreaterThan: 3

@@ -80,7 +80,14 @@ SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 
 { #category : #printing }
 SPrimitiveStatement >> stringBody [
-	^ (value isLiteral ifTrue: [value storeString] ifFalse: [(SAuxiliar isVeryDeep: value) ifTrue: [ '' ] ifFalse: [value storeString]]) "value storeString" , $. asString
+	^ 
+	value storeString, $. asString
+	"(value isLiteral
+		ifTrue: [ value storeString ]
+		ifFalse: [ 
+			(SAuxiliar isVeryDeep: value)
+				ifTrue: [ '' ]
+				ifFalse: [ value storeString ] ]) , $. asString"	"value storeString"
 ]
 
 { #category : #evaluating }

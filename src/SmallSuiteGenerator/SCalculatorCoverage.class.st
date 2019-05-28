@@ -55,7 +55,7 @@ SCalculatorCoverage class >> nodeFormattedOf: testCase [
 	node := RBParser parseExpression: '[]'.
 	temporaries := varNames
 		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.self halt.
+	node body temporaries: temporaries.
 	statements
 		collect: [ :statement | 
 			statement
