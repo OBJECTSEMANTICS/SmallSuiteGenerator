@@ -10,7 +10,9 @@ Class {
 { #category : #mutation }
 SAuxiliar class >> change: args ofTypes: types using: aTestCase [
 	| varToChange argsResult varNames |
-	argsResult := args deepCopy.
+	argsResult := args collect: [:arg | arg].
+	"args do: [ :arg | argsResult add: arg ]."
+	"argsResult := args deepCopy."
 	varToChange := OrderedCollection new.
 	varNames := aTestCase varNames.
 	args
@@ -19,7 +21,11 @@ SAuxiliar class >> change: args ofTypes: types using: aTestCase [
 				ifTrue: [ varToChange add: aArg ]
 				ifFalse: [ argsResult
 						at: index
-						put: (self changeAndTransform: aArg ofType: (types at: index) using: aTestCase) ] ].
+						put:
+							(self
+								changeAndTransform: aArg
+								ofType: (types at: index)
+								using: aTestCase) ] ].
 	^ {argsResult.
 	varToChange}
 ]
@@ -194,7 +200,8 @@ SAuxiliar class >> reduceLevel [
 { #category : #removing }
 SAuxiliar class >> removeOrRepair: args argsOf: aStatement statementWith: varName varNameUsing: aTestCase [
 	| varToDelete replace argsResult |
-	argsResult := args deepCopy.
+	argsResult := args collect: [ :arg | arg ].
+	"argsResult := args deepCopy."
 	varToDelete := OrderedCollection new.
 	replace := Dictionary new.
 	args

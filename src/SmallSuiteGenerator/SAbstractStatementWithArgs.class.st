@@ -51,6 +51,14 @@ SAbstractStatementWithArgs >> createNewStatement [
 		yourself
 ]
 
+{ #category : #copying }
+SAbstractStatementWithArgs >> deepCopy [
+	| new |
+	new := self createNewStatement.
+	new id: self id.
+	^ new.
+]
+
 { #category : #'as yet unclassified' }
 SAbstractStatementWithArgs >> insertParameterUsing: aTestCase [
 	"insert its parameters"

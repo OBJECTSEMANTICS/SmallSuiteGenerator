@@ -15,6 +15,11 @@ SPrimitiveStatement >> createNewStatement [
 		yourself
 ]
 
+{ #category : #copying }
+SPrimitiveStatement >> deepCopy [ 
+	^ self copy
+]
+
 { #category : #'as yet unclassified' }
 SPrimitiveStatement >> dependenciesConsidering: varNames [
 	^ #()
