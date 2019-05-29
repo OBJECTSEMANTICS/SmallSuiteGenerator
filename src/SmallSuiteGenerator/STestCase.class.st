@@ -446,12 +446,13 @@ STestCase >> insert: aStatement statementWithArgsBefore: varName [
 { #category : #'as yet unclassified' }
 STestCase >> insertRandomStatement [
 	| varNamesInserted |
-	#(#insertRandomCallUsing: #insertMethodCallUsing: #insertParameterUsing:) shuffle
+	#(#insertRandomCallUsing: #insertMethodCallUsing: #insertParameterUsing:)
+		shuffle
 		detect: [ :selector | 
 			varNamesInserted := self insert: selector.
 			varNamesInserted isNotNil ]
 		ifFound: [ ^ varNamesInserted ]
-		ifNone: [ ^ -1 ]
+		ifNone: [ ^ nil ]
 ]
 
 { #category : #'as yet unclassified' }

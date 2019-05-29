@@ -45,18 +45,10 @@ SAbstractStatementWithArgs >> changeUsing: aTestCase [
 
 { #category : #private }
 SAbstractStatementWithArgs >> createNewStatement [
-	^ (self class create)
-		args: self args;
+	^ self class create
+		args: self args copy;
 		selector: self selector;
 		yourself
-]
-
-{ #category : #copying }
-SAbstractStatementWithArgs >> deepCopy [
-	| new |
-	new := self createNewStatement.
-	new id: self id.
-	^ new.
 ]
 
 { #category : #'as yet unclassified' }

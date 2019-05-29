@@ -68,8 +68,8 @@ SMethodStatement >> changeUsing: aTestCase [
 			method selector = self selector
 				ifTrue: [ result := SAuxiliar
 						change: args
-						ofTypes: method argTypes
-						using: aTestCase.
+						argsOf: method argTypes
+						typesUsing: aTestCase.
 					newArgs := result first.
 					result := result second ]
 				ifFalse: [ newArgs := self alternativeArgsOf: method using: aTestCase.

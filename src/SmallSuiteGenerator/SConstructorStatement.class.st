@@ -98,8 +98,8 @@ SConstructorStatement >> statementsToChange: methods using: aTestCase [
 	methods ifEmpty: [ ^ #() ].
 	result := SAuxiliar
 		change: args
-		ofTypes: methods first argTypes
-		using: aTestCase.
+		argsOf: methods first argTypes
+		typesUsing: aTestCase.
 	(aTestCase statementAt: self varName) args: result first.
 	^ result second
 ]

@@ -31,6 +31,14 @@ SStatement >> createNewStatement [
 	^ self subclassResponsibility
 ]
 
+{ #category : #copying }
+SStatement >> deepCopy [
+	| new |
+	new := self createNewStatement.
+	new id: self id.
+	^ new
+]
+
 { #category : #'as yet unclassified' }
 SStatement >> dependenciesConsidering: varNames [
 	^ self subclassResponsibility

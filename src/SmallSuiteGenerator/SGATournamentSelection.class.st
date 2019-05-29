@@ -31,8 +31,11 @@ SGATournamentSelection >> createNewPopulation [
 			offsprings := self crossover: parentA with: parentB.
 			offspringA := self mutate: offsprings first.
 			offspringB := self mutate: offsprings second.
-			{ offspringA . offspringB } do: [ :each | (self isTooLong: each)
-				ifFalse: [ population add: each ] ] ]
+			{offspringA.
+			offspringB}
+				do: [ :each | 
+					(self isTooLong: each)
+						ifFalse: [ population add: each ] ] ]
 ]
 
 { #category : #'as yet unclassified' }

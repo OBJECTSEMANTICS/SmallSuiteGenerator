@@ -54,11 +54,6 @@ SFieldStatement >> createNewStatement [
 		yourself
 ]
 
-{ #category : #copying }
-SFieldStatement >> deepCopy [
-	^ self copy
-]
-
 { #category : #'as yet unclassified' }
 SFieldStatement >> dependenciesConsidering: varNames [
 	^ {receiverVarName}

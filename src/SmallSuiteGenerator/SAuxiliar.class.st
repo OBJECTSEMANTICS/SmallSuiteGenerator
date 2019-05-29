@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #mutation }
-SAuxiliar class >> change: args ofTypes: types using: aTestCase [
+SAuxiliar class >> change: args argsOf: types typesUsing: aTestCase [
 	| varToChange argsResult varNames |
 	argsResult := args collect: [:arg | arg].
 	"args do: [ :arg | argsResult add: arg ]."

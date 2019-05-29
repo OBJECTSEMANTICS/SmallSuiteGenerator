@@ -26,8 +26,7 @@ SGAMutationOperation >> initialize [
 SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
 	newTestCase := STestCase seed: aTestCase profile.
-	newTestCase
-		addFromParents: aTestCase statements deepCopy.
+	newTestCase addFromParents: aTestCase statements deepCopy.
 	self doMutate: newTestCase.
 	^ newTestCase
 ]
