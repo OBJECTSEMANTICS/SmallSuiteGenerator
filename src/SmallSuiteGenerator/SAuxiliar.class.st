@@ -252,7 +252,7 @@ SAuxiliar class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement and
 								createArg: argType
 								before: aTestCase statements size + 1
 								avoiding: nil ] ].
-			self assert: aArg isNotNil description: 'The arg must not be nil'.
+			"self assert: aArg isNotNil description: 'The arg must not be nil'."
 			resultArgs add: aArg ].
 	^ resultArgs
 ]
@@ -355,7 +355,7 @@ SAuxiliar class >> valueOf: aClassName typeIn: testCase testCaseUsing: aDictiona
 		ifAbsent: [ | classes |
 			testCase dictSubclasses
 				at: aClassName
-				ifPresent: [ :value | classes := value ]
+				ifPresent: [ :value | classes := (value asArray), { aClassName } ]
 				ifAbsent: [ 
 					classes := (Smalltalk classNamed: aClassName) subclasses
 						collect: [ :aClass | aClass name ].
