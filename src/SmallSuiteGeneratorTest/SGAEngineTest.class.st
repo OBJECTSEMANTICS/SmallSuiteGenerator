@@ -487,7 +487,7 @@ SGAEngineTest >> testExampleRTSVGPathOnClass [
 	self assert: (fitness at: 'statementCoverage') >= 3.45.
 ]
 
-{ #category : #'tests-class fitness' }
+{ #category : #'tests-class unfunctional' }
 SGAEngineTest >> testExampleRTSpectrographOnClass [
 	| fitness |
 	self
@@ -537,13 +537,13 @@ SGAEngineTest >> testExampleRTUMLClassBuilderOnClass [
 		numStatements: 15
 		and: 30.
 	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 20.
-	self assert: (fitness at: 'statementCoverage') equals: 22.22.
-	"20 = (1/5) * 100"
-	"22.22 = (2/9) * 100"
+	self assert: (fitness at: 'methodCoverage') <= 24.53.
+	self assert: (fitness at: 'statementCoverage') >= 11.7.
+	"24.53 = (13/53) * 100"
+	"11.7 = (20/171) * 100"
 	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 20.
-	self assert: (fitness at: 'statementCoverage') equals: 22.22.
+	self assert: (fitness at: 'methodCoverage') >= 24.53.
+	self assert: (fitness at: 'statementCoverage') >= 11.7.
 ]
 
 { #category : #'tests-class fitness' }
@@ -692,7 +692,7 @@ SGAEngineTest >> testExampleSStudentOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages unfunctional' }
+{ #category : #'tests-packages fitness' }
 SGAEngineTest >> testRTCalendarExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -753,7 +753,7 @@ SGAEngineTest >> testRTCalendarExampleOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages unfunctional' }
+{ #category : #'tests-packages fitness' }
 SGAEngineTest >> testRTMondrianExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -824,7 +824,7 @@ SGAEngineTest >> testRTNameCloudExampleOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages unfunctional' }
+{ #category : #'tests-packages fitness' }
 SGAEngineTest >> testRTPieExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -860,7 +860,7 @@ SGAEngineTest >> testRTPieExampleOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages unfunctional' }
+{ #category : #'tests-packages fitness' }
 SGAEngineTest >> testRTSVGExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
@@ -951,7 +951,7 @@ SGAEngineTest >> testRTSpectrographExampleOnPackage [
 				<= (fitnessLast at: 'statementCoverage')
 ]
 
-{ #category : #'tests-packages unfunctional' }
+{ #category : #'tests-packages fitness' }
 SGAEngineTest >> testRTUMLExampleOnPackage [
 	| fitnessFirst fitnessLast |
 	self
