@@ -153,6 +153,11 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
+SFieldStatement >> replace: varName varNameBy: valueToReplace [
+	
+]
+
+{ #category : #'as yet unclassified' }
 SFieldStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	^ SAuxiliar
 		satisfyParameters: aTestCase

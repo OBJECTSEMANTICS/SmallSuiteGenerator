@@ -73,6 +73,11 @@ SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
+SPrimitiveStatement >> replace: varName varNameBy: valueToReplace [
+	
+]
+
+{ #category : #'as yet unclassified' }
 SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	^ aTestCase
 		addStatement: self createNewStatement

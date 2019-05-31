@@ -136,6 +136,11 @@ SStatement >> repairOn: aTestCase deleting: aStatement [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #'as yet unclassified' }
+SStatement >> replace: varName varNameBy: valueToReplace [
+	^ self subclassResponsibility
+]
+
 { #category : #accessing }
 SStatement >> returnTypeName [
 	^ returnTypeName

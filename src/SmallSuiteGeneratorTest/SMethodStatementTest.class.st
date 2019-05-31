@@ -26,3 +26,23 @@ SMethodStatementTest >> testDependenciesConsidering [
 				includesAny:
 					{'_var1' . '_var5' . '_var7' . '_var10' . '_var14' . '_var15' . '_var16'} ]
 ]
+
+{ #category : #tests }
+SMethodStatementTest >> testReplaceVarNameBy [
+	| statement |
+	statement := SMethodStatement new
+		receiverVarName: '_var0';
+		selector: #score:;
+		args: {'_var1'};
+		id: 2;
+		yourself.
+	self
+		assert: statement asString
+		equals: '_var2 := _var0 score: ''_var1'' .'.
+	self
+		assert: (statement replace: '_var0' varNameBy: (SFoo score: 5)) asString
+		equals: '_var2 := _var0 score: ''_var1'' .'.
+	self
+		assert: (statement replace: '_var1' varNameBy: 5) asString
+		equals: '_var2 := _var0 score: 5 .'
+]

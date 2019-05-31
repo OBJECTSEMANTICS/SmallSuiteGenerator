@@ -25,7 +25,7 @@ SSmallSuiteGeneratorTest >> tearDown [
 { #category : #'test-class invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsing: aClass classAnd: invariants [
 	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
-	smallSuiteGenerator runGeneration.
+	smallSuiteGenerator runGeneration.self halt.
 	smallSuiteGenerator generateInvariants: invariants
 ]
 

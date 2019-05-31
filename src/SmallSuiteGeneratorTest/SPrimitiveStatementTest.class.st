@@ -19,3 +19,17 @@ SPrimitiveStatementTest >> testDependenciesConsidering [
 			('_var10' -> {}).
 			('_var12' -> {})}
 ]
+
+{ #category : #tests }
+SPrimitiveStatementTest >> testReplaceVarNameBy [
+	| statement |
+	statement := SPrimitiveStatement new
+		returnTypeName: #SmallInteger;
+		value: 2;
+		id: 0;
+		yourself.
+	self assert: statement asString equals: '_var0 := 2.'.
+	self
+		assert: (statement replace: '_var1' varNameBy: '5') asString
+		equals: '_var0 := 2.'
+]

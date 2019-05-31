@@ -89,6 +89,14 @@ SAbstractStatementWithArgs >> repairOn: aTestCase changing: aStatement [
 	^ self changeUsing: aTestCase.
 ]
 
+{ #category : #'as yet unclassified' }
+SAbstractStatementWithArgs >> replace: varName varNameBy: valueToReplace [
+	| index |
+	index := args indexOf: varName.
+	index > 0
+		ifTrue: [ args at: index put: valueToReplace ]
+]
+
 { #category : #accessing }
 SAbstractStatementWithArgs >> selector [
 	^ selector
