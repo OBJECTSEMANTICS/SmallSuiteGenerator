@@ -104,3 +104,8 @@ SPrimitiveStatement >> value [
 SPrimitiveStatement >> value: anObject [
 	value := anObject.
 ]
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> valueInline [
+	^ value
+]

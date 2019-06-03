@@ -162,6 +162,13 @@ SMethodStatement >> repairReferencesOf: aStatement in: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
+SMethodStatement >> replace: varName varNameBy: stmToReplace [
+	super replace: varName varNameBy: stmToReplace.
+	receiverVarName = varName
+		ifTrue: [ receiverVarName := SAuxiliar transformToVar: stmToReplace valueInline ]
+]
+
+{ #category : #'as yet unclassified' }
 SMethodStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	^ SAuxiliar
 		satisfyParameters: aTestCase

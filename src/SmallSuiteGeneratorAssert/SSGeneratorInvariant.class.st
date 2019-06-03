@@ -2,7 +2,8 @@ Class {
 	#name : #SSGeneratorInvariant,
 	#superclass : #Object,
 	#instVars : [
-		'compiler'
+		'compiler',
+		'refactorTest'
 	],
 	#classInstVars : [
 		'numTest'
@@ -70,8 +71,11 @@ SSGeneratorInvariant >> generateAssert: aCollection [
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> generateInvariantsOf: aSTestCase testCaseUsing: selectedInvariants [
 	| filteredInvariants compiled |
+	refactorTest clean: aSTestCase; inline: aSTestCase.
 	compiler compile: (self transformToNode: aSTestCase).
-	filteredInvariants := compiler executeMethodUsing: aSTestCase testCaseAnd: selectedInvariants.
+	filteredInvariants := compiler
+		executeMethodUsing: aSTestCase
+		testCaseAnd: selectedInvariants.
 	compiled := self
 		compileStatementsOf: aSTestCase
 		with: filteredInvariants.
@@ -81,8 +85,9 @@ SSGeneratorInvariant >> generateInvariantsOf: aSTestCase testCaseUsing: selected
 ]
 
 { #category : #initialization }
-SSGeneratorInvariant >> initialize [ 	
+SSGeneratorInvariant >> initialize [
 	compiler := SSCompilerInvariant new.
+	refactorTest := SRefactorTestCase new
 ]
 
 { #category : #accessing }

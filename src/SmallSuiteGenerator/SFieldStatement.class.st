@@ -153,8 +153,9 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SFieldStatement >> replace: varName varNameBy: valueToReplace [
-	
+SFieldStatement >> replace: varName varNameBy: stmToReplace [
+	receiverVarName = varName
+		ifTrue: [ receiverVarName := SAuxiliar transformToVar: stmToReplace valueInline]
 ]
 
 { #category : #'as yet unclassified' }

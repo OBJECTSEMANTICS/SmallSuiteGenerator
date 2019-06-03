@@ -306,6 +306,11 @@ SAuxiliar class >> satisfyParameters: aTestCase with: otherTestCase of: aStateme
 ]
 
 { #category : #'as yet unclassified' }
+SAuxiliar class >> transformToVar: aString [
+	^ '(' , aString , ')'
+]
+
+{ #category : #'as yet unclassified' }
 SAuxiliar class >> typeNameArgsOf: selector selectorIn: aClassName classNameUsing: aTestCase [
 	(aTestCase profile >> aClassName) methods
 		detect: [ :method | method selector = selector ]

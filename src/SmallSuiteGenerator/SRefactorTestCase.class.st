@@ -72,8 +72,7 @@ SRefactorTestCase >> inline: aSTestCase using: dictReferences [
 			varNamesToRemove add: assoc key.
 			(aSTestCase statementAt: assoc value first)
 				replace: assoc key
-				varNameBy: (aSTestCase statementAt: assoc key) stringBody
-			"realizar el inline de la variable" ].
+				varNameBy: (aSTestCase statementAt: assoc key) ].
 	varNamesToRemove
 		do: [ :varName | removedVarNames addAll: (aSTestCase remove: varName) ].
 	^ removedVarNames

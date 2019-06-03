@@ -137,7 +137,7 @@ SStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SStatement >> replace: varName varNameBy: valueToReplace [
+SStatement >> replace: varName varNameBy: stmToReplace [
 	^ self subclassResponsibility
 ]
 
@@ -159,6 +159,11 @@ SStatement >> satisfyParameters: aTestCase with: otherTestCase [
 { #category : #'as yet unclassified' }
 SStatement >> stringBody [ 
 	^ self subclassResponsibility 
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> valueInline [
+	^ self stringBody allButLast
 ]
 
 { #category : #accessing }
