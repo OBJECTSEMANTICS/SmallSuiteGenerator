@@ -8,7 +8,8 @@ Class {
 		'dictSubclasses',
 		'fitness',
 		'nextId',
-		'allowNullParameters'
+		'allowNullParameters',
+		'refactorizer'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -332,9 +333,9 @@ STestCase >> fitness [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> generateInvariants: classInvariants [
+STestCase >> generateAssertionsUsing: classInvariants [
 	^ generatorInvariant
-		generateInvariantsOf: self
+		generateAssertionsOf: self
 		testCaseUsing: classInvariants
 ]
 
@@ -379,7 +380,8 @@ STestCase >> initialize [
 	statements := OrderedCollection new.
 	generatorInvariant := SSGeneratorInvariant new.
 	dictSubclasses := Dictionary new.
-	allowNullParameters := false
+	allowNullParameters := false.
+	refactorizer := SRefactorizer new
 ]
 
 { #category : #'accessing untypeable characters' }
@@ -492,6 +494,11 @@ STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 { #category : #accessing }
 STestCase >> numberOfStatements [
 	^ statements size
+]
+
+{ #category : #'as yet unclassified' }
+STestCase >> prettyCodeApplying: kindsRefactoring [
+	^ refactorizer prettyCodeOf: self testCaseApplying: kindsRefactoring 
 ]
 
 { #category : #printing }

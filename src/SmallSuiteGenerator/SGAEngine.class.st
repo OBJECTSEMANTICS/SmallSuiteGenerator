@@ -120,11 +120,22 @@ SGAEngine >> fitnessBlock: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> generateInvariantsFittest: selectedInvariants [
+SGAEngine >> generateAssertionsUsing: selectedInvariants [
 	self
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
-	self logs do: [ :log | log fittestTestCase generateInvariants: selectedInvariants ]
+	self logs do: [ :log | log fittestTestCase generateAssertionsUsing: selectedInvariants ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrettyCodeWith: kindsRefactoring [
+	self
+		assert: logs isNotEmpty
+		description: 'In this point the logs must not be empty'.
+	self logs
+		do:
+			[ :log | log fittestTestCase prettyCodeApplying: kindsRefactoring.
+			log fittestTestCase generateAssertionsUsing: selectedInvariants ]
 ]
 
 { #category : #accessing }
@@ -251,6 +262,15 @@ SGAEngine >> populationSize [
 { #category : #accessing }
 SGAEngine >> populationSize: aInteger [
 	populationSize := aInteger
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> prettyCodeOfTestCaseApplying: typesRefactoring [
+	self
+		assert: logs isNotEmpty
+		description: 'In this point the logs must not be empty'.
+	self logs
+		do: [ :log | log fittestTestCase prettyCodeApplying: typesRefactoring ]
 ]
 
 { #category : #'as yet unclassified' }

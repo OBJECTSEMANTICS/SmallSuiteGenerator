@@ -19,7 +19,7 @@ SSAssertionTest >> testGenerateInvariantCollections [
 		onClass: Stack.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -34,7 +34,7 @@ SSAssertionTest >> testGenerateInvariantCollections [
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants size equals: 2.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -44,7 +44,7 @@ SSAssertionTest >> testGenerateInvariantCollections [
 	profile := SSGenerator profile: [ Array new ] onClass: Array.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants size equals: 4.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -61,7 +61,7 @@ SSAssertionTest >> testGenerateInvariantsArray [
 	profile := SSGenerator profile: [ SFoo score: #(2 4) ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants size equals: 5.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -74,7 +74,7 @@ SSAssertionTest >> testGenerateInvariantsArray [
 	profile := SSGenerator profile: [ SFoo score: #() ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants size equals: 4.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -91,7 +91,7 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	profile := SSGenerator profile: [ Stack new ] onClass: Stack.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -109,7 +109,7 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase addMethod.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	"invariants is empty if the compiled method has failed"
 	self deny: invariants isEmpty.
 	self assert: invariants size equals: 8.
@@ -133,7 +133,7 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	selectedInvariants := {SCollectionSizeAssertion}.
-	invariants := testCase generateInvariants: selectedInvariants.
+	invariants := testCase generateAssertionsUsing: selectedInvariants.
 	self assert: invariants size equals: 1.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -153,12 +153,12 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	SInspectorAssertion.
 	SCollectionTypeSimilarityAssertion}.
 	self
-		should: [ testCase generateInvariants: selectedInvariants ]
+		should: [ testCase generateAssertionsUsing: selectedInvariants ]
 		raise: Error.
 	selectedInvariants := {SStringAssertion.
 	SPrimitiveAssertion.
 	SCollectionTypeSimilarityAssertion}.
-	invariants := testCase generateInvariants: selectedInvariants.
+	invariants := testCase generateAssertionsUsing: selectedInvariants.
 	"invariants is empty if the compiled method has failed"
 	self deny: invariants isEmpty.
 	self assert: invariants size equals: 1.
@@ -177,7 +177,7 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 	testCase addConstructor.
 	testCase addMethod.
 	selectedInvariants := {SCollectionSizeAssertion}.
-	invariants := testCase generateInvariants: selectedInvariants.
+	invariants := testCase generateAssertionsUsing: selectedInvariants.
 	self
 		assert:
 			(invariants isEmpty
@@ -186,17 +186,17 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 	selectedInvariants := {SCollectionSizeAssertion.
 	SStringAssertion.
 	SComparisonAssertion}.
-	invariants := testCase generateInvariants: selectedInvariants.
+	invariants := testCase generateAssertionsUsing: selectedInvariants.
 	classesInvariants := invariants collect: [ :i | i class ].
 	self
 		assert: ((classesInvariants includesAll: selectedInvariants) or: [classesInvariants includesAny: selectedInvariants ]).
 	selectedInvariants := {SComparisonAssertion.
 	SInspectorAssertion}.
-	invariants := testCase generateInvariants: selectedInvariants.
+	invariants := testCase generateAssertionsUsing: selectedInvariants.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
 		hasSameElements: selectedInvariants.
-	invariants := testCase generateInvariants: {}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self
 		assert: ((invariants collect: [ :i | i class ])
 		includesAll:
@@ -214,7 +214,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		onClass: Stack.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	invariants := testCase generateInvariants:{}.
+	invariants := testCase generateAssertionsUsing:{}.
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -227,7 +227,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	invariants := testCase generateInvariants:{}.
+	invariants := testCase generateAssertionsUsing:{}.
 	self assert: invariants size equals: 5.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -242,7 +242,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	invariants := testCase generateInvariants:{}.
+	invariants := testCase generateAssertionsUsing:{}.
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -255,7 +255,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	invariants := testCase generateInvariants:{}.
+	invariants := testCase generateAssertionsUsing:{}.
 	self assert: invariants size >= 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -277,7 +277,7 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 	testCase := STestCase seed: profile.
 	testCase generateStatements: 15.
 	"self halt."
-	invariants := testCase generateInvariants:{}.
+	invariants := testCase generateAssertionsUsing:{}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty.
 	profile := SSGenerator
@@ -288,7 +288,7 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase generateStatements: 15.
-	invariants := testCase generateInvariants:{}.
+	invariants := testCase generateAssertionsUsing:{}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty
 ]

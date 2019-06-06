@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'id',
-		'returnTypeName'
+		'returnTypeName',
+		'keyword'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -52,6 +53,11 @@ SStatement >> id [
 { #category : #accessing }
 SStatement >> id: anInteger [
 	id:= anInteger.
+]
+
+{ #category : #initialization }
+SStatement >> initialize [ 	
+	keyword := '_var'
 ]
 
 { #category : #'as yet unclassified' }
@@ -137,7 +143,7 @@ SStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SStatement >> replace: varName varNameBy: stmToReplace [
+SStatement >> replace: varName varNameBy: object [
 	^ self subclassResponsibility
 ]
 
@@ -162,8 +168,18 @@ SStatement >> stringBody [
 ]
 
 { #category : #'as yet unclassified' }
+SStatement >> typeVar [
+	^ returnTypeName 
+]
+
+{ #category : #'as yet unclassified' }
 SStatement >> valueInline [
 	^ self stringBody allButLast
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> varKeyword: aString [
+	keyword := aString
 ]
 
 { #category : #accessing }
@@ -173,6 +189,5 @@ SStatement >> varName [
 
 { #category : #'as yet unclassified' }
 SStatement >> variableKeyword [
-	^  '_var'
-
+	^ keyword	
 ]

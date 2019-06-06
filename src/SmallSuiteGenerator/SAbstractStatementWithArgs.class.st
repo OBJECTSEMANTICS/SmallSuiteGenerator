@@ -90,12 +90,12 @@ SAbstractStatementWithArgs >> repairOn: aTestCase changing: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractStatementWithArgs >> replace: varName varNameBy: stmToReplace [
+SAbstractStatementWithArgs >> replace: varName varNameBy: object [
 	| index |
 	index := args indexOf: varName.
 	index = 0
 		ifTrue: [ ^ self ].
-	args at: index put: stmToReplace valueInline
+	args at: index put: object
 	"last := args size.
 	index ~= last
 		ifTrue: [ args at: index put: stmToReplace valueInline ]

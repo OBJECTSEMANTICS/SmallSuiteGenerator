@@ -306,6 +306,13 @@ SAuxiliar class >> satisfyParameters: aTestCase with: otherTestCase of: aStateme
 ]
 
 { #category : #'as yet unclassified' }
+SAuxiliar class >> transformReplacement: object [
+	^ (object isString and: [ object beginsWith: '_' ])
+		ifTrue: [ object ]
+		ifFalse: [ self transformToVar: object ]
+]
+
+{ #category : #'as yet unclassified' }
 SAuxiliar class >> transformToVar: aString [
 	^ '(' , aString , ')'
 ]

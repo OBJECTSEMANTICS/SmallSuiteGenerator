@@ -113,3 +113,8 @@ SConstructorStatement >> theClassName [
 SConstructorStatement >> theClassName: anObject [
 	theClassName := anObject
 ]
+
+{ #category : #'as yet unclassified' }
+SConstructorStatement >> typeVar [
+	^ theClassName 
+]

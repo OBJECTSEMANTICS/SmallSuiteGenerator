@@ -56,7 +56,7 @@ SFieldStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> dependenciesConsidering: varNames [
-	^ {receiverVarName}
+	^ varNames detect: [ :varName | varName = receiverVarName ] ifFound: [ :varName | {varName} ] ifNone: [ {  } ]
 ]
 
 { #category : #accessing }
@@ -153,9 +153,9 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
-SFieldStatement >> replace: varName varNameBy: stmToReplace [
+SFieldStatement >> replace: varName varNameBy: object [
 	receiverVarName = varName
-		ifTrue: [ receiverVarName := SAuxiliar transformToVar: stmToReplace valueInline]
+		ifTrue: [ receiverVarName := SAuxiliar transformReplacement: object ]
 ]
 
 { #category : #'as yet unclassified' }
