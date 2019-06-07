@@ -45,7 +45,7 @@ SAbstractStatementWithArgs >> changeUsing: aTestCase [
 
 { #category : #private }
 SAbstractStatementWithArgs >> createNewStatement [
-	^ self class create
+	^ super createNewStatement 
 		args: self args copy;
 		selector: self selector;
 		yourself

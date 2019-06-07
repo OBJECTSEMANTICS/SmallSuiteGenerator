@@ -92,8 +92,10 @@ SMethodStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> dependenciesConsidering: varNames [
-	^ (varNames detect: [ :varName | varName = receiverVarName ] ifFound: [ :varName | {varName } ] ifNone: [{}])
-		, (args select: [ :arg | varNames includes: arg ])
+	^ (varNames
+		detect: [ :varName | "varName = receiverVarName" SAuxiliar string:receiverVarName equalsOrIncludes: varName  ]
+		ifFound: [ :varName | {varName} ]
+		ifNone: [ {} ]) , (args select: [ :arg | varNames includes: arg ])
 ]
 
 { #category : #'as yet unclassified' }
@@ -165,8 +167,14 @@ SMethodStatement >> repairReferencesOf: aStatement in: aTestCase [
 { #category : #'as yet unclassified' }
 SMethodStatement >> replace: varName varNameBy: object [
 	super replace: varName varNameBy: object.
-	receiverVarName = varName
-		ifTrue: [ receiverVarName := SAuxiliar transformReplacement: object ]
+	receiverVarName := receiverVarName = varName
+		ifTrue: [ SAuxiliar transformReplacement: object ]
+		ifFalse: [ "receiverVarName = varName
+		ifTrue: [ receiverVarName := SAuxiliar transformReplacement: object ]"
+			SAuxiliar
+				replace: varName
+				varNameIn: receiverVarName
+				receiverBy: object ]
 ]
 
 { #category : #'as yet unclassified' }

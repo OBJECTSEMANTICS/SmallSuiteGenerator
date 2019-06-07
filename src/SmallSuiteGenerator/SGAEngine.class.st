@@ -265,15 +265,6 @@ SGAEngine >> populationSize: aInteger [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> prettyCodeOfTestCaseApplying: typesRefactoring [
-	self
-		assert: logs isNotEmpty
-		description: 'In this point the logs must not be empty'.
-	self logs
-		do: [ :log | log fittestTestCase prettyCodeApplying: typesRefactoring ]
-]
-
-{ #category : #'as yet unclassified' }
 SGAEngine >> produceNewPopulation [
 	selection doSelection.
 	population := selection population.

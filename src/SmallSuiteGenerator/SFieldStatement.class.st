@@ -47,7 +47,7 @@ SFieldStatement >> changeUsing: aTestCase [
 
 { #category : #private }
 SFieldStatement >> createNewStatement [
-	^ (self class create)
+	^ super createNewStatement 
 		fieldName: self fieldName;
 		receiverVarName: self receiverVarName;
 		returnTypeName: self returnTypeName;
@@ -56,7 +56,10 @@ SFieldStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> dependenciesConsidering: varNames [
-	^ varNames detect: [ :varName | varName = receiverVarName ] ifFound: [ :varName | {varName} ] ifNone: [ {  } ]
+	^ varNames
+		detect: [ :varName | SAuxiliar string: receiverVarName equalsOrIncludes: varName "varName = receiverVarName" ]
+		ifFound: [ :varName | {varName} ]
+		ifNone: [ {} ]
 ]
 
 { #category : #accessing }
@@ -154,8 +157,16 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> replace: varName varNameBy: object [
-	receiverVarName = varName
-		ifTrue: [ receiverVarName := SAuxiliar transformReplacement: object ]
+	receiverVarName := receiverVarName = varName
+		ifTrue: [ SAuxiliar transformReplacement: object ]
+		ifFalse: [ SAuxiliar
+				replace: varName
+				varNameIn: receiverVarName
+				receiverBy: object
+			"| index |
+			index := 
+			(receiverVarName indexOfSubCollection: varName) > 0
+				ifTrue: [ receiverVarName replace: varName with: object ]" ]
 ]
 
 { #category : #'as yet unclassified' }

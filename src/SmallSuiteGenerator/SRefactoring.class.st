@@ -27,7 +27,7 @@ SRefactoring class >> dataStatements: aSTestCase [
 { #category : #'as yet unclassified' }
 SRefactoring class >> dictReferencesOf: aSTestCase [
 	| dictReferences varNames |
-	dictReferences := Dictionary new.
+	dictReferences := OrderedDictionary new.
 	varNames := aSTestCase varNames.
 	aSTestCase statements
 		do: [ :aStatement | 
@@ -36,8 +36,8 @@ SRefactoring class >> dictReferencesOf: aSTestCase [
 					dictReferences
 						at: varName
 						ifPresent: [ :value | value add: aStatement varName ]
-						ifAbsentPut: [ OrderedCollection new
+						ifAbsent: [ dictReferences at: varName put: (OrderedCollection new
 								add: aStatement varName;
-								yourself ] ] ].
+								yourself) ] ] ].
 	^ dictReferences
 ]

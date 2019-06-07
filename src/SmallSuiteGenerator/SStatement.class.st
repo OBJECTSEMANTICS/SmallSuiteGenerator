@@ -29,7 +29,7 @@ SStatement >> cleanId [
 
 { #category : #private }
 SStatement >> createNewStatement [
-	^ self subclassResponsibility
+	^ self class create varKeyword: keyword
 ]
 
 { #category : #copying }

@@ -9,7 +9,7 @@ Class {
 
 { #category : #private }
 SPrimitiveStatement >> createNewStatement [
-	^ (self class create)
+	^ super createNewStatement 
 		value: self value;
 		returnTypeName: self returnTypeName;
 		yourself

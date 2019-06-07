@@ -22,6 +22,6 @@ SRefactorizer >> prettyCodeOf: aSTestCase testCaseApplying: kindsRefactoring [
 				detect: [ :refactor | (refactor selectors includes: #applyOn:) not ]
 				ifFound: [ false ]
 				ifNone: [ true ])."
-	^ kindsRefactoring
+	^ kindsRefactoringToApply 
 		select: [ :refactor | (refactor applyOn: aSTestCase) isNotEmpty ]
 ]

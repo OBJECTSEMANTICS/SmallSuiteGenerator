@@ -226,6 +226,24 @@ SAuxiliar class >> removeOrRepair: args argsOf: aStatement statementWith: varNam
 ]
 
 { #category : #'as yet unclassified' }
+SAuxiliar class >> replace: varName varNameIn: receiver receiverBy: object [
+	^ [ | index |
+	index := receiver indexOfSubCollection: '' , varName , ''.
+	index > 0
+		ifTrue: [ receiver
+				copyReplaceFrom: index
+				to: index + varName size - 1
+				with: ('', object, '') ]
+		ifFalse: [ receiver ] ]
+		on: Exception
+		do: [ "^ receiver isString ifTrue: [ 
+		| index |
+		index := receiver includesSubstring: varName.
+		index > 0 ifTrue: [  ] ifFalse: [ receiver ]	
+	] ifFalse: [ receiver ]" receiver ]
+]
+
+{ #category : #'as yet unclassified' }
 SAuxiliar class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement and: constructor [
 	| args varNames otherVarNames resultArgs argTypes |
 	args := aStatement args.
@@ -303,6 +321,11 @@ SAuxiliar class >> satisfyParameters: aTestCase with: otherTestCase of: aStateme
 							aStatement.
 							constructor} ] ].
 	^ false
+]
+
+{ #category : #testing }
+SAuxiliar class >> string: aString equalsOrIncludes: otherString [
+	^ aString = otherString or: [ aString includesSubstring: otherString ]
 ]
 
 { #category : #'as yet unclassified' }

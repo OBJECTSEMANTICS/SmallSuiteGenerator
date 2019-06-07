@@ -25,8 +25,17 @@ SSmallSuiteGeneratorTest >> tearDown [
 { #category : #'test-class invariants' }
 SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsing: aClass classAnd: invariants [
 	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
-	smallSuiteGenerator runGeneration.self halt.
+	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
+]
+
+{ #category : #'test-class invariants' }
+SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsing: aClass classAnd: invariants invariantsApplyingPrettyCodeWith: kindsRefactoring [
+	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
+	smallSuiteGenerator runGeneration.
+	smallSuiteGenerator
+		generateAssertionsUsing: invariants
+		invariantsAndApplyPrettyCodeWith: kindsRefactoring
 ]
 
 { #category : #'test-packages invariants' }
@@ -36,6 +45,22 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingPackagesMa
 		blockOnPackagesMatching: regex.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
+]
+
+{ #category : #'test-packages invariants' }
+SSmallSuiteGeneratorTest >> testGenerateInvariantsOf: block blockUsingPackagesMatching: regex regexAnd: invariants invariantsApplyingPrettyCodeWith: kindsRefactoring [
+	smallSuiteGenerator
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
+	smallSuiteGenerator runGeneration.
+	smallSuiteGenerator
+		generateAssertionsUsing: invariants
+		invariantsAndApplyPrettyCodeWith: kindsRefactoring.
+	smallSuiteGenerator engine logs collect: #fittestTestCase thenDo: [ :testCase | 
+		| strings |
+		strings := testCase statements collect: #asString.
+		self assert: strings size equals: strings asSet size. 	
+	]
 ]
 
 { #category : #'test-class invariants' }
@@ -72,6 +97,17 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTDirectedLine [
 				pointsFrom: -1 @ 3 To: 3 @ -5;
 				offset: 6.512341234 ]
 		blockUsing: RTDirectedLine classAnd: {  }
+]
+
+{ #category : #'test-class invariants' }
+SSmallSuiteGeneratorTest >> testGenerateInvariantsOnClassRTDirectedLineWithPrettyCode [
+	self
+		testGenerateInvariantsOf: [ RTDirectedLine instance
+				pointsFrom: -1 @ 3 To: 3 @ -5;
+				offset: 6.512341234 ]
+		blockUsing: RTDirectedLine
+		classAnd: {}
+		invariantsApplyingPrettyCodeWith: {  }
 ]
 
 { #category : #'test-class invariants' }
@@ -202,6 +238,19 @@ SSmallSuiteGeneratorTest >> testGenerateInvariantsOnPackagesMatchingSStudent [
 				scoreStudent: -45.12;
 				scoreStudent ]
 		blockUsingPackagesMatching: 'SmallSuiteExamp*' regexAnd: {  }
+]
+
+{ #category : #'test-class invariants prettyCode' }
+SSmallSuiteGeneratorTest >> testGenerateInvariantsWithPrettyCodeOnClassRTAMItem [
+	self
+		testGenerateInvariantsOf: [ RTAMItem new
+				itemName: 'Bonus[Card';
+				row: 'F;ranceAmklsd-@sdf';
+				column: 'Customer (R*elatio%$nship';
+				color: Color lightGreen ]
+		blockUsing: RTAMItem
+		classAnd: {}
+		invariantsApplyingPrettyCodeWith: { }
 ]
 
 { #category : #'tests-class' }

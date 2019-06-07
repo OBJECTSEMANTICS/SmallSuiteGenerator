@@ -115,14 +115,6 @@ SSmallSuiteGenerator >> numberOfStatements: aInt [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> prettyCodeWith: typesRefactoring [
-	self
-		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
-		description: 'Before must execute ''runGeneration''.'.
-	engine prettyCodeOfTestCaseApplying: typesRefactoring 
-]
-
-{ #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> pupulationSize: aInt [
 	engine populationSize: aInt
 ]
