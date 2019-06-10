@@ -93,7 +93,8 @@ SMethodStatement >> createNewStatement [
 { #category : #'as yet unclassified' }
 SMethodStatement >> dependenciesConsidering: varNames [
 	^ (varNames
-		detect: [ :varName | "varName = receiverVarName" SAuxiliar string:receiverVarName equalsOrIncludes: varName  ]
+		detect:
+			[ :varName | SAuxiliar string: receiverVarName equalsOrIncludes: varName ]
 		ifFound: [ :varName | {varName} ]
 		ifNone: [ {} ]) , (args select: [ :arg | varNames includes: arg ])
 ]
@@ -167,10 +168,10 @@ SMethodStatement >> repairReferencesOf: aStatement in: aTestCase [
 { #category : #'as yet unclassified' }
 SMethodStatement >> replace: varName varNameBy: object [
 	super replace: varName varNameBy: object.
-	receiverVarName := receiverVarName = varName
+	receiverVarName := (receiverVarName = varName
+		and: [ object isString ])
 		ifTrue: [ SAuxiliar transformReplacement: object ]
-		ifFalse: [ "receiverVarName = varName
-		ifTrue: [ receiverVarName := SAuxiliar transformReplacement: object ]"
+		ifFalse: [
 			SAuxiliar
 				replace: varName
 				varNameIn: receiverVarName

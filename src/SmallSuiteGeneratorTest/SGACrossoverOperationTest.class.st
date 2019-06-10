@@ -60,9 +60,7 @@ SGACrossoverOperationTest >> testCrossOverToRTLineSegment [
 SGACrossoverOperationTest >> testCrossOverToSStack [
 	self testCrossOver: SUtilityTest listTestCaseSStack shuffle.
 	self
-		testCrossOverWithMutation: SUtilityTest listTestCaseSStack shuffle.
-	"self
-		testCrossOverWithMutation2: SUtilityTest listTestCaseSStack shuffle"
+		testCrossOverWithMutation: SUtilityTest listTestCaseSStack shuffle
 ]
 
 { #category : #tests }

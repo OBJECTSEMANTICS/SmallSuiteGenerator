@@ -22,7 +22,10 @@ SAlignerStatementTest >> testAlign: aSTestCase testCaseUsing: dictReferences [
 		equals: previousNumStms - removedVarNames size.
 	varNames := aSTestCase varNames.
 	dictReferences associations
-		select: [ :assoc | assoc value size = 1 ]
+		select: [ :assoc | 
+			| stm |
+			stm := aSTestCase statementAt: assoc key.
+			assoc value size = 1 and: [ stm isNotNil and: [stm isConstructor or: [ stm isPrimitive ]]]]
 		thenDo: [ :assoc | 
 			self
 				deny:
@@ -120,6 +123,102 @@ SAlignerStatementTest >> testAlignMethodStatements [
 		assert: (testCase statementAt: '_var1') asString
 		equals:
 			'_var1 := (SFoo score: 2 ) return: ((Dictionary new) add: (3->3); yourself) .'
+]
+
+{ #category : #tests }
+SAlignerStatementTest >> testAlignMethodStatements2 [
+	| testCase dictReferences |
+	testCase := STestCase new
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #SmallInteger;
+				value: 45);
+		addStatement:
+			(SConstructorStatement new
+				theClassName: 'SStudent';
+				selector: 'name:with:';
+				args: {'Sussy' . '_var0'});
+		addStatement:
+			(SFieldStatement new
+				receiverVarName: '_var1';
+				fieldName: #scoreStudent;
+				returnTypeName: #SmallInteger);
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '_var1';
+				selector: #scoreStudent:;
+				returnTypeName: #ByteString;
+				args: {'_var2'});
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '(SFoo score: ''_var1'' )';
+				selector: #return:;
+				returnTypeName: #ByteString;
+				args: {'_var0'});
+		yourself.
+	dictReferences := Dictionary new
+		at: '_var0' put: {'_var1' . '_var4'};
+		at: '_var1' put: {'_var2' . '_var3' . '_var4'};
+		at: '_var2' put: {'_var3'};
+		yourself.
+	self testAlign: testCase testCaseUsing: dictReferences.
+	self assert: testCase numberOfStatements equals: 5.
+	self
+		assertCollection: (testCase statements collect: #asString)
+		hasSameElements:
+			{'_var0 := 45.' . '_var1 := SStudent name: ''Sussy'' with: ''_var0'' .'.
+			'_var2 := _var1 scoreStudent.' . '_var3 := _var1 scoreStudent: ''_var2'' .'.
+			'_var4 := (SFoo score: ''_var1'' ) return: ''_var0'' .'}
+	"self
+		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames).
+	self
+		assertCollection: dictReferences associations
+		equals:
+			{('_var0'
+				-> (OrderedCollection newFrom: {'_var1' . '_var2' . '_var3'})).
+			('_var1' -> (OrderedCollection newFrom: {'_var2' . '_var3'}))}.
+	testCase := STestCase new
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #ByteString;
+				value: 'Mary';
+				varKeyword: '_bytStr');
+		addStatement:
+			(SConstructorStatement new
+				theClassName: 'SStudent';
+				selector: 'name:';
+				args: {'_bytStr0'});
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '_var1';
+				selector: #return:;
+				returnTypeName: #ByteString;
+				args: {'_bytStr0'});
+		yourself.
+	dictReferences := refactorTest dictReferencesOf: testCase.
+	self
+		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames).
+	testCase := STestCase new
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #ByteString;
+				value: 'Mary';
+				varKeyword: 'otherVar');
+		addStatement:
+			(SConstructorStatement new
+				theClassName: 'SStudent';
+				selector: 'name:';
+				args: {'otherVar0'});
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '_var1';
+				selector: #return:;
+				returnTypeName: #ByteString;
+				args: {'otherVar0'});
+		yourself.
+	dictReferences := refactorTest dictReferencesOf: testCase.
+	self
+		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames)"
 ]
 
 { #category : #tests }

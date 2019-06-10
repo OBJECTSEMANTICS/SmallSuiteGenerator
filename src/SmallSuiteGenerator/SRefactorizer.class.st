@@ -16,12 +16,6 @@ SRefactorizer >> prettyCodeOf: aSTestCase testCaseApplying: kindsRefactoring [
 	(kindsRefactoringToApply isNil
 		or: [ kindsRefactoringToApply isEmpty ])
 		ifTrue: [ kindsRefactoringToApply := self defaultKindsRefactoring ].
-	"self
-		assert:
-			(kindsRefactoring
-				detect: [ :refactor | (refactor selectors includes: #applyOn:) not ]
-				ifFound: [ false ]
-				ifNone: [ true ])."
-	^ kindsRefactoringToApply 
+	^ kindsRefactoringToApply
 		select: [ :refactor | (refactor applyOn: aSTestCase) isNotEmpty ]
 ]

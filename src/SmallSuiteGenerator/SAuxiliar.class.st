@@ -10,9 +10,7 @@ Class {
 { #category : #mutation }
 SAuxiliar class >> change: args argsOf: types typesUsing: aTestCase [
 	| varToChange argsResult varNames |
-	argsResult := args collect: [:arg | arg].
-	"args do: [ :arg | argsResult add: arg ]."
-	"argsResult := args deepCopy."
+	argsResult := args collect: [ :arg | arg ].
 	varToChange := OrderedCollection new.
 	varNames := aTestCase varNames.
 	args
@@ -201,7 +199,6 @@ SAuxiliar class >> reduceLevel [
 SAuxiliar class >> removeOrRepair: args argsOf: aStatement statementWith: varName varNameUsing: aTestCase [
 	| varToDelete replace argsResult |
 	argsResult := args collect: [ :arg | arg ].
-	"argsResult := args deepCopy."
 	varToDelete := OrderedCollection new.
 	replace := Dictionary new.
 	args
@@ -233,14 +230,10 @@ SAuxiliar class >> replace: varName varNameIn: receiver receiverBy: object [
 		ifTrue: [ receiver
 				copyReplaceFrom: index
 				to: index + varName size - 1
-				with: ('', object, '') ]
+				with: '' , object , '' ]
 		ifFalse: [ receiver ] ]
 		on: Exception
-		do: [ "^ receiver isString ifTrue: [ 
-		| index |
-		index := receiver includesSubstring: varName.
-		index > 0 ifTrue: [  ] ifFalse: [ receiver ]	
-	] ifFalse: [ receiver ]" receiver ]
+		do: [ receiver ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -270,7 +263,6 @@ SAuxiliar class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement and
 								createArg: argType
 								before: aTestCase statements size + 1
 								avoiding: nil ] ].
-			"self assert: aArg isNotNil description: 'The arg must not be nil'."
 			resultArgs add: aArg ].
 	^ resultArgs
 ]
@@ -325,7 +317,10 @@ SAuxiliar class >> satisfyParameters: aTestCase with: otherTestCase of: aStateme
 
 { #category : #testing }
 SAuxiliar class >> string: aString equalsOrIncludes: otherString [
-	^ aString = otherString or: [ aString includesSubstring: otherString ]
+	| stringWithDoubleQuotes |
+	stringWithDoubleQuotes := '''', otherString, ''''.
+	^ aString = otherString
+		or: [ (aString splitOn: ' ') detect: [ :subString | subString = otherString or: [ subString = stringWithDoubleQuotes ] ] ifFound: [ true ] ifNone: [ false ] ]
 ]
 
 { #category : #'as yet unclassified' }

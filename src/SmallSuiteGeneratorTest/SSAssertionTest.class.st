@@ -276,8 +276,7 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase generateStatements: 15.
-	"self halt."
-	invariants := testCase generateAssertionsUsing:{}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty.
 	profile := SSGenerator
@@ -288,7 +287,7 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 		onClass: SStack.
 	testCase := STestCase seed: profile.
 	testCase generateStatements: 15.
-	invariants := testCase generateAssertionsUsing:{}.
+	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty
 ]

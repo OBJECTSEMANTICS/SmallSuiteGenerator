@@ -25,7 +25,6 @@ SCleanerStatementTest >> testApplyOnConstructorStatements [
 	self
 		assertCollection: cleanedVarNames
 		hasSameElements: {'_var1' . '_var2' . '_var3'}.
-	"self assert: (cleaner applyOn: testCase)."
 	self
 		deny: (testCase varNames includesAny: {'_var1' . '_var2' . '_var3'}).
 	self assert: testCase numberOfStatements equals: 1.

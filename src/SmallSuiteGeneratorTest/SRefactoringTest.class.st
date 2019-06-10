@@ -93,7 +93,45 @@ SRefactoringTest >> testDictReferencesOfMethodStatements [
 		yourself.
 	dictReferences := refactorTest dictReferencesOf: testCase.
 	self
-		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames)
+		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames).
+	testCase := STestCase new
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #SmallInteger;
+				value: 45);
+		addStatement:
+			(SConstructorStatement new
+				theClassName: 'SStudent';
+				selector: 'name:with:';
+				args: {'Sussy' . '_var0'});
+		addStatement:
+			(SFieldStatement new
+				receiverVarName: '_var1';
+				fieldName: #scoreStudent;
+				returnTypeName: #SmallInteger);
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '_var1';
+				selector: #scoreStudent:;
+				returnTypeName: #ByteString;
+				args: {'_var2'});
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '(SFoo score: ''_var1'' )';
+				selector: #return:;
+				returnTypeName: #ByteString;
+				args: {'_var0'});
+		yourself.
+	dictReferences := refactorTest dictReferencesOf: testCase.
+	self
+		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames).
+	self
+		assertCollection: dictReferences associations
+		hasSameElements:
+			{('_var0' -> (OrderedCollection newFrom: {'_var1' . '_var4'})).
+			('_var1' -> (OrderedCollection
+				newFrom: {'_var2' . '_var3' . '_var4'})).
+			('_var2' -> (OrderedCollection newFrom: {'_var3'}))}
 ]
 
 { #category : #tests }

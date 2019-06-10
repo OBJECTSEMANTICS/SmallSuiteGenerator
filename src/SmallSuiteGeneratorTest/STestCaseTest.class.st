@@ -197,10 +197,10 @@ STestCaseTest class >> listTestCaseSStudent [
 STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
 	| selectedStatements |
 	selectedStatements := aTestCase statements select: selector.
-	selectedStatements detect: [ :aStm | aStm args includesAnyOf: varNames ]
-	ifFound: [ ^ true ]
-	ifNone: [ ^ false ].
-	"^ (aTestCase statements select: selector thenCollect: #args) includes: varNames"
+	selectedStatements
+		detect: [ :aStm | aStm args includesAnyOf: varNames ]
+		ifFound: [ ^ true ]
+		ifNone: [ ^ false ]
 ]
 
 { #category : #'mutation-change' }
@@ -239,18 +239,7 @@ STestCaseTest >> assertRemove: listTestCase [
 	removedVarNames := testCase remove.
 	(removedVarNames isNotNil and: [ removedVarNames isNotEmpty ])
 		ifFalse: [ self assert: false ]
-		ifTrue: [
-			self assert: testCase hasValidDependencies.
-			 "| varNames referencedArgs |
-			varNames := testCase varNames.
-			referencedArgs := OrderedCollection new.
-			testCase statements
-				select: [ :aStm | aStm isConstructor or: [ aStm isMethod ] ]
-				thenDo: [ :aStm | referencedArgs addAll: aStm args ].
-			removedVarNames
-				do: [ :varName | 
-					self deny: (varNames includes: varName).
-					self deny: (referencedArgs includes: varName) ]" ]
+		ifTrue: [ self assert: testCase hasValidDependencies ]
 ]
 
 { #category : #'mutation-change' }
@@ -560,19 +549,15 @@ STestCaseTest >> testInsertParameterRoassal [
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertRandomCall [
 	| profile testCase stm varNames |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	self assert: (testCase insert: #insertRandomCallUsing:)isNil.
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	self assert: (testCase insert: #insertRandomCallUsing:) isNil.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	varNames := (testCase insert: #insertRandomCallUsing:).
+	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 2.
 	self assertCollection: varNames equals: {'_var2' . '_var3'}.
 	profile := SSGenerator
@@ -585,11 +570,8 @@ STestCaseTest >> testInsertRandomCall [
 	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 3.
 	self assert: (varNames includesAny: {'_var3' . '_var4'}).
-	"self assert: (testCase statementAt: '_var3') isPrimitive."
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isField or: [ stm isConstructor ]).
-	"stm := testCase statementAt: varNames.
-	self assert: (stm isConstructor or: [ stm isField ])."
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.

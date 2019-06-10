@@ -58,5 +58,5 @@ SRenamerVariable class >> nameBasedOnType: aStatement [
 SRenamerVariable class >> subStringOf: string stringTo: limit [
 	^ [ string copyFrom: 1 to: limit ]
 		on: Exception
-		do: [ string copyFrom: 1 to: limit size ]
+		do: [ string copyFrom: 1 to: string size ]
 ]

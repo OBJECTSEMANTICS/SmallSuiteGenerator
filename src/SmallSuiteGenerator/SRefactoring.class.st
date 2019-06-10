@@ -29,6 +29,7 @@ SRefactoring class >> dictReferencesOf: aSTestCase [
 	| dictReferences varNames |
 	dictReferences := OrderedDictionary new.
 	varNames := aSTestCase varNames.
+	
 	aSTestCase statements
 		do: [ :aStatement | 
 			(aStatement dependenciesConsidering: varNames)
@@ -36,8 +37,11 @@ SRefactoring class >> dictReferencesOf: aSTestCase [
 					dictReferences
 						at: varName
 						ifPresent: [ :value | value add: aStatement varName ]
-						ifAbsent: [ dictReferences at: varName put: (OrderedCollection new
-								add: aStatement varName;
-								yourself) ] ] ].
+						ifAbsent: [ dictReferences
+								at: varName
+								put:
+									(OrderedCollection new
+										add: aStatement varName;
+										yourself) ] ] ].
 	^ dictReferences
 ]

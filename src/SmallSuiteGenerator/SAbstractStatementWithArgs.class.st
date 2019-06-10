@@ -21,11 +21,7 @@ SAbstractStatementWithArgs >> alternativeMethodIn: methods [
 SAbstractStatementWithArgs >> argToString: aArg [
 	^ (references isNotNil and: [ references includes: aArg ])
 		ifTrue: [ aArg asString ]
-		ifFalse: [ "aArg isLiteral
-				ifTrue: [ aArg ]
-				ifFalse: [ (SAuxiliar isVeryDeep: aArg)
-						ifTrue: [ '' ]
-						ifFalse: [" aArg storeString	" ] ]" ]
+		ifFalse: [ aArg storeString ]
 ]
 
 { #category : #accessing }
@@ -96,10 +92,6 @@ SAbstractStatementWithArgs >> replace: varName varNameBy: object [
 	index = 0
 		ifTrue: [ ^ self ].
 	args at: index put: object
-	"last := args size.
-	index ~= last
-		ifTrue: [ args at: index put: stmToReplace valueInline ]
-		ifFalse: [ args at: index put: stmToReplace ]"
 ]
 
 { #category : #accessing }

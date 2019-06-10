@@ -10,7 +10,10 @@ SAlignerStatement class >> align: aSTestCase testCaseUsing: dictReferences [
 	varNamesToRemove := Set new.
 	removedVarNames := OrderedCollection new.
 	dictReferences associations
-		select: [ :assoc | assoc value size = 1 ]
+		select: [ :assoc | 
+			| stm |
+			stm := aSTestCase statementAt: assoc key.
+			assoc value size = 1 and: [ stm isConstructor or: [ stm isPrimitive ] ] ]
 		thenDo: [ :assoc | 
 			varNamesToRemove add: assoc key.
 			(aSTestCase statementAt: assoc value first)

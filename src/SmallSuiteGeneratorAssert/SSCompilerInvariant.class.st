@@ -40,9 +40,6 @@ SSCompilerInvariant >> executeMethodUsing: aTestCase testCaseAnd: classInvariant
 	testCase := aTestCase.
 	invariants := classInvariants.
 	^ self compiledTest
-	"^ [ self compiledTest ]
-		on: Exception
-		do: [ #() ]"
 ]
 
 { #category : #initialization }

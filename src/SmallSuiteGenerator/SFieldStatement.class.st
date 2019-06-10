@@ -57,7 +57,8 @@ SFieldStatement >> createNewStatement [
 { #category : #'as yet unclassified' }
 SFieldStatement >> dependenciesConsidering: varNames [
 	^ varNames
-		detect: [ :varName | SAuxiliar string: receiverVarName equalsOrIncludes: varName "varName = receiverVarName" ]
+		detect:
+			[ :varName | SAuxiliar string: receiverVarName equalsOrIncludes: varName ]
 		ifFound: [ :varName | {varName} ]
 		ifNone: [ {} ]
 ]
@@ -157,16 +158,13 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> replace: varName varNameBy: object [
-	receiverVarName := receiverVarName = varName
+	receiverVarName := (receiverVarName = varName
+		and: [ object isString ])
 		ifTrue: [ SAuxiliar transformReplacement: object ]
 		ifFalse: [ SAuxiliar
 				replace: varName
 				varNameIn: receiverVarName
-				receiverBy: object
-			"| index |
-			index := 
-			(receiverVarName indexOfSubCollection: varName) > 0
-				ifTrue: [ receiverVarName replace: varName with: object ]" ]
+				receiverBy: object ]
 ]
 
 { #category : #'as yet unclassified' }
