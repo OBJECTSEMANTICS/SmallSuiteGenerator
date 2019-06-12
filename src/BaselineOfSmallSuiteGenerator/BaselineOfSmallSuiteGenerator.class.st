@@ -11,7 +11,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		for: #common
 		do: [ spec
 				baseline: 'Spy2'
-				with: [ spec repository: 'github://ObjectProfile/Spy2/src' ].
+				with: [ spec repository: 'github://ObjectProfile/Spy2:v1.0/src' ].
 			spec
 				baseline: 'SBTestCoverage'
 				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
