@@ -18,7 +18,7 @@ SConstructorStatement >> changeUsing: aTestCase [
 	newArgs := self newArgsOf: aTestCase using: method.
 	(aTestCase statementAt: self varName)
 		args: newArgs;
-		selector: method selector.
+		selector: method selector. "revisar si es mejor poner solo selector"
 	^ newArgs
 ]
 
