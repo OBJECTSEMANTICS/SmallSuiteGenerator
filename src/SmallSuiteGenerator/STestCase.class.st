@@ -469,10 +469,10 @@ STestCase >> methodsOrAccessors: aStatement toSelect: aBoolean [
 { #category : #generation }
 STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 	| selected args selector |
-	methodList
-		ifEmpty: [ args := #().
+	(methodList isEmpty or: [ methodList first isQuick ])
+		ifTrue: [ args := #().
 			selector := 'new' ]
-		ifNotEmpty: [ selected := methodList shuffle anyOne.
+		ifFalse: [ selected := methodList shuffle anyOne.
 			args := selected argTypes
 				collect: [ :class | 
 					varName
@@ -521,12 +521,13 @@ STestCase >> profile: anObject [
 
 { #category : #mutation }
 STestCase >> remove [
+	"If other statements refer the statement to remove, then this reference is replaced with another value out of the set which has the same type"
+
 	statements ifEmpty: [ ^ #() ].
-	 ^ self
-				remove:
-					(statements
-						at: (SAuxiliar randomNumberFrom: 1 to: statements size))
-						varName
+	^ self
+		remove:
+			(statements at: (SAuxiliar randomNumberFrom: 1 to: statements size))
+				varName
 ]
 
 { #category : #mutation }

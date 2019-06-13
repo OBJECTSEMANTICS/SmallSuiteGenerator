@@ -69,6 +69,14 @@ SGACrossoverOperationTest >> testCrossOverToSStudent [
 ]
 
 { #category : #tests }
+SGACrossoverOperationTest >> testCrossOverToSStudent2 [
+	self
+		testCrossOver: SUtilityTest listTestCaseSStudentGeneratedManually.
+	self
+		testCrossOverWithMutation: SUtilityTest listTestCaseSStudentGeneratedManually
+]
+
+{ #category : #tests }
 SGACrossoverOperationTest >> testCrossOverWithMutation2: listTestCase [
 	| offSprings offSpring1 offSpring2 |
 	self assert: listTestCase size >= 2.

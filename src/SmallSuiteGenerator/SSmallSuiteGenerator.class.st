@@ -115,7 +115,7 @@ SSmallSuiteGenerator >> numberOfStatements: aInt [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> pupulationSize: aInt [
+SSmallSuiteGenerator >> populationSize: aInt [
 	engine populationSize: aInt
 ]
 

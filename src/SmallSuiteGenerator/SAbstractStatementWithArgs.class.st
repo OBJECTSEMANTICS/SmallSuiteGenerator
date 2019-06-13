@@ -47,6 +47,12 @@ SAbstractStatementWithArgs >> createNewStatement [
 		yourself
 ]
 
+{ #category : #initialization }
+SAbstractStatementWithArgs >> initialize [ 	
+	super initialize.
+	args := #()
+]
+
 { #category : #'as yet unclassified' }
 SAbstractStatementWithArgs >> insertParameterUsing: aTestCase [
 	"insert its parameters"
