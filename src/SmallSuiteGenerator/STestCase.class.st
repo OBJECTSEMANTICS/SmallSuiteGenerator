@@ -8,7 +8,8 @@ Class {
 		'dictSubclasses',
 		'fitness',
 		'nextId',
-		'allowNullParameters'
+		'allowNullParameters',
+		'refactorizer'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -332,9 +333,9 @@ STestCase >> fitness [
 ]
 
 { #category : #'as yet unclassified' }
-STestCase >> generateInvariants: classInvariants [
+STestCase >> generateAssertionsUsing: classInvariants [
 	^ generatorInvariant
-		generateInvariantsOf: self
+		generateAssertionsOf: self
 		testCaseUsing: classInvariants
 ]
 
@@ -379,7 +380,8 @@ STestCase >> initialize [
 	statements := OrderedCollection new.
 	generatorInvariant := SSGeneratorInvariant new.
 	dictSubclasses := Dictionary new.
-	allowNullParameters := false
+	allowNullParameters := false.
+	refactorizer := SRefactorizer new
 ]
 
 { #category : #'accessing untypeable characters' }
@@ -446,12 +448,13 @@ STestCase >> insert: aStatement statementWithArgsBefore: varName [
 { #category : #'as yet unclassified' }
 STestCase >> insertRandomStatement [
 	| varNamesInserted |
-	#(#insertRandomCallUsing: #insertMethodCallUsing: #insertParameterUsing:) shuffle
+	#(#insertRandomCallUsing: #insertMethodCallUsing: #insertParameterUsing:)
+		shuffle
 		detect: [ :selector | 
 			varNamesInserted := self insert: selector.
 			varNamesInserted isNotNil ]
 		ifFound: [ ^ varNamesInserted ]
-		ifNone: [ ^ -1 ]
+		ifNone: [ ^ nil ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -466,10 +469,10 @@ STestCase >> methodsOrAccessors: aStatement toSelect: aBoolean [
 { #category : #generation }
 STestCase >> newConstructorStatement: classSpy of: methodList before: varName [
 	| selected args selector |
-	methodList
-		ifEmpty: [ args := #().
+	(methodList isEmpty or: [ methodList first isQuick ])
+		ifTrue: [ args := #().
 			selector := 'new' ]
-		ifNotEmpty: [ selected := methodList shuffle anyOne.
+		ifFalse: [ selected := methodList shuffle anyOne.
 			args := selected argTypes
 				collect: [ :class | 
 					varName
@@ -493,6 +496,11 @@ STestCase >> numberOfStatements [
 	^ statements size
 ]
 
+{ #category : #'as yet unclassified' }
+STestCase >> prettyCodeApplying: kindsRefactoring [
+	^ refactorizer prettyCodeOf: self testCaseApplying: kindsRefactoring 
+]
+
 { #category : #printing }
 STestCase >> printOn: aStream [
 	statements
@@ -513,12 +521,13 @@ STestCase >> profile: anObject [
 
 { #category : #mutation }
 STestCase >> remove [
+	"If other statements refer the statement to remove, then this reference is replaced with another value out of the set which has the same type"
+
 	statements ifEmpty: [ ^ #() ].
-	 ^ self
-				remove:
-					(statements
-						at: (SAuxiliar randomNumberFrom: 1 to: statements size))
-						varName
+	^ self
+		remove:
+			(statements at: (SAuxiliar randomNumberFrom: 1 to: statements size))
+				varName
 ]
 
 { #category : #mutation }

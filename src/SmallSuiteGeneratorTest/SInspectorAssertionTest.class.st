@@ -34,7 +34,7 @@ SInspectorAssertionTest >> testPrintString [
 
 { #category : #tests }
 SInspectorAssertionTest >> testPrintStringRTLineSegment [
-	| assertions result possibleResults profile testCase |
+	| assertions profile testCase |
 	profile := SSGenerator
 		profile: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 				angleInDeg;
@@ -49,12 +49,5 @@ SInspectorAssertionTest >> testPrintStringRTLineSegment [
 		applyOn: 'rtLine'
 		with: (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 		of: testCase.
-	self assert: assertions first printString isNotEmpty.
-	"possibleResults := OrderedCollection new
-		add: 'self assert: rtLine a equals: 4';
-		add: 'self assert: foo returnString equals: ''Hello''';
-		add: 'self assert: foo returnFloat equals: 2.3';
-		add: 'self assert: foo score equals: 0';
-		yourself.
-	self assert: (possibleResults includes: result)"
+	self assert: assertions first printString isNotEmpty
 ]

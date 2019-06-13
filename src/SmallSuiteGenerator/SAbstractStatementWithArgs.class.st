@@ -41,10 +41,16 @@ SAbstractStatementWithArgs >> changeUsing: aTestCase [
 
 { #category : #private }
 SAbstractStatementWithArgs >> createNewStatement [
-	^ (self class create)
-		args: self args;
+	^ super createNewStatement 
+		args: self args copy;
 		selector: self selector;
 		yourself
+]
+
+{ #category : #initialization }
+SAbstractStatementWithArgs >> initialize [ 	
+	super initialize.
+	args := #()
 ]
 
 { #category : #'as yet unclassified' }
@@ -83,6 +89,15 @@ SAbstractStatementWithArgs >> repairOn: aTestCase changing: aStatement [
 	self varName = aStatement varName
 		ifFalse: [ ^ #() ].
 	^ self changeUsing: aTestCase.
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractStatementWithArgs >> replace: varName varNameBy: object [
+	| index |
+	index := args indexOf: varName.
+	index = 0
+		ifTrue: [ ^ self ].
+	args at: index put: object
 ]
 
 { #category : #accessing }

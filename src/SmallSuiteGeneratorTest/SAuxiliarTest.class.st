@@ -87,6 +87,15 @@ SAuxiliarTest >> testDefaultConstructor [
 ]
 
 { #category : #tests }
+SAuxiliarTest >> testIsVeryDeep [
+	self assert: (SAuxiliar isVeryDeep: RTView new).
+	self deny: (SAuxiliar isVeryDeep: 1).
+	self deny: (SAuxiliar isVeryDeep: (OrderedCollection new addAll: {3. 6. 6. 7. -1. 0}; yourself)).
+	self deny: (SAuxiliar isVeryDeep: RTAMItem new).
+	self assert: (SAuxiliar isVeryDeep: RTViewForSpec)
+]
+
+{ #category : #tests }
 SAuxiliarTest >> testPositionToInsertAfterIndexStatement [
 	| testCase methodStatement positionConstructor positionToInsert|
 	testCase := SStatementTest testCaseSStack.

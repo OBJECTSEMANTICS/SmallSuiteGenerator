@@ -29,3 +29,15 @@ SExtensionsTest >> testMutateToChange [
 		assert: self createStudent mutateToChange storeString
 		equals: self createStudent storeString
 ]
+
+{ #category : #tests }
+SExtensionsTest >> testStoreString [
+	self assert: 1 storeString equals: '1'.
+	self assert: 4.6 storeString equals: '4.6'.
+	self assert: true storeString equals: 'true'.
+	self assert: false storeString equals: 'false'.
+	self assert: 'hello' storeString equals: '''hello'''.
+	self assert: $d storeString equals: '$d'.
+	self assert: (SSTeacher new name: 'Mary') storeString isNotEmpty.
+	self assert: RTView new storeString isNotEmpty
+]

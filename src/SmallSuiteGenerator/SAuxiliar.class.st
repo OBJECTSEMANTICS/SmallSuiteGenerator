@@ -1,13 +1,16 @@
 Class {
 	#name : #SAuxiliar,
 	#superclass : #Object,
+	#classInstVars : [
+		'level'
+	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #mutation }
-SAuxiliar class >> change: args ofTypes: types using: aTestCase [
+SAuxiliar class >> change: args argsOf: types typesUsing: aTestCase [
 	| varToChange argsResult varNames |
-	argsResult := args deepCopy.
+	argsResult := args collect: [ :arg | arg ].
 	varToChange := OrderedCollection new.
 	varNames := aTestCase varNames.
 	args
@@ -16,7 +19,11 @@ SAuxiliar class >> change: args ofTypes: types using: aTestCase [
 				ifTrue: [ varToChange add: aArg ]
 				ifFalse: [ argsResult
 						at: index
-						put: (self changeAndTransform: aArg ofType: (types at: index) using: aTestCase) ] ].
+						put:
+							(self
+								changeAndTransform: aArg
+								ofType: (types at: index)
+								using: aTestCase) ] ].
 	^ {argsResult.
 	varToChange}
 ]
@@ -85,6 +92,19 @@ SAuxiliar class >> createStatementOf: aClassName typeIn: testCase testCaseUsing:
 	^ self valueOf: aClassName typeIn: testCase testCaseUsing: dictionary
 ]
 
+{ #category : #testing }
+SAuxiliar class >> deepOf: aObject objectGreaterThan: level [
+	level < 0
+		ifTrue: [ ^ true ].
+	aObject class instSize = 0
+		ifTrue: [ ^ false ].
+	1 to: aObject class instSize do: [ :n | 
+		(self deepOf: (aObject instVarAt: n) objectGreaterThan: level - 1)
+			ifTrue: [
+				^ true ] ].
+	^ false
+]
+
 { #category : #generation }
 SAuxiliar class >> defaultConstructor: classSpy [
 	"returns a new constructor with the selector 'new'"
@@ -93,6 +113,26 @@ SAuxiliar class >> defaultConstructor: classSpy [
 		selector: 'new';
 		args: #();
 		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> initLevel: aInt [
+	level := aInt
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> initLevelDefault [
+	level := 10
+]
+
+{ #category : #testing }
+SAuxiliar class >> isVeryDeep: aObject [
+	^ self deepOf: aObject objectGreaterThan: 3
+]
+
+{ #category : #accessing }
+SAuxiliar class >> level [ 
+	^ level
 ]
 
 { #category : #'as yet unclassified' }
@@ -150,10 +190,15 @@ SAuxiliar class >> randomValueCharacter: aCharacter [
 	^ value
 ]
 
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> reduceLevel [
+	level := level - 1.
+]
+
 { #category : #removing }
 SAuxiliar class >> removeOrRepair: args argsOf: aStatement statementWith: varName varNameUsing: aTestCase [
 	| varToDelete replace argsResult |
-	argsResult := args deepCopy.
+	argsResult := args collect: [ :arg | arg ].
 	varToDelete := OrderedCollection new.
 	replace := Dictionary new.
 	args
@@ -175,6 +220,20 @@ SAuxiliar class >> removeOrRepair: args argsOf: aStatement statementWith: varNam
 				collect: [ :arg | replace at: arg ifAbsent: [ arg ] ] ].
 	^ {argsResult.
 	varToDelete}
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> replace: varName varNameIn: receiver receiverBy: object [
+	^ [ | index |
+	index := receiver indexOfSubCollection: '' , varName , ''.
+	index > 0
+		ifTrue: [ receiver
+				copyReplaceFrom: index
+				to: index + varName size - 1
+				with: '' , object , '' ]
+		ifFalse: [ receiver ] ]
+		on: Exception
+		do: [ receiver ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -204,7 +263,6 @@ SAuxiliar class >> satisfyArgs: aTestCase with: otherTestCase of: aStatement and
 								createArg: argType
 								before: aTestCase statements size + 1
 								avoiding: nil ] ].
-			self assert: aArg isNotNil description: 'The arg must not be nil'.
 			resultArgs add: aArg ].
 	^ resultArgs
 ]
@@ -257,6 +315,26 @@ SAuxiliar class >> satisfyParameters: aTestCase with: otherTestCase of: aStateme
 	^ false
 ]
 
+{ #category : #testing }
+SAuxiliar class >> string: aString equalsOrIncludes: otherString [
+	| stringWithDoubleQuotes |
+	stringWithDoubleQuotes := '''', otherString, ''''.
+	^ aString = otherString
+		or: [ (aString splitOn: ' ') detect: [ :subString | subString = otherString or: [ subString = stringWithDoubleQuotes ] ] ifFound: [ true ] ifNone: [ false ] ]
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> transformReplacement: object [
+	^ (object isString and: [ object beginsWith: '_' ])
+		ifTrue: [ object ]
+		ifFalse: [ self transformToVar: object ]
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> transformToVar: aString [
+	^ '(' , aString , ')'
+]
+
 { #category : #'as yet unclassified' }
 SAuxiliar class >> typeNameArgsOf: selector selectorIn: aClassName classNameUsing: aTestCase [
 	(aTestCase profile >> aClassName) methods
@@ -307,7 +385,7 @@ SAuxiliar class >> valueOf: aClassName typeIn: testCase testCaseUsing: aDictiona
 		ifAbsent: [ | classes |
 			testCase dictSubclasses
 				at: aClassName
-				ifPresent: [ :value | classes := value ]
+				ifPresent: [ :value | classes := (value asArray), { aClassName } ]
 				ifAbsent: [ 
 					classes := (Smalltalk classNamed: aClassName) subclasses
 						collect: [ :aClass | aClass name ].

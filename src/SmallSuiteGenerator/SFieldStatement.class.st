@@ -47,7 +47,7 @@ SFieldStatement >> changeUsing: aTestCase [
 
 { #category : #private }
 SFieldStatement >> createNewStatement [
-	^ (self class create)
+	^ super createNewStatement 
 		fieldName: self fieldName;
 		receiverVarName: self receiverVarName;
 		returnTypeName: self returnTypeName;
@@ -56,7 +56,11 @@ SFieldStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SFieldStatement >> dependenciesConsidering: varNames [
-	^ {receiverVarName}
+	^ varNames
+		detect:
+			[ :varName | SAuxiliar string: receiverVarName equalsOrIncludes: varName ]
+		ifFound: [ :varName | {varName} ]
+		ifNone: [ {} ]
 ]
 
 { #category : #accessing }
@@ -150,6 +154,17 @@ SFieldStatement >> repairOn: aTestCase deleting: aStatement [
 		ifNotNil: [ (aTestCase statementAt: self varName)
 				receiverVarName: constructStatement varName ].
 	^ varNamesToDelete
+]
+
+{ #category : #'as yet unclassified' }
+SFieldStatement >> replace: varName varNameBy: object [
+	receiverVarName := (receiverVarName = varName
+		and: [ object isString ])
+		ifTrue: [ SAuxiliar transformReplacement: object ]
+		ifFalse: [ SAuxiliar
+				replace: varName
+				varNameIn: receiverVarName
+				receiverBy: object ]
 ]
 
 { #category : #'as yet unclassified' }

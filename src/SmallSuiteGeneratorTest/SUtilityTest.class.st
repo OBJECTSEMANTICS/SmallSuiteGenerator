@@ -5,9 +5,17 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SUtilityTest class >> generateTestCase: aBlock with: aClass [
+SUtilityTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
 	| profile testCase |
 	profile := SSGenerator profile: aBlock onClass: aClass.
+	testCase := STestCase seed: profile.
+	^ testCase
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTest class >> generateTestSuiteOf: aBlock blockOnPackagesMatching: regex [
+	| profile testCase |
+	profile := SSGenerator profile: aBlock onPackagesMatching: regex.
 	testCase := STestCase seed: profile.
 	^ testCase
 ]
@@ -18,34 +26,34 @@ SUtilityTest class >> listTestCase [
 	list := OrderedCollection new.
 	list
 		add:
-			(self generateTestCase: [ SFoo score: 34 ] with: SFoo)
+			(self generateTestSuiteOf: [ SFoo score: 34 ] blockOnClass: SFoo)
 				generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) score ] with: SFoo)
+			(self generateTestSuiteOf: [ (SFoo score: 2) score ] blockOnClass: SFoo)
 				generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) return: 2 ] with: SFoo)
+			(self generateTestSuiteOf: [ (SFoo score: 2) return: 2 ] blockOnClass: SFoo)
 				generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SStudent name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
 						name;
 						nickname;
 						id ]
-				with: SStudent) generateStatements;
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SStudent name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
 						age: 34;
 						identifier;
 						nickname: 'Ann34';
 						fullIdentifier ]
-				with: SStudent) generateStatements;
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ SStudent name: 'Peter'.
+				generateTestSuiteOf: [ SStudent name: 'Peter'.
 					SStudent name: 'Ann' with: 2 ]
-				with: SStudent) generateStatements.
+				blockOnClass: SStudent) generateStatements.
 	^ list
 ]
 
@@ -56,26 +64,26 @@ SUtilityTest class >> listTestCaseRTAMItem [
 	list
 		add:
 			(self
-				generateTestCase: [ RTAMItem basicNew
+				generateTestSuiteOf: [ RTAMItem basicNew
 						itemName: 'Bonus Card';
 						color: Color lightCyan ]
-				with: RTAMItem) generateStatements;
+				blockOnClass: RTAMItem) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTAMItem basicNew
+				generateTestSuiteOf: [ RTAMItem basicNew
 						itemName: 'Contract Management';
 						row: 'Australia';
 						column: 'Corporate Services';
 						color: Color red ]
-				with: RTAMItem) generateStatements;
+				blockOnClass: RTAMItem) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTAMItem basicNew
+				generateTestSuiteOf: [ RTAMItem basicNew
 						itemName: 'Bonus Card';
 						row: 'France';
 						column: 'Customer Relationship';
 						color: Color lightGreen ]
-				with: RTAMItem) generateStatements.
+				blockOnClass: RTAMItem) generateStatements.
 	^ list
 ]
 
@@ -86,16 +94,16 @@ SUtilityTest class >> listTestCaseRTBorderAttachPoint [
 	list
 		add:
 			(self
-				generateTestCase: [ RTBorderAttachPoint instance offset: 4 ]
-				with: RTBorderAttachPoint) generateStatements;
+				generateTestSuiteOf: [ RTBorderAttachPoint instance offset: 4 ]
+				blockOnClass: RTBorderAttachPoint) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTBorderAttachPoint instance offset: 19 ]
-				with: RTBorderAttachPoint) generateStatements;
+				generateTestSuiteOf: [ RTBorderAttachPoint instance offset: 19 ]
+				blockOnClass: RTBorderAttachPoint) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTBorderAttachPoint instance offset: 4 ]
-				with: RTBorderAttachPoint) generateStatements.
+				generateTestSuiteOf: [ RTBorderAttachPoint instance offset: 4 ]
+				blockOnClass: RTBorderAttachPoint) generateStatements.
 	^ list
 ]
 
@@ -106,20 +114,20 @@ SUtilityTest class >> listTestCaseRTBox [
 	list
 		add:
 			(self
-				generateTestCase: [ RTBox instance
+				generateTestSuiteOf: [ RTBox instance
 						defaultWidth;
 						borderStyle ]
-				with: RTBox) generateStatements;
+				blockOnClass: RTBox) generateStatements;
 		add:
-			(self generateTestCase: [ RTBox instance borderStyle ] with: RTBox)
+			(self generateTestSuiteOf: [ RTBox instance borderStyle ] blockOnClass: RTBox)
 				generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTBox instance
+				generateTestSuiteOf: [ RTBox instance
 						defaultWidth;
 						height;
 						borderStyle ]
-				with: RTBox) generateStatements.
+				blockOnClass: RTBox) generateStatements.
 	^ list
 ]
 
@@ -130,18 +138,18 @@ SUtilityTest class >> listTestCaseRTDirectedLine [
 	list
 		add:
 			(self
-				generateTestCase: [ RTDirectedLine instance offset: 6.5 ]
-				with: RTDirectedLine) generateStatements;
+				generateTestSuiteOf: [ RTDirectedLine instance offset: 6.5 ]
+				blockOnClass: RTDirectedLine) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
-				with: RTDirectedLine) generateStatements;
+				generateTestSuiteOf: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
+				blockOnClass: RTDirectedLine) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTDirectedLine instance
+				generateTestSuiteOf: [ RTDirectedLine instance
 						offset: 56;
 						offset: 2.4 ]
-				with: RTDirectedLine) generateStatements.
+				blockOnClass: RTDirectedLine) generateStatements.
 	^ list
 ]
 
@@ -152,25 +160,25 @@ SUtilityTest class >> listTestCaseRTLineSegment [
 	list
 		add:
 			(self
-				generateTestCase: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
-				with: RTLineSegment) generateStatements;
+				generateTestSuiteOf: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
+				blockOnClass: RTLineSegment) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
+				generateTestSuiteOf: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
 						from;
 						to;
 						a;
 						b;
 						c ]
-				with: RTLineSegment) generateStatements;
+				blockOnClass: RTLineSegment) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+				generateTestSuiteOf: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 						angleInDeg;
 						angleInRad;
 						cotan;
 						bottom ]
-				with: RTLineSegment) generateStatements.
+				blockOnClass: RTLineSegment) generateStatements.
 	^ list
 ]
 
@@ -180,15 +188,15 @@ SUtilityTest class >> listTestCaseSFoo [
 	list := OrderedCollection new.
 	list
 		add:
-			(self generateTestCase: [ SFoo score: 34 ] with: SFoo)
+			(self generateTestSuiteOf: [ SFoo score: 34 ] blockOnClass: SFoo)
 				generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) score ] with: SFoo)
+			(self generateTestSuiteOf: [ (SFoo score: 2) score ] blockOnClass: SFoo)
 				generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SFoo score: 2) return: 2 ]
-				with: SFoo) generateStatements.
+				generateTestSuiteOf: [ (SFoo score: 2) return: 2 ]
+				blockOnClass: SFoo) generateStatements.
 	^ list
 ]
 
@@ -199,20 +207,20 @@ SUtilityTest class >> listTestCaseSSTeacher [
 	list
 		add:
 			(self
-				generateTestCase: [ (SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5 ]
-				with: SSTeacher) generateStatements;
+				generateTestSuiteOf: [ (SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5 ]
+				blockOnClass: SSTeacher) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SSTeacher name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-				with: SSTeacher) generateStatements;
+				blockOnClass: SSTeacher) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SSTeacher name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SSTeacher name: 'Ann' with: 34)
 				age: 34;
 				identifier;
 				nickname: 'Ann34';
@@ -220,7 +228,7 @@ SUtilityTest class >> listTestCaseSSTeacher [
 				name;
 				id;
 				nickname ]
-				with: SSTeacher) generateStatements.
+				blockOnClass: SSTeacher) generateStatements.
 	^ list
 ]
 
@@ -231,20 +239,20 @@ SUtilityTest class >> listTestCaseSStack [
 	list
 		add:
 			((self
-				generateTestCase: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				generateTestSuiteOf: [ (SStack newStackWith: {2 . 4 . 6 . 1})
 						push: 8;
 						pop;
 						top ]
-				with: SStack) generateStatements:10);
+				blockOnClass: SStack) generateStatements:10);
 		add:
-			((self generateTestCase: [ SStack newStack push: 2 ] with: SStack)
+			((self generateTestSuiteOf: [ SStack newStack push: 2 ] blockOnClass: SStack)
 				generateStatements: 10);
 		add:
 			((self
-				generateTestCase: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				generateTestSuiteOf: [ (SStack newStackWith: {2 . 4 . 6 . 1})
 						pop;
 						top ]
-				with: SStack) generateStatements:10).
+				blockOnClass: SStack) generateStatements:10).
 	^ list
 ]
 
@@ -255,26 +263,106 @@ SUtilityTest class >> listTestCaseSStudent [
 	list
 		add:
 			(self
-				generateTestCase: [ SStudent new
+				generateTestSuiteOf: [ SStudent new
 						name: 'Peter';
 						nickname: 'peter';
 						scoreStudent: 5 ]
-				with: SStudent) generateStatements;
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SStudent name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
 						age: 34;
 						identifier;
 						nickname: 'Ann34';
 						fullIdentifier ]
-				with: SStudent) generateStatements;
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SStudent name: 'Jane')
+				generateTestSuiteOf: [ (SStudent name: 'Jane')
 						age: 19;
 						identifier;
 						nickname: 'Jane5';
 						fullIdentifier ]
-				with: SStudent) generateStatements.
+				blockOnClass: SStudent) generateStatements.
 	^ list
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTest class >> listTestCaseSStudentGeneratedManually [
+	^ {(STestCase new
+				addStatement:
+					(SConstructorStatement new
+						theClassName: #SStudent;
+						selector: 'new');
+				addStatement:
+					(SPrimitiveStatement new
+						returnTypeName: #ByteString;
+						value: 'Sophie');
+				addStatement:
+					(SFieldStatement new
+						returnTypeName: #SmallInteger;
+						fieldName: #idStudent;
+						receiverVarName: '_var0');
+				addStatement:
+					(SMethodStatement new
+						returnTypeName: #SStudent;
+						selector: #scoreStudent:;
+						receiverVarName: '_var0';
+						args: #(36));
+				addStatement:
+					(SConstructorStatement new
+						theClassName: #SStudent;
+						selector: 'new');
+				addStatement:
+					(SFieldStatement new
+						returnTypeName: #SmallInteger;
+						fieldName: #scoreStudent;
+						receiverVarName: '_var4');
+				addStatement:
+					(SMethodStatement new
+						returnTypeName: #ByteString;
+						selector: #nickname;
+						receiverVarName: '_var4');
+				profile:
+					(SSGenerator
+						profile: [ (SStudent name: 'Sophie')
+								scoreStudent: 45;
+								scoreStudent;
+								idStudent;
+								nickname;
+								yourself ]
+						onClass: SStudent);
+				yourself).
+			(STestCase new
+				addStatement:
+					(SPrimitiveStatement new
+						returnTypeName: #SmallInteger;
+						value: 36);
+				addStatement:
+					(SConstructorStatement new
+						theClassName: #SStudent;
+						selector: 'new');
+				addStatement:
+					(SMethodStatement new
+						returnTypeName: #SStudent;
+						selector: #scoreStudent:;
+						receiverVarName: '_var1';
+						args: #('_var0'));
+				addStatement:
+					(SConstructorStatement new
+						theClassName: #SStudent;
+						selector: 'new');
+				addStatement:
+					(SFieldStatement new
+						returnTypeName: #SmallInteger;
+						fieldName: #idStudent;
+						receiverVarName: '_var3');
+				profile:
+					(SSGenerator
+						profile: [ (SStudent name: 'Sophie' with: 45)
+								scoreStudent: 36;
+								idStudent;
+								yourself ]
+						onClass: SStudent);
+				yourself)}
 ]

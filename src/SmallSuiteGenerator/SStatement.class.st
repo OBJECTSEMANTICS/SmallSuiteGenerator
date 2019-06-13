@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'id',
-		'returnTypeName'
+		'returnTypeName',
+		'keyword'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -28,7 +29,15 @@ SStatement >> cleanId [
 
 { #category : #private }
 SStatement >> createNewStatement [
-	^ self subclassResponsibility
+	^ self class create varKeyword: keyword
+]
+
+{ #category : #copying }
+SStatement >> deepCopy [
+	| new |
+	new := self createNewStatement.
+	new id: self id.
+	^ new
 ]
 
 { #category : #'as yet unclassified' }
@@ -44,6 +53,11 @@ SStatement >> id [
 { #category : #accessing }
 SStatement >> id: anInteger [
 	id:= anInteger.
+]
+
+{ #category : #initialization }
+SStatement >> initialize [ 	
+	keyword := '_var'
 ]
 
 { #category : #'as yet unclassified' }
@@ -128,6 +142,11 @@ SStatement >> repairOn: aTestCase deleting: aStatement [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #'as yet unclassified' }
+SStatement >> replace: varName varNameBy: object [
+	^ self subclassResponsibility
+]
+
 { #category : #accessing }
 SStatement >> returnTypeName [
 	^ returnTypeName
@@ -148,6 +167,21 @@ SStatement >> stringBody [
 	^ self subclassResponsibility 
 ]
 
+{ #category : #'as yet unclassified' }
+SStatement >> typeVar [
+	^ returnTypeName 
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> valueInline [
+	^ self stringBody allButLast
+]
+
+{ #category : #'as yet unclassified' }
+SStatement >> varKeyword: aString [
+	keyword := aString
+]
+
 { #category : #accessing }
 SStatement >> varName [
 	^ self variableKeyword , id asString
@@ -155,6 +189,5 @@ SStatement >> varName [
 
 { #category : #'as yet unclassified' }
 SStatement >> variableKeyword [
-	^  '_var'
-
+	^ keyword	
 ]

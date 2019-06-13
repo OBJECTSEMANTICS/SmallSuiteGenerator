@@ -34,11 +34,19 @@ SSmallSuiteGenerator >> fitnessBlock: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateInvariants: selectedInvariants [
+SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Before must execute ''runGeneration''.'.
-	engine generateInvariantsFittest: selectedInvariants 
+	engine generateAssertionsUsing: selectedInvariants 
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrettyCodeWith: kindsRefactoring [
+	self
+		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
+		description: 'Before must execute ''runGeneration''.'.
+	engine generateAssertionsUsing: selectedInvariants invariantsAndApplyPrettyCodeWith: kindsRefactoring 
 ]
 
 { #category : #'as yet unclassified' }
@@ -107,7 +115,7 @@ SSmallSuiteGenerator >> numberOfStatements: aInt [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> pupulationSize: aInt [
+SSmallSuiteGenerator >> populationSize: aInt [
 	engine populationSize: aInt
 ]
 

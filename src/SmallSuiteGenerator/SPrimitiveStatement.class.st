@@ -9,7 +9,7 @@ Class {
 
 { #category : #private }
 SPrimitiveStatement >> createNewStatement [
-	^ (self class create)
+	^ super createNewStatement 
 		value: self value;
 		returnTypeName: self returnTypeName;
 		yourself
@@ -73,6 +73,11 @@ SPrimitiveStatement >> repairOn: aTestCase deleting: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
+SPrimitiveStatement >> replace: varName varNameBy: valueToReplace [
+	
+]
+
+{ #category : #'as yet unclassified' }
 SPrimitiveStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	^ aTestCase
 		addStatement: self createNewStatement
@@ -91,4 +96,9 @@ SPrimitiveStatement >> value [
 { #category : #accessing }
 SPrimitiveStatement >> value: anObject [
 	value := anObject.
+]
+
+{ #category : #'as yet unclassified' }
+SPrimitiveStatement >> valueInline [
+	^ value
 ]

@@ -44,7 +44,7 @@ SCalculatorCoverage class >> executeStatementsOf: aTestCase using: profiler inLe
 
 { #category : #accessing }
 SCalculatorCoverage class >> maxNumberOfIterations [
-	^ 5
+	^ 3
 ]
 
 { #category : #compiling }

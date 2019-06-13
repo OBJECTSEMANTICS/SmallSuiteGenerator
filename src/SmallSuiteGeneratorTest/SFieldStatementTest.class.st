@@ -19,3 +19,21 @@ SFieldStatementTest >> testDependenciesConsidering [
 			('_var14' -> {'_var9'}).
 			('_var16' -> {'_var11'})}
 ]
+
+{ #category : #tests }
+SFieldStatementTest >> testReplaceVarNameBy [
+	| statement |
+	statement := SFieldStatement new
+		returnTypeName: #SmallInteger;
+		receiverVarName: '_var0';
+		fieldName: #score;
+		id: 1;
+		yourself.
+	self assert: statement asString equals: '_var1 := _var0 score.'.
+	self
+		assert: (statement replace: '_var1' varNameBy: 5) asString
+		equals: '_var1 := _var0 score.'.
+	self
+		assert: (statement replace: '_var0' varNameBy: (SFoo score: 5)) asString
+		equals: '_var1 := _var0 score.'
+]

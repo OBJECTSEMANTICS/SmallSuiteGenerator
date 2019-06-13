@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-STestCaseTest class >> generateTestCase: aBlock with: aClass [
+STestCaseTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
 	| profile testCase |
 	profile := SSGenerator profile: aBlock onClass: aClass.
 	testCase := STestCase seed: profile.
@@ -18,34 +18,34 @@ STestCaseTest class >> listTestCase [
 	list := OrderedCollection new.
 	list
 		add:
-			(self generateTestCase: [ SFoo score: 34 ] with: SFoo)
+			(self generateTestSuiteOf: [ SFoo score: 34 ] blockOnClass: SFoo)
 				generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) score ] with: SFoo)
+			(self generateTestSuiteOf: [ (SFoo score: 2) score ] blockOnClass: SFoo)
 				generateStatements;
 		add:
-			(self generateTestCase: [ (SFoo score: 2) return: 2 ] with: SFoo)
+			(self generateTestSuiteOf: [ (SFoo score: 2) return: 2 ] blockOnClass: SFoo)
 				generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SStudent name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
 						name;
 						nickname;
 						id ]
-				with: SStudent) generateStatements;
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SStudent name: 'Ann' with: 34)
+				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
 						age: 34;
 						identifier;
 						nickname: 'Ann34';
 						fullIdentifier ]
-				with: SStudent) generateStatements;
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ SStudent name: 'Peter'.
+				generateTestSuiteOf: [ SStudent name: 'Peter'.
 					SStudent name: 'Ann' with: 2 ]
-				with: SStudent) generateStatements.
+				blockOnClass: SStudent) generateStatements.
 	^ list
 ]
 
@@ -56,26 +56,26 @@ STestCaseTest class >> listTestCaseRTAMItem [
 	list
 		add:
 			((self
-				generateTestCase: [ RTAMItem basicNew
+				generateTestSuiteOf: [ RTAMItem basicNew
 						itemName: 'Bonus Card';
 						color: Color lightCyan ]
-				with: RTAMItem) generateStatements);
+				blockOnClass: RTAMItem) generateStatements);
 		add:
 			(self
-				generateTestCase: [ RTAMItem basicNew
+				generateTestSuiteOf: [ RTAMItem basicNew
 						itemName: 'Contract Management';
 						row: 'Australia';
 						column: 'Corporate Services';
 						color: Color red ]
-				with: RTAMItem) generateStatements;
+				blockOnClass: RTAMItem) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTAMItem basicNew
+				generateTestSuiteOf: [ RTAMItem basicNew
 						itemName: 'Bonus Card';
 						row: 'France';
 						column: 'Customer Relationship';
 						color: Color lightGreen ]
-				with: RTAMItem) generateStatements.
+				blockOnClass: RTAMItem) generateStatements.
 	^ list
 ]
 
@@ -86,16 +86,16 @@ STestCaseTest class >> listTestCaseRTBorderAttachPoint [
 	list
 		add:
 			(self
-				generateTestCase: [ (RTBorderAttachPoint instance) offset: 4  ]
-				with: RTBorderAttachPoint) generateStatements;
+				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 4  ]
+				blockOnClass: RTBorderAttachPoint) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (RTBorderAttachPoint instance) offset: 19  ]
-				with: RTBorderAttachPoint) generateStatements;
+				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 19  ]
+				blockOnClass: RTBorderAttachPoint) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (RTBorderAttachPoint instance) offset: 4  ]
-				with: RTBorderAttachPoint) generateStatements.
+				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 4  ]
+				blockOnClass: RTBorderAttachPoint) generateStatements.
 	^ list
 ]
 
@@ -106,22 +106,22 @@ STestCaseTest class >> listTestCaseRTBox [
 	list
 		add:
 			(self
-				generateTestCase: [ RTBox instance
+				generateTestSuiteOf: [ RTBox instance
 						defaultWidth;
 						borderStyle ]
-				with: RTBox) generateStatements;
+				blockOnClass: RTBox) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTBox instance
+				generateTestSuiteOf: [ RTBox instance
 						borderStyle ]
-				with: RTBox) generateStatements;
+				blockOnClass: RTBox) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTBox instance
+				generateTestSuiteOf: [ RTBox instance
 						defaultWidth;
 						height;
 						borderStyle ]
-				with: RTBox) generateStatements.
+				blockOnClass: RTBox) generateStatements.
 	^ list
 ]
 
@@ -132,17 +132,17 @@ STestCaseTest class >> listTestCaseRTDirectedLine [
 	list
 		add:
 			(self
-				generateTestCase: [ RTDirectedLine instance offset: 6.5 ]
-				with: RTDirectedLine) generateStatements;
+				generateTestSuiteOf: [ RTDirectedLine instance offset: 6.5 ]
+				blockOnClass: RTDirectedLine) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
-				with: RTDirectedLine) generateStatements;
+				generateTestSuiteOf: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
+				blockOnClass: RTDirectedLine) generateStatements;
 		add:
 			(self
-				generateTestCase: [ RTDirectedLine instance
+				generateTestSuiteOf: [ RTDirectedLine instance
 						offset: 56; offset: 2.4 ]
-				with: RTDirectedLine) generateStatements.
+				blockOnClass: RTDirectedLine) generateStatements.
 	^ list
 ]
 
@@ -153,25 +153,25 @@ STestCaseTest class >> listTestCaseRTLineSegment [
 	list
 		add:
 			(self
-				generateTestCase: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
-				with: RTLineSegment) generateStatements;
+				generateTestSuiteOf: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
+				blockOnClass: RTLineSegment) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
+				generateTestSuiteOf: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
 						from;
 						to;
 						a;
 						b;
 						c ]
-				with: RTLineSegment) generateStatements;
+				blockOnClass: RTLineSegment) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+				generateTestSuiteOf: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 						angleInDeg;
 						angleInRad;
 						cotan;
 						bottom ]
-				with: RTLineSegment) generateStatements.
+				blockOnClass: RTLineSegment) generateStatements.
 	^ list
 ]
 
@@ -181,15 +181,25 @@ STestCaseTest class >> listTestCaseSStudent [
 	list := OrderedCollection new.
 	list
 		add:
-			(self generateTestCase: [ SFoo score: 34 ] with: SFoo)
-				generateStatements;
-		add:
-			(self generateTestCase: [ (SFoo score: 2) score ] with: SFoo)
-				generateStatements;
+			(self
+				generateTestSuiteOf: [ (SStudent name: 'Peter')
+						scoreStudent: 45;
+						scoreStudent; yourself ]
+				blockOnClass: SStudent) generateStatements;
 		add:
 			(self
-				generateTestCase: [ (SFoo score: 2) return: 2 ]
-				with: SFoo) generateStatements.
+				generateTestSuiteOf: [ (SStudent name: 'Peter')
+						idStudent;
+						nickname; yourself ]
+				blockOnClass: SStudent) generateStatements;
+		add:
+			(self
+				generateTestSuiteOf: [ (SStudent name: 'Ann' with: -34.234)
+						nickname;
+						idStudent;
+						scoreStudent: 45;
+						scoreStudent; yourself ]
+				blockOnClass: SStudent) generateStatements.
 	^ list
 ]
 
@@ -197,10 +207,10 @@ STestCaseTest class >> listTestCaseSStudent [
 STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
 	| selectedStatements |
 	selectedStatements := aTestCase statements select: selector.
-	selectedStatements detect: [ :aStm | aStm args includesAnyOf: varNames ]
-	ifFound: [ ^ true ]
-	ifNone: [ ^ false ].
-	"^ (aTestCase statements select: selector thenCollect: #args) includes: varNames"
+	selectedStatements
+		detect: [ :aStm | aStm args includesAnyOf: varNames ]
+		ifFound: [ ^ true ]
+		ifNone: [ ^ false ]
 ]
 
 { #category : #'mutation-change' }
@@ -239,18 +249,7 @@ STestCaseTest >> assertRemove: listTestCase [
 	removedVarNames := testCase remove.
 	(removedVarNames isNotNil and: [ removedVarNames isNotEmpty ])
 		ifFalse: [ self assert: false ]
-		ifTrue: [
-			self assert: testCase hasValidDependencies.
-			 "| varNames referencedArgs |
-			varNames := testCase varNames.
-			referencedArgs := OrderedCollection new.
-			testCase statements
-				select: [ :aStm | aStm isConstructor or: [ aStm isMethod ] ]
-				thenDo: [ :aStm | referencedArgs addAll: aStm args ].
-			removedVarNames
-				do: [ :varName | 
-					self deny: (varNames includes: varName).
-					self deny: (referencedArgs includes: varName) ]" ]
+		ifTrue: [ self assert: testCase hasValidDependencies ]
 ]
 
 { #category : #'mutation-change' }
@@ -287,7 +286,20 @@ STestCaseTest >> testChangeConstructor [
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase change.
-	self assert: testCase statements first args equals: {#(1 4 5)}
+	self assert: testCase statements first args equals: {#(1 4 5)}.
+	profile := SSGenerator
+		profile: [ (SStudent name: 'Ann' with: -34.234)
+				nickname;
+				idStudent;
+				scoreStudent: 45;
+				scoreStudent ]
+		onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor.
+	testCase addField.
+	testCase change.
+	testCase generateStatements: 10.
+	self assert: testCase statements first selector equals: 'new'
 ]
 
 { #category : #'mutation-change' }
@@ -560,19 +572,15 @@ STestCaseTest >> testInsertParameterRoassal [
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertRandomCall [
 	| profile testCase stm varNames |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
-	self assert: (testCase insert: #insertRandomCallUsing:)isNil.
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	self assert: (testCase insert: #insertRandomCallUsing:) isNil.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
-	varNames := (testCase insert: #insertRandomCallUsing:).
+	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 2.
 	self assertCollection: varNames equals: {'_var2' . '_var3'}.
 	profile := SSGenerator
@@ -585,11 +593,8 @@ STestCaseTest >> testInsertRandomCall [
 	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 3.
 	self assert: (varNames includesAny: {'_var3' . '_var4'}).
-	"self assert: (testCase statementAt: '_var3') isPrimitive."
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isField or: [ stm isConstructor ]).
-	"stm := testCase statementAt: varNames.
-	self assert: (stm isConstructor or: [ stm isField ])."
 	profile := SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
 		onClass: SFoo.
@@ -607,23 +612,37 @@ STestCaseTest >> testInsertRandomCall [
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveConstructor [
 	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addConstructor.
 	testCase remove.
 	self assert: testCase statements isEmpty.
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
+	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
 	testCase := STestCase seed: profile.
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase statements last args includes: '_var0').
 	testCase remove: '_var0'.
 	self assert: testCase statements size equals: 1.
-	self deny: (testCase statements last args includes: '_var0')
+	self deny: (testCase statements last args includes: '_var0').
+	profile := SSGenerator
+		profile: [ (SStudent name: 'Ann' with: -34.234)
+				nickname;
+				idStudent;
+				scoreStudent: 45;
+				scoreStudent ]
+		onClass: SStudent.
+	testCase := STestCase seed: profile.
+	testCase addConstructor. "_var0"
+	testCase addField. "_var1"
+	testCase addField. "_var2"
+	testCase addMethod. "_var3"
+	testCase remove: '_var0'.
+	self assert: (testCase statements select: #isConstructor) size equals: 3.
+	self assert: (testCase statementAt: '_var4') isConstructor.
+	self assert: (testCase statementAt: '_var1') receiverVarName equals: '_var4'.
+	self assert: (testCase statementAt: '_var2') receiverVarName equals: '_var5'.
+	self assert: (testCase statementAt: '_var3') receiverVarName equals: '_var6'.
 ]
 
 { #category : #'mutation-remove' }

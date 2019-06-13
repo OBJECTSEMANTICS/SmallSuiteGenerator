@@ -68,8 +68,8 @@ SMethodStatement >> changeUsing: aTestCase [
 			method selector = self selector
 				ifTrue: [ result := SAuxiliar
 						change: args
-						ofTypes: method argTypes
-						using: aTestCase.
+						argsOf: method argTypes
+						typesUsing: aTestCase.
 					newArgs := result first.
 					result := result second ]
 				ifFalse: [ newArgs := self alternativeArgsOf: method using: aTestCase.
@@ -92,7 +92,11 @@ SMethodStatement >> createNewStatement [
 
 { #category : #'as yet unclassified' }
 SMethodStatement >> dependenciesConsidering: varNames [
-	^ {receiverVarName} , (args select: [ :arg | varNames includes: arg ])
+	^ (varNames
+		detect:
+			[ :varName | SAuxiliar string: receiverVarName equalsOrIncludes: varName ]
+		ifFound: [ :varName | {varName} ]
+		ifNone: [ {} ]) , (args select: [ :arg | varNames includes: arg ])
 ]
 
 { #category : #'as yet unclassified' }
@@ -159,6 +163,19 @@ SMethodStatement >> repairReferencesOf: aStatement in: aTestCase [
 		ifNotNil: [ (aTestCase statementAt: self varName)
 				receiverVarName: constructStatement varName ].
 	^ {  }
+]
+
+{ #category : #'as yet unclassified' }
+SMethodStatement >> replace: varName varNameBy: object [
+	super replace: varName varNameBy: object.
+	receiverVarName := (receiverVarName = varName
+		and: [ object isString ])
+		ifTrue: [ SAuxiliar transformReplacement: object ]
+		ifFalse: [
+			SAuxiliar
+				replace: varName
+				varNameIn: receiverVarName
+				receiverBy: object ]
 ]
 
 { #category : #'as yet unclassified' }
