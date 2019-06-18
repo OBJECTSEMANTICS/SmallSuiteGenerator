@@ -57,6 +57,9 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	self
 		assert: aClass isNotNil
 		description: 'Need to provide a class to generate the tests'.
+	"save the class to evaluate mutants killed or alived"
+	engine modelClasses: { aClass }.
+	"execute the engine"
 	engine
 		blockToExecute: aBlock;
 		generatorProfiler:
@@ -69,7 +72,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 			[ :testCase | 
 			SCalculatorCoverage
 				calculateCoverageOf: testCase
-				using: coverageProfiler ] ]
+				using: coverageProfiler ] ].
 ]
 
 { #category : #'as yet unclassified' }
@@ -80,6 +83,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 	self
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
+	engine modelClasses: (SAuxiliar classesForRegex: regex).
 	^ engine
 		blockToExecute: aBlock;
 		generatorProfiler:
@@ -92,7 +96,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 			[ :testCase | 
 			SCalculatorCoverage
 				calculateCoverageOf: testCase
-				using: coverageProfiler ] ]
+				using: coverageProfiler ] ].
 ]
 
 { #category : #initialization }

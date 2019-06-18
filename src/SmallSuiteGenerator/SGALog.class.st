@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'generationNumber',
 		'timeToProduceGeneration',
-		'fittestTestCase'
+		'fittestTestCase',
+		'mutationResult'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -33,6 +34,33 @@ SGALog >> generationNumber [
 { #category : #accessing }
 SGALog >> generationNumber: anObject [
 	generationNumber := anObject
+]
+
+{ #category : #initialization }
+SGALog >> initialize [ 	
+	mutationResult := Dictionary new
+]
+
+{ #category : #accessing }
+SGALog >> mutationResult [
+	^ mutationResult 
+]
+
+{ #category : #accessing }
+SGALog >> mutationResult: mutationTestingResult [
+	self
+		assert: mutationResult isEmpty
+		description: 'The analysis of mutants has already been calculated'.
+	[ mutationResult
+		at: 'noEvaluatedMutants'
+			put: mutationTestingResult numberOfEvaluatedMutants;
+		at: 'noKilledOrTerminatedMutants'
+			put: mutationTestingResult numberOfKilledOrTerminatedMutants;
+		at: 'noAliveMutants'
+			put: mutationTestingResult numberOfAliveMutants;
+		at: 'mutationScore' put: mutationTestingResult mutationScore ]
+		on: Exception
+		do: [ nil ]
 ]
 
 { #category : #printing }

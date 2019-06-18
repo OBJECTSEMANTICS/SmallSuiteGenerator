@@ -135,18 +135,23 @@ SSmallSuiteGeneratorExample >> exampleRTDirectedLineOnClass [
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleRTDirectedLineOnPackages [	
-	| smallSuiteGenerator block regex |
+SSmallSuiteGeneratorExample >> exampleRTDirectedLineOnPackages [
+	| smallSuiteGenerator block regex invariants kindsRefactoring |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
+	invariants := #().
+	kindsRefactoring := #().
 	block := [ RTDirectedLine instance
-						pointsFrom: 1 @ 3 To: 3 @ 5;
-						offset: 6.5 ].
+		pointsFrom: 1 @ 3 To: 3 @ 5;
+		offset: 6.5 ].
 	regex := 'Roassal2-Cor*'.
 	smallSuiteGenerator
-				generateTestsOf: block
-				blockOnPackagesMatching: regex.
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
 	smallSuiteGenerator runGeneration.
+	smallSuiteGenerator
+		generateAssertionsUsing: invariants
+		invariantsAndApplyPrettyCodeWith: kindsRefactoring
 ]
 
 { #category : #'examples - onClass' }

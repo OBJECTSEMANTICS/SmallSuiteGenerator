@@ -15,10 +15,26 @@ Class {
 		'blockToExecute',
 		'coverageProfiler',
 		'generatorProfiler',
-		'valueToCompare'
+		'valueToCompare',
+		'modelClasses'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> analyzeMutants [
+	| analysis |
+	self
+		assert: (modelClasses isNotNil and: [ modelClasses isNotEmpty ])
+		description: 'modelClasses must not be nil or empty'.
+	analysis := MutationTestingAnalysis
+		testCasesFrom: {SConfiguration classAssertsGenerationTest}
+		mutating: modelClasses
+		using: SConfiguration defaultMutantOperators
+		with: SConfiguration defaultEvaluationStrategy.
+	analysis run.
+	^ analysis generalResult 
+]
 
 { #category : #'as yet unclassified' }
 SGAEngine >> beforeRun [
@@ -124,7 +140,10 @@ SGAEngine >> generateAssertionsUsing: selectedInvariants [
 	self
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
-	self logs do: [ :log | log fittestTestCase generateAssertionsUsing: selectedInvariants ]
+	self logs
+		do: [ :log | 
+			log fittestTestCase generateAssertionsUsing: selectedInvariants.
+			log mutationResult: self analyzeMutants ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -133,9 +152,10 @@ SGAEngine >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrett
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
 	self logs
-		do:
-			[ :log | log fittestTestCase prettyCodeApplying: kindsRefactoring.
-			log fittestTestCase generateAssertionsUsing: selectedInvariants ]
+		do: [ :log | 
+			log fittestTestCase prettyCodeApplying: kindsRefactoring.
+			log fittestTestCase generateAssertionsUsing: selectedInvariants.
+			log mutationResult: self analyzeMutants ]
 ]
 
 { #category : #accessing }
@@ -160,7 +180,8 @@ SGAEngine >> initialize [
 	self maximizeComparator.
 	self initializeMutationOperator.
 	self initializeCrossoverOperator.
-	self selection: SGATournamentSelection new
+	self selection: SGATournamentSelection new.
+	modelClasses := #()
 ]
 
 { #category : #initialization }
@@ -221,6 +242,12 @@ SGAEngine >> microPause [
     "Useful when you wish to log in the Transcript and see progresses"
     (Delay forMilliseconds: 1) wait.
     World doOneCycleNow.
+]
+
+{ #category : #accessing }
+SGAEngine >> modelClasses: classes [
+	self assert: (classes isNotNil and: [ classes isNotEmpty ]) description: 'The classes must not be nil or empty'.
+	modelClasses := classes
 ]
 
 { #category : #'as yet unclassified' }

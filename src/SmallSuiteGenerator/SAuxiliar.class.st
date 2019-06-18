@@ -59,6 +59,11 @@ SAuxiliar class >> classLiterals [
 ]
 
 { #category : #'as yet unclassified' }
+SAuxiliar class >> classesForRegex: regex [
+	^ (S2Gatherer new packagesForRegexExpressions: {regex}) flatCollect: #definedClasses.
+]
+
+{ #category : #'as yet unclassified' }
 SAuxiliar class >> constructorIn: aTestCase testCaseOf: aStatement statementWithBlockCondition: aBlock [
 	"If there is a constructor which has the selector either method or field, it returns the found constructor, Opposite it returns nil"
 
