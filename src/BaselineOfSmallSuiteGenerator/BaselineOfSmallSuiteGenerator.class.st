@@ -13,11 +13,14 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'Spy2'
 				with: [ spec repository: 'github://ObjectProfile/Spy2:v1.0/src' ].
 			spec
+				baseline: 'MuTalk'
+				with: [ spec repository: 'github://pavel-krivanek/mutalk/src' ].
+			spec
 				baseline: 'SBTestCoverage'
 				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
 			spec
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'SBTestCoverage') ];
+					with: [ spec requires: #('Spy2' 'SBTestCoverage' 'MuTalk') ];
 				package: 'SmallSuiteGeneratorAssert'
 					with: [ spec requires: 'SmallSuiteGenerator' ];
 				package: 'SmallSuiteGeneratorTest'
