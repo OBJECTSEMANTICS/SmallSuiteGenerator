@@ -16,7 +16,10 @@ Class {
 		'coverageProfiler',
 		'generatorProfiler',
 		'valueToCompare',
-		'modelClasses'
+		'modelClasses',
+		'testClasses',
+		'operators',
+		'evaluationStrategy'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -28,12 +31,19 @@ SGAEngine >> analyzeMutants [
 		assert: (modelClasses isNotNil and: [ modelClasses isNotEmpty ])
 		description: 'modelClasses must not be nil or empty'.
 	analysis := MutationTestingAnalysis
-		testCasesFrom: {SConfiguration classAssertsGenerationTest}
+		testCasesFrom:
+			(SAuxiliar
+				validate: testClasses
+				ifNotValid: [ SConfiguration classAssertsGenerationTest ])
 		mutating: modelClasses
-		using: SConfiguration defaultMutantOperators
-		with: SConfiguration defaultEvaluationStrategy.
+		using:
+			(SAuxiliar
+				validate: operators
+				ifNotValid: [ SConfiguration defaultMutantOperators ])
+		with:
+			(evaluationStrategy ifNil: [ SConfiguration defaultEvaluationStrategy ]).
 	analysis run.
-	^ analysis generalResult 
+	^ analysis generalResult
 ]
 
 { #category : #'as yet unclassified' }
@@ -123,6 +133,11 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 SGAEngine >> endForMaxNumberOfGeneration: nbOfGenerations [
     "End the algorithm after a fixed number of generations"
     terminationBlock := [ logs last generationNumber >= nbOfGenerations ]
+]
+
+{ #category : #accessing }
+SGAEngine >> evaluationStrategy: aEvaluationStrategy [
+	evaluationStrategy := aEvaluationStrategy 
 ]
 
 { #category : #accessing }
@@ -251,14 +266,13 @@ SGAEngine >> modelClasses: classes [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> mutate: testCase [
-	^ mutationOperator mutate: testCase
+SGAEngine >> mutantOperators: mutantOperators [
+	operators := mutantOperators 
 ]
 
-{ #category : #accessing }
-SGAEngine >> mutationOperator: aMutationOperator [
-	mutationOperator := aMutationOperator.
-	aMutationOperator random: random
+{ #category : #'as yet unclassified' }
+SGAEngine >> mutate: testCase [
+	^ mutationOperator mutate: testCase
 ]
 
 { #category : #accessing }
@@ -339,6 +353,11 @@ SGAEngine >> selection: aSelection [
 SGAEngine >> shouldTerminate [
 	logs ifEmpty: [ ^ false ].
 	^ terminationBlock value
+]
+
+{ #category : #accessing }
+SGAEngine >> testClasses: testCaseClasses [
+	testClasses := testCaseClasses 
 ]
 
 { #category : #accessing }

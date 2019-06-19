@@ -30,7 +30,8 @@ SSmallSuiteGeneratorExample >> exampleRTAMItemOnClass [
 		column: 'Customer Relationship';
 		color: Color lightGreen ].
 	class := RTAMItem.
-	smallSuiteGenerator generateTestsOf: block blockOnClass: class.
+	"smallSuiteGenerator generateTestsOf: block blockOnClass: class."
+	smallSuiteGenerator generateTestsFrom: block blockOn: class classMutating: { SSAssertionGeneratorTest } testCasesUsing: {  } operatorsAnd: AllTestsMethodsRunningMutantEvaluationStrategy new.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator
 		generateAssertionsUsing: invariants

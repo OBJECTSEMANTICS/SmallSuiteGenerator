@@ -262,7 +262,7 @@ SRenamerVariableTest >> testRenameVarNamesMethodStatement [
 				args: #());
 		addStatement:
 			(SMethodStatement new
-				receiverVarName: '(SFoo score: 4.5)';
+				receiverVarName: '(SFoo score: ''_var0'' )';
 				selector: #returnCollection;
 				returnTypeName: #OrderedCollection;
 				args: #());
@@ -287,7 +287,7 @@ SRenamerVariableTest >> testRenameVarNamesMethodStatement [
 			'_sfoo1 := SFoo score: ''_smaInt0'' .'.
 			'_smaInt2 := _sfoo1 return: ''_smaInt0'' .'.
 			'_bytStr3 := (SFoo score: 23) returnString.'.
-			'_ordCol4 := (SFoo score: 4.5) returnCollection.'.
+			'_ordCol4 := (SFoo score: ''_smaInt0'' ) returnCollection.'.
 			'_smaFlo5 := (SFoo new) returnFloat.'.
 			'_var6 := (SSTeacher new) id.'}
 ]

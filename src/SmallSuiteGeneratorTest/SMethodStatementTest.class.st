@@ -44,5 +44,29 @@ SMethodStatementTest >> testReplaceVarNameBy [
 		equals: '_var2 := _var0 score: ''_var1'' .'.
 	self
 		assert: (statement replace: '_var1' varNameBy: 5) asString
-		equals: '_var2 := _var0 score: 5 .'
+		equals: '_var2 := _var0 score: 5 .'.
+	statement := SMethodStatement new
+		receiverVarName: '_bytStr11';
+		selector: #column:;
+		args: {'_bytStr1'};
+		id: 26;
+		yourself.
+	self
+		assert: statement asString
+		equals: '_var26 := _bytStr11 column: ''_bytStr1'' .'.
+	self
+		assert: (statement replace: '_bytStr11' varNameBy: '_rtamitem11') asString
+		equals: '_var26 := _rtamitem11 column: ''_bytStr1'' .'.
+	statement := SMethodStatement new
+		receiverVarName: '_var11';
+		selector: #column:;
+		args: {'_var1'};
+		id: 26;
+		yourself.
+	self
+		assert: statement asString
+		equals: '_var26 := _var11 column: ''_var1'' .'.
+	self
+		assert: (statement replace: '_var1' varNameBy: '_bytStr1') asString
+		equals: '_var26 := _var11 column: ''_bytStr1'' .'
 ]

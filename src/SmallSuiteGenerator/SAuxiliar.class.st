@@ -230,12 +230,12 @@ SAuxiliar class >> removeOrRepair: args argsOf: aStatement statementWith: varNam
 { #category : #'as yet unclassified' }
 SAuxiliar class >> replace: varName varNameIn: receiver receiverBy: object [
 	^ [ | index |
-	index := receiver indexOfSubCollection: '' , varName , ''.
+	index := receiver indexOfSubCollection: '''' , varName , ''''.
 	index > 0
 		ifTrue: [ receiver
-				copyReplaceFrom: index
-				to: index + varName size - 1
-				with: '' , object , '' ]
+				copyReplaceFrom: index + 1
+				to: index + varName size 
+				with: object ]
 		ifFalse: [ receiver ] ]
 		on: Exception
 		do: [ receiver ]
@@ -325,7 +325,7 @@ SAuxiliar class >> string: aString equalsOrIncludes: otherString [
 	| stringWithDoubleQuotes |
 	stringWithDoubleQuotes := '''', otherString, ''''.
 	^ aString = otherString
-		or: [ (aString splitOn: ' ') detect: [ :subString | subString = otherString or: [ subString = stringWithDoubleQuotes ] ] ifFound: [ true ] ifNone: [ false ] ]
+		or: [ (aString splitOn: ' ') detect: [ :subString | (subString = otherString or: [ subString = stringWithDoubleQuotes ]) or: [ subString includesSubstring: stringWithDoubleQuotes ] ] ifFound: [ true ] ifNone: [ false ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -376,6 +376,11 @@ SAuxiliar class >> validDependenciesOf: statements statementsUsing: varNames [
 				ifFalse: [ true ] ]
 		ifFound: [ ^ false ].
 	^ true
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> validate: aList ifNotValid: aBlock [
+	^ (aList isNil or: [ aList isEmpty ]) ifTrue: [ aBlock value ] ifFalse: aList
 ]
 
 { #category : #'as yet unclassified' }

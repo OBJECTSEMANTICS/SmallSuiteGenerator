@@ -10,10 +10,15 @@ SRenamerVariable class >> applyOn: aSTestCase [
 	dictReferences := self dictReferencesOf: aSTestCase.
 	^ aSTestCase statements
 		collect: [ :stm | 
-			| newName oldVarName |
+			| newName oldVarName  |
 			newName := self nameBasedOnType: stm.
 			oldVarName := stm varName.
 			stm varKeyword: newName.
+			newName := String
+										streamContents: [ :stream | 
+											stream
+												nextPutAll: newName;
+												nextPutAll: stm id asString ].
 			dictReferences
 				at: oldVarName
 				ifPresent: [ :varNames | 
@@ -22,11 +27,7 @@ SRenamerVariable class >> applyOn: aSTestCase [
 							(aSTestCase statementAt: varName)
 								replace: oldVarName
 								varNameBy:
-									(String
-										streamContents: [ :stream | 
-											stream
-												nextPutAll: newName;
-												nextPutAll: stm id asString ]) ] ].
+									newName ] ].
 			oldVarName ]
 ]
 

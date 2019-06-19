@@ -122,6 +122,16 @@ SAuxiliarTest >> testTypeNameArgsOfSelector [
 ]
 
 { #category : #tests }
+SAuxiliarTest >> testValidateIfNotValid [
+	self assert: (SAuxiliar validate: nil ifNotValid: [ 1 ]) equals: 1.
+	self assert: (SAuxiliar validate: #() ifNotValid: [ 1 ]) equals: 1.
+	self
+		assert: (SAuxiliar validate: #(1 2 3) ifNotValid: [ 3 ])
+		equals: #(1 2 3).
+	self assert: (SAuxiliar validate: (OrderedCollection new) ifNotValid: [#(1 4 5)]) equals: #(1 4 5)
+]
+
+{ #category : #tests }
 SAuxiliarTest >> testValueOfTypeInTestCase [
 	| profile testCase dictionary value |
 	profile := SSGenerator

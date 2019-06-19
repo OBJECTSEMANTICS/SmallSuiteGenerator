@@ -168,7 +168,40 @@ SAlignerStatementTest >> testAlignMethodStatements2 [
 		hasSameElements:
 			{'_var0 := 45.' . '_var1 := SStudent name: ''Sussy'' with: ''_var0'' .'.
 			'_var2 := _var1 scoreStudent.' . '_var3 := _var1 scoreStudent: ''_var2'' .'.
-			'_var4 := (SFoo score: ''_var1'' ) return: ''_var0'' .'}
+			'_var4 := (SFoo score: ''_var1'' ) return: ''_var0'' .'}.
+	testCase := STestCase new
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #SmallInteger;
+				value: 45);
+		addStatement:
+			(SConstructorStatement new
+				theClassName: 'SStudent';
+				selector: 'name:with:';
+				args: {'Sussy' . '_var0'});
+		addStatement:
+			(SMethodStatement new
+				receiverVarName: '_var1';
+				selector: #scoreStudent:;
+				returnTypeName: #ByteString;
+				args: {45});
+		addStatement:
+			(SConstructorStatement new
+				theClassName: 'SStudent';
+				selector: 'name:with:';
+				args: {'Sussy' . '_var0'});
+		yourself.
+	dictReferences := Dictionary new
+		at: '_var0' put: {'_var1' . '_var3'};
+		at: '_var1' put: {'_var2'};
+		yourself.
+	self testAlign: testCase testCaseUsing: dictReferences.
+	self assert: testCase numberOfStatements equals: 3.
+	self
+		assertCollection: (testCase statements collect: #asString)
+		hasSameElements:
+			{'_var0 := 45.' . '_var2 := (SStudent name: ''Sussy'' with: ''_var0'' ) scoreStudent: 45 .'.
+			'_var3 := SStudent name: ''Sussy'' with: ''_var0'' .'}
 	"self
 		assert: (self all: dictReferences keys keysAreVarNames: testCase varNames).
 	self
