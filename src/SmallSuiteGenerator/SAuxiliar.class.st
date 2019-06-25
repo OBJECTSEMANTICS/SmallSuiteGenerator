@@ -160,6 +160,29 @@ SAuxiliar class >> newConstructorOf: classSpy classNameWith: selector selectorAn
 ]
 
 { #category : #'as yet unclassified' }
+SAuxiliar class >> packagesClassesAndMethodsOf: profile filterBy: mutatedMethods [
+	| packages classes methods selectors |
+	packages := Set new.
+	classes := Set new.
+	methods := Set new.
+	selectors := (mutatedMethods
+		collect: [ :meth | meth originalClass name -> meth originalMethod selector ])
+		asSet.
+	profile allMethods
+		select:
+			[ :meth | selectors includes: meth classSpy className -> meth selector ]
+		thenDo: [ :meth | 
+			| aClass |
+			aClass := meth classSpy.
+			packages add: aClass packageSpy.
+			classes add: aClass.
+			methods add: meth ].
+	^ {packages.
+	classes.
+	methods}
+]
+
+{ #category : #'as yet unclassified' }
 SAuxiliar class >> positionToInsertAfter: position indexStatementOf: testCase testCaseHaving: newArgs [
 	| positionResult |
 	positionResult := position.
