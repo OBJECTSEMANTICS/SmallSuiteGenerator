@@ -14,9 +14,11 @@ SCleanerStatementTest >> setUp [
 
 { #category : #tests }
 SCleanerStatementTest >> testApplyOnConstructorStatements [
-	| profile testCase cleanedVarNames |
-	profile := SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase cleanedVarNames |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addConstructor.	"_var1 := SFoo score: 34"
 	testCase addConstructor.	"_var2 := SFoo score: 34"
@@ -29,7 +31,7 @@ SCleanerStatementTest >> testApplyOnConstructorStatements [
 		deny: (testCase varNames includesAny: {'_var1' . '_var2' . '_var3'}).
 	self assert: testCase numberOfStatements equals: 1.
 	self assert: testCase statements first varName equals: '_var0'.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 3.46."
 	testCase addConstructor.	"_var2 := SFoo score: _var1"
@@ -46,9 +48,11 @@ SCleanerStatementTest >> testApplyOnConstructorStatements [
 
 { #category : #tests }
 SCleanerStatementTest >> testCleanConstructorStatements [
-	| profile testCase cleanedVarNames |
-	profile := SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase cleanedVarNames |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addConstructor.	"_var1 := SFoo score: 34"
 	testCase addConstructor.	"_var2 := SFoo score: 34"
@@ -59,7 +63,7 @@ SCleanerStatementTest >> testCleanConstructorStatements [
 		hasSameElements: {'_var1' . '_var2' . '_var3'}.
 	self assert: testCase statements size equals: 1.
 	self assert: testCase statements first varName equals: '_var0'.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 3.46."
 	testCase addConstructor.	"_var2 := SFoo score: _var1"
@@ -141,9 +145,11 @@ SCleanerStatementTest >> testCleanConstructorStatementsWithoutProfiler [
 
 { #category : #tests }
 SCleanerStatementTest >> testCleanPrimitiveStatements [
-	| profile testCase cleanedVarNames |
-	profile := SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase cleanedVarNames |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.	"_var0 := 3.46"
 	testCase addPrimitive.	"_var1 := 3.46"
 	testCase addPrimitive.	"_var2 := 3.46"
@@ -184,8 +190,10 @@ SCleanerStatementTest >> testCleanPrimitiveStatementsWithoutProfiler [
 
 { #category : #tests }
 SCleanerStatementTest >> testCleanStatementsGeneratedRandomly [
-	| profile testCase cleanedVarNames oldSize |
-	profile := SSGenerator
+	| generatorInfo testCase cleanedVarNames oldSize |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				age: 34;
 				identifier;
@@ -194,8 +202,8 @@ SCleanerStatementTest >> testCleanStatementsGeneratedRandomly [
 				name;
 				id;
 				nickname ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	oldSize := testCase statements size.
 	cleanedVarNames := cleaner applyOn: testCase.
@@ -208,9 +216,11 @@ SCleanerStatementTest >> testCleanStatementsGeneratedRandomly [
 
 { #category : #tests }
 SCleanerStatementTest >> testCleanStatementsNonRepeated [
-	| profile testCase cleanedVarNames |
-	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase cleanedVarNames |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
 	testCase addMethod.	"_var2 := _var0 initialize"
@@ -254,9 +264,11 @@ SCleanerStatementTest >> testCleanStatementsNonRepeatedWithoutProfiler [
 
 { #category : #tests }
 SCleanerStatementTest >> testCleanStatementsRepeated [
-	| profile testCase cleanedVarNames |
-	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase cleanedVarNames |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
 	testCase addMethod.	"_var2 := _var0 initialize"

@@ -11,7 +11,7 @@ Class {
 SConstructorStatement >> changeUsing: aTestCase [
 	| classSpy method methods newArgs |
 	newArgs := nil.
-	classSpy := aTestCase profile classAt: self theClassName.
+	classSpy := aTestCase spyInfo classAt: self theClassName.
 	methods := classSpy factoryMethods shuffle.
 	method := self alternativeMethodIn: methods.
 	method ifNil: [ ^ self statementsToChange: methods using: aTestCase ].
@@ -81,9 +81,9 @@ SConstructorStatement >> repairOn: aTestCase deleting: aStatement [
 { #category : #'as yet unclassified' }
 SConstructorStatement >> satisfyParameters: aTestCase with: otherTestCase [
 	| newConstructor class |
-	class := aTestCase profile
+	class := aTestCase spyInfo
 		classAt: theClassName
-		ifNone: [ otherTestCase profile classAt: theClassName ].
+		ifNone: [ otherTestCase spyInfo classAt: theClassName ].
 	newConstructor := aTestCase
 		newConstructorStatement: theClassName
 		of: class factoryMethods

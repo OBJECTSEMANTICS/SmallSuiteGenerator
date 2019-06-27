@@ -32,7 +32,7 @@ SGeneratorTestCase >> mutatedMethodsFrom: testClasses mutating: classes using: o
 { #category : #'as yet unclassified' }
 SGeneratorTestCase >> profileMutatedMethodsFrom: methods using: profile [
 	| newProfile data |
-	newProfile := SSGenerator new.
+	newProfile := profile copy.
 	data := SAuxiliar
 		packagesClassesAndMethodsOf: profile
 		filterBy: methods.
@@ -40,8 +40,16 @@ SGeneratorTestCase >> profileMutatedMethodsFrom: methods using: profile [
 		assert: data size = 3
 		description: 'Data must contain: packages, classes and methods'.
 	newProfile
-		addPackagesToProfile: data first asOrderedCollection;
-		addClassesToProfile: data second asOrderedCollection;
-		addMethodsToProfile: data third asOrderedCollection.
+		packages:
+			(profile packagesDictionary associations
+				select: [ :assoc | data first includes: assoc key ]) asDictionary;
+		classes:
+			(profile allClasses
+				select: [ :cls | data second includes: cls className ]) asOrderedCollection ;
+		methods:
+			(profile allMethods
+				select:
+					[ :meth | data third includes: meth classSpy className -> meth selector ])
+				asOrderedCollection.
 	^ newProfile
 ]

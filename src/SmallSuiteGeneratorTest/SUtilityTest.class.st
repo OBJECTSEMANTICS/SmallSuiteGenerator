@@ -6,17 +6,19 @@ Class {
 
 { #category : #'as yet unclassified' }
 SUtilityTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
-	| profile testCase |
-	profile := SSGenerator profile: aBlock onClass: aClass.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator profile: aBlock onClass: aClass).
+	testCase := STestCase seed: generatorInfo.
 	^ testCase
 ]
 
 { #category : #'as yet unclassified' }
 SUtilityTest class >> generateTestSuiteOf: aBlock blockOnPackagesMatching: regex [
-	| profile testCase |
-	profile := SSGenerator profile: aBlock onPackagesMatching: regex.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator profile: aBlock onPackagesMatching: regex).
+	testCase := STestCase seed: generatorInfo .
 	^ testCase
 ]
 

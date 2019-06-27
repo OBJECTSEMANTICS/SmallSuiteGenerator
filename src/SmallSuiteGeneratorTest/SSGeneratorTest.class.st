@@ -6,9 +6,11 @@ Class {
 
 { #category : #'generator-tests' }
 SSGeneratorTest >> testConstructorGenerator [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	self
 		assert: testCase statements first printString
@@ -17,11 +19,13 @@ SSGeneratorTest >> testConstructorGenerator [
 
 { #category : #tests }
 SSGeneratorTest >> testFieldGenerator [
-	| profile testCase |
-	profile := SSGenerator
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	self
@@ -47,31 +51,49 @@ SSGeneratorTest >> testMergeTypes [
 
 { #category : #tests }
 SSGeneratorTest >> testMethodGenerator [
-	| profile testCase collectString |
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 2; score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase collectString |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
+		profile: [ (SFoo score: 2)
+				return: 2;
+				score ]
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	collectString := testCase statements collect: #printString.
 	self assert: collectString first equals: '_var0 := SFoo score: 2 .'.
-	self assert: ({collectString second} includesAny: { '_var1 := _var0 return: 2 .'. '_var1 := _var0 initialize.'. '_var1 := _var0 score: 2 .'. '_var1 := _var0 score.' }).
-	profile := SSGenerator
+	self
+		assert:
+			({collectString second}
+				includesAny:
+					{'_var1 := _var0 return: 2 .' . '_var1 := _var0 initialize.'.
+					'_var1 := _var0 score: 2 .' . '_var1 := _var0 score.'}).
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	collectString := testCase statements collect: #printString.
 	self assert: collectString first equals: '_var0 := SFoo score: 4 .'.
-	self assert: ({ collectString second } includesAny: {'_var1 := _var0 return: ((SStack new) add: 7; add: 6; add: 2; yourself) .'. '_var1 := _var0 initialize.'. '_var1 := _var0 score: 4 .'}).
+	self
+		assert:
+			({collectString second}
+				includesAny:
+					{'_var1 := _var0 return: ((SStack new) add: 7; add: 6; add: 2; yourself) .'.
+					'_var1 := _var0 initialize.' . '_var1 := _var0 score: 4 .'})
 ]
 
 { #category : #tests }
 SSGeneratorTest >> testMethodGeneratorOnClass [
-	| profile testCase |
-	profile := SSGenerator
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2)
 				return:
 					(SStudent new
@@ -80,8 +102,8 @@ SSGeneratorTest >> testMethodGeneratorOnClass [
 						scoreStudent: 5).
 			(SFoo score: 6)
 				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	testCase statements
 		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
@@ -90,18 +112,21 @@ SSGeneratorTest >> testMethodGeneratorOnClass [
 				assert:
 					((stm args collect: #storeString)
 						includesAny:
-							{((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) storeString.
+							{((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5)
+								storeString.
 							(SStudent new
-										name: 'Peter';
-										nickname: 'peter';
-										scoreStudent: 5) storeString}) ]
+								name: 'Peter';
+								nickname: 'peter';
+								scoreStudent: 5) storeString}) ]
 		ifNone: [ self assert: true ]
 ]
 
 { #category : #tests }
 SSGeneratorTest >> testMethodGeneratorOnClasses [
-	| profile testCase |
-	profile := SSGenerator
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2)
 				return:
 					(SStudent new
@@ -114,8 +139,8 @@ SSGeneratorTest >> testMethodGeneratorOnClasses [
 			{SFoo.
 			SStudent.
 			SSPerson.
-			SSTeacher}.
-	testCase := STestCase seed: profile.
+			SSTeacher}).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	testCase statements
 		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
@@ -125,19 +150,22 @@ SSGeneratorTest >> testMethodGeneratorOnClasses [
 			possibleValues := {#SSTeacher . #SStudent}.
 			self
 				assert:
-					((statement isConstructor and: [ possibleValues includes: statement theClassName ])
-						or: [ (statement isMethod) and: [ possibleValues includes: statement returnTypeName ]])
-						 ]
+					((statement isConstructor
+						and: [ possibleValues includes: statement theClassName ])
+						or: [ statement isMethod
+								and: [ possibleValues includes: statement returnTypeName ] ]) ]
 		ifNone: [ self assert: true ]
 ]
 
 { #category : #tests }
 SSGeneratorTest >> testMethodGeneratorWithArgs [
-	| profile testCase collectString |
-	profile := SSGenerator
+	| generatorInfo testCase collectString |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -155,10 +183,12 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 				includesAny:
 					{'_var2 := _var1 return: _var0 .' . '_var2 := _var1 initialize.'.
 					'_var2 := _var1 score: _var0 .'}).
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -179,24 +209,26 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 
 { #category : #'generator-tests' }
 SSGeneratorTest >> testMultipleConstructorGenerator [
-	| profile testCase |
-	profile := SSGenerator
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ SFoo score: 2.
 			SFoo score: 5.
 			SFoo score: 7 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	10 timesRepeat: [ testCase addConstructor ].
 	self assert: testCase statements size equals: 10
 ]
 
 { #category : #tests }
 SSGeneratorTest >> testPrimitiveGenerator [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	self
 		assert: testCase statements first printString

@@ -22,7 +22,7 @@ SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 	selector := nil.
 	(aObject isNil or: [ aTestCase isNil ])
 		ifTrue: [ ^ selector ].
-	class := aTestCase profile
+	class := aTestCase spyInfo
 		classAt: aObject class name
 		ifNone: [ ^ selector ].
 	methods := (class methods

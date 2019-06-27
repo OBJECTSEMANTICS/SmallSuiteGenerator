@@ -3,7 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'statements',
-		'profile',
+		'spyInfo',
 		'generatorInvariant',
 		'dictSubclasses',
 		'fitness',
@@ -15,16 +15,16 @@ Class {
 }
 
 { #category : #'instance creation' }
-STestCase class >> seed: aGeneratorProfile [
+STestCase class >> seed: aSpyInfo [
 	| ins |
 	ins := self new.
-	ins profile: aGeneratorProfile.
+	ins spyInfo: aSpyInfo.
 	^ ins
 ]
 
 { #category : #generation }
 STestCase >> addConstructor [
-	^ self profile allClasses shuffle
+	^ self spyInfo allClasses shuffle
 		detect: [ :classSpy | self addConstructor: classSpy ]
 		ifFound: [ true ]
 		ifNone: [ false ]
@@ -49,7 +49,7 @@ STestCase >> addConstructor: aStatement before: varName forField: toField [
 		ifTrue: [ list := self methodsOrAccessors: aStatement toSelect: true.
 			list ifEmpty: [ ^ nil ] ]
 		ifFalse: [ | classSpy |
-			classSpy := profile classAt: aStatement theClassName.
+			classSpy := spyInfo classAt: aStatement theClassName.
 			list := classSpy factoryMethods.
 			list
 				ifEmpty: [ | constructor |
@@ -311,7 +311,7 @@ STestCase >> createArg: aClassName before: stop avoiding: varName [
 
 { #category : #generation }
 STestCase >> createScalar: aClassName [
-	self profile scalars
+	self spyInfo scalars
 		at: aClassName
 		ifPresent: [ :value | 
 			^ {(SAuxiliar listShuffle: value) first.
@@ -319,7 +319,7 @@ STestCase >> createScalar: aClassName [
 		ifAbsent: [ ^ SAuxiliar
 				valueOf: aClassName
 				typeIn: self
-				testCaseUsing: self profile scalars ]
+				testCaseUsing: self spyInfo scalars ]
 ]
 
 { #category : #accessing }
@@ -460,8 +460,12 @@ STestCase >> insertRandomStatement [
 { #category : #'as yet unclassified' }
 STestCase >> methodsOrAccessors: aStatement toSelect: aBoolean [
 	| methods |
-	methods := [(self profile >> aStatement theClassName) methods] on: Error do: [#()].
-	methods := aBoolean ifTrue: [ methods select: #isQuick ] ifFalse: [ methods reject: #isQuick ].
+	methods := [ (self spyInfo >> aStatement theClassName) methods ]
+		on: Error
+		do: [ #() ].
+	methods := aBoolean
+		ifTrue: [ methods select: #isQuick ]
+		ifFalse: [ methods reject: #isQuick ].
 	methods := methods select: [ :m | m returnType notNil ].
 	^ methods
 ]
@@ -507,11 +511,6 @@ STestCase >> printOn: aStream [
 		do: [ :stm | 
 			stm printOn: aStream.
 			aStream cr. ]
-]
-
-{ #category : #accessing }
-STestCase >> profile [
-	^ profile.
 ]
 
 { #category : #accessing }
@@ -576,6 +575,16 @@ STestCase >> satisfyParametersOf: args before: position allowingNull: aBoolean [
 										ifFalse: [ aArg ] ]) ]
 				ifFalse: [ argsResult at: index put: aArg mutateToChange ] ].
 	^ argsResult
+]
+
+{ #category : #accessing }
+STestCase >> spyInfo [
+	^ spyInfo
+]
+
+{ #category : #accessing }
+STestCase >> spyInfo: aSpyInfo [
+	spyInfo := aSpyInfo 
 ]
 
 { #category : #accessing }

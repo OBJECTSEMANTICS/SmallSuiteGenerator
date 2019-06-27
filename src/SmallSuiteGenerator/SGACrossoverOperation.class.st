@@ -46,15 +46,12 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
 	| sizeA sizeB offSpring limit |
 	sizeA := parentA numberOfStatements.
 	sizeB := parentB numberOfStatements.
-	offSpring := STestCase seed: parentB profile.
+	offSpring := STestCase seed: parentB spyInfo.
 	limit := (sizeA * alpha) asInteger.
 	offSpring
-		addFromParents:
-			(parentA statements copyFrom: 1 to: limit)
-				deepCopy.
-	(parentB statements
-		copyFrom: (alpha * sizeB) asInteger + 1
-		to: sizeB) deepCopy
+		addFromParents: (parentA statements copyFrom: 1 to: limit) deepCopy.
+	(parentB statements copyFrom: (alpha * sizeB) asInteger + 1 to: sizeB)
+		deepCopy
 		do: [ :aStm | aStm satisfyParameters: offSpring with: parentB ].
 	^ offSpring
 ]

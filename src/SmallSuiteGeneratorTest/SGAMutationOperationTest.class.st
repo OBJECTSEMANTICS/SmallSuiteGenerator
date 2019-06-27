@@ -12,14 +12,16 @@ SGAMutationOperationTest >> setUp [
 
 { #category : #tests }
 SGAMutationOperationTest >> testMutation [
-	| profile testCase mutatedTestCase |
-	profile := SSGenerator
-		profile:  [ (SStack newStackWith: {2 . 4 . 6 . 1})
-						push: 8;
-						pop;
-						top ]
-		onClass: SStack.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase mutatedTestCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
+		profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				push: 8;
+				pop;
+				top ]
+		onClass: SStack).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
@@ -29,16 +31,18 @@ SGAMutationOperationTest >> testMutation [
 
 { #category : #tests }
 SGAMutationOperationTest >> testMutationSSteacher [
-	| profile testCase mutatedTestCase |
-	profile := SSGenerator
+	| generatorInfo testCase mutatedTestCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.

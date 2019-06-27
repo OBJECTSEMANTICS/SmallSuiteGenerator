@@ -35,9 +35,9 @@ SAlignerStatementTest >> testAlign: aSTestCase testCaseUsing: dictReferences [
 
 { #category : #tests }
 SAlignerStatementTest >> testAlignConstructorStatements [
-	| profile testCase removedVarNames previousSize |
-	profile := SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase removedVarNames previousSize |
+	generatorInfo := SGeneratorInfo typeInfo: (SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
 	testCase addMethod.	"_var2 := _var0 initialize"
@@ -64,16 +64,18 @@ SAlignerStatementTest >> testAlignConstructorStatements [
 	previousSize := testCase statements size.
 	removedVarNames := aligner applyOn: testCase.
 	self
-		assert: testCase numberOfStatements equals: previousSize - removedVarNames size
+		assert: testCase numberOfStatements
+		equals: previousSize - removedVarNames size
 ]
 
 { #category : #tests }
 SAlignerStatementTest >> testAlignFieldStatements [
-	| profile testCase dictReferences |
-	profile := SSGenerator
+	| generatorInfo testCase dictReferences |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 2"
 	testCase addField.	"_var1 := _var0 score"
 	dictReferences := Dictionary new
@@ -87,16 +89,17 @@ SAlignerStatementTest >> testAlignFieldStatements [
 
 { #category : #tests }
 SAlignerStatementTest >> testAlignMethodStatements [
-	| profile testCase dictReferences |
-	profile := SSGenerator
+	| generatorInfo testCase dictReferences |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ (SFoo score: 2)
 				returnFloat;
 				return:
 					(Dictionary new
 						at: 3 put: 3;
 						yourself) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 2"
 	testCase addMethod.	"_var1 := _var0 ..."
 	dictReferences := Dictionary new
@@ -107,7 +110,7 @@ SAlignerStatementTest >> testAlignMethodStatements [
 		assert:
 			((testCase statementAt: '_var1') asString
 				beginsWith: '_var1 := (SFoo score: 2 )').
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 2"
 	testCase addMethod.	"_var1 := _var0 return:"
 	dictReferences := Dictionary new
@@ -116,7 +119,7 @@ SAlignerStatementTest >> testAlignMethodStatements [
 	testCase statements last selector = #return:
 		ifFalse: [ testCase statements last
 				selector: #return:;
-				args: {(testCase profile scalars at: #Dictionary) asArray first};
+				args: {(testCase spyInfo scalars at: #Dictionary) asArray first};
 				returnTypeName: #Dictionary ].
 	self testAlign: testCase testCaseUsing: dictReferences.
 	self
@@ -256,11 +259,12 @@ SAlignerStatementTest >> testAlignMethodStatements2 [
 
 { #category : #tests }
 SAlignerStatementTest >> testAlignUsingConstructorStatements [
-	| profile testCase dictReferences |
-	profile := SSGenerator
+	| generatorInfo testCase dictReferences |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ SFoo score: {1 . 6 . 8 . 7} ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.	"_var0 := #(1. 6. 8. 7)"
 	testCase addConstructor.	"_var1 := SFoo score: _var0"
 	dictReferences := Dictionary new
@@ -274,9 +278,10 @@ SAlignerStatementTest >> testAlignUsingConstructorStatements [
 
 { #category : #tests }
 SAlignerStatementTest >> testAlignUsingPrimitiveStatements [
-	| profile testCase dictReferences |
-	profile := SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase dictReferences |
+	generatorInfo := SGeneratorInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 3.46 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.	"_var0 := 3.46"
 	testCase addConstructor.	"_var1 := SFoo score: _var0"
 	testCase addPrimitive.	"_var2 := 3.46"

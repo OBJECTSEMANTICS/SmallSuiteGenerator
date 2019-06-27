@@ -34,14 +34,14 @@ SAuxiliar class >> changeAndTransform: aObject ofType: aType using: aTestCase [
 	aObject isLiteral
 		ifTrue: [ ^ aObject mutateToChange ].
 	dictOfClasses := Dictionary
-		newFromKeys: aTestCase dictSubclasses keys , aTestCase profile scalars keys
-		andValues: aTestCase dictSubclasses values , aTestCase profile scalars values.
+		newFromKeys: aTestCase dictSubclasses keys , aTestCase spyInfo scalars keys
+		andValues: aTestCase dictSubclasses values , aTestCase spyInfo scalars values.
 	dictOfClasses
 		at: aType name
 		ifPresent: [ :subClasses | 
 			| otherValues |
 			otherValues := OrderedCollection new.
-			aTestCase profile scalars associations
+			aTestCase spyInfo scalars associations
 				select: [ :assoc | subClasses includes: assoc key ]
 				thenDo: [ :assoc | otherValues addAll: assoc value ].
 			otherValues := self listShuffle: otherValues.
@@ -172,11 +172,12 @@ SAuxiliar class >> packagesClassesAndMethodsOf: profile filterBy: mutatedMethods
 		select:
 			[ :meth | selectors includes: meth classSpy className -> meth selector ]
 		thenDo: [ :meth | 
-			| aClass |
+			| aClass splited |
 			aClass := meth classSpy.
-			packages add: aClass packageSpy.
-			classes add: aClass.
-			methods add: meth ].
+			packages add: aClass packageSpy packageName.
+			splited := aClass className splitOn: ' '.
+			classes add: (splited size > 1 ifFalse: [aClass className]ifTrue: [splited first asSymbol]).
+			methods add: meth classSpy className -> meth selector ].
 	^ {packages.
 	classes.
 	methods}
@@ -311,11 +312,10 @@ SAuxiliar class >> satisfyConstructor: aTestCase with: otherTestCase of: aStatem
 				ifNotNil: [ constructor := aTestCase
 						newConstructorStatement: constructor theClassName
 						of:
-							(otherTestCase profile classAt: constructor theClassName)
+							(otherTestCase spyInfo classAt: constructor theClassName)
 								factoryMethods
 						before: constructor varName.
-						constructor ifNotNil: [ aTestCase addStatement: constructor ]
-						 ] ].
+					constructor ifNotNil: [ aTestCase addStatement: constructor ] ] ].
 	^ constructor
 ]
 
@@ -365,7 +365,7 @@ SAuxiliar class >> transformToVar: aString [
 
 { #category : #'as yet unclassified' }
 SAuxiliar class >> typeNameArgsOf: selector selectorIn: aClassName classNameUsing: aTestCase [
-	(aTestCase profile >> aClassName) methods
+	(aTestCase spyInfo >> aClassName) methods
 		detect: [ :method | method selector = selector ]
 		ifFound: [ :method | ^ method argTypes collect: [ :type | type name ] ]
 		ifNone: [ ^ nil ]

@@ -25,7 +25,7 @@ SGAMutationOperation >> initialize [
 { #category : #'as yet unclassified' }
 SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
-	newTestCase := STestCase seed: aTestCase profile.
+	newTestCase := STestCase seed: aTestCase spyInfo.
 	newTestCase addFromParents: aTestCase statements deepCopy.
 	self doMutate: newTestCase.
 	^ newTestCase

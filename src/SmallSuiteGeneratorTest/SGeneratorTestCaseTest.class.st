@@ -22,7 +22,7 @@ SGeneratorTestCaseTest >> testMethodsWithMutation [
 		with: AllTestsMethodsRunningMutantEvaluationStrategy new.
 	self
 		assertCollection: (methods collect: [:met | met originalMethod selector]) asSet
-		hasSameElements: {#discount . #price. #discount:}
+		hasSameElements: {#discount . #price. #discount:. #price:}
 ]
 
 { #category : #tests }
@@ -38,7 +38,7 @@ SGeneratorTestCaseTest >> testProfilerMutatedMethods [
 		mutatedMethodsFrom: {SEventTest}
 		mutating: {SEvent}
 		using: MutantOperator contents
-		with: AllTestsMethodsRunningMutantEvaluationStrategy new. self halt.
+		with: AllTestsMethodsRunningMutantEvaluationStrategy new.
 	newProfile := generator
 		profileMutatedMethodsFrom: methods
 		using: profile.
@@ -47,5 +47,5 @@ SGeneratorTestCaseTest >> testProfilerMutatedMethods [
 		hasSameElements: {#SEvent}.
 	self
 		assertCollection: (newProfile allMethods collect: #selector)
-		hasSameElements: methods
+		hasSameElements: (methods collect: [ :meth | meth originalMethod selector ]) asSet
 ]

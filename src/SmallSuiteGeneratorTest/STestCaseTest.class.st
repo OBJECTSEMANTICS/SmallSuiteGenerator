@@ -6,9 +6,11 @@ Class {
 
 { #category : #'as yet unclassified' }
 STestCaseTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
-	| profile testCase |
-	profile := SSGenerator profile: aBlock onClass: aClass.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: aBlock onClass: aClass).
+	testCase := STestCase seed: generatorInfo.
 	^ testCase
 ]
 
@@ -254,47 +256,61 @@ STestCaseTest >> assertRemove: listTestCase [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeConstructor [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #(2).
-	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #(3.56).
-	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: $a ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: {$a}.
-	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: true ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase change.
 	self assert: testCase statements first args equals: #(false).
-	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('hello').
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ SFoo score: #(1 4 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase change.
 	self assert: testCase statements first args equals: {#(1 4 5)}.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SStudent name: 'Ann' with: -34.234)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
+		onClass: SStudent).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase addField.
 	testCase change.
@@ -304,16 +320,18 @@ STestCaseTest >> testChangeConstructor [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeField [
-	| profile testCase oldStatement |
-	profile := SSGenerator
+	| generatorInfo testCase oldStatement |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	oldStatement := testCase statements second deepCopy.
@@ -332,15 +350,17 @@ STestCaseTest >> testChangeField [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeMethod [
-	| profile testCase oldStatement currentStatement |
-	profile := SSGenerator
+	| generatorInfo testCase oldStatement currentStatement |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SStudent name: 'Ann' with: 34)
 				age: 34;
 				identifier;
 				nickname: 'Ann34';
 				fullIdentifier ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
+		onClass: SStudent).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	testCase addMethod.
@@ -357,8 +377,10 @@ STestCaseTest >> testChangeMethod [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
-	| profile testCase oldStatement currentStatement |
-	profile := SSGenerator
+	| generatorInfo testCase oldStatement currentStatement |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2)
 				return:
 					(SStudent new
@@ -367,8 +389,8 @@ STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
 						scoreStudent: 5).
 			(SFoo score: 6)
 				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	oldStatement := testCase statements
 		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
@@ -378,42 +400,53 @@ STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
 	currentStatement := testCase statementAt: oldStatement varName.
 	self denyCollection: currentStatement args equals: oldStatement args.
 	self assert: testCase hasValidDependencies.
-	self
-		assert: testCase hasUniqueStatements 
+	self assert: testCase hasUniqueStatements
 ]
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangePrimitive [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 2.
-	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo).
+	testCase := STestCase seed:generatorInfo .
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 3.56.
-	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: $a ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: $a.
-	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: true ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase change.
 	self assert: testCase statements first value equals: false.
-	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			(SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 'hello'.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ SFoo score: #(1 4 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase change.
 	self assert: testCase statements first value equals: #(1 4 5)
@@ -431,12 +464,14 @@ STestCaseTest >> testChangeRoassal [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeWithTwoConstructor [
-	| profile testCase oldSelector |
-	profile := SSGenerator
+	| generatorInfo testCase oldSelector |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ SStack newStack.
-			SStack newStackWith: { 1. 5. 7. 8 } ]
-		onClass: SStack.
-	testCase := STestCase seed: profile.
+			SStack newStackWith: {1 . 5 . 7 . 8} ]
+		onClass: SStack).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	oldSelector := testCase statements first selector.
 	testCase change.
@@ -445,37 +480,45 @@ STestCaseTest >> testChangeWithTwoConstructor [
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertMethodCall [
-	| profile testCase varNames stm |
-	profile := SSGenerator
+	| generatorInfo testCase varNames stm |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2)
 				score;
 				return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -484,32 +527,36 @@ STestCaseTest >> testInsertMethodCall [
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isMethod or: [ stm isConstructor ]).
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2)
 				score;
 				return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
 	testCase addMethod.
 	varNames := testCase insert: #insertMethodCallUsing:.
 	self assert: testCase statements size > 4.
-	self assert: testCase hasValidDependencies.
+	self assert: testCase hasValidDependencies
 ]
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertParameter [
-	| profile testCase varNames |
+	| generatorInfo testCase varNames |
 	"if is primitive, parameter is not added"
 	"parameter is added if any statement has args"
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase insert: #insertParameterUsing:.
 	self assert: testCase statements size equals: 1.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	varNames := testCase insert: #insertParameterUsing:.
@@ -519,8 +566,8 @@ STestCaseTest >> testInsertParameter [
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first).
 			self assert: testCase hasValidDependencies.
-			self assert: testCase hasUniqueStatements  ].
-	testCase := STestCase seed: profile.
+			self assert: testCase hasUniqueStatements ].
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
@@ -531,8 +578,8 @@ STestCaseTest >> testInsertParameter [
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first).
 			self assert: testCase hasValidDependencies.
-			self assert: testCase hasUniqueStatements  ].
-	testCase := STestCase seed: profile.
+			self assert: testCase hasUniqueStatements ].
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -545,18 +592,20 @@ STestCaseTest >> testInsertParameter [
 						addAll: (testCase statements select: #isMethod thenCollect: #args) first;
 						yourself) includes: varNames first).
 			self assert: testCase hasValidDependencies.
-			self assert: testCase hasUniqueStatements  ].
-	profile := SSGenerator
+			self assert: testCase hasUniqueStatements ].
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
 				push: 8;
 				pop;
 				top ]
-		onClass: SStack.
-	testCase := STestCase seed: profile.
+		onClass: SStack).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	testCase insert: #insertParameterUsing:.
 	self assert: testCase hasValidDependencies.
-	self assert: testCase hasUniqueStatements 
+	self assert: testCase hasUniqueStatements
 ]
 
 { #category : #'mutation-insert' }
@@ -571,22 +620,28 @@ STestCaseTest >> testInsertParameterRoassal [
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertRandomCall [
-	| profile testCase stm varNames |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase stm varNames |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	self assert: (testCase insert: #insertRandomCallUsing:) isNil.
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 2.
 	self assertCollection: varNames equals: {'_var2' . '_var3'}.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
@@ -595,10 +650,12 @@ STestCaseTest >> testInsertRandomCall [
 	self assert: (varNames includesAny: {'_var3' . '_var4'}).
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isField or: [ stm isConstructor ]).
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -611,56 +668,74 @@ STestCaseTest >> testInsertRandomCall [
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveConstructor [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase remove.
 	self assert: testCase statements isEmpty.
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase statements last args includes: '_var0').
 	testCase remove: '_var0'.
 	self assert: testCase statements size equals: 1.
 	self deny: (testCase statements last args includes: '_var0').
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SStudent name: 'Ann' with: -34.234)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
-	testCase addConstructor. "_var0"
-	testCase addField. "_var1"
-	testCase addField. "_var2"
-	testCase addMethod. "_var3"
+		onClass: SStudent).
+	testCase := STestCase seed: generatorInfo .
+	testCase addConstructor.	"_var0"
+	testCase addField.	"_var1"
+	testCase addField.	"_var2"
+	testCase addMethod.	"_var3"
 	testCase remove: '_var0'.
-	self assert: (testCase statements select: #isConstructor) size equals: 3.
+	self
+		assert: (testCase statements select: #isConstructor) size
+		equals: 3.
 	self assert: (testCase statementAt: '_var4') isConstructor.
-	self assert: (testCase statementAt: '_var1') receiverVarName equals: '_var4'.
-	self assert: (testCase statementAt: '_var2') receiverVarName equals: '_var5'.
-	self assert: (testCase statementAt: '_var3') receiverVarName equals: '_var6'.
+	self
+		assert: (testCase statementAt: '_var1') receiverVarName
+		equals: '_var4'.
+	self
+		assert: (testCase statementAt: '_var2') receiverVarName
+		equals: '_var5'.
+	self
+		assert: (testCase statementAt: '_var3') receiverVarName
+		equals: '_var6'
 ]
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveField [
-	| profile testCase varNamesDeleted statement |
-	profile := SSGenerator
+	| generatorInfo testCase varNamesDeleted statement |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			(SSGenerator
 		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase addField.
 	varNamesDeleted := testCase remove: '_var1'.	"remove the fieldStatement"
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
 	self assert: testCase statements size equals: 1.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	varNamesDeleted := testCase remove: '_var0'.	"remove the constructorStatement"
@@ -672,22 +747,24 @@ STestCaseTest >> testRemoveField [
 	self
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'.
-	self assert: testCase hasValidDependencies.
+	self assert: testCase hasValidDependencies
 ]
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveMethod [
-	| profile testCase varNamesDeleted statement referencedVarName |
-	profile := SSGenerator
+	| generatorInfo testCase varNamesDeleted statement referencedVarName |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator
 		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+		onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	varNamesDeleted := testCase remove: '_var1'.	"remove the methodStatement"
 	self assert: testCase statements size equals: 1.
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	varNamesDeleted := testCase remove: '_var0'.	"remove the constructorStatement"
@@ -700,7 +777,7 @@ STestCaseTest >> testRemoveMethod [
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'.
 	self assert: testCase hasValidDependencies.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo .
 	testCase addConstructor.
 	testCase addConstructor.
 	testCase addMethod.	"_var2"
@@ -715,11 +792,11 @@ STestCaseTest >> testRemoveMethod [
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemovePrimitive [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo:
+			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase remove.
 	self assert: testCase statements isEmpty

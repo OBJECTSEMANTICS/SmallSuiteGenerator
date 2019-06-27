@@ -6,24 +6,25 @@ Class {
 
 { #category : #tests }
 SAuxiliarTest >> testConstructorInTestCase [
-	| profile testCase constructor |
-	profile := SSGenerator
+	| generatorInfo testCase constructor |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				idTeacher;
 				nickname ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
-	testCase addConstructor. "_var0 := SSteacher new"
-	testCase addField. "_var1 := _var0 idTeacher"
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
+	testCase addConstructor.	"_var0 := SSteacher new"
+	testCase addField.	"_var1 := _var0 idTeacher"
 	constructor := SAuxiliar
 		constructorIn: testCase
 		testCaseOf: testCase statements last
 		statementWithBlockCondition: SFieldStatement blockCondition.
 	self assert: constructor isNotNil.
 	self assert: constructor varName equals: '_var0'.
-	testCase := STestCase seed: profile.
-	testCase addConstructor. "_var0 := SSteacher new"
-	testCase addMethod. "_var1 := _var0 nickname"
+	testCase := STestCase seed: generatorInfo.
+	testCase addConstructor.	"_var0 := SSteacher new"
+	testCase addMethod.	"_var1 := _var0 nickname"
 	constructor := SAuxiliar
 		constructorIn: testCase
 		testCaseOf: testCase statements last
@@ -34,13 +35,14 @@ SAuxiliarTest >> testConstructorInTestCase [
 
 { #category : #tests }
 SAuxiliarTest >> testConstructorInTestCaseNotFound [
-	| profile testCase constructor |
-	profile := SSGenerator
+	| generatorInfo testCase constructor |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				idTeacher;
 				nickname ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SSteacher new"
 	testCase addField.	"_var1 := _var0 idTeacher"
 	testCase statements first theClassName: 'SStudent'.	"theClassName of constructor is changed"
@@ -49,7 +51,7 @@ SAuxiliarTest >> testConstructorInTestCaseNotFound [
 		testCaseOf: testCase statements last
 		statementWithBlockCondition: SFieldStatement blockCondition.
 	self assert: constructor isNil.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SSteacher new"
 	testCase addMethod.	"_var1 := _var0 nickname"
 	testCase statements first theClassName: 'SStudent'.	"theClassName of constructor is changed"
@@ -58,7 +60,7 @@ SAuxiliarTest >> testConstructorInTestCaseNotFound [
 		testCaseOf: testCase statements last
 		statementWithBlockCondition: SMethodStatement blockCondition.
 	self assert: constructor isNil.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SSteacher new"
 	testCase addMethod.	"_var1 := _var0 nickname"
 	testCase statements last selector: #name.	"selector of method is changed"
@@ -96,6 +98,38 @@ SAuxiliarTest >> testIsVeryDeep [
 ]
 
 { #category : #tests }
+SAuxiliarTest >> testPackagesClassesAndMethodsOfFilterBy [
+	| profile methods generator res |
+	generator := SGeneratorTestCase new.
+	profile := SSGenerator
+		profile: [ (SEvent price: 200)
+				discount: 15;
+				discount;
+				price ]
+		onClass: SEvent.
+	methods := generator
+		mutatedMethodsFrom: {SEventTest}
+		mutating: {SEvent}
+		using: MutantOperator contents
+		with: AllTestsMethodsRunningMutantEvaluationStrategy new.
+	res := SAuxiliar
+		packagesClassesAndMethodsOf: profile
+		filterBy: methods.
+	self assert: res size equals: 3.
+	self
+		assertCollection: res first
+		hasSameElements: {#SmallSuiteGeneratorTest}.
+	self assertCollection: res second hasSameElements: {#SEvent}.
+	self
+		assertCollection: res third
+		hasSameElements:
+			{(#SEvent -> #discount).
+			(#SEvent -> #price).
+			(#SEvent -> #discount:).
+			#'SEvent class' -> #price:}
+]
+
+{ #category : #tests }
 SAuxiliarTest >> testPositionToInsertAfterIndexStatement [
 	| testCase methodStatement positionConstructor positionToInsert|
 	testCase := SStatementTest testCaseSStack.
@@ -108,9 +142,10 @@ SAuxiliarTest >> testPositionToInsertAfterIndexStatement [
 
 { #category : #tests }
 SAuxiliarTest >> testTypeNameArgsOfSelector [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 5 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator profile: [ SFoo score: 5 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	self
 		assertCollection:
@@ -133,16 +168,17 @@ SAuxiliarTest >> testValidateIfNotValid [
 
 { #category : #tests }
 SAuxiliarTest >> testValueOfTypeInTestCase [
-	| profile testCase dictionary value |
-	profile := SSGenerator
+	| generatorInfo testCase dictionary value |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	dictionary := Dictionary new
 		at: 'SmallInteger' put: #(1 4 5);
 		at: 'ByteString' put: {'sfoo' . 'ssteacher'};
@@ -162,8 +198,8 @@ SAuxiliarTest >> testValueOfTypeInTestCase [
 	self assert: ({'sfoo' . 'ssteacher'} includes: value first).
 	self assert: value second equals: #ByteString.
 	self
-		assert: ((testCase dictSubclasses at: 'String') includes: 'ByteString').
-	
+		assert: ((testCase dictSubclasses at: 'String') includes: 'ByteString')
+
 
 	"profile := SSGenerator profile: [ (SFoo score: 5) ] onClass: SFoo.
 	testCase := STestCase seed: profile.
@@ -179,11 +215,12 @@ SAuxiliarTest >> testValueOfTypeInTestCase [
 
 { #category : #tests }
 SAuxiliarTest >> testValueOfTypeInTestCaseWithoutData [
-	| profile testCase dictionary value |
-	profile := SSGenerator
+	| generatorInfo testCase dictionary value |
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ SSTeacher name: 'Ann' with: 34 ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	dictionary := Dictionary new
 		at: 'ByteString' put: {'sfoo' . 'ssteacher'};
 		yourself.
@@ -192,10 +229,11 @@ SAuxiliarTest >> testValueOfTypeInTestCaseWithoutData [
 		typeIn: testCase
 		testCaseUsing: dictionary.
 	self assert: value isNil.
-	profile := SSGenerator
+	generatorInfo := SGeneratorInfo
+		typeInfo: ( SSGenerator
 		profile: [ SSTeacher name: 'Ann' with: 34 ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+		onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	dictionary := Dictionary new
 		at: 'SSTeacher' put: {SSTeacher new};
 		at: 'ByteString' put: {'sfoo' . 'ssteacher'};

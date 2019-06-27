@@ -207,12 +207,12 @@ SCalculatorCoverageTest >> testCoverageOnPackagesSStack [
 ]
 
 { #category : #tests }
-SCalculatorCoverageTest >> testSuite: profiler ofSize: aNumber [
+SCalculatorCoverageTest >> testSuite: aTypeInfo ofSize: aNumber [
 	| collection |
 	collection := OrderedCollection new.
 	1 to: aNumber do: [ :index | 
 		| testCase |
-		testCase := STestCase seed: profiler.
+		testCase := STestCase seed: aTypeInfo.
 		testCase generateStatements: (10 to: 54) atRandom.
 		collection add: testCase ].
 	^ collection
