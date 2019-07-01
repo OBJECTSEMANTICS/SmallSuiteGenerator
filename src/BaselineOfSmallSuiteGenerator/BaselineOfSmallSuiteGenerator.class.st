@@ -27,5 +27,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with:
 						[ spec requires: #('SmallSuiteGenerator' 'SmallSuiteGeneratorAssert') ].
 			spec package: 'SmallSuiteCompiler'.
-			spec package: 'SmallSuiteExamples' ]
+			spec package: 'SmallSuiteExamples'.
+			spec package: 'SSGenerator'.
+			spec package: 'SSGenerator-Tests' ]
 ]

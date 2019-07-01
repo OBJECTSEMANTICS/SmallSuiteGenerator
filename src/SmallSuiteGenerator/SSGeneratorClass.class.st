@@ -30,7 +30,7 @@ SSGeneratorClass >> fillTypesOn: aTypeInfo [
 	dict := self dictInfoMethodsFrom: self allMethods."
 	aTypeInfo types
 		at: self className
-		put: (self dictInfoMethodsFrom: self allMethods).
+		put: (self dictInfoMethodsFrom: self methods).
 	"self allMethods
 		do: [ :method | dict at: method selector put: method asTypeInfo ]."
 	meths := self metaclassSpy methods.

@@ -292,79 +292,79 @@ SUtilityTest class >> listTestCaseSStudent [
 { #category : #'as yet unclassified' }
 SUtilityTest class >> listTestCaseSStudentGeneratedManually [
 	^ {(STestCase new
-				addStatement:
-					(SConstructorStatement new
-						theClassName: #SStudent;
-						selector: 'new');
-				addStatement:
-					(SPrimitiveStatement new
-						returnTypeName: #ByteString;
-						value: 'Sophie');
-				addStatement:
-					(SFieldStatement new
-						returnTypeName: #SmallInteger;
-						fieldName: #idStudent;
-						receiverVarName: '_var0');
-				addStatement:
-					(SMethodStatement new
-						returnTypeName: #SStudent;
-						selector: #scoreStudent:;
-						receiverVarName: '_var0';
-						args: #(36));
-				addStatement:
-					(SConstructorStatement new
-						theClassName: #SStudent;
-						selector: 'new');
-				addStatement:
-					(SFieldStatement new
-						returnTypeName: #SmallInteger;
-						fieldName: #scoreStudent;
-						receiverVarName: '_var4');
-				addStatement:
-					(SMethodStatement new
-						returnTypeName: #ByteString;
-						selector: #nickname;
-						receiverVarName: '_var4');
-				profile:
-					(SSGenerator
-						profile: [ (SStudent name: 'Sophie')
-								scoreStudent: 45;
-								scoreStudent;
-								idStudent;
-								nickname;
-								yourself ]
-						onClass: SStudent);
-				yourself).
-			(STestCase new
-				addStatement:
-					(SPrimitiveStatement new
-						returnTypeName: #SmallInteger;
-						value: 36);
-				addStatement:
-					(SConstructorStatement new
-						theClassName: #SStudent;
-						selector: 'new');
-				addStatement:
-					(SMethodStatement new
-						returnTypeName: #SStudent;
-						selector: #scoreStudent:;
-						receiverVarName: '_var1';
-						args: #('_var0'));
-				addStatement:
-					(SConstructorStatement new
-						theClassName: #SStudent;
-						selector: 'new');
-				addStatement:
-					(SFieldStatement new
-						returnTypeName: #SmallInteger;
-						fieldName: #idStudent;
-						receiverVarName: '_var3');
-				profile:
-					(SSGenerator
-						profile: [ (SStudent name: 'Sophie' with: 45)
-								scoreStudent: 36;
-								idStudent;
-								yourself ]
-						onClass: SStudent);
-				yourself)}
+		addStatement:
+			(SConstructorStatement new
+				theClassName: #SStudent;
+				selector: 'new');
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #ByteString;
+				value: 'Sophie');
+		addStatement:
+			(SFieldStatement new
+				returnTypeName: #SmallInteger;
+				fieldName: #idStudent;
+				receiverVarName: '_var0');
+		addStatement:
+			(SMethodStatement new
+				returnTypeName: #SStudent;
+				selector: #scoreStudent:;
+				receiverVarName: '_var0';
+				args: #(36));
+		addStatement:
+			(SConstructorStatement new
+				theClassName: #SStudent;
+				selector: 'new');
+		addStatement:
+			(SFieldStatement new
+				returnTypeName: #SmallInteger;
+				fieldName: #scoreStudent;
+				receiverVarName: '_var4');
+		addStatement:
+			(SMethodStatement new
+				returnTypeName: #ByteString;
+				selector: #nickname;
+				receiverVarName: '_var4');
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStudent name: 'Sophie')
+						scoreStudent: 45;
+						scoreStudent;
+						idStudent;
+						nickname;
+						yourself ]
+				onClass: SStudent);
+		yourself). "change this"
+	(STestCase new
+		addStatement:
+			(SPrimitiveStatement new
+				returnTypeName: #SmallInteger;
+				value: 36);
+		addStatement:
+			(SConstructorStatement new
+				theClassName: #SStudent;
+				selector: 'new');
+		addStatement:
+			(SMethodStatement new
+				returnTypeName: #SStudent;
+				selector: #scoreStudent:;
+				receiverVarName: '_var1';
+				args: #('_var0'));
+		addStatement:
+			(SConstructorStatement new
+				theClassName: #SStudent;
+				selector: 'new');
+		addStatement:
+			(SFieldStatement new
+				returnTypeName: #SmallInteger;
+				fieldName: #idStudent;
+				receiverVarName: '_var3');
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStudent name: 'Sophie' with: 45)
+						scoreStudent: 36;
+						idStudent;
+						yourself ]
+				onClass: SStudent);
+		yourself)}
 ]

@@ -216,11 +216,10 @@ SGAEngine >> initializeMutationOperator [
 SGAEngine >> initializePopulation [
 	population := OrderedCollection new.
 	populationSize
-		timesRepeat: [ 
-			population
+		timesRepeat: [ population
 				add:
 					(STestCase new
-						profile: generatorProfiler;
+						typeInfo: generatorProfiler; "change this"
 						generateStatements: numberOfStatements) ]
 ]
 

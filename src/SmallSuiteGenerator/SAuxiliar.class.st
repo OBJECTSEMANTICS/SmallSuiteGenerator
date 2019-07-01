@@ -121,6 +121,28 @@ SAuxiliar class >> defaultConstructor: classSpy [
 ]
 
 { #category : #'as yet unclassified' }
+SAuxiliar class >> dictInfoMethodsFrom: arrMethods [
+	| dict |
+	dict := Dictionary new.
+	arrMethods
+		do: [ :method | dict at: method selector put: method asTypeInfo ].
+	^ dict
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> fillTypeInfo: aTypeInfo withDataFrom: aClass [
+	|meths |
+	aTypeInfo types
+		at: aClass className
+		put: (self dictInfoMethodsFrom: aClass methods).
+	meths := aClass metaclassSpy methods.
+	meths
+		ifNotEmpty: [ aTypeInfo types
+				at: aClass metaclassSpy className
+				put: (self dictInfoMethodsFrom: meths) ]
+]
+
+{ #category : #'as yet unclassified' }
 SAuxiliar class >> initLevel: aInt [
 	level := aInt
 ]
@@ -361,6 +383,21 @@ SAuxiliar class >> transformReplacement: object [
 { #category : #'as yet unclassified' }
 SAuxiliar class >> transformToVar: aString [
 	^ '(' , aString , ')'
+]
+
+{ #category : #'as yet unclassified' }
+SAuxiliar class >> typeMethodInfoFrom: aMethod [
+	^ STypeMethodInfo new
+		selector: aMethod selector;
+		returnType:
+			([ aMethod returnType name ]
+				on: Exception
+				do: [ nil ]);
+		argTypes:
+			([ aMethod argTypes collect: #name ]
+				on: Exception
+				do: [ nil ]);
+		yourself
 ]
 
 { #category : #'as yet unclassified' }

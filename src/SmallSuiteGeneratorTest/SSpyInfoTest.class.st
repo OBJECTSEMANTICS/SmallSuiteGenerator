@@ -32,17 +32,43 @@ SSpyInfoTest >> testTypeInfo: profile [
 
 { #category : #tests }
 SSpyInfoTest >> testTypeInfoSBProfiler [
-	| profile info |
+	| profile typeInfo |
 	profile := SBProfiler
 		profile: [ RTElement new hasNestedElements ]
 		onClass: RTElement.
-	info := self testTypeInfo: profile.
+	typeInfo := profile asTypeInfo.
 	self
-		assertCollection: (info at: 'packages') keys
-		hasSameElements: {#'Roassal2-Core' . #Roassal2GT}.
+		assert: (typeInfo typeOf: #initialize from: #RTElement) returnType
+		equals: #RTElement.
 	self
-		assertCollection: (info at: 'classes') keys
-		hasSameElements: {#RTElement}
+		assert: (typeInfo typeOf: #return: from: #RTElement) returnType
+		equals: #SequenceableCollection.
+	self
+		assertCollection: (typeInfo typeOf: #return: from: #RTElement) argTypes
+		hasSameElements: {#SequenceableCollection}.
+	self
+		assert: (typeInfo typeOf: #returnFloat from: #RTElement) returnType
+		equals: #SmallFloat64.
+	self
+		assert: (typeInfo typeOf: #returnCollection from: #RTElement) returnType
+		equals: #OrderedCollection.
+	self
+		assert: (typeInfo typeOf: #returnString from: #RTElement) returnType
+		equals: #ByteString.
+	self
+		assert: (typeInfo typeOf: #returnNum from: #RTElement) returnType
+		equals: #SmallInteger.
+	self
+		assert: (typeInfo typeOf: #score from: #RTElement) returnType
+		equals: #SmallInteger.
+	self
+		assert: (typeInfo typeOf: #score: from: #RTElement) returnType
+		equals: #RTElement.
+	self
+		assertCollection: (typeInfo typeOf: #score: from: #RTElement) argTypes
+		hasSameElements: {#SmallInteger}.
+	self
+		assert: (typeInfo typeOf: #score: from: #'SFoo class') returnType isNil.
 ]
 
 { #category : #tests }

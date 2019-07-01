@@ -15,14 +15,7 @@ SSGeneratorMethod >> argTypes [
 
 { #category : #converting }
 SSGeneratorMethod >> asTypeInfo [
-	^ STypeMethodInfo new
-		selector: self selector;
-		returnType:
-			([ self returnType name ]
-				on: Exception
-				do: [ nil ]);
-		argTypes: ([self argTypes collect: #name] on: Exception do: [nil]);
-		yourself
+	^ SAuxiliar typeMethodInfoFrom: self
 ]
 
 { #category : #hooks }

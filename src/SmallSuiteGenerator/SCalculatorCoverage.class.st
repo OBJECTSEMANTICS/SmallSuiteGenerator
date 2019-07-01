@@ -25,7 +25,10 @@ SCalculatorCoverage class >> calculateCoverageOf: aTestCase using: profiler inLe
 						using: profiler
 						inLevel: numLevel + 1 ]
 				ifFalse: [ ^ profiler dictCoverage ] ].
-	^ self executeStatementsOf: aTestCase using: profiler inLevel: numLevel.
+	^ self
+		executeStatementsOf: aTestCase
+		using: profiler
+		inLevel: numLevel
 ]
 
 { #category : #'as yet unclassified' }

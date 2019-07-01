@@ -513,11 +513,6 @@ STestCase >> printOn: aStream [
 			aStream cr. ]
 ]
 
-{ #category : #accessing }
-STestCase >> profile: anObject [
-	profile := anObject
-]
-
 { #category : #mutation }
 STestCase >> remove [
 	"If other statements refer the statement to remove, then this reference is replaced with another value out of the set which has the same type"

@@ -19,6 +19,11 @@ STypeMethodInfo >> argTypes: anObject [
 	argTypes := anObject
 ]
 
+{ #category : #initialization }
+STypeMethodInfo >> initialize [ 
+	argTypes := #()
+]
+
 { #category : #accessing }
 STypeMethodInfo >> returnType [
 	^ returnType
