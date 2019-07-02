@@ -1,5 +1,5 @@
 Class {
-	#name : #SSpyInfoTest,
+	#name : #STypeInfoTest,
 	#superclass : #TestCase,
 	#instVars : [
 		'spyInfo'
@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #tests }
-SSpyInfoTest >> testTypeInfo: profile [
+STypeInfoTest >> testTypeInfo: profile [
 	| info |
 	spyInfo typeInfo: profile.
 	info := spyInfo info.
@@ -31,14 +31,14 @@ SSpyInfoTest >> testTypeInfo: profile [
 ]
 
 { #category : #tests }
-SSpyInfoTest >> testTypeInfoSBProfiler [
+STypeInfoTest >> testTypeInfoSBProfiler [
 	| profile typeInfo |
 	profile := SBProfiler
-		profile: [ RTElement new hasNestedElements ]
+		profile: [ RTElement forCollection: (1 to: 3) ]
 		onClass: RTElement.
 	typeInfo := profile asTypeInfo.
 	self
-		assert: (typeInfo typeOf: #initialize from: #RTElement) returnType
+		assert: (typeInfo typeOf: #forCollection: from: #RTElement) returnType
 		equals: #RTElement.
 	self
 		assert: (typeInfo typeOf: #return: from: #RTElement) returnType
@@ -72,8 +72,8 @@ SSpyInfoTest >> testTypeInfoSBProfiler [
 ]
 
 { #category : #tests }
-SSpyInfoTest >> testTypeInfoSSGenerator [
-	| profile typeInfo |
+STypeInfoTest >> testTypeInfoSSGenerator [
+	| profile typeInfo methodInfo |
 	profile := SSGenerator
 		profile: [ SFoo new
 				return: Stack new;
@@ -89,11 +89,10 @@ SSpyInfoTest >> testTypeInfoSSGenerator [
 	self
 		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType
 		equals: #SFoo.
+	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	self assert: methodInfo returnType equals: #SequenceableCollection.
 	self
-		assert: (typeInfo typeOf: #return: from: #SFoo) returnType
-		equals: #SequenceableCollection.
-	self
-		assertCollection: (typeInfo typeOf: #return: from: #SFoo) argTypes
+		assertCollection: methodInfo argTypes
 		hasSameElements: {#SequenceableCollection}.
 	self
 		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType
@@ -110,12 +109,16 @@ SSpyInfoTest >> testTypeInfoSSGenerator [
 	self
 		assert: (typeInfo typeOf: #score from: #SFoo) returnType
 		equals: #SmallInteger.
+	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	self assert: methodInfo returnType equals: #SFoo.
 	self
-		assert: (typeInfo typeOf: #score: from: #SFoo) returnType
-		equals: #SFoo.
-	self
-		assertCollection: (typeInfo typeOf: #score: from: #SFoo) argTypes
+		assertCollection: methodInfo argTypes
 		hasSameElements: {#SmallInteger}.
 	self
-		assert: (typeInfo typeOf: #score: from: #'SFoo class') returnType isNil
+		assert: (typeInfo typeOf: #score: from: #'SFoo class') returnType isNil.
+	self
+		assertCollection: typeInfo scalars keys
+		hasSameElements:
+			{#OrderedCollection . #Stack . #ByteString . #SmallInteger.
+			#SmallFloat64}
 ]
