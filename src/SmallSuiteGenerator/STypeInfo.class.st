@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'types',
 		'classes',
-		'noneAbstractClasses'
+		'noneAbstractClasses',
+		'scalars'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -12,6 +13,34 @@ Class {
 { #category : #'as yet unclassified' }
 STypeInfo class >> typeInfo: aInstance [
 	^ self subclassResponsibility
+]
+
+{ #category : #adding }
+STypeInfo >> addMethodsOf: aClassName with: methods [
+	| classInfo |
+	classInfo := STypeClassInfo new.
+	methods
+		do: [ :aMethod | 
+			| methodTypeInfo |
+			methodTypeInfo := aMethod asTypeInfo.
+			methodTypeInfo typeInfo: self.
+			methodTypeInfo isClassMethod ifTrue: [classInfo addClassMethod: methodTypeInfo] ifFalse: [ classInfo addMethod: methodTypeInfo ] ].
+	classInfo typeInfo: self.
+	types at: aClassName put: classInfo
+]
+
+{ #category : #adding }
+STypeInfo >> addTypeOf: aClassName with: methods [
+	types
+		at: aClassName
+		put:
+			(methods
+				collect: [ :aMethod | 
+					|methodTypeInfo|
+					methodTypeInfo := aMethod asTypeInfo.
+					methodTypeInfo typeInfo: self.
+					aMethod selector -> methodTypeInfo ])
+				asDictionary
 ]
 
 { #category : #accessing }
@@ -47,27 +76,8 @@ STypeInfo >> filterFrom: aCoverageAnlysisResult [
 { #category : #initialization }
 STypeInfo >> initialize [
 	super initialize.
- 	types := Dictionary new.
-]
-
-{ #category : #lookup }
-STypeInfo >> methodsFrom: aClassName [
-	^ types at: aClassName ifAbsentPut:[ Dictionary new].
-]
-
-{ #category : #enumerating }
-STypeInfo >> methodsFrom: nameReceiver toSelect: aBoolean [
-	^ (types at: nameReceiver ifPresent: [ :dict | self methodsOrAccessorOf: nameReceiver toSelect: aBoolean ] ifAbsent: [#()])
-]
-
-{ #category : #enumerating }
-STypeInfo >> methodsOrAccessorOf: nameReceiver toSelect: aBoolean [
-	|methods |
-	methods := (Smalltalk at: nameReceiver ) methods.
-	methods := aBoolean
-		ifTrue: [ methods select: #isQuick ]
-		ifFalse: [ methods reject: #isQuick ].
-	^ methods select: [ :m | m returnType notNil ].
+	types := Dictionary new.
+	scalars := Dictionary new
 ]
 
 { #category : #accessing }
@@ -84,9 +94,19 @@ STypeInfo >> randomNoneAbstractClass [
 	^ self noneAbstractClasses shuffle anyOne
 ]
 
+{ #category : #accessing }
+STypeInfo >> scalars [
+	^ scalars 
+]
+
+{ #category : #accessing }
+STypeInfo >> scalars: aDictionary [
+	scalars := aDictionary
+]
+
 { #category : #lookup }
 STypeInfo >> typeOf: aSelector from: aClassName [
-	^ [(types at: aClassName) at: aSelector] on: Exception do: [ nil ]
+	^ (types at: aClassName) methodOf: aSelector
 ]
 
 { #category : #accessing }

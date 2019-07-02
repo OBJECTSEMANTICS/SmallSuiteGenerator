@@ -386,21 +386,6 @@ SAuxiliar class >> transformToVar: aString [
 ]
 
 { #category : #'as yet unclassified' }
-SAuxiliar class >> typeMethodInfoFrom: aMethod [
-	^ STypeMethodInfo new
-		selector: aMethod selector;
-		returnType:
-			([ aMethod returnType name ]
-				on: Exception
-				do: [ nil ]);
-		argTypes:
-			([ aMethod argTypes collect: #name ]
-				on: Exception
-				do: [ nil ]);
-		yourself
-]
-
-{ #category : #'as yet unclassified' }
 SAuxiliar class >> typeNameArgsOf: selector selectorIn: aClassName classNameUsing: aTestCase [
 	(aTestCase spyInfo >> aClassName) methods
 		detect: [ :method | method selector = selector ]

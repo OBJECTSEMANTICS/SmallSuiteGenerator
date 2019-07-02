@@ -16,10 +16,10 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	^ aMethodTypeInfo argTypes
 		collect: [ :className | 
 			| stms |
-			stms := statements shuffle anyOne detect: [ :stm | stm returnType = className ]
+			stms := statements shuffle detect: [ :stm | stm returnType = className ]
 			ifFound: [ :stm | stm variable] ifNone: [ self error: 'we could find an argument of type ' , className  ]]
 			thenDo: [ :variable | 
-				typeInfo scalars at: variable returnType ifPresent: [ :values | values shuffle first ] ifAbsent: [ self error: 'Error to generate args' ]
+				aMethodTypeInfo typeInfo scalars at: variable returnType ifPresent: [ :values | values shuffle first ] ifAbsent: [ self error: 'Error to generate args' ]
 				
 				 ]
 ]

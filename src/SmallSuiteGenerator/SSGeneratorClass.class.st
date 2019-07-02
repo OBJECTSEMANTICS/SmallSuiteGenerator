@@ -11,11 +11,8 @@ SSGeneratorClass class >> spyClassForMethod [
 
 { #category : #'as yet unclassified' }
 SSGeneratorClass >> dictInfoMethodsFrom: arrMethods [
-	| dict  |
-	dict := Dictionary new.
-	arrMethods do: [ :method | dict at: method selector put: method asTypeInfo ].
-	^ dict
-	
+	^ (arrMethods
+		collect: [ :method | method selector -> method asTypeInfo ]) asDictionary .
 ]
 
 { #category : #'as yet unclassified' }
@@ -25,17 +22,8 @@ SSGeneratorClass >> factoryMethods [
 
 { #category : #'as yet unclassified' }
 SSGeneratorClass >> fillTypesOn: aTypeInfo [
-	| meths |
-	"dict := Dictionary new.
-	dict := self dictInfoMethodsFrom: self allMethods."
-	aTypeInfo types
-		at: self className
-		put: (self dictInfoMethodsFrom: self methods).
-	"self allMethods
-		do: [ :method | dict at: method selector put: method asTypeInfo ]."
-	meths := self metaclassSpy methods.
-	meths
-		ifNotEmpty: [ aTypeInfo types
-				at: self metaclassSpy className
-				put: (self dictInfoMethodsFrom: meths) ]
+	aTypeInfo addMethodsOf: self className with: self allMethods.
+	"aTypeInfo
+		addClassMethodsOf: self className
+		with: self metaclassSpy methods"
 ]

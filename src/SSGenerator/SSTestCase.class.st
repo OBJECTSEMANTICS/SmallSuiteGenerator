@@ -51,38 +51,25 @@ SSTestCase >> addFactoryMessage: aClass [
 
 { #category : #actions }
 SSTestCase >> addFieldAccessMessage [
-	self addFieldAccessOrMessageWith: [:receiver :method | (SFieldAccessMessage
-								receiver: receiver
-								selector: method) ] filteringBy: true.
-]
-
-{ #category : #actions }
-SSTestCase >> addFieldAccessOrMessageWith: aBlock filteringBy: aBoolean [
-	| receivers |
-	receivers := statements select: #isFactoryMessage.
-	receivers shuffle
-		do: [ :receiver | 
-			| methods |
-			methods := typeInfo methodsFrom: receiver toSelect: aBoolean.
-			methods
-				ifNotEmpty: [ self
-						addAssignment:
-							(aBlock
-								valueWithPossibleArgs:
-									{receiver.
-									methods shuffle anyOne}).
-					^ self ] ]
+	| receiver methods |
+	receiver := self pickAnObjectVariable.
+	methods := self pickAnAccessorOf: receiver.
+	methods
+		ifNotEmpty: [ self addAssignment: (SFieldAccessMessage
+				receiver: receiver
+				selector: methods shuffle anyOne) ]
 ]
 
 { #category : #actions }
 SSTestCase >> addMessage [
-	self
-		addFieldAccessOrMessageWith: [ :receiver :method | 
-			SMessage
+	| receiver methods |
+	receiver := self pickAnObjectVariable.
+	methods := self pickMessagesOf: receiver.
+	methods
+		ifNotEmpty: [ self addAssignment: (SMessage
 				receiver: receiver
-				selector: method
-				previousStatements: statements ]
-		filteringBy: false
+				selector: methods shuffle anyOne
+				previousStatements: statements) ]
 ]
 
 { #category : #actions }
@@ -105,10 +92,32 @@ SSTestCase >> assignedIds [
 	^ statements collect: #id
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> factoryMessageVariables [
+	^ statements
+		select: [ :stm | stm value isFactoryMessage ]
+		thenCollect: [ :stm | stm variable ]
+]
+
 { #category : #initialization }
 SSTestCase >> initialize [
 	statements := OrderedCollection new.
 	nextId := 0
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> pickAnAccessorOf: aVariable [
+	^ (typeInfo types at: aVariable returnType) accessMessages
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> pickAnObjectVariable [
+	^ self factoryMessageVariables shuffle anyOne
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> pickMessagesOf: aVariable [
+	^ (typeInfo types at: aVariable returnType) messages
 ]
 
 { #category : #accessing }

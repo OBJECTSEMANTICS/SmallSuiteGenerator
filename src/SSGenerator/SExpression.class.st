@@ -18,6 +18,11 @@ SExpression >> id: anObject [
 	id := anObject
 ]
 
+{ #category : #testing }
+SExpression >> isFactoryMessage [
+	^ false
+]
+
 { #category : #accessing }
 SExpression >> returnType [
 	^ returnType

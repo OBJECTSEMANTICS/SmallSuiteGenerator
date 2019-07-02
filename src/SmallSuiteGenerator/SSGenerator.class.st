@@ -24,7 +24,7 @@ SSGenerator >> asTypeInfo [
 	| typeInfo |
 	typeInfo := STypeInfo new.
 	self allClasses do: [ :aSpyClass | aSpyClass fillTypesOn: typeInfo ].
-	typeInfo types at: 'scalars' put: scalars copy.
+	typeInfo scalars: scalars copy.
 	^ typeInfo
 ]
 

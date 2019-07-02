@@ -29,6 +29,11 @@ SAssignment >> printOn: aStream [
 	value printOn: aStream
 ]
 
+{ #category : #evaluating }
+SAssignment >> value [ 
+	^ value
+]
+
 { #category : #accessing }
 SAssignment >> value: anObject [
 	value := anObject

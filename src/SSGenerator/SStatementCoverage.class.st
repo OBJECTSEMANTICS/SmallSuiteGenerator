@@ -1,5 +1,5 @@
 Class {
 	#name : #SStatementCoverage,
-	#superclass : #SCoverage,
+	#superclass : #SFitness,
 	#category : #SSGenerator
 }

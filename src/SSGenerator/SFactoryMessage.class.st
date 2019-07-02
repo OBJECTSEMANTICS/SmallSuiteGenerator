@@ -29,3 +29,8 @@ SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements 
 		args: (self args: aMethodTypeInfo with: statements);
 		yourself
 ]
+
+{ #category : #testing }
+SFactoryMessage >> isFactoryMessage [
+	^ true
+]

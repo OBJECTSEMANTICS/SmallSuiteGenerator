@@ -1,11 +1,11 @@
 Class {
-	#name : #SCoverage,
+	#name : #SFitness,
 	#superclass : #Object,
 	#category : #SSGenerator
 }
 
 { #category : #running }
-SCoverage >> run: aSTestCase [
+SFitness >> run: aSTestCase [
 	
 
 ]

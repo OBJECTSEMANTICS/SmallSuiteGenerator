@@ -15,7 +15,7 @@ SSGeneratorMethod >> argTypes [
 
 { #category : #converting }
 SSGeneratorMethod >> asTypeInfo [
-	^ SAuxiliar typeMethodInfoFrom: self
+	^ STypeMethodInfo newFrom: self
 ]
 
 { #category : #hooks }
