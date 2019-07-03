@@ -7,9 +7,8 @@ Class {
 { #category : #'generator-tests' }
 SSGeneratorTest >> testConstructorGenerator [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	self
@@ -20,11 +19,8 @@ SSGeneratorTest >> testConstructorGenerator [
 { #category : #tests }
 SSGeneratorTest >> testFieldGenerator [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ (SFoo score: 2) score ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
@@ -52,13 +48,13 @@ SSGeneratorTest >> testMergeTypes [
 { #category : #tests }
 SSGeneratorTest >> testMethodGenerator [
 	| generatorInfo testCase collectString |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 2)
-				return: 2;
-				score ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						return: 2;
+						score ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
@@ -70,11 +66,11 @@ SSGeneratorTest >> testMethodGenerator [
 				includesAny:
 					{'_var1 := _var0 return: 2 .' . '_var1 := _var0 initialize.'.
 					'_var1 := _var0 score: 2 .' . '_var1 := _var0 score.'}).
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
@@ -91,18 +87,18 @@ SSGeneratorTest >> testMethodGenerator [
 { #category : #tests }
 SSGeneratorTest >> testMethodGeneratorOnClass [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 2)
-				return:
-					(SStudent new
-						name: 'Peter';
-						nickname: 'peter';
-						scoreStudent: 5).
-			(SFoo score: 6)
-				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						return:
+							(SStudent new
+								name: 'Peter';
+								nickname: 'peter';
+								scoreStudent: 5).
+					(SFoo score: 6)
+						return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	testCase statements
@@ -124,22 +120,22 @@ SSGeneratorTest >> testMethodGeneratorOnClass [
 { #category : #tests }
 SSGeneratorTest >> testMethodGeneratorOnClasses [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 2)
-				return:
-					(SStudent new
-						name: 'Peter';
-						nickname: 'peter';
-						scoreStudent: 5).
-			(SFoo score: 6)
-				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClasses:
-			{SFoo.
-			SStudent.
-			SSPerson.
-			SSTeacher}).
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						return:
+							(SStudent new
+								name: 'Peter';
+								nickname: 'peter';
+								scoreStudent: 5).
+					(SFoo score: 6)
+						return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				onClasses:
+					{SFoo.
+					SStudent.
+					SSPerson.
+					SSTeacher}).
 	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	testCase statements
@@ -160,11 +156,9 @@ SSGeneratorTest >> testMethodGeneratorOnClasses [
 { #category : #tests }
 SSGeneratorTest >> testMethodGeneratorWithArgs [
 	| generatorInfo testCase collectString |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 2) return: 3 ]
-		onClass: SFoo).
+			(SSGenerator profile: [ (SFoo score: 2) return: 3 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
@@ -183,11 +177,11 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 				includesAny:
 					{'_var2 := _var1 return: _var0 .' . '_var2 := _var1 initialize.'.
 					'_var2 := _var1 score: _var0 .'}).
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 4) return: (SStack newStackWith: {2 . 6 . 7}) ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
@@ -210,13 +204,13 @@ SSGeneratorTest >> testMethodGeneratorWithArgs [
 { #category : #'generator-tests' }
 SSGeneratorTest >> testMultipleConstructorGenerator [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ SFoo score: 2.
-			SFoo score: 5.
-			SFoo score: 7 ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ SFoo score: 2.
+					SFoo score: 5.
+					SFoo score: 7 ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	10 timesRepeat: [ testCase addConstructor ].
 	self assert: testCase statements size equals: 10
@@ -225,9 +219,8 @@ SSGeneratorTest >> testMultipleConstructorGenerator [
 { #category : #tests }
 SSGeneratorTest >> testPrimitiveGenerator [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	self

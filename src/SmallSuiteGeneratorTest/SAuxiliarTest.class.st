@@ -7,12 +7,13 @@ Class {
 { #category : #tests }
 SAuxiliarTest >> testConstructorInTestCase [
 	| generatorInfo testCase constructor |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				idTeacher;
-				nickname ]
-		onClass: SSTeacher).
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SSTeacher name: 'Ann' with: 34)
+						idTeacher;
+						nickname ]
+				onClass: SSTeacher).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SSteacher new"
 	testCase addField.	"_var1 := _var0 idTeacher"
@@ -36,12 +37,13 @@ SAuxiliarTest >> testConstructorInTestCase [
 { #category : #tests }
 SAuxiliarTest >> testConstructorInTestCaseNotFound [
 	| generatorInfo testCase constructor |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				idTeacher;
-				nickname ]
-		onClass: SSTeacher).
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SSTeacher name: 'Ann' with: 34)
+						idTeacher;
+						nickname ]
+				onClass: SSTeacher).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SSteacher new"
 	testCase addField.	"_var1 := _var0 idTeacher"
@@ -143,8 +145,8 @@ SAuxiliarTest >> testPositionToInsertAfterIndexStatement [
 { #category : #tests }
 SAuxiliarTest >> testTypeNameArgsOfSelector [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator profile: [ SFoo score: 5 ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 5 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	self
@@ -169,15 +171,16 @@ SAuxiliarTest >> testValidateIfNotValid [
 { #category : #tests }
 SAuxiliarTest >> testValueOfTypeInTestCase [
 	| generatorInfo testCase dictionary value |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				name;
-				nickname;
-				yearsWorkExperience;
-				idTeacher;
-				id ]
-		onClass: SSTeacher).
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SSTeacher name: 'Ann' with: 34)
+						name;
+						nickname;
+						yearsWorkExperience;
+						idTeacher;
+						id ]
+				onClass: SSTeacher).
 	testCase := STestCase seed: generatorInfo.
 	dictionary := Dictionary new
 		at: 'SmallInteger' put: #(1 4 5);
@@ -216,10 +219,11 @@ SAuxiliarTest >> testValueOfTypeInTestCase [
 { #category : #tests }
 SAuxiliarTest >> testValueOfTypeInTestCaseWithoutData [
 	| generatorInfo testCase dictionary value |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator
-		profile: [ SSTeacher name: 'Ann' with: 34 ]
-		onClass: SSTeacher).
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ SSTeacher name: 'Ann' with: 34 ]
+				onClass: SSTeacher).
 	testCase := STestCase seed: generatorInfo.
 	dictionary := Dictionary new
 		at: 'ByteString' put: {'sfoo' . 'ssteacher'};
@@ -229,10 +233,11 @@ SAuxiliarTest >> testValueOfTypeInTestCaseWithoutData [
 		typeIn: testCase
 		testCaseUsing: dictionary.
 	self assert: value isNil.
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator
-		profile: [ SSTeacher name: 'Ann' with: 34 ]
-		onClass: SSTeacher).
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ SSTeacher name: 'Ann' with: 34 ]
+				onClass: SSTeacher).
 	testCase := STestCase seed: generatorInfo.
 	dictionary := Dictionary new
 		at: 'SSTeacher' put: {SSTeacher new};

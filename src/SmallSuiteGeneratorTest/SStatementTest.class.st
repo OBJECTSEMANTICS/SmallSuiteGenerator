@@ -7,9 +7,8 @@ Class {
 { #category : #tests }
 SStatementTest class >> testCaseSFoo [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
@@ -40,18 +39,18 @@ SStatementTest class >> testCaseSFoo [
 { #category : #tests }
 SStatementTest class >> testCaseSFooWithAbstractClassAsArgs [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 2)
-				return:
-					(SStudent new
-						name: 'Vania';
-						nickname: 'vania';
-						scoreStudent: 5).
-			(SFoo score: 6)
-				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						return:
+							(SStudent new
+								name: 'Vania';
+								nickname: 'vania';
+								scoreStudent: 5).
+					(SFoo score: 6)
+						return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	^ testCase
@@ -60,13 +59,13 @@ SStatementTest class >> testCaseSFooWithAbstractClassAsArgs [
 { #category : #tests }
 SStatementTest class >> testCaseSFooWithMethods [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 34)
-				score;
-				returnCollection ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 34)
+						score;
+						returnCollection ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
@@ -105,14 +104,14 @@ SStatementTest class >> testCaseSFooWithMethods [
 { #category : #tests }
 SStatementTest class >> testCaseSStack [
 	| generatorInfo testCase statement |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SStack newStackWith: {'abcd' . 'abcdf' . '1234' . '234'})
-				push: '_varVania3';
-				pop;
-				top ]
-		onClass: SStack).
+			(SSGenerator
+				profile: [ (SStack newStackWith: {'abcd' . 'abcdf' . '1234' . '234'})
+						push: '_varVania3';
+						pop;
+						top ]
+				onClass: SStack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.

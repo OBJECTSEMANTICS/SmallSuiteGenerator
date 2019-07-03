@@ -7,9 +7,8 @@ Class {
 { #category : #'as yet unclassified' }
 STestCaseTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: aBlock onClass: aClass).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: aBlock onClass: aClass).
 	testCase := STestCase seed: generatorInfo.
 	^ testCase
 ]

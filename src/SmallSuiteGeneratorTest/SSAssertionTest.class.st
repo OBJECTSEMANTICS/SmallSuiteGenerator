@@ -12,13 +12,13 @@ SSAssertionTest >> setUp [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantCollections [
 	| generatorInfo testCase invariants |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ Stack
-				new;
-				yourself ]
-		onClass: Stack).
+			(SSGenerator
+				profile: [ Stack
+						new;
+						yourself ]
+				onClass: Stack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -29,13 +29,13 @@ SSAssertionTest >> testGenerateInvariantCollections [
 			{SCollectionSizeAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ SFoo new
-				returnString;
-				returnFloat ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ SFoo new
+						returnString;
+						returnFloat ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -45,9 +45,8 @@ SSAssertionTest >> testGenerateInvariantCollections [
 		hasSameElements:
 			{SInspectorAssertion.
 			SComparisonAssertion}.
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ Array new ] onClass: Array).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ Array new ] onClass: Array).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -64,9 +63,8 @@ SSAssertionTest >> testGenerateInvariantCollections [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsArray [
 	| generatorInfo testCase invariants |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SFoo score: #(2 4) ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: #(2 4) ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -79,9 +77,8 @@ SSAssertionTest >> testGenerateInvariantsArray [
 			SPrimitiveAssertion.
 			SComparisonAssertion.
 			SStringAssertion}.
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SFoo score: #() ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: #() ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -98,9 +95,8 @@ SSAssertionTest >> testGenerateInvariantsArray [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsStack [
 	| generatorInfo testCase invariants |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ Stack new ] onClass: Stack).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ Stack new ] onClass: Stack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -111,15 +107,15 @@ SSAssertionTest >> testGenerateInvariantsStack [
 			{SCollectionSizeAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ Stack new
-				push: 1;
-				push: 3;
-				pop;
-				yourself ]
-		onClass: Stack).
+			(SSGenerator
+				profile: [ Stack new
+						push: 1;
+						push: 3;
+						pop;
+						yourself ]
+				onClass: Stack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
@@ -143,9 +139,8 @@ SSAssertionTest >> testGenerateInvariantsStack [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	| generatorInfo testCase invariants selectedInvariants |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SStack new ] onClass: Stack).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SStack new ] onClass: Stack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	selectedInvariants := {SCollectionSizeAssertion}.
@@ -154,15 +149,15 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
 		hasSameElements: selectedInvariants.
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ Stack new
-				push: 1;
-				push: 'hello';
-				pop;
-				yourself ]
-		onClass: Stack).
+			(SSGenerator
+				profile: [ Stack new
+						push: 1;
+						push: 'hello';
+						pop;
+						yourself ]
+				onClass: Stack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
@@ -188,11 +183,11 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 	| generatorInfo testCase invariants selectedInvariants classesInvariants |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SStudent name: 'Ann' with: -34.234) nickname ]
-		onClass: SStudent).
+			(SSGenerator
+				profile: [ (SStudent name: 'Ann' with: -34.234) nickname ]
+				onClass: SStudent).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
@@ -230,13 +225,13 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 { #category : #tests }
 SSAssertionTest >> testGeneratePrimitiveAssertions [
 	| generatorInfo testCase invariants |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ Stack new
-				push: 10;
-				yourself ]
-		onClass: Stack).
+			(SSGenerator
+				profile: [ Stack new
+						push: 10;
+						yourself ]
+				onClass: Stack).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -247,11 +242,9 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 			{SPrimitiveAssertion.
 			SComparisonAssertion.
 			SStringAssertion}.
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ SFoo new return: 'hello World' ]
-		onClass: SFoo).
+			(SSGenerator profile: [ SFoo new return: 'hello World' ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -264,11 +257,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 			SCollectionTypeSimilarityAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator
-		profile: [ SFoo new return: 2.34 ]
-		onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo new return: 2.34 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -279,11 +269,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 			{SPrimitiveAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator
-		profile: [ SFoo new return: true ]
-		onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo new return: true ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -299,27 +286,27 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 { #category : #tests }
 SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 	| generatorInfo testCase invariants |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
-				push: 8;
-				pop;
-				top ]
-		onClass: SStack).
+			(SSGenerator
+				profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+						push: 8;
+						pop;
+						top ]
+				onClass: SStack).
 	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements: 15.
 	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty.
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SStack newStackWith: {'abcd' . 'efg' . 'hij' . 'klmn'})
-				push: 'opqr';
-				pop;
-				top ]
-		onClass: SStack).
+			(SSGenerator
+				profile: [ (SStack newStackWith: {'abcd' . 'efg' . 'hij' . 'klmn'})
+						push: 'opqr';
+						pop;
+						top ]
+				onClass: SStack).
 	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements: 15.
 	invariants := testCase generateAssertionsUsing: {}.

@@ -162,9 +162,8 @@ SRefactorizerTest >> testPrettyCodeApplyingAlignerAndRenamer [
 { #category : #tests }
 SRefactorizerTest >> testPrettyCodeApplyingAlignerWithProfiler [
 	| testCase listRefactoring generatorInfo |
-	generatorInfo := SGeneratorInfo
-		typeInfo:
-			( SSGenerator profile: [ SFoo score: 23 ] onClass: SFoo).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 23 ] onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.	"_var0 := 23"
 	testCase addConstructor.	"_var1 := SFoo score: _var0"

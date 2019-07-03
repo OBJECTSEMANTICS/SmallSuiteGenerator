@@ -12,15 +12,15 @@ SInspectorAssertionTest >> testPrintString [
 		with: SFoo new
 		of: nil.
 	self assert: assertions isEmpty.
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (SFoo score: 4)
-				returnNum;
-				returnString;
-				returnFloat;
-				score ]
-		onClass: SFoo).
+			(SSGenerator
+				profile: [ (SFoo score: 4)
+						returnNum;
+						returnString;
+						returnFloat;
+						score ]
+				onClass: SFoo).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
@@ -41,15 +41,15 @@ SInspectorAssertionTest >> testPrintString [
 { #category : #tests }
 SInspectorAssertionTest >> testPrintStringRTLineSegment [
 	| assertions generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
+	generatorInfo := STypeInfo
 		typeInfo:
-			( SSGenerator
-		profile: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
-				angleInDeg;
-				angleInRad;
-				cotan;
-				bottom ]
-		onClass: RTLineSegment).
+			(SSGenerator
+				profile: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+						angleInDeg;
+						angleInRad;
+						cotan;
+						bottom ]
+				onClass: RTLineSegment).
 	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.

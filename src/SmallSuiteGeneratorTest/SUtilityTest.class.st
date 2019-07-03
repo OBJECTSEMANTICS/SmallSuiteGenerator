@@ -7,8 +7,8 @@ Class {
 { #category : #'as yet unclassified' }
 SUtilityTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator profile: aBlock onClass: aClass).
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: aBlock onClass: aClass).
 	testCase := STestCase seed: generatorInfo.
 	^ testCase
 ]
@@ -16,9 +16,9 @@ SUtilityTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
 { #category : #'as yet unclassified' }
 SUtilityTest class >> generateTestSuiteOf: aBlock blockOnPackagesMatching: regex [
 	| generatorInfo testCase |
-	generatorInfo := SGeneratorInfo
-		typeInfo: ( SSGenerator profile: aBlock onPackagesMatching: regex).
-	testCase := STestCase seed: generatorInfo .
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: aBlock onPackagesMatching: regex).
+	testCase := STestCase seed: generatorInfo.
 	^ testCase
 ]
 
