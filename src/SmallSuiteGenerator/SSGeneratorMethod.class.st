@@ -8,6 +8,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Profiler'
 }
 
+{ #category : #'as yet unclassified' }
+SSGeneratorMethod >> argTypeNames [
+	^ argTypes ifNil: [] ifNotNil: [argTypes collect: [:argType | argType ifNil: [ nil ] ifNotNil: [ argType name] ]]
+]
+
 { #category : #accessing }
 SSGeneratorMethod >> argTypes [
 	^ argTypes
@@ -15,7 +20,11 @@ SSGeneratorMethod >> argTypes [
 
 { #category : #converting }
 SSGeneratorMethod >> asTypeInfo [
-	^ STypeMethodInfo newFrom: self
+	^ STypeMethodInfo new
+		selector: selector;
+		returnType: self returnTypeName;
+		argTypes: self argTypeNames;
+		isQuick: self isQuick 
 ]
 
 { #category : #hooks }
@@ -59,6 +68,11 @@ SSGeneratorMethod >> mergeTypes: listOfArguments [
 { #category : #accessing }
 SSGeneratorMethod >> returnType [
 	^ returnType
+]
+
+{ #category : #accessing }
+SSGeneratorMethod >> returnTypeName [
+	^ returnType ifNil: [ nil ] ifNotNil: [ returnType name ]
 ]
 
 { #category : #hooks }

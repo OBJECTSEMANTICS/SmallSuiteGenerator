@@ -6,3 +6,14 @@ Class {
 	],
 	#category : #SSGenerator
 }
+
+{ #category : #printing }
+SLiteral >> printOn: aStream [
+	aStream nextPutAll: value asString;
+	nextPut: $.
+]
+
+{ #category : #accessing }
+SLiteral >> value: anObject [
+	value := anObject
+]

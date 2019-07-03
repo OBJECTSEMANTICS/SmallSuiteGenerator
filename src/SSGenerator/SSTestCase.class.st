@@ -60,6 +60,25 @@ SSTestCase >> addFieldAccessMessage [
 				selector: methods shuffle anyOne) ]
 ]
 
+{ #category : #adding }
+SSTestCase >> addLiteral [
+	typeInfo scalars ifEmpty: [ self error: 'scalars are not defined' ].
+	self addLiteral: typeInfo scalars keys shuffle anyOne.
+	
+]
+
+{ #category : #adding }
+SSTestCase >> addLiteral: aClassName [
+	|aObject|
+aObject := (typeInfo scalars at: aClassName) asArray shuffle anyOne.
+	aObject isLiteral
+		ifTrue: [ self
+				addAssignment:
+					(SLiteral new
+						returnType: aClassName;
+						value: aObject) ]
+]
+
 { #category : #actions }
 SSTestCase >> addMessage [
 	| receiver methods |

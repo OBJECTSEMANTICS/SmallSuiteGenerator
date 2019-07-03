@@ -31,47 +31,6 @@ STypeInfoTest >> testTypeInfo: profile [
 ]
 
 { #category : #tests }
-STypeInfoTest >> testTypeInfoSBProfiler [
-	| profile typeInfo |
-	profile := SBProfiler
-		profile: [ RTElement forCollection: (1 to: 3) ]
-		onClass: RTElement.
-	typeInfo := profile asTypeInfo.
-	self
-		assert: (typeInfo typeOf: #forCollection: from: #RTElement) returnType
-		equals: #RTElement.
-	self
-		assert: (typeInfo typeOf: #return: from: #RTElement) returnType
-		equals: #SequenceableCollection.
-	self
-		assertCollection: (typeInfo typeOf: #return: from: #RTElement) argTypes
-		hasSameElements: {#SequenceableCollection}.
-	self
-		assert: (typeInfo typeOf: #returnFloat from: #RTElement) returnType
-		equals: #SmallFloat64.
-	self
-		assert: (typeInfo typeOf: #returnCollection from: #RTElement) returnType
-		equals: #OrderedCollection.
-	self
-		assert: (typeInfo typeOf: #returnString from: #RTElement) returnType
-		equals: #ByteString.
-	self
-		assert: (typeInfo typeOf: #returnNum from: #RTElement) returnType
-		equals: #SmallInteger.
-	self
-		assert: (typeInfo typeOf: #score from: #RTElement) returnType
-		equals: #SmallInteger.
-	self
-		assert: (typeInfo typeOf: #score: from: #RTElement) returnType
-		equals: #RTElement.
-	self
-		assertCollection: (typeInfo typeOf: #score: from: #RTElement) argTypes
-		hasSameElements: {#SmallInteger}.
-	self
-		assert: (typeInfo typeOf: #score: from: #'SFoo class') returnType isNil.
-]
-
-{ #category : #tests }
 STypeInfoTest >> testTypeInfoSSGenerator [
 	| profile typeInfo methodInfo |
 	profile := SSGenerator
@@ -86,6 +45,10 @@ STypeInfoTest >> testTypeInfoSSGenerator [
 				score: 5 ]
 		onClass: SFoo.
 	typeInfo := profile asTypeInfo.
+	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
+	self
+		assert: (typeInfo types at: #SFoo) classMethodTypes size
+		equals: 1.
 	self
 		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType
 		equals: #SFoo.
@@ -115,7 +78,7 @@ STypeInfoTest >> testTypeInfoSSGenerator [
 		assertCollection: methodInfo argTypes
 		hasSameElements: {#SmallInteger}.
 	self
-		assert: (typeInfo typeOf: #score: from: #'SFoo class') returnType isNil.
+		assert: (typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType isNil.
 	self
 		assertCollection: typeInfo scalars keys
 		hasSameElements:

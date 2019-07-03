@@ -1,37 +1,14 @@
 Class {
 	#name : #STypeMethodInfo,
-	#superclass : #Object,
+	#superclass : #STypeObjectInfo,
 	#instVars : [
 		'selector',
 		'returnType',
 		'argTypes',
-		'typeInfo',
-		'isClassMethod'
+		'isQuick'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
-
-{ #category : #'instance creation' }
-STypeMethodInfo class >> newFrom: aMethod [
-	| block |
-	block := [ :aBlock :excBlock | 
-	aBlock
-		on: MessageNotUnderstood
-		do: excBlock ].
-	^ self new
-		selector: aMethod selector;
-		returnType:
-			(block
-				valueWithArguments:
-					{[ aMethod returnType name ].
-					[ nil ]});
-		argTypes:
-			(block
-				valueWithArguments:
-					{[ aMethod argTypes collect: #name ].
-					[ #() ]});
-			isClassMethod: aMethod isFactory
-]
 
 { #category : #accessing }
 STypeMethodInfo >> argTypes [
@@ -46,17 +23,17 @@ STypeMethodInfo >> argTypes: anObject [
 { #category : #initialization }
 STypeMethodInfo >> initialize [
 	argTypes := #().
-	isClassMethod := false
+	isQuick := false
 ]
 
 { #category : #accessing }
-STypeMethodInfo >> isClassMethod [
-	^ isClassMethod 
+STypeMethodInfo >> isQuick [
+	^ isQuick
 ]
 
 { #category : #accessing }
-STypeMethodInfo >> isClassMethod: aBoolean [
-	isClassMethod := aBoolean
+STypeMethodInfo >> isQuick: aBoolean [
+	isQuick := aBoolean
 ]
 
 { #category : #accessing }
@@ -77,14 +54,4 @@ STypeMethodInfo >> selector [
 { #category : #accessing }
 STypeMethodInfo >> selector: anObject [
 	selector := anObject
-]
-
-{ #category : #accessing }
-STypeMethodInfo >> typeInfo [
-	^ typeInfo
-]
-
-{ #category : #accessing }
-STypeMethodInfo >> typeInfo: anObject [
-	typeInfo := anObject
 ]

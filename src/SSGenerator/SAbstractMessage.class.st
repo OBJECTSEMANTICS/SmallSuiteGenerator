@@ -17,9 +17,9 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 		collect: [ :className | 
 			| stms |
 			stms := statements shuffle detect: [ :stm | stm returnType = className ]
-			ifFound: [ :stm | stm variable] ifNone: [ self error: 'we could find an argument of type ' , className  ]]
+			ifFound: [ :stm | stm variable] ifNone: [ self error: 'we could find an argument of type ' , className  ]"]
 			thenDo: [ :variable | 
-				aMethodTypeInfo typeInfo scalars at: variable returnType ifPresent: [ :values | values shuffle first ] ifAbsent: [ self error: 'Error to generate args' ]
+				aMethodTypeInfo typeInfo scalars at: variable returnType ifPresent: [ :values | values shuffle first ] ifAbsent: [ self error: 'Error to generate args' ]"
 				
 				 ]
 ]
@@ -48,7 +48,23 @@ SAbstractMessage >> initialize [
 SAbstractMessage >> printOn: aStream [
 	receiver printOn: aStream.
 	aStream	nextPut: Character space.
-	self stringBody: aStream
+	self printSelectors: aStream
+]
+
+{ #category : #printing }
+SAbstractMessage >> printSelectors: aStream [
+	args
+		ifEmpty: [ aStream nextPutAll: self selector ]
+		ifNotEmpty: [ | withColon |
+			withColon := self selector includes: $:.
+			(self selector substrings: ':')
+				with: self args
+				do: [ :selectorPart :arg | 
+					aStream nextPutAll: selectorPart.
+					withColon
+						ifTrue: [ aStream nextPutAll: ': ' ].
+					aStream nextPutAll: arg asString ] ].
+	aStream nextPut: $.
 ]
 
 { #category : #accessing }
@@ -69,20 +85,4 @@ SAbstractMessage >> selector [
 { #category : #accessing }
 SAbstractMessage >> selector: anObject [
 	selector := anObject
-]
-
-{ #category : #printing }
-SAbstractMessage >> stringBody: aStream [
-	args
-		ifEmpty: [ aStream nextPutAll: self selector ]
-		ifNotEmpty: [ | withColon |
-			withColon := self selector includes: $:.
-			(self selector substrings: ':')
-				with: self args
-				do: [ :selectorPart :arg | 
-					aStream nextPutAll: selectorPart.
-					withColon
-						ifTrue: [ aStream nextPutAll: ':' ].
-					aStream nextPutAll: arg asString ] ].
-	aStream nextPut: $.
 ]

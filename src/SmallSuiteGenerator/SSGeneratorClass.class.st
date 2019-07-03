@@ -10,20 +10,18 @@ SSGeneratorClass class >> spyClassForMethod [
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorClass >> dictInfoMethodsFrom: arrMethods [
-	^ (arrMethods
-		collect: [ :method | method selector -> method asTypeInfo ]) asDictionary .
-]
-
-{ #category : #'as yet unclassified' }
 SSGeneratorClass >> factoryMethods [
 	^ self metaclassSpy methods select:#isFactory.
 ]
 
 { #category : #'as yet unclassified' }
 SSGeneratorClass >> fillTypesOn: aTypeInfo [
-	aTypeInfo addMethodsOf: self className with: self allMethods.
-	"aTypeInfo
-		addClassMethodsOf: self className
-		with: self metaclassSpy methods"
+	| aTypeClass aClassName |
+	aClassName := self className.
+	aTypeClass := STypeClassInfo newFrom: aClassName and: aTypeInfo.
+	aTypeClass
+		addMethods: (self methods collect: #asTypeInfo).
+	aTypeClass
+		addClassMethods: (self metaclassSpy methods collect: #asTypeInfo).
+	aTypeInfo addClassInfo: aTypeClass
 ]

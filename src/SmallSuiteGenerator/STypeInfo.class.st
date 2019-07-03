@@ -16,31 +16,8 @@ STypeInfo class >> typeInfo: aInstance [
 ]
 
 { #category : #adding }
-STypeInfo >> addMethodsOf: aClassName with: methods [
-	| classInfo |
-	classInfo := STypeClassInfo new.
-	methods
-		do: [ :aMethod | 
-			| methodTypeInfo |
-			methodTypeInfo := aMethod asTypeInfo.
-			methodTypeInfo typeInfo: self.
-			methodTypeInfo isClassMethod ifTrue: [classInfo addClassMethod: methodTypeInfo] ifFalse: [ classInfo addMethod: methodTypeInfo ] ].
-	classInfo typeInfo: self.
-	types at: aClassName put: classInfo
-]
-
-{ #category : #adding }
-STypeInfo >> addTypeOf: aClassName with: methods [
-	types
-		at: aClassName
-		put:
-			(methods
-				collect: [ :aMethod | 
-					|methodTypeInfo|
-					methodTypeInfo := aMethod asTypeInfo.
-					methodTypeInfo typeInfo: self.
-					aMethod selector -> methodTypeInfo ])
-				asDictionary
+STypeInfo >> addClassInfo: aTypeClassInfo [
+	types at: aTypeClassInfo typeName put: aTypeClassInfo 
 ]
 
 { #category : #accessing }
@@ -60,12 +37,14 @@ STypeInfo >> copyFrom: aCoverageAnlysisResult [
 
 { #category : #lookup }
 STypeInfo >> factoryMethods: aClass [
-	| methodInfos className |
+	| className |
 	className := aClass name.
-	methodInfos := types
+	types
 		at: className
-		ifAbsent: [ ^ self error: 'this class has no type info' ].
-	^ methodInfos select: [ :m | m returnType = className ].
+		ifPresent: [ :classInfo | 
+			^ classInfo classMethodTypes associations
+				select: [ :assoc | assoc value returnType = className ] thenCollect: [ :assoc | assoc value ] ]
+		ifAbsent: [ ^ self error: 'this class has no type info' ]
 ]
 
 { #category : #lookup }
@@ -107,6 +86,11 @@ STypeInfo >> scalars: aDictionary [
 { #category : #lookup }
 STypeInfo >> typeOf: aSelector from: aClassName [
 	^ (types at: aClassName) methodOf: aSelector
+]
+
+{ #category : #lookup }
+STypeInfo >> typeOf: aSelector fromMetaClassName: aClassName [
+	^ (types at: aClassName) classMethodOf: aSelector
 ]
 
 { #category : #accessing }
