@@ -1,7 +1,7 @@
 Class {
 	#name : #SFieldAccessMessage,
 	#superclass : #SAbstractMessage,
-	#category : #SSGenerator
+	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #'instance creation' }

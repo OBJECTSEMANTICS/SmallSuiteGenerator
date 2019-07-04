@@ -1,7 +1,7 @@
 Class {
 	#name : #SFitness,
 	#superclass : #Object,
-	#category : #SSGenerator
+	#category : #'SSGenerator-Core'
 }
 
 { #category : #running }

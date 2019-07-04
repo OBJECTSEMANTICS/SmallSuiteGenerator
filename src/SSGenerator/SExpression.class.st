@@ -5,7 +5,7 @@ Class {
 		'returnType',
 		'id'
 	],
-	#category : #SSGenerator
+	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #accessing }

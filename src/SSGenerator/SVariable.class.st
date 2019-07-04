@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'nameVar'
 	],
-	#category : #SSGenerator
+	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #accessing }

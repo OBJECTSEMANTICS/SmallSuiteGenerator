@@ -5,7 +5,7 @@ Class {
 		'variable',
 		'value'
 	],
-	#category : #SSGenerator
+	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #'instance creation' }

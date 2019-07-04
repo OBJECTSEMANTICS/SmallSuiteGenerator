@@ -6,22 +6,20 @@ Class {
 		'selector',
 		'args'
 	],
-	#category : #SSGenerator
+	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
-	| args typeInfo |
 	"typeInfo must send as parameter"
+
 	^ aMethodTypeInfo argTypes
 		collect: [ :className | 
-			| stms |
-			stms := statements shuffle detect: [ :stm | stm returnType = className ]
-			ifFound: [ :stm | stm variable] ifNone: [ self error: 'we could find an argument of type ' , className  ]"]
-			thenDo: [ :variable | 
-				aMethodTypeInfo typeInfo scalars at: variable returnType ifPresent: [ :values | values shuffle first ] ifAbsent: [ self error: 'Error to generate args' ]"
-				
-				 ]
+			statements shuffle
+				detect: [ :stm | stm returnType = className ]
+				ifFound: [ :stm | stm variable ]
+				ifNone: [ 
+					self error: 'we could find an argument of type ' , className ] ]
 ]
 
 { #category : #accessing }

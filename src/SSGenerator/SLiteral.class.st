@@ -4,12 +4,12 @@ Class {
 	#instVars : [
 		'value'
 	],
-	#category : #SSGenerator
+	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #printing }
 SLiteral >> printOn: aStream [
-	aStream nextPutAll: value asString;
+	aStream nextPutAll: value storeString;
 	nextPut: $.
 ]
 

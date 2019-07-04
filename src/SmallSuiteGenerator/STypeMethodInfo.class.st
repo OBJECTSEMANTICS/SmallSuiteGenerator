@@ -10,6 +10,17 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #'accessing structure variables' }
+STypeMethodInfo class >> type: aAssoc [
+	| aValue|
+	aValue := aAssoc value.
+	^ self new 
+	selector: aAssoc key;
+	returnType: aValue first;
+	argTypes: aValue second;
+	isQuick: aValue third
+]
+
 { #category : #accessing }
 STypeMethodInfo >> argTypes [
 	^ argTypes

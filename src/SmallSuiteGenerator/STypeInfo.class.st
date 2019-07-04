@@ -17,7 +17,13 @@ STypeInfo class >> typeInfo: aInstance [
 
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
-	types at: aTypeClassInfo typeName put: aTypeClassInfo 
+	aTypeClassInfo typeInfo: self.
+	types at: aTypeClassInfo typeName put: aTypeClassInfo
+]
+
+{ #category : #accessing }
+STypeInfo >> classAt: aClassName [
+	^ types at: aClassName
 ]
 
 { #category : #accessing }
@@ -73,6 +79,11 @@ STypeInfo >> randomNoneAbstractClass [
 	^ self noneAbstractClasses shuffle anyOne
 ]
 
+{ #category : #'as yet unclassified' }
+STypeInfo >> scalar: aClassName with: aValue [
+	scalars at: aClassName put: aValue asSet
+]
+
 { #category : #accessing }
 STypeInfo >> scalars [
 	^ scalars 
@@ -81,6 +92,11 @@ STypeInfo >> scalars [
 { #category : #accessing }
 STypeInfo >> scalars: aDictionary [
 	scalars := aDictionary
+]
+
+{ #category : #'accessing structure variables' }
+STypeInfo >> type: aAssoc [
+	self addClassInfo: (STypeClassInfo type: aAssoc)
 ]
 
 { #category : #lookup }

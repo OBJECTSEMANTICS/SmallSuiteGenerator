@@ -19,6 +19,20 @@ STypeClassInfo class >> newFrom: aClassName and: aTypeInfo [
 		typeInfo: aTypeInfo
 ]
 
+{ #category : #'accessing structure variables' }
+STypeClassInfo class >> type: aAssoc [
+	| dataOfAllMethods inst dataMethods dataClassMethods |
+	inst := self new typeName: aAssoc key.
+	dataOfAllMethods := aAssoc value.
+	dataMethods := dataOfAllMethods first.
+	dataClassMethods := dataOfAllMethods second.
+	dataMethods
+		do: [ :data | inst addMethod: (STypeMethodInfo type: data) ].
+	dataClassMethods
+		do: [ :data | inst addClassMethod: (STypeMethodInfo type: data) ].
+	^ inst
+]
+
 { #category : #private }
 STypeClassInfo >> accessMessages [
 	^ methodTypes values select: #isQuick
@@ -58,6 +72,11 @@ STypeClassInfo >> classMethodTypes [
 	^ classMethodTypes
 ]
 
+{ #category : #testing }
+STypeClassInfo >> includesSelector: aSelector ofAccess: aBoolean [
+	^ methodTypes detect: [ :methType | methType selector = aSelector and: [ methType isQuick = aBoolean ] ] ifFound: [ true ] ifNone: [ false ]
+]
+
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
@@ -66,7 +85,7 @@ STypeClassInfo >> initialize [
 
 { #category : #private }
 STypeClassInfo >> messages [
-	^ methodTypes reject: #isQuick
+	^ methodTypes values reject: #isQuick
 ]
 
 { #category : #'as yet unclassified' }

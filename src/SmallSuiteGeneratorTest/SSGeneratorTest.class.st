@@ -4,6 +4,13 @@ Class {
 	#category : #'SmallSuiteGeneratorTest-Generator'
 }
 
+{ #category : #'as yet unclassified' }
+SSGeneratorTest class >> profileSFoo: aBlock [
+	^ SSGenerator
+		profile: aBlock
+		onClass: SFoo
+]
+
 { #category : #'generator-tests' }
 SSGeneratorTest >> testConstructorGenerator [
 	| generatorInfo testCase |

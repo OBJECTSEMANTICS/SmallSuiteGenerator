@@ -4,9 +4,10 @@ Class {
 	#instVars : [
 		'statements',
 		'typeInfo',
-		'nextId'
+		'nextId',
+		'numberStatements'
 	],
-	#category : #SSGenerator
+	#category : #'SSGenerator-Core'
 }
 
 { #category : #'as yet unclassified' }
@@ -15,6 +16,12 @@ SSTestCase class >> with: aTypeInfo [
 	testCase := self new.
 	testCase typeInfo: aTypeInfo.
 	^ testCase.
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase class >> withNumStatements: aNumber [
+	aNumber >0 ifFalse: [ ^ self error: 'The number of statements must be greater than 0' ].
+	^ self new numberStatements: aNumber
 ]
 
 { #category : #actions }
@@ -51,13 +58,27 @@ SSTestCase >> addFactoryMessage: aClass [
 
 { #category : #actions }
 SSTestCase >> addFieldAccessMessage [
-	| receiver methods |
+	| receiver selectors |
 	receiver := self pickAnObjectVariable.
-	methods := self pickAnAccessorOf: receiver.
-	methods
-		ifNotEmpty: [ self addAssignment: (SFieldAccessMessage
-				receiver: receiver
-				selector: methods shuffle anyOne) ]
+	selectors := self pickAccessorsOf: receiver.
+	selectors
+		ifNotEmpty: [ self
+				addFieldAccessMessage: selectors shuffle anyOne
+				withReceiver: receiver ]
+]
+
+{ #category : #actions }
+SSTestCase >> addFieldAccessMessage: aSelector [
+	| receiver |
+	receiver := self pickObjectVariableOf: aSelector ofAccess: true.
+	receiver
+		ifNotNil: [ self addFieldAccessMessage: aSelector withReceiver: receiver ]
+]
+
+{ #category : #actions }
+SSTestCase >> addFieldAccessMessage: method withReceiver: receiver [
+	self
+		addAssignment: (SFieldAccessMessage receiver: receiver selector: method)
 ]
 
 { #category : #adding }
@@ -71,8 +92,7 @@ SSTestCase >> addLiteral [
 SSTestCase >> addLiteral: aClassName [
 	|aObject|
 aObject := (typeInfo scalars at: aClassName) asArray shuffle anyOne.
-	aObject isLiteral
-		ifTrue: [ self
+	aObject ifNotNil:[ self
 				addAssignment:
 					(SLiteral new
 						returnType: aClassName;
@@ -81,14 +101,29 @@ aObject := (typeInfo scalars at: aClassName) asArray shuffle anyOne.
 
 { #category : #actions }
 SSTestCase >> addMessage [
-	| receiver methods |
+	| receiver selectors |
 	receiver := self pickAnObjectVariable.
-	methods := self pickMessagesOf: receiver.
-	methods
-		ifNotEmpty: [ self addAssignment: (SMessage
-				receiver: receiver
-				selector: methods shuffle anyOne
-				previousStatements: statements) ]
+	selectors := self pickMessagesOf: receiver.
+	selectors ifNotEmpty: [ 
+	self addMessage: selectors shuffle anyOne withReceiver: receiver]
+]
+
+{ #category : #actions }
+SSTestCase >> addMessage: aSelector [
+	| receiver |
+	receiver := self pickObjectVariableOf: aSelector ofAccess: false.
+	receiver
+		ifNotNil: [ self addMessage: aSelector withReceiver: receiver ]
+]
+
+{ #category : #actions }
+SSTestCase >> addMessage: method withReceiver: receiver [
+self
+				addAssignment:
+					(SMessage
+						receiver: receiver
+						selector: method
+						previousStatements: statements)
 ]
 
 { #category : #actions }
@@ -118,14 +153,31 @@ SSTestCase >> factoryMessageVariables [
 		thenCollect: [ :stm | stm variable ]
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> generateStatements [
+	[ self statements size < numberStatements ]
+		whileTrue: [ self
+				perform: #(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral) shuffle anyOne ]
+]
+
 { #category : #initialization }
 SSTestCase >> initialize [
 	statements := OrderedCollection new.
 	nextId := 0
 ]
 
+{ #category : #accessing }
+SSTestCase >> numberStatements [
+	^ numberStatements
+]
+
+{ #category : #accessing }
+SSTestCase >> numberStatements: anObject [
+	numberStatements := anObject
+]
+
 { #category : #'as yet unclassified' }
-SSTestCase >> pickAnAccessorOf: aVariable [
+SSTestCase >> pickAccessorsOf: aVariable [
 	^ (typeInfo types at: aVariable returnType) accessMessages
 ]
 
@@ -137,6 +189,16 @@ SSTestCase >> pickAnObjectVariable [
 { #category : #'as yet unclassified' }
 SSTestCase >> pickMessagesOf: aVariable [
 	^ (typeInfo types at: aVariable returnType) messages
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> pickObjectVariableOf: aSelector ofAccess: aBoolean [
+	^ self factoryMessageVariables
+		detect: [ :factMessage | 
+			(typeInfo classAt: factMessage selector)
+				includesSelector: aSelector
+				ofAccess: aBoolean ]
+		ifFound: [ :factMessage | factMessage variable ]
 ]
 
 { #category : #accessing }
