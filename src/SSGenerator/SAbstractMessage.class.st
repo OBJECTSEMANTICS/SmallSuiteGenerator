@@ -11,15 +11,14 @@ Class {
 
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
-	"typeInfo must send as parameter"
-
+	|assocs|
+	assocs := (statements collect: [:stm | stm returnType -> stm variable]) shuffle.
 	^ aMethodTypeInfo argTypes
 		collect: [ :className | 
-			statements shuffle
-				detect: [ :stm | stm returnType = className ]
-				ifFound: [ :stm | stm variable ]
-				ifNone: [ 
-					self error: 'we could find an argument of type ' , className ] ]
+			assocs
+				detect: [ :assoc | assoc key = className ]
+				ifFound: [ :assoc | assoc value ]
+				ifNone: [ self error: 'we could find an argument of type ' , className ] ]
 ]
 
 { #category : #accessing }

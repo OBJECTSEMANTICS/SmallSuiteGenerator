@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-SFieldAccessMessage class >> receiver: aReceiver selector: aMethod [
+SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 	^ SFieldAccessMessage new
 		returnType: aMethod returnType;
 		selector: aMethod selector;

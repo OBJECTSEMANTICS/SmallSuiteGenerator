@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-SMessage class >> receiver: aReceiver selector: aMethod previousStatements: statements [
+SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatements: statements [
 	^ SMessage new
 		returnType: aMethod returnType;
 		selector: aMethod selector;

@@ -34,6 +34,16 @@ STypeInfo >> classes [
 	^ classes.
 ]
 
+{ #category : #copying }
+STypeInfo >> copy [
+	| copy |
+	copy := self copy.
+	types
+		valuesDo: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
+	copy scalars: scalars copy.
+	^ copy
+]
+
 { #category : #lookup }
 STypeInfo >> copyFrom: aCoverageAnlysisResult [
 	| clone |

@@ -31,6 +31,17 @@ STypeMethodInfo >> argTypes: anObject [
 	argTypes := anObject
 ]
 
+{ #category : #copying }
+STypeMethodInfo >> copy [
+	| copy |
+	copy := self copy.
+	copy selector: selector;
+	returnType: returnType;
+	isQuick: isQuick;
+	argTypes: argTypes copy.
+	^ copy
+]
+
 { #category : #initialization }
 STypeMethodInfo >> initialize [
 	argTypes := #().

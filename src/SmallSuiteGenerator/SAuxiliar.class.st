@@ -130,24 +130,6 @@ SAuxiliar class >> dictInfoMethodsFrom: arrMethods [
 ]
 
 { #category : #'as yet unclassified' }
-SAuxiliar class >> fillTypeInfo: aTypeInfo withDataFrom: aClass [
-	|meths |
-	aTypeInfo types
-		at: aClass className
-		put: (self dictInfoMethodsFrom: aClass methods).
-	meths := aClass metaclassSpy methods.
-	meths
-		ifNotEmpty: [ aTypeInfo types
-				at: aClass metaclassSpy className
-				put: (self dictInfoMethodsFrom: meths) ]
-]
-
-{ #category : #'as yet unclassified' }
-SAuxiliar class >> initLevel: aInt [
-	level := aInt
-]
-
-{ #category : #'as yet unclassified' }
 SAuxiliar class >> initLevelDefault [
 	level := 10
 ]

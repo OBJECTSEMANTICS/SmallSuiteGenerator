@@ -12,16 +12,36 @@ SGAMutationOperationTest >> setUp [
 
 { #category : #tests }
 SGAMutationOperationTest >> testMutation [
-	| generatorInfo testCase mutatedTestCase |
-	generatorInfo := STypeInfo
-		typeInfo:
-			(SSGenerator
-				profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
-						push: 8;
-						pop;
-						top ]
-				onClass: SStack).
-	testCase := STestCase seed: generatorInfo.
+	| typeInfo testCase mutatedTestCase |
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{(#push:
+						->
+							{#SmallInteger.
+							{#SmallInteger}.
+							false}).
+					(#pop
+						->
+							{#SmallInteger.
+							{}.
+							false}).
+					(#top
+						->
+							{#SmallInteger.
+							{}.
+							false})}.
+					{(#newStackWith:
+						->
+							{#SStack.
+							{#Array}.
+							false})}}.
+	typeInfo
+		scalar: #SmallInteger with: {8};
+		scalar: #Array with: {#(2 4 6 1)}.
+	testCase := SSTestCase with: typeInfo.
+	testCase numberStatements: 30.
 	testCase generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.

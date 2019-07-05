@@ -27,9 +27,9 @@ STypeClassInfo class >> type: aAssoc [
 	dataMethods := dataOfAllMethods first.
 	dataClassMethods := dataOfAllMethods second.
 	dataMethods
-		do: [ :data | inst addMethod: (STypeMethodInfo type: data) ].
+		do: [ :data | inst typeMethod: data ].
 	dataClassMethods
-		do: [ :data | inst addClassMethod: (STypeMethodInfo type: data) ].
+		do: [ :data | inst typeClassMethod: data ].
 	^ inst
 ]
 
@@ -72,6 +72,16 @@ STypeClassInfo >> classMethodTypes [
 	^ classMethodTypes
 ]
 
+{ #category : #copying }
+STypeClassInfo >> copy [
+	| copy |
+	copy := self copy.
+	methodTypes do: [ :methodType | copy addMethod: methodType copy ].
+	classMethodTypes do: [ :classMethodType | copy addMethod: classMethodType copy ].
+	copy typeName: typeName.
+	^ copy
+]
+
 { #category : #testing }
 STypeClassInfo >> includesSelector: aSelector ofAccess: aBoolean [
 	^ methodTypes detect: [ :methType | methType selector = aSelector and: [ methType isQuick = aBoolean ] ] ifFound: [ true ] ifNone: [ false ]
@@ -96,6 +106,16 @@ STypeClassInfo >> methodOf: aSelector [
 { #category : #accessing }
 STypeClassInfo >> methodTypes [
 	^ methodTypes
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> typeClassMethod: aAssoc [
+	self addClassMethod: (STypeMethodInfo type: aAssoc)
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> typeMethod: aAssoc [
+	self addMethod: (STypeMethodInfo type: aAssoc)
 ]
 
 { #category : #accessing }

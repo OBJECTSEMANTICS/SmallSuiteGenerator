@@ -41,7 +41,14 @@ SClassInfoTest >> testType [
 							{#SFoo.
 							{#SmallInteger}.
 							false})}}.
-	self assert: classInfo methodTypes size equals: 5.
+	classInfo
+		typeMethod:
+			#returnNum
+				->
+					{#SmallInteger.
+					{}.
+					false}.
+	self assert: classInfo methodTypes size equals: 6.
 	self assert: classInfo classMethodTypes size equals: 1.
 	methodInfo := classInfo methodTypes at: #return:.
 	self assert: methodInfo returnType equals: #OrderedCollection.
@@ -64,5 +71,8 @@ SClassInfoTest >> testType [
 		hasSameElements: {#SmallInteger}.
 	self
 		assert: (classInfo classMethodTypes at: #score:) returnType
-		equals: #SFoo
+		equals: #SFoo.
+	self
+		assert: (classInfo methodTypes at: #returnNum) returnType
+		equals: #SmallInteger
 ]
