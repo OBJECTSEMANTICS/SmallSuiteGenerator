@@ -34,11 +34,12 @@ STypeMethodInfo >> argTypes: anObject [
 { #category : #copying }
 STypeMethodInfo >> copy [
 	| copy |
-	copy := self copy.
-	copy selector: selector;
-	returnType: returnType;
-	isQuick: isQuick;
-	argTypes: argTypes copy.
+	copy := STypeMethodInfo new.
+	copy
+		selector: selector;
+		returnType: returnType;
+		isQuick: isQuick;
+		argTypes: argTypes copy.
 	^ copy
 ]
 

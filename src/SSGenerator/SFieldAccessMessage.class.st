@@ -12,3 +12,10 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		receiver: aReceiver;
 		yourself
 ]
+
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> insertRandomMessageWith: aTestCase [
+	^ (aTestCase
+		addFieldAccessMessage: self selector
+		from: (Smalltalk at: self receiver)) variable
+]

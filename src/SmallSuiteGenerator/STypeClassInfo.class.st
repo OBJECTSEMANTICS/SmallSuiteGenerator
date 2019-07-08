@@ -75,9 +75,10 @@ STypeClassInfo >> classMethodTypes [
 { #category : #copying }
 STypeClassInfo >> copy [
 	| copy |
-	copy := self copy.
+	copy := STypeClassInfo new .
 	methodTypes do: [ :methodType | copy addMethod: methodType copy ].
-	classMethodTypes do: [ :classMethodType | copy addMethod: classMethodType copy ].
+	classMethodTypes
+		do: [ :classMethodType | copy addMethod: classMethodType copy ].
 	copy typeName: typeName.
 	^ copy
 ]

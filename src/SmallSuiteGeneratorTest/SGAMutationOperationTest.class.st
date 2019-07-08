@@ -41,8 +41,8 @@ SGAMutationOperationTest >> testMutation [
 		scalar: #SmallInteger with: {8};
 		scalar: #Array with: {#(2 4 6 1)}.
 	testCase := SSTestCase with: typeInfo.
-	testCase numberStatements: 30.
-	testCase generateStatements.
+	testCase numMaxStatements: 30.
+	testCase generateStatements.self halt.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase hasValidDependencies.

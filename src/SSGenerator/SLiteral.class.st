@@ -7,10 +7,33 @@ Class {
 	#category : #'SSGenerator-Nodes'
 }
 
+{ #category : #comparing }
+SLiteral >> = other [
+	^ super = other and: [ value = other value ]
+]
+
+{ #category : #copying }
+SLiteral >> copy [ 
+	| copy|
+	copy := super copy.
+	copy value: value copy.
+	^ copy
+]
+
+{ #category : #comparing }
+SLiteral >> hash [
+	^ super hash xor: value hash
+]
+
 { #category : #printing }
 SLiteral >> printOn: aStream [
 	aStream nextPutAll: value storeString;
 	nextPut: $.
+]
+
+{ #category : #evaluating }
+SLiteral >> value [ 	
+	^ value
 ]
 
 { #category : #accessing }

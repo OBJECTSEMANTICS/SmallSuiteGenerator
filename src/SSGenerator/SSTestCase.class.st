@@ -5,7 +5,7 @@ Class {
 		'statements',
 		'typeInfo',
 		'nextId',
-		'numberStatements'
+		'numMaxStatements'
 	],
 	#category : #'SSGenerator-Core'
 }
@@ -20,22 +20,31 @@ SSTestCase class >> with: aTypeInfo [
 
 { #category : #'as yet unclassified' }
 SSTestCase class >> withNumStatements: aNumber [
-	aNumber >0 ifFalse: [ ^ self error: 'The number of statements must be greater than 0' ].
-	^ self new numberStatements: aNumber
+	aNumber > 0
+		ifFalse: [ ^ self error: 'The number of statements must be greater than 0' ].
+	^ self new numMaxStatements: aNumber
+]
+
+{ #category : #comparing }
+SSTestCase >> = other [
+	^ self class = other class and: [ statements = other statements ]
 ]
 
 { #category : #actions }
 SSTestCase >> addAssignment: anExpression [
-	self
-		addStatement:
-			(SAssignment
+	|assignment|
+	assignment := SAssignment
 				name:
 					(SVariable new
-						nameVar: '_var';
+						varName: '_var';
 						id: self assignId;
 						returnType: anExpression returnType;
 						yourself)
-				value: anExpression)
+				value: anExpression.
+	self
+		addStatement:
+			assignment.
+			^ assignment
 ]
 
 { #category : #actions }
@@ -53,7 +62,7 @@ SSTestCase >> addFactoryMessage: aClass [
 			method := methods shuffle anyOne.
 			self satisfyArgs: method.
 			SFactoryMessage method: method previousStatements: statements ].
-	self addAssignment: factory
+	^ self addAssignment: factory.
 ]
 
 { #category : #actions }
@@ -68,19 +77,18 @@ SSTestCase >> addFieldAccessMessage [
 ]
 
 { #category : #actions }
-SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
-	| receiver |
-	((typeInfo classAt: aClassName) methodOf: aSelector) isQuick
+SSTestCase >> addFieldAccessMessage: aSelector from: aClass [
+	| receiver anAccessor |
+	anAccessor := (typeInfo classAt: aClass) methodOf: aSelector.
+	anAccessor isQuick
 		ifFalse: [ self error: 'the method must be an accessor message' ].
-	receiver := self
-		pickObjectVariableOf:aClassName.
-	receiver
-		ifNotNil: [ self addFieldAccessMessage: aSelector withReceiver: receiver ]
+	receiver := self pickOrCreateObjectVariableOf: aClass.
+	^ self addFieldAccessMessage: anAccessor withReceiver: receiver
 ]
 
 { #category : #actions }
 SSTestCase >> addFieldAccessMessage: method withReceiver: receiver [
-	self
+	^ self
 		addAssignment: (SFieldAccessMessage newFromReceiver: receiver andMethod: method)
 ]
 
@@ -112,20 +120,19 @@ SSTestCase >> addMessage [
 ]
 
 { #category : #actions }
-SSTestCase >> addMessage: aSelector from: aClassName [
+SSTestCase >> addMessage: aSelector from: aClass [
 	| receiver aMethod |
-	((typeInfo classAt: aClassName) methodOf: aSelector) isQuick
+	aMethod := (typeInfo classAt: aClass) methodOf: aSelector.
+	aMethod isQuick
 		ifTrue: [ ^ self error: 'the method must be a message, not accessor message' ].
-	aMethod := (typeInfo classAt: aClassName) methodOf: aSelector.
-	receiver := self pickObjectVariableOf: aClassName.
-	receiver
-		ifNotNil: [ self addMessage: aMethod withReceiver: receiver ]
+	receiver := self pickOrCreateObjectVariableOf: aClass.
+	^ self addMessage: aMethod withReceiver: receiver
 ]
 
 { #category : #actions }
 SSTestCase >> addMessage: method withReceiver: receiver [
 	self satisfyArgs: method.
-	self
+	^ self
 		addAssignment:
 			(SMessage
 				newFromReceiver: receiver
@@ -153,17 +160,46 @@ SSTestCase >> assignedIds [
 	^ statements collect: #id
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> changeStatement [
+	statements ifEmpty: [ ^ #() ].
+	^ self
+		changeStatementOfVarName:
+			(statements at: (1 to: self numberStatements) atRandom) variable
+				varName
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> changeStatementOfVarName: varName [
+	| stmToChange varNamesToChange |
+	stmToChange := self statementAt: varName.
+	stmToChange
+		ifNil: [ ^ self error: 'Dont exist a statement with this varName.' ].
+	varNamesToChange := OrderedCollection new. "implementar repair:onChhanging:"
+	statements copy
+		do:
+			[ :stm | varNamesToChange addAll: (stm repairOn: self changing: stmToChange) ].
+	statements remove: stmToChange.
+	varNamesToChange
+		do: [ :aName | self changeStatementOfVarName: aName ].
+	^ {varName} , varNamesToChange
+]
+
 { #category : #copying }
 SSTestCase >> copy [
 	| copy |
-	copy := super copy.
-	copy typeInfo: typeInfo copy.
-	copy statements: statements copy.
+	copy := SSTestCase with: typeInfo copy.
+	statements do: [ :stm | copy addStatement: stm copy ].
 	copy updateNextId.
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'error handling' }
+SSTestCase >> error: aString [
+	^ SError new signal: aString 
+]
+
+{ #category : #querying }
 SSTestCase >> factoryMessageVariables [
 	^ statements
 		select: [ :stm | stm value isFactoryMessage ]
@@ -172,11 +208,16 @@ SSTestCase >> factoryMessageVariables [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> generateStatements [
-	[ self statements size < numberStatements ]
+	[ statements size < numMaxStatements ]
 		whileTrue: [ self
 				perform:
 					#(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral)
-						shuffle anyOne ].
+						shuffle anyOne ]
+]
+
+{ #category : #comparing }
+SSTestCase >> hash [
+	^ self statements hash
 ]
 
 { #category : #initialization }
@@ -185,37 +226,107 @@ SSTestCase >> initialize [
 	nextId := 0
 ]
 
-{ #category : #accessing }
-SSTestCase >> numberStatements [
-	^ numberStatements
-]
-
-{ #category : #accessing }
-SSTestCase >> numberStatements: anObject [
-	numberStatements := anObject
+{ #category : #'as yet unclassified' }
+SSTestCase >> insertRandomStatement [
+	| insertedVarNames |
+	#(#insertRandomMessageWith: #insertMethodMessageWith: #insertParameterWith:)
+		shuffle
+		detect: [ :selector | 
+			insertedVarNames := self insertStatementOfSelector: selector.
+			insertedVarNames isNotNil ]
+		ifFound: [ ^ insertedVarNames ]
+		ifNone: [ ^ nil ]
 ]
 
 { #category : #'as yet unclassified' }
+SSTestCase >> insertStatement [
+	| l stop varNames alpha count random insertedVarNames |
+	statements ifEmpty: [ ^ #() ].
+	l := 1.
+	count := 0.
+	stop := self numberStatements.
+	alpha := 0.5.
+	insertedVarNames := OrderedCollection new.
+	random := Random new seed: DateAndTime current nanoSecond / 100.
+	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
+		whileTrue: [ varNames := self insertRandomStatement.
+			varNames ifNotNil: [ insertedVarNames addAll: varNames ].
+			l := l + 1.
+			count := count + 1 ].
+	^ insertedVarNames
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> insertStatementOfSelector: selector [
+	| varNames |
+	^ statements copy shuffle
+		detect: [ :stm | varNames := (stm perform: selector with: self).
+			varNames isNotNil ] ifFound: [ varNames ] ifNone: [ nil ]
+]
+
+{ #category : #accessing }
+SSTestCase >> numMaxStatements: aInt [
+	numMaxStatements := aInt
+]
+
+{ #category : #accessing }
+SSTestCase >> numberStatements [
+	^ statements size
+]
+
+{ #category : #querying }
 SSTestCase >> pickAccessorsOf: aVariable [
 	^ (typeInfo types at: aVariable returnType) accessMessages
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> pickAnObjectVariable [
 	self factoryMessageVariables ifEmpty: [ self addFactoryMessage ].
 	^ self factoryMessageVariables shuffle anyOne
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> pickMessagesOf: aVariable [
 	^ (typeInfo types at: aVariable returnType) messages
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> pickObjectVariableOf: aClassName [
 	^ self factoryMessageVariables
 		detect: [ :var | var returnType = aClassName ]
 		ifFound: [ :var | var ] ifNone: [ self error: 'Dont exist a constructor of class', aClassName]
+]
+
+{ #category : #querying }
+SSTestCase >> pickOrCreateObjectVariableOf: aClass [
+	^ [ self pickObjectVariableOf: aClass name ]
+		on: SError
+		do: [ (self addFactoryMessage: aClass) variable ]
+]
+
+{ #category : #removing }
+SSTestCase >> removeStatement [
+	"If other statements refer the statement to remove, then this reference is replaced with another value out of the set which has the same type"
+
+	statements ifEmpty: [ ^ #() ].
+	^ self
+		removeStatementOfVarName: (statements at: (1 to: self numberStatements) atRandom) variable varName
+]
+
+{ #category : #removing }
+SSTestCase >> removeStatementOfVarName: varName [
+	| stmToRemove varNamesToRemove |
+	stmToRemove := self statementAt: varName.
+	varNamesToRemove := OrderedCollection new.
+	stmToRemove
+		ifNil: [ ^ self error: 'Dont exist a statement with this varName.' ].
+	statements copy
+		do:
+			[ :stm | varNamesToRemove addAll: (stm repairOn: self removing: stmToRemove) ].
+	statements remove: stmToRemove.
+	varNamesToRemove
+		do: [ :aName | self removeStatementOfVarName: aName ].
+	^ {varName} , varNamesToRemove
 ]
 
 { #category : #'as yet unclassified' }
@@ -226,6 +337,15 @@ SSTestCase >> satisfyArgs: aMethodTypeInfo [
 		types includes: aType
 		 ]) asSet.
 	typesToAdd do: [ :type | self addLiteral: type ]
+]
+
+{ #category : #accessing }
+SSTestCase >> statementAt: varName [
+	"implementar un metodo para devolver el varName de cualquier expression, si no tiene variable devolver null"
+	^ statements
+		detect: [ :stm | stm varName = varName ]
+		ifFound: [ :stm | stm ]
+		ifNone: [ nil ]
 ]
 
 { #category : #accessing }

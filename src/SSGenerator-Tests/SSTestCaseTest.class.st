@@ -152,14 +152,14 @@ SSTestCaseTest >> testAddMessage [
 		hasSameElements:
 			{'_var0 := SFoo new.' . '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'.
 			'_var2 := _var0 return: _var1.'}.
-	(aTypeInfo classAt: #SFoo)
+	(aTypeInfo classAt: SFoo)
 		typeMethod:
 			#returnString
 				->
 					{#ByteString.
 					{}.
 					false}.
-	testCase addMessage: #returnString from: #SFoo.
+	testCase addMessage: #returnString from: SFoo.
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
@@ -188,7 +188,9 @@ SSTestCaseTest >> testCopy [
 						->
 							{#SmallInteger.
 							{}.
-							true})}.
+							true}).
+							(#return: -> {#ByteString.
+							{#ByteString}. false })}.
 					{(#score:
 						->
 							{#SFoo.
@@ -197,17 +199,17 @@ SSTestCaseTest >> testCopy [
 	typeInfo scalar: #ByteString with: {'hello'}.
 	typeInfo scalar: #SmallInteger with: {5}.
 	typeInfo scalar: #SmallFloat64 with: {7.3}.
-		testCase := SSTestCase with: typeInfo.
+	testCase := SSTestCase with: typeInfo.
 	testCase
-		addMessage: #returnNum from: #SFoo;
-		addFieldAccessMessage: #score from: #SFoo;
+		addMessage: #returnNum from: SFoo;
+		addFieldAccessMessage: #score from: SFoo;
 		addLiteral: #SmallInteger.
 	otherTestCase := testCase copy.
 	self assert: testCase numberStatements equals: 5.
 	self assert: testCase equals: otherTestCase.
 	testCase addLiteral: #ByteString.
-	otherTestCase addMessage: #returnFloat from: #SFoo.
-	otherTestCase addMessage: #return: from: #SFoo.
+	otherTestCase addMessage: #returnFloat from: SFoo.
+	otherTestCase addMessage: #return: from: SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -262,6 +264,6 @@ SSTestCaseTest >> testGenerateStatements [
 	| testCase typeInfo |
 	typeInfo := self class typeInfoFoo.
 	testCase := SSTestCase with: typeInfo.
-	testCase numberStatements: 30.
+	testCase numMaxStatements: 30.
 	self shouldnt: [ testCase generateStatements ] raise: SError
 ]

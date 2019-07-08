@@ -21,6 +21,11 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 				ifNone: [ self error: 'we could find an argument of type ' , className ] ]
 ]
 
+{ #category : #comparing }
+SAbstractMessage >> = other [
+	^ super = other and: [ args = other args and: [ receiver = other receiver and: [ selector = other selector ] ] ]
+]
+
 { #category : #accessing }
 SAbstractMessage >> args [
 	^ args
@@ -29,6 +34,21 @@ SAbstractMessage >> args [
 { #category : #accessing }
 SAbstractMessage >> args: anObject [
 	args := anObject
+]
+
+{ #category : #copying }
+SAbstractMessage >> copy [ 
+	| copy|
+	copy := super copy.
+	copy args: args copy;
+	receiver: receiver copy;
+	selector: selector copy.
+	^ copy
+]
+
+{ #category : #comparing }
+SAbstractMessage >> hash [ 	
+	^ super hash xor: (receiver hash xor: (selector hash xor: args hash))
 ]
 
 { #category : #accessing }

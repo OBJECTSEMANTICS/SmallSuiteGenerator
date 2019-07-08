@@ -22,8 +22,8 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 ]
 
 { #category : #accessing }
-STypeInfo >> classAt: aClassName [
-	^ types at: aClassName
+STypeInfo >> classAt: aClass [
+	^ types at: aClass name
 ]
 
 { #category : #accessing }
@@ -37,7 +37,7 @@ STypeInfo >> classes [
 { #category : #copying }
 STypeInfo >> copy [
 	| copy |
-	copy := self copy.
+	copy := STypeInfo new.
 	types
 		valuesDo: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
 	copy scalars: scalars copy.

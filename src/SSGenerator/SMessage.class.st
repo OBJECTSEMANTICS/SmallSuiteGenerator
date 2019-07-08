@@ -13,3 +13,15 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		args: (self args: aMethod with: statements);
 		yourself
 ]
+
+{ #category : #'as yet unclassified' }
+SMessage >> insertMethodMessageWith: aTestCase [
+	^ self insertRandomMessageWith: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SMessage >> insertRandomMessageWith: aTestCase [
+	^ (aTestCase
+		addMessage: self selector
+		from: (Smalltalk at: self receiver)) variable
+]

@@ -17,6 +17,25 @@ SAssignment class >> name: aVariable value: anExpression [
 		yourself.
 ]
 
+{ #category : #comparing }
+SAssignment >> = other [
+	^ super = other and: [ variable = other variable and: [ value = other value ] ]
+]
+
+{ #category : #copying }
+SAssignment >> copy [ 
+	|copy|
+	copy := super copy.
+	copy variable: variable copy;
+	value: value copy.
+	^ copy
+]
+
+{ #category : #comparing }
+SAssignment >> hash [
+	^ super hash xor: (variable hash xor: (value hash))
+]
+
 { #category : #accessing }
 SAssignment >> id [ 		
 	^ variable id

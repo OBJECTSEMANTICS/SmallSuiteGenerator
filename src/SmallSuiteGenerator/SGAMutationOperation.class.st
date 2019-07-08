@@ -10,11 +10,11 @@ Class {
 { #category : #'as yet unclassified' }
 SGAMutationOperation >> doMutate: aTestCase [
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase remove ].
+		ifTrue: [ aTestCase removeStatement ].
 	self randomNumber <= mutationRate
 		ifTrue: [ aTestCase change ].
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase insert ]
+		ifTrue: [ aTestCase insertStatement ]
 ]
 
 { #category : #initialization }
@@ -25,8 +25,7 @@ SGAMutationOperation >> initialize [
 { #category : #'as yet unclassified' }
 SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
-	newTestCase := SSTestCase with: aTestCase typeInfo.
-	newTestCase addFromParents: aTestCase statements deepCopy.
+	newTestCase := aTestCase copy.
 	self doMutate: newTestCase.
 	^ newTestCase
 ]
