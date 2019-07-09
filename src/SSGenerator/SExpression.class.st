@@ -57,6 +57,21 @@ SExpression >> isFactoryMessage [
 ]
 
 { #category : #accessing }
+SExpression >> reference [
+	^ self
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> references: aExpression [
+	^ #()
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> repairHaving: newExpressions [
+	^ #()
+]
+
+{ #category : #accessing }
 SExpression >> returnType [
 	^ returnType
 ]

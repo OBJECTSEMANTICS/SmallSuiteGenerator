@@ -48,6 +48,17 @@ SAssignment >> printOn: aStream [
 	value printOn: aStream
 ]
 
+{ #category : #accessing }
+SAssignment >> reference [ 
+	^ variable
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> references: aExpression [
+	^ (variable references: aExpression)
+		, (value references: aExpression)
+]
+
 { #category : #evaluating }
 SAssignment >> value [ 
 	^ value

@@ -2,56 +2,61 @@ Class {
 	#name : #SVariable,
 	#superclass : #SExpression,
 	#instVars : [
-		'nameVar'
+		'varName'
 	],
 	#category : #'SSGenerator-Nodes'
 }
 
 { #category : #accessing }
 SVariable class >> name: aString [
-	|variable|
+	| variable |
 	variable := self new.
-	variable name: aString.
-	^ variable.
+	variable varName: aString.
+	^ variable
 ]
 
 { #category : #comparing }
 SVariable >> = other [
-	^ super = other and: [ nameVar = other varName ]
+	^ super = other and: [ varName = other varName ]
 ]
 
 { #category : #copying }
-SVariable >> copy [ 	
-	|copy|
+SVariable >> copy [
+	| copy |
 	copy := super copy.
-	copy varName: nameVar copy.
+	copy varName: varName copy.
 	^ copy
 ]
 
 { #category : #comparing }
 SVariable >> hash [
-	^ super hash xor: nameVar hash
+	^ super hash xor: varName  hash
 ]
 
 { #category : #initialization }
 SVariable >> initialize [
-	nameVar := '_var'
+	varName := '_var'
 ]
 
 { #category : #printing }
 SVariable >> printOn: aStream [
-	aStream
-		nextPutAll: nameVar.
-	id ifNotNil: [ 
-		aStream nextPutAll: id asString]
+	aStream nextPutAll: varName.
+	id ifNotNil: [ aStream nextPutAll: id asString ]
+]
+
+{ #category : #'as yet unclassified' }
+SVariable >> references: anExpression [
+	^ self = anExpression reference
+		ifFalse: [ #() ]
+		ifTrue: [ self ]
 ]
 
 { #category : #accessing }
 SVariable >> varName [
-	^ nameVar
+	^ varName
 ]
 
 { #category : #accessing }
 SVariable >> varName: anObject [
-	nameVar := anObject
+	varName := anObject
 ]

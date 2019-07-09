@@ -43,6 +43,44 @@ SSTestCaseTest class >> typeInfoFoo [
 	^ aTypeInfo
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCaseTest class >> typeInfoSFoo [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#returnNum
+						->
+							{#SmallInteger.
+							{}.
+							false}).
+					(#returnFloat
+						->
+							{#SmallFloat64.
+							{}.
+							false}).
+					(#score
+						->
+							{#SmallInteger.
+							{}.
+							true}).
+					(#return:
+						->
+							{#ByteString.
+							{#ByteString}.
+							false})}.
+					{(#score:
+						->
+							{#SFoo.
+							{#SmallFloat64}.
+							false})}};
+		scalar: #ByteString with: {'hello'};
+		scalar: #SmallInteger with: {5};
+		scalar: #SmallFloat64 with: {7.3}.
+	^ typeInfo
+]
+
 { #category : #tests }
 SSTestCaseTest >> setUp [
 ]
@@ -266,4 +304,71 @@ SSTestCaseTest >> testGenerateStatements [
 	testCase := SSTestCase with: typeInfo.
 	testCase numMaxStatements: 30.
 	self shouldnt: [ testCase generateStatements ] raise: SError
+]
+
+{ #category : #mutation }
+SSTestCaseTest >> testRemoveArgsFactoryMessage [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+	testCase
+		removeStatement:
+			(SAssignment
+				name:
+					(SVariable new
+						varName: '_var';
+						id: 0;
+						returnType: #SmallFloat64;
+						yourself)
+				value:
+					(SLiteral new
+						returnType: #SmallFloat64;
+						value: 7.3)).
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var2 := 7.3' . '_var1 := SFoo score: _var2.'}
+]
+
+{ #category : #mutation }
+SSTestCaseTest >> testRemoveFactoryMessage [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+	testCase
+		removeStatement:
+			(SAssignment
+				name:
+					(SVariable new
+						varName: '_var';
+						id: 1;
+						returnType: #SFoo;
+						yourself)
+				value:
+					(SFactoryMessage new
+						receiver:
+							((SVariable name: #SFoo)
+								returnType: #SFoo;
+								yourself);
+						returnType: #SFoo;
+						selector: #score:;
+						args:
+							{(SVariable new
+								varName: '_var';
+								id: 0;
+								returnType: #SmallFloat64;
+								yourself)})).
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.'}.
+]
+
+{ #category : #mutation }
+SSTestCaseTest >> testRemoveStatement [
+	
 ]

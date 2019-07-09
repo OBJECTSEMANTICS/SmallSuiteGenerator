@@ -94,6 +94,12 @@ SAbstractMessage >> receiver: anObject [
 	receiver := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> references: aExpression [
+	^ (receiver references: aExpression)
+		, (args collect: [ :arg | arg references: aExpression ])
+]
+
 { #category : #accessing }
 SAbstractMessage >> selector [
 	^ selector

@@ -1,5 +1,5 @@
 Class {
 	#name : #SError,
-	#superclass : #Exception,
+	#superclass : #Error,
 	#category : #'SSGenerator-Core'
 }
