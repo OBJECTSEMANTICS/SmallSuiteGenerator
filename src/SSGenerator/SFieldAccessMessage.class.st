@@ -19,3 +19,7 @@ SFieldAccessMessage >> insertRandomMessageWith: aTestCase [
 		addFieldAccessMessage: self selector
 		from: (Smalltalk at: self receiver)) variable
 ]
+
+{ #category : #actions }
+SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
+]

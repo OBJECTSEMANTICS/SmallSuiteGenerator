@@ -45,15 +45,7 @@ SSTestCase >> addFactoryMessage [
 
 { #category : #actions }
 SSTestCase >> addFactoryMessage: aClass [
-	| methods factory |
-	methods := typeInfo factoryMethods: aClass.
-	factory := methods
-		ifEmpty: [ SFactoryMessage default: aClass ]
-		ifNotEmpty: [ | method |
-			method := methods shuffle anyOne.
-			self satisfyArgs: method.
-			SFactoryMessage method: method previousStatements: statements ].
-	^ self addAssignment: factory.
+	^ self addAssignment: (self newFactoryMessage: aClass)
 ]
 
 { #category : #actions }
@@ -99,20 +91,6 @@ SSTestCase >> addLiteral: aClassName [
 					newLiteral 
 ]
 
-{ #category : #adding }
-SSTestCase >> addLiteral: aType at: aIndex [
-	| newStatement |
-	newStatement := self newAssignment: (self newLiteral: aType).
-	newStatement ifNil: [ ^ nil ].
-	statements
-		add: newStatement
-		afterIndex:
-			(aIndex > 1
-				ifTrue: [ aIndex - 1 ]
-				ifFalse: [ 0 ]).
-	^ newStatement
-]
-
 { #category : #actions }
 SSTestCase >> addMessage [
 	| receiver methods |
@@ -146,6 +124,20 @@ SSTestCase >> addMessage: method withReceiver: receiver [
 { #category : #actions }
 SSTestCase >> addStatement: anExpression [
 	statements add: anExpression.
+]
+
+{ #category : #adding }
+SSTestCase >> addStatement: newExpression before: aStatement [
+	| anIndex|
+	anIndex := statements indexOf: aStatement.
+	anIndex > 0
+		ifFalse: [ ^ self error: 'the statement does not exist' ].
+	statements
+		add: newExpression
+		afterIndex:
+			(anIndex > 1
+				ifTrue: [ anIndex - 1 ]
+				ifFalse: [ 0 ]).
 ]
 
 { #category : #'as yet unclassified' }
@@ -279,6 +271,18 @@ SSTestCase >> newAssignment: anExpression [
 		value: anExpression.
 ]
 
+{ #category : #actions }
+SSTestCase >> newFactoryMessage: aClass [
+	| methods |
+	methods := typeInfo factoryMethods: aClass.
+	^ methods
+		ifEmpty: [ SFactoryMessage default: aClass ]
+		ifNotEmpty: [ | method |
+			method := methods shuffle anyOne.
+			self satisfyArgs: method.
+			SFactoryMessage method: method previousStatements: statements ].
+]
+
 { #category : #'instance creation' }
 SSTestCase >> newLiteral: aClassName [
 	|aObject|
@@ -287,6 +291,12 @@ SSTestCase >> newLiteral: aClassName [
 					(SLiteral new
 						returnType: aClassName;
 						value: aObject) 
+]
+
+{ #category : #adding }
+SSTestCase >> newStatementOfType: aType [
+	^ typeInfo scalars at: aType ifPresent: [ :value | self newLiteral: aType ] 
+	ifAbsent: [ self newFactoryMessage: (Smalltalk at: aType) ]
 ]
 
 { #category : #accessing }
@@ -334,26 +344,53 @@ SSTestCase >> removeStatement [
 	"If other statements refer the statement to remove, then this reference is replaced with another value out of the set which has the same type"
 
 	statements ifEmpty: [ ^ #() ].
-	^ self
-		removeStatement:
-			(statements at: (1 to: self numberStatements) atRandom)
+	self
+		removeStatement: (statements at: (1 to: self numberStatements) atRandom)
 ]
 
 { #category : #removing }
 SSTestCase >> removeStatement: aStatement [
-	| stmToRemove varNamesToRemove |
+	| stmToRemove  |
 	stmToRemove := self statementAt: aStatement.
 	stmToRemove
 		ifNil: [ ^ self error: 'Dont exist a statement with this varName.' ].
-	varNamesToRemove := statements copy
-		flatCollect: [ :stm | 
-			| references |
-			references := stm references: stmToRemove. 
-			stm repairHaving: (self updateReferences: references of: stm).
-			].
-	statements remove: stmToRemove.
-	varNamesToRemove do: [ :aName | self removeStatement: aName ].
-	^ {aStatement} , varNamesToRemove
+	statements copy
+		do: [ :stm | 
+			self
+				repairParameters: (stm pickUpReferences: stmToRemove)
+				of: stm ].
+	statements remove: stmToRemove
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> repairExpression: anExpression before: aStatement [
+	| aType indexExpr replacement |
+	indexExpr := statements indexOf: aStatement.
+	indexExpr > 0
+		ifFalse: [ ^ self error: 'the statement does not exist' ].
+	aType := anExpression returnType.
+	replacement := (statements copyFrom: 1 to: indexExpr - 1) shuffle
+		detect:
+			[ :stm | stm reference ~= anExpression and: [ stm returnType = aType ] ]
+		ifNone: [ self replacementOf: anExpression before: aStatement ].
+		(self statementAt: aStatement) replaceArg: anExpression by: replacement
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> repairParameters: expressions of: aStatement [
+	^ expressions
+		do: [ :expr | self repairExpression: expr before: aStatement ]
+]
+
+{ #category : #adding }
+SSTestCase >> replacementOf: anExpression before: aStatement [
+	|newExpression|
+	newExpression := self
+				newAssignment: (self newStatementOfType: anExpression returnType).
+	self
+		addStatement:
+			newExpression 
+		before: aStatement. ^ newExpression 
 ]
 
 { #category : #'as yet unclassified' }
@@ -370,40 +407,13 @@ SSTestCase >> satisfyArgs: aMethodTypeInfo [
 SSTestCase >> statementAt: statement [
 	^ statements
 		detect: [ :stm | stm = statement ]
-		ifFound: [ :stm | stm ]
+		"ifFound: [ :stm | stm ]"
 		ifNone: [ nil ]
-]
-
-{ #category : #'as yet unclassified' }
-SSTestCase >> statementOfType: aType before: anIndex [
-	| candidates |
-	candidates := (statements copyFrom: 1 to: anIndex - 1 ) select: [ :stm | stm returnType = aType ].
-	^ candidates ifNotEmpty: [ candidates shuffle anyOne ] 
-	ifEmpty: [ | position  |
-		
-		position := (1 to: anIndex -1 ) atRandom.
-		^ self addLiteral: aType at: position.
-		 ]
 ]
 
 { #category : #accessing }
 SSTestCase >> statements [
 	^ statements
-]
-
-{ #category : #'as yet unclassified' }
-SSTestCase >> substituteArg: argToSubstitute of: aExpression [
-	| statement indexStatement newArg |
-	indexStatement := statements indexOf: aExpression.
-	indexStatement <= 0
-		ifTrue: [ ^ self error: 'Statements dont contain the expression' ].
-	statement := statements at: indexStatement.
-	newArg := self
-		statementOfType: argToSubstitute returnType
-		before: indexStatement.
-	newArg ifNil: [ ^ false ].
-	"statement updateArg: argToSubstitute by: newArg."
-	^ true
 ]
 
 { #category : #accessing }
@@ -419,25 +429,4 @@ SSTestCase >> typeInfo: anObject [
 { #category : #'as yet unclassified' }
 SSTestCase >> updateNextId [ 
 	nextId = 0 ifTrue: [ nextId := statements size ]
-]
-
-{ #category : #'as yet unclassified' }
-SSTestCase >> updateReferences: references of: anExpression [
-	| statement newReferences |
-	statement := self statementAt: anExpression.
-	newReferences := references.	"buscar nuevas referencias de la expression"
-		"| candidates |
-	candidates := (statements copyFrom: 1 to: anIndex - 1)
-		select: [ :stm | stm returnType = aType ].
-	^ candidates
-		ifNotEmpty: [ candidates shuffle anyOne ]
-		ifEmpty: [ | position |
-			position := (1 to: anIndex - 1) atRandom.
-			^ self addLiteral: aType at: position ]"
-	"	newArg := self
-		addStatementOfType: exprToSubstitute returnType
-		before: indexExpr.
-	newArg ifNil: [ ^ false ].
-	statement updateArg: exprToSubstitute by: newArg."
-	statement replace: references by: newReferences
 ]

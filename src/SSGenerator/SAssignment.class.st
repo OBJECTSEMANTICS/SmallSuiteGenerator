@@ -41,6 +41,11 @@ SAssignment >> id [
 	^ variable id
 ]
 
+{ #category : #'as yet unclassified' }
+SAssignment >> pickUpReferences: aExpression [
+	^ value pickUpReferences: aExpression
+]
+
 { #category : #printing }
 SAssignment >> printOn: aStream [
 	variable printOn: aStream.
@@ -53,10 +58,9 @@ SAssignment >> reference [
 	^ variable
 ]
 
-{ #category : #'as yet unclassified' }
-SAssignment >> references: aExpression [
-	^ (variable references: aExpression)
-		, (value references: aExpression)
+{ #category : #actions }
+SAssignment >> replaceArg: expression by: newExpression [
+	value replaceArg: expression by: newExpression
 ]
 
 { #category : #evaluating }

@@ -38,17 +38,17 @@ SVariable >> initialize [
 	varName := '_var'
 ]
 
+{ #category : #'as yet unclassified' }
+SVariable >> pickUpReferences: anExpression [
+	^ self = anExpression reference
+		ifFalse: [ #() ]
+		ifTrue: [ {self} ]
+]
+
 { #category : #printing }
 SVariable >> printOn: aStream [
 	aStream nextPutAll: varName.
 	id ifNotNil: [ aStream nextPutAll: id asString ]
-]
-
-{ #category : #'as yet unclassified' }
-SVariable >> references: anExpression [
-	^ self = anExpression reference
-		ifFalse: [ #() ]
-		ifTrue: [ self ]
 ]
 
 { #category : #accessing }

@@ -61,6 +61,12 @@ SAbstractMessage >> initialize [
 	args := #().
 ]
 
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> pickUpReferences: aExpression [
+	^ (receiver pickUpReferences: aExpression)
+		, (args flatCollect: [ :arg | arg pickUpReferences: aExpression ])
+]
+
 { #category : #printing }
 SAbstractMessage >> printOn: aStream [
 	receiver printOn: aStream.
@@ -94,10 +100,13 @@ SAbstractMessage >> receiver: anObject [
 	receiver := anObject
 ]
 
-{ #category : #'as yet unclassified' }
-SAbstractMessage >> references: aExpression [
-	^ (receiver references: aExpression)
-		, (args collect: [ :arg | arg references: aExpression ])
+{ #category : #actions }
+SAbstractMessage >> replaceArg: anExpression by: newExpression [
+	| indexExpr |
+	indexExpr := args indexOf: anExpression.
+	indexExpr > 0
+		ifFalse: [ ^ self error: 'args dont contain the expression' ].
+	args at: indexExpr put: newExpression reference
 ]
 
 { #category : #accessing }

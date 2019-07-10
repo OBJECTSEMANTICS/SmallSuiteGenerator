@@ -56,19 +56,19 @@ SExpression >> isFactoryMessage [
 	^ false
 ]
 
+{ #category : #'as yet unclassified' }
+SExpression >> pickUpReferences: aExpression [
+	^ #()
+]
+
 { #category : #accessing }
 SExpression >> reference [
 	^ self
 ]
 
-{ #category : #'as yet unclassified' }
-SExpression >> references: aExpression [
-	^ #()
-]
-
-{ #category : #'as yet unclassified' }
-SExpression >> repairHaving: newExpressions [
-	^ #()
+{ #category : #actions }
+SExpression >> replaceArg: expressions by: newExpressions [
+	
 ]
 
 { #category : #accessing }
