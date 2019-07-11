@@ -59,8 +59,8 @@ SAssignment >> reference [
 ]
 
 { #category : #actions }
-SAssignment >> replaceArg: expression by: newExpression [
-	value replaceArg: expression by: newExpression
+SAssignment >> replaceExpression: expression by: newExpression [
+	value replaceExpression: expression by: newExpression
 ]
 
 { #category : #evaluating }

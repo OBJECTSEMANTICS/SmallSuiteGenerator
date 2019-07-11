@@ -5,15 +5,15 @@ Class {
 }
 
 { #category : #accessing }
-SFactoryMessage class >> default: aClass [
+SFactoryMessage class >> default: aClassName [
 	^ self new
 		receiver:
 			(SVariable new
-				varName: aClass name;
-				returnType: aClass name;
+				varName: aClassName;
+				returnType: aClassName;
 				yourself);
 		selector: #new;
-		returnType: aClass name;
+		returnType: aClassName;
 		yourself
 ]
 

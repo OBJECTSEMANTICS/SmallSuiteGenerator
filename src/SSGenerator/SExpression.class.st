@@ -67,7 +67,7 @@ SExpression >> reference [
 ]
 
 { #category : #actions }
-SExpression >> replaceArg: expressions by: newExpressions [
+SExpression >> replaceExpression: expression by: newExpression [
 	
 ]
 

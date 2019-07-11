@@ -22,8 +22,8 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 ]
 
 { #category : #accessing }
-STypeInfo >> classAt: aClass [
-	^ types at: aClass name
+STypeInfo >> classAt: aClassName [
+	^ types at: aClassName
 ]
 
 { #category : #accessing }
@@ -51,16 +51,19 @@ STypeInfo >> copyFrom: aCoverageAnlysisResult [
 	"filter data according the other typeInfo of mutalk or othher class, or just analisysOfMutalk to dont depend another project "
 ]
 
+{ #category : #'error handling' }
+STypeInfo >> error: aString [
+	^ SError new signal: aString
+]
+
 { #category : #lookup }
-STypeInfo >> factoryMethods: aClass [
-	| className |
-	className := aClass name.
-	types
+STypeInfo >> factoryMethods: className [
+	^ types
 		at: className
 		ifPresent: [ :classInfo | 
-			^ classInfo classMethodTypes associations
+			 classInfo classMethodTypes associations
 				select: [ :assoc | assoc value returnType = className ] thenCollect: [ :assoc | assoc value ] ]
-		ifAbsent: [ ^ self error: 'this class has no type info' ]
+		ifAbsent: [  self error: 'typeInfo does not contain info of type: ', className asString ]
 ]
 
 { #category : #lookup }

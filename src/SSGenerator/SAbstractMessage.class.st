@@ -101,12 +101,10 @@ SAbstractMessage >> receiver: anObject [
 ]
 
 { #category : #actions }
-SAbstractMessage >> replaceArg: anExpression by: newExpression [
-	| indexExpr |
-	indexExpr := args indexOf: anExpression.
-	indexExpr > 0
-		ifFalse: [ ^ self error: 'args dont contain the expression' ].
-	args at: indexExpr put: newExpression reference
+SAbstractMessage >> replaceExpression: anExpression by: newExpression [
+	receiver replaceExpression: anExpression by: newExpression.
+	args
+		do: [ :arg | arg replaceExpression: anExpression by: newExpression ]
 ]
 
 { #category : #accessing }

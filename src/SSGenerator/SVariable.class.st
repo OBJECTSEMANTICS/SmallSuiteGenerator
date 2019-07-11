@@ -51,6 +51,17 @@ SVariable >> printOn: aStream [
 	id ifNotNil: [ aStream nextPutAll: id asString ]
 ]
 
+{ #category : #actions }
+SVariable >> replaceExpression: anExpression by: newExpression [
+	| reference |
+	self = anExpression
+		ifFalse: [ ^ self ].
+	reference := newExpression reference.
+	self
+		id: reference id;
+		varName: reference varName
+]
+
 { #category : #accessing }
 SVariable >> varName [
 	^ varName
