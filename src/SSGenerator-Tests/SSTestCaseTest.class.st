@@ -358,9 +358,7 @@ SSTestCaseTest >> testRemoveArgsMessage [
 					(SLiteral new
 						returnType: #ByteString;
 						value: 'hello')).
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
+	self assertCollection: (testCase statements collect: #printString) includesAll: 
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
 			'_var4 := ''hello''.' . '_var3 := _var1 return: _var4.'}
 ]

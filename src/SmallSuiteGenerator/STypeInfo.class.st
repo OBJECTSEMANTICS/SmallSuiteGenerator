@@ -53,7 +53,7 @@ STypeInfo >> copyFrom: aCoverageAnlysisResult [
 
 { #category : #'error handling' }
 STypeInfo >> error: aString [
-	^ SError new signal: aString
+	^ SError signal: aString
 ]
 
 { #category : #lookup }
@@ -61,9 +61,10 @@ STypeInfo >> factoryMethods: className [
 	^ types
 		at: className
 		ifPresent: [ :classInfo | 
-			 classInfo classMethodTypes associations
-				select: [ :assoc | assoc value returnType = className ] thenCollect: [ :assoc | assoc value ] ]
-		ifAbsent: [  self error: 'typeInfo does not contain info of type: ', className asString ]
+			classInfo classMethodTypes associations
+				select: [ :assoc | assoc value returnType = className ]
+				thenCollect: [ :assoc | assoc value ] ]
+		ifAbsent: [ #() ]
 ]
 
 { #category : #lookup }

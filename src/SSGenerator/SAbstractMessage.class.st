@@ -11,14 +11,27 @@ Class {
 
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
-	|assocs|
-	assocs := (statements collect: [:stm | stm returnType -> stm variable]) shuffle.
-	^ aMethodTypeInfo argTypes
+	| assocs |
+	assocs := (statements
+		collect: [ :stm | stm returnType -> stm variable ]) shuffle.
+	aMethodTypeInfo argTypes
+		detect: [ :aClassName | 
+			assocs
+				at: aClassName
+				ifAbsent:
+					[ :value | SError signal: 'we could find an argument of type ' , aClassName ] ]
+	" review
+	aMethodTypeInfo argTypes
 		collect: [ :className | 
 			assocs
 				detect: [ :assoc | assoc key = className ]
 				ifFound: [ :assoc | assoc value ]
-				ifNone: [ self error: 'we could find an argument of type ' , className ] ]
+				ifNone: [ self error: 'we could find an argument of type ' , className ] ].
+		collect: [ :className | 
+			assocs
+				detect: [ :assoc | assoc key = className ]
+				ifFound: [ :assoc | assoc value ]
+				ifNone: [ SError signal: 'we could find an argument of type ' , className ] ]"
 ]
 
 { #category : #comparing }
