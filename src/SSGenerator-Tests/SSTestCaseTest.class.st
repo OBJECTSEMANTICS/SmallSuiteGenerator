@@ -317,19 +317,8 @@ SSTestCaseTest >> testRemoveArgsFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	testCase
-		removeStatement:
-			(SAssignment
-				name:
-					(SVariable new
-						varName: '_var';
-						id: 0;
-						returnType: #SmallFloat64;
-						yourself)
-				value:
-					(SLiteral new
-						returnType: #SmallFloat64;
-						value: 7.3)).
+	testCase removeStatementOfVarName: '_var0'.
+	
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var2 := 7.3.' . '_var1 := SFoo score: _var2.'}
@@ -345,24 +334,12 @@ SSTestCaseTest >> testRemoveArgsMessage [
 		hasSameElements:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
 			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
-	testCase
-		removeStatement:
-			(SAssignment
-				name:
-					(SVariable new
-						varName: '_var';
-						id: 2;
-						returnType: #ByteString;
-						yourself)
-				value:
-					(SLiteral new
-						returnType: #ByteString;
-						value: 'hello')).
+	testCase removeStatementOfVarName: '_var2'.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		includesAll:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var4 := ''hello''.' .}. " '_var3 := _var1 return: _var4.'"
+			'_var4 := ''hello''.'}.	" '_var3 := _var1 return: _var4.'"
 	self
 		assert:
 			(testCase
@@ -377,32 +354,10 @@ SSTestCaseTest >> testRemoveFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	testCase
-		removeStatement:
-			(SAssignment
-				name:
-					(SVariable new
-						varName: '_var';
-						id: 1;
-						returnType: #SFoo;
-						yourself)
-				value:
-					(SFactoryMessage new
-						receiver:
-							((SVariable name: #SFoo)
-								returnType: #SFoo;
-								yourself);
-						returnType: #SFoo;
-						selector: #score:;
-						args:
-							{(SVariable new
-								varName: '_var';
-								id: 0;
-								returnType: #SmallFloat64;
-								yourself)})).
+	testCase removeStatementOfVarName: '_var1'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'}.
+		hasSameElements: {'_var0 := 7.3.'}
 ]
 
 { #category : #mutation }
@@ -412,34 +367,18 @@ SSTestCaseTest >> testRemoveFieldAccessMessage [
 	testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'. '_var2 := _var1 score.'}.
-	testCase
-		removeStatement:
-			(SAssignment
-				name:
-					(SVariable new
-						varName: '_var';
-						id: 2;
-						returnType: #SmallFloat64;
-						yourself)
-				value:
-					(SFieldAccessMessage new
-						receiver:
-							((SVariable name: '_var')
-								id: 1;
-								returnType: #SFoo;
-								yourself);
-						returnType: #SmallFloat64;
-						selector: #score
-						)).
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := _var1 score.'}.
+	testCase removeStatementOfVarName: '_var2'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'. '_var1 := SFoo score: _var0.'}
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}
 ]
 
 { #category : #mutation }
 SSTestCaseTest >> testRemoveMessage [
-	| testCase stmToRemove |
+	| testCase |
 	testCase := SSTestCase with: self class typeInfoSFoo.
 	testCase addMessage: #return: from: #SFoo.
 	self
@@ -447,28 +386,8 @@ SSTestCaseTest >> testRemoveMessage [
 		hasSameElements:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
 			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
-	stmToRemove := SAssignment
-		name:
-			(SVariable new
-				varName: '_var';
-				id: 3;
-				returnType: #ByteString;
-				yourself)
-		value:
-			(SMessage new
-				receiver:
-					((SVariable name: '_var')
-						id: 1;
-						returnType: #SFoo;
-						yourself);
-				returnType: #ByteString;
-				args:
-					{((SVariable name: '_var')
-						id: 2;
-						returnType: #ByteString;
-						yourself)};
-				selector: #return:).
-	testCase removeStatement: stmToRemove.
+	
+	testCase removeStatementOfVarName: '_var3'.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -486,29 +405,8 @@ SSTestCaseTest >> testRemoveReceiverFieldAccessMessage [
 		hasSameElements:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
 			'_var2 := _var1 score.'}.
-	testCase
-		removeStatement:
-			(SAssignment
-				name:
-					(SVariable new
-						varName: '_var';
-						id: 1;
-						returnType: #SFoo;
-						yourself)
-				value:
-					(SFactoryMessage new
-						receiver:
-							((SVariable name: #SFoo)
-								returnType: #SFoo;
-								yourself);
-						returnType: #SFoo;
-						selector: #score:;
-						args:
-							{(SVariable new
-								varName: '_var';
-								id: 0;
-								returnType: #SmallFloat64;
-								yourself)})).
+	testCase removeStatementOfVarName: '_var1'.
+	
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -526,29 +424,8 @@ SSTestCaseTest >> testRemoveReceiverMessage [
 		hasSameElements:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
 			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
-	testCase
-		removeStatement:
-			(SAssignment
-				name:
-					(SVariable new
-						varName: '_var';
-						id: 1;
-						returnType: #SFoo;
-						yourself)
-				value:
-					(SFactoryMessage new
-						receiver:
-							((SVariable name: #SFoo)
-								returnType: #SFoo;
-								yourself);
-						returnType: #SFoo;
-						selector: #score:;
-						args:
-							{(SVariable new
-								varName: '_var';
-								id: 0;
-								returnType: #SmallFloat64;
-								yourself)})).
+	testCase removeStatementOfVarName: '_var1'.
+	
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:

@@ -445,6 +445,11 @@ SSTestCase >> removeStatement: aStatement [
 			[ :stm | self repairParameters: (stm pickUpReferences: stmToRemove) of: stm ].
 ]
 
+{ #category : #removing }
+SSTestCase >> removeStatementOfVarName: varName [
+	^ self removeStatement: (self statementOfVarName: varName) copy
+]
+
 { #category : #'as yet unclassified' }
 SSTestCase >> repairExpression: anExpression before: aStatement [
 	| aType replacement |
@@ -513,14 +518,6 @@ SSTestCase >> typeInfo [
 { #category : #accessing }
 SSTestCase >> typeInfo: anObject [
 	typeInfo := anObject
-]
-
-{ #category : #adding }
-SSTestCase >> typesToAdd: aMethodTypeInfo using: arrStatements [
-	 | types  |
-	types := (arrStatements collect: #returnType) asSet.
-	^ (aMethodTypeInfo argTypes
-		reject: [ :aType | types includes: aType ]) asSet.
 ]
 
 { #category : #'as yet unclassified' }
