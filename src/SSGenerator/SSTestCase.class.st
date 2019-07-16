@@ -38,7 +38,8 @@ SSTestCase >> addFactoryMessage [
 
 { #category : #actions }
 SSTestCase >> addFactoryMessage: aClassName [
-	^ self addAssignment: (self newFactoryMessage: aClassName before: nil)
+	^ self
+		addAssignment: (self newFactoryMessage: aClassName before: nil)
 ]
 
 { #category : #actions }
@@ -101,9 +102,7 @@ SSTestCase >> addMessage: aSelector from: aClassName [
 
 { #category : #actions }
 SSTestCase >> addMessage: method withReceiver: receiver [
-	self
-		satisfyArgs: method
-		before: nil.
+	self satisfyArgs: method before: nil.
 	^ self
 		addAssignment:
 			(SMessage
@@ -277,7 +276,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 					SFactoryMessage
 						method: method
 						previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ] ].
-		self error: 'error factoryMessage'
+	^ self error: 'error factoryMessage'
 ]
 
 { #category : #actions }
@@ -289,7 +288,7 @@ SSTestCase >> newFieldAccessMessageOfType: aType before: aStatement [
 				ifFound:
 					[ :aMethod | ^ self addFieldAccessMessage: aMethod withReceiver: receiver ]
 				ifNone: [ false ] ].
-	self error: 'cant create field access of type: ' , aType asString
+	^ self error: 'cant create field access of type: ' , aType asString
 ]
 
 { #category : #'instance creation' }
@@ -310,9 +309,9 @@ SSTestCase >> newMessageOfType: aType before: aStatement [
 		do: [ :receiver | 
 			(self pickMessagesOf: receiver)
 				detect: [ :aMethod | aMethod returnType = aType ]
-				ifFound: [ :aMethod | ^ self addMessage: aMethod withReceiver: receiver ]
+				ifFound: [ :aMethod | ^ self addMessage: aMethod withReceiver: receiver reference ]
 				ifNone: [ false ] ].
-	self error: 'cant create message of type: ' , aType asString
+	^ self error: 'cant create message of type: ' , aType asString
 ]
 
 { #category : #adding }
@@ -328,7 +327,7 @@ SSTestCase >> newStatementOfType: aType before: aStatement [
 					aStatement}.
 			true ]
 				on: SError
-				do: [ false ] ]
+				do: [:e | false ] ]
 		ifFound: [ ^ newExpression ].
 	self
 		error: 'Cant create expression with the returnType: ' , aType asString
@@ -427,14 +426,15 @@ SSTestCase >> replacementOf: anExpression before: aStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> satisfyArgs: aMethodTypeInfo before: aStatement [
-	| types typesToAdd |
-	types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-		collect: #returnType.
-	typesToAdd := (aMethodTypeInfo argTypes
-		reject: [ :aType | types includes: aType ]) asSet.
-	typesToAdd
-		do: [ :type |
-			self newStatementOfType: type before: aStatement]
+	aMethodTypeInfo argTypes
+		ifNotEmpty: [ | types typesToAdd |
+			types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+				collect: #returnType.
+			typesToAdd := (aMethodTypeInfo argTypes
+				reject: [ :aType | types includes: aType ]) asSet.
+			typesToAdd
+				do:
+					[ :type | self addAssignment: (self newStatementOfType: type before: aStatement) ] ]
 ]
 
 { #category : #accessing }

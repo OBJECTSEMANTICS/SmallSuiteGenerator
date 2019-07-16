@@ -11,15 +11,17 @@ Class {
 
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
-	| assocs |
-	assocs := (statements
-		collect: [ :stm | stm returnType -> stm variable ]) shuffle.
-	aMethodTypeInfo argTypes
-		detect: [ :aClassName | 
-			assocs
-				at: aClassName
-				ifAbsent:
-					[ :value | SError signal: 'we could find an argument of type ' , aClassName ] ]
+	| dict |
+	(statements isEmpty or: [ aMethodTypeInfo argTypes isEmpty ])
+		ifTrue: [ ^ #() ].
+	dict := Dictionary new.
+	((statements collect: #returnType) asSet
+		includesAll: aMethodTypeInfo argTypes)
+		ifFalse: [ ^ SError error: 'statements dont contain soms types of method' ].
+	 (statements copy shuffle
+		do: [ :stm | dict at: stm returnType put: stm variable ]).
+	^ aMethodTypeInfo argTypes collect: [ :aType | dict at: aType ]
+
 	" review
 	aMethodTypeInfo argTypes
 		collect: [ :className | 
