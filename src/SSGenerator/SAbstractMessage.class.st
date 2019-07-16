@@ -18,22 +18,10 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	((statements collect: #returnType) asSet
 		includesAll: aMethodTypeInfo argTypes)
 		ifFalse: [ ^ SError error: 'statements dont contain soms types of method' ].
-	 (statements copy shuffle
-		do: [ :stm | dict at: stm returnType put: stm variable ]).
-	^ aMethodTypeInfo argTypes collect: [ :aType | dict at: aType ]
-
-	" review
-	aMethodTypeInfo argTypes
-		collect: [ :className | 
-			assocs
-				detect: [ :assoc | assoc key = className ]
-				ifFound: [ :assoc | assoc value ]
-				ifNone: [ self error: 'we could find an argument of type ' , className ] ].
-		collect: [ :className | 
-			assocs
-				detect: [ :assoc | assoc key = className ]
-				ifFound: [ :assoc | assoc value ]
-				ifNone: [ SError signal: 'we could find an argument of type ' , className ] ]"
+	statements copy shuffle
+		do: [ :stm | dict at: stm returnType put: stm variable ].
+	^ aMethodTypeInfo argTypes
+		collect: [ :aType |  dict at: aType ]
 ]
 
 { #category : #comparing }

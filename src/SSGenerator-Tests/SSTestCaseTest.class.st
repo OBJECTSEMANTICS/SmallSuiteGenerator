@@ -358,9 +358,15 @@ SSTestCaseTest >> testRemoveArgsMessage [
 					(SLiteral new
 						returnType: #ByteString;
 						value: 'hello')).
-	self assertCollection: (testCase statements collect: #printString) includesAll: 
+	self
+		assertCollection: (testCase statements collect: #printString)
+		includesAll:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var4 := ''hello''.' . '_var3 := _var1 return: _var4.'}
+			'_var4 := ''hello''.' .}. " '_var3 := _var1 return: _var4.'"
+	self
+		assert:
+			(testCase
+				includesStatementOfVarName: (testCase statementOfVarName: '_var3') value args first printString)
 ]
 
 { #category : #mutation }
