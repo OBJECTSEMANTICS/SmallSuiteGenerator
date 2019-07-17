@@ -435,14 +435,15 @@ SSTestCase >> removeStatement [
 
 { #category : #removing }
 SSTestCase >> removeStatement: aStatement [
-	| stmToRemove |
+	| stmToRemove stmtsToRemove|
 	stmToRemove := self statementAt: aStatement.
 	stmToRemove
 		ifNil: [ ^ self error: 'Dont exist a statement with this varName.' ].
-		statements remove: stmToRemove.
-	statements copy
-		do:
+	statements remove: stmToRemove.
+	stmtsToRemove := statements copy
+		flatCollect:
 			[ :stm | self repairParameters: (stm pickUpReferences: stmToRemove) of: stm ].
+		stmtsToRemove do: [ :stm | self removeStatement: stm ]
 ]
 
 { #category : #removing }
@@ -454,12 +455,13 @@ SSTestCase >> removeStatementOfVarName: varName [
 SSTestCase >> repairExpression: anExpression before: aStatement [
 	| aType replacement |
 	aType := anExpression returnType.
-	replacement := (self
-		subStatementsFrom: 1
-		toPrevIndexOf: aStatement) shuffle
+	replacement := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+		shuffle
 		detect:
 			[ :stm | stm reference ~= anExpression and: [ stm returnType = aType ] ]
-		ifNone: [ self replacementOf: anExpression before: aStatement ].
+		ifNone: [ [ self replacementOf: anExpression before: aStatement ]
+				on: SError
+				do: [ :error | ^ error ] ].
 	(self statementAt: aStatement)
 		replaceExpression: anExpression
 		by: replacement
@@ -467,16 +469,21 @@ SSTestCase >> repairExpression: anExpression before: aStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> repairParameters: expressions of: aStatement [
-	^ expressions
-		do: [ :expr | self repairExpression: expr before: aStatement ]
+	|exprsToDelete|
+	exprsToDelete := OrderedCollection new.
+	expressions
+		do: [ :expr | [self repairExpression: expr before: aStatement] on: SError do: [ exprsToDelete add: expr. ] ].
+		^ exprsToDelete 
 ]
 
 { #category : #adding }
 SSTestCase >> replacementOf: anExpression before: aStatement [
 	| newExpression |
-	newExpression := self
+	[ newExpression := self
 		newAssignment: (self newStatementOfType: anExpression returnType before: aStatement).
-	self addStatement: newExpression before: aStatement.
+	self addStatement: newExpression before: aStatement ]
+		on: SError
+		do: [ :error | ^ error ].
 	^ newExpression
 ]
 
