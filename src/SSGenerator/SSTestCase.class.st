@@ -33,7 +33,7 @@ SSTestCase >> addAssignment: anExpression [
 
 { #category : #actions }
 SSTestCase >> addFactoryMessage [
-	self addFactoryMessage: typeInfo randomNoneAbstractClass name
+	^ self addFactoryMessage: typeInfo randomNoneAbstractClass name
 ]
 
 { #category : #actions }
@@ -48,7 +48,7 @@ SSTestCase >> addFieldAccessMessage [
 	receiver := self pickAnObjectVariable.
 	methods := self pickAccessorsOf: receiver.
 	methods
-		ifNotEmpty: [ self
+		ifNotEmpty: [ ^ self
 				addFieldAccessMessage: methods shuffle anyOne
 				withReceiver: receiver ]
 ]
@@ -72,13 +72,12 @@ SSTestCase >> addFieldAccessMessage: method withReceiver: receiver [
 { #category : #adding }
 SSTestCase >> addLiteral [
 	typeInfo scalars ifEmpty: [ self error: 'scalars are not defined' ].
-	self addLiteral: typeInfo scalars keys shuffle anyOne.
-	
+	^ self addLiteral: typeInfo scalars keys shuffle anyOne
 ]
 
 { #category : #adding }
 SSTestCase >> addLiteral: aClassName [
-	self addAssignment: (self newLiteral: aClassName)
+	^ self addAssignment: (self newLiteral: aClassName)
 ]
 
 { #category : #actions }
@@ -117,19 +116,29 @@ SSTestCase >> addStatement: anExpression [
 ]
 
 { #category : #adding }
+SSTestCase >> addStatement: newExpression after: aStatement [
+	| anIndex |
+	anIndex := statements indexOf: aStatement.
+	anIndex = 0
+		ifTrue: [ self addStatement: newExpression  ]
+		ifFalse: [ anIndex := (anIndex to: self numberStatements) atRandom.
+			statements add: newExpression afterIndex: anIndex ].
+	^ newExpression
+]
+
+{ #category : #adding }
 SSTestCase >> addStatement: newExpression before: aStatement [
 	| anIndex |
 	anIndex := statements indexOf: aStatement.
-	anIndex = 0 ifTrue: [ statements add: newExpression  ] ifFalse: [  
-	"anIndex > 0
-		ifFalse: [ self error: 'the statement does not exist' ]."
-	anIndex := (1 to: anIndex) atRandom.
-	statements
-		add: newExpression
-		afterIndex:
-			(anIndex > 1
-				ifTrue: [ anIndex - 1 ]
-				ifFalse: [ 0 ])]
+	anIndex = 0
+		ifTrue: [ self addStatement: newExpression ]
+		ifFalse: [ anIndex := (1 to: anIndex) atRandom.
+			statements
+				add: newExpression
+				afterIndex:
+					(anIndex > 1
+						ifTrue: [ anIndex - 1 ]
+						ifFalse: [ 0 ]) ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -200,6 +209,14 @@ SSTestCase >> error: aString [
 	^ SError signal: aString
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> expressionWithMaxIndexFrom: expressions [
+	^ statements at: ((expressions collect: #reference )
+	collect: [ :ref | 
+	self indexOfVarName: ref
+	]) max
+]
+
 { #category : #querying }
 SSTestCase >> factoryMessageVariables [
 	^ statements
@@ -233,48 +250,54 @@ SSTestCase >> includesStatementOfVarName: aString [
 	^ (statements collect: [ :stm | stm reference printString ]) includes: aString
 ]
 
+{ #category : #accessing }
+SSTestCase >> indexOfVarName: varName [
+	^ (statements collect: #reference) indexOf: varName
+]
+
 { #category : #initialization }
 SSTestCase >> initialize [
 	statements := OrderedCollection new.
 	nextId := 0
 ]
 
+{ #category : #actions }
+SSTestCase >> insertExpression: aExpression after: aStatement [
+	^ self
+		addStatement: (self newAssignment: aExpression)
+		after: aStatement
+]
+
 { #category : #'as yet unclassified' }
 SSTestCase >> insertRandomStatement [
-	| insertedVarNames |
-	#(#insertRandomMessageWith: #insertMethodMessageWith: #insertParameterWith:)
+	#(#insertRandomMessageUsing: #insertMethodMessageUsing: #insertParameterUsing:)
 		shuffle
 		detect: [ :selector | 
-			insertedVarNames := self insertStatementOfSelector: selector.
-			insertedVarNames isNotNil ]
-		ifFound: [ ^ insertedVarNames ]
-		ifNone: [ ^ nil ]
+			(self insertStatementOfSelector: selector) isNotNil.
+			 ].
 ]
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatement [
-	| l stop varNames alpha count random insertedVarNames |
+	| l stop alpha count random  |
 	statements ifEmpty: [ ^ #() ].
 	l := 1.
 	count := 0.
 	stop := self numberStatements.
 	alpha := 0.5.
-	insertedVarNames := OrderedCollection new.
 	random := Random new seed: DateAndTime current nanoSecond / 100.
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
-		whileTrue: [ varNames := self insertRandomStatement.
-			varNames ifNotNil: [ insertedVarNames addAll: varNames ].
+		whileTrue: [ self insertRandomStatement.
 			l := l + 1.
 			count := count + 1 ].
-	^ insertedVarNames
 ]
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatementOfSelector: selector [
-	| varNames |
 	^ statements copy shuffle
-		detect: [ :stm | varNames := (stm perform: selector with: self).
-			varNames isNotNil ] ifFound: [ varNames ] ifNone: [ nil ]
+		detect: [ :stm | 
+			(stm perform: selector with: self) isNotNil ]
+		ifNone: [ nil ]
 ]
 
 { #category : #'instance creation' }
@@ -296,9 +319,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 		ifPresent: [ | methods |
 			methods := typeInfo factoryMethods: aClassName.
 			methods ifEmpty: [ ^ SFactoryMessage default: aClassName ].
-			^ [ self newFactoryMessageUsing: methods and: aStatement ]
-				on: SError
-				do: [ :e | e ] ]
+			^self newFactoryMessageUsing: methods and: aStatement ]
 		ifAbsent: [ self error: 'error factoryMessage' ]
 ]
 
@@ -380,7 +401,7 @@ SSTestCase >> newStatementOfType: aType before: aStatement [
 					aStatement} ]
 				on: SError
 				do: [ "try with the next one" ] ].
-	^ self
+	self
 		error: 'Cant create expression with the returnType: ' , aType asString
 ]
 
@@ -414,7 +435,7 @@ SSTestCase >> pickMessagesOf: aVariable [
 SSTestCase >> pickObjectVariableOf: aClassName [
 	^ self factoryMessageVariables
 		detect: [ :var | var returnType = aClassName ]
-		ifFound: [ :var | var ] ifNone: [ self error: 'Dont exist a constructor of class', aClassName]
+		ifNone: [ self error: 'Dont exist a constructor of class' , aClassName ]
 ]
 
 { #category : #querying }
@@ -422,6 +443,12 @@ SSTestCase >> pickOrCreateObjectVariableOf: aClassName [
 	^ [ self pickObjectVariableOf: aClassName ]
 		on: SError
 		do: [ (self addFactoryMessage: aClassName) variable ]
+]
+
+{ #category : #actions }
+SSTestCase >> randomStatement [
+	^ statements at: (1 to: self numberStatements ) atRandom
+	
 ]
 
 { #category : #removing }
@@ -459,9 +486,7 @@ SSTestCase >> repairExpression: anExpression before: aStatement [
 		shuffle
 		detect:
 			[ :stm | stm reference ~= anExpression and: [ stm returnType = aType ] ]
-		ifNone: [ [ self replacementOf: anExpression before: aStatement ]
-				on: SError
-				do: [ :error | ^ error ] ].
+		ifNone: [ self replacementOf: anExpression before: aStatement  ].
 	(self statementAt: aStatement)
 		replaceExpression: anExpression
 		by: replacement
@@ -479,11 +504,9 @@ SSTestCase >> repairParameters: expressions of: aStatement [
 { #category : #adding }
 SSTestCase >> replacementOf: anExpression before: aStatement [
 	| newExpression |
-	[ newExpression := self
+	newExpression := self
 		newAssignment: (self newStatementOfType: anExpression returnType before: aStatement).
-	self addStatement: newExpression before: aStatement ]
-		on: SError
-		do: [ :error | ^ error ].
+	self addStatement: newExpression before: aStatement.
 	^ newExpression
 ]
 
@@ -497,8 +520,9 @@ SSTestCase >> statementAt: statement [
 
 { #category : #testing }
 SSTestCase >> statementOfVarName: aString [
-	^ statements detect: [ :stm | stm reference printString = aString ]
-	ifNone: [ nil ]
+	^ statements
+		detect: [ :stm | stm reference printString = aString ]
+		ifNone: [ self error: 'Not found statement of varName: ' , aString ]
 ]
 
 { #category : #accessing }

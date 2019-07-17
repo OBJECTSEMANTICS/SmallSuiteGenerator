@@ -15,13 +15,13 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 ]
 
 { #category : #'as yet unclassified' }
-SMessage >> insertMethodMessageWith: aTestCase [
-	^ self insertRandomMessageWith: aTestCase
+SMessage >> insertMethodMessageUsing: aTestCase [
+	^ self insertRandomMessageUsing: aTestCase
 ]
 
 { #category : #'as yet unclassified' }
-SMessage >> insertRandomMessageWith: aTestCase [
-	^ (aTestCase
-		addMessage: self selector
-		from: (Smalltalk at: self receiver)) variable
+SMessage >> insertRandomMessageUsing: aTestCase [
+	| expression |
+	expression := self expressionWithMaxIndex: aTestCase.
+	^ (aTestCase insertExpression: self copy after: expression) reference
 ]

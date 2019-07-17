@@ -310,6 +310,20 @@ SSTestCaseTest >> testGenerateStatements [
 ]
 
 { #category : #mutation }
+SSTestCaseTest >> testInsertStatementOfSelectorRandomMessage [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+	testCase removeStatementOfVarName: '_var1'.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.'}
+]
+
+{ #category : #mutation }
 SSTestCaseTest >> testRemoveArgsFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: self class typeInfoSFoo.

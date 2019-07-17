@@ -49,6 +49,12 @@ SAbstractMessage >> copy [
 	^ copy
 ]
 
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> expressionWithMaxIndex: aTestCase [
+	^ aTestCase expressionWithMaxIndexFrom: { receiver }, args.
+	
+]
+
 { #category : #comparing }
 SAbstractMessage >> hash [ 	
 	^ super hash xor: (receiver hash xor: (selector hash xor: args hash))
@@ -62,6 +68,20 @@ SAbstractMessage >> id [
 { #category : #initialization }
 SAbstractMessage >> initialize [ 	
 	args := #().
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> insertParameterUsing: aTestCase [
+	(args collect: #reference) do: [ :ref | 
+		(aTestCase statementOfVarName: ref printString) insertParameterUsing: aTestCase
+		 ]
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> insertRandomMessageUsing: aTestCase [
+	| expression |
+	expression := self expressionWithMaxIndex: aTestCase.
+	^ (aTestCase insertExpression: self copy after: expression) reference
 ]
 
 { #category : #'as yet unclassified' }

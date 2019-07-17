@@ -37,18 +37,18 @@ SExpression >> id: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-SExpression >> insertMethodMessageWith: aTestCase [
-	^ nil
+SExpression >> insertMethodMessageUsing: aTestCase [
+	
 ]
 
 { #category : #'as yet unclassified' }
-SExpression >> insertParameterWith: aTestCase [
-	^ nil
+SExpression >> insertParameterUsing: aTestCase [
+	
 ]
 
 { #category : #'as yet unclassified' }
-SExpression >> insertRandomMessageWith: aTestCase [
-	^ nil
+SExpression >> insertRandomMessageUsing: aTestCase [
+	
 ]
 
 { #category : #testing }

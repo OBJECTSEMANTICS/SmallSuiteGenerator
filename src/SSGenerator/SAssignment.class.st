@@ -42,6 +42,21 @@ SAssignment >> id [
 ]
 
 { #category : #'as yet unclassified' }
+SAssignment >> insertMethodMessageUsing: aTestCase [
+	^ value insertMethodMessageUsing: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> insertParameterUsing: aTestCase [
+	^ value insertParameterUsing: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> insertRandomMessageUsing: aTestCase [
+	^ value insertRandomMessageUsing: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
 ]

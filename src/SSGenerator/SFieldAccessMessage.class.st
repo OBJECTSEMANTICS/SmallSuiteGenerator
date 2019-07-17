@@ -13,13 +13,6 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
-SFieldAccessMessage >> insertRandomMessageWith: aTestCase [
-	^ (aTestCase
-		addFieldAccessMessage: self selector
-		from: (Smalltalk at: self receiver)) variable
-]
-
 { #category : #actions }
 SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
 ]

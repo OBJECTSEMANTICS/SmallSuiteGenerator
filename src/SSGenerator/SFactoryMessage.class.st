@@ -30,11 +30,6 @@ SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements 
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
-SFactoryMessage >> insertRandomMessageWith: aTestCase [
-	^ (aTestCase addFactoryMessage: (Smalltalk at: self returnType)) variable
-]
-
 { #category : #testing }
 SFactoryMessage >> isFactoryMessage [
 	^ true
