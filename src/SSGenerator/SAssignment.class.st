@@ -73,6 +73,12 @@ SAssignment >> reference [
 	^ variable
 ]
 
+{ #category : #mutation }
+SAssignment >> repairOn: aTestCase changing: aExpression [
+	self reference = aExpression reference
+		ifTrue: [ value repairOn: aTestCase changing: aExpression ]
+]
+
 { #category : #actions }
 SAssignment >> replaceExpression: expression by: newExpression [
 	value replaceExpression: expression by: newExpression

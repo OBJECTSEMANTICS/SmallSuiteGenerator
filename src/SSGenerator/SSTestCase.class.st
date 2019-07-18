@@ -142,6 +142,12 @@ SSTestCase >> addStatement: newExpression before: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
+SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
+	^ typeInfo factoryMethods detect: [ :meth | 
+		meth selector ~= aFactoryMessage selector ] ifFound: [ :meth | SFactoryMessage method: meth previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression) ] ifNone: [ SFactoryMessage default: aFactoryMessage returnType ]
+]
+
+{ #category : #'as yet unclassified' }
 SSTestCase >> assignId [
 	| idToAssign assignedIds |
 	assignedIds := self assignedIds.
@@ -172,27 +178,21 @@ SSTestCase >> buildArgs: aMethodTypeInfo before: aStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> changeStatement [
-	statements ifEmpty: [ ^ #() ].
-	^ self
-		changeStatementOfVarName:
-			(statements at: (1 to: self numberStatements) atRandom) variable
-				varName
+	statements copy shuffle
+		do: [ :stm | 
+			[ ^ self changeStatement: stm]
+				on: SError
+				do: [  ] ]
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> changeStatementOfVarName: varName [
-	| stmToChange varNamesToChange |
-	stmToChange := self statementAt: varName.
-	stmToChange
-		ifNil: [ ^ self error: 'Dont exist a statement with this varName.' ].
-	varNamesToChange := OrderedCollection new. "implementar repair:onChhanging:"
-	statements copy
-		do:
-			[ :stm | varNamesToChange addAll: (stm repairOn: self changing: stmToChange) ].
+SSTestCase >> changeStatement: aStatement [
+	| stmToChange statementsToChange |
+	stmToChange := self statementAt: aStatement.
+	statementsToChange := statements copy
+		flatCollect: [ :stm | stm repairOn: self changing: stmToChange ].
 	statements remove: stmToChange.
-	varNamesToChange
-		do: [ :aName | self changeStatementOfVarName: aName ].
-	^ {varName} , varNamesToChange
+	statementsToChange do: [ :stm | self changeStatement: stm ]
 ]
 
 { #category : #copying }
@@ -272,9 +272,8 @@ SSTestCase >> insertExpression: aExpression after: aStatement [
 SSTestCase >> insertRandomStatement [
 	#(#insertRandomMessageUsing: #insertMethodMessageUsing: #insertParameterUsing:)
 		shuffle
-		detect: [ :selector | 
-			(self insertStatementOfSelector: selector) isNotNil.
-			 ].
+		do:
+			[ :selector | [^ self insertStatementOfSelector: selector] on: SError do: [  ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -294,10 +293,13 @@ SSTestCase >> insertStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatementOfSelector: selector [
-	^ statements copy shuffle
-		detect: [ :stm | 
-			(stm perform: selector with: self) isNotNil ]
-		ifNone: [ nil ]
+	statements copy shuffle
+		do: [ :stm | 
+			[ ^ self perform: selector inStatement: stm ]
+				on: SError
+				do: [  ] ].
+	self
+		error: 'Cant insert statement of selector: ' , selector printString
 ]
 
 { #category : #'instance creation' }
@@ -415,6 +417,12 @@ SSTestCase >> numberStatements [
 	^ statements size
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> perform: selector inStatement: stm [	
+	^ stm perform: selector with: self
+			
+]
+
 { #category : #querying }
 SSTestCase >> pickAccessorsOf: aVariable [
 	^ typeInfo types at: aVariable returnType ifPresent: [ :value | value accessMessages ] ifAbsent: [#()]
@@ -462,15 +470,13 @@ SSTestCase >> removeStatement [
 
 { #category : #removing }
 SSTestCase >> removeStatement: aStatement [
-	| stmToRemove stmtsToRemove|
+	| stmToRemove stmtsToRemove |
 	stmToRemove := self statementAt: aStatement.
-	stmToRemove
-		ifNil: [ ^ self error: 'Dont exist a statement with this varName.' ].
 	statements remove: stmToRemove.
 	stmtsToRemove := statements copy
 		flatCollect:
 			[ :stm | self repairParameters: (stm pickUpReferences: stmToRemove) of: stm ].
-		stmtsToRemove do: [ :stm | self removeStatement: stm ]
+	stmtsToRemove do: [ :stm | self removeStatement: stm ]
 ]
 
 { #category : #removing }
@@ -514,8 +520,7 @@ SSTestCase >> replacementOf: anExpression before: aStatement [
 SSTestCase >> statementAt: statement [
 	^ statements
 		detect: [ :stm | stm = statement ]
-		"ifFound: [ :stm | stm ]"
-		ifNone: [ nil ]
+		ifNone: [ self error: 'statement not found' ]
 ]
 
 { #category : #testing }

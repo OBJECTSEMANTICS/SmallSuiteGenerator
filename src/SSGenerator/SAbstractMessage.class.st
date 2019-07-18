@@ -39,6 +39,33 @@ SAbstractMessage >> args: anObject [
 	args := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> changeArgsFrom: aExpression in: aTestCase [
+	"| newArgs |
+	newArgs := args
+		collect: [ :arg | 
+			[ [ aTestCase alternativeStatementOf: arg before: aExpression ]
+				on: SError
+				do: [ aTestCase addStatementOfType: arg returnType before: aExpression ] ]
+				on: SError
+				do: [ arg ] ].
+	self args: newArgs.
+	aTestCase replaceFrom: aExpression with: self"
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> changeReceiverFrom: aExpression in: aTestCase [
+	| otherExpression |
+	otherExpression := receiver repairOn: aTestCase changing: aExpression.
+	self receiver: otherExpression.
+	"aTestCase replaceFrom: aExpression with: self"
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> changeSelectorFrom: aExpression in: aTestCase [
+	^ self subclassResponsibility
+]
+
 { #category : #copying }
 SAbstractMessage >> copy [ 
 	| copy|
@@ -72,9 +99,10 @@ SAbstractMessage >> initialize [
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> insertParameterUsing: aTestCase [
-	(args collect: #reference) do: [ :ref | 
-		(aTestCase statementOfVarName: ref printString) insertParameterUsing: aTestCase
-		 ]
+	(args collect: #reference)
+		do: [ :ref | 
+			(aTestCase statementOfVarName: ref printString)
+				insertParameterUsing: aTestCase ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -121,6 +149,24 @@ SAbstractMessage >> receiver [
 { #category : #accessing }
 SAbstractMessage >> receiver: anObject [
 	receiver := anObject
+]
+
+{ #category : #mutation }
+SAbstractMessage >> repairOn: aTestCase changing: aExpression [
+	#(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:)
+		shuffle
+		detect: [ :sel | 
+			self
+				perform: sel
+				withArguments:
+					{aExpression.
+					aTestCase} ]
+		ifNone: [ self
+				error: 
+				(String streamContents: [:s | 
+		 s nextPutAll: 'cant change the statement: ';
+		nextPutAll: aExpression reference printString ])]
+	
 ]
 
 { #category : #actions }

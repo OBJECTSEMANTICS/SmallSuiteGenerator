@@ -36,6 +36,12 @@ SLiteral >> printOn: aStream [
 	nextPut: $.
 ]
 
+{ #category : #mutation }
+SLiteral >> repairOn: aTestCase changing: aExpression [
+	self value: value mutateToChange.
+	"aTestCase replaceFrom: aExpression with: self"
+]
+
 { #category : #evaluating }
 SLiteral >> value [ 	
 	^ value

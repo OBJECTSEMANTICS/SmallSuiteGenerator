@@ -13,6 +13,23 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> changeArgsFrom: aExpression in: aTestCase [
+]
+
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
+	"| otherFieldAccessMessage |
+	otherFieldAccessMessage := aTestCase
+		alternativeFieldAccessMessage: self.
+	aTestCase replaceFrom: aExpression with: otherFieldAccessMessage"
+]
+
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> insertParameterUsing: aTestCase [
+	self error: 'cant insert parameter'
+]
+
 { #category : #actions }
 SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
 ]

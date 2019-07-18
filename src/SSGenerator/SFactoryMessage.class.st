@@ -30,6 +30,19 @@ SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements 
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+SFactoryMessage >> changeReceiverFrom: aExpression in: aTestCase [
+]
+
+{ #category : #'as yet unclassified' }
+SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
+	| otherFactoryMessage |
+	otherFactoryMessage := aTestCase
+		alternativeFactoryMessage: self
+		before: aExpression.
+	"aTestCase replaceFrom: aExpression with: otherFactoryMessage"
+]
+
 { #category : #testing }
 SFactoryMessage >> isFactoryMessage [
 	^ true

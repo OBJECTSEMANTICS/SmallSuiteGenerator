@@ -309,18 +309,186 @@ SSTestCaseTest >> testGenerateStatements [
 	self shouldnt: [ testCase generateStatements ] raise: SError
 ]
 
-{ #category : #mutation }
-SSTestCaseTest >> testInsertStatementOfSelectorRandomMessage [
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: self class typeInfoSFoo.
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	testCase removeStatementOfVarName: '_var1'.
+	self should: [testCase insertStatementOfSelector: #insertMethodMessageUsing:] raise: SError.
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
+	| testCase fieldMessage |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	fieldMessage := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'}
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := _var1 score.'}.
+	self
+		should: [ testCase
+				perform: #insertMethodMessageUsing:
+				inStatement: fieldMessage copy ]
+		raise: SError
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addLiteral: #SmallInteger.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 5.'}.
+	self
+		should: [ testCase insertStatementOfSelector: #insertMethodMessageUsing: ]
+		raise: SError
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInMessage [
+	| testCase message |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	message := testCase addMessage: #returnNum from: #SFoo.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			 '_var2 := _var1 returnNum.'}.
+	testCase
+		perform: #insertMethodMessageUsing:
+		inStatement: message copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := _var1 returnNum.'. '_var3 := _var1 returnNum.'
+			}
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorParameterInFactoryMessage [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+	testCase insertStatementOfSelector: #insertParameterUsing:.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'. '_var2 := 7.3.'}.
+	
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorParameterInFieldMessage [
+	| testCase fieldMessage |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	fieldMessage := testCase addFieldAccessMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := _var1 score.'}.
+	self should: [testCase
+		perform: #insertParameterUsing:
+		inStatement: fieldMessage copy] raise: SError.
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorParameterInMessage [
+	| testCase message |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	message := testCase addMessage: #return: from: #SFoo.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'. }.
+	testCase
+		perform: #insertParameterUsing:
+		inStatement: message copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'.
+			'_var4 := ''hello''.'}
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+	testCase insertStatementOfSelector: #insertRandomMessageUsing:.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := SFoo score: _var0.'}
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
+	| testCase fieldMessage |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	fieldMessage := testCase addFieldAccessMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := _var1 score.'}.
+	testCase
+		perform: #insertRandomMessageUsing:
+		inStatement: fieldMessage copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
+			'_var2 := _var1 score.' . '_var3 := _var1 score.'}
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addLiteral: #SmallFloat64.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.'}.
+	self
+		should: [testCase insertStatementOfSelector: #insertRandomMessageUsing:]
+		raise: SError
+]
+
+{ #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInMessage [
+	| testCase message |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	message := testCase addMessage: #return: from: #SFoo.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'. '_var2 := ''hello''.'.
+			'_var3 := _var1 return: _var2.'}.
+	testCase
+		perform: #insertRandomMessageUsing:
+		inStatement: message copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'. '_var2 := ''hello''.'.
+			'_var3 := _var1 return: _var2.'. '_var4 := _var1 return: _var2.'}.
 ]
 
 { #category : #mutation }

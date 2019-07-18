@@ -21,6 +21,11 @@ SExpression >> copy [
 		returnType: self returnType
 ]
 
+{ #category : #'error handling' }
+SExpression >> error: aString [
+	^ SError signal: aString
+]
+
 { #category : #comparing }
 SExpression >> hash [ 	
 	^ self id hash xor: self returnType
@@ -38,17 +43,17 @@ SExpression >> id: anObject [
 
 { #category : #'as yet unclassified' }
 SExpression >> insertMethodMessageUsing: aTestCase [
-	
+	self error: 'cant insert methodMessage'
 ]
 
 { #category : #'as yet unclassified' }
 SExpression >> insertParameterUsing: aTestCase [
-	
+	self error: 'cant insert parameter'
 ]
 
 { #category : #'as yet unclassified' }
 SExpression >> insertRandomMessageUsing: aTestCase [
-	
+	self error: 'cant insert randomMessage'
 ]
 
 { #category : #testing }
@@ -64,6 +69,11 @@ SExpression >> pickUpReferences: aExpression [
 { #category : #accessing }
 SExpression >> reference [
 	^ self
+]
+
+{ #category : #mutation }
+SExpression >> repairOn: aTestCase changing: aExpression [
+	^ #()
 ]
 
 { #category : #actions }
