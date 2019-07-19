@@ -51,6 +51,17 @@ SVariable >> printOn: aStream [
 	id ifNotNil: [ aStream nextPutAll: id asString ]
 ]
 
+{ #category : #mutation }
+SVariable >> repairOn: aTestCase changing: aExpression [
+	| otherVariable |
+	
+	otherVariable := aTestCase
+		alternativeOfVariable: self
+		before: aExpression.
+	self varName: otherVariable varName.
+	self id: otherVariable id
+]
+
 { #category : #actions }
 SVariable >> replaceExpression: anExpression by: newExpression [
 	| reference |

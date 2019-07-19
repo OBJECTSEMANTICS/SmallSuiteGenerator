@@ -73,7 +73,7 @@ SExpression >> reference [
 
 { #category : #mutation }
 SExpression >> repairOn: aTestCase changing: aExpression [
-	^ #()
+	
 ]
 
 { #category : #actions }

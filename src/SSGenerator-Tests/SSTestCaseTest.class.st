@@ -5,45 +5,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SSTestCaseTest class >> typeInfoFoo [
-	| aTypeInfo typeClassInfo |
-	aTypeInfo := STypeInfo new.
-	typeClassInfo := STypeClassInfo newFrom: #SFoo and: aTypeInfo.
-	typeClassInfo
-		addMethod:
-			(STypeMethodInfo new
-				selector: #score;
-				returnType: #SmallInteger;
-				isQuick: true;
-				yourself);
-		addMethod:
-			(STypeMethodInfo new
-				selector: #score:;
-				returnType: #SmallInteger;
-				argTypes: {#SmallInteger};
-				yourself);
-		addMethod:
-			(STypeMethodInfo new
-				selector: #returnString;
-				returnType: #ByteString;
-				yourself);
-		addClassMethod:
-			(STypeMethodInfo new
-				selector: #score:;
-				returnType: #SFoo;
-				argTypes: {#SmallInteger};
-				yourself).
-	aTypeInfo
-		scalars:
-			(Dictionary new
-				at: #SmallInteger put: {5} asSet;
-				at: #ByteString put: {'hello'} asSet;
-				yourself).
-	aTypeInfo addClassInfo: typeClassInfo.
-	^ aTypeInfo
-]
-
-{ #category : #'as yet unclassified' }
 SSTestCaseTest class >> typeInfoSFoo [
 	| typeInfo |
 	typeInfo := STypeInfo new
@@ -78,6 +39,55 @@ SSTestCaseTest class >> typeInfoSFoo [
 		scalar: #ByteString with: {'hello'};
 		scalar: #SmallInteger with: {5};
 		scalar: #SmallFloat64 with: {7.3}.
+	^ typeInfo
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCaseTest class >> typeInfoSStack [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{(#firstLinkStack
+						->
+							{#SmallInteger.
+							{}.
+							true}).
+					(#lastLinkStack
+						->
+							{#SmallInteger.
+							{}.
+							true}).
+					(#pop
+						->
+							{#SmallInteger.
+							{}.
+							false}).
+					(#push:
+						->
+							{#SmallInteger.
+							{#SmallInteger}.
+							false}).
+							(#top
+						->
+							{#SmallInteger.
+							{}.
+							false})
+							}.
+					{(#newStack
+						->
+							{#SStack.
+							{}.
+							false}).
+							(#newStackWith:
+						->
+							{#SStack.
+							{#Array}.
+							false})
+							}};
+		scalar: #SmallInteger with: {5};
+		scalar: #Array with: {#(1 4 5)}.
 	^ typeInfo
 ]
 
@@ -205,6 +215,63 @@ SSTestCaseTest >> testAddMessage [
 			'_var2 := _var0 return: _var1.' . '_var3 := _var0 returnString.'}
 ]
 
+{ #category : #'mutation-change' }
+SSTestCaseTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
+	| testCase expression |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase
+		addLiteral: #SmallFloat64;
+		addLiteral: #SmallFloat64.
+	testCase addFactoryMessage.
+	expression := testCase statements last.	"a factoryMessage"
+	self
+		assertCollection: (testCase statements collect: #printString)
+		includesAll: {'_var0 := 7.3.' . '_var1 := 7.3.'}.
+	self
+		assert:
+			({'_var2 := SFoo score: _var0.' . '_var2 := SFoo score: _var1.'}
+				includes: expression printString).
+	testCase changeStatementOfVarName: '_var2'.
+	expression := testCase statements last.
+	self
+		assert:
+			({'_var2 := SFoo score: _var0.' . '_var2 := SFoo score: _var1.'.
+			'_var2 := SFoo new.'} includes: expression printString)
+]
+
+{ #category : #'mutation-change' }
+SSTestCaseTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
+	| testCase |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+	testCase changeStatementOfVarName: '_var1'.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo new.'}.
+]
+
+{ #category : #'mutation-change' }
+SSTestCaseTest >> testChangeStatementOfFieldAccessMessage [
+	| testCase expressionField |
+	testCase := SSTestCase with: self class typeInfoSStack.
+	expressionField := testCase
+		addFieldAccessMessage: #firstLinkStack
+		from: #SStack.
+	self
+		assert:
+			({'_var2 := _var1 firstLinkStack.' . '_var1 := _var0 firstLinkStack.'}
+				includes: expressionField printString).
+	testCase changeStatement: expressionField.
+	expressionField := testCase statements last.
+	self
+		assert:
+			({'_var2 := _var1 lastLinkStack.' . '_var1 := _var0 lastLinkStack.'}
+				includes: expressionField printString)
+]
+
 { #category : #tests }
 SSTestCaseTest >> testCopy [
 	| testCase typeInfo otherTestCase |
@@ -303,7 +370,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 { #category : #tests }
 SSTestCaseTest >> testGenerateStatements [
 	| testCase typeInfo |
-	typeInfo := self class typeInfoFoo.
+	typeInfo := self class typeInfoSFoo.
 	testCase := SSTestCase with: typeInfo.
 	testCase numMaxStatements: 30.
 	self shouldnt: [ testCase generateStatements ] raise: SError

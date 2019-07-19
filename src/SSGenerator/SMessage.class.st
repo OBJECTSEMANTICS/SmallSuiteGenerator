@@ -16,9 +16,13 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 
 { #category : #'as yet unclassified' }
 SMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	"| otherMessage |
-	otherMessage := aTestCase alternativeMessage: self.
-	aTestCase replaceFrom: aExpression with: otherMessage"
+	| otherMessage |
+	otherMessage := aTestCase alternativeMessage: self before: aExpression.
+	self selector: otherMessage selector.
+	self args: otherMessage args
+	"aTestCase replaceFrom: aExpression with: otherMessage"
+
+	
 ]
 
 { #category : #'as yet unclassified' }

@@ -14,15 +14,13 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 ]
 
 { #category : #'as yet unclassified' }
-SFieldAccessMessage >> changeArgsFrom: aExpression in: aTestCase [
-]
-
-{ #category : #'as yet unclassified' }
 SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	"| otherFieldAccessMessage |
+	| otherFieldAccessMessage |
 	otherFieldAccessMessage := aTestCase
-		alternativeFieldAccessMessage: self.
-	aTestCase replaceFrom: aExpression with: otherFieldAccessMessage"
+		alternativeFieldAccessMessage: self
+		before: aExpression.
+	self selector: otherFieldAccessMessage selector
+	"aTestCase replaceFrom: aExpression with: otherFieldAccessMessage"
 ]
 
 { #category : #'as yet unclassified' }

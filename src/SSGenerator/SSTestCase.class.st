@@ -46,7 +46,7 @@ SSTestCase >> addFactoryMessage: aClassName [
 SSTestCase >> addFieldAccessMessage [
 	| receiver methods |
 	receiver := self pickAnObjectVariable.
-	methods := self pickAccessorsOf: receiver.
+	methods := self pickAccessorsOf: receiver returnType.
 	methods
 		ifNotEmpty: [ ^ self
 				addFieldAccessMessage: methods shuffle anyOne
@@ -84,9 +84,9 @@ SSTestCase >> addLiteral: aClassName [
 SSTestCase >> addMessage [
 	| receiver methods |
 	receiver := self pickAnObjectVariable.
-	methods := self pickMessagesOf: receiver.
-	methods ifNotEmpty: [ 
-	self addMessage: methods shuffle anyOne withReceiver: receiver]
+	methods := self pickMessagesOf: receiver returnType.
+	methods
+		ifNotEmpty: [ self addMessage: methods shuffle anyOne withReceiver: receiver ]
 ]
 
 { #category : #actions }
@@ -142,9 +142,80 @@ SSTestCase >> addStatement: newExpression before: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
+SSTestCase >> addStatementOfType: aType before: aExpression [
+	^ self replacementOf: aExpression before: aExpression
+]
+
+{ #category : #'as yet unclassified' }
 SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
-	^ typeInfo factoryMethods detect: [ :meth | 
-		meth selector ~= aFactoryMessage selector ] ifFound: [ :meth | SFactoryMessage method: meth previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression) ] ifNone: [ SFactoryMessage default: aFactoryMessage returnType ]
+|returnType|
+returnType := aFactoryMessage returnType.
+	^ (typeInfo factoryMethods: returnType)
+		detect: [ :meth | 
+			meth returnType = returnType
+				and: [ meth selector ~= aFactoryMessage selector ] ]
+		ifFound: [ :meth | 
+			self buildArgs: meth before: aExpression.
+			SFactoryMessage
+				method: meth
+				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression) ]
+		ifNone: [ SFactoryMessage default: returnType ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExpression [
+	| returnType receiver |
+	receiver := aFieldAccessMessage receiver.
+	returnType := aFieldAccessMessage returnType.
+	(self pickAccessorsOf: receiver returnType)
+		detect: [ :meth | 
+			meth returnType = returnType
+				and: [ meth selector ~= aFieldAccessMessage selector ] ]
+		ifFound: [ :meth | 
+			^ SFieldAccessMessage
+				newFromReceiver: receiver
+				andMethod: meth ].
+	self
+		error:
+			'not found alternative of fieldAccessMessage: '
+				, aFieldAccessMessage printString
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> alternativeMessage: aMessage before: aExpression [
+	| returnType receiver |
+	receiver := aMessage receiver.
+	returnType := aMessage returnType.
+	(self pickMessagesOf: receiver returnType)
+		detect: [ :meth | 
+			meth returnType = returnType
+				and: [ meth selector ~= aMessage selector ] ]
+		ifFound: [ :meth | 
+			self buildArgs: meth before: aExpression.
+			^ SMessage
+				newFromReceiver: receiver copy
+				method: meth
+				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression) ].
+				self
+		error:
+			'not found alternative of message: '
+				, aMessage printString
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
+	| returnType |
+	(self includesStatementOfVarName: aVariable printString)
+		ifFalse: [ self
+				error: 'testCase does not include the expression: ' , self printString ].
+	returnType := aVariable returnType.
+	^ ([ (self statementsOfType: returnType before: aExpression)
+		detect: [ :stm | stm reference ~= aVariable ]
+		ifNone: [ self
+				error: 'not exist a type alternative of: ' , aVariable printString ] ]
+		on: SError
+		do: [ self addStatementOfType: returnType before: aExpression ])
+		reference
 ]
 
 { #category : #'as yet unclassified' }
@@ -180,19 +251,19 @@ SSTestCase >> buildArgs: aMethodTypeInfo before: aStatement [
 SSTestCase >> changeStatement [
 	statements copy shuffle
 		do: [ :stm | 
-			[ ^ self changeStatement: stm]
+			[ ^ self changeStatement: stm ]
 				on: SError
 				do: [  ] ]
 ]
 
 { #category : #'as yet unclassified' }
 SSTestCase >> changeStatement: aStatement [
-	| stmToChange statementsToChange |
-	stmToChange := self statementAt: aStatement.
-	statementsToChange := statements copy
-		flatCollect: [ :stm | stm repairOn: self changing: stmToChange ].
-	statements remove: stmToChange.
-	statementsToChange do: [ :stm | self changeStatement: stm ]
+	aStatement repairOn: self changing: aStatement
+]
+
+{ #category : #removing }
+SSTestCase >> changeStatementOfVarName: varName [
+	^ self changeStatement: (self statementOfVarName: varName) copy
 ]
 
 { #category : #copying }
@@ -340,7 +411,7 @@ SSTestCase >> newFactoryMessageUsing: methods and: aStatement [
 
 { #category : #actions }
 SSTestCase >> newFieldAccessMessageOfType: aType andReceiver: receiver [
-	^ (self pickAccessorsOf: receiver)
+	^ (self pickAccessorsOf: receiver returnType)
 		detect: [ :aMethod | aMethod returnType = aType ]
 		ifFound:
 			[ :aMethod | SFieldAccessMessage newFromReceiver: receiver copy andMethod: aMethod ]
@@ -380,15 +451,17 @@ SSTestCase >> newMessageOfType: aType before: aStatement [
 
 { #category : #actions }
 SSTestCase >> newMessageOfType: aType using: receiver before: aStatement [
-	(self pickMessagesOf: receiver)
-				detect: [ :aMethod | aMethod returnType = aType ]
-				ifFound: [ :aMethod | 
-					[self buildArgs: aMethod before: aStatement.
-					^ SMessage
-						newFromReceiver: receiver reference copy
-						method: aMethod
-						andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ] on: SError do: [  ]].
-				^ self error: 'error to create message'
+	(self pickMessagesOf: receiver returnType)
+		detect: [ :aMethod | aMethod returnType = aType ]
+		ifFound: [ :aMethod | 
+			[ self buildArgs: aMethod before: aStatement.
+			^ SMessage
+				newFromReceiver: receiver reference copy
+				method: aMethod
+				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ]
+				on: SError
+				do: [  ] ].
+	^ self error: 'error to create message'
 ]
 
 { #category : #adding }
@@ -424,8 +497,11 @@ SSTestCase >> perform: selector inStatement: stm [
 ]
 
 { #category : #querying }
-SSTestCase >> pickAccessorsOf: aVariable [
-	^ typeInfo types at: aVariable returnType ifPresent: [ :value | value accessMessages ] ifAbsent: [#()]
+SSTestCase >> pickAccessorsOf: aType [
+	^ typeInfo types
+		at: aType
+		ifPresent: [ :value | value accessMessages ]
+		ifAbsent: [ #() ]
 ]
 
 { #category : #querying }
@@ -435,8 +511,8 @@ SSTestCase >> pickAnObjectVariable [
 ]
 
 { #category : #querying }
-SSTestCase >> pickMessagesOf: aVariable [
-	^ (typeInfo types at: aVariable returnType) messages
+SSTestCase >> pickMessagesOf: aType [
+	^ (typeInfo types at: aType) messages
 ]
 
 { #category : #querying }
@@ -533,6 +609,14 @@ SSTestCase >> statementOfVarName: aString [
 { #category : #accessing }
 SSTestCase >> statements [
 	^ statements
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> statementsOfType: aType before: aExpression [
+	(statements includes: aExpression)
+		ifFalse: [ self error: 'not found statement' ].
+	^ (self subStatementsFrom: 1 toPrevIndexOf: aExpression)
+		select: [ :stm | stm returnType = aType ]
 ]
 
 { #category : #'as yet unclassified' }

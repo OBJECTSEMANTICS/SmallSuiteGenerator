@@ -41,24 +41,16 @@ SAbstractMessage >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> changeArgsFrom: aExpression in: aTestCase [
-	"| newArgs |
-	newArgs := args
-		collect: [ :arg | 
-			[ [ aTestCase alternativeStatementOf: arg before: aExpression ]
-				on: SError
-				do: [ aTestCase addStatementOfType: arg returnType before: aExpression ] ]
-				on: SError
-				do: [ arg ] ].
-	self args: newArgs.
-	aTestCase replaceFrom: aExpression with: self"
+	args isEmpty
+		ifTrue: [ self error: 'cannot change args' ].
+	args
+		do: [ :arg |  arg repairOn: aTestCase changing: aExpression ]
 ]
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> changeReceiverFrom: aExpression in: aTestCase [
-	| otherExpression |
-	otherExpression := receiver repairOn: aTestCase changing: aExpression.
-	self receiver: otherExpression.
-	"aTestCase replaceFrom: aExpression with: self"
+	 receiver repairOn: aTestCase changing: aExpression.
+	
 ]
 
 { #category : #'as yet unclassified' }
@@ -155,18 +147,14 @@ SAbstractMessage >> receiver: anObject [
 SAbstractMessage >> repairOn: aTestCase changing: aExpression [
 	#(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:)
 		shuffle
-		detect: [ :sel | 
-			self
-				perform: sel
+		do: [ :aSelector | 
+			[^ self
+				perform: aSelector
 				withArguments:
 					{aExpression.
-					aTestCase} ]
-		ifNone: [ self
-				error: 
-				(String streamContents: [:s | 
-		 s nextPutAll: 'cant change the statement: ';
-		nextPutAll: aExpression reference printString ])]
-	
+					aTestCase} ] on: SError do: []].
+	self
+				error: 'cant change the statement: ', aExpression reference printString
 ]
 
 { #category : #actions }
