@@ -42,6 +42,11 @@ SLiteral >> repairOn: aTestCase changing: aExpression [
 	"aTestCase replaceFrom: aExpression with: self"
 ]
 
+{ #category : #accessing }
+SLiteral >> replaceBy: otherExpression [
+	self value: otherExpression value
+]
+
 { #category : #evaluating }
 SLiteral >> value [ 	
 	^ value

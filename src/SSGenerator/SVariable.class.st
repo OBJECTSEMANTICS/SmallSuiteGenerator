@@ -24,13 +24,14 @@ SVariable >> = other [
 SVariable >> copy [
 	| copy |
 	copy := super copy.
-	copy varName: varName copy.
+	copy
+		varName: varName copy.
 	^ copy
 ]
 
 { #category : #comparing }
 SVariable >> hash [
-	^ super hash xor: varName  hash
+	^ super hash bitXor: varName  hash
 ]
 
 { #category : #initialization }
@@ -62,6 +63,12 @@ SVariable >> repairOn: aTestCase changing: aExpression [
 	self id: otherVariable id
 ]
 
+{ #category : #accessing }
+SVariable >> replaceBy: otherVariable [
+	self varName: otherVariable varName.
+	self id: otherVariable id
+]
+
 { #category : #actions }
 SVariable >> replaceExpression: anExpression by: newExpression [
 	| reference |
@@ -81,4 +88,9 @@ SVariable >> varName [
 { #category : #accessing }
 SVariable >> varName: anObject [
 	varName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SVariable >> variablesWithId [
+	^ id ifNotNil: [ { self } ] ifNil: [ super variablesWithId  ]
 ]

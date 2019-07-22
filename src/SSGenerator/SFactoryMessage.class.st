@@ -33,6 +33,7 @@ SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements 
 { #category : #'as yet unclassified' }
 SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherFactoryMessage |
+	
 	otherFactoryMessage := aTestCase
 		alternativeFactoryMessage: self
 		before: aExpression.

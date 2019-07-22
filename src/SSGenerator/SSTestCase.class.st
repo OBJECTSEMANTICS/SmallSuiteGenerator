@@ -42,6 +42,16 @@ SSTestCase >> addFactoryMessage: aClassName [
 		addAssignment: (self newFactoryMessage: aClassName before: nil)
 ]
 
+{ #category : #adding }
+SSTestCase >> addFactoryMessage: aClassName ofSelector: aSelector [
+	^ self addAssignment: (self factoryMessageUsing: (self typeInfo typeOf: aSelector fromMetaClassName: aClassName) before: nil)
+]
+
+{ #category : #adding }
+SSTestCase >> addFactoryMessage: aClassName withMethod: aMethod [
+	^ self addAssignment: (self factoryMessageUsing: aMethod before: nil)
+]
+
 { #category : #actions }
 SSTestCase >> addFieldAccessMessage [
 	| receiver methods |
@@ -101,13 +111,13 @@ SSTestCase >> addMessage: aSelector from: aClassName [
 
 { #category : #actions }
 SSTestCase >> addMessage: method withReceiver: receiver [
-	self buildArgs: method before: nil.
+	"self buildArgs: method argTypes before: nil."
 	^ self
-		addAssignment:
-			(SMessage
+		addAssignment: (self messageUsing: method and: receiver before: nil)
+			"(SMessage
 				newFromReceiver: receiver copy
 				method: method
-				andPreviousStatements: statements)
+				andPreviousStatements: statements)"
 ]
 
 { #category : #actions }
@@ -132,7 +142,9 @@ SSTestCase >> addStatement: newExpression before: aStatement [
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
 		ifTrue: [ self addStatement: newExpression ]
-		ifFalse: [ anIndex := (1 to: anIndex) atRandom.
+		ifFalse: [ anIndex := (1 to:
+				{(self maxIndex: newExpression).
+				anIndex} max) atRandom.
 			statements
 				add: newExpression
 				afterIndex:
@@ -143,22 +155,23 @@ SSTestCase >> addStatement: newExpression before: aStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> addStatementOfType: aType before: aExpression [
-	^ self replacementOf: aExpression before: aExpression
+	^ self replacementOf: aType before: aExpression
 ]
 
 { #category : #'as yet unclassified' }
 SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
-|returnType|
-returnType := aFactoryMessage returnType.
+	| returnType |
+	returnType := aFactoryMessage returnType.
 	^ (typeInfo factoryMethods: returnType)
 		detect: [ :meth | 
 			meth returnType = returnType
 				and: [ meth selector ~= aFactoryMessage selector ] ]
 		ifFound: [ :meth | 
-			self buildArgs: meth before: aExpression.
+			self factoryMessageUsing: meth before: aExpression.
+			"self buildArgs: meth argTypes before: aExpression.
 			SFactoryMessage
 				method: meth
-				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression) ]
+				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression)" ]
 		ifNone: [ SFactoryMessage default: returnType ]
 ]
 
@@ -191,15 +204,14 @@ SSTestCase >> alternativeMessage: aMessage before: aExpression [
 			meth returnType = returnType
 				and: [ meth selector ~= aMessage selector ] ]
 		ifFound: [ :meth | 
-			self buildArgs: meth before: aExpression.
+			^ self messageUsing: meth and: receiver before: aExpression.
+			"self buildArgs: meth argTypes before: aExpression.
 			^ SMessage
 				newFromReceiver: receiver copy
 				method: meth
-				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression) ].
-				self
-		error:
-			'not found alternative of message: '
-				, aMessage printString
+				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aExpression)" ].
+	self
+		error: 'not found alternative of message: ' , aMessage printString
 ]
 
 { #category : #'as yet unclassified' }
@@ -209,13 +221,17 @@ SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 		ifFalse: [ self
 				error: 'testCase does not include the expression: ' , self printString ].
 	returnType := aVariable returnType.
-	^ ([ (self statementsOfType: returnType before: aExpression)
+	(self statementsOfType: returnType before: aExpression)
+		detect: [ :stm | stm reference ~= aVariable ]
+		ifFound: [ :stm | ^ stm reference ].
+		^ (self addStatementOfType: returnType before: aExpression) reference.
+	"^ ([ (self statementsOfType: returnType before: aExpression)
 		detect: [ :stm | stm reference ~= aVariable ]
 		ifNone: [ self
 				error: 'not exist a type alternative of: ' , aVariable printString ] ]
 		on: SError
 		do: [ self addStatementOfType: returnType before: aExpression ])
-		reference
+		reference"
 ]
 
 { #category : #'as yet unclassified' }
@@ -234,17 +250,22 @@ SSTestCase >> assignedIds [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> buildArgs: aMethodTypeInfo before: aStatement [
-	aMethodTypeInfo argTypes
+SSTestCase >> buildArgs: argTypes before: aStatement [
+	
+	argTypes
 		ifNotEmpty: [ | types typesToAdd |
+		
 			types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 				collect: #returnType.
-			typesToAdd := (aMethodTypeInfo argTypes
-				reject: [ :aType | types includes: aType ]) asSet.
+			typesToAdd := (argTypes reject: [ :aType | types includes: aType ])
+				asSet.
 			(typeInfo scalars keys includesAll: typesToAdd)
 				ifFalse: [ ^ self error: 'error to create args' ].
 			typesToAdd
-				do: [ :type | self addStatement: (self newAssignment: (self newLiteral: type)) before: aStatement ] ]
+				do: [ :type | 
+					self
+						addStatement: (self newAssignment: (self newLiteral: type))
+						before: aStatement ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -258,12 +279,16 @@ SSTestCase >> changeStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> changeStatement: aStatement [
-	aStatement repairOn: self changing: aStatement
+	|statementChanged|
+	statementChanged := aStatement copy repairOn: self changing: aStatement.
+	(self statementAt: aStatement)
+		replaceBy: statementChanged.
+		^ statementChanged
 ]
 
 { #category : #removing }
 SSTestCase >> changeStatementOfVarName: varName [
-	^ self changeStatement: (self statementOfVarName: varName) copy
+	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
 { #category : #copying }
@@ -286,6 +311,14 @@ SSTestCase >> expressionWithMaxIndexFrom: expressions [
 	collect: [ :ref | 
 	self indexOfVarName: ref
 	]) max
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> factoryMessageUsing: method before: aStatement [
+	self buildArgs: method argTypes before: aStatement.
+			^ SFactoryMessage
+				method: method
+				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 ]
 
 { #category : #querying }
@@ -373,6 +406,20 @@ SSTestCase >> insertStatementOfSelector: selector [
 		error: 'Cant insert statement of selector: ' , selector printString
 ]
 
+{ #category : #accessing }
+SSTestCase >> maxIndex: aExpression [
+	^ ((aExpression variablesWithId ) collect: [ :var | statements indexOf: (self statementOfVarName: var) ]) max
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> messageUsing: method and: receiver before: aStatement [
+	self buildArgs: method argTypes before: aStatement.
+	^ SMessage
+				newFromReceiver: receiver copy
+				method: method
+				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+]
+
 { #category : #'instance creation' }
 SSTestCase >> newAssignment: anExpression [
 	^ SAssignment
@@ -387,12 +434,14 @@ SSTestCase >> newAssignment: anExpression [
 
 { #category : #actions }
 SSTestCase >> newFactoryMessage: aClassName before: aStatement [
-	typeInfo types
+self halt. 
+	^ typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
 			methods := typeInfo factoryMethods: aClassName.
-			methods ifEmpty: [ ^ SFactoryMessage default: aClassName ].
-			^self newFactoryMessageUsing: methods and: aStatement ]
+			methods
+				ifEmpty: [ SFactoryMessage default: aClassName ]
+				ifNotEmpty: [ self newFactoryMessageUsing: methods and: aStatement ] ]
 		ifAbsent: [ self error: 'error factoryMessage' ]
 ]
 
@@ -400,12 +449,12 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 SSTestCase >> newFactoryMessageUsing: methods and: aStatement [
 	methods shuffle
 		do: [ :method | 
-			[self buildArgs: method before: aStatement.
+			[ ^ self factoryMessageUsing: method before: aStatement"self buildArgs: method argTypes before: aStatement.
 			^ SFactoryMessage
 				method: method
-				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ]
-			on: SError
-		do: [  ]].
+				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) "]
+				on: SError
+				do: [  ] ].
 	self error: 'error factoryMessage'
 ]
 
@@ -425,7 +474,7 @@ SSTestCase >> newFieldAccessMessageOfType: aType before: aStatement [
 			[ ^ self newFieldAccessMessageOfType: aType andReceiver: receiver ]
 				on: SError
 				do: [  ] ].
-	self error: 'cant create field access of type: ' , aType asString
+	^self error: 'cant create field access of type: ' , aType asString
 ]
 
 { #category : #'instance creation' }
@@ -444,9 +493,10 @@ SSTestCase >> newLiteral: aClassName [
 SSTestCase >> newMessageOfType: aType before: aStatement [
 	(self factoryMessageVariablesBefore: aStatement)
 		do: [ :receiver | 
-			[ ^ self newMessageOfType: aType using: receiver before: aStatement ] on: SError do: [  ]
-			 ].
-	self error: 'cant create message of type: ' , aType asString
+			[ ^ self newMessageOfType: aType using: receiver before: aStatement ]
+				on: SError
+				do: [  ] ].
+	^self error: 'cant create message of type: ' , aType asString
 ]
 
 { #category : #actions }
@@ -454,11 +504,13 @@ SSTestCase >> newMessageOfType: aType using: receiver before: aStatement [
 	(self pickMessagesOf: receiver returnType)
 		detect: [ :aMethod | aMethod returnType = aType ]
 		ifFound: [ :aMethod | 
-			[ self buildArgs: aMethod before: aStatement.
+			[ 
+			^ self messageUsing: aMethod and: receiver before: aStatement.
+			"self buildArgs: aMethod before: aStatement.
 			^ SMessage
 				newFromReceiver: receiver reference copy
 				method: aMethod
-				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ]
+				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)" ]
 				on: SError
 				do: [  ] ].
 	^ self error: 'error to create message'
@@ -476,7 +528,7 @@ SSTestCase >> newStatementOfType: aType before: aStatement [
 					aStatement} ]
 				on: SError
 				do: [ "try with the next one" ] ].
-	self
+	^self
 		error: 'Cant create expression with the returnType: ' , aType asString
 ]
 
@@ -568,7 +620,7 @@ SSTestCase >> repairExpression: anExpression before: aStatement [
 		shuffle
 		detect:
 			[ :stm | stm reference ~= anExpression and: [ stm returnType = aType ] ]
-		ifNone: [ self replacementOf: anExpression before: aStatement  ].
+		ifNone: [ self replacementOf: anExpression returnType before: aStatement ].
 	(self statementAt: aStatement)
 		replaceExpression: anExpression
 		by: replacement
@@ -584,10 +636,10 @@ SSTestCase >> repairParameters: expressions of: aStatement [
 ]
 
 { #category : #adding }
-SSTestCase >> replacementOf: anExpression before: aStatement [
+SSTestCase >> replacementOf: aType before: aStatement [
 	| newExpression |
 	newExpression := self
-		newAssignment: (self newStatementOfType: anExpression returnType before: aStatement).
+		newAssignment: (self newStatementOfType: aType before: aStatement).
 	self addStatement: newExpression before: aStatement.
 	^ newExpression
 ]
@@ -643,4 +695,18 @@ SSTestCase >> typeInfo: anObject [
 { #category : #'as yet unclassified' }
 SSTestCase >> updateNextId [ 
 	nextId = 0 ifTrue: [ nextId := statements size ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> validReferences [
+	| references |
+	references := Set new.
+	^ statements
+		detect: [ :stm | 
+			|variables|
+			variables := stm variablesWithId.
+			references add: stm reference.
+			(references includesAll: variables) ifFalse: [ true ] ifTrue: [ references addAll: variables. false ] 
+				.
+		 ] ifFound: [false] ifNone: [true].
 ]

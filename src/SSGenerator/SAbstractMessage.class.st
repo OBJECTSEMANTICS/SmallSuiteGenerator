@@ -19,9 +19,8 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 		includesAll: aMethodTypeInfo argTypes)
 		ifFalse: [ ^ SError error: 'statements dont contain soms types of method' ].
 	statements copy shuffle
-		do: [ :stm | dict at: stm returnType put: stm variable ].
-	^ aMethodTypeInfo argTypes
-		collect: [ :aType |  dict at: aType ]
+		do: [ :stm | dict at: stm returnType put: stm variable copy ].
+	^ aMethodTypeInfo argTypes collect: [ :aType | dict at: aType ]
 ]
 
 { #category : #comparing }
@@ -41,16 +40,15 @@ SAbstractMessage >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> changeArgsFrom: aExpression in: aTestCase [
-	args isEmpty
-		ifTrue: [ self error: 'cannot change args' ].
-	args
-		do: [ :arg |  arg repairOn: aTestCase changing: aExpression ]
+	
+
+	args isEmpty ifTrue: [ ^self error: 'cannot change args' ].
+	args do: [ :arg | arg repairOn: aTestCase changing: aExpression ]
 ]
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> changeReceiverFrom: aExpression in: aTestCase [
-	 receiver repairOn: aTestCase changing: aExpression.
-	
+	receiver repairOn: aTestCase changing: aExpression
 ]
 
 { #category : #'as yet unclassified' }
@@ -157,6 +155,14 @@ SAbstractMessage >> repairOn: aTestCase changing: aExpression [
 				error: 'cant change the statement: ', aExpression reference printString
 ]
 
+{ #category : #accessing }
+SAbstractMessage >> replaceBy: otherExpression [
+	receiver replaceBy: otherExpression receiver.
+	self selector: otherExpression selector.
+	self args size = otherExpression args size ifTrue: [ 
+	self args with: otherExpression args do: [ :arg :newArg | arg replaceBy: newArg ]] ifFalse: [ self args: otherExpression args copy ]
+]
+
 { #category : #actions }
 SAbstractMessage >> replaceExpression: anExpression by: newExpression [
 	receiver replaceExpression: anExpression by: newExpression.
@@ -172,4 +178,9 @@ SAbstractMessage >> selector [
 { #category : #accessing }
 SAbstractMessage >> selector: anObject [
 	selector := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> variablesWithId [
+	^ receiver variablesWithId , (args flatCollect: [:arg | arg variablesWithId])
 ]

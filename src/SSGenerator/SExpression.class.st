@@ -28,7 +28,7 @@ SExpression >> error: aString [
 
 { #category : #comparing }
 SExpression >> hash [ 	
-	^ self id hash xor: self returnType
+	^ self id hash bitXor: self returnType hash
 ]
 
 { #category : #accessing }
@@ -76,6 +76,11 @@ SExpression >> repairOn: aTestCase changing: aExpression [
 	
 ]
 
+{ #category : #accessing }
+SExpression >> replaceBy: otherExpression [
+	self subclassResponsibility 
+]
+
 { #category : #actions }
 SExpression >> replaceExpression: expression by: newExpression [
 	
@@ -89,4 +94,9 @@ SExpression >> returnType [
 { #category : #accessing }
 SExpression >> returnType: anObject [
 	returnType := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> variablesWithId [
+	^ #()
 ]

@@ -217,13 +217,12 @@ SSTestCaseTest >> testAddMessage [
 
 { #category : #'mutation-change' }
 SSTestCaseTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
-	| testCase expression |
-	testCase := SSTestCase with: self class typeInfoSFoo.
+	| testCase expression expressionChanged |
+	testCase := SSTestCase with: self typeInfoSFoo.
 	testCase
 		addLiteral: #SmallFloat64;
 		addLiteral: #SmallFloat64.
-	testCase addFactoryMessage.
-	expression := testCase statements last.	"a factoryMessage"
+	expression := testCase addFactoryMessage: #SFoo ofSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		includesAll: {'_var0 := 7.3.' . '_var1 := 7.3.'}.
@@ -231,45 +230,65 @@ SSTestCaseTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 		assert:
 			({'_var2 := SFoo score: _var0.' . '_var2 := SFoo score: _var1.'}
 				includes: expression printString).
-	testCase changeStatementOfVarName: '_var2'.
-	expression := testCase statements last.
+	expressionChanged := testCase changeStatementOfVarName: '_var2'.
 	self
 		assert:
 			({'_var2 := SFoo score: _var0.' . '_var2 := SFoo score: _var1.'.
-			'_var2 := SFoo new.'} includes: expression printString)
+			'_var2 := SFoo new.'} includes: expressionChanged printString).
+	self assert: testCase validReferences
 ]
 
 { #category : #'mutation-change' }
 SSTestCaseTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
-	| testCase |
-	testCase := SSTestCase with: self class typeInfoSFoo.
+	| testCase expressionChanged |
+	testCase := SSTestCase with: self typeInfoSFoo.
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	testCase changeStatementOfVarName: '_var1'.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo new.'}.
+	expressionChanged := testCase changeStatementOfVarName: '_var1'.
+	self assert: ({ '_var1 := SFoo new.'. '_var1 := SFoo score: _var2.' } includes: expressionChanged printString).
+		self assert: testCase validReferences
 ]
 
 { #category : #'mutation-change' }
 SSTestCaseTest >> testChangeStatementOfFieldAccessMessage [
-	| testCase expressionField |
-	testCase := SSTestCase with: self class typeInfoSStack.
-	expressionField := testCase
+	| testCase exprField exprFieldChanged |
+	testCase := SSTestCase with: self typeInfoSStack.
+	testCase addFactoryMessage: #SStack ofSelector: #newStack.
+	exprField := (testCase
 		addFieldAccessMessage: #firstLinkStack
-		from: #SStack.
+		from: #SStack) copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := SStack newStack.' . '_var1 := _var0 firstLinkStack.'}.
+	exprFieldChanged := testCase changeStatement: exprField.
 	self
 		assert:
-			({'_var2 := _var1 firstLinkStack.' . '_var1 := _var0 firstLinkStack.'}
-				includes: expressionField printString).
-	testCase changeStatement: expressionField.
-	expressionField := testCase statements last.
+			({'_var1 := _var0 lastLinkStack.' . '_var1 := _var3 firstLinkStack.'.
+			'_var1 := _var2 firstLinkStack.'}
+				includes: exprFieldChanged printString).
+				self assert: testCase validReferences
+]
+
+{ #category : #'mutation-change' }
+SSTestCaseTest >> testChangeStatementOfMessage [
+	| testCase exprMessage exprMessageChanged |
+	testCase := SSTestCase with: self typeInfoSStack.
+	testCase
+		addFactoryMessage: #SStack
+		withMethod: (testCase typeInfo typeOf: #newStack fromMetaClassName: #SStack).
+	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: {'_var0 := SStack newStack.' . '_var1 := _var0 pop.'}.
+	exprMessageChanged := testCase changeStatement: exprMessage.
 	self
 		assert:
-			({'_var2 := _var1 lastLinkStack.' . '_var1 := _var0 lastLinkStack.'}
-				includes: expressionField printString)
+			({'_var1 := _var0 top.' . '_var1 := _var0 push: _var2.'.
+			'_var1 := _var3 pop.' . '_var1 := _var2 pop.'}
+				includes: exprMessageChanged printString).
+				self assert: testCase validReferences
 ]
 
 { #category : #tests }
@@ -680,4 +699,14 @@ SSTestCaseTest >> testRemoveReceiverMessage [
 		hasSameElements:
 			{'_var0 := 7.3.' . '_var4 := SFoo score: _var0.'.
 			'_var2 := ''hello''.' . '_var3 := _var4 return: _var2.'}
+]
+
+{ #category : #'mutation-change' }
+SSTestCaseTest >> typeInfoSFoo [
+	^ self class typeInfoSFoo
+]
+
+{ #category : #'mutation-change' }
+SSTestCaseTest >> typeInfoSStack [
+	^ self class typeInfoSStack
 ]

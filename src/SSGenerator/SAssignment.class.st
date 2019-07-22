@@ -80,6 +80,11 @@ SAssignment >> repairOn: aTestCase changing: aExpression [
 			[ value repairOn: aTestCase changing: aExpression ]
 ]
 
+{ #category : #accessing }
+SAssignment >> replaceBy: aExpression [
+	self reference = aExpression reference ifTrue: [ value replaceBy: aExpression value ]
+]
+
 { #category : #actions }
 SAssignment >> replaceExpression: expression by: newExpression [
 	value replaceExpression: expression by: newExpression
@@ -103,4 +108,9 @@ SAssignment >> variable [
 { #category : #accessing }
 SAssignment >> variable: anObject [
 	variable := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> variablesWithId [
+	^ variable variablesWithId, value variablesWithId
 ]
