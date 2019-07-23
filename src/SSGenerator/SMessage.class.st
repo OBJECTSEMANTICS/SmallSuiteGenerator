@@ -25,12 +25,12 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
-SMessage >> insertMethodMessageUsing: aTestCase [
-	^ self insertRandomMessageUsing: aTestCase
+SMessage >> insertMethodMessage: aExpression using: aTestCase [
+	^ self insertRandomMessage: aExpression using: aTestCase
 ]
 
 { #category : #'as yet unclassified' }
-SMessage >> insertRandomMessageUsing: aTestCase [
+SMessage >> insertRandomMessage: aExpression using: aTestCase [
 	| expression |
 	expression := self expressionWithMaxIndex: aTestCase.
 	^ (aTestCase insertExpression: self copy after: expression) reference

@@ -42,18 +42,18 @@ SAssignment >> id [
 ]
 
 { #category : #'as yet unclassified' }
-SAssignment >> insertMethodMessageUsing: aTestCase [
-	^ value insertMethodMessageUsing: aTestCase
+SAssignment >> insertAsParameter: aExpression using: aTestCase [
+	^ variable insertAsParameter: aExpression using: aTestCase
 ]
 
 { #category : #'as yet unclassified' }
-SAssignment >> insertParameterUsing: aTestCase [
-	^ value insertParameterUsing: aTestCase
+SAssignment >> insertMethodMessage: aExpression using: aTestCase [
+	^ value insertMethodMessage: aExpression using: aTestCase
 ]
 
 { #category : #'as yet unclassified' }
-SAssignment >> insertRandomMessageUsing: aTestCase [
-	^ value insertRandomMessageUsing: aTestCase
+SAssignment >> insertRandomMessage: aExpression using: aTestCase [
+	^ value insertRandomMessage:aExpression using: aTestCase
 ]
 
 { #category : #'as yet unclassified' }
@@ -78,6 +78,11 @@ SAssignment >> repairOn: aTestCase changing: aExpression [
 	self reference = aExpression reference
 		ifTrue:
 			[ value repairOn: aTestCase changing: aExpression ]
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> replaceArgBy: aExpression [
+	value replaceArgBy: aExpression
 ]
 
 { #category : #accessing }

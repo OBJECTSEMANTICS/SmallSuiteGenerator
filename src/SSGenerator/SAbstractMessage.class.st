@@ -88,18 +88,19 @@ SAbstractMessage >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMessage >> insertParameterUsing: aTestCase [
-	(args collect: #reference)
+SAbstractMessage >> insertAsParameter: aExpression using: aTestCase [
+	"^ aTestCase insertAsParameter: self copy before: aExpression"
+	"(args collect: #reference)
 		do: [ :ref | 
 			(aTestCase statementOfVarName: ref printString)
-				insertParameterUsing: aTestCase ]
+				insertParameterUsing: aTestCase ]"
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMessage >> insertRandomMessageUsing: aTestCase [
-	| expression |
-	expression := self expressionWithMaxIndex: aTestCase.
-	^ (aTestCase insertExpression: self copy after: expression) reference
+SAbstractMessage >> insertRandomMessage: aExpression using: aTestCase [
+	"| expression |
+	expression := self expressionWithMaxIndex: aTestCase."
+	^ aTestCase insertExpression: self copy after: aExpression
 ]
 
 { #category : #'as yet unclassified' }
@@ -153,6 +154,17 @@ SAbstractMessage >> repairOn: aTestCase changing: aExpression [
 					aTestCase} ] on: SError do: []].
 	self
 				error: 'cant change the statement: ', aExpression reference printString
+]
+
+{ #category : #'as yet unclassified' }
+SAbstractMessage >> replaceArgBy: aExpression [
+	args ifEmpty: [ ^ self error: 'cant insert expression as parameter' ].
+	args
+		do: [ :arg | 
+			[ ^ arg replaceArgBy: aExpression ]
+				on: SError
+				do: [  ] ].
+	self error: 'cant insert as parameter'
 ]
 
 { #category : #accessing }

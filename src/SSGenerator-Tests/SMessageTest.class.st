@@ -14,7 +14,7 @@ SMessageTest >> testInsertMethodMessageUsing [
 		hasSameElements:
 			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
 			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
-	message insertMethodMessageUsing: testCase.
+	message insertMethodMessage: message using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:

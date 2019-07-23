@@ -23,11 +23,6 @@ SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	"aTestCase replaceFrom: aExpression with: otherFieldAccessMessage"
 ]
 
-{ #category : #'as yet unclassified' }
-SFieldAccessMessage >> insertParameterUsing: aTestCase [
-	self error: 'cant insert parameter'
-]
-
 { #category : #actions }
 SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
 ]

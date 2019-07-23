@@ -25,11 +25,6 @@ SLiteral >> hash [
 	^ super hash xor: value hash
 ]
 
-{ #category : #'as yet unclassified' }
-SLiteral >> insertParameterUsing: aTestCase [
-	aTestCase insertExpression: self copy after: (aTestCase statements first)
-]
-
 { #category : #printing }
 SLiteral >> printOn: aStream [
 	aStream nextPutAll: value storeString;

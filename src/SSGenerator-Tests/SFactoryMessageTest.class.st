@@ -5,31 +5,31 @@ Class {
 }
 
 { #category : #tests }
-SFactoryMessageTest >> testInsertMethodMessageUsing [
-	| testCase  factoryMessage |
-	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
-	factoryMessage := testCase addFactoryMessage.
+SFactoryMessageTest >> testInsertAsParameterUsing [
+	| testCase aExpression insertedExpression |
+	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo2.
+	aExpression := testCase addFactoryMessage.
+	testCase addMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	factoryMessage insertMethodMessageUsing: testCase.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}
+		hasSameElements:
+			{'_var0 := SFoo new.'.
+			'_var1 := _var0 return: _var0.'}.
+	insertedExpression := aExpression
+		insertAsParameter: aExpression
+		using: testCase.
+	self assert: ({'_var1 := _var0 return: _var0.'} includes: insertedExpression printString)
 ]
 
 { #category : #tests }
-SFactoryMessageTest >> testInsertParameterUsing [
-	| testCase factoryMessage |
+SFactoryMessageTest >> testInsertMethodMessageUsing [
+	| testCase aExpression |
 	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
-	factoryMessage := testCase addFactoryMessage.
+	aExpression := testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	factoryMessage insertParameterUsing: testCase.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'. '_var2 := 7.3.'}
+	self should: [aExpression insertMethodMessage: aExpression using: testCase] raise: SError.
 ]
 
 { #category : #tests }
@@ -40,7 +40,7 @@ SFactoryMessageTest >> testInsertRandomMessageUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	factoryMessage insertRandomMessageUsing: testCase.
+	factoryMessage insertRandomMessage: factoryMessage using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		includesAll:

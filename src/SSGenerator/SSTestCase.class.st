@@ -138,19 +138,11 @@ SSTestCase >> addStatement: newExpression after: aStatement [
 
 { #category : #adding }
 SSTestCase >> addStatement: newExpression before: aStatement [
-	| anIndex |
-	anIndex := statements indexOf: aStatement.
-	anIndex = 0
-		ifTrue: [ self addStatement: newExpression ]
-		ifFalse: [ anIndex := (1 to:
-				{(self maxIndex: newExpression).
-				anIndex} max) atRandom.
-			statements
-				add: newExpression
-				afterIndex:
-					(anIndex > 1
-						ifTrue: [ anIndex - 1 ]
-						ifFalse: [ 0 ]) ]
+
+	statements
+		add: newExpression
+		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -365,6 +357,18 @@ SSTestCase >> initialize [
 	nextId := 0
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> insertAsParameter: aExpression after: aStatement [
+	(statements
+		copyFrom: (statements indexOf: aStatement) + 1
+		to: self numberStatements) shuffle
+		do: [ :stm | 
+			^ [ stm replaceArgBy: aExpression ]
+				on: SError
+				do: [  ] ].
+	self error: 'cant insert as parameter'
+]
+
 { #category : #actions }
 SSTestCase >> insertExpression: aExpression after: aStatement [
 	^ self
@@ -374,10 +378,12 @@ SSTestCase >> insertExpression: aExpression after: aStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertRandomStatement [
-	#(#insertRandomMessageUsing: #insertMethodMessageUsing: #insertParameterUsing:)
+	#(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:)
 		shuffle
-		do:
-			[ :selector | [^ self insertStatementOfSelector: selector] on: SError do: [  ] ]
+		do: [ :selector | 
+			[ ^ self insertStatementOfSelector: selector ]
+				on: SError
+				do: [  ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -406,11 +412,6 @@ SSTestCase >> insertStatementOfSelector: selector [
 		error: 'Cant insert statement of selector: ' , selector printString
 ]
 
-{ #category : #accessing }
-SSTestCase >> maxIndex: aExpression [
-	^ ((aExpression variablesWithId ) collect: [ :var | statements indexOf: (self statementOfVarName: var) ]) max
-]
-
 { #category : #'as yet unclassified' }
 SSTestCase >> messageUsing: method and: receiver before: aStatement [
 	self buildArgs: method argTypes before: aStatement.
@@ -434,7 +435,6 @@ SSTestCase >> newAssignment: anExpression [
 
 { #category : #actions }
 SSTestCase >> newFactoryMessage: aClassName before: aStatement [
-self halt. 
 	^ typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
@@ -543,9 +543,8 @@ SSTestCase >> numberStatements [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> perform: selector inStatement: stm [	
-	^ stm perform: selector with: self
-			
+SSTestCase >> perform: selector inStatement: stm [
+	^ stm perform: selector withArguments: {stm copy. self}
 ]
 
 { #category : #querying }
@@ -581,10 +580,34 @@ SSTestCase >> pickOrCreateObjectVariableOf: aClassName [
 		do: [ (self addFactoryMessage: aClassName) variable ]
 ]
 
+{ #category : #adding }
+SSTestCase >> randomIndexToAdd: aExpression before: aStatement [
+	| refIndexes anIndex |
+	anIndex := statements indexOf: aStatement.
+	anIndex = 0
+		ifTrue: [ ^ self numberStatements ].
+	refIndexes := self referencesIndexes: aExpression.
+	anIndex := anIndex - 1.
+	refIndexes
+		ifNotEmpty: [ | ini end maxIndex |
+			maxIndex := refIndexes max.
+			ini := anIndex min: maxIndex.
+			end := anIndex max: maxIndex.
+			^ (ini to: end) atRandom ].
+	anIndex = 0
+		ifTrue: [ ^ anIndex ].
+	^ (1 to: anIndex) atRandom
+]
+
 { #category : #actions }
 SSTestCase >> randomStatement [
 	^ statements at: (1 to: self numberStatements ) atRandom
 	
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> referencesIndexes: aExpression [
+	^ ((aExpression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
 ]
 
 { #category : #removing }

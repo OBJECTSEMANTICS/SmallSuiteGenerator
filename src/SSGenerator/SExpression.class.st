@@ -42,17 +42,17 @@ SExpression >> id: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-SExpression >> insertMethodMessageUsing: aTestCase [
+SExpression >> insertAsParameter: aExpression using: aTestCase [
+	^ aTestCase insertAsParameter: self copy after: aExpression
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> insertMethodMessage: aExpression using: aTestCase [
 	self error: 'cant insert methodMessage'
 ]
 
 { #category : #'as yet unclassified' }
-SExpression >> insertParameterUsing: aTestCase [
-	self error: 'cant insert parameter'
-]
-
-{ #category : #'as yet unclassified' }
-SExpression >> insertRandomMessageUsing: aTestCase [
+SExpression >> insertRandomMessage: aExpression using: aTestCase [
 	self error: 'cant insert randomMessage'
 ]
 
@@ -74,6 +74,11 @@ SExpression >> reference [
 { #category : #mutation }
 SExpression >> repairOn: aTestCase changing: aExpression [
 	
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> replaceArgBy: aExpression [
+	self error: 'cant insert as parameter'
 ]
 
 { #category : #accessing }
