@@ -10,7 +10,8 @@ Class {
 
 { #category : #comparing }
 SExpression >> = other [
-	self class = other class ifFalse: [^ false].
+	self class = other class
+		ifFalse: [ ^ false ].
 	^ self id = other id and: [ returnType = other returnType ]
 ]
 
@@ -27,7 +28,7 @@ SExpression >> error: aString [
 ]
 
 { #category : #comparing }
-SExpression >> hash [ 	
+SExpression >> hash [
 	^ self id hash bitXor: self returnType hash
 ]
 
@@ -49,6 +50,11 @@ SExpression >> insertAsParameter: aExpression using: aTestCase [
 { #category : #'as yet unclassified' }
 SExpression >> insertMethodMessage: aExpression using: aTestCase [
 	self error: 'cant insert methodMessage'
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> insertOn: aTestCase [
+	
 ]
 
 { #category : #'as yet unclassified' }

@@ -14,7 +14,7 @@ SAssignment class >> name: aVariable value: anExpression [
 		variable: aVariable;
 		value: anExpression;
 		returnType: anExpression returnType;
-		yourself.
+		yourself
 ]
 
 { #category : #comparing }
@@ -49,6 +49,11 @@ SAssignment >> insertAsParameter: aExpression using: aTestCase [
 { #category : #'as yet unclassified' }
 SAssignment >> insertMethodMessage: aExpression using: aTestCase [
 	^ value insertMethodMessage: aExpression using: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> insertOn: aTestCase [
+	^ value insertOn: aTestCase
 ]
 
 { #category : #'as yet unclassified' }

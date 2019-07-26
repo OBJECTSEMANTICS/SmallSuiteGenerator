@@ -25,6 +25,11 @@ SLiteral >> hash [
 	^ super hash xor: value hash
 ]
 
+{ #category : #'as yet unclassified' }
+SLiteral >> insertOn: aTestCase [
+	^ aTestCase addLiteral: self returnType
+]
+
 { #category : #printing }
 SLiteral >> printOn: aStream [
 	aStream nextPutAll: value storeString;

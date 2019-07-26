@@ -368,3 +368,220 @@ SUtilityTest class >> listTestCaseSStudentGeneratedManually [
 				onClass: SStudent);
 		yourself)}
 ]
+
+{ #category : #tests }
+SUtilityTest >> testSuiteOf: aCollection [
+	self assert: aCollection size >= 2 description: 'list must have at least two or more testCases.'.
+	^ OrderedCollection new
+		add: (SSTestCase with: aCollection first) generateStatements;
+		add: (SSTestCase with: aCollection second) generateStatements;
+		yourself
+]
+
+{ #category : #tests }
+SUtilityTest >> testSuiteSStack [
+	^ self testSuiteOf: self typeInfosSStack
+	"| typeInfos |
+	typeInfos := self typeInfosSStack.
+	^ OrderedCollection new
+		add: (SSTestCase with: typeInfos first) generateStatements;
+		add: (SSTestCase with: typeInfos second) generateStatements;
+		yourself"
+]
+
+{ #category : #tests }
+SUtilityTest >> testSuiteSStudent [
+	^ self testSuiteOf: self typeInfosSStudent 
+	"^ OrderedCollection new
+		add: (SSTestCase with: self typeInfosSStudent) generateStatements;
+		add: (SSTestCase with: self typeInfosSStudent) generateStatements;
+		yourself"
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTest >> typeInfosSFoo [
+	^ OrderedCollection new 
+	add: (STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#returnNum
+						->
+							{#SmallInteger.
+							{}.
+							false}).
+					(#returnFloat
+						->
+							{#SmallFloat64.
+							{}.
+							false}).
+					(#returnString
+						->
+							{#ByteString.
+							{}.
+							false}).
+					(#score
+						->
+							{#SmallFloat64.
+							{}.
+							true}).
+					(#return:
+						->
+							{#ByteString.
+							{#ByteString}.
+							false})}.
+					{(#score:
+						->
+							{#SFoo.
+							{#SmallFloat64}.
+							false})}};
+		scalar: #ByteString with: {'hello'};
+		scalar: #SmallInteger with: {5};
+		scalar: #SmallFloat64 with: {7.3});
+		add: (
+		STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#return:
+						->
+							{#SFoo.
+							{#SFoo}.
+							false})}.
+					{}};
+		scalar: #ByteString with: {'hello'};
+		scalar: #SmallInteger with: {5};
+		scalar: #SmallFloat64 with: {7.3}
+		); add: (STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#returnNum
+						->
+							{#SmallInteger.
+							{}.
+							false}).
+					(#returnFloat
+						->
+							{#SmallFloat64.
+							{}.
+							false}).
+					(#returnString
+						->
+							{#ByteString.
+							{}.
+							false}).
+					(#score
+						->
+							{#SmallInteger.
+							{}.
+							true}).
+					
+							(#score:
+						->
+							{#SFoo.
+							{#SmallInteger}.
+							false}).
+							
+							}.
+					{(#score:
+						->
+							{#SFoo.
+							{#SmallInteger}.
+							false})}};
+		scalar: #ByteString with: {'Hello'};
+		scalar: #SmallInteger with: {4};
+		scalar: #SmallFloat64 with: {2.3});yourself.
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTest >> typeInfosSStack [
+	^ OrderedCollection new
+		add:
+			(STypeInfo new
+				type:
+					#SStack
+						->
+							{{(#firstLinkStack
+								->
+									{#SmallInteger.
+									{}.
+									true}).
+							(#pop
+								->
+									{#SmallInteger.
+									{}.
+									false}).
+							(#push:
+								->
+									{#SmallInteger.
+									{#SmallInteger}.
+									false})}.
+							{(#newStackWith:
+								->
+									{#SStack.
+									{#Array}.
+									false})}};
+				scalar: #Array with: {#(2 4 6 1)};
+				scalar: #SmallInteger with: #(1  2  4  6  8));
+		add:
+			(STypeInfo new
+				type:
+					#SStack
+						->
+							{{(#lastLinkStack
+								->
+									{#SmallInteger.
+									{}.
+									true}).
+							(#pop
+								->
+									{#SmallInteger.
+									{}.
+									false}).
+							(#top
+								->
+									{#SmallInteger.
+									{}.
+									false})}.
+							{(#newStack
+								->
+									{#SStack.
+									{}.
+									false}).
+							(#newStackWith:
+								->
+									{#SStack.
+									{#Array}.
+									false})}};
+				scalar: #Array
+					with:
+					{#(2 4 6 1).
+					#(5  7  9  0)};
+				scalar: #SmallInteger with: #(1  2  5  8  9));
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTest >> typeInfosSStudent [
+	^ OrderedCollection new
+		add:
+			(STypeInfo new
+				type:
+					#SStudent -> { { 
+					(#initialize -> { #SStudent. {  }. false }). 
+					(#scoreStudent -> { #SmallInteger. {  }. true }). 
+					(#scoreStudent: -> { #SStudent. { #SmallInteger }. false }).
+				
+					 }. {  } }; 
+					scalar: #SmallInteger with: #(10 1);
+					scalar: #ByteString with: {'student_Jane'}); 
+		add: (STypeInfo new
+				type:
+					#SStudent -> { { 
+					(#scoreStudent: -> { #SStudent. { #SmallInteger }. false }).
+					(#idStudent -> { #SmallInteger. {  }. true }).
+					(#nickname -> { #ByteString. {  }. false }) }. {  } }; 
+					scalar: #SmallInteger with: #( 1 6 8);
+					scalar: #ByteString with: {'Jane'. 'Ann'. 'Peter'}); yourself.
+]

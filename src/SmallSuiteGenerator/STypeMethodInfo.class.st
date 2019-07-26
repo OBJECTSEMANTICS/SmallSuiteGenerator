@@ -12,13 +12,13 @@ Class {
 
 { #category : #'accessing structure variables' }
 STypeMethodInfo class >> type: aAssoc [
-	| aValue|
+	| aValue |
 	aValue := aAssoc value.
-	^ self new 
-	selector: aAssoc key;
-	returnType: aValue first;
-	argTypes: aValue second;
-	isQuick: aValue third
+	^ self new
+		selector: aAssoc key;
+		returnType: (STypeReturnInfo new: aValue first);
+		argTypes: (aValue second collect: [:aType | STypeReturnInfo new: aType]);
+		isQuick: aValue third
 ]
 
 { #category : #accessing }
@@ -34,10 +34,10 @@ STypeMethodInfo >> argTypes: anObject [
 { #category : #copying }
 STypeMethodInfo >> copy [
 	| copy |
-	copy := STypeMethodInfo new.
+	copy := self class instance.
 	copy
 		selector: selector;
-		returnType: returnType;
+		returnType: returnType copy;
 		isQuick: isQuick;
 		argTypes: argTypes copy.
 	^ copy
@@ -46,7 +46,7 @@ STypeMethodInfo >> copy [
 { #category : #initialization }
 STypeMethodInfo >> initialize [
 	argTypes := #().
-	isQuick := false
+	isQuick := false. returnType := STypeReturnInfo new
 ]
 
 { #category : #accessing }
@@ -57,6 +57,14 @@ STypeMethodInfo >> isQuick [
 { #category : #accessing }
 STypeMethodInfo >> isQuick: aBoolean [
 	isQuick := aBoolean
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> joinWith: otherTypeMethod [
+	argTypes
+		with: otherTypeMethod argTypes
+		do: [ :argType :otherArgType | argType joinWith: otherArgType ].
+	returnType joinWith: otherTypeMethod returnType
 ]
 
 { #category : #accessing }

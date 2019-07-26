@@ -60,6 +60,82 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 ]
 
 { #category : #tests }
+STypeInfoTest >> testJoinWith [
+	| typeInfo methodInfo otherTypeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#return:
+						->
+							{#OrderedCollection.
+							{#OrderedCollection}.
+							false}).
+					(#score:
+						->
+							{#SFoo.
+							{#SmallInteger}.
+							false}).
+					(#score
+						->
+							{#SmallInteger.
+							{}.
+							true})}.
+					{(#score:
+						->
+							{#SFoo.
+							{#SmallInteger}.
+							false})}}.
+	otherTypeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#returnFloat
+						->
+							{#SmallFloat64.
+							{}.
+							false}).
+					(#returnString
+						->
+							{#ByteString.
+							{}.
+							false}).
+					(#return:
+						->
+							{#Stack.
+							{#Stack}.
+							false})}.
+					{}}.
+	typeInfo joinWith: otherTypeInfo.
+	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 5.
+	self
+		assert: (typeInfo types at: #SFoo) classMethodTypes size
+		equals: 1.
+	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	self
+		assertCollection: {#OrderedCollection . #Stack} hasSameElements: methodInfo returnType types.
+	self
+		assertCollection: {#OrderedCollection . #Stack} hasSameElements: (methodInfo argTypes flatCollect: [:argType | argType types]) .
+	self
+		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType type
+		equals: #SmallFloat64.
+	self
+		assert: (typeInfo typeOf: #returnString from: #SFoo) returnType type
+		equals: #ByteString.
+	self
+		assert: (typeInfo typeOf: #score from: #SFoo) returnType type
+		equals: #SmallInteger.
+	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	self assert: methodInfo returnType type equals: #SFoo.
+	self
+		assertCollection: (methodInfo argTypes flatCollect: [:argType | argType types])
+		hasSameElements: {#SmallInteger}.
+	self
+		assert: (typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType type
+		equals: #SFoo
+]
+
+{ #category : #tests }
 STypeInfoTest >> testScalar [
 	| typeInfo  |
 	typeInfo := STypeInfo new

@@ -19,12 +19,15 @@ SFactoryMessage class >> default: aClassName [
 
 { #category : #creation }
 SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements [
+	|returnType|
+	returnType := aMethodTypeInfo returnType type.
 	^ self new
-	receiver: (SVariable new
-				varName: aMethodTypeInfo returnType;
-				returnType: aMethodTypeInfo returnType;
+		receiver:
+			(SVariable new
+				varName: returnType ;
+				returnType: returnType ;
 				yourself);
-		returnType: aMethodTypeInfo returnType;
+		returnType: returnType;
 		selector: aMethodTypeInfo selector;
 		args: (self args: aMethodTypeInfo with: statements);
 		yourself
@@ -40,6 +43,13 @@ SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	self selector: otherFactoryMessage selector.
 	self args: otherFactoryMessage args
 	"aTestCase replaceFrom: aExpression with: otherFactoryMessage"
+]
+
+{ #category : #'as yet unclassified' }
+SFactoryMessage >> insertOn: aTestCase [
+	^ aTestCase
+		addFactoryMessage: self returnType
+		ofSelector: self selector
 ]
 
 { #category : #testing }

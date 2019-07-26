@@ -41,7 +41,9 @@ STypeClassInfo >> accessMessages [
 { #category : #adding }
 STypeClassInfo >> addClassMethod: methodTypeInfo [
 	methodTypeInfo typeInfo: typeInfo.
-	classMethodTypes at: methodTypeInfo selector put: methodTypeInfo
+	classMethodTypes at: methodTypeInfo selector 
+	ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
+	ifAbsentPut: methodTypeInfo
 ]
 
 { #category : #adding }
@@ -53,7 +55,10 @@ STypeClassInfo >> addClassMethods: methodTypeInfos [
 { #category : #adding }
 STypeClassInfo >> addMethod: methodTypeInfo [
 	methodTypeInfo typeInfo: typeInfo.
-	methodTypes at: methodTypeInfo selector put: methodTypeInfo
+	methodTypes
+		at: methodTypeInfo selector
+		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
+		ifAbsentPut: [methodTypeInfo]
 ]
 
 { #category : #adding }
@@ -75,10 +80,10 @@ STypeClassInfo >> classMethodTypes [
 { #category : #copying }
 STypeClassInfo >> copy [
 	| copy |
-	copy := STypeClassInfo new .
+	copy := self class instance.
 	methodTypes do: [ :methodType | copy addMethod: methodType copy ].
 	classMethodTypes
-		do: [ :classMethodType | copy addMethod: classMethodType copy ].
+		do: [ :classMethodType | copy addClassMethod: classMethodType copy ].
 	copy typeName: typeName.
 	^ copy
 ]
@@ -92,6 +97,14 @@ STypeClassInfo >> includesSelector: aSelector ofAccess: aBoolean [
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
 	classMethodTypes := Dictionary new
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> joinWith: otherTypeClass [
+	otherTypeClass methodTypes do: [ :aMethod | 
+		self addMethod: aMethod
+		 ].
+	otherTypeClass classMethodTypes do: [ :aMethod | self addClassMethod: aMethod ]
 ]
 
 { #category : #private }

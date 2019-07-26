@@ -14,13 +14,13 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	| dict |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isEmpty ])
 		ifTrue: [ ^ #() ].
-	dict := Dictionary new.
 	((statements collect: #returnType) asSet
-		includesAll: aMethodTypeInfo argTypes)
-		ifFalse: [ ^ SError error: 'statements dont contain soms types of method' ].
+		includesAll: (aMethodTypeInfo argTypes flatCollect: [ :arg | arg types ]))
+		ifFalse: [ ^ SError error: 'statements dont contain some types of method' ].
+	dict := Dictionary new.
 	statements copy shuffle
 		do: [ :stm | dict at: stm returnType put: stm variable copy ].
-	^ aMethodTypeInfo argTypes collect: [ :aType | dict at: aType ]
+	^ aMethodTypeInfo argTypes collect: [ :aTypeReturn | dict at: aTypeReturn type ]
 ]
 
 { #category : #comparing }
@@ -66,12 +66,6 @@ SAbstractMessage >> copy [
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
-SAbstractMessage >> expressionWithMaxIndex: aTestCase [
-	^ aTestCase expressionWithMaxIndexFrom: { receiver }, args.
-	
-]
-
 { #category : #comparing }
 SAbstractMessage >> hash [ 	
 	^ super hash xor: (receiver hash xor: (selector hash xor: args hash))
@@ -88,18 +82,7 @@ SAbstractMessage >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-SAbstractMessage >> insertAsParameter: aExpression using: aTestCase [
-	"^ aTestCase insertAsParameter: self copy before: aExpression"
-	"(args collect: #reference)
-		do: [ :ref | 
-			(aTestCase statementOfVarName: ref printString)
-				insertParameterUsing: aTestCase ]"
-]
-
-{ #category : #'as yet unclassified' }
 SAbstractMessage >> insertRandomMessage: aExpression using: aTestCase [
-	"| expression |
-	expression := self expressionWithMaxIndex: aTestCase."
 	^ aTestCase insertExpression: self copy after: aExpression
 ]
 

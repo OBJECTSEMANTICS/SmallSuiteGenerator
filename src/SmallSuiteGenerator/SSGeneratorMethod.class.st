@@ -8,11 +8,6 @@ Class {
 	#category : #'SmallSuiteGenerator-Profiler'
 }
 
-{ #category : #'as yet unclassified' }
-SSGeneratorMethod >> argTypeNames [
-	^ argTypes ifNil: [] ifNotNil: [argTypes collect: [:argType | argType ifNil: [ nil ] ifNotNil: [ argType name] ]]
-]
-
 { #category : #accessing }
 SSGeneratorMethod >> argTypes [
 	^ argTypes
@@ -22,37 +17,47 @@ SSGeneratorMethod >> argTypes [
 SSGeneratorMethod >> asTypeInfo [
 	^ STypeMethodInfo new
 		selector: selector;
-		returnType: self returnTypeName;
-		argTypes: self argTypeNames;
-		isQuick: self isQuick 
+		returnType: self returnType;
+		argTypes: self argTypes;
+		isQuick: self isQuick
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
-	argTypes := argTypes
-		ifNil: [ listOfArguments collect: #class ]
-		ifNotNil: [ self mergeTypes: listOfArguments ].
-	listOfArguments
-		do: [ :arg | self checkIfArgIsScalar: arg ]
+	self initArgsTypesWith: listOfArguments.
+	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ]
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> checkIfArgIsScalar: arg [
+	
 	(self profiler isScalar: arg)
 		ifTrue: [ self profiler addScalar: arg ]
 ]
 
 { #category : #hooks }
+SSGeneratorMethod >> initArgsTypesWith: args [
+	|classNames|
+	classNames := args collect: [ :arg | arg class name ].
+	argTypes
+		ifEmpty: [ argTypes := classNames
+				collect: [ :aName | STypeReturnInfo new: aName ] ]
+		ifNotEmpty: [ self mergeTypes: classNames ]
+]
+
+{ #category : #hooks }
 SSGeneratorMethod >> initialize [
 	super initialize.
-
+	returnType := STypeReturnInfo new.
+	argTypes := OrderedCollection new
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> isFactory [
 	"so its class is meta and it is returning an object of this class"
-	returnType ifNil: [ ^ false ].
-	^ returnType name == self classSpy nonMetaClassName
+
+	self halt. returnType type ifNil: [ ^ false ].
+	^ returnType type name == self classSpy nonMetaClassName
 ]
 
 { #category : #hooks }
@@ -72,7 +77,8 @@ SSGeneratorMethod >> returnType [
 
 { #category : #accessing }
 SSGeneratorMethod >> returnTypeName [
-	^ returnType ifNil: [ nil ] ifNotNil: [ returnType name ]
+	"to remove"
+	^ returnType ifNotNil: [ returnType name ]	"ifNil: [ nil ]"
 ]
 
 { #category : #hooks }

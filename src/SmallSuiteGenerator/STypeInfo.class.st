@@ -18,7 +18,9 @@ STypeInfo class >> typeInfo: aInstance [
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
 	aTypeClassInfo typeInfo: self.
-	types at: aTypeClassInfo typeName put: aTypeClassInfo
+	types at: aTypeClassInfo typeName
+	ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
+	 ifAbsentPut: aTypeClassInfo
 ]
 
 { #category : #accessing }
@@ -62,14 +64,9 @@ STypeInfo >> factoryMethods: className [
 		at: className
 		ifPresent: [ :classInfo | 
 			classInfo classMethodTypes associations
-				select: [ :assoc | assoc value returnType = className ]
+				select: [ :assoc | assoc value returnType type = className ]
 				thenCollect: [ :assoc | assoc value ] ]
 		ifAbsent: [ #() ]
-]
-
-{ #category : #lookup }
-STypeInfo >> filterFrom: aCoverageAnlysisResult [
-	
 ]
 
 { #category : #initialization }
@@ -77,6 +74,23 @@ STypeInfo >> initialize [
 	super initialize.
 	types := Dictionary new.
 	scalars := Dictionary new
+]
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> joinScalars: aDict [
+	aDict associations
+		do: [ :assoc | 
+			scalars
+				at: assoc key
+				ifPresent: [ :values | scalars at: assoc key put: (values union: assoc value) ]
+				ifAbsentPut: [ assoc value ] ]
+]
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> joinWith: otherTypeInfo [
+	otherTypeInfo types
+		valuesDo: [ :aTypeClass | self addClassInfo: aTypeClass ].
+		self joinScalars: otherTypeInfo scalars
 ]
 
 { #category : #accessing }

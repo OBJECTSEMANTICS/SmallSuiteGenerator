@@ -7,7 +7,7 @@ Class {
 { #category : #'instance creation' }
 SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatements: statements [
 	^ SMessage new
-		returnType: aMethod returnType;
+		returnType: aMethod returnType type;
 		selector: aMethod selector;
 		receiver: aReceiver;
 		args: (self args: aMethod with: statements);
@@ -30,8 +30,6 @@ SMessage >> insertMethodMessage: aExpression using: aTestCase [
 ]
 
 { #category : #'as yet unclassified' }
-SMessage >> insertRandomMessage: aExpression using: aTestCase [
-	| expression |
-	expression := self expressionWithMaxIndex: aTestCase.
-	^ (aTestCase insertExpression: self copy after: expression) reference
+SMessage >> insertOn: aTestCase [
+	^ aTestCase addMessage: self selector from: self receiver returnType
 ]

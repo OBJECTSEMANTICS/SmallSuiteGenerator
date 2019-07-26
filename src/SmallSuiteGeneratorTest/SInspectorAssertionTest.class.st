@@ -6,24 +6,16 @@ Class {
 
 { #category : #tests }
 SInspectorAssertionTest >> testPrintString [
-	| assertions result possibleResults generatorInfo testCase |
+	| assertions result possibleResults typeInfo testCase |
 	assertions := SInspectorAssertion
 		applyOn: 'foo'
 		with: SFoo new
 		of: nil.
 	self assert: assertions isEmpty.
-	generatorInfo := STypeInfo
-		typeInfo:
-			(SSGenerator
-				profile: [ (SFoo score: 4)
-						returnNum;
-						returnString;
-						returnFloat;
-						score ]
-				onClass: SFoo).
-	testCase := STestCase seed: generatorInfo.
-	testCase addConstructor.
-	testCase addMethod.
+	typeInfo  := SUtilityTest new typeInfosSFoo third.
+	testCase := SSTestCase with: typeInfo.
+	testCase addFactoryMessage.
+	testCase addMessage.
 	assertions := SInspectorAssertion
 		applyOn: 'foo'
 		with: SFoo new
@@ -36,26 +28,4 @@ SInspectorAssertionTest >> testPrintString [
 		add: 'self assert: foo score equals: 0';
 		yourself.
 	self assert: (possibleResults includes: result)
-]
-
-{ #category : #tests }
-SInspectorAssertionTest >> testPrintStringRTLineSegment [
-	| assertions generatorInfo testCase |
-	generatorInfo := STypeInfo
-		typeInfo:
-			(SSGenerator
-				profile: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
-						angleInDeg;
-						angleInRad;
-						cotan;
-						bottom ]
-				onClass: RTLineSegment).
-	testCase := STestCase seed: generatorInfo.
-	testCase addConstructor.
-	testCase addMethod.
-	assertions := SInspectorAssertion
-		applyOn: 'rtLine'
-		with: (RTLineSegment from: 4 @ 9 to: 5 @ 18)
-		of: testCase.
-	self assert: assertions first printString isNotEmpty
 ]

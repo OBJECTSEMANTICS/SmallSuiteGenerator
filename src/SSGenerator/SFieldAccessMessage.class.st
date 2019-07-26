@@ -7,7 +7,7 @@ Class {
 { #category : #'instance creation' }
 SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 	^ SFieldAccessMessage new
-		returnType: aMethod returnType;
+		returnType: aMethod returnType type;
 		selector: aMethod selector;
 		receiver: aReceiver;
 		yourself
@@ -21,6 +21,11 @@ SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
 		before: aExpression.
 	self selector: otherFieldAccessMessage selector
 	"aTestCase replaceFrom: aExpression with: otherFieldAccessMessage"
+]
+
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> insertOn: aTestCase [
+	^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType
 ]
 
 { #category : #actions }
