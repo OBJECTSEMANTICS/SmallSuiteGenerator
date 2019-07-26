@@ -235,14 +235,12 @@ SSTestCase >> assignedIds [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> buildArgs: argTypes before: aStatement [
-	
 	argTypes
 		ifNotEmpty: [ | types typesToAdd |
-		
 			types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-				collect: #returnType.
-			typesToAdd := (argTypes reject: [ :aType | types includes: aType ])
-				asSet.
+				collect: #returnType.	
+			typesToAdd := ((argTypes flatCollect: [ :arg | arg types ])
+				reject: [ :aType | types includes: aType ]) asSet.
 			(typeInfo scalars keys includesAll: typesToAdd)
 				ifFalse: [ ^ self error: 'error to create args' ].
 			typesToAdd

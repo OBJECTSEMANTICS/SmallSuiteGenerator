@@ -61,13 +61,10 @@ SSGeneratorMethod >> isFactory [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> mergeTypes: listOfArguments [
-	1 to: argTypes size do: [ :index | 
-		| a b |
-		a := argTypes at: index.
-		b := listOfArguments at: index.
-		argTypes at: index put: (a commonSuperclassWith: b class) ].
-	^ argTypes
+SSGeneratorMethod >> mergeTypes: args [
+	argTypes
+		with: args
+		do: [ :argType :otherArgType | argType type: otherArgType ]
 ]
 
 { #category : #accessing }
@@ -83,8 +80,7 @@ SSGeneratorMethod >> returnTypeName [
 
 { #category : #hooks }
 SSGeneratorMethod >> returnValue: value [
-	returnType := returnType
-		ifNil: [ value class ]
-		ifNotNil: [ returnType commonSuperclassWith: value class ].
+
+	returnType type: value class name.
 	self checkIfArgIsScalar: value
 ]

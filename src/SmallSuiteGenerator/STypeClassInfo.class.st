@@ -49,7 +49,8 @@ STypeClassInfo >> addClassMethod: methodTypeInfo [
 { #category : #adding }
 STypeClassInfo >> addClassMethods: methodTypeInfos [
 	methodTypeInfos
-		do: [ :aMethodType | classMethodTypes at: aMethodType selector put: aMethodType ]
+		do: [ :aMethodType | 
+			self addClassMethod: aMethodType ]
 ]
 
 { #category : #adding }
@@ -64,7 +65,8 @@ STypeClassInfo >> addMethod: methodTypeInfo [
 { #category : #adding }
 STypeClassInfo >> addMethods: methodTypeInfos [
 	methodTypeInfos
-		do: [ :aMethodType | methodTypes at: aMethodType selector put: aMethodType ]
+		do: [ :aMethodType | 
+			self addMethod: aMethodType ]
 ]
 
 { #category : #'as yet unclassified' }
