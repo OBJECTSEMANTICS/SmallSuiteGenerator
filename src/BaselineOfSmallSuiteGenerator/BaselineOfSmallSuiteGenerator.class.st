@@ -39,12 +39,12 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with: [ spec requires: #('SmallSuiteGenerator-GeneticAlgorithm') ];
 				package: 'SmallSuiteGenerator-Tests-Info'
 					with: [ spec
-						requires: #('SmallSuiteGenerator-Info');
-						package: 'SmallSuiteGenerator-Tests-Refactorization'
+						requires: #('SmallSuiteGenerator-Info')];
+				package: 'SmallSuiteGenerator-Tests-Refactorization'
 							with: [ spec
 								requires:
-									#('SmallSuiteGenerator'  'SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Refactorization' 'SmallSuiteGenerator-Examples') ];
+									#('SmallSuiteGenerator' 'SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Refactorization' 'SmallSuiteGenerator-Examples') ];
 						package: 'SmallSuiteGeneratorTest'
 							with: [ spec requires: #('SmallSuiteGenerator' 'MuTalk') ] ].
-			spec package: 'SmallSuiteGenerator-Tests-Roassal' ]
+			spec package: 'SmallSuiteGenerator-Tests-Roassal'.
 ]
