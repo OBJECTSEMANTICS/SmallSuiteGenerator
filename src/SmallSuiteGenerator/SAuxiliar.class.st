@@ -121,15 +121,6 @@ SAuxiliar class >> defaultConstructor: classSpy [
 ]
 
 { #category : #'as yet unclassified' }
-SAuxiliar class >> dictInfoMethodsFrom: arrMethods [
-	| dict |
-	dict := Dictionary new.
-	arrMethods
-		do: [ :method | dict at: method selector put: method asTypeInfo ].
-	^ dict
-]
-
-{ #category : #'as yet unclassified' }
 SAuxiliar class >> initLevelDefault [
 	level := 10
 ]

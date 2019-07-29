@@ -1,7 +1,7 @@
 Class {
 	#name : #SGeneratorTestCase,
 	#superclass : #Object,
-	#category : #'SmallSuiteGenerator-Generator'
+	#category : #'SmallSuiteGenerator-Generators'
 }
 
 { #category : #'as yet unclassified' }

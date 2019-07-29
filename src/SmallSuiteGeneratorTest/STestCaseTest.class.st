@@ -5,206 +5,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-STestCaseTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
-	| generatorInfo testCase |
-	generatorInfo := STypeInfo
-		typeInfo: (SSGenerator profile: aBlock onClass: aClass).
-	testCase := STestCase seed: generatorInfo.
-	^ testCase
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCase [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self generateTestSuiteOf: [ SFoo score: 34 ] blockOnClass: SFoo)
-				generateStatements;
-		add:
-			(self generateTestSuiteOf: [ (SFoo score: 2) score ] blockOnClass: SFoo)
-				generateStatements;
-		add:
-			(self generateTestSuiteOf: [ (SFoo score: 2) return: 2 ] blockOnClass: SFoo)
-				generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
-						name;
-						nickname;
-						id ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
-						age: 34;
-						identifier;
-						nickname: 'Ann34';
-						fullIdentifier ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ SStudent name: 'Peter'.
-					SStudent name: 'Ann' with: 2 ]
-				blockOnClass: SStudent) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTAMItem [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			((self
-				generateTestSuiteOf: [ RTAMItem basicNew
-						itemName: 'Bonus Card';
-						color: Color lightCyan ]
-				blockOnClass: RTAMItem) generateStatements);
-		add:
-			(self
-				generateTestSuiteOf: [ RTAMItem basicNew
-						itemName: 'Contract Management';
-						row: 'Australia';
-						column: 'Corporate Services';
-						color: Color red ]
-				blockOnClass: RTAMItem) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTAMItem basicNew
-						itemName: 'Bonus Card';
-						row: 'France';
-						column: 'Customer Relationship';
-						color: Color lightGreen ]
-				blockOnClass: RTAMItem) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTBorderAttachPoint [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 4  ]
-				blockOnClass: RTBorderAttachPoint) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 19  ]
-				blockOnClass: RTBorderAttachPoint) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 4  ]
-				blockOnClass: RTBorderAttachPoint) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTBox [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ RTBox instance
-						defaultWidth;
-						borderStyle ]
-				blockOnClass: RTBox) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTBox instance
-						borderStyle ]
-				blockOnClass: RTBox) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTBox instance
-						defaultWidth;
-						height;
-						borderStyle ]
-				blockOnClass: RTBox) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTDirectedLine [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ RTDirectedLine instance offset: 6.5 ]
-				blockOnClass: RTDirectedLine) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
-				blockOnClass: RTDirectedLine) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTDirectedLine instance
-						offset: 56; offset: 2.4 ]
-				blockOnClass: RTDirectedLine) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTLineSegment [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
-				blockOnClass: RTLineSegment) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
-						from;
-						to;
-						a;
-						b;
-						c ]
-				blockOnClass: RTLineSegment) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
-						angleInDeg;
-						angleInRad;
-						cotan;
-						bottom ]
-				blockOnClass: RTLineSegment) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseSStudent [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Peter')
-						scoreStudent: 45;
-						scoreStudent; yourself ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Peter')
-						idStudent;
-						nickname; yourself ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Ann' with: -34.234)
-						nickname;
-						idStudent;
-						scoreStudent: 45;
-						scoreStudent; yourself ]
-				blockOnClass: SStudent) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
 STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
 	| selectedStatements |
 	selectedStatements := aTestCase statements select: selector.
@@ -436,16 +236,6 @@ STestCaseTest >> testChangePrimitive [
 ]
 
 { #category : #'mutation-change' }
-STestCaseTest >> testChangeRoassal [
-	self assertChange: self class listTestCaseRTAMItem.
-	self
-		assertChange: self class listTestCaseRTBorderAttachPoint.
-	self assertChange: self class listTestCaseRTBox.
-	self assertChange: self class listTestCaseRTDirectedLine.
-	self assertChange: self class listTestCaseRTLineSegment
-]
-
-{ #category : #'mutation-change' }
 STestCaseTest >> testChangeWithTwoConstructor [
 	| generatorInfo testCase oldSelector |
 	generatorInfo := STypeInfo
@@ -581,16 +371,6 @@ STestCaseTest >> testInsertParameter [
 	testCase insert: #insertParameterUsing:.
 	self assert: testCase hasValidDependencies.
 	self assert: testCase hasUniqueStatements
-]
-
-{ #category : #'mutation-insert' }
-STestCaseTest >> testInsertParameterRoassal [
-	self assertInsertParameter: self class listTestCaseRTAMItem.
-	self
-		assertInsertParameter: self class listTestCaseRTBorderAttachPoint.
-	self assertInsertParameter: self class listTestCaseRTBox.
-	self assertInsertParameter: self class listTestCaseRTDirectedLine.
-	self assertInsertParameter: self class listTestCaseRTLineSegment
 ]
 
 { #category : #'mutation-insert' }
@@ -757,13 +537,4 @@ STestCaseTest >> testRemovePrimitive [
 	testCase addPrimitive.
 	testCase remove.
 	self assert: testCase statements isEmpty
-]
-
-{ #category : #'mutation-remove' }
-STestCaseTest >> testRemoveRoassal [
-	self assertRemove: self class listTestCaseRTAMItem.
-	self assertRemove: self class listTestCaseRTBorderAttachPoint.
-	self assertRemove: self class listTestCaseRTBox.
-	self assertRemove: self class listTestCaseRTDirectedLine.
-	self assertRemove: self class listTestCaseRTLineSegment
 ]

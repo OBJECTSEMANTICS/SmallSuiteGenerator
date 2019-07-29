@@ -36,12 +36,13 @@ SCalculatorCoverage class >> executeStatementsOf: aTestCase using: profiler inLe
 	[ profiler executeBlock: [ STestCaseCompiler new testCaseCompiled ] ]
 		on: Exception
 		do: [ :exception | 
-			(aTestCase
+			self halt.
+			"(aTestCase
 				changeStatementsOfClassName: (self signalerOfException: exception))
 				ifTrue: [ ^ self
 						calculateCoverageOf: aTestCase
 						using: profiler
-						inLevel: numLevel + 1 ]].
+						inLevel: numLevel + 1 ]"].
 	^ profiler dictCoverage
 ]
 
@@ -54,17 +55,18 @@ SCalculatorCoverage class >> maxNumberOfIterations [
 SCalculatorCoverage class >> nodeFormattedOf: testCase [
 	| statements varNames node temporaries |
 	statements := testCase statements.
-	varNames := testCase varNames.
+	varNames := testCase allVarNames.
 	node := RBParser parseExpression: '[]'.
 	temporaries := varNames
 		collect: [ :varName | RBParser parseExpression: varName ].
 	node body temporaries: temporaries.
-	statements
+	statements collect: #printString thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+	"statements
 		collect: [ :statement | 
 			statement
 				referencesToArgs: varNames;
 				printString ]
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
+		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ]."
 	^ node
 ]
 

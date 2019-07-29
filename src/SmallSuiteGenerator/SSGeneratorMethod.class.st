@@ -37,26 +37,25 @@ SSGeneratorMethod >> checkIfArgIsScalar: arg [
 
 { #category : #hooks }
 SSGeneratorMethod >> initArgsTypesWith: args [
-	|classNames|
+	| classNames |
 	classNames := args collect: [ :arg | arg class name ].
-	argTypes
-		ifEmpty: [ argTypes := classNames
-				collect: [ :aName | STypeReturnInfo new: aName ] ]
-		ifNotEmpty: [ self mergeTypes: classNames ]
+	argTypes ifNil: [ 
+		classNames ifNotEmpty: [argTypes := classNames collect: [ :aName | STypeReturnInfo new: aName ]]
+		 ] ifNotNil: [ self mergeTypes: classNames ].
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> initialize [
 	super initialize.
 	returnType := STypeReturnInfo new.
-	argTypes := OrderedCollection new
+	"argTypes := OrderedCollection new"
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> isFactory [
 	"so its class is meta and it is returning an object of this class"
 
-	self halt. returnType type ifNil: [ ^ false ].
+	returnType type ifNil: [ ^ false ].
 	^ returnType type name == self classSpy nonMetaClassName
 ]
 

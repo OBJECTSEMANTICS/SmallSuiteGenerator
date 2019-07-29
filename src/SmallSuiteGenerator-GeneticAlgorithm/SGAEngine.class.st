@@ -220,7 +220,8 @@ SGAEngine >> initializePopulation [
 				add:
 					(SSTestCase new
 						typeInfo: generatorProfiler asTypeInfo;
-							generateStatements: numberOfStatements) ]
+						numMaxStatements: numberOfStatements;
+							generateStatements) ]
 ]
 
 { #category : #testing }

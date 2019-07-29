@@ -21,13 +21,30 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('Spy2' 'SBTestCoverage' 'MuTalk') ];
-				package: 'SmallSuiteGeneratorAssert'
-					with: [ spec requires: 'SmallSuiteGenerator' ];
-				package: 'SmallSuiteGeneratorTest'
-					with:
-						[ spec requires: #('SmallSuiteGenerator' 'SmallSuiteGeneratorAssert') ].
-			spec package: 'SmallSuiteCompiler'.
-			spec package: 'SmallSuiteExamples'.
-			spec package: 'SSGenerator'.
-			spec package: 'SSGenerator-Tests' ]
+				package: 'SmallSuiteGenerator-Generator';
+				package: 'SmallSuiteGenerator-Assertion';
+				package: 'SmallSuiteGenerator-GeneticAlgorithm';
+				package: 'SmallSuiteGenerator-Refactorization';
+				package: 'SmallSuiteGenerator-Info'
+					with: [ spec requires: #('SmallSuiteGenerator-Generator') ];
+				package: 'SmallSuiteGenerator-Examples'
+					with: [ spec
+						requires:
+							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Info' 'SmallSuiteGenerator-GeneticAlgorithm') ];
+				package: 'SmallSuiteGenerator-Tests-Assertion'
+					with: [ spec requires: 'SmallSuiteGenerator-Assertion' ];
+				package: 'SmallSuiteGenerator-Tests-Generator'
+					with: [ spec requires: #('SmallSuiteGenerator-Generator') ];
+				package: 'SmallSuiteGenerator-Tests-GeneticAlgorithm'
+					with: [ spec requires: #('SmallSuiteGenerator-GeneticAlgorithm') ];
+				package: 'SmallSuiteGenerator-Tests-Info'
+					with: [ spec
+						requires: #('SmallSuiteGenerator-Info');
+						package: 'SmallSuiteGenerator-Tests-Refactorization'
+							with: [ spec
+								requires:
+									#('SmallSuiteGenerator'  'SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Refactorization' 'SmallSuiteGenerator-Examples') ];
+						package: 'SmallSuiteGeneratorTest'
+							with: [ spec requires: #('SmallSuiteGenerator' 'MuTalk') ] ].
+			spec package: 'SmallSuiteGenerator-Tests-Roassal' ]
 ]

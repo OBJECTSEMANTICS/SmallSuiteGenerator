@@ -31,28 +31,28 @@ SGACrossOverOperationTestWithRoassal >> testCrossOver: listTestCase [
 
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTAMItem [
-	self testCrossOver: utility listTestCaseRTAMItem.
-	self testCrossOverWithMutation: utility listTestCaseRTAMItem
+	self testCrossOver: utility testSuiteRTAMItem.
+	self testCrossOverWithMutation: utility testSuiteRTAMItem
 ]
 
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTBorderAttachPoint [
-	self testCrossOver: utility listTestCaseRTBorderAttachPoint
+	self testCrossOver: utility testSuiteRTBorderAttachPoint
 ]
 
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTBox [
-	self testCrossOver: utility listTestCaseRTBox
+	self testCrossOver: utility testSuiteRTBox
 ]
 
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTDirectedLine [
-	self testCrossOver: utility listTestCaseRTDirectedLine
+	self testCrossOver: utility testSuiteRTDirectedLine
 ]
 
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTLineSegment [
-	self testCrossOver: utility listTestCaseRTLineSegment
+	self testCrossOver: utility testSuiteRTLineSegment
 ]
 
 { #category : #tests }

@@ -5,8 +5,8 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SUtilityRoassal >> listTestCaseRTAMItem [
-	|typeInfos|
+SUtilityRoassal >> testSuiteRTAMItem [
+	| typeInfos |
 	typeInfos := self typeInfosRTAMItem.
 	^ OrderedCollection new
 		add: (SSTestCase with: typeInfos first) generateStatements;
@@ -15,28 +15,26 @@ SUtilityRoassal >> listTestCaseRTAMItem [
 ]
 
 { #category : #'as yet unclassified' }
-SUtilityRoassal >> listTestCaseRTBorderAttachPoint [
-	|typeInfo|
+SUtilityRoassal >> testSuiteRTBorderAttachPoint [
+	| typeInfo |
 	typeInfo := self typeInfoRTBorderAttachPoint.
 	^ OrderedCollection new
 		add: (SSTestCase with: typeInfo) generateStatements;
-		add:
-			(SSTestCase with: typeInfo) generateStatements;
+		add: (SSTestCase with: typeInfo) generateStatements;
 		yourself
 ]
 
 { #category : #'as yet unclassified' }
-SUtilityRoassal >> listTestCaseRTBox [
-				^ OrderedCollection new
+SUtilityRoassal >> testSuiteRTBox [
+	^ OrderedCollection new
 		add: (SSTestCase with: self typeInfoRTBox) generateStatements;
-		add:
-			(SSTestCase with: self typeInfoRTBox) generateStatements;
+		add: (SSTestCase with: self typeInfoRTBox) generateStatements;
 		yourself
 ]
 
 { #category : #'as yet unclassified' }
-SUtilityRoassal >> listTestCaseRTDirectedLine [
-	|typeInfos |
+SUtilityRoassal >> testSuiteRTDirectedLine [
+	| typeInfos |
 	typeInfos := self typeInfosRTDirectedLine.
 	^ OrderedCollection new
 		add: (SSTestCase with: typeInfos first) generateStatements;
@@ -45,7 +43,7 @@ SUtilityRoassal >> listTestCaseRTDirectedLine [
 ]
 
 { #category : #'as yet unclassified' }
-SUtilityRoassal >> listTestCaseRTLineSegment [
+SUtilityRoassal >> testSuiteRTLineSegment [
 	| typeInfos |
 	typeInfos := self typeInfosRTLineSegment.
 	^ OrderedCollection new
