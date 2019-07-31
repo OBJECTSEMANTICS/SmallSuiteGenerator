@@ -10,11 +10,6 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
-{ #category : #'as yet unclassified' }
-STypeInfo class >> typeInfo: aInstance [
-	^ self subclassResponsibility
-]
-
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
 	aTypeClassInfo typeInfo: self.
@@ -26,6 +21,11 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 { #category : #accessing }
 STypeInfo >> classAt: aClassName [
 	^ types at: aClassName
+]
+
+{ #category : #accessing }
+STypeInfo >> classAt: aClassName ifNone: aBlock [
+	^ types at: aClassName ifAbsent: aBlock
 ]
 
 { #category : #accessing }

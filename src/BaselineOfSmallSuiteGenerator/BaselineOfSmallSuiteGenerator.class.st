@@ -25,9 +25,10 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				package: 'SmallSuiteGenerator-Assertion';
 				package: 'SmallSuiteGenerator-GeneticAlgorithm';
 				package: 'SmallSuiteGenerator-Refactorization';
+				package: 'SmallSuiteGenerator-Examples';
 				package: 'SmallSuiteGenerator-Info'
 					with: [ spec requires: #('SmallSuiteGenerator-Generator') ];
-				package: 'SmallSuiteGenerator-Examples'
+				package: 'SmallSuiteGenerator-Examples-Demo'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Info' 'SmallSuiteGenerator-GeneticAlgorithm') ];

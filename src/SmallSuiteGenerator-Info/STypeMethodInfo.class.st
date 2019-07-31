@@ -21,6 +21,12 @@ STypeMethodInfo class >> type: aAssoc [
 		isQuick: aValue third
 ]
 
+{ #category : #adding }
+STypeMethodInfo >> addType: aType [
+	argTypes do: [ :arg | arg type: aType ].
+	returnType type: aType
+]
+
 { #category : #'as yet unclassified' }
 STypeMethodInfo >> allArgTypes [
 	^ argTypes flatCollect:[:arg | arg types]

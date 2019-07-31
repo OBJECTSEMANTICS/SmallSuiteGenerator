@@ -1,9 +1,6 @@
 Class {
 	#name : #SCalculatorCoverageTest,
 	#superclass : #TestCase,
-	#instVars : [
-		'calculatorCoverage'
-	],
 	#category : #'SmallSuiteGenerator-Tests-Coverage'
 }
 
@@ -22,9 +19,8 @@ SCalculatorCoverageTest >> assertCoverageB: aBlock onClass: aClass withValues: c
 { #category : #'coverage-onPackages' }
 SCalculatorCoverageTest >> assertCoverageOfTestSuite: aBlock onPackages: regex [
 	| listCoverage coverageProfiler typeInfo testSuite coverageBlock |
-	typeInfo := (SSGenerator
-		profile: aBlock
-		onPackagesMatching: regex) asTypeInfo .
+	typeInfo := (SSGenerator profile: aBlock onPackagesMatching: regex)
+		asTypeInfo.
 	coverageProfiler := SBProfiler new
 		profileInstrumented: aBlock onPackagesMatching: regex;
 		yourself.
@@ -45,11 +41,6 @@ SCalculatorCoverageTest >> assertCoverageOfTestSuite: aBlock onPackages: regex [
 		assert:
 			(listCoverage collect: [ :dict | dict at: 'statementCoverage' ]) max
 				>= (coverageBlock at: 'statementCoverage')
-]
-
-{ #category : #running }
-SCalculatorCoverageTest >> setUp [
-	calculatorCoverage := SCalculatorCoverage new.
 ]
 
 { #category : #running }
@@ -81,7 +72,7 @@ SCalculatorCoverageTest >> testCoverageOnPackagesSStack [
 				push: 8;
 				pop;
 				top ]
-		onPackages: 'SmallSuiteGenerator-Exam*'
+		onPackages: 'SmallSuiteGenerator-Examples'
 ]
 
 { #category : #tests }

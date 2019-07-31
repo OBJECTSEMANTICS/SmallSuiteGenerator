@@ -30,10 +30,38 @@ SGeneratorTestCase >> mutatedMethodsFrom: testClasses mutating: classes using: o
 ]
 
 { #category : #'as yet unclassified' }
+SGeneratorTestCase >> packagesClassesAndMethodsOf: profile filterBy: mutatedMethods [
+	| packages classes methods selectors |
+	packages := Set new.
+	classes := Set new.
+	methods := Set new.
+	selectors := (mutatedMethods
+		collect: [ :meth | meth originalClass name -> meth originalMethod selector ])
+		asSet.
+	profile allMethods
+		select:
+			[ :meth | selectors includes: meth classSpy className -> meth selector ]
+		thenDo: [ :meth | 
+			| aClass splited |
+			aClass := meth classSpy.
+			packages add: aClass packageSpy packageName.
+			splited := aClass className splitOn: ' '.
+			classes
+				add:
+					(splited size > 1
+						ifFalse: [ aClass className ]
+						ifTrue: [ splited first asSymbol ]).
+			methods add: meth classSpy className -> meth selector ].
+	^ {packages.
+	classes.
+	methods}
+]
+
+{ #category : #'as yet unclassified' }
 SGeneratorTestCase >> profileMutatedMethodsFrom: methods using: profile [
 	| newProfile data |
 	newProfile := profile copy.
-	data := SAuxiliar
+	data := self
 		packagesClassesAndMethodsOf: profile
 		filterBy: methods.
 	self
@@ -45,7 +73,8 @@ SGeneratorTestCase >> profileMutatedMethodsFrom: methods using: profile [
 				select: [ :assoc | data first includes: assoc key ]) asDictionary;
 		classes:
 			(profile allClasses
-				select: [ :cls | data second includes: cls className ]) asOrderedCollection ;
+				select: [ :cls | data second includes: cls className ])
+				asOrderedCollection;
 		methods:
 			(profile allMethods
 				select:

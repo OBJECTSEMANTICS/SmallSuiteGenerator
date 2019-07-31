@@ -14,7 +14,7 @@ SSAssertionTest >> testGenerateInvariantCollections [
 	| typeInfo testCase invariants |
 	typeInfo := STypeInfo new
 		type:
-			#SFoo
+			#Stack
 				->
 					{{}.
 					{}}.
@@ -197,7 +197,12 @@ SSAssertionTest >> testGenerateInvariantsStack [
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	| typeInfo testCase invariants selectedInvariants |
-	typeInfo :=  (SSGenerator profile: [ SStack new ] onClass: Stack) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{}.
+					{}}.
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	selectedInvariants := {SCollectionSizeAssertion}.
@@ -206,14 +211,32 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
 		hasSameElements: selectedInvariants.
-	typeInfo := 
-			(SSGenerator
-				profile: [ Stack new
-						push: 1;
-						push: 'hello';
-						pop;
-						yourself ]
-				onClass: Stack) asTypeInfo.
+	"typeInfo := (SSGenerator
+		profile: [ Stack new
+				push: 1;
+				push: 'hello';
+				pop;
+				yourself ]
+		onClass: Stack) asTypeInfo."
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{(#push:
+						->
+							{#ByteString.
+							{#ByteString}.
+							false}).
+					(#pop
+						->
+							{#ByteString.
+							{}.
+							false})}.
+					{}};
+		scalar: #SmallInteger with: #(1);
+		scalar: #ByteString with: #('hello').
+	(typeInfo typeOf: #push: from: #SStack) addType: #SmallInteger.
+	(typeInfo typeOf: #pop from: #SStack) addType: #SmallInteger.
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.
@@ -221,27 +244,42 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	SPrimitiveAssertion.
 	SInspectorAssertion.
 	SCollectionTypeSimilarityAssertion}.
+	invariants := (testCase generateAssertionsUsing: selectedInvariants).
+	"self assert: invariants size equals: 3."
 	self
+		assertCollection: (invariants collect: [ :i | i class ]) asSet
+		hasSameElements:
+			{SStringAssertion.
+			SPrimitiveAssertion.
+			SInspectorAssertion}.
+	"self
 		should: [ testCase generateAssertionsUsing: selectedInvariants ]
-		raise: Error.
+		raise: Error."
 	selectedInvariants := {SStringAssertion.
 	SPrimitiveAssertion.
 	SCollectionTypeSimilarityAssertion}.
-	invariants := testCase generateAssertionsUsing: selectedInvariants.
+	invariants := (testCase generateAssertionsUsing: selectedInvariants)
+		.
 	"invariants is empty if the compiled method has failed"
 	self deny: invariants isEmpty.
-	self assert: invariants size equals: 1.
+	"self assert: invariants size equals: 1."
 	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements: {SStringAssertion}
+		assertCollection: (invariants collect: [ :i | i class ]) asSet
+		hasSameElements:
+			{SStringAssertion.
+			SPrimitiveAssertion}
 ]
 
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 	| typeInfo testCase invariants selectedInvariants classesInvariants |
-	typeInfo := (SSGenerator
+	"typeInfo := (SSGenerator
 		profile: [ (SStudent name: 'Ann' with: -34.234) nickname ]
-		onClass: SStudent) asTypeInfo.
+		onClass: SStudent) asTypeInfo."
+	typeInfo := STypeInfo new type: #SStudent -> {{
+		(#nickname -> {#ByteString. {}. false}).
+		(#initialize -> {#SStudent. {}. false})
+	}. {}}.
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.
@@ -279,12 +317,18 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 { #category : #tests }
 SSAssertionTest >> testGeneratePrimitiveAssertions [
 	| typeInfo testCase invariants |
-	typeInfo := 
-			(SSGenerator
-				profile: [ Stack new
-						push: 10;
-						yourself ]
-				onClass: Stack) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{ (#initialize -> {#SStack. {}. false}).
+					(#push: -> {#SmallInteger. {#SmallInteger}. false})}.
+					{}}; scalar: #SmallInteger with: {1}.
+	"typeInfo := (SSGenerator
+		profile: [ Stack new
+				push: 10;
+				yourself ]
+		onClass: Stack) asTypeInfo."
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -295,8 +339,16 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 			{SPrimitiveAssertion.
 			SComparisonAssertion.
 			SStringAssertion}.
-	typeInfo := 
-			(SSGenerator profile: [ SFoo new return: 'hello World' ] onClass: SFoo) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#initialize -> {#SFoo. {}. false}). 
+					(#return: -> {#ByteString. {#ByteString}. false})}.
+					{}}; scalar: #ByteString with: {'hello World'}.
+	"typeInfo := (SSGenerator
+		profile: [ SFoo new return: 'hello World' ]
+		onClass: SFoo) asTypeInfo."
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -309,7 +361,16 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 			SCollectionTypeSimilarityAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	typeInfo := (SSGenerator profile: [ SFoo new return: 2.34 ] onClass: SFoo) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#initialize -> {#SFoo. {}. false}). 
+					(#return: -> {#SmallFloat64. {#SmallFloat64}. false})}.
+					{}}; scalar: #SmallFloat64 with: {2.34}.
+	"typeInfo := (SSGenerator
+		profile: [ SFoo new return: 2.34 ]
+		onClass: SFoo) asTypeInfo."
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -320,7 +381,16 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 			{SPrimitiveAssertion.
 			SStringAssertion.
 			SComparisonAssertion}.
-	typeInfo := (SSGenerator profile: [ SFoo new return: true ] onClass: SFoo) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					{{(#initialize -> {#SFoo. {}. false}). 
+					(#return: -> {#True. {#True}. false})}.
+					{}}; scalar: #True with: {true}.
+	"typeInfo := (SSGenerator
+		profile: [ SFoo new return: true ]
+		onClass: SFoo) asTypeInfo."
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
 	invariants := testCase generateAssertionsUsing: {}.
@@ -336,27 +406,89 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 { #category : #tests }
 SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 	| typeInfo testCase invariants |
-	typeInfo := 
-			(SSGenerator
-				profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
-						push: 8;
-						pop;
-						top ]
-				onClass: SStack) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{(#initialize
+						->
+							{#SStack.
+							{}.
+							false}).
+					(#push:
+						->
+							{#SmallInteger.
+							{#SmallInteger}.
+							false}).
+					(#pop
+						->
+							{#SmallInteger.
+							{}.
+							false}).
+					(#top
+						->
+							{#SmallInteger.
+							{}.
+							false})}.
+					{(#newStackWith:
+						->
+							{#SStack.
+							{#Array}.
+							false})}};
+		scalar: #Array with: {#(2 4 6 1)};
+		scalar: #SmallInteger with: {8}.
+	"typeInfo := (SSGenerator
+		profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+				push: 8;
+				pop;
+				top ]
+		onClass: SStack) asTypeInfo."
 	testCase := SSTestCase with: typeInfo.
-	testCase generateStatements: 15.
+	testCase numMaxStatements: 15.
+	testCase generateStatements.
 	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty.
-	typeInfo := 
-			(SSGenerator
-				profile: [ (SStack newStackWith: {'abcd' . 'efg' . 'hij' . 'klmn'})
-						push: 'opqr';
-						pop;
-						top ]
-				onClass: SStack) asTypeInfo.
+	typeInfo := STypeInfo new
+		type:
+			#SStack
+				->
+					{{(#initialize
+						->
+							{#SStack.
+							{}.
+							false}).
+					(#push:
+						->
+							{#ByteString.
+							{#ByteString}.
+							false}).
+					(#pop
+						->
+							{#ByteString.
+							{}.
+							false}).
+					(#top
+						->
+							{#ByteString.
+							{}.
+							false})}.
+					{(#newStackWith:
+						->
+							{#SStack.
+							{#Array}.
+							false})}};
+		scalar: #Array with: {#('abcd' 'efg' 'hij' 'klmn')};
+		scalar: #ByteString with: {'opqr'}.
+	"typeInfo := (SSGenerator
+		profile: [ (SStack newStackWith: {'abcd' . 'efg' . 'hij' . 'klmn'})
+				push: 'opqr';
+				pop;
+				top ]
+		onClass: SStack) asTypeInfo."
 	testCase := SSTestCase with: typeInfo.
-	testCase generateStatements: 15.
+	testCase numMaxStatements: 15.
+	testCase generateStatements.
 	invariants := testCase generateAssertionsUsing: {}.
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty

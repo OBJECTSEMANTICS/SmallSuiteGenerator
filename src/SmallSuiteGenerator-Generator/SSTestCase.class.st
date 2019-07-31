@@ -5,7 +5,9 @@ Class {
 		'statements',
 		'typeInfo',
 		'nextId',
-		'numMaxStatements'
+		'numMaxStatements',
+		'fitness',
+		'generatorInvariant'
 	],
 	#category : #'SmallSuiteGenerator-Generator-Core'
 }
@@ -242,8 +244,9 @@ SSTestCase >> assignedIds [
 SSTestCase >> buildArgs: argTypes before: aStatement [
 	argTypes
 		ifNotNil: [ | types typesToAdd |
+			
 			types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-				collect: #returnType.	
+				collect: #returnType thenSelect: [:aType | aType isNotNil].	
 			typesToAdd := ((argTypes flatCollect: [ :arg | arg types ])
 				reject: [ :aType | types includes: aType ]) asSet.
 			(typeInfo scalars keys includesAll: typesToAdd)
@@ -276,6 +279,11 @@ SSTestCase >> changeStatement: aStatement [
 { #category : #removing }
 SSTestCase >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> computeFitnessUsing: fitnessBlock [
+	fitness := fitnessBlock value: self
 ]
 
 { #category : #copying }
@@ -312,8 +320,21 @@ SSTestCase >> factoryMessageVariablesBefore: aStatement [
 		thenCollect: [ :stm | stm variable ]
 ]
 
+{ #category : #accessing }
+SSTestCase >> fitness [ 	
+	^ fitness
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> generateAssertionsUsing: classInvariants [
+	^ generatorInvariant
+		generateAssertionsOf: self
+		testCaseUsing: classInvariants
+]
+
 { #category : #'as yet unclassified' }
 SSTestCase >> generateStatements [
+	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain data.'.
 	[ self numberStatements < self numMaxStatements ]
 		whileTrue: [ self
 				perform:
@@ -330,7 +351,8 @@ SSTestCase >> hash [
 SSTestCase >> initialize [
 	statements := OrderedCollection new.
 	nextId := 0.
-	numMaxStatements := 0
+	numMaxStatements := 0.
+	generatorInvariant := SSGeneratorInvariant new.
 ]
 
 { #category : #'as yet unclassified' }
@@ -390,6 +412,7 @@ SSTestCase >> insertStatementOfSelector: selector [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> messageUsing: method and: receiver before: aStatement [
+
 	self buildArgs: method argTypes before: aStatement.
 	^ SMessage
 				newFromReceiver: receiver copy

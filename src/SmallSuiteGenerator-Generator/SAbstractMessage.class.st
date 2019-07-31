@@ -14,7 +14,7 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	| dict |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
-	((statements collect: #returnType) asSet
+	((statements collect: #returnType thenSelect: [:aType | aType isNotNil]) asSet
 		includesAll: (aMethodTypeInfo argTypes flatCollect: [ :arg | arg types ]))
 		ifFalse: [ ^ SError error: 'statements dont contain some types of method' ].
 	dict := Dictionary new.

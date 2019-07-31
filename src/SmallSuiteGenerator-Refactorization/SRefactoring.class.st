@@ -28,8 +28,7 @@ SRefactoring class >> dataStatements: aSTestCase [
 SRefactoring class >> dictReferencesOf: aSTestCase [
 	| dictReferences varNames |
 	dictReferences := OrderedDictionary new.
-	varNames := aSTestCase varNames.
-	
+	varNames := aSTestCase allVarNames.
 	aSTestCase statements
 		do: [ :aStatement | 
 			(aStatement dependenciesConsidering: varNames)

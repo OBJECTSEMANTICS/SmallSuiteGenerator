@@ -23,6 +23,15 @@ SSmallSuiteGenerator class >> resetInstance [
 	instance := nil
 ]
 
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> classesForRegex: regexExpressions [
+	^ ((regexExpressions
+		flatCollect: [ :regex | 
+			RPackage organizer packages
+				select: [ :p | regex match: p name asString ] ]) asSet)
+		flatCollect: #definedClasses
+]
+
 { #category : #accessing }
 SSmallSuiteGenerator >> engine [ 	
 	^ engine
@@ -86,7 +95,7 @@ SSmallSuiteGenerator >> generateTestsFrom: aBlock blockOn: regex packagesMatchin
 	self
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
-	engine modelClasses: (SAuxiliar classesForRegex: regex).
+	engine modelClasses: (self classesForRegex: {regex}).
 	^ engine
 		blockToExecute: aBlock;
 		generatorProfiler:
@@ -139,7 +148,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 	self
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
-	engine modelClasses: (SAuxiliar classesForRegex: regex).
+	engine modelClasses: (self classesForRegex: {regex}).
 	^ engine
 		blockToExecute: aBlock;
 		generatorProfiler:
@@ -152,7 +161,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 			[ :testCase | 
 			SCalculatorCoverage
 				calculateCoverageOf: testCase
-				using: coverageProfiler ] ].
+				using: coverageProfiler ] ]
 ]
 
 { #category : #initialization }

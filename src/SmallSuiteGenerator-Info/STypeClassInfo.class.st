@@ -35,7 +35,7 @@ STypeClassInfo class >> type: aAssoc [
 
 { #category : #private }
 STypeClassInfo >> accessMessages [
-	^ methodTypes values select: #isQuick
+	^ (methodTypes values select: #isQuick) select: [ :meth | meth returnType type isNotNil ]
 ]
 
 { #category : #adding }
@@ -69,6 +69,11 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 			self addMethod: aMethodType ]
 ]
 
+{ #category : #'accessing - read only' }
+STypeClassInfo >> allMethods [ 	
+	^ methodTypes values , classMethodTypes values
+]
+
 { #category : #'as yet unclassified' }
 STypeClassInfo >> classMethodOf: aSelector [
 	^ classMethodTypes at: aSelector
@@ -90,11 +95,6 @@ STypeClassInfo >> copy [
 	^ copy
 ]
 
-{ #category : #testing }
-STypeClassInfo >> includesSelector: aSelector ofAccess: aBoolean [
-	^ methodTypes detect: [ :methType | methType selector = aSelector and: [ methType isQuick = aBoolean ] ] ifFound: [ true ] ifNone: [ false ]
-]
-
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
@@ -111,7 +111,7 @@ STypeClassInfo >> joinWith: otherTypeClass [
 
 { #category : #private }
 STypeClassInfo >> messages [
-	^ methodTypes values reject: #isQuick
+	^ (methodTypes values reject: #isQuick) select: [ :meth | meth returnType type isNotNil ]
 ]
 
 { #category : #'as yet unclassified' }

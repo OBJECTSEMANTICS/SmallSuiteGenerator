@@ -31,17 +31,12 @@ SGAEngine >> analyzeMutants [
 		assert: (modelClasses isNotNil and: [ modelClasses isNotEmpty ])
 		description: 'modelClasses must not be nil or empty'.
 	analysis := MutationTestingAnalysis
-		testCasesFrom:
-			(SAuxiliar
-				validate: testClasses
-				ifNotValid: [ SConfiguration classAssertsGenerationTest ])
+		testCasesFrom: self validTestClasses
 		mutating: modelClasses
-		using:
-			(SAuxiliar
-				validate: operators
-				ifNotValid: [ SConfiguration defaultMutantOperators ])
+		using: self validOperators
 		with:
-			(evaluationStrategy ifNil: [ SConfiguration defaultEvaluationStrategy ]).
+			(evaluationStrategy
+				ifNil: [ SConfiguration defaultEvaluationStrategy ]).
 	analysis run.
 	^ analysis generalResult
 ]
@@ -358,6 +353,25 @@ SGAEngine >> shouldTerminate [
 { #category : #accessing }
 SGAEngine >> testClasses: testCaseClasses [
 	testClasses := testCaseClasses 
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> valid: aCollection
+		ifNotValid: aBlock [
+		^ (aCollection isNil or: [ aCollection isEmpty ]) ifFalse: [aCollection]
+		ifTrue: [ aBlock value ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> validOperators [
+	^ self
+				valid: operators
+				ifNotValid: [ SConfiguration defaultMutantOperators ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> validTestClasses [
+	^ self valid: testClasses ifNotValid: [ SConfiguration classAssertsGenerationTest ]
 ]
 
 { #category : #accessing }
