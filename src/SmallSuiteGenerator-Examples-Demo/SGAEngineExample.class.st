@@ -174,8 +174,8 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock ofPopulationSize: popul
 		populationSize: populationSize;
 		numberOfStatements: numStatements;
 		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: aClass ];
+		typeInfo:
+				[ :blockToExecute | (SSGenerator profile: blockToExecute onClass: aClass) asTypeInfo ];
 		coverageProfiler: [ :blockToExecute | 
 			SBProfiler new
 				profileInstrumented: blockToExecute onClass: aClass;
@@ -197,8 +197,8 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationS
 		populationSize: populationSize;
 		numberOfStatements: numStatements;
 		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
+		typeInfo:
+				[ :blockToExecute | (SSGenerator profile: blockToExecute onPackagesMatching: regex) asTypeInfo ];
 		coverageProfiler: [ :blockToExecute | 
 			SBProfiler new
 				profileInstrumented: blockToExecute onPackagesMatching: regex;

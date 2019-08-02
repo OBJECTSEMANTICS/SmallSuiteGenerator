@@ -10,11 +10,14 @@ Class {
 { #category : #'as yet unclassified' }
 SGAMutationOperation >> doMutate: aTestCase [
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase removeStatement ].
+		ifTrue: [ aTestCase removeStatement.
+			aTestCase validReferences ifFalse: [ self halt ] ].
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase changeStatement ].
+		ifTrue: [ aTestCase changeStatement .
+			aTestCase validReferences ifFalse: [ self halt ]].
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase insertStatement ]
+		ifTrue: [ aTestCase insertStatement.
+			aTestCase validReferences ifFalse: [ self halt ] ]
 ]
 
 { #category : #initialization }

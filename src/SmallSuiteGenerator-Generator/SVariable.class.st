@@ -55,17 +55,17 @@ SVariable >> printOn: aStream [
 { #category : #mutation }
 SVariable >> repairOn: aTestCase changing: aExpression [
 	| otherVariable |
-	
 	otherVariable := aTestCase
 		alternativeOfVariable: self
-		before: aExpression.
+		before: aExpression.self halt.
 	self varName: otherVariable varName.
 	self id: otherVariable id
 ]
 
 { #category : #'as yet unclassified' }
 SVariable >> replaceArgBy: aExpression [
-	returnType = aExpression returnType ifFalse: [ ^ self error: 'cant replace arg' ].
+	returnType = aExpression returnType
+		ifFalse: [ ^ self error: 'cant replace arg' ].
 	self replaceBy: aExpression
 ]
 

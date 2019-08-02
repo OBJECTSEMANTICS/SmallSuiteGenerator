@@ -2,7 +2,8 @@ Class {
 	#name : #SSmallSuiteGenerator,
 	#superclass : #Object,
 	#instVars : [
-		'engine'
+		'engine',
+		'typeInfo'
 	],
 	#classInstVars : [
 		'instance'
@@ -46,8 +47,8 @@ SSmallSuiteGenerator >> fitnessBlock: aBlock [
 SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
-		description: 'Before must execute ''runGeneration''.'.
-	engine generateAssertionsUsing: selectedInvariants 
+		description: 'Execute ''runGeneration'' before.'.
+	engine generateAssertionsUsing: selectedInvariants
 ]
 
 { #category : #'as yet unclassified' }
@@ -59,7 +60,7 @@ SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants invariantsAn
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsFrom: aBlock blockOn: aClass classMutating: testClasses testCasesUsing: operators operatorsAnd: evaluationStrategy [
+SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
@@ -71,8 +72,7 @@ SSmallSuiteGenerator >> generateTestsFrom: aBlock blockOn: aClass classMutating:
 	"execute the engine"
 	engine
 		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: aClass ];
+		typeInfo: [ :blockToExecute | self typeInfoOf: blockToExecute onClass: aClass ];
 		coverageProfiler: [ :blockToExecute | 
 			SBProfiler new
 				profileInstrumented: blockToExecute onClass: aClass;
@@ -81,63 +81,7 @@ SSmallSuiteGenerator >> generateTestsFrom: aBlock blockOn: aClass classMutating:
 			[ :testCase | 
 			SCalculatorCoverage
 				calculateCoverageOf: testCase
-				using: coverageProfiler ] ];
-		testClasses: testClasses;
-		mutantOperators: operators;
-		evaluationStrategy: evaluationStrategy
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsFrom: aBlock blockOn: regex packagesMatchingMutating: testClasses testCasesUsing: operators operatorsAnd: evaluationStrategy [
-	self
-		assert: aBlock isNotNil
-		description: 'Need to provide a block to generate the tests'.
-	self
-		assert: (regex isNotNil and: [ regex isNotEmpty ])
-		description: 'Need to provide a valid regex to generate the tests'.
-	engine modelClasses: (self classesForRegex: {regex}).
-	^ engine
-		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
-		coverageProfiler: [ :blockToExecute | 
-			SBProfiler new
-				profileInstrumented: blockToExecute onPackagesMatching: regex;
-				yourself ];
-		fitnessBlock: [ :coverageProfiler | 
-			[ :testCase | 
-			SCalculatorCoverage
-				calculateCoverageOf: testCase
-				using: coverageProfiler ] ];
-		testClasses: testClasses;
-		mutantOperators: operators;
-		evaluationStrategy: evaluationStrategy
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
-	self
-		assert: aBlock isNotNil
-		description: 'Need to provide a block to generate the tests'.
-	self
-		assert: aClass isNotNil
-		description: 'Need to provide a class to generate the tests'.
-	"save the class to evaluate mutants killed or alived"
-	engine modelClasses: { aClass }.
-	"execute the engine"
-	engine
-		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: aClass ];
-		coverageProfiler: [ :blockToExecute | 
-			SBProfiler new
-				profileInstrumented: blockToExecute onClass: aClass;
-				yourself ];
-		fitnessBlock: [ :coverageProfiler | 
-			[ :testCase | 
-			SCalculatorCoverage
-				calculateCoverageOf: testCase
-				using: coverageProfiler ] ].
+				using: coverageProfiler ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -151,8 +95,9 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 	engine modelClasses: (self classesForRegex: {regex}).
 	^ engine
 		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
+		typeInfo: [ :blockToExecute | 
+			self typeInfoOf: blockToExecute onPackagesMatching: regex
+			];
 		coverageProfiler: [ :blockToExecute | 
 			SBProfiler new
 				profileInstrumented: blockToExecute onPackagesMatching: regex;
@@ -191,8 +136,8 @@ SSmallSuiteGenerator >> populationSize: aInt [
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> runGeneration [
 	self
-		assert: engine generatorProfiler isNotNil
-		description: 'Need to provide generatorProfiler'.
+		assert: engine typeInfo isNotNil
+		description: 'Need to provide typeInfo'.
 	self
 		assert: engine coverageProfiler isNotNil
 		description: 'Need to provide coverageProfiler'.
@@ -206,4 +151,32 @@ SSmallSuiteGenerator >> runGeneration [
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
 	^ engine run
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> typeInfo [ 
+	^ typeInfo
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> typeInfo: aTypeInfo [
+	typeInfo := aTypeInfo
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> typeInfoOf: blockToExecute onClass: aClass [
+	typeInfo
+		ifNil: [ typeInfo := SConfiguration
+				defaultGeneratorTypeInfoOf: blockToExecute
+				onClass: aClass ].
+	^ typeInfo
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> typeInfoOf: blockToExecute onPackagesMatching: regex [
+	typeInfo
+		ifNil: [ typeInfo := SConfiguration
+				defaultGeneratorTypeInfoOf: blockToExecute
+				onPackagesMatching: regex ].
+	^ typeInfo
 ]

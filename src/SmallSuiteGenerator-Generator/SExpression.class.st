@@ -44,6 +44,7 @@ SExpression >> id: anObject [
 
 { #category : #'as yet unclassified' }
 SExpression >> insertAsParameter: aExpression using: aTestCase [
+	
 	^ aTestCase insertAsParameter: self copy after: aExpression
 ]
 

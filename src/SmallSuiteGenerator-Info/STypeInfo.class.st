@@ -46,13 +46,6 @@ STypeInfo >> copy [
 	^ copy
 ]
 
-{ #category : #lookup }
-STypeInfo >> copyFrom: aCoverageAnlysisResult [
-	| clone |
-	clone := self class new
-	"filter data according the other typeInfo of mutalk or othher class, or just analisysOfMutalk to dont depend another project "
-]
-
 { #category : #'error handling' }
 STypeInfo >> error: aString [
 	^ SError signal: aString

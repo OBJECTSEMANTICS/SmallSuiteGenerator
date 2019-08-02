@@ -55,99 +55,162 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfosSEvent [
+	^ OrderedCollection new
+		add:
+			(STypeInfo new
+				type:
+					#SEvent
+						->
+							{{(#initialize -> #(#SEvent #() false)).
+							(#discount -> #(#SmallInteger #()  true)).
+							(#discount: -> #(#SEvent #(#SmallInteger) false)).
+							(#price -> #(#SmallInteger  #()  true)).
+							(#price: -> #(#SEvent #(#SmallInteger) false))}.
+							{(#price: -> #(#SEvent #(#SmallInteger) false))}};
+				scalar: #SmallInteger with: #(0 1 8 30));
+		add:
+			(STypeInfo new
+				type:
+					#SEvent
+						->
+							{{(#initialize -> #(#SEvent #() false)).
+							(#discount -> #(#SmallInteger #() true)).
+							(#price -> #(#SmallInteger #() true))}.
+							{(#price: -> #(#SEvent #(#SmallInteger) false))}};
+				scalar: #SmallInteger with: #(0 15));
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfosSFoo [
-	^ OrderedCollection new 
-	add: (STypeInfo new
-		type:
-			#SFoo
-				->
-					{{(#returnNum
+	^ OrderedCollection new
+		add:
+			(STypeInfo new
+				type:
+					#SFoo
 						->
-							{#SmallInteger.
-							{}.
-							false}).
-					(#returnFloat
+							{{(#returnNum
+								->
+									{#SmallInteger.
+									{}.
+									false}).
+							(#returnFloat
+								->
+									{#SmallFloat64.
+									{}.
+									false}).
+							(#returnString
+								->
+									{#ByteString.
+									{}.
+									false}).
+							(#score
+								->
+									{#SmallFloat64.
+									{}.
+									true}).
+							(#return:
+								->
+									{#ByteString.
+									{#ByteString}.
+									false})}.
+							{(#score:
+								->
+									{#SFoo.
+									{#SmallFloat64}.
+									false})}};
+				scalar: #ByteString with: {'hello'};
+				scalar: #SmallInteger with: {5};
+				scalar: #SmallFloat64 with: {7.3});
+		add:
+			(STypeInfo new
+				type:
+					#SFoo
 						->
-							{#SmallFloat64.
-							{}.
-							false}).
-					(#returnString
+							{{(#return:
+								->
+									{#SFoo.
+									{#SFoo}.
+									false})}.
+							{}};
+				scalar: #ByteString with: {'hello'};
+				scalar: #SmallInteger with: {5};
+				scalar: #SmallFloat64 with: {7.3});
+		add:
+			(STypeInfo new
+				type:
+					#SFoo
 						->
-							{#ByteString.
-							{}.
-							false}).
-					(#score
-						->
-							{#SmallFloat64.
-							{}.
-							true}).
-					(#return:
-						->
-							{#ByteString.
-							{#ByteString}.
-							false})}.
-					{(#score:
-						->
-							{#SFoo.
-							{#SmallFloat64}.
-							false})}};
-		scalar: #ByteString with: {'hello'};
-		scalar: #SmallInteger with: {5};
-		scalar: #SmallFloat64 with: {7.3});
-		add: (
-		STypeInfo new
-		type:
-			#SFoo
-				->
-					{{(#return:
-						->
-							{#SFoo.
-							{#SFoo}.
-							false})}.
-					{}};
-		scalar: #ByteString with: {'hello'};
-		scalar: #SmallInteger with: {5};
-		scalar: #SmallFloat64 with: {7.3}
-		); add: (STypeInfo new
-		type:
-			#SFoo
-				->
-					{{(#returnNum
-						->
-							{#SmallInteger.
-							{}.
-							false}).
-					(#returnFloat
-						->
-							{#SmallFloat64.
-							{}.
-							false}).
-					(#returnString
-						->
-							{#ByteString.
-							{}.
-							false}).
-					(#score
-						->
-							{#SmallInteger.
-							{}.
-							true}).
-					
+							{{(#returnNum
+								->
+									{#SmallInteger.
+									{}.
+									false}).
+							(#returnFloat
+								->
+									{#SmallFloat64.
+									{}.
+									false}).
+							(#returnString
+								->
+									{#ByteString.
+									{}.
+									false}).
+							(#score
+								->
+									{#SmallInteger.
+									{}.
+									true}).
 							(#score:
+								->
+									{#SFoo.
+									{#SmallInteger}.
+									false})}.
+							{(#score:
+								->
+									{#SFoo.
+									{#SmallInteger}.
+									false})}};
+				scalar: #ByteString with: {'Hello'};
+				scalar: #SmallInteger with: {4};
+				scalar: #SmallFloat64 with: {2.3});
+				add:
+			(STypeInfo new
+				type:
+					#SFoo
 						->
-							{#SFoo.
-							{#SmallInteger}.
-							false}).
+							{{(#returnCollection
+								->
+									{#OrderedCollection.
+									{}.
+									false}).
+							(#returnFloat
+								->
+									{#SmallFloat64.
+									{}.
+									false}).
 							
-							}.
-					{(#score:
-						->
-							{#SFoo.
-							{#SmallInteger}.
-							false})}};
-		scalar: #ByteString with: {'Hello'};
-		scalar: #SmallInteger with: {4};
-		scalar: #SmallFloat64 with: {2.3});yourself.
+							(#score
+								->
+									{#SmallInteger.
+									{}.
+									true}).
+							(#return:
+								->
+									{#Array.
+									{#Array}.
+									false})}.
+							{(#score:
+								->
+									{#SFoo.
+									{#SmallInteger}.
+									false})}};
+				scalar: #OrderedCollection with: (Array with: OrderedCollection new);
+				scalar: #Array with: (Array with: #(1 5 6));
+				scalar: #SmallInteger with: #(15 );
+				scalar: #SmallFloat64 with: #(2.3));
+		yourself
 ]
 
 { #category : #'as yet unclassified' }
@@ -161,12 +224,12 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 							{{(#initialize
 								->
 									{#SSTeacher.
-									{}.
+									#().
 									false}).
 							(#yearsWorkExperience
 								->
 									{#SmallInteger.
-									{}.
+									#().
 									true}).
 							(#yearsWorkExperience:
 								->
@@ -175,7 +238,7 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 									false})}.
 							{}};
 				scalar: #SmallInteger with: #(0 100);
-				scalar: #ByteString with: {'teacher_Ann'});
+				scalar: #ByteString with: #('teacher_Ann'));
 		add:
 			(STypeInfo new
 				type:
@@ -184,12 +247,12 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 							{{(#initialize
 								->
 									{#SSTeacher.
-									{}.
+									#().
 									false}).
 							(#idTeacher
 								->
 									{#SmallInteger.
-									{}.
+									#().
 									true}).
 							(#yearsWorkExperience:
 								->
@@ -199,11 +262,34 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 							(#nickname
 								->
 									{#ByteString.
-									{}.
+									#().
+									false})}.
+							#()};
+				scalar: #SmallInteger with: #(1 29 -7 9);
+				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark'));
+				add:
+			(STypeInfo new
+				type:
+					#SSTeacher
+						->
+							{{(#initialize
+								->
+									{#SSTeacher.
+									#().
+									false}).
+							(#yearsWorkExperience
+								->
+									{#SmallInteger.
+									#().
+									false}).
+							(#nickname
+								->
+									{#ByteString.
+									#().
 									false})}.
 							{}};
-				scalar: #SmallInteger with: #(1 29 -7 9);
-				scalar: #ByteString with: {'teacher_Amy' . 'teacher_Mark'});
+				scalar: #SmallInteger with: #(1 10);
+				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark'));
 		yourself
 ]
 
@@ -236,7 +322,7 @@ SUtilityTypeInfo >> typeInfosSStack [
 									{#Array}.
 									false})}};
 				scalar: #Array with: {#(2 4 6 1)};
-				scalar: #SmallInteger with: #(1  2  4  6  8));
+				scalar: #SmallInteger with: #(1 2 4 6 8));
 		add:
 			(STypeInfo new
 				type:
@@ -270,8 +356,37 @@ SUtilityTypeInfo >> typeInfosSStack [
 				scalar: #Array
 					with:
 					{#(2 4 6 1).
-					#(5  7  9  0)};
-				scalar: #SmallInteger with: #(1  2  5  8  9));
+					#(5 7 9 0)};
+				scalar: #SmallInteger with: #(1 2 5 8 9));
+				add:
+			(STypeInfo new
+				type:
+					#SStack
+						->
+							{{
+							(#pop
+								->
+									{#SmallInteger.
+									{}.
+									false}).
+							(#push:
+								->
+									{#SmallInteger.
+									{#SmallInteger}.
+									false}).
+									(#top
+								->
+									{#SmallInteger.
+									{}.
+									false}).
+							}.
+							{(#newStackWith:
+								->
+									{#SStack.
+									{#Array}.
+									false})}};
+				scalar: #Array with: (Array with: #(2 4 6 1));
+				scalar: #SmallInteger with: #(7 5 9 1));
 		yourself
 ]
 

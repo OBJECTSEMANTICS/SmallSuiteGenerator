@@ -2,19 +2,20 @@ Class {
 	#name : #SCalculatorCoverage,
 	#superclass : #Object,
 	#instVars : [
-		'maxNumToIterate'
+		'maxNumToIterate',
+		'level'
 	],
 	#classInstVars : [
 		'compilerClassOfCalculator'
 	],
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Fitness'
 }
 
 { #category : #'as yet unclassified' }
 SCalculatorCoverage class >> calculateCoverageOf: aTestCase using: profiler [
 	^ self new
 		maxNumToIterate: self maxNumberOfIterations;
-		calculateCoverageOf: aTestCase using: profiler inLevel: 1
+		calculateCoverageOf: aTestCase using: profiler
 ]
 
 { #category : #accessing }
@@ -51,9 +52,9 @@ SCalculatorCoverage class >> stringToCreateNewClass [
 ]
 
 { #category : #'as yet unclassified' }
-SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: numLevel [
+SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler [
 	| formattedNode |
-	numLevel > maxNumToIterate
+	level > maxNumToIterate
 		ifTrue: [ ^ profiler dictCoverage ].
 	formattedNode := (self class nodeFormattedOf: aTestCase) body
 		formattedCode.
@@ -62,25 +63,24 @@ SCalculatorCoverage >> calculateCoverageOf: aTestCase using: profiler inLevel: n
 		on: Error
 		do: [ :e | 
 			self halt.
+			level := level + 1.
 			"(aTestCase removeNumStatements: 5)
 				ifTrue: [ ^ self
 						calculateCoverageOf: aTestCase
 						using: profiler
 						inLevel: numLevel + 1 ]
 				ifFalse: [ ^ profiler dictCoverage ]" ].
-	^ self
-		executeStatementsOf: aTestCase
-		using: profiler
-		inLevel: numLevel
+	^ self executeStatementsOf: aTestCase using: profiler
 ]
 
 { #category : #'as yet unclassified' }
-SCalculatorCoverage >> executeStatementsOf: aTestCase using: profiler inLevel: numLevel [
+SCalculatorCoverage >> executeStatementsOf: aTestCase using: profiler [
 	[ profiler
 		executeBlock: [ self class compilerClassOfCalculator new perform: #compileTestCase ] ]
 		on: Exception
 		do: [ :exception | 
-			self halt
+			self halt.
+			level := level + 1.
 			"(aTestCase
 				changeStatementsOfClassName: (self signalerOfException: exception))
 				ifTrue: [ ^ self
@@ -88,6 +88,11 @@ SCalculatorCoverage >> executeStatementsOf: aTestCase using: profiler inLevel: n
 						using: profiler
 						inLevel: numLevel + 1 ]" ].
 	^ profiler dictCoverage
+]
+
+{ #category : #initialization }
+SCalculatorCoverage >> initialize [ 	
+	level := 1
 ]
 
 { #category : #accessing }

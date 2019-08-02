@@ -63,3 +63,20 @@ SGAMutationOperationTest >> testMutationSSteacher [
 	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase validReferences
 ]
+
+{ #category : #tests }
+SGAMutationOperationTest >> testMutationSStudentManual [
+	| testCase mutatedTestCase testSuite |
+	testSuite := utility testSuiteSStudentManual.
+	testCase := testSuite first.
+	"testCase generateStatements."
+	mutatedTestCase := operation mutate: testCase.
+	mutatedTestCase := operation mutate: mutatedTestCase.
+	self assert: mutatedTestCase validReferences.
+	
+testCase := testSuite  second.
+	"testCase generateStatements."
+	mutatedTestCase := operation mutate: testCase.
+	mutatedTestCase := operation mutate: mutatedTestCase.
+	self assert: mutatedTestCase validReferences
+]

@@ -39,5 +39,5 @@ SExtensionsTest >> testStoreString [
 	self assert: 'hello' storeString equals: '''hello'''.
 	self assert: $d storeString equals: '$d'.
 	self assert: (SSTeacher new name: 'Mary') storeString isNotEmpty.
-	self assert: RTView new storeString isNotEmpty
+	self assert: (SStudent new name: 'Alan') storeString isNotEmpty
 ]

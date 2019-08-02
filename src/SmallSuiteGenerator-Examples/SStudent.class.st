@@ -27,10 +27,12 @@ SStudent >> nickname [
 
 { #category : #accessing }
 SStudent >> scoreStudent [
+
 	^ scoreStudent
 ]
 
 { #category : #accessing }
 SStudent >> scoreStudent: aNumber [
+	
 	scoreStudent := aNumber
 ]

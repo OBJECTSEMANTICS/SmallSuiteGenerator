@@ -39,16 +39,17 @@ SSGeneratorMethod >> checkIfArgIsScalar: arg [
 SSGeneratorMethod >> initArgsTypesWith: args [
 	| classNames |
 	classNames := args collect: [ :arg | arg class name ].
-	argTypes ifNil: [ 
-		classNames ifNotEmpty: [argTypes := classNames collect: [ :aName | STypeReturnInfo new: aName ]]
-		 ] ifNotNil: [ self mergeTypes: classNames ].
+	argTypes
+		ifNil: [ classNames
+				ifNotEmpty: [ argTypes := classNames
+						collect: [ :aName | STypeReturnInfo new: aName ] ] ]
+		ifNotNil: [ self mergeArgsTypes: classNames ]
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> initialize [
 	super initialize.
-	returnType := STypeReturnInfo new.
-	"argTypes := OrderedCollection new"
+	returnType := STypeReturnInfo new
 ]
 
 { #category : #hooks }
@@ -60,7 +61,7 @@ SSGeneratorMethod >> isFactory [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> mergeTypes: args [
+SSGeneratorMethod >> mergeArgsTypes: args [
 	argTypes
 		with: args
 		do: [ :argType :otherArgType | argType type: otherArgType ]
@@ -69,12 +70,6 @@ SSGeneratorMethod >> mergeTypes: args [
 { #category : #accessing }
 SSGeneratorMethod >> returnType [
 	^ returnType
-]
-
-{ #category : #accessing }
-SSGeneratorMethod >> returnTypeName [
-	"to remove"
-	^ returnType ifNotNil: [ returnType name ]	"ifNil: [ nil ]"
 ]
 
 { #category : #hooks }

@@ -250,16 +250,16 @@ SSTestCaseTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	expression := testCase addFactoryMessage: #SFoo ofSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		includesAll: {'_var0 := 7.3.' . '_var1 := 7.3.'}.
+		includesAll: #('_var0 := 7.3.' '_var1 := 7.3.').
 	self
 		assert:
-			({'_var2 := SFoo score: _var0.' . '_var2 := SFoo score: _var1.'}
+			(#('_var2 := SFoo score: _var0.'  '_var2 := SFoo score: _var1.')
 				includes: expression printString).
 	expressionChanged := testCase changeStatementOfVarName: '_var2'.
 	self
 		assert:
-			({'_var2 := SFoo score: _var0.' . '_var2 := SFoo score: _var1.'.
-			'_var2 := SFoo new.'} includes: expressionChanged printString).
+			(#('_var2 := SFoo score: _var0.'  '_var2 := SFoo score: _var1.'
+			'_var2 := SFoo new.') includes: expressionChanged printString).
 	self assert: testCase validReferences
 ]
 

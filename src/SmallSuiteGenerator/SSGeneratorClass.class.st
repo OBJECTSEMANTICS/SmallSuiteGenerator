@@ -16,12 +16,9 @@ SSGeneratorClass >> factoryMethods [
 
 { #category : #'as yet unclassified' }
 SSGeneratorClass >> fillTypesOn: aTypeInfo [
-	| aTypeClass aClassName |
-	aClassName := self className.
-	aTypeClass := STypeClassInfo newFrom: aClassName and: aTypeInfo.
-	aTypeClass
-		addMethods: (self methods collect: #asTypeInfo).
-	aTypeClass
+	| aTypeClass |
+	aTypeClass := STypeClassInfo newFrom: self className and: aTypeInfo.
+	aTypeClass addMethods: (self methods collect: #asTypeInfo);
 		addClassMethods: (self metaclassSpy methods collect: #asTypeInfo).
 	aTypeInfo addClassInfo: aTypeClass
 ]

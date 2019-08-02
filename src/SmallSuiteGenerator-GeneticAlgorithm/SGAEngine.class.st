@@ -14,12 +14,12 @@ Class {
 		'logs',
 		'blockToExecute',
 		'coverageProfiler',
-		'generatorProfiler',
 		'valueToCompare',
 		'modelClasses',
 		'testClasses',
 		'operators',
-		'evaluationStrategy'
+		'evaluationStrategy',
+		'typeInfo'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -81,17 +81,10 @@ SGAEngine >> checkFitnessBlock [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> checkGeneratorProfiler [
-	self
-		assert: [ generatorProfiler notNil ]
-		description: 'Need to set a generatorProfiler'
-]
-
-{ #category : #'as yet unclassified' }
 SGAEngine >> checkIfReadyToRun [
 	self checkBlockToExecute.
 	self checkCoverageProfiler.
-	self checkGeneratorProfiler.
+	self checkTypeInfo.
 	self checkFitnessBlock.
 	self checkLogs
 ]
@@ -99,6 +92,13 @@ SGAEngine >> checkIfReadyToRun [
 { #category : #'as yet unclassified' }
 SGAEngine >> checkLogs [
 	self assert: [ logs isEmpty ] description: 'Already been run'
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> checkTypeInfo [
+	self
+		assert: [ typeInfo notNil ]
+		description: 'Set a typeInfo'
 ]
 
 { #category : #accessing }
@@ -109,7 +109,7 @@ SGAEngine >> coverageProfiler [
 { #category : #accessing }
 SGAEngine >> coverageProfiler: aCoverageBlock [
 	self checkBlockToExecute.
-	self checkGeneratorProfiler.
+	self checkTypeInfo.
 	coverageProfiler := aCoverageBlock value: blockToExecute
 ]
 
@@ -168,17 +168,6 @@ SGAEngine >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrett
 			log mutationResult: self analyzeMutants ]
 ]
 
-{ #category : #accessing }
-SGAEngine >> generatorProfiler [
-	^ generatorProfiler
-]
-
-{ #category : #accessing }
-SGAEngine >> generatorProfiler: generatorBlock [
-	self checkBlockToExecute.
-	generatorProfiler := generatorBlock value: blockToExecute
-]
-
 { #category : #initialization }
 SGAEngine >> initialize [
 	super initialize.
@@ -214,9 +203,9 @@ SGAEngine >> initializePopulation [
 		timesRepeat: [ population
 				add:
 					(SSTestCase new
-						typeInfo: generatorProfiler asTypeInfo;
+						typeInfo: typeInfo;
 						numMaxStatements: numberOfStatements;
-							generateStatements) ]
+						generateStatements) ]
 ]
 
 { #category : #testing }
@@ -353,6 +342,17 @@ SGAEngine >> shouldTerminate [
 { #category : #accessing }
 SGAEngine >> testClasses: testCaseClasses [
 	testClasses := testCaseClasses 
+]
+
+{ #category : #accessing }
+SGAEngine >> typeInfo [
+	^ typeInfo
+]
+
+{ #category : #accessing }
+SGAEngine >> typeInfo: aTypeInfo [
+	self checkBlockToExecute.
+	typeInfo := aTypeInfo
 ]
 
 { #category : #'as yet unclassified' }

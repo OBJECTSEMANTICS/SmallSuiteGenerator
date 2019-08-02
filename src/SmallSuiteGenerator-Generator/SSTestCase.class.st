@@ -142,10 +142,10 @@ SSTestCase >> addStatement: newExpression after: aStatement [
 { #category : #adding }
 SSTestCase >> addStatement: newExpression before: aStatement [
 
+
 	statements
 		add: newExpression
 		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
-
 ]
 
 { #category : #'as yet unclassified' }
@@ -217,6 +217,7 @@ SSTestCase >> alternativeMessage: aMessage before: aExpression [
 { #category : #'as yet unclassified' }
 SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 	| returnType |
+	
 	self statementOfVarName: aVariable printString.
 	returnType := aVariable returnType.
 	(self statementsOfType: returnType before: aExpression)
@@ -244,11 +245,12 @@ SSTestCase >> assignedIds [
 SSTestCase >> buildArgs: argTypes before: aStatement [
 	argTypes
 		ifNotNil: [ | types typesToAdd |
-			
 			types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-				collect: #returnType thenSelect: [:aType | aType isNotNil].	
+				collect: #returnType
+				thenSelect: [ :aType | aType isNotNil ].
 			typesToAdd := ((argTypes flatCollect: [ :arg | arg types ])
 				reject: [ :aType | types includes: aType ]) asSet.
+			
 			(typeInfo scalars keys includesAll: typesToAdd)
 				ifFalse: [ ^ self error: 'error to create args' ].
 			typesToAdd
@@ -357,6 +359,7 @@ SSTestCase >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertAsParameter: aExpression after: aStatement [
+
 	(statements
 		copyFrom: (statements indexOf: aStatement) + 1
 		to: self numberStatements) shuffle
@@ -386,7 +389,7 @@ SSTestCase >> insertRandomStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatement [
-	| l stop alpha count random  |
+	| l stop alpha count random |
 	statements ifEmpty: [ ^ #() ].
 	l := 1.
 	count := 0.
@@ -401,6 +404,7 @@ SSTestCase >> insertStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatementOfSelector: selector [
+	Transcript show: selector , String cr.
 	statements copy shuffle
 		do: [ :stm | 
 			[ ^ self perform: selector inStatement: stm ]
@@ -429,7 +433,7 @@ SSTestCase >> newAssignment: anExpression [
 				id: self assignId;
 				returnType: anExpression returnType;
 				yourself)
-		value: anExpression.
+		value: anExpression copy
 ]
 
 { #category : #actions }

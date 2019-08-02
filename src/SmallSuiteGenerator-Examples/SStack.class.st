@@ -25,6 +25,7 @@ SStack class >> newStackWith: aList [
 
 { #category : #accessing }
 SStack >> firstLinkStack [
+
 	^ firstLink
 ]
 
@@ -35,10 +36,11 @@ SStack >> lastLinkStack [
 
 { #category : #removing }
 SStack >> pop [
+	
 	self isEmpty
 		ifTrue: [ 
 			^ nil ]
-		ifFalse: [
+		ifFalse: [ 
 			^ self removeFirst ]
 ]
 
@@ -47,7 +49,7 @@ SStack >> push: aObject [
 	| aLink |
 	aLink := aObject asLink.
 	self isEmpty
-		ifTrue: [ 
+		ifTrue: [
 			lastLink := aLink ].
 	aLink nextLink: firstLink.
 	firstLink := aLink.
