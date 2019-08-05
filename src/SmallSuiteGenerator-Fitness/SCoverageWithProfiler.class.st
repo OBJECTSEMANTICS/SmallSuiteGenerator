@@ -80,9 +80,7 @@ SCoverageWithProfiler >> profiler: anObject [
 
 { #category : #running }
 SCoverageWithProfiler >> run: aSTestCase [
-	"numIteration > maxNumOfIterations
-		ifTrue: [ ^ profiler methodCoverage ]."
-
+	self assert: aSTestCase isNotNil description: 'testCase cant be nil.'.
 	numIteration <= maxNumOfIterations
 		ifTrue: [ [ self class compilerClassOfCoverage
 				compile:
@@ -98,7 +96,7 @@ SCoverageWithProfiler >> run: aSTestCase [
 						using: profiler
 						inLevel: numLevel + 1 ]
 				ifFalse: [ ^ profiler dictCoverage ]" ].
-			"self executeStatementsOf: aSTestCase" ].
+			self executeStatementsOf: aSTestCase ].
 	profiler cleanInstrumentation.
 	^ self coverage
 ]

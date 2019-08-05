@@ -43,7 +43,7 @@ SGACrossoverOperationTest >> testCrossOverToSStudent [
 
 { #category : #tests }
 SGACrossoverOperationTest >> testCrossOverToSStudent2 [
-	"self testCrossOver: utility testSuiteSStudentManual."
+	self testCrossOver: utility testSuiteSStudentManual.
 	self testCrossOverWithMutation: utility testSuiteSStudentManual
 ]
 

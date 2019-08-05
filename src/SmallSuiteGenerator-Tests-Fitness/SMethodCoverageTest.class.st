@@ -15,6 +15,11 @@ SMethodCoverageTest >> setUp [
 	
 ]
 
+{ #category : #running }
+SMethodCoverageTest >> tearDown [ 
+	super tearDown 
+]
+
 { #category : #tests }
 SMethodCoverageTest >> testCoverageClassSEvent [
 	| testCase |

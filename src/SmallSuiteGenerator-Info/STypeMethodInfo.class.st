@@ -72,9 +72,10 @@ STypeMethodInfo >> isQuick: aBoolean [
 
 { #category : #'as yet unclassified' }
 STypeMethodInfo >> joinWith: otherTypeMethod [
-	argTypes
+	argTypes ifNotNil: [argTypes
 		with: otherTypeMethod argTypes
-		do: [ :argType :otherArgType | argType joinWith: otherArgType ].
+		do: [ :argType :otherArgType | argType joinWith: otherArgType ].  ].
+	
 	returnType joinWith: otherTypeMethod returnType
 ]
 

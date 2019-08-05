@@ -2,7 +2,6 @@ Class {
 	#name : #SGAEngine,
 	#superclass : #SGAObject,
 	#instVars : [
-		'fitnessBlock',
 		'populationSize',
 		'mutationOperator',
 		'compareFitness',
@@ -13,13 +12,12 @@ Class {
 		'terminationBlock',
 		'logs',
 		'blockToExecute',
-		'coverageProfiler',
-		'valueToCompare',
 		'modelClasses',
 		'testClasses',
 		'operators',
 		'evaluationStrategy',
-		'typeInfo'
+		'typeInfo',
+		'fitness'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -44,7 +42,7 @@ SGAEngine >> analyzeMutants [
 { #category : #'as yet unclassified' }
 SGAEngine >> beforeRun [
 	self checkIfReadyToRun.
-	selection fitnessBlock: fitnessBlock.
+	selection fitness: fitness.
 	selection populationSize: populationSize.
 	selection random: random
 ]
@@ -67,25 +65,18 @@ SGAEngine >> checkBlockToExecute [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> checkCoverageProfiler [
+SGAEngine >> checkFitness [
 	self
-		assert: [ coverageProfiler notNil ]
-		description: 'Need to set a coverageProfiler'
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> checkFitnessBlock [
-	self
-		assert: [ fitnessBlock notNil ]
+		assert: [ fitness notNil ]
 		description: 'Need to set a fitnessBlock'
 ]
 
 { #category : #'as yet unclassified' }
 SGAEngine >> checkIfReadyToRun [
 	self checkBlockToExecute.
-	self checkCoverageProfiler.
+	"self checkCoverageProfiler."
 	self checkTypeInfo.
-	self checkFitnessBlock.
+	self checkFitness.
 	self checkLogs
 ]
 
@@ -99,18 +90,6 @@ SGAEngine >> checkTypeInfo [
 	self
 		assert: [ typeInfo notNil ]
 		description: 'Set a typeInfo'
-]
-
-{ #category : #accessing }
-SGAEngine >> coverageProfiler [
-	^ coverageProfiler
-]
-
-{ #category : #accessing }
-SGAEngine >> coverageProfiler: aCoverageBlock [
-	self checkBlockToExecute.
-	self checkTypeInfo.
-	coverageProfiler := aCoverageBlock value: blockToExecute
 ]
 
 { #category : #'as yet unclassified' }
@@ -136,13 +115,13 @@ SGAEngine >> evaluationStrategy: aEvaluationStrategy [
 ]
 
 { #category : #accessing }
-SGAEngine >> fitnessBlock [ 
-	^ fitnessBlock 
+SGAEngine >> fitness [
+	^ fitness
 ]
 
 { #category : #accessing }
-SGAEngine >> fitnessBlock: aBlock [
-	fitnessBlock := aBlock value: coverageProfiler 
+SGAEngine >> fitness: aFitness [
+	fitness := aFitness
 ]
 
 { #category : #'as yet unclassified' }
@@ -173,7 +152,6 @@ SGAEngine >> initialize [
 	super initialize.
 	logs := OrderedCollection new.
 	random := Random new.
-	valueToCompare := 'statementCoverage'.
 	self endForMaxNumberOfGeneration: 10.
 	populationSize := 100.
 	self maximizeComparator.
@@ -233,7 +211,7 @@ SGAEngine >> logs [
 SGAEngine >> maximizeComparator [
 	"change by statementCoverage or methodCoverage"
 
-	compareFitness := [ :f1 :f2 | (f1 at: valueToCompare) > (f2 at: valueToCompare)]
+	compareFitness := [ :f1 :f2 | f1  > f2 ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -318,7 +296,7 @@ SGAEngine >> run [
 					t := Time now asSeconds.
 					self produceNewPopulation.
 					logs add: (self logWithGenerationNumber: gen atTime: t) ].
-			coverageProfiler cleanInstrumentation ]
+			"coverageProfiler cleanInstrumentation" ]
 ]
 
 { #category : #accessing }
@@ -372,9 +350,4 @@ SGAEngine >> validOperators [
 { #category : #'as yet unclassified' }
 SGAEngine >> validTestClasses [
 	^ self valid: testClasses ifNotValid: [ SConfiguration classAssertsGenerationTest ]
-]
-
-{ #category : #accessing }
-SGAEngine >> valueToCompare: keyValue [
-	valueToCompare := keyValue 
 ]

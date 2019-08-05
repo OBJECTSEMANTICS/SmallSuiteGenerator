@@ -13,6 +13,11 @@ SStatementCoverageTest >> setUp [
 	fitness := SStatementCoverage new
 ]
 
+{ #category : #running }
+SStatementCoverageTest >> tearDown [ 
+	super tearDown 
+]
+
 { #category : #tests }
 SStatementCoverageTest >> testCoverageClassSEvent [
 	| testCase |

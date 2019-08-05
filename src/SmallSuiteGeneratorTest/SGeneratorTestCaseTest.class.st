@@ -2,14 +2,16 @@ Class {
 	#name : #SGeneratorTestCaseTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'generator'
+		'generator',
+		'utility'
 	],
 	#category : #'SmallSuiteGeneratorTest-Mutation'
 }
 
 { #category : #initialization }
 SGeneratorTestCaseTest >> setUp [
-	generator := SGeneratorTestCase new
+	generator := SGeneratorTestCase new.
+	utility := SUtilityTypeInfo new
 ]
 
 { #category : #tests }
@@ -27,7 +29,7 @@ SGeneratorTestCaseTest >> testMethodsWithMutation [
 
 { #category : #tests }
 SGeneratorTestCaseTest >> testProfilerMutatedMethods [
-	| profile methods newProfile |
+	"| profile methods newProfile |
 	profile := SSGenerator
 		profile: [ (SEvent price: 200)
 				discount: 15;
@@ -47,5 +49,31 @@ SGeneratorTestCaseTest >> testProfilerMutatedMethods [
 		hasSameElements: {#SEvent}.
 	self
 		assertCollection: (newProfile allMethods collect: #selector)
+		hasSameElements: (methods collect: [ :meth | meth originalMethod selector ]) asSet"
+]
+
+{ #category : #tests }
+SGeneratorTestCaseTest >> testTypeInfoMutatedMethods [
+	| typeInfo newTypeInfo methods |
+	"profile := SSGenerator
+		profile: [ (SEvent price: 200)
+				discount: 15;
+				discount;
+				price ]
+		onClass: SEvent."
+	typeInfo := utility typeInfosSEvent first.
+	methods := generator
+		mutatedMethodsFrom: {SEventTest}
+		mutating: {SEvent}
+		using: MutantOperator contents
+		with: AllTestsMethodsRunningMutantEvaluationStrategy new.
+	newTypeInfo:= generator
+		profileMutatedMethodsFrom: methods
+		usingTypeInfo: typeInfo.
+	self
+		assertCollection: typeInfo types keys
+		hasSameElements: {#SEvent}.
+	self
+		assertCollection: (newTypeInfo allMethods collect: #selector)
 		hasSameElements: (methods collect: [ :meth | meth originalMethod selector ]) asSet
 ]

@@ -186,8 +186,7 @@ SCleanerStatementTest >> testCleanPrimitiveStatementsWithoutProfiler [
 { #category : #tests }
 SCleanerStatementTest >> testCleanStatementsGeneratedRandomly [
 	| typeInfo testCase cleanedVarNames oldSize |
-	typeInfo := STypeInfo
-		typeInfo:
+	typeInfo := 
 			(SSGenerator
 				profile: [ (SSTeacher name: 'Ann' with: 34)
 						age: 34;
@@ -197,12 +196,12 @@ SCleanerStatementTest >> testCleanStatementsGeneratedRandomly [
 						name;
 						id;
 						nickname ]
-				onClass: SSTeacher).
+				onClass: SSTeacher) asTypeInfo.
 	testCase := SSTestCase with: typeInfo.
 	testCase generateStatements.
 	oldSize := testCase statements size.
 	cleanedVarNames := cleaner applyOn: testCase.
-	self assert: testCase validReferences .
+	self assert: testCase validReferences.
 	"self assert: testCase hasUniqueStatements."
 	self
 		assert: testCase statements size

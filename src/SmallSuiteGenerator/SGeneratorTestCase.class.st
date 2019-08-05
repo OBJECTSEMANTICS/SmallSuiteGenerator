@@ -58,6 +58,37 @@ SGeneratorTestCase >> packagesClassesAndMethodsOf: profile filterBy: mutatedMeth
 ]
 
 { #category : #'as yet unclassified' }
+SGeneratorTestCase >> packagesClassesAndMethodsOfTypeInfo: typeInfo filterBy: mutatedMethods [
+	| packages classes methods assocMutation |
+	packages := Set new.
+	classes := Set new.
+	methods := Set new.
+	assocMutation  := (mutatedMethods
+		collect: [ :meth | meth originalClass name -> meth originalMethod selector ])
+		asSet.
+	(typeInfo types
+		collect: [ :assoc | assoc values do: [ :aMethod | assoc key -> aMethod selector ] ] thenSelect: 
+			[ :assoc | 
+				assocMutation  includes: assoc
+			  ]) asSet
+		do: [ :assoc | 
+			| aClass splited aClassName |
+			aClassName := assoc key.
+			aClass := Smalltalk at: aClassName.
+			packages add: aClass packageSpy packageName.
+			splited := aClassName splitOn: ' '.
+			classes
+				add:
+					(splited size > 1
+						ifFalse: [ aClassName ]
+						ifTrue: [ splited first asSymbol ]).
+			methods add: aClassName -> assoc value ].
+	^ {packages.
+	classes.
+	methods}
+]
+
+{ #category : #'as yet unclassified' }
 SGeneratorTestCase >> profileMutatedMethodsFrom: methods using: profile [
 	| newProfile data |
 	newProfile := profile copy.
@@ -81,4 +112,31 @@ SGeneratorTestCase >> profileMutatedMethodsFrom: methods using: profile [
 					[ :meth | data third includes: meth classSpy className -> meth selector ])
 				asOrderedCollection.
 	^ newProfile
+]
+
+{ #category : #'as yet unclassified' }
+SGeneratorTestCase >> profileMutatedMethodsFrom: methods usingTypeInfo: typeInfo [
+	| newTypeInfo data |
+	newTypeInfo := typeInfo copy.
+	data := self
+		packagesClassesAndMethodsOfTypeInfo: typeInfo
+		filterBy: methods.
+	self
+		assert: data size = 3
+		description: 'Data must contain: packages, classes and methods'.
+	newTypeInfo
+		packages:
+			(typeInfo packagesDictionary associations
+				select: [ :assoc | data first includes: assoc key ]) asDictionary.
+	data second do: [ :aClassTypeInfo | newTypeInfo addClassInfo: aClassTypeInfo   ].
+		"
+			(profile allClasses
+				select: [ :cls | data second includes: cls className ])
+				asOrderedCollection;
+		methods:
+			(profile allMethods
+				select:
+					[ :meth | data third includes: meth classSpy className -> meth selector ])
+				asOrderedCollection."
+	^ newTypeInfo
 ]

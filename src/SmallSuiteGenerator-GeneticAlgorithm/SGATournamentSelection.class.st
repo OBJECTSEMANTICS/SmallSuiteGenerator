@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'population',
 		'fittest',
-		'fitnessBlock',
+		'fitness',
 		'populationSize',
 		'compareFitness',
 		'initialPopulation',
@@ -49,7 +49,7 @@ SGATournamentSelection >> doSelection [
 	fittest := initialPopulation first.
 	initialPopulation
 		do: [ :testCase | 
-			testCase computeFitnessUsing: fitnessBlock.
+			testCase computeFitnessUsing: fitness.
 			(self isTestCase: testCase betterThan: fittest)
 				ifTrue: [ fittest := testCase ] ].
 	self createNewPopulation.
@@ -67,13 +67,13 @@ SGATournamentSelection >> engine: aEngine [
 ]
 
 { #category : #accessing }
-SGATournamentSelection >> fitnessBlock [
-	^ fitnessBlock 
+SGATournamentSelection >> fitness [ 	
+	^ fitness 
 ]
 
 { #category : #accessing }
-SGATournamentSelection >> fitnessBlock: aBlock [
-	fitnessBlock := aBlock
+SGATournamentSelection >> fitness: aFitness [
+	fitness := aFitness
 ]
 
 { #category : #accessing }
@@ -113,7 +113,7 @@ SGATournamentSelection >> isTestCase: testCase betterThan: fittestTestCase [
 
 { #category : #testing }
 SGATournamentSelection >> isTooLong: aTestCase [
-	^ aTestCase numberOfStatements > 54	"if number statements exceeds the number max of statements"
+	^ aTestCase numberStatements > 54	"if number statements exceeds the number max of statements"
 ]
 
 { #category : #'as yet unclassified' }

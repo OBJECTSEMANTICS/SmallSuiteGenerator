@@ -34,7 +34,7 @@ SSGeneratorInvariant class >> resetNumTest [
 { #category : #accessing }
 SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
 	| node selector |
-	node := SCalculatorCoverage nodeFormattedOf: testCase.
+	node := SCoverageWithProfiler  nodeFormattedOf: testCase.
 	invariants
 		do:
 			[ :invariant | node body addNode: (RBParser parseExpression: invariant asString) ].
@@ -100,7 +100,7 @@ SSGeneratorInvariant >> initialize [
 { #category : #accessing }
 SSGeneratorInvariant >> transformToNode: testCase [
 	| node |
-	node := SCalculatorCoverage nodeFormattedOf: testCase.
+	node := SCoverageWithProfiler  nodeFormattedOf: testCase.
 	node body
 		addNode: (RBParser parseExpression: '^ self analyze: thisContext').
 	^ node
