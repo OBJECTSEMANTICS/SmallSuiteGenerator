@@ -45,6 +45,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Refactorization' 'SmallSuiteGenerator-Examples') ];
 				package: 'SmallSuiteGeneratorTest'
-					with: [ spec requires: #('SmallSuiteGenerator' 'MuTalk') ] ].
-	spec package: 'SmallSuiteGenerator-Tests'
+					with: [ spec requires: #('SmallSuiteGenerator' 'MuTalk') ];
+				package: 'SmallSuiteGenerator-Tests'.
+			 ]
 ]
