@@ -60,7 +60,7 @@ SAbstractMessage >> changeSelectorFrom: aExpression in: aTestCase [
 SAbstractMessage >> copy [ 
 	| copy|
 	copy := super copy.
-	copy args: args copy;
+	copy args: args deepCopy;
 	receiver: receiver copy;
 	selector: selector copy.
 	^ copy

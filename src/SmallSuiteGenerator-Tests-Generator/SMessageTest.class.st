@@ -5,6 +5,37 @@ Class {
 }
 
 { #category : #tests }
+SMessageTest >> testCopy [
+	| testCase expression copy |
+	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
+	expression := testCase addMessage: #return: from: #SFoo.
+	self
+		assert: expression printString
+		equals: '_var3 := _var1 return: _var2.'.
+
+	copy := expression copy.
+	copy value args first id: 5.
+	self assert: copy printString equals: '_var3 := _var1 return: _var5.'.
+	copy value receiver varName: '_sfoo'.
+	copy value receiver id: 4.
+	self
+		assert: copy printString
+		equals: '_var3 := _sfoo4 return: _var5.'.
+	copy value selector: #returnValue:.
+	self
+		assert: copy printString
+		equals: '_var3 := _sfoo4 returnValue: _var5.'.
+	copy variable varName: '_value'.
+	copy variable id: 6.
+	self
+		assert: copy printString
+		equals: '_value6 := _sfoo4 returnValue: _var5.'.
+	self
+		assert: expression printString
+		equals: '_var3 := _var1 return: _var2.'
+]
+
+{ #category : #tests }
 SMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.

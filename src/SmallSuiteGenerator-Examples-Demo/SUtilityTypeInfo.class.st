@@ -413,14 +413,13 @@ SUtilityTypeInfo >> typeInfosSStudent [
 									{#SStudent.
 									{#SmallInteger}.
 									false}).
-									
-									(#idStudent
+							(#idStudent
 								->
 									{#SmallInteger.
 									{}.
-									true}).}.
+									true})}.
 							{}};
-				scalar: #SmallInteger with: #(10 1);
+				scalar: #SmallInteger with: #(1);
 				scalar: #ByteString with: {'student_Jane'});
 		add:
 			(STypeInfo new

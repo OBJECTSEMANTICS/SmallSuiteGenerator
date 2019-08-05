@@ -57,7 +57,7 @@ SVariable >> repairOn: aTestCase changing: aExpression [
 	| otherVariable |
 	otherVariable := aTestCase
 		alternativeOfVariable: self
-		before: aExpression.self halt.
+		before: aExpression.
 	self varName: otherVariable varName.
 	self id: otherVariable id
 ]

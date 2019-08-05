@@ -5,6 +5,37 @@ Class {
 }
 
 { #category : #tests }
+SFactoryMessageTest >> testCopy [
+	| testCase expression copy |
+	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
+	expression := testCase addFactoryMessage.
+	self
+		assert: expression printString
+		equals: '_var1 := SFoo score: _var0.'.
+	copy := expression copy.
+	self assert: copy printString equals: expression printString.
+	copy value args first id: 1.
+	self assert: copy printString equals: '_var1 := SFoo score: _var1.'.
+	
+	copy value receiver varName: #SStudent.
+	self
+		assert: copy printString
+		equals: '_var1 := SStudent score: _var1.'.
+	copy value selector: #name:.
+	self
+		assert: copy printString
+		equals: '_var1 := SStudent name: _var1.'.
+	copy variable varName: '_assignment'.
+	copy variable id: 3.
+	self
+		assert: copy printString
+		equals: '_assignment3 := SStudent name: _var1.'.
+	self
+		assert: expression printString
+		equals: '_var1 := SFoo score: _var0.'
+]
+
+{ #category : #tests }
 SFactoryMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo2.

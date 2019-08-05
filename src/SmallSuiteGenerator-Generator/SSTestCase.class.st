@@ -404,7 +404,7 @@ SSTestCase >> insertStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatementOfSelector: selector [
-	Transcript show: selector , String cr.
+	"Transcript show: selector , String cr."
 	statements copy shuffle
 		do: [ :stm | 
 			[ ^ self perform: selector inStatement: stm ]

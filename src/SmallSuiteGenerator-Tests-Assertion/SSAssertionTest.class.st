@@ -177,7 +177,7 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage .
 	testCase addMessage.
-	invariants := testCase generateAssertionsUsing: {}.
+	invariants := testCase generateAssertionsUsing: #().
 	"invariants is empty if the compiled method has failed"
 	self deny: invariants isEmpty.
 	self assert: invariants size equals: 8.

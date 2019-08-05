@@ -5,6 +5,21 @@ Class {
 }
 
 { #category : #tests }
+SLiteralTest >> testCopy [
+	| testCase expression copy |
+	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
+	expression := testCase addLiteral: #ByteString.
+	self assert: expression printString equals: '_var0 := ''hello''.'.
+	copy := expression copy.
+	copy value value: 'world'.
+	self assert: copy printString equals: '_var0 := ''world''.'.
+	copy variable varName: '_string'.
+	copy variable id: 2.
+	self assert: copy printString equals: '_string2 := ''world''.'.
+	self assert: expression printString equals: '_var0 := ''hello''.'
+]
+
+{ #category : #tests }
 SLiteralTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.

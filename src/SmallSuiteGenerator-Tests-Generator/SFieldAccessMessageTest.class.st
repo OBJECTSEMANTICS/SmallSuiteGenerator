@@ -5,6 +5,38 @@ Class {
 }
 
 { #category : #tests }
+SFieldAccessMessageTest >> testCopy [
+	| testCase expression copy |
+	testCase := SSTestCase with: SSTestCaseTest typeInfoSStack.
+	testCase addFactoryMessage: #SStack ofSelector: #newStack.
+	expression := testCase
+		addFieldAccessMessage: #firstLinkStack
+		from: #SStack.
+	self
+		assert: expression printString
+		equals: '_var1 := _var0 firstLinkStack.'.
+	copy := expression copy.
+	copy value receiver varName: '_sstack'.
+	copy value receiver id: 4.
+	self
+		assert: copy printString
+		equals: '_var1 := _sstack4 firstLinkStack.'.
+	
+	copy value selector: #lastLinkStack.
+	self
+		assert: copy printString
+		equals: '_var1 := _sstack4 lastLinkStack.'.
+	copy variable varName: '_fieldAccess'.
+	copy variable id: 6.
+	self
+		assert: copy printString
+		equals: '_fieldAccess6 := _sstack4 lastLinkStack.'.
+	self
+		assert: expression printString
+		equals: '_var1 := _var0 firstLinkStack.'
+]
+
+{ #category : #tests }
 SFieldAccessMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: SSTestCaseTest typeInfoSStack.
