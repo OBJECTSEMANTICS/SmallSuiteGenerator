@@ -37,7 +37,7 @@ SRefactorizerTest >> testPrettyCodeApplyingAligner [
 				selector: #score:;
 				args: {'_var1'});
 		addStatement:
-			(SFieldStatement new
+			(SFieldAccessMessage  new
 				receiverVarName: '_var3';
 				fieldName: #name;
 				returnTypeName: 'ByteString');
@@ -255,7 +255,7 @@ SRefactorizerTest >> testPrettyCodeApplyingCleanerAndAligner [
 				selector: #score:;
 				args: {'_var1'});
 		addStatement:
-			(SFieldStatement new
+			(SFieldAccessMessage  new
 				receiverVarName: '_var4';
 				fieldName: #name;
 				returnTypeName: 'ByteString');

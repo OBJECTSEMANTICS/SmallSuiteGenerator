@@ -1,9 +1,6 @@
 Class {
 	#name : #SGAEngineExampleWithRoassal,
 	#superclass : #Object,
-	#instVars : [
-		'engine'
-	],
 	#category : #'SmallSuiteGenerator-Tests-Roassal'
 }
 
@@ -16,151 +13,127 @@ SGAEngineExampleWithRoassal >> clean [
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTAMItemOnClass [
-	| fitness |
-	self
+	|engine |
+	engine := SGAEngineExample new
 		runOnClass: RTAMItem
 		withBlock: [ RTAMItem new
 				itemName: 'Bonus Card';
 				row: 'France';
 				column: 'Customer Relationship';
 				color: Color lightGreen ]
-		ofPopulationSize: 30
-		numStatements: 10
-		and: 10.
-	"7.14 = (1/14) * 100"
-	"31.58 = (6/19) * 100"
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 7.14.
-	self assert: (fitness at: 'statementCoverage') >= 31.58.
-	"35.71 = (4/14) * 100"
-	"52.63 = (10/19) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 35.71.
-	self assert: (fitness at: 'statementCoverage') equals: 52.63.
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fittestTestCase fitness >= 7.14.	"7.14 = (1/14) * 100"
+	self assert: engine logs last fittestTestCase fitness equals: 35.71.	"35.71 = (4/14) * 100"
+	engine := SGAEngineExample new
+		runOnClass: RTAMItem
+		withBlock: [ RTAMItem new
+				itemName: 'Bonus Card';
+				row: 'France';
+				column: 'Customer Relationship';
+				color: Color lightGreen ]
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fittestTestCase fitness >= 31.58.	"31.58 = (6/19) * 100"
+	self assert: engine logs last fittestTestCase fitness equals: 52.63.	"52.63 = (10/19) * 100"
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTAMItemOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	|  engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ RTAMItem new
 				itemName: 'Bonus Card';
 				row: 'France';
 				column: 'Customer Relationship';
 				color: Color lightGreen ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 10.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
+		andFitness: SStatementCoverage.
 	self
 		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+			engine logs first fittestTestCase fitness
+				<= engine logs last fittestTestCase fitness.
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTBorderAttachPointOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTBorderAttachPoint
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
-		ofPopulationSize: 30
-		numStatements: 10
-		and: 10.
+		andFitness: SMethodCoverage.
 	"At least the constructor must be initialized"
-	"12.5 = (1/8) * 100"
-	"6.45 = (2/31) * 100"
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 12.5.
-	self assert: (fitness at: 'statementCoverage') >= 6.45.
-	"25 = (2/8) * 100 round: 2"
-	"9.68 = (3/31) * 100 round: 2"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 25.
-	self assert: (fitness at: 'statementCoverage') equals: 9.68.
+	
+	self assert: engine logs first fittestTestCase fitness >= 12.5.	"12.5 = (1/8) * 100"
+	self assert: engine logs last fittestTestCase fitness >= 25.	"25 = (2/8) * 100 round: 2"
+	
+	engine := SGAEngineExample new
+		runOnClass: RTBorderAttachPoint
+		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fittestTestCase fitness >= 6.45.	"6.45 = (2/31) * 100"
+	self assert: engine logs last fittestTestCase fitness >= 9.68.	"9.68 = (3/31) * 100 round: 2"
+	
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTBorderAttachPointPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine  |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 10.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
+		andFitness: SStatementCoverage.
 	self
 		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+			engine logs first fittestTestCase fitness
+				<= engine logs last fittestTestCase fitness.
+	
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTBoxOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTBox
 		withBlock: [ RTBox new
 				defaultWidth;
 				borderStyle ]
-		ofPopulationSize: 30
-		numStatements: 10
-		and: 15.
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 20.
-	self assert: (fitness at: 'statementCoverage') equals: 22.22.
-	"20 = (1/5) * 100"
-	"22.22 = (2/9) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 20.
-	self assert: (fitness at: 'statementCoverage') equals: 22.22.
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness equals: 20.	"20 = (1/5) * 100"
+	self assert: engine logs last fittestTestCase fitness equals: 20.	
+	engine := SGAEngineExample new
+		runOnClass: RTBox
+		withBlock: [ RTBox new
+				defaultWidth;
+				borderStyle ]
+		andFitness: SStatementCoverage .
+	self assert: engine logs first fittestTestCase fitness equals: 22.22.	"22.22 = (2/9) * 100"
+	self assert: engine logs last fittestTestCase fitness equals: 22.22.	
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTBoxOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ RTBox new
 				defaultWidth;
 				borderStyle ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 10.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
+		andFitness: SStatementCoverage .
 	self
 		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+			engine logs first fittestTestCase fitness
+				<= engine logs last fittestTestCase fitness.
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTCalendarBuilderOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTCalendarBuilder
 		withBlock: [ | classes dictByJulian dictByDate maxPerDays b |
 			"Set your classes here:"
@@ -203,26 +176,19 @@ SGAEngineExampleWithRoassal >> exampleRTCalendarBuilderOnClass [
 						, ' Methods' ].
 			b dates: (dictByDate keys min to: dictByDate keys max).
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	"4.17 = 1/24 * 100"
-	"17.36 = 21/121 * 100"
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 4.17.
-	self assert: (fitness at: 'statementCoverage') >= 17.36.
-	"4.17 = 1/24 * 100"
-	"17.36 = 21/121 * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 4.17.
-	self assert: (fitness at: 'statementCoverage') >= 17.36.
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness >= 4.17.	"4.17 = 1/24 * 100"
+	self assert: engine logs last fittestTestCase fitness >= 4.17.	
+	
+	
+	"StatementCoverage: >=17.36 = 21/121 * 100"
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTCalendarOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-C*'
 		withBlock: [ | classes dictByJulian dictByDate maxPerDays b |
 			"Set your classes here:"
@@ -265,126 +231,100 @@ SGAEngineExampleWithRoassal >> exampleRTCalendarOnPackage [
 						, ' Methods' ].
 			b dates: (dictByDate keys min to: dictByDate keys max).
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
+		andFitness: SStatementCoverage.
 	self
 		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+			engine logs first fittestTestCase fitness
+				<= engine logs last fittestTestCase fitness.
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTDirectedLineOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTDirectedLine
 		withBlock: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
-		ofPopulationSize: 30
-		numStatements: 10
-		and: 15.
-	"20 = (1/5) * 100 round: 2"
-	"18.18 = (2/11) * 100 round: 2"
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 20.
-	self assert: (fitness at: 'statementCoverage') >= 18.18.
-	"60 = (3/5) * 100 round: 2"
-	"54.55 = (6/11) * 100 round: 2"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 60.
-	self assert: (fitness at: 'statementCoverage') equals: 54.55.
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness >= 20. "20 = (1/5) * 100 round: 2"
+	self assert: engine logs first fittestTestCase fitness equals: 60. "60 = (3/5) * 100 round: 2"
+	
+	engine := SGAEngineExample new
+		runOnClass: RTDirectedLine
+		withBlock: [ RTDirectedLine instance
+				pointsFrom: 1 @ 3 To: 3 @ 5;
+				offset: 6.5 ]
+		andFitness: SStatementCoverage  .
+	self assert: engine logs first fittestTestCase fitness >= 18.18. "18.18 = (2/11) * 100 round: 2"
+	self assert: engine logs first fittestTestCase fitness equals: 54.55. "54.55 = (6/11) * 100 round: 2"
+
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTDirectedLineOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
-		ofPopulationSize: 30
-		numStatements: 10
-		and: 15.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
+		andFitness: SMethodCoverage .
 	self
 		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+			engine logs first fittestTestCase fitness
+				<= engine logs last fittestTestCase fitness.
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTLineSegmentOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTLineSegment
 		withBlock: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 				angleInDeg;
 				angleInRad;
 				cotan;
 				bottom ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 15.
-	"2.94 = (1/34) * 100 round: 2"
-	"2.88 = (3/104) * 100 round: 2"
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 2.94.
-	self assert: (fitness at: 'statementCoverage') >= 2.88.
-	"23.53 = (8/34) * 100 round: 2"
-	"13.46 = (14/104) * 100 round: 2"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 23.53.
-	self assert: (fitness at: 'statementCoverage') >= 13.46.
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fittestTestCase fitness >= 2.94.	"2.94 = (1/34) * 100 round: 2"
+	self assert: engine logs first fittestTestCase fitness >= 23.53.	"23.53 = (8/34) * 100 round: 2"
+	engine := SGAEngineExample new
+		runOnClass: RTLineSegment
+		withBlock: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
+				angleInDeg;
+				angleInRad;
+				cotan;
+				bottom ]
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fittestTestCase fitness >= 2.88.	"2.88 = (3/104) * 100 round: 2"
+	self assert: engine logs first fittestTestCase fitness >= 13.46.	"13.46 = (14/104) * 100 round: 2"
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTLineSegmentOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
 				angleInDeg;
 				angleInRad;
 				cotan;
 				bottom ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 10.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SStatementCoverage .
+	self assert: engine logs first fittestTestCase fitness <=  engine logs last fittestTestCase fitness.
+	
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTMondrianOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTMondrian
 		withBlock: [ | nbOfNodes nbOfRandomEdges nodes edges b |
 			nbOfNodes := 40.
@@ -405,24 +345,18 @@ edges := { 1 -> 2 . 1 -> 4 . 4 -> 3 }.
 			b edges source: edges connectFrom: #key to: #value.
 			b layout force.
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 2.78.
-	self assert: (fitness at: 'statementCoverage') >= 6.76.
-	"2.78 = (1/36) * 100"
-	"6.76 = (5/74) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 2.78.
-	self assert: (fitness at: 'statementCoverage') >= 6.76.
+		andFitness: SStatementCoverage .
+	self assert: engine logs first fittestTestCase fitness >= 6.76. "6.76 = (5/74) * 100"
+	self assert: engine logs last fittestTestCase fitness >= 6.76.
+	"SMethodCoverage: >= 2.78. 2.78 = (1/36) * 100"
+	
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTMondrianOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ | nbOfNodes nbOfRandomEdges nodes edges b |
 			nbOfNodes := 40.
@@ -443,26 +377,17 @@ edges := { 1 -> 2 . 1 -> 4 . 4 -> 3 }.
 			b edges source: edges connectFrom: #key to: #value.
 			b layout force.
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness <=
+ engine logs last fittestTestCase fitness.
+
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTNameCloudExampleOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ | b |
 			b := RTNameCloud new
@@ -476,26 +401,16 @@ SGAEngineExampleWithRoassal >> exampleRTNameCloudExampleOnPackage [
 		RTFlowLayout on: v elements.
 		v open'.
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
+
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTPieBuilderOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTPieBuilder
 		withBlock: [ | b |
 			b := RTPieBuilder new.
@@ -513,24 +428,18 @@ SGAEngineExampleWithRoassal >> exampleRTPieBuilderOnClass [
 			b slice: #numberOfMethods.
 			b normalizer distinctColor.
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 16.67.
-	self assert: (fitness at: 'statementCoverage') >= 15.
-	"20 = (1/6) * 100"
-	"22.22 = (3/20) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 16.67.
-	self assert: (fitness at: 'statementCoverage') >= 15.
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness >= 16.67.
+	self assert: engine logs last fittestTestCase fitness >= 16.67.
+	"statementCoverage: >= 15" 
+	
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTPieOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ | b |
 			b := RTPieBuilder new.
@@ -548,26 +457,16 @@ SGAEngineExampleWithRoassal >> exampleRTPieOnPackage [
 			b slice: #numberOfMethods.
 			b normalizer distinctColor.
 			b ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
+	
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTSVGOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-C*'
 		withBlock: [ | v s elements |
 			v := RTView new.
@@ -609,26 +508,16 @@ SGAEngineExampleWithRoassal >> exampleRTSVGOnPackage [
 			v addAll: elements.
 			RTGridLayout on: elements.
 			v ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SStatementCoverage .
+	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
+
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTSVGPathOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTSVGPath
 		withBlock: [ | v s elements |
 			v := RTView new.
@@ -670,24 +559,18 @@ SGAEngineExampleWithRoassal >> exampleRTSVGPathOnClass [
 			v addAll: elements.
 			RTGridLayout on: elements.
 			v ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 1.07.
-	self assert: (fitness at: 'statementCoverage') >= 3.45.
-	"1.07 = (2/187) * 100"
-	"3.45 = (8/232) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 1.07.
-	self assert: (fitness at: 'statementCoverage') >= 3.45.
+		andFitness: SStatementCoverage .
+	self assert: engine logs first fittestTestCase fitness >= 3.45. "3.45 = (8/232) * 100"
+	self assert: engine logs last fittestTestCase fitness >= 3.45.
+	"sMethodCoverage: >= 1.07. 1.07 = (2/187) * 100"
+	
 	self clean
 ]
 
 { #category : #'examples - unfunctional' }
 SGAEngineExampleWithRoassal >> exampleRTSpectrographOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTSpectrograph
 		withBlock: [ | b |
 			b := RTSpectrograph new.
@@ -700,24 +583,18 @@ SGAEngineExampleWithRoassal >> exampleRTSpectrographOnClass [
 			b title: 'Proportion of class methods'.
 			b build.
 			b view ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 20.
-	self assert: (fitness at: 'statementCoverage') equals: 22.22.
-	"20 = (1/5) * 100"
-	"22.22 = (2/9) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') equals: 20.
-	self assert: (fitness at: 'statementCoverage') equals: 22.22.
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness equals: 20. "20 = (1/5) * 100"
+	self assert: engine logs last fittestTestCase fitness equals: 20.
+	
+	"statementCoverage: =22.22 = (2/9) * 100"
 	self clean
 ]
 
 { #category : #'examples - unfunctional' }
 SGAEngineExampleWithRoassal >> exampleRTSpectrographOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Co*'
 		withBlock: [ | b |
 			b := RTSpectrograph new.
@@ -730,26 +607,16 @@ SGAEngineExampleWithRoassal >> exampleRTSpectrographOnPackage [
 			b title: 'Proportion of class methods'.
 			b build.
 			b view ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
+	
 	self clean
 ]
 
 { #category : #'examples - onClass' }
 SGAEngineExampleWithRoassal >> exampleRTUMLClassBuilderOnClass [
-	| fitness |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnClass: RTUMLClassBuilder
 		withBlock: [ | someClasses allMethodCategories b n |
 			someClasses := RTShape withAllSubclasses.
@@ -763,24 +630,19 @@ SGAEngineExampleWithRoassal >> exampleRTUMLClassBuilderOnClass [
 			b treeLayout.
 			b build.
 			b view ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitness := engine logs first fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') <= 24.53.
-	self assert: (fitness at: 'statementCoverage') >= 11.7.
-	"24.53 = (13/53) * 100"
-	"11.7 = (20/171) * 100"
-	fitness := engine logs last fittestTestCase fitness.
-	self assert: (fitness at: 'methodCoverage') >= 24.53.
-	self assert: (fitness at: 'statementCoverage') >= 11.7.
+		andFitness: SStatementCoverage .
+	self assert: engine logs first fittestTestCase fitness >= 11.7. "11.7 = (20/171) * 100"
+	self assert: engine logs last fittestTestCase fitness >= 11.7.
+	
+	"statementCoverage: >= 24.53 = (13/53) * 100"
+	
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTUMLClassBuilderOnPackage [
-	| fitnessFirst fitnessLast |
-	self
+	| engine |
+	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ | someClasses allMethodCategories b n |
 			someClasses := RTShape withAllSubclasses.
@@ -794,64 +656,8 @@ SGAEngineExampleWithRoassal >> exampleRTUMLClassBuilderOnPackage [
 			b treeLayout.
 			b build.
 			b view ]
-		ofPopulationSize: 30
-		numStatements: 15
-		and: 30.
-	fitnessFirst := engine logs first fittestTestCase fitness.
-	fitnessLast := engine logs last fittestTestCase fitness.
-	self
-		assert:
-			(fitnessFirst at: 'methodCoverage')
-				<= (fitnessLast at: 'methodCoverage').
-	self
-		assert:
-			(fitnessFirst at: 'statementCoverage')
-				<= (fitnessLast at: 'statementCoverage').
+		andFitness: SMethodCoverage .
+	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
+	
 	self clean
-]
-
-{ #category : #actions }
-SGAEngineExampleWithRoassal >> runOnClass: aClass withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: numGenerations [
-	engine := SGAEngine new.
-	SSGeneratorInvariant resetNumTest.
-	engine
-		populationSize: populationSize;
-		numberOfStatements: numStatements;
-		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: aClass ];
-		coverageProfiler: [ :blockToExecute | 
-			SBProfiler new
-				profileInstrumented: blockToExecute onClass: aClass;
-				yourself ];
-		fitnessBlock: [ :coverageProfiler | 
-			[ :testCase | 
-			SCalculatorCoverage
-				calculateCoverageOf: testCase
-				using: coverageProfiler ] ];
-		endForMaxNumberOfGeneration: numGenerations;
-		run
-]
-
-{ #category : #actions }
-SGAEngineExampleWithRoassal >> runOnPackagesMatching: regex withBlock: aBlock ofPopulationSize: populationSize numStatements: numStatements and: numGenerations [
-	engine := SGAEngine new.
-	SSGeneratorInvariant resetNumTest.
-	engine
-		populationSize: populationSize;
-		numberOfStatements: numStatements;
-		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
-		coverageProfiler: [ :blockToExecute | 
-			SBProfiler new
-				profileInstrumented: blockToExecute onPackagesMatching: regex;
-				yourself ];
-		fitnessBlock: [ :coverageProfiler | 
-			[ :testCase | 
-			SCalculatorCoverage
-				calculateCoverageOf: testCase
-				using: coverageProfiler ] ];
-		endForMaxNumberOfGeneration: numGenerations;
-		run
 ]

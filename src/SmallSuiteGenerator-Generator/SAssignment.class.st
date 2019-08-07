@@ -19,7 +19,7 @@ SAssignment class >> name: aVariable value: anExpression [
 
 { #category : #comparing }
 SAssignment >> = other [
-	^ super = other and: [ variable = other variable and: [ value = other value ] ]
+	^ (super = other) and: [ (variable = other variable) and: [ value = other value ] ]
 ]
 
 { #category : #copying }

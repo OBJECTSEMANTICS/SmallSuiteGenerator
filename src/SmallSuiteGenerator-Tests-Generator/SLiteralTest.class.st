@@ -29,8 +29,8 @@ SLiteralTest >> testInsertAsParameterUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := ''hello''.' . '_var1 := ''hello''.' . '_var2 := 7.3.'.
-			'_var3 := SFoo score: _var2.'}.
+			#('_var0 := ''hello''.'  '_var1 := ''hello''.'  '_var2 := 7.3.'
+			'_var3 := SFoo score: _var2.').
 	testCase addMessage: #return: from: #SFoo.
 	insertedExpression := aExpression
 		insertAsParameter: aExpression

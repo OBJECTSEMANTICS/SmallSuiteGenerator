@@ -21,7 +21,7 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 		alternativeMessage: self
 		before: aExpression.
 	self selector: otherMessage selector.
-	self args: otherMessage args
+			self args: otherMessage args
 ]
 
 { #category : #'as yet unclassified' }

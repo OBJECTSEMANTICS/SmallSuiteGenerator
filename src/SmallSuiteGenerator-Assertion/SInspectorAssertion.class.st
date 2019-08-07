@@ -13,7 +13,7 @@ SInspectorAssertion class >> applyOn: aName with: aObject of: testCase [
 		nameValue: aName;
 		valueAssert: aObject;
 		comparableValue: selector.
-	^ {instance}
+	^ Array with: instance
 ]
 
 { #category : #'as yet unclassified' }
@@ -32,14 +32,6 @@ SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 			meth returnType type isNotNil
 				and: [ (argTypes isNil or: [ argTypes isEmpty ])
 						and: [ meth selector ~= #initialize ] ] ].
-	"methods := (class methods
-		select: [ :method | 
-			(method argTypes isNil
-				and:
-					((method selector includes: $:) not
-						and: [ method returnType isNotNil ]))
-				or: [ method argTypes isNotNil and: [ method argTypes isEmpty ] ] ])
-		shuffle reject: [ :meth | meth selector = #initialize ]."
 	methods ifNotEmpty: [ selector := methods first selector ].
 	^ selector
 ]

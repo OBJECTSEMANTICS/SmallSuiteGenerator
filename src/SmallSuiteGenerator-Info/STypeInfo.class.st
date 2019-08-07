@@ -88,10 +88,10 @@ STypeInfo >> joinWith: otherTypeInfo [
 
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
-	noneAbstractClasses ifNil:[
-		noneAbstractClasses := self classes reject:[ :class| class isAbstract].
-		].
-	^ noneAbstractClasses.
+	noneAbstractClasses
+		ifNil: [ noneAbstractClasses := self classes
+				reject: [ :aClass | aClass isAbstract or: [ (aClass methods select: #isAbstract) isNotEmpty  ] ] ].
+	^ noneAbstractClasses
 ]
 
 { #category : #accessing }

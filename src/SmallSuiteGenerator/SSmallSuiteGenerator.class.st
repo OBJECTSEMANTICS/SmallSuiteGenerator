@@ -71,17 +71,16 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	engine modelClasses: {aClass}.
 	"execute the engine"
 	engine
-		blockToExecute: aBlock;
-		typeInfo: [ :blockToExecute | self typeInfoOf: blockToExecute onClass: aClass ].
-	engine
+		blockToExecute: aBlock.
+	engine typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass);
 		fitness: [ :aTestCase | 
-			|fitness |
-			fitness := (SMethodCoverage new
+			| fitness |
+			fitness := SMethodCoverage new
 				profiler:
 					(SBProfiler new
-						profileInstrumented: engine  onClass: aClass;
-						yourself)).
-						fitness run: aTestCase]
+						profileInstrumented: engine onClass: aClass;
+						yourself).
+			fitness run: aTestCase ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -94,19 +93,17 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 		description: 'Need to provide a valid regex to generate the tests'.
 	engine modelClasses: (self classesForRegex: {regex}).
 	engine
-		blockToExecute: aBlock;
-		typeInfo:
-				[ :blockToExecute | self typeInfoOf: blockToExecute onPackagesMatching: regex ].
-	engine
+		blockToExecute: aBlock.
+	engine 	typeInfo: (self typeInfoOf: engine blockToExecute  onPackagesMatching: regex );
 		fitness: [ :aTestCase | 
-			|fitness|
-			fitness := (SMethodCoverage new
+			| fitness |
+			fitness := SMethodCoverage new
 				profiler:
 					(SBProfiler new
 						profileInstrumented: engine blockToExecute
 							onPackagesMatching: regex;
-						yourself)).
-						fitness run: aTestCase].
+						yourself).
+			fitness run: aTestCase ].
 	^ engine
 ]
 
@@ -139,9 +136,6 @@ SSmallSuiteGenerator >> runGeneration [
 	self
 		assert: engine typeInfo isNotNil
 		description: 'Need to provide typeInfo'.
-	"self
-		assert: engine coverageProfiler isNotNil
-		description: 'Need to provide coverageProfiler'."
 	self
 		assert: engine fitness isNotNil
 		description: 'Need to provide a block to calculate the fitness'.

@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'utility'
 	],
-	#category : #'SmallSuiteGenerator-Tests-Generator-Core'
+	#category : #'SmallSuiteGenerator-Tests-Core'
 }
 
 { #category : #'as yet unclassified' }
@@ -127,45 +127,44 @@ SSTestCaseTest >> testAddFactoryMessage [
 		type:
 			#SFoo
 				->
-					{{(#returnString
+					(Array with: (Array with: (#returnString
 						->
-							{#ByteString.
-							{}.
-							false})}.
-					{(#score:
+							#(#ByteString
+							#()
+							false))) with:
+					(Array with: (#score:
 						->
-							{#SFoo.
-							{#SmallInteger}.
-							false})}}.
+							#(#SFoo
+							#(#SmallInteger)
+							false)))).
 	aTypeInfo scalar: #SmallInteger with: #(3).
 	testCase typeInfo: aTypeInfo.
-
 	testCase addFactoryMessage.
 	self assert: testCase statements size equals: 2.
 	self
 		assertCollection: (testCase statements collect: #asString)
-		hasSameElements: {'_var0 := 3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 3.' '_var1 := SFoo score: _var0.').
 	aTypeInfo
 		type:
 			#SStack
 				->
-					{{(#top
+					(Array with: (Array with: (#top
 						->
-							{nil.
-							{}.
-							false})}.
-					{(#newStack:
+							#(nil
+							#()
+							false))) with:
+					(Array with: (#newStack:
 						->
-							{#SStack.
-							{#Array}.
-							false})}}.
-	aTypeInfo scalar: #Array with: {#(1 3 2)}.
+							#(#SStack
+							#(#Array)
+							false)))).
+	aTypeInfo scalar: #Array with: #(#(1 3 2)).
 	testCase addFactoryMessage: #SStack.
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			{'_var0 := 3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := #(1 3 2 ).' . '_var3 := SStack newStack: _var2.'}
+			#('_var0 := 3.' '_var1 := SFoo score: _var0.'
+			'_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
 ]
 
 { #category : #tests }

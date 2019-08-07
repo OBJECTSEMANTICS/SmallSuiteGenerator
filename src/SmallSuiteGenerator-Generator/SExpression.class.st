@@ -10,9 +10,8 @@ Class {
 
 { #category : #comparing }
 SExpression >> = other [
-	self class = other class
-		ifFalse: [ ^ false ].
-	^ self id = other id and: [ returnType = other returnType ]
+	^ (self class = other class) and: [ (self id = other id) and: [ returnType = other returnType ] ]
+	
 ]
 
 { #category : #copying }

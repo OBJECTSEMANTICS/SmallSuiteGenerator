@@ -14,13 +14,16 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	| dict |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
-	((statements collect: #returnType thenSelect: [:aType | aType isNotNil]) asSet
+	((statements
+		collect: #returnType
+		thenSelect: [ :aType | aType isNotNil ]) asSet
 		includesAll: (aMethodTypeInfo argTypes flatCollect: [ :arg | arg types ]))
 		ifFalse: [ ^ SError error: 'statements dont contain some types of method' ].
 	dict := Dictionary new.
 	statements copy shuffle
 		do: [ :stm | dict at: stm returnType put: stm variable copy ].
-	^ aMethodTypeInfo argTypes collect: [ :aTypeReturn | dict at: aTypeReturn type ]
+	^ aMethodTypeInfo argTypes
+		collect: [ :aTypeReturn | dict at: aTypeReturn type ]
 ]
 
 { #category : #comparing }
@@ -40,9 +43,8 @@ SAbstractMessage >> args: anObject [
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> changeArgsFrom: aExpression in: aTestCase [
-	
-
-	args isEmpty ifTrue: [ ^self error: 'cannot change args' ].
+	args isEmpty
+		ifTrue: [ ^ self error: 'cannot change args' ].
 	args do: [ :arg | arg repairOn: aTestCase changing: aExpression ]
 ]
 
@@ -103,15 +105,21 @@ SAbstractMessage >> printOn: aStream [
 SAbstractMessage >> printSelectors: aStream [
 	args
 		ifEmpty: [ aStream nextPutAll: self selector ]
-		ifNotEmpty: [ | withColon |
+		ifNotEmpty: [ | withColon index stop |
 			withColon := self selector includes: $:.
+			index := 0.
+			stop := self args size.
 			(self selector substrings: ':')
 				with: self args
 				do: [ :selectorPart :arg | 
+					index := index + 1.
 					aStream nextPutAll: selectorPart.
 					withColon
 						ifTrue: [ aStream nextPutAll: ': ' ].
-					aStream nextPutAll: arg asString ] ].
+					aStream nextPutAll: arg asString.
+					(index < stop and: [ withColon  ]) ifTrue: [ 
+						aStream nextPut: Character space.
+						 ] ] ].
 	aStream nextPut: $.
 ]
 
@@ -155,7 +163,7 @@ SAbstractMessage >> replaceBy: otherExpression [
 	receiver replaceBy: otherExpression receiver.
 	self selector: otherExpression selector.
 	self args size = otherExpression args size ifTrue: [ 
-	self args with: otherExpression args do: [ :arg :newArg | arg replaceBy: newArg ]] ifFalse: [ self args: otherExpression args copy ]
+	self args with: otherExpression args do: [ :arg :newArg | arg replaceBy: newArg ]] ifFalse: [ self args: otherExpression args deepCopy ]
 ]
 
 { #category : #actions }

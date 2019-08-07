@@ -59,7 +59,7 @@ SVariable >> repairOn: aTestCase changing: aExpression [
 		alternativeOfVariable: self
 		before: aExpression.
 	self varName: otherVariable varName.
-	self id: otherVariable id
+	self id: otherVariable id.
 ]
 
 { #category : #'as yet unclassified' }
@@ -72,7 +72,8 @@ SVariable >> replaceArgBy: aExpression [
 { #category : #accessing }
 SVariable >> replaceBy: otherVariable [
 	self varName: otherVariable varName.
-	self id: otherVariable id
+	self id: otherVariable id.
+	self returnType: otherVariable returnType
 ]
 
 { #category : #actions }
@@ -83,7 +84,8 @@ SVariable >> replaceExpression: anExpression by: newExpression [
 	reference := newExpression reference.
 	self
 		id: reference id;
-		varName: reference varName
+		varName: reference varName;
+		returnType: reference returnType
 ]
 
 { #category : #accessing }

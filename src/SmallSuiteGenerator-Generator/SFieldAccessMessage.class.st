@@ -20,7 +20,6 @@ SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
 		alternativeFieldAccessMessage: self
 		before: aExpression.
 	self selector: otherFieldAccessMessage selector
-	"aTestCase replaceFrom: aExpression with: otherFieldAccessMessage"
 ]
 
 { #category : #'as yet unclassified' }

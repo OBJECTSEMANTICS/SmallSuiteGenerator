@@ -5,25 +5,24 @@ Class {
 }
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [	
+SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
 	| smallSuiteGenerator block regex |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
-	block := [ ].
-	regex := 'SmallSuiteExamp*'.
+	block := [  ].
+	regex := 'SmallSuiteGenerator-Examples'.
 	smallSuiteGenerator
-				generateTestsOf: block
-				blockOnPackagesMatching: regex.
-	smallSuiteGenerator runGeneration.
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
+	smallSuiteGenerator runGeneration
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSSTeacherOnClass [
-	| smallSuiteGenerator block class invariants kindsRefactoring |
+	| smallSuiteGenerator block class invariants |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
-	kindsRefactoring := #().
 	block := [ (SSTeacher name: 'Ann' with: 34)
 		name;
 		nickname;
@@ -33,71 +32,65 @@ SSmallSuiteGeneratorExample >> exampleSSTeacherOnClass [
 	class := SSTeacher.
 	smallSuiteGenerator generateTestsOf: block blockOnClass: class.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator
-		generateAssertionsUsing: invariants
-		invariantsAndApplyPrettyCodeWith: kindsRefactoring
+	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [	
+SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [
 	| smallSuiteGenerator block regex |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	block := [ (SSTeacher name: 'Ann' with: 34)
-				name;
-				nickname;
-				yearsWorkExperience;
-				idTeacher;
-				id ].
-	regex := 'SmallSuiteExamp*'.
+		name;
+		nickname;
+		yearsWorkExperience;
+		idTeacher;
+		id ].
+	regex := 'SmallSuiteGenerator-Examples'.
 	smallSuiteGenerator
-				generateTestsOf: block
-				blockOnPackagesMatching: regex.
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
 	smallSuiteGenerator runGeneration.
+	smallSuiteGenerator generateAssertionsUsing: #()
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSStackOnClass [
-	| smallSuiteGenerator block class invariants kindsRefactoring |
+	| smallSuiteGenerator block invariants |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
-	kindsRefactoring := #().
-	block := [ (SStack newStackWith: {1 . 5 . 3 . 2})
+	block := [ (SStack newStackWith: #(1 5 3 2))
 		pop;
 		top;
 		push: 4 ].
-	class := SStack.
-	smallSuiteGenerator generateTestsOf: block blockOnClass: class.
+	smallSuiteGenerator generateTestsOf: block blockOnClass: SStack.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator
-		generateAssertionsUsing: invariants
-		invariantsAndApplyPrettyCodeWith: kindsRefactoring
+	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleSStackOnPackages [	
+SSmallSuiteGeneratorExample >> exampleSStackOnPackages [
 	| smallSuiteGenerator block regex |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
-	block := [ (SStack newStackWith: {1 . 5 . 3 . 2})
-				pop;
-				top;
-				push: 4 ].
-	regex := 'SmallSuiteExamp*'.
+	block := [ (SStack newStackWith: #(1  5  3  2))
+		pop;
+		top;
+		push: 4 ].
+	regex := 'SmallSuiteGenerator-Examples'.
 	smallSuiteGenerator
-				generateTestsOf: block
-				blockOnPackagesMatching: regex.
-	smallSuiteGenerator runGeneration.
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
+	smallSuiteGenerator runGeneration
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
-	| smallSuiteGenerator block class invariants kindsRefactoring |
+	| smallSuiteGenerator block class invariants |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
-	kindsRefactoring := #().
 	block := [ (SStudent name: 'Ann' with: 34)
 		nickname;
 		idStudent;
@@ -106,18 +99,15 @@ SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
 	class := SStudent.
 	smallSuiteGenerator generateTestsOf: block blockOnClass: class.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator
-		generateAssertionsUsing: invariants
-		invariantsAndApplyPrettyCodeWith: kindsRefactoring
+	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
-	| smallSuiteGenerator block class invariants kindsRefactoring |
+	| smallSuiteGenerator block class invariants |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
-	kindsRefactoring := #().
 	block := [ (SStudent name: 'Ann' with: 34)
 		nickname;
 		idStudent;
@@ -126,18 +116,15 @@ SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
 	class := SSTeacher.
 	smallSuiteGenerator generateTestsOf: block blockOnClass: class.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator
-		generateAssertionsUsing: invariants
-		invariantsAndApplyPrettyCodeWith: kindsRefactoring
+	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
-	| smallSuiteGenerator block class invariants kindsRefactoring |
+	| smallSuiteGenerator block class invariants |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
-	kindsRefactoring := #().
 	block := [ (SStudent name: 'Ann' with: 34)
 		nickname;
 		idStudent;
@@ -146,22 +133,20 @@ SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
 	class := SFoo.
 	smallSuiteGenerator generateTestsOf: block blockOnClass: class.
 	smallSuiteGenerator runGeneration.
-	smallSuiteGenerator
-		generateAssertionsUsing: invariants
-		invariantsAndApplyPrettyCodeWith: kindsRefactoring
+	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleWithWrongRegexToRun [	
+SSmallSuiteGeneratorExample >> exampleWithWrongRegexToRun [
 	| smallSuiteGenerator block regex |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	block := [ (SStudent name: 'Ann' with: 34)
-						nickname;
-						idStudent ].
-	regex := 'Roassal2-Cor*'.
+		nickname;
+		idStudent ].
+	regex := 'SmallSuiteGenerator-Fitness'.
 	smallSuiteGenerator
-				generateTestsOf: block
-				blockOnPackagesMatching: regex.
-	smallSuiteGenerator runGeneration.
+		generateTestsOf: block
+		blockOnPackagesMatching: regex.
+	smallSuiteGenerator runGeneration
 ]

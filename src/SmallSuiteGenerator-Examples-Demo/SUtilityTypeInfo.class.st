@@ -37,21 +37,18 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 				addLiteral: #ByteString;
 				addFieldAccessMessage: #idStudent from: #SStudent;
 				addMessage: #scoreStudent: from: #SStudent;
-				"_Var0 scoreStudent: 36"
 					addFactoryMessage: #SStudent ofSelector: #new;
-				addFieldAccessMessage: #scoreStudent from: #SStudent; yourself);
-		"_Var4 nickname"
+				addFieldAccessMessage: #scoreStudent from: #SStudent;
+				yourself);
 			add:
 			((SSTestCase with: self typeInfosSStudent first)
 				addLiteral: #SmallInteger;
 				addFactoryMessage: #SStudent ofSelector: #new;
 				addMessage: #scoreStudent: from: #SStudent;
 				addFactoryMessage: #SStudent ofSelector: #new;
-				addFieldAccessMessage: #idStudent from: #SStudent; yourself);
-		"_var3 idStudent"
+				addFieldAccessMessage: #idStudent from: #SStudent;
+				yourself);
 			yourself
-	"_Var4 scoreStudent"
-	"addMessage: #nickname from: #SStudent"
 ]
 
 { #category : #'as yet unclassified' }

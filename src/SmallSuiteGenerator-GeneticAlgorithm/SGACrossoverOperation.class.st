@@ -27,18 +27,17 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	"first alpha(P1) and last (1-alpha)(P2)"
 	offSpring1 := self offSpringOf: testCaseA and: testCaseB using: alpha.
 	self checkReferencesOf: offSpring1 withDescription: 'offspring'.
-	"self checkUniqueStatementsOf: offSpring1."
 	"first alpha(P2) and last (1-alpha)(P1)"
 	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: alpha.
 	self checkReferencesOf: offSpring2 withDescription: 'offspring'.
-	"self checkUniqueStatementsOf: offSpring2."
-	^ {offSpring1.
-	offSpring2}
+	^ Array with: offSpring1
+	with: offSpring2
 ]
 
 { #category : #'as yet unclassified' }
 SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
 	| sizeA sizeB offSpring limit |
+	
 	sizeA := parentA numberStatements.
 	sizeB := parentB numberStatements.
 	offSpring := SSTestCase with: parentA typeInfo copy.

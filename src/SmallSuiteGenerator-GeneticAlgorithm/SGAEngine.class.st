@@ -74,7 +74,6 @@ SGAEngine >> checkFitness [
 { #category : #'as yet unclassified' }
 SGAEngine >> checkIfReadyToRun [
 	self checkBlockToExecute.
-	"self checkCoverageProfiler."
 	self checkTypeInfo.
 	self checkFitness.
 	self checkLogs
@@ -132,7 +131,7 @@ SGAEngine >> generateAssertionsUsing: selectedInvariants [
 	self logs
 		do: [ :log | 
 			log fittestTestCase generateAssertionsUsing: selectedInvariants.
-			log mutationResult: self analyzeMutants ]
+			"log mutationResult: self analyzeMutants" ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -142,9 +141,9 @@ SGAEngine >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrett
 		description: 'In this point the logs must not be empty'.
 	self logs
 		do: [ :log | 
-			log fittestTestCase prettyCodeApplying: kindsRefactoring.
+			"log fittestTestCase prettyCodeApplying: kindsRefactoring."
 			log fittestTestCase generateAssertionsUsing: selectedInvariants.
-			log mutationResult: self analyzeMutants ]
+			"log mutationResult: self analyzeMutants" ]
 ]
 
 { #category : #initialization }
@@ -290,13 +289,14 @@ SGAEngine >> run [
 			| gen |
 			gen := 0.
 			[ self shouldTerminate ]
-				whileFalse: [ gen := gen + 1.
+				whileFalse: [ 
+					gen := gen + 1.
 					bar label: gen asString.
 					self microPause.
 					t := Time now asSeconds.
 					self produceNewPopulation.
 					logs add: (self logWithGenerationNumber: gen atTime: t) ].
-			"coverageProfiler cleanInstrumentation" ]
+				"coverageProfiler cleanInstrumentation" ]
 ]
 
 { #category : #accessing }

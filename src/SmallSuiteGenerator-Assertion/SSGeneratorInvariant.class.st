@@ -2,8 +2,7 @@ Class {
 	#name : #SSGeneratorInvariant,
 	#superclass : #Object,
 	#instVars : [
-		'compiler',
-		'refactorizer'
+		'compiler'
 	],
 	#classInstVars : [
 		'numTest'
@@ -50,25 +49,6 @@ SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant >> generateAssert: aCollection [
-	| node temporaries collectAsSet |
-	node := RBParser parseExpression: '[]'.
-	temporaries := Set new.
-	aCollection ifNotEmpty: [ 
-		collectAsSet := (aCollection collect: [ :invariant | invariant statement ]) asSet.
-		collectAsSet do: [ :statement | node body addNode: (RBParser parseExpression: statement) ].
-		aCollection do: [ :invariant | 
-			temporaries add: (RBParser parseExpression: invariant nameValue).
-			node body addNode: (RBParser parseExpression: invariant asString).	
-		].
-		node body temporaries: temporaries asOrderedCollection.
-		SSAssertionGeneratorTest compile: 'test', self class numTest asString, '
-		', node body formattedCode.
-		self class incrementNumTest 
-	].
-]
-
-{ #category : #'as yet unclassified' }
 SSGeneratorInvariant >> generateAssertionsOf: aSTestCase testCaseUsing: selectedInvariants [
 	| filteredInvariants compiled |
 	compiler compile: (self transformToNode: aSTestCase).
@@ -83,18 +63,10 @@ SSGeneratorInvariant >> generateAssertionsOf: aSTestCase testCaseUsing: selected
 	^ nil
 ]
 
-{ #category : #'as yet unclassified' }
-SSGeneratorInvariant >> generateAssertionsOf: aSTestCase testCaseUsing: invariants invariantsApplyingPrettyCodeWith: kindsRefactoring [
-	refactorizer
-		prettyCodeOf: aSTestCase
-		testCaseApplying: kindsRefactoring.
-	^ self generateAssertionsOf: aSTestCase testCaseUsing: invariants
-]
-
 { #category : #initialization }
 SSGeneratorInvariant >> initialize [
 	compiler := SSCompilerInvariant new.
-	refactorizer := SRefactorizer new
+	"refactorizer := SRefactorizer new"
 ]
 
 { #category : #accessing }

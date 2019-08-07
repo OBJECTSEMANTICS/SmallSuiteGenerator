@@ -13,7 +13,7 @@ SCollectionSimilarityAssertion class >> applyOn: aName with: aCollection of: tes
 		nameValue: aName;
 		valueAssert: aCollection;
 		comparableValue: aCollection first.
-	^ {instance}
+	^ (Array with: instance)
 ]
 
 { #category : #preconditions }

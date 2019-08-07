@@ -62,7 +62,5 @@ SGACrossoverOperationTest >> testCrossOverWithMutation: listTestCase [
 	offSpring2 := mutationOperation mutate: offSpring2.
 	offSprings := operation crossover: offSpring1 with: offSpring2.
 	self assert: offSpring1 validReferences.
-	"self assert: offSpring1 hasUniqueStatements."
 	self assert: offSpring2 validReferences
-	"self assert: offSpring2 hasUniqueStatements"
 ]

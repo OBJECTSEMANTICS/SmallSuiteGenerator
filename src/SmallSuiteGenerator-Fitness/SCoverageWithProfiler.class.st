@@ -53,7 +53,8 @@ SCoverageWithProfiler >> executeStatementsOf: aTestCase [
 		on: Exception
 		do: [ :exception | 
 			self halt.
-			numIteration := numIteration + 1
+			numIteration := numIteration + 1.
+			
 			"(aTestCase
 				changeStatementsOfClassName: (self signalerOfException: exception))
 				ifTrue: [ ^ self

@@ -32,6 +32,7 @@ SGACrossOverOperationTestWithRoassal >> testCrossOver: listTestCase [
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTAMItem [
 	self testCrossOver: utility testSuiteRTAMItem.
+
 	self testCrossOverWithMutation: utility testSuiteRTAMItem
 ]
 
@@ -60,7 +61,9 @@ SGACrossOverOperationTestWithRoassal >> testCrossOverWithMutation: listTestCase 
 	| offSprings offSpring1 offSpring2 |
 	self assert: listTestCase size >= 2.
 	offSpring1 := mutationOperation mutate: listTestCase first.
+	self assert: offSpring1 validReferences.
 	offSpring2 := mutationOperation mutate: listTestCase second.
+	self assert: offSpring2 validReferences.
 	offSprings := operation crossover: offSpring1 with: offSpring2.
 	offSpring1 := offSprings first.
 	offSpring2 := offSprings second.

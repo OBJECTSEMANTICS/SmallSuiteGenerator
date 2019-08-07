@@ -11,7 +11,7 @@ SComparisonAssertion class >> applyOn: aName with: aObject of: testCase [
 		nameValue: aName;
 		valueAssert: aObject;
 		comparableValue: aObject.
-	^ {instance}
+	^ Array with: instance
 ]
 
 { #category : #preconditions }

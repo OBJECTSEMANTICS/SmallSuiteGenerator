@@ -13,7 +13,7 @@ SCollectionSizeAssertion class >> applyOn: aName with: aCollection of: testCase 
 		nameValue: aName;
 		valueAssert: aCollection;
 		comparableValue: aCollection size.
-	^ {instance}
+	^ Array with: instance
 ]
 
 { #category : #preconditions }

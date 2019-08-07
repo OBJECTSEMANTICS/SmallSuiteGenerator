@@ -48,8 +48,8 @@ SFieldAccessMessageTest >> testInsertAsParameterUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := #(1 4 5 ).' . '_var1 := SStack newStackWith: _var0.'.
-			'_var2 := _var1 firstLinkStack.' . '_var3 := 5.'}.
+			#('_var0 := #(1 4 5 ).'  '_var1 := SStack newStackWith: _var0.'
+			'_var2 := _var1 firstLinkStack.' '_var3 := 5.').
 	testCase addMessage: #push: from: #SStack.
 	insertedExpression := aExpression
 		insertAsParameter: aExpression
@@ -67,12 +67,10 @@ SFieldAccessMessageTest >> testInsertRandomMessageUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.' '_var2 := _var1 score.').
 	aExpression insertRandomMessage: aExpression using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		includesAll:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.' . '_var3 := _var1 score.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.' '_var2 := _var1 score.'  '_var3 := _var1 score.')
 ]

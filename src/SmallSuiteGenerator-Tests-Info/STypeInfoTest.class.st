@@ -7,8 +7,7 @@ Class {
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFoo [
 	| profile typeInfo methodInfo |
-	profile := SSGeneratorTest
-		profileSFoo: [ SFoo new
+	profile := SSGenerator profile: [ SFoo new
 				return: Stack new;
 				return: OrderedCollection new;
 				returnFloat;
@@ -16,7 +15,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 				returnCollection;
 				returnNum;
 				score;
-				score: 5 ].
+				score: 5 ] onClass: SFoo.
 	typeInfo := profile asTypeInfo.
 	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
 	self
@@ -28,10 +27,10 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	methodInfo := typeInfo typeOf: #return: from: #SFoo.
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: {#OrderedCollection. #Stack}.
+		hasSameElements: {#OrderedCollection . #Stack}.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: {#OrderedCollection. #Stack}.
+		hasSameElements: {#OrderedCollection . #Stack}.
 	self
 		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType type
 		equals: #SmallFloat64.
@@ -53,7 +52,9 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: {#SmallInteger}.
 	self
-		assert: (typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType type isNil.
+		assert:
+			(typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType type
+				isNil.
 	self
 		assertCollection: typeInfo scalars keys
 		hasSameElements:

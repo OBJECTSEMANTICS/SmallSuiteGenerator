@@ -7,9 +7,10 @@ Class {
 		'nextId',
 		'numMaxStatements',
 		'fitness',
-		'generatorInvariant'
+		'generatorInvariant',
+		'refactorizer'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Core'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'as yet unclassified' }
@@ -404,7 +405,7 @@ SSTestCase >> insertStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertStatementOfSelector: selector [
-	"Transcript show: selector , String cr."
+
 	statements copy shuffle
 		do: [ :stm | 
 			[ ^ self perform: selector inStatement: stm ]
@@ -543,7 +544,11 @@ SSTestCase >> numberStatements [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> perform: selector inStatement: stm [
-	^ stm perform: selector withArguments: {stm copy. self}
+	^ stm
+		perform: selector
+		withArguments:
+			(Array with: stm copy with:
+			self)
 ]
 
 { #category : #querying }
@@ -579,6 +584,11 @@ SSTestCase >> pickOrCreateObjectVariableOf: aClassName [
 	^ [ self pickObjectVariableOf: aClassName ]
 		on: SError
 		do: [ (self addFactoryMessage: aClassName) variable ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> prettyCodeApplying: kindsRefactoring [
+	^ refactorizer prettyCodeOf: self  testCaseApplying: kindsRefactoring 
 ]
 
 { #category : #adding }
@@ -718,10 +728,14 @@ SSTestCase >> validReferences [
 	references := Set new.
 	^ statements
 		detect: [ :stm | 
-			|variables|
+			| variables |
 			variables := stm variablesWithId.
 			references add: stm reference.
-			(references includesAll: variables) ifFalse: [ self halt.true ] ifTrue: [ references addAll: variables. false ] 
-				.
-		 ] ifFound: [false] ifNone: [true].
+			(references includesAll: variables)
+				ifFalse: [ 
+					true ]
+				ifTrue: [ references addAll: variables.
+					false ] ]
+		ifFound: [ false ]
+		ifNone: [ true ]
 ]

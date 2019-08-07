@@ -13,7 +13,7 @@ SPrimitiveAssertion class >> applyOn: aName with: aLiteral of: testCase [
 		nameValue: aName;
 		valueAssert: aLiteral;
 		comparableValue: aLiteral.
-	^ {instance}
+	^ Array with: instance
 ]
 
 { #category : #preconditions }

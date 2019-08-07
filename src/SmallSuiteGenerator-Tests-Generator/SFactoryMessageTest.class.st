@@ -43,13 +43,14 @@ SFactoryMessageTest >> testInsertAsParameterUsing [
 	testCase addMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			{'_var0 := SFoo new.'.
-			'_var1 := _var0 return: _var0.'}.
+		hasSameElements: #('_var0 := SFoo new.'  '_var1 := _var0 return: _var0.').
 	insertedExpression := aExpression
 		insertAsParameter: aExpression
 		using: testCase.
-	self assert: ({'_var1 := _var0 return: _var0.'} includes: insertedExpression printString)
+	self
+		assert:
+			(#('_var1 := _var0 return: _var0.')
+				includes: insertedExpression printString)
 ]
 
 { #category : #tests }
@@ -59,8 +60,10 @@ SFactoryMessageTest >> testInsertMethodMessageUsing [
 	aExpression := testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
-	self should: [aExpression insertMethodMessage: aExpression using: testCase] raise: SError.
+		hasSameElements: #('_var0 := 7.3.'  '_var1 := SFoo score: _var0.').
+	self
+		should: [ aExpression insertMethodMessage: aExpression using: testCase ]
+		raise: SError
 ]
 
 { #category : #tests }
@@ -70,11 +73,10 @@ SFactoryMessageTest >> testInsertRandomMessageUsing [
 	factoryMessage := testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
 	factoryMessage insertRandomMessage: factoryMessage using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		includesAll:
-			{'_var0 := 7.3.' . '_var2 := SFoo score: _var0.'.
-			'_var1 := SFoo score: _var0.'}
+			#('_var0 := 7.3.' '_var2 := SFoo score: _var0.' '_var1 := SFoo score: _var0.')
 ]

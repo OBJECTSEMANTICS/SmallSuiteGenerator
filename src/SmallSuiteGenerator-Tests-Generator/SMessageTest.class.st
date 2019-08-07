@@ -45,15 +45,15 @@ SMessageTest >> testInsertAsParameterUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 returnString.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 returnString.').
 	testCase addMessage: #return: from: #SFoo.
 	insertedExpression := aExpression
 		insertAsParameter: aExpression
 		using: testCase.
 	self
 		assert:
-			({'_var4 := _var1 return: _var3.'}
+			(#('_var4 := _var1 return: _var3.')
 				includes: insertedExpression printString)
 ]
 
@@ -65,13 +65,13 @@ SMessageTest >> testInsertMethodMessageUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.').
 	message insertMethodMessage: message using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'.
-			'_var4 := _var1 return: _var2.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.'
+			'_var4 := _var1 return: _var2.')
 ]
