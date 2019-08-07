@@ -11,50 +11,50 @@ SClassInfoTest >> testType [
 		type:
 			#SFoo
 				->
-					{{(#returnFloat
+					(Array with: (Array with: (#returnFloat
 						->
-							{#SmallFloat64.
-							{}.
-							false}).
+							#(#SmallFloat64
+							#()
+							false)) with:
 					(#returnString
 						->
-							{#ByteString.
-							{}.
-							false}).
+							#(#ByteString
+							#()
+							false)) with:
 					(#return:
 						->
-							{#OrderedCollection.
-							{#OrderedCollection}.
-							false}).
+							#(#OrderedCollection
+							#(#OrderedCollection)
+							false)) with:
 					(#score:
 						->
-							{#SFoo.
-							{#SmallInteger}.
-							false}).
+							#(#SFoo
+							#(#SmallInteger)
+							false)) with:
 					(#score
 						->
-							{#SmallInteger.
-							{}.
-							true})}.
-					{(#score:
+							#(#SmallInteger
+							#()
+							true))) with: 
+					(Array with: (#score:
 						->
-							{#SFoo.
-							{#SmallInteger}.
-							false})}}.
+							#(#SFoo
+							#(#SmallInteger)
+							false)))).
 	classInfo
 		typeMethod:
 			#returnNum
 				->
-					{#SmallInteger.
-					{}.
-					false}.
+					#(#SmallInteger
+					#()
+					false).
 	self assert: classInfo methodTypes size equals: 6.
 	self assert: classInfo classMethodTypes size equals: 1.
 	methodInfo := classInfo methodTypes at: #return:.
 	self assert: methodInfo returnType type equals: #OrderedCollection.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: {#OrderedCollection}.
+		hasSameElements: #(#OrderedCollection).
 	self
 		assert: (classInfo methodTypes at: #returnFloat) returnType type
 		equals: #SmallFloat64.
@@ -67,8 +67,8 @@ SClassInfoTest >> testType [
 	methodInfo := classInfo methodTypes at: #score:.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
-		assertCollection: methodInfo allArgTypes 
-		hasSameElements: {#SmallInteger}.
+		assertCollection: methodInfo allArgTypes
+		hasSameElements: #(#SmallInteger).
 	self
 		assert: (classInfo classMethodTypes at: #score:) returnType type
 		equals: #SFoo.

@@ -11,9 +11,9 @@ SMethodInfoTest >> testType [
 		type:
 			#returnFloat
 				->
-					{#SmallFloat64.
-					{}.
-					false}.
+					#(#SmallFloat64
+					#()
+					false).
 	self assert: methodInfo returnType type equals: #SmallFloat64.
 	self assert: methodInfo allArgTypes isEmpty.
 	self deny: methodInfo isQuick.
@@ -21,9 +21,9 @@ SMethodInfoTest >> testType [
 		type:
 			#returnString
 				->
-					{#ByteString.
-					{}.
-					false}.
+					#(#ByteString
+					#()
+					false).
 	self assert: methodInfo returnType type equals: #ByteString.
 	self assert: methodInfo allArgTypes isEmpty.
 	self deny: methodInfo isQuick.
@@ -31,33 +31,33 @@ SMethodInfoTest >> testType [
 		type:
 			#return:
 				->
-					{#OrderedCollection.
-					{#OrderedCollection}.
-					false}.
+					#(#OrderedCollection
+					#(#OrderedCollection)
+					false).
 	self assert: methodInfo returnType type equals: #OrderedCollection.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: {#OrderedCollection}.
+		hasSameElements: #(#OrderedCollection).
 	self deny: methodInfo isQuick.
 	methodInfo := STypeMethodInfo
 		type:
 			#score:
 				->
-					{#SFoo.
-					{#SmallInteger}.
-					false}.
+					#(#SFoo
+					#(#SmallInteger)
+					false).
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: {#SmallInteger}.
+		hasSameElements: #(#SmallInteger).
 	self deny: methodInfo isQuick.
 	methodInfo := STypeMethodInfo
 		type:
 			#score
 				->
-					{#SmallInteger.
-					{}.
-					true}.
+					#(#SmallInteger
+					#()
+					true).
 	self assert: methodInfo returnType equals: #SmallInteger.
 	self assert: methodInfo argTypes isEmpty.
 	self assert: methodInfo isQuick

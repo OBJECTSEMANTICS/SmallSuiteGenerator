@@ -22,7 +22,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				package: 'SmallSuiteGenerator-Generator';
 				package: 'SmallSuiteGenerator-Info';
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator-Generator') ];
+					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator-Generator' 'Mutalk') ];
 				package: 'SmallSuiteGenerator-Fitness'
 					with: [ spec requires: 'SBTestCoverage' ];
 				package: 'SmallSuiteGenerator-GeneticAlgorithm'

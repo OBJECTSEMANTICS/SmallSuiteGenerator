@@ -22,29 +22,29 @@ SGAMutationOperationTest >> testMutation [
 		type:
 			#SStack
 				->
-					{{(#push:
+					(Array with: (Array with: (#push:
 						->
-							{#SmallInteger.
-							{#SmallInteger}.
-							false}).
+							#(#SmallInteger
+							#(#SmallInteger)
+							false)) with:
 					(#pop
 						->
-							{#SmallInteger.
-							{}.
-							false}).
+							#(#SmallInteger
+							#()
+							false)) with:
 					(#top
 						->
-							{#SmallInteger.
-							{}.
-							false})}.
-					{(#newStackWith:
+							#(#SmallInteger
+							#()
+							false))) with: 
+					(Array with: (#newStackWith:
 						->
-							{#SStack.
-							{#Array}.
-							false})}}.
+							#(#SStack
+							#(#Array)
+							false)))).
 	typeInfo
-		scalar: #SmallInteger with: {8};
-		scalar: #Array with: {#(2 4 6 1)}.
+		scalar: #SmallInteger with: #(8);
+		scalar: #Array with: #(#(2 4 6 1)).
 	testCase := SSTestCase with: typeInfo.
 	testCase numMaxStatements: 30.
 	testCase generateStatements.

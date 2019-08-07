@@ -100,5 +100,5 @@ SVariable >> varName: anObject [
 
 { #category : #'as yet unclassified' }
 SVariable >> variablesWithId [
-	^ id ifNotNil: [ { self } ] ifNil: [ super variablesWithId  ]
+	^ id ifNotNil: [ (Array with: self) ] ifNil: [ super variablesWithId ]
 ]

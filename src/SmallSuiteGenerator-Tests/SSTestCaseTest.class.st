@@ -14,35 +14,39 @@ SSTestCaseTest class >> typeInfoSFoo [
 		type:
 			#SFoo
 				->
-					{{(#returnNum
+					(Array with: (Array with: (#returnNum
 						->
-							{#SmallInteger.
-							{}.
-							false}).
+							#(#SmallInteger
+							#()
+							false)) with: 
 					(#returnFloat
 						->
-							{#SmallFloat64.
-							{}.
-							false}).
-							(#returnString -> {#ByteString. {}. false}).
+							#(#SmallFloat64
+							#()
+							false)) with: 
+					(#returnString
+						->
+							#(#ByteString
+							#()
+							false)) with:
 					(#score
 						->
-							{#SmallFloat64.
-							{}.
-							true}).
+							#(#SmallFloat64
+							#()
+							true)) with: 
 					(#return:
 						->
-							{#ByteString.
-							{#ByteString}.
-							false})}.
-					{(#score:
+							#(#ByteString
+							#(#ByteString)
+							false))) with: 
+					(Array with: (#score:
 						->
-							{#SFoo.
-							{#SmallFloat64}.
-							false})}};
-		scalar: #ByteString with: {'hello'};
-		scalar: #SmallInteger with: {5};
-		scalar: #SmallFloat64 with: {7.3}.
+							#(#SFoo
+							#(#SmallFloat64)
+							false))));
+		scalar: #ByteString with: #('hello');
+		scalar: #SmallInteger with: #(5);
+		scalar: #SmallFloat64 with: #(7.3).
 	^ typeInfo
 ]
 
@@ -53,15 +57,15 @@ SSTestCaseTest class >> typeInfoSFoo2 [
 		type:
 			#SFoo
 				->
-					{{(#return:
+					(Array with: (Array with: (#return:
 						->
-							{#SFoo.
-							{#SFoo}.
-							false})}.
-					{}	};
-		scalar: #ByteString with: {'hello'};
-		scalar: #SmallInteger with: {5};
-		scalar: #SmallFloat64 with: {7.3}.
+							#(#SFoo
+							#(#SFoo)
+							false))) with:
+					#());
+		scalar: #ByteString with: #('hello');
+		scalar: #SmallInteger with: #(5);
+		scalar: #SmallFloat64 with: #(7.3).
 	^ typeInfo
 ]
 
@@ -72,45 +76,43 @@ SSTestCaseTest class >> typeInfoSStack [
 		type:
 			#SStack
 				->
-					{{(#firstLinkStack
+					(Array with: (Array with: (#firstLinkStack
 						->
-							{#SmallInteger.
-							{}.
-							true}).
+							#(#SmallInteger
+							#()
+							true)) with:
 					(#lastLinkStack
 						->
-							{#SmallInteger.
-							{}.
-							true}).
+							#(#SmallInteger
+							#()
+							true)) with:
 					(#pop
 						->
-							{#SmallInteger.
-							{}.
-							false}).
+							#(#SmallInteger
+							#()
+							false)) with:
 					(#push:
 						->
-							{#SmallInteger.
-							{#SmallInteger}.
-							false}).
-							(#top
+							#(#SmallInteger
+							#(#SmallInteger)
+							false)) with:
+					(#top
 						->
-							{#SmallInteger.
-							{}.
-							false})
-							}.
-					{(#newStack
+							#(#SmallInteger
+							#()
+							false))) with: 
+					(Array with: (#newStack
 						->
-							{#SStack.
-							{}.
-							false}).
-							(#newStackWith:
+							#(#SStack
+							#()
+							false)) with: 
+					(#newStackWith:
 						->
-							{#SStack.
-							{#Array}.
-							false})
-							}};
-		scalar: #SmallInteger with: {5};
-		scalar: #Array with: {#(1 4 5)}.
+							#(#SStack
+							#(#Array)
+							false))));
+		scalar: #SmallInteger with: #(5);
+		scalar: #Array with: #(#(1 4 5)).
 	^ typeInfo
 ]
 
@@ -175,15 +177,15 @@ SSTestCaseTest >> testAddLiteral [
 		type:
 			#SFoo
 				->
-					{{(#return:
+					(Array with: (Array with: (#return:
 						->
-							{#OrderedCollection.
-							{#OrderedCollection}.
-							false})}.
-					{}}.
+							#(#OrderedCollection
+							#(#OrderedCollection)
+							false))) with:
+					#()).
 	aTypeInfo
 		scalar: #OrderedCollection
-		with: {(OrderedCollection newFrom: #(1 4))}.
+		with: (Array with: (OrderedCollection newFrom: #(1 4))).
 	aTypeInfo scalar: #ByteString with: #('World').
 	aTypeInfo scalar: #SmallInteger with: #(2).
 	testCase typeInfo: aTypeInfo.
@@ -195,8 +197,8 @@ SSTestCaseTest >> testAddLiteral [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			{'_var0 := ''World''.' . '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'.
-			'_var2 := 2.'}
+			#('_var0 := ''World''.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
+			'_var2 := 2.')
 ]
 
 { #category : #tests }
@@ -207,36 +209,36 @@ SSTestCaseTest >> testAddMessage [
 		type:
 			#SFoo
 				->
-					{{(#return:
+					(Array with: (Array with: (#return:
 						->
-							{#OrderedCollection.
-							{#OrderedCollection}.
-							false})}.
-					{}}.
+							#(#OrderedCollection
+							#(#OrderedCollection)
+							false))) with: 
+					#()).
 	aTypeInfo
 		scalar: #OrderedCollection
-		with: {(OrderedCollection newFrom: #(1 4))}.
+		with: (Array with: (OrderedCollection newFrom: #(1 4))).
 	testCase typeInfo: aTypeInfo.
 	testCase addMessage.
 	self assert: testCase statements size equals: 3.
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			{'_var0 := SFoo new.' . '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'.
-			'_var2 := _var0 return: _var1.'}.
+			#('_var0 := SFoo new.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
+			'_var2 := _var0 return: _var1.').
 	(aTypeInfo classAt: #SFoo)
 		typeMethod:
 			#returnString
 				->
-					{#ByteString.
-					{}.
-					false}.
+					#(#ByteString
+					#()
+					false).
 	testCase addMessage: #returnString from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			{'_var0 := SFoo new.' . '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'.
-			'_var2 := _var0 return: _var1.' . '_var3 := _var0 returnString.'}
+			#('_var0 := SFoo new.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
+			'_var2 := _var0 return: _var1.' '_var3 := _var0 returnString.')
 ]
 
 { #category : #'mutation-change' }
@@ -269,10 +271,13 @@ SSTestCaseTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 7.3.'  '_var1 := SFoo score: _var0.').
 	expressionChanged := testCase changeStatementOfVarName: '_var1'.
-	self assert: ({ '_var1 := SFoo new.'. '_var1 := SFoo score: _var2.' } includes: expressionChanged printString).
-		self assert: testCase validReferences
+	self
+		assert:
+			(#('_var1 := SFoo new.'  '_var1 := SFoo score: _var2.')
+				includes: expressionChanged printString).
+	self assert: testCase validReferences
 ]
 
 { #category : #'mutation-change' }
@@ -285,14 +290,14 @@ SSTestCaseTest >> testChangeStatementOfFieldAccessMessage [
 		from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := SStack newStack.' . '_var1 := _var0 firstLinkStack.'}.
+		hasSameElements: #('_var0 := SStack newStack.'  '_var1 := _var0 firstLinkStack.').
 	exprFieldChanged := testCase changeStatement: exprField.
 	self
 		assert:
-			({'_var1 := _var0 lastLinkStack.' . '_var1 := _var3 firstLinkStack.'.
-			'_var1 := _var2 firstLinkStack.'}
+			(#('_var1 := _var0 lastLinkStack.'  '_var1 := _var3 firstLinkStack.'
+			'_var1 := _var2 firstLinkStack.')
 				includes: exprFieldChanged printString).
-				self assert: testCase validReferences
+	self assert: testCase validReferences
 ]
 
 { #category : #'mutation-change' }
@@ -302,7 +307,7 @@ SSTestCaseTest >> testChangeStatementOfLiteral [
 	exprLiteral := (testCase addLiteral: #SmallInteger) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 5.'}.
+		hasSameElements: #('_var0 := 5.').
 	exprLiteralChanged := testCase changeStatementOfVarName: '_var0'.
 	self deny: exprLiteral equals: exprLiteralChanged.
 	self assert: testCase validReferences
@@ -318,14 +323,14 @@ SSTestCaseTest >> testChangeStatementOfMessage [
 	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := SStack newStack.' . '_var1 := _var0 pop.'}.
+		hasSameElements: #('_var0 := SStack newStack.'  '_var1 := _var0 pop.').
 	exprLiteralChanged := testCase changeStatement: exprMessage.
 	self
 		assert:
-			({'_var1 := _var0 top.' . '_var1 := _var0 push: _var2.'.
-			'_var1 := _var3 pop.' . '_var1 := _var2 pop.'}
+			(#('_var1 := _var0 top.'  '_var1 := _var0 push: _var2.'
+			'_var1 := _var3 pop.'  '_var1 := _var2 pop.')
 				includes: exprLiteralChanged printString).
-				self assert: testCase validReferences
+	self assert: testCase validReferences
 ]
 
 { #category : #tests }
@@ -335,34 +340,37 @@ SSTestCaseTest >> testCopy [
 		type:
 			#SFoo
 				->
-					{{(#returnNum
-						->
-							{#SmallInteger.
-							{}.
-							false}).
-					(#returnFloat
-						->
-							{#SmallFloat64.
-							{}.
-							false}).
-					(#score
-						->
-							{#SmallInteger.
-							{}.
-							true}).
-					(#return:
-						->
-							{#ByteString.
-							{#ByteString}.
-							false})}.
-					{(#score:
-						->
-							{#SFoo.
-							{#SmallFloat64}.
-							false})}}.
-	typeInfo scalar: #ByteString with: {'hello'}.
-	typeInfo scalar: #SmallInteger with: {5}.
-	typeInfo scalar: #SmallFloat64 with: {7.3}.
+					(Array
+						with:
+							(Array with: (#returnNum
+								->
+									#(#SmallInteger
+									#()
+									false)) with: 
+							(#returnFloat
+								->
+									#(#SmallFloat64
+									#()
+									false)) with: 
+							(#score
+								->
+									#(#SmallInteger
+									#()
+									true)) with: 
+							(#return:
+								->
+									#(#ByteString
+									#(#ByteString)
+									false)))
+						with:
+							(Array with: (#score:
+								->
+									#(#SFoo
+									#(#SmallFloat64)
+									false)))).
+	typeInfo scalar: #ByteString with: #('hello').
+	typeInfo scalar: #SmallInteger with: #(5).
+	typeInfo scalar: #SmallFloat64 with: #(7.3).
 	testCase := SSTestCase with: typeInfo.
 	testCase
 		addMessage: #returnNum from: #SFoo;
@@ -377,41 +385,41 @@ SSTestCaseTest >> testCopy [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 returnNum.' . '_var3 := _var1 score.'.
-			'_var4 := 5.' . '_var5 := ''hello''.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 returnNum.'  '_var3 := _var1 score.'
+			'_var4 := 5.'  '_var5 := ''hello''.').
 	self
 		assertCollection: (otherTestCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 returnNum.' . '_var3 := _var1 score.'.
-			'_var4 := 5.' . '_var5 := _var1 returnFloat.'.
-			'_var6 := ''hello''.' . '_var7 := _var1 return: _var6.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 returnNum.'  '_var3 := _var1 score.'
+			'_var4 := 5.'  '_var5 := _var1 returnFloat.'
+			'_var6 := ''hello''.'  '_var7 := _var1 return: _var6.')
 ]
 
 { #category : #tests }
 SSTestCaseTest >> testFieldAccessMessage [
-	| testCase aTypeInfo|
+	| testCase aTypeInfo |
 	testCase := SSTestCase new.
 	aTypeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
-					{{(#score
+					(Array with: (Array with: (#score
 						->
-							{#SmallInteger.
-							{}.
-							true}).
+							#(#SmallInteger
+							#()
+							true)) with:
 					(#score:
 						->
-							{#SmallInteger.
-							{#SmallInteger}.
-							false})}.
-					{(#score:
+							#(#SmallInteger
+							#(#SmallInteger)
+							false))) with: 
+					(Array with: (#score:
 						->
-							{#SFoo.
-							{#SmallInteger}.
-							false})}}.
+							#(#SFoo
+							#(#SmallInteger)
+							false)))).
 	aTypeInfo scalar: #SmallInteger with: #(5).
 	testCase typeInfo: aTypeInfo.
 	testCase addFieldAccessMessage.
@@ -419,8 +427,8 @@ SSTestCaseTest >> testFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			{'_var0 := 5.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.'}
+			#('_var0 := 5.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 score.')
 ]
 
 { #category : #tests }
@@ -472,11 +480,11 @@ SSTestCaseTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := SFoo new.' . '_var1 := SFoo new.'}.
+		hasSameElements: #('_var0 := SFoo new.'  '_var1 := SFoo new.').
 	auxExpr := testCase addMessage.
 	auxExpr value
 		receiver: (testCase statementOfVarName: '_var1') variable.
-	auxExpr  := testCase
+	auxExpr := testCase
 		perform: #insertAsParameter:using:
 		inStatement: expression.
 	self
@@ -486,7 +494,7 @@ SSTestCaseTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 
 { #category : #'mutation-insert' }
 SSTestCaseTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
-	| testCase aExpression|
+	| testCase aExpression |
 	testCase := SSTestCase with: self class typeInfoSStack.
 	testCase addFactoryMessage: #SStack ofSelector: #newStack.
 	aExpression := testCase
@@ -496,17 +504,17 @@ SSTestCaseTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := SStack newStack.' . '_var1 := _var0 lastLinkStack.'.
-			'_var2 := 5.'}.
+			#('_var0 := SStack newStack.' '_var1 := _var0 lastLinkStack.'
+			'_var2 := 5.').
 	testCase addMessage: #push: from: #SStack.
 	testCase
 		perform: #insertAsParameter:using:
 		inStatement: aExpression copy.
-		self
+	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := SStack newStack.' . '_var1 := _var0 lastLinkStack.'.
-			'_var2 := 5.'. '_var3 := _var0 push: _var1.'}.
+			#('_var0 := SStack newStack.'  '_var1 := _var0 lastLinkStack.'
+			'_var2 := 5.'  '_var3 := _var0 push: _var1.')
 ]
 
 { #category : #'mutation-insert' }
@@ -519,8 +527,7 @@ SSTestCaseTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := #(1 4 5 ).' . '_var1 := SStack newStackWith: _var0.'.
-			'_var2 := _var1 pop.' . '_var3 := 5.'}.
+			#('_var0 := #(1 4 5 ).' '_var1 := SStack newStackWith: _var0.' '_var2 := _var1 pop.' '_var3 := 5.').
 	testCase addMessage: #push: from: #SStack.
 	testCase
 		perform: #insertAsParameter:using:
@@ -528,8 +535,7 @@ SSTestCaseTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := #(1 4 5 ).' . '_var1 := SStack newStackWith: _var0.'.
-			'_var2 := _var1 pop.' . '_var3 := 5.' . '_var4 := _var1 push: _var2.'}
+			#('_var0 := #(1 4 5 ).' '_var1 := SStack newStackWith: _var0.' '_var2 := _var1 pop.' '_var3 := 5.'  '_var4 := _var1 push: _var2.')
 ]
 
 { #category : #'mutation-insert' }
@@ -539,7 +545,7 @@ SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 7.3.'  '_var1 := SFoo score: _var0.').
 	self
 		should: [ testCase insertStatementOfSelector: #insertMethodMessage:using: ]
 		raise: SError
@@ -553,8 +559,8 @@ SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 score.').
 	self
 		should: [ testCase
 				perform: #insertMethodMessage:using:
@@ -569,7 +575,7 @@ SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
 	testCase addLiteral: #SmallInteger.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 5.'}.
+		hasSameElements: #('_var0 := 5.').
 	self
 		should: [ testCase insertStatementOfSelector: #insertMethodMessage:using: ]
 		raise: SError
@@ -583,16 +589,16 @@ SSTestCaseTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 returnNum.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 returnNum.').
 	testCase
 		perform: #insertMethodMessage:using:
 		inStatement: message copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 returnNum.' . '_var3 := _var1 returnNum.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 returnNum.'  '_var3 := _var1 returnNum.')
 ]
 
 { #category : #'mutation-insert' }
@@ -602,13 +608,13 @@ SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
 	testCase insertStatementOfSelector: #insertRandomMessage:using:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := SFoo score: _var0.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := SFoo score: _var0.')
 ]
 
 { #category : #'mutation-insert' }
@@ -619,16 +625,16 @@ SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.'}.
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 score.').
 	testCase
 		perform: #insertRandomMessage:using:
 		inStatement: fieldMessage copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.' . '_var3 := _var1 score.'}
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 score.'  '_var3 := _var1 score.')
 ]
 
 { #category : #'mutation-insert' }
@@ -638,7 +644,7 @@ SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
 	testCase addLiteral: #SmallFloat64.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'}.
+		hasSameElements: #('_var0 := 7.3.').
 	self
 		should: [ testCase insertStatementOfSelector: #insertRandomMessage:using: ]
 		raise: SError
@@ -652,17 +658,17 @@ SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.').
 	testCase
 		perform: #insertRandomMessage:using:
 		inStatement: message copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'.
-			'_var4 := _var1 return: _var2.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.'
+			'_var4 := _var1 return: _var2.')
 ]
 
 { #category : #'mutation-remove' }
@@ -672,11 +678,12 @@ SSTestCaseTest >> testRemoveArgsFactoryMessage [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
 	testCase removeStatementOfVarName: '_var0'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var2 := 7.3.' . '_var1 := SFoo score: _var2.'}.self assert: testCase validReferences
+		hasSameElements: #('_var2 := 7.3.' '_var1 := SFoo score: _var2.').
+	self assert: testCase validReferences
 ]
 
 { #category : #'mutation-remove' }
@@ -687,12 +694,17 @@ SSTestCaseTest >> testRemoveArgsMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.').
 	testCase removeStatementOfVarName: '_var2'.
-	self assert: ({'_var4 := ''hello''.'. '_var4 := _var1 returnString.'} includes: (testCase statementOfVarName: '_var4') printString).
-	self assert: (testCase statementOfVarName: '_var3') printString equals: '_var3 := _var1 return: _var4.'.
-	self assert: testCase validReferences.
+	self
+		assert:
+			(#('_var4 := ''hello''.'  '_var4 := _var1 returnString.')
+				includes: (testCase statementOfVarName: '_var4') printString).
+	self
+		assert: (testCase statementOfVarName: '_var3') printString
+		equals: '_var3 := _var1 return: _var4.'.
+	self assert: testCase validReferences
 ]
 
 { #category : #'mutation-remove' }
@@ -702,11 +714,11 @@ SSTestCaseTest >> testRemoveFactoryMessage [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}.
+		hasSameElements: #('_var0 := 7.3.'  '_var1 := SFoo score: _var0.').
 	testCase removeStatementOfVarName: '_var1'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'}
+		hasSameElements: #('_var0 := 7.3.')
 ]
 
 { #category : #'mutation-remove' }
@@ -717,12 +729,12 @@ SSTestCaseTest >> testRemoveFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.'}.
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 score.').
 	testCase removeStatementOfVarName: '_var2'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'}
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.')
 ]
 
 { #category : #'mutation-remove' }
@@ -733,15 +745,14 @@ SSTestCaseTest >> testRemoveMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
-	
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
 	testCase removeStatementOfVarName: '_var3'.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.'}
+			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.')
 ]
 
 { #category : #'mutation-remove' }
@@ -752,15 +763,14 @@ SSTestCaseTest >> testRemoveReceiverFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := _var1 score.'}.
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := _var1 score.').
 	testCase removeStatementOfVarName: '_var1'.
-	
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var3 := SFoo score: _var0.'.
-			'_var2 := _var3 score.'}
+			#('_var0 := 7.3.'  '_var3 := SFoo score: _var0.'
+			'_var2 := _var3 score.')
 ]
 
 { #category : #'mutation-remove' }
@@ -771,15 +781,14 @@ SSTestCaseTest >> testRemoveReceiverMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var1 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var1 return: _var2.'}.
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.'
+			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.').
 	testCase removeStatementOfVarName: '_var1'.
-	
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{'_var0 := 7.3.' . '_var4 := SFoo score: _var0.'.
-			'_var2 := ''hello''.' . '_var3 := _var4 return: _var2.'}
+			#('_var0 := 7.3.' '_var4 := SFoo score: _var0.'
+			'_var2 := ''hello''.' '_var3 := _var4 return: _var2.')
 ]
 
 { #category : #'mutation-change' }

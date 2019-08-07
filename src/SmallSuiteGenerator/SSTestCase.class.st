@@ -586,11 +586,6 @@ SSTestCase >> pickOrCreateObjectVariableOf: aClassName [
 		do: [ (self addFactoryMessage: aClassName) variable ]
 ]
 
-{ #category : #'as yet unclassified' }
-SSTestCase >> prettyCodeApplying: kindsRefactoring [
-	^ refactorizer prettyCodeOf: self  testCaseApplying: kindsRefactoring 
-]
-
 { #category : #adding }
 SSTestCase >> randomIndexToAdd: aExpression before: aStatement [
 	| refIndexes anIndex |

@@ -31,8 +31,8 @@ SGATournamentSelection >> createNewPopulation [
 			offsprings := self crossover: parentA with: parentB.
 			offspringA := self mutate: offsprings first.
 			offspringB := self mutate: offsprings second.
-			{offspringA.
-			offspringB}
+			(Array with: offspringA with: 
+			offspringB)
 				do: [ :each | 
 					(self isTooLong: each)
 						ifFalse: [ population add: each ] ] ]
