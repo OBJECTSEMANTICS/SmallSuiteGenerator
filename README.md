@@ -53,7 +53,7 @@ smallSuiteGenerator generateTestsOf: [ (SStudent name: 'Ann@323' with: -34)
 				idStudent;
 				scoreStudent: -45.12;
 				scoreStudent ]
-		blockOnPackagesMatching: 'SmallSuiteExamp*'.
+		blockOnPackagesMatching: 'SmallSuiteGenerator-Examples'.
 ```
 
 ### Execution
@@ -76,19 +76,7 @@ smallSuiteGenerator numberOfStatements: 15. "number of statements that each test
 To generate assertions of each testCase execute:
 
 ```Smalltalk
-smallSuiteGenerator generateAssertionsUsing: {}
+smallSuiteGenerator generateAssertionsUsing: #()
 ```
 This instruction must be executed after the generations of testCases.
 If you execute the code with an empty list, by default all subClasses of SSAssertion will be considered to generate the assertions. You can modify this list. 
-
-### Pretty Code
-To generate assertions with the statements renamed, no redundant and inlined you can type the following instruction instead of the previous instruction:
-
-```Smalltalk
-smallSuiteGenerator
-generateAssertionsUsing: {}
-invariantsAndApplyPrettyCodeWith: {}
-```
-
-The classes to apply the refactorings at the assertions must be send in the second parameter, by default all the subclasses of SRefactoring will be considered but you can modify it.
-The class which contains the generated assertions is `SSAssertionGeneratorTest`
