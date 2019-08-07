@@ -13,3 +13,12 @@ SSGeneratorClass class >> spyClassForMethod [
 SSGeneratorClass >> factoryMethods [
 	^ self metaclassSpy methods select:#isFactory.
 ]
+
+{ #category : #'as yet unclassified' }
+SSGeneratorClass >> fillTypesOn: aTypeInfo [
+	| aTypeClass |
+	aTypeClass := STypeClassInfo newFrom: self className and: aTypeInfo.
+	aTypeClass addMethods: (self methods collect: #asTypeInfo);
+		addClassMethods: (self metaclassSpy methods collect: #asTypeInfo).
+	aTypeInfo addClassInfo: aTypeClass
+]

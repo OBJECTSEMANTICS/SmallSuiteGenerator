@@ -6,9 +6,10 @@ Class {
 
 { #category : #tests }
 SStatementTest class >> testCaseSFoo [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 34 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
 	testCase addMethod.	"_var2 := _var0 initialize"
@@ -37,31 +38,35 @@ SStatementTest class >> testCaseSFoo [
 
 { #category : #tests }
 SStatementTest class >> testCaseSFooWithAbstractClassAsArgs [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ (SFoo score: 2)
-				return:
-					(SStudent new
-						name: 'Vania';
-						nickname: 'vania';
-						scoreStudent: 5).
-			(SFoo score: 6)
-				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						return:
+							(SStudent new
+								name: 'Vania';
+								nickname: 'vania';
+								scoreStudent: 5).
+					(SFoo score: 6)
+						return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	^ testCase
 ]
 
 { #category : #tests }
 SStatementTest class >> testCaseSFooWithMethods [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ (SFoo score: 34)
-				score;
-				returnCollection ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SFoo score: 34)
+						score;
+						returnCollection ]
+				onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.	"_var0 := SFoo score: 34"
 	testCase addPrimitive.	"_var1 := 34"
 	testCase addMethod.	"_var2 := _var0 initialize or _var0 returnCollection"
@@ -98,14 +103,16 @@ SStatementTest class >> testCaseSFooWithMethods [
 
 { #category : #tests }
 SStatementTest class >> testCaseSStack [
-	| profile testCase statement |
-	profile := SSGenerator
-		profile: [ (SStack newStackWith: {'abcd' . 'abcdf' . '1234' . '234'})
-				push: '_varVania3';
-				pop;
-				top ]
-		onClass: SStack.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase statement |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStack newStackWith: {'abcd' . 'abcdf' . '1234' . '234'})
+						push: '_varVania3';
+						pop;
+						top ]
+				onClass: SStack).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	statement := testCase statements last.

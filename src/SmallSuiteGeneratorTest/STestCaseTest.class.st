@@ -5,205 +5,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-STestCaseTest class >> generateTestSuiteOf: aBlock blockOnClass: aClass [
-	| profile testCase |
-	profile := SSGenerator profile: aBlock onClass: aClass.
-	testCase := STestCase seed: profile.
-	^ testCase
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCase [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self generateTestSuiteOf: [ SFoo score: 34 ] blockOnClass: SFoo)
-				generateStatements;
-		add:
-			(self generateTestSuiteOf: [ (SFoo score: 2) score ] blockOnClass: SFoo)
-				generateStatements;
-		add:
-			(self generateTestSuiteOf: [ (SFoo score: 2) return: 2 ] blockOnClass: SFoo)
-				generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
-						name;
-						nickname;
-						id ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Ann' with: 34)
-						age: 34;
-						identifier;
-						nickname: 'Ann34';
-						fullIdentifier ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ SStudent name: 'Peter'.
-					SStudent name: 'Ann' with: 2 ]
-				blockOnClass: SStudent) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTAMItem [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			((self
-				generateTestSuiteOf: [ RTAMItem basicNew
-						itemName: 'Bonus Card';
-						color: Color lightCyan ]
-				blockOnClass: RTAMItem) generateStatements);
-		add:
-			(self
-				generateTestSuiteOf: [ RTAMItem basicNew
-						itemName: 'Contract Management';
-						row: 'Australia';
-						column: 'Corporate Services';
-						color: Color red ]
-				blockOnClass: RTAMItem) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTAMItem basicNew
-						itemName: 'Bonus Card';
-						row: 'France';
-						column: 'Customer Relationship';
-						color: Color lightGreen ]
-				blockOnClass: RTAMItem) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTBorderAttachPoint [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 4  ]
-				blockOnClass: RTBorderAttachPoint) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 19  ]
-				blockOnClass: RTBorderAttachPoint) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTBorderAttachPoint instance) offset: 4  ]
-				blockOnClass: RTBorderAttachPoint) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTBox [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ RTBox instance
-						defaultWidth;
-						borderStyle ]
-				blockOnClass: RTBox) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTBox instance
-						borderStyle ]
-				blockOnClass: RTBox) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTBox instance
-						defaultWidth;
-						height;
-						borderStyle ]
-				blockOnClass: RTBox) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTDirectedLine [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ RTDirectedLine instance offset: 6.5 ]
-				blockOnClass: RTDirectedLine) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTDirectedLine instance pointsFrom: 1 @ 3 To: 3 @ 5 ]
-				blockOnClass: RTDirectedLine) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ RTDirectedLine instance
-						offset: 56; offset: 2.4 ]
-				blockOnClass: RTDirectedLine) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseRTLineSegment [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ RTLineSegment from: 1 @ 2 to: 3 @ 4 ]
-				blockOnClass: RTLineSegment) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTLineSegment from: 2 @ 6 to: 5 @ 8)
-						from;
-						to;
-						a;
-						b;
-						c ]
-				blockOnClass: RTLineSegment) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
-						angleInDeg;
-						angleInRad;
-						cotan;
-						bottom ]
-				blockOnClass: RTLineSegment) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseTest class >> listTestCaseSStudent [
-	| list |
-	list := OrderedCollection new.
-	list
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Peter')
-						scoreStudent: 45;
-						scoreStudent; yourself ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Peter')
-						idStudent;
-						nickname; yourself ]
-				blockOnClass: SStudent) generateStatements;
-		add:
-			(self
-				generateTestSuiteOf: [ (SStudent name: 'Ann' with: -34.234)
-						nickname;
-						idStudent;
-						scoreStudent: 45;
-						scoreStudent; yourself ]
-				blockOnClass: SStudent) generateStatements.
-	^ list
-]
-
-{ #category : #'as yet unclassified' }
 STestCaseTest >> argsInclude: varNames filteringBy: selector and: aTestCase [
 	| selectedStatements |
 	selectedStatements := aTestCase statements select: selector.
@@ -254,47 +55,53 @@ STestCaseTest >> assertRemove: listTestCase [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeConstructor [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #(2).
-	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #(3.56).
-	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: $a ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: {$a}.
-	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: true ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self assert: testCase statements first args equals: #(false).
-	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self deny: testCase statements first args equals: #('hello').
-	profile := SSGenerator
-		profile: [ SFoo score: #(1 4 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: #(1 4 5) ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase change.
 	self assert: testCase statements first args equals: {#(1 4 5)}.
-	profile := SSGenerator
-		profile: [ (SStudent name: 'Ann' with: -34.234)
-				nickname;
-				idStudent;
-				scoreStudent: 45;
-				scoreStudent ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStudent name: 'Ann' with: -34.234)
+						nickname;
+						idStudent;
+						scoreStudent: 45;
+						scoreStudent ]
+				onClass: SStudent).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	testCase change.
@@ -304,16 +111,18 @@ STestCaseTest >> testChangeConstructor [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeField [
-	| profile testCase oldStatement |
-	profile := SSGenerator
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				name;
-				nickname;
-				yearsWorkExperience;
-				idTeacher;
-				id ]
-		onClass: SSTeacher.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase oldStatement |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SSTeacher name: 'Ann' with: 34)
+						name;
+						nickname;
+						yearsWorkExperience;
+						idTeacher;
+						id ]
+				onClass: SSTeacher).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	oldStatement := testCase statements second deepCopy.
@@ -332,15 +141,17 @@ STestCaseTest >> testChangeField [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeMethod [
-	| profile testCase oldStatement currentStatement |
-	profile := SSGenerator
-		profile: [ (SStudent name: 'Ann' with: 34)
-				age: 34;
-				identifier;
-				nickname: 'Ann34';
-				fullIdentifier ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase oldStatement currentStatement |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStudent name: 'Ann' with: 34)
+						age: 34;
+						identifier;
+						nickname: 'Ann34';
+						fullIdentifier ]
+				onClass: SStudent).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	testCase addMethod.
@@ -357,18 +168,20 @@ STestCaseTest >> testChangeMethod [
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
-	| profile testCase oldStatement currentStatement |
-	profile := SSGenerator
-		profile: [ (SFoo score: 2)
-				return:
-					(SStudent new
-						name: 'Peter';
-						nickname: 'peter';
-						scoreStudent: 5).
-			(SFoo score: 6)
-				return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase oldStatement currentStatement |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						return:
+							(SStudent new
+								name: 'Peter';
+								nickname: 'peter';
+								scoreStudent: 5).
+					(SFoo score: 6)
+						return: ((SSTeacher name: 'Carl' with: 110) yearsWorkExperience: 5) ]
+				onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	oldStatement := testCase statements
 		detect: [ :stm | stm isMethod and: [ stm selector = #return: ] ]
@@ -378,65 +191,60 @@ STestCaseTest >> testChangeMethodWithArgsOfAbstractClass [
 	currentStatement := testCase statementAt: oldStatement varName.
 	self denyCollection: currentStatement args equals: oldStatement args.
 	self assert: testCase hasValidDependencies.
-	self
-		assert: testCase hasUniqueStatements 
+	self assert: testCase hasUniqueStatements
 ]
 
 { #category : #'mutation-change' }
 STestCaseTest >> testChangePrimitive [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 2.
-	profile := SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 3.56 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 3.56.
-	profile := SSGenerator profile: [ SFoo score: $a ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: $a ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: $a.
-	profile := SSGenerator profile: [ SFoo score: true ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: true ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self assert: testCase statements first value equals: false.
-	profile := SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 'hello' ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self deny: testCase statements first value equals: 'hello'.
-	profile := SSGenerator
-		profile: [ SFoo score: #(1 4 5) ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: #(1 4 5) ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase change.
 	self assert: testCase statements first value equals: #(1 4 5)
 ]
 
 { #category : #'mutation-change' }
-STestCaseTest >> testChangeRoassal [
-	self assertChange: self class listTestCaseRTAMItem.
-	self
-		assertChange: self class listTestCaseRTBorderAttachPoint.
-	self assertChange: self class listTestCaseRTBox.
-	self assertChange: self class listTestCaseRTDirectedLine.
-	self assertChange: self class listTestCaseRTLineSegment
-]
-
-{ #category : #'mutation-change' }
 STestCaseTest >> testChangeWithTwoConstructor [
-	| profile testCase oldSelector |
-	profile := SSGenerator
-		profile: [ SStack newStack.
-			SStack newStackWith: { 1. 5. 7. 8 } ]
-		onClass: SStack.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase oldSelector |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ SStack newStack.
+					SStack newStackWith: {1 . 5 . 7 . 8} ]
+				onClass: SStack).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	oldSelector := testCase statements first selector.
 	testCase change.
@@ -445,37 +253,38 @@ STestCaseTest >> testChangeWithTwoConstructor [
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertMethodCall [
-	| profile testCase varNames stm |
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase varNames stm |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator profile: [ (SFoo score: 2) return: 3 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator profile: [ (SFoo score: 2) return: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ (SFoo score: 2) score ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
 	self assert: (testCase insert: #insertMethodCallUsing:) equals: nil.
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2)
-				score;
-				return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						score;
+						return: 3 ]
+				onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -484,32 +293,35 @@ STestCaseTest >> testInsertMethodCall [
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isMethod or: [ stm isConstructor ]).
 	self assert: testCase hasValidDependencies.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2)
-				score;
-				return: 3 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SFoo score: 2)
+						score;
+						return: 3 ]
+				onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
 	testCase addMethod.
 	varNames := testCase insert: #insertMethodCallUsing:.
 	self assert: testCase statements size > 4.
-	self assert: testCase hasValidDependencies.
+	self assert: testCase hasValidDependencies
 ]
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertParameter [
-	| profile testCase varNames |
+	| generatorInfo testCase varNames |
 	"if is primitive, parameter is not added"
 	"parameter is added if any statement has args"
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase insert: #insertParameterUsing:.
 	self assert: testCase statements size equals: 1.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	varNames := testCase insert: #insertParameterUsing:.
@@ -519,8 +331,8 @@ STestCaseTest >> testInsertParameter [
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first).
 			self assert: testCase hasValidDependencies.
-			self assert: testCase hasUniqueStatements  ].
-	testCase := STestCase seed: profile.
+			self assert: testCase hasUniqueStatements ].
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
@@ -531,8 +343,8 @@ STestCaseTest >> testInsertParameter [
 					((testCase statements select: #isConstructor) first args
 						includes: varNames first).
 			self assert: testCase hasValidDependencies.
-			self assert: testCase hasUniqueStatements  ].
-	testCase := STestCase seed: profile.
+			self assert: testCase hasUniqueStatements ].
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -545,48 +357,41 @@ STestCaseTest >> testInsertParameter [
 						addAll: (testCase statements select: #isMethod thenCollect: #args) first;
 						yourself) includes: varNames first).
 			self assert: testCase hasValidDependencies.
-			self assert: testCase hasUniqueStatements  ].
-	profile := SSGenerator
-		profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
-				push: 8;
-				pop;
-				top ]
-		onClass: SStack.
-	testCase := STestCase seed: profile.
+			self assert: testCase hasUniqueStatements ].
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+						push: 8;
+						pop;
+						top ]
+				onClass: SStack).
+	testCase := STestCase seed: generatorInfo.
 	testCase generateStatements.
 	testCase insert: #insertParameterUsing:.
 	self assert: testCase hasValidDependencies.
-	self assert: testCase hasUniqueStatements 
-]
-
-{ #category : #'mutation-insert' }
-STestCaseTest >> testInsertParameterRoassal [
-	self assertInsertParameter: self class listTestCaseRTAMItem.
-	self
-		assertInsertParameter: self class listTestCaseRTBorderAttachPoint.
-	self assertInsertParameter: self class listTestCaseRTBox.
-	self assertInsertParameter: self class listTestCaseRTDirectedLine.
-	self assertInsertParameter: self class listTestCaseRTLineSegment
+	self assert: testCase hasUniqueStatements
 ]
 
 { #category : #'mutation-insert' }
 STestCaseTest >> testInsertRandomCall [
-	| profile testCase stm varNames |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase stm varNames |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	self assert: (testCase insert: #insertRandomCallUsing:) isNil.
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	varNames := testCase insert: #insertRandomCallUsing:.
 	self assert: testCase statements size > 2.
 	self assertCollection: varNames equals: {'_var2' . '_var3'}.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ (SFoo score: 2) score ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addField.
@@ -595,10 +400,10 @@ STestCaseTest >> testInsertRandomCall [
 	self assert: (varNames includesAny: {'_var3' . '_var4'}).
 	stm := testCase statementAt: varNames last.
 	self assert: (stm isField or: [ stm isConstructor ]).
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator profile: [ (SFoo score: 2) return: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	testCase addMethod.
@@ -611,56 +416,66 @@ STestCaseTest >> testInsertRandomCall [
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveConstructor [
-	| profile testCase |
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase remove.
 	self assert: testCase statements isEmpty.
-	profile := SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase addConstructor.
 	self assert: (testCase statements last args includes: '_var0').
 	testCase remove: '_var0'.
 	self assert: testCase statements size equals: 1.
 	self deny: (testCase statements last args includes: '_var0').
-	profile := SSGenerator
-		profile: [ (SStudent name: 'Ann' with: -34.234)
-				nickname;
-				idStudent;
-				scoreStudent: 45;
-				scoreStudent ]
-		onClass: SStudent.
-	testCase := STestCase seed: profile.
-	testCase addConstructor. "_var0"
-	testCase addField. "_var1"
-	testCase addField. "_var2"
-	testCase addMethod. "_var3"
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator
+				profile: [ (SStudent name: 'Ann' with: -34.234)
+						nickname;
+						idStudent;
+						scoreStudent: 45;
+						scoreStudent ]
+				onClass: SStudent).
+	testCase := STestCase seed: generatorInfo.
+	testCase addConstructor.	"_var0"
+	testCase addField.	"_var1"
+	testCase addField.	"_var2"
+	testCase addMethod.	"_var3"
 	testCase remove: '_var0'.
-	self assert: (testCase statements select: #isConstructor) size equals: 3.
+	self
+		assert: (testCase statements select: #isConstructor) size
+		equals: 3.
 	self assert: (testCase statementAt: '_var4') isConstructor.
-	self assert: (testCase statementAt: '_var1') receiverVarName equals: '_var4'.
-	self assert: (testCase statementAt: '_var2') receiverVarName equals: '_var5'.
-	self assert: (testCase statementAt: '_var3') receiverVarName equals: '_var6'.
+	self
+		assert: (testCase statementAt: '_var1') receiverVarName
+		equals: '_var4'.
+	self
+		assert: (testCase statementAt: '_var2') receiverVarName
+		equals: '_var5'.
+	self
+		assert: (testCase statementAt: '_var3') receiverVarName
+		equals: '_var6'
 ]
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveField [
-	| profile testCase varNamesDeleted statement |
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase varNamesDeleted statement |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ (SFoo score: 2) score ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	varNamesDeleted := testCase remove: '_var1'.	"remove the fieldStatement"
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
 	self assert: testCase statements size equals: 1.
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) score ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ (SFoo score: 2) score ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addField.
 	varNamesDeleted := testCase remove: '_var0'.	"remove the constructorStatement"
@@ -672,22 +487,22 @@ STestCaseTest >> testRemoveField [
 	self
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'.
-	self assert: testCase hasValidDependencies.
+	self assert: testCase hasValidDependencies
 ]
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemoveMethod [
-	| profile testCase varNamesDeleted statement referencedVarName |
-	profile := SSGenerator
-		profile: [ (SFoo score: 2) return: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase varNamesDeleted statement referencedVarName |
+	generatorInfo := STypeInfo
+		typeInfo:
+			(SSGenerator profile: [ (SFoo score: 2) return: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	varNamesDeleted := testCase remove: '_var1'.	"remove the methodStatement"
 	self assert: testCase statements size equals: 1.
 	self assertCollection: varNamesDeleted equals: {'_var1'}.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addMethod.
 	varNamesDeleted := testCase remove: '_var0'.	"remove the constructorStatement"
@@ -700,7 +515,7 @@ STestCaseTest >> testRemoveMethod [
 		assert: (statement isConstructor and: [ statement varName = '_var2' ]).
 	self assert: testCase statements last receiverVarName equals: '_var2'.
 	self assert: testCase hasValidDependencies.
-	testCase := STestCase seed: profile.
+	testCase := STestCase seed: generatorInfo.
 	testCase addConstructor.
 	testCase addConstructor.
 	testCase addMethod.	"_var2"
@@ -715,21 +530,11 @@ STestCaseTest >> testRemoveMethod [
 
 { #category : #'mutation-remove' }
 STestCaseTest >> testRemovePrimitive [
-	| profile testCase |
-	profile := SSGenerator
-		profile: [ SFoo score: 2 ]
-		onClass: SFoo.
-	testCase := STestCase seed: profile.
+	| generatorInfo testCase |
+	generatorInfo := STypeInfo
+		typeInfo: (SSGenerator profile: [ SFoo score: 2 ] onClass: SFoo).
+	testCase := STestCase seed: generatorInfo.
 	testCase addPrimitive.
 	testCase remove.
 	self assert: testCase statements isEmpty
-]
-
-{ #category : #'mutation-remove' }
-STestCaseTest >> testRemoveRoassal [
-	self assertRemove: self class listTestCaseRTAMItem.
-	self assertRemove: self class listTestCaseRTBorderAttachPoint.
-	self assertRemove: self class listTestCaseRTBox.
-	self assertRemove: self class listTestCaseRTDirectedLine.
-	self assertRemove: self class listTestCaseRTLineSegment
 ]

@@ -2,7 +2,8 @@ Class {
 	#name : #SSmallSuiteGenerator,
 	#superclass : #Object,
 	#instVars : [
-		'engine'
+		'engine',
+		'typeInfo'
 	],
 	#classInstVars : [
 		'instance'
@@ -23,6 +24,15 @@ SSmallSuiteGenerator class >> resetInstance [
 	instance := nil
 ]
 
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> classesForRegex: regexExpressions [
+	^ ((regexExpressions
+		flatCollect: [ :regex | 
+			RPackage organizer packages
+				select: [ :p | regex match: p name asString ] ]) asSet)
+		flatCollect: #definedClasses
+]
+
 { #category : #accessing }
 SSmallSuiteGenerator >> engine [ 	
 	^ engine
@@ -30,15 +40,15 @@ SSmallSuiteGenerator >> engine [
 
 { #category : #accessing }
 SSmallSuiteGenerator >> fitnessBlock: aBlock [
-	engine fitnessBlock: aBlock
+	engine fitness: aBlock
 ]
 
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
-		description: 'Before must execute ''runGeneration''.'.
-	engine generateAssertionsUsing: selectedInvariants 
+		description: 'Execute ''runGeneration'' before.'.
+	engine generateAssertionsUsing: selectedInvariants
 ]
 
 { #category : #'as yet unclassified' }
@@ -57,19 +67,20 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	self
 		assert: aClass isNotNil
 		description: 'Need to provide a class to generate the tests'.
+	"save the class to evaluate mutants killed or alived"
+	engine modelClasses: {aClass}.
+	"execute the engine"
 	engine
-		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onClass: aClass ];
-		coverageProfiler: [ :blockToExecute | 
-			SBProfiler new
-				profileInstrumented: blockToExecute onClass: aClass;
-				yourself ];
-		fitnessBlock: [ :coverageProfiler | 
-			[ :testCase | 
-			SCalculatorCoverage
-				calculateCoverageOf: testCase
-				using: coverageProfiler ] ]
+		blockToExecute: aBlock.
+	engine typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass);
+		fitness: [ :aTestCase | 
+			| fitness |
+			fitness := SMethodCoverage new
+				profiler:
+					(SBProfiler new
+						profileInstrumented: engine onClass: aClass;
+						yourself).
+			fitness run: aTestCase ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -80,19 +91,20 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 	self
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
+	engine modelClasses: (self classesForRegex: {regex}).
+	engine
+		blockToExecute: aBlock.
+	engine 	typeInfo: (self typeInfoOf: engine blockToExecute  onPackagesMatching: regex );
+		fitness: [ :aTestCase | 
+			| fitness |
+			fitness := SMethodCoverage new
+				profiler:
+					(SBProfiler new
+						profileInstrumented: engine blockToExecute
+							onPackagesMatching: regex;
+						yourself).
+			fitness run: aTestCase ].
 	^ engine
-		blockToExecute: aBlock;
-		generatorProfiler:
-				[ :blockToExecute | SSGenerator profile: blockToExecute onPackagesMatching: regex ];
-		coverageProfiler: [ :blockToExecute | 
-			SBProfiler new
-				profileInstrumented: blockToExecute onPackagesMatching: regex;
-				yourself ];
-		fitnessBlock: [ :coverageProfiler | 
-			[ :testCase | 
-			SCalculatorCoverage
-				calculateCoverageOf: testCase
-				using: coverageProfiler ] ]
 ]
 
 { #category : #initialization }
@@ -122,13 +134,10 @@ SSmallSuiteGenerator >> populationSize: aInt [
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> runGeneration [
 	self
-		assert: engine generatorProfiler isNotNil
-		description: 'Need to provide generatorProfiler'.
+		assert: engine typeInfo isNotNil
+		description: 'Need to provide typeInfo'.
 	self
-		assert: engine coverageProfiler isNotNil
-		description: 'Need to provide coverageProfiler'.
-	self
-		assert: engine fitnessBlock isNotNil
+		assert: engine fitness isNotNil
 		description: 'Need to provide a block to calculate the fitness'.
 	self
 		assert: engine blockToExecute isNotNil
@@ -137,4 +146,32 @@ SSmallSuiteGenerator >> runGeneration [
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
 	^ engine run
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> typeInfo [ 
+	^ typeInfo
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> typeInfo: aTypeInfo [
+	typeInfo := aTypeInfo
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> typeInfoOf: blockToExecute onClass: aClass [
+	typeInfo
+		ifNil: [ typeInfo := SConfiguration
+				defaultGeneratorTypeInfoOf: blockToExecute
+				onClass: aClass ].
+	^ typeInfo
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> typeInfoOf: blockToExecute onPackagesMatching: regex [
+	typeInfo
+		ifNil: [ typeInfo := SConfiguration
+				defaultGeneratorTypeInfoOf: blockToExecute
+				onPackagesMatching: regex ].
+	^ typeInfo
 ]
