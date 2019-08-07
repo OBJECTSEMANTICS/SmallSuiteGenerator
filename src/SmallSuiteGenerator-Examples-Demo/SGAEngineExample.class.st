@@ -211,16 +211,16 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 
 { #category : #actions }
 SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: aClassFitness [
-	|engine |
+	| engine |
 	engine := SGAEngine new.
 	SSGeneratorInvariant resetNumTest.
 	engine
 		populationSize: 30;
 		numberOfStatements: 15;
-		blockToExecute: aBlock;
-		typeInfo: [ :blockToExecute | 
-			(SSGenerator profile: blockToExecute onPackagesMatching: regex)
-				asTypeInfo ];
+		blockToExecute: aBlock.
+		engine typeInfo:  
+			(SSGenerator profile: engine blockToExecute onPackagesMatching: regex)
+				asTypeInfo;
 		fitness: [ :aTestCase | 
 			| fitness |
 			fitness := aClassFitness new
@@ -232,5 +232,5 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: a
 			fitness run: aTestCase ];
 		endForMaxNumberOfGeneration: 15;
 		run.
-		^ engine
+	^ engine
 ]
