@@ -24,24 +24,32 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator-Generator') ];
 				package: 'SmallSuiteGenerator-Fitness'
-					with: [ spec requires: #('SBTestCoverage') ];
-				package: 'SmallSuiteGenerator-GeneticAlgorithm' with: [
-					spec requires: #('SmallSuiteGenerator')];
+					with: [ spec requires: 'SBTestCoverage' ];
+				package: 'SmallSuiteGenerator-GeneticAlgorithm'
+					with: [ spec requires: 'SmallSuiteGenerator' ];
 				package: 'SmallSuiteGenerator-Assertion';
 				package: 'SmallSuiteGenerator-Examples';
 				package: 'SmallSuiteGenerator-Examples-Demo'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Info' 'SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples') ];
-				package: 'SmallSuiteGenerator-Tests' with: [ spec requires: #('SmallSuiteGenerator' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Info')];
+				package: 'SmallSuiteGenerator-Tests'
+					with: [ spec
+						requires:
+							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Info') ];
 				package: 'SmallSuiteGenerator-Tests-Assertion'
 					with: [ spec requires: 'SmallSuiteGenerator-Assertion' ];
 				package: 'SmallSuiteGenerator-Tests-Fitness'
-					with: [ spec requires: #('SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator') ];
+					with: [ spec
+						requires:
+							#('SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator') ];
 				package: 'SmallSuiteGenerator-Tests-Generator'
-					with: [ spec requires: #('SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Tests') ];
+					with: [ spec
+						requires: #('SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Tests') ];
 				package: 'SmallSuiteGenerator-Tests-GeneticAlgorithm'
-					with: [ spec requires: #('SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Examples') ];
+					with: [ spec
+						requires:
+							#('SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Examples') ];
 				package: 'SmallSuiteGenerator-Tests-Info'
 					with: [ spec requires: #('SmallSuiteGenerator-Info' 'SmallSuiteGenerator') ] ]
 ]
