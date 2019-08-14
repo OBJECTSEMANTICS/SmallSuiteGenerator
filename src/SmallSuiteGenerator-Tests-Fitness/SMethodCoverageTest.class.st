@@ -10,9 +10,7 @@ Class {
 { #category : #running }
 SMethodCoverageTest >> setUp [
 	super setUp.
-	fitness := SMethodCoverage new
-
-	
+	fitness := SMethodCoverage
 ]
 
 { #category : #running }

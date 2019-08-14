@@ -285,8 +285,9 @@ SSTestCase >> changeStatementOfVarName: varName [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> computeFitnessUsing: fitnessBlock [
-	fitness := fitnessBlock value: self
+SSTestCase >> computeFitnessUsing: fitnessClass [
+	"fitness := fitnessBlock value: self"
+	fitness := fitnessClass run: self
 ]
 
 { #category : #copying }

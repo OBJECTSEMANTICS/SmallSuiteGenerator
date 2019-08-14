@@ -5,6 +5,6 @@ Class {
 }
 
 { #category : #metric }
-SMethodCoverage >> coverage [ 	
-	^ profiler methodCoverage
+SMethodCoverage >> coverage [
+	^ self class profiler methodCoverage
 ]

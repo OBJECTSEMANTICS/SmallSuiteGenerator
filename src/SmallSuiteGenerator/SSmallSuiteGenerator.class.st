@@ -39,8 +39,8 @@ SSmallSuiteGenerator >> engine [
 ]
 
 { #category : #accessing }
-SSmallSuiteGenerator >> fitnessBlock: aBlock [
-	engine fitness: aBlock
+SSmallSuiteGenerator >> fitnessBlock: aClassFitness [
+	engine fitness: aClassFitness
 ]
 
 { #category : #'as yet unclassified' }
@@ -70,17 +70,17 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	"save the class to evaluate mutants killed or alived"
 	engine modelClasses: {aClass}.
 	"execute the engine"
+	engine blockToExecute: aBlock.
 	engine
-		blockToExecute: aBlock.
-	engine typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass);
-		fitness: [ :aTestCase | 
+		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass);
+		fitness: (SMethodCoverage coverageOf: aBlock onClass: aClass)"[ :aTestCase | 
 			| fitness |
 			fitness := SMethodCoverage new
 				profiler:
 					(SBProfiler new
 						profileInstrumented: engine onClass: aClass;
 						yourself).
-			fitness run: aTestCase ]
+			fitness run: aTestCase ]"
 ]
 
 { #category : #'as yet unclassified' }
@@ -92,10 +92,10 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
 	engine modelClasses: (self classesForRegex: {regex}).
+	engine blockToExecute: aBlock.
 	engine
-		blockToExecute: aBlock.
-	engine 	typeInfo: (self typeInfoOf: engine blockToExecute  onPackagesMatching: regex );
-		fitness: [ :aTestCase | 
+		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex);
+		fitness: (SMethodCoverage coverageOf: aBlock onPackagesMatching: regex).	"[ :aTestCase | 
 			| fitness |
 			fitness := SMethodCoverage new
 				profiler:
@@ -103,7 +103,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 						profileInstrumented: engine blockToExecute
 							onPackagesMatching: regex;
 						yourself).
-			fitness run: aTestCase ].
+			fitness run: aTestCase ]"
 	^ engine
 ]
 

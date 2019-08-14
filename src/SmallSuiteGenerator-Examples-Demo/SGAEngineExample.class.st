@@ -185,7 +185,7 @@ SGAEngineExample >> exampleSStudentOnPackage [
 
 { #category : #actions }
 SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitness [
-	|engine |
+	| engine |
 	engine := SGAEngine new.
 	SSGeneratorInvariant resetNumTest.
 	engine
@@ -196,16 +196,16 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 		typeInfo:
 			(SSGenerator profile: engine blockToExecute onClass: aClass)
 				asTypeInfo;
-		fitness: [ :aTestCase | 
+		fitness: (aClassFitness coverageOf: aBlock onClass: aClass);
+		endForMaxNumberOfGeneration: 15;
+		run.	"[ :aTestCase | 
 			| fitness |
 			fitness := aClassFitness new
 				profiler:
 					(SBProfiler new
 						profileInstrumented: engine blockToExecute onClass: aClass;
 						yourself).
-			fitness run: aTestCase ];
-		endForMaxNumberOfGeneration: 15;
-		run.
+			fitness run: aTestCase ]"
 	^ engine
 ]
 
@@ -218,10 +218,13 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: a
 		populationSize: 30;
 		numberOfStatements: 15;
 		blockToExecute: aBlock.
-		engine typeInfo:  
+	engine
+		typeInfo:
 			(SSGenerator profile: engine blockToExecute onPackagesMatching: regex)
 				asTypeInfo;
-		fitness: [ :aTestCase | 
+		fitness: (aClassFitness coverageOf: aBlock onPackagesMatching: regex);
+		endForMaxNumberOfGeneration: 15;
+		run.	"[ :aTestCase | 
 			| fitness |
 			fitness := aClassFitness new
 				profiler:
@@ -229,8 +232,6 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: a
 						profileInstrumented: engine blockToExecute
 							onPackagesMatching: regex;
 						yourself).
-			fitness run: aTestCase ];
-		endForMaxNumberOfGeneration: 15;
-		run.
+			fitness run: aTestCase ]"
 	^ engine
 ]
