@@ -1,6 +1,6 @@
 Class {
 	#name : #STypeInfo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'types',
 		'classes',
@@ -69,7 +69,7 @@ STypeInfo >> initialize [
 	scalars := Dictionary new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 STypeInfo >> joinScalars: aDict [
 	aDict associations
 		do: [ :assoc | 
@@ -79,7 +79,7 @@ STypeInfo >> joinScalars: aDict [
 				ifAbsentPut: [ assoc value ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 STypeInfo >> joinWith: otherTypeInfo [
 	otherTypeInfo types
 		valuesDo: [ :aTypeClass | self addClassInfo: aTypeClass ].
@@ -100,7 +100,7 @@ STypeInfo >> randomNoneAbstractClass [
 	^ self noneAbstractClasses shuffle anyOne
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeInfo >> scalar: aClassName with: aValue [
 	scalars at: aClassName put: aValue asSet
 ]

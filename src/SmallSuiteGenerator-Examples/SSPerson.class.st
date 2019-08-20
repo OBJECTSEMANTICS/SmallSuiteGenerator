@@ -1,6 +1,6 @@
 Class {
 	#name : #SSPerson,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'name',
 		'id',
@@ -31,7 +31,7 @@ SSPerson >> age: aNumber [
 	^ aNumber
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #printing }
 SSPerson >> fullIdentifier [
 	^ name, '_', nickname, '_', id asString
 ]

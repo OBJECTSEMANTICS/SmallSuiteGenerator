@@ -1,6 +1,6 @@
 Class {
 	#name : #SRefactorizerTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'refactorizer'
 	],

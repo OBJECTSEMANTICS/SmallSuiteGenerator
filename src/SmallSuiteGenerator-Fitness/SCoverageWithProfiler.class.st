@@ -33,7 +33,7 @@ SCoverageWithProfiler class >> nodeFormattedOf: testCase [
 	^ node
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - string reading' }
 SCoverageWithProfiler class >> stringToCreateNewClass [
 	^ 'Object subclass: #SCompilerTestCase
     instanceVariableNames: ''''
@@ -46,7 +46,7 @@ SCoverageWithProfiler >> coverage [
 	^ self subclassResponsibility 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SCoverageWithProfiler >> executeStatementsOf: aTestCase [
 	[ profiler
 		executeBlock: [ self class compilerClassOfCoverage new perform: #compileTestCase ] ]

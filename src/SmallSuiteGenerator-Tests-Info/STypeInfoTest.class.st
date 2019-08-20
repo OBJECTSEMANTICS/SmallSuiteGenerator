@@ -1,6 +1,6 @@
 Class {
 	#name : #STypeInfoTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Info'
 }
 

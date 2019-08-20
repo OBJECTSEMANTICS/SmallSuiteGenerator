@@ -1,6 +1,6 @@
 Class {
 	#name : #SInvariantsInRoassal,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Roassal'
 }
 

@@ -27,9 +27,9 @@ STypeClassInfo class >> type: aAssoc [
 	dataMethods := dataOfAllMethods first.
 	dataClassMethods := dataOfAllMethods second.
 	dataMethods
-		do: [ :data | inst typeMethod: data ].
+		do: [ :data | inst addTypeMethod: data ].
 	dataClassMethods
-		do: [ :data | inst typeClassMethod: data ].
+		do: [ :data | inst addMethodInfoInClassMethod: data ].
 	^ inst
 ]
 
@@ -63,10 +63,20 @@ STypeClassInfo >> addMethod: methodTypeInfo [
 ]
 
 { #category : #adding }
+STypeClassInfo >> addMethodInfoInClassMethod: aAssoc [
+	self addClassMethod: (STypeMethodInfo type: aAssoc)
+]
+
+{ #category : #adding }
 STypeClassInfo >> addMethods: methodTypeInfos [
 	methodTypeInfos
 		do: [ :aMethodType | 
 			self addMethod: aMethodType ]
+]
+
+{ #category : #adding }
+STypeClassInfo >> addTypeMethod: aAssoc [
+	self addMethod: (STypeMethodInfo type: aAssoc)
 ]
 
 { #category : #'accessing - read only' }
@@ -74,7 +84,7 @@ STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing - read only' }
 STypeClassInfo >> classMethodOf: aSelector [
 	^ classMethodTypes at: aSelector
 ]
@@ -101,7 +111,7 @@ STypeClassInfo >> initialize [
 	classMethodTypes := Dictionary new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 STypeClassInfo >> joinWith: otherTypeClass [
 	otherTypeClass methodTypes do: [ :aMethod | 
 		self addMethod: aMethod
@@ -114,7 +124,7 @@ STypeClassInfo >> messages [
 	^ (methodTypes values reject: #isQuick) select: [ :meth | meth returnType type isNotNil ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing - read only' }
 STypeClassInfo >> methodOf: aSelector [
 	^ methodTypes at: aSelector
 ]
@@ -122,16 +132,6 @@ STypeClassInfo >> methodOf: aSelector [
 { #category : #accessing }
 STypeClassInfo >> methodTypes [
 	^ methodTypes
-]
-
-{ #category : #'as yet unclassified' }
-STypeClassInfo >> typeClassMethod: aAssoc [
-	self addClassMethod: (STypeMethodInfo type: aAssoc)
-]
-
-{ #category : #'as yet unclassified' }
-STypeClassInfo >> typeMethod: aAssoc [
-	self addMethod: (STypeMethodInfo type: aAssoc)
 ]
 
 { #category : #accessing }

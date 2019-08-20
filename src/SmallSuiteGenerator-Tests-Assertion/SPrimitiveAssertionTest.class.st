@@ -1,6 +1,6 @@
 Class {
 	#name : #SPrimitiveAssertionTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Assertion'
 }
 

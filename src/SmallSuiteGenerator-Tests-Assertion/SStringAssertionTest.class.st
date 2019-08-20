@@ -1,6 +1,6 @@
 Class {
 	#name : #SStringAssertionTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Assertion'
 }
 

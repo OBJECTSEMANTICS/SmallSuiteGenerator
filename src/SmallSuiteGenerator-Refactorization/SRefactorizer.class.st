@@ -1,6 +1,6 @@
 Class {
 	#name : #SRefactorizer,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Refactorization'
 }
 

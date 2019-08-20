@@ -1,6 +1,6 @@
 Class {
 	#name : #SGALog,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'generationNumber',
 		'timeToProduceGeneration',

@@ -22,7 +22,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> analyzeMutants [
 	| analysis |
 	self
@@ -39,7 +39,7 @@ SGAEngine >> analyzeMutants [
 	^ analysis generalResult
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGAEngine >> beforeRun [
 	self checkIfReadyToRun.
 	selection fitness: fitness.
@@ -57,21 +57,21 @@ SGAEngine >> blockToExecute: aBlock [
 	blockToExecute := aBlock
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGAEngine >> checkBlockToExecute [
 	self
 		assert: [ blockToExecute notNil ]
 		description: 'Need to set the block to analyze'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGAEngine >> checkFitness [
 	self
 		assert: [ fitness notNil ]
 		description: 'Need to set a fitnessBlock'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGAEngine >> checkIfReadyToRun [
 	self checkBlockToExecute.
 	self checkTypeInfo.
@@ -79,19 +79,19 @@ SGAEngine >> checkIfReadyToRun [
 	self checkLogs
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGAEngine >> checkLogs [
 	self assert: [ logs isEmpty ] description: 'Already been run'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGAEngine >> checkTypeInfo [
 	self
 		assert: [ typeInfo notNil ]
 		description: 'Set a typeInfo'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> crossover: testCaseA with: testCaseB [
 	^ crossoverOperator crossover: testCaseA with: testCaseB
 ]
@@ -102,7 +102,7 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator random: random
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SGAEngine >> endForMaxNumberOfGeneration: nbOfGenerations [
     "End the algorithm after a fixed number of generations"
     terminationBlock := [ logs last generationNumber >= nbOfGenerations ]
@@ -123,7 +123,7 @@ SGAEngine >> fitness: aFitness [
 	fitness := aFitness
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> generateAssertionsUsing: selectedInvariants [
 	self
 		assert: logs isNotEmpty
@@ -134,7 +134,7 @@ SGAEngine >> generateAssertionsUsing: selectedInvariants [
 			"log mutationResult: self analyzeMutants" ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrettyCodeWith: kindsRefactoring [
 	self
 		assert: logs isNotEmpty
@@ -173,7 +173,7 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator random: random.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 SGAEngine >> initializePopulation [
 	population := OrderedCollection new.
 	populationSize
@@ -206,14 +206,14 @@ SGAEngine >> logs [
 	^ logs copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SGAEngine >> maximizeComparator [
 	"change by statementCoverage or methodCoverage"
 
 	compareFitness := [ :f1 :f2 | f1  > f2 ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> microPause [
     "Useful when you wish to log in the Transcript and see progresses"
     (Delay forMilliseconds: 1) wait.
@@ -226,12 +226,12 @@ SGAEngine >> modelClasses: classes [
 	modelClasses := classes
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SGAEngine >> mutantOperators: mutantOperators [
 	operators := mutantOperators 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> mutate: testCase [
 	^ mutationOperator mutate: testCase
 ]
@@ -266,7 +266,7 @@ SGAEngine >> populationSize: aInteger [
 	populationSize := aInteger
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngine >> produceNewPopulation [
 	selection doSelection.
 	population := selection population.
@@ -311,7 +311,7 @@ SGAEngine >> selection: aSelection [
 	
 ]
 
-{ #category : #asserting }
+{ #category : #preconditions }
 SGAEngine >> shouldTerminate [
 	logs ifEmpty: [ ^ false ].
 	^ terminationBlock value
@@ -333,21 +333,21 @@ SGAEngine >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SGAEngine >> valid: aCollection
 		ifNotValid: aBlock [
 		^ (aCollection isNil or: [ aCollection isEmpty ]) ifFalse: [aCollection]
 		ifTrue: [ aBlock value ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SGAEngine >> validOperators [
 	^ self
 				valid: operators
 				ifNotValid: [ SConfiguration defaultMutantOperators ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SGAEngine >> validTestClasses [
 	^ self valid: testClasses ifNotValid: [ SConfiguration classAssertsGenerationTest ]
 ]

@@ -1,6 +1,6 @@
 Class {
 	#name : #SGeneratorTestCaseTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'generator',
 		'utility'

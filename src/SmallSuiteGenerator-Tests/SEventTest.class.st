@@ -1,6 +1,6 @@
 Class {
 	#name : #SEventTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Examples'
 }
 

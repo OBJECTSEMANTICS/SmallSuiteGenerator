@@ -1,6 +1,6 @@
 Class {
 	#name : #SSTestCaseTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'utility'
 	],
@@ -227,7 +227,7 @@ SSTestCaseTest >> testAddMessage [
 			#('_var0 := SFoo new.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
 			'_var2 := _var0 return: _var1.').
 	(aTypeInfo classAt: #SFoo)
-		typeMethod:
+		addTypeMethod:
 			#returnString
 				->
 					#(#ByteString

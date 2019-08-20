@@ -1,10 +1,10 @@
 Class {
 	#name : #SCollectionTypeSimilarityAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#category : #'SmallSuiteGenerator-Assertion'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 SCollectionTypeSimilarityAssertion class >> applyOn: aName with: aCollection of: testCase [
 	| instance |
 	(self preconditionChecking: aCollection)

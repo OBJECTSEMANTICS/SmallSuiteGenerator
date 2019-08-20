@@ -9,14 +9,14 @@ SGACrossoverOperation >> alpha [
 	^ (0.1 to: 0.9 by: 0.1) atRandom round: 1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SGACrossoverOperation >> checkReferencesOf: testCase withDescription: aString [
 	self
 		assert: testCase validReferences
 		description: aString , ' must have valid references'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	| alpha offSpring1 offSpring2 |
 	self checkReferencesOf: testCaseA withDescription: 'testCase'.
@@ -34,7 +34,7 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	with: offSpring2
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
 	| sizeA sizeB offSpring limit |
 	

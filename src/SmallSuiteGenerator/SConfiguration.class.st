@@ -1,40 +1,40 @@
 Class {
 	#name : #SConfiguration,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#classInstVars : [
 		'level'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'default configuration' }
 SConfiguration class >> classAssertsGenerationTest [
 	^ SSAssertionGeneratorTest 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'default configuration' }
 SConfiguration class >> defaultEvaluationStrategy [
 	^ AllTestsMethodsRunningMutantEvaluationStrategy new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'default configuration' }
 SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute onClass: aClass [
 	^ (SSGenerator profile: blockToExecute onClass: aClass) asTypeInfo
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'default configuration' }
 SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute
 				onPackagesMatching: regex [
 ^ (SSGenerator profile: blockToExecute onPackagesMatching: regex)
 				asTypeInfo
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'default configuration' }
 SConfiguration class >> defaultMutantOperators [
 	^ MutantOperator contents
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'default configuration' }
 SConfiguration class >> initLevelToPrint [ 	
 	level := 10
 ]
@@ -44,7 +44,7 @@ SConfiguration class >> levelToPrint [
 	^ level
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'modifier state' }
 SConfiguration class >> reduceLevel [
 	level := level - 1
 ]

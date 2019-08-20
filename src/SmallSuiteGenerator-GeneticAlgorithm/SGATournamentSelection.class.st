@@ -19,7 +19,7 @@ SGATournamentSelection >> compareFitness: aTwoArgBlock [
 	compareFitness := aTwoArgBlock
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGATournamentSelection >> createNewPopulation [
 	"Return a new population made of newly breed testCase"
 
@@ -38,12 +38,12 @@ SGATournamentSelection >> createNewPopulation [
 						ifFalse: [ population add: each ] ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGATournamentSelection >> crossover: testCaseA with: testCaseB [
 	^ engine crossover: testCaseA with: testCaseB
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGATournamentSelection >> doSelection [
 	populationSize := initialPopulation size.
 	fittest := initialPopulation first.
@@ -81,7 +81,7 @@ SGATournamentSelection >> fittest [
 	^ fittest
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SGATournamentSelection >> getGoodTestCase [
 	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
 	| best testCase |
@@ -116,7 +116,7 @@ SGATournamentSelection >> isTooLong: aTestCase [
 	^ aTestCase numberStatements > 54	"if number statements exceeds the number max of statements"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGATournamentSelection >> mutate: child [
 	^ engine mutate: child
 ]

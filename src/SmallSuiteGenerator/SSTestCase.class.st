@@ -1,6 +1,6 @@
 Class {
 	#name : #SSTestCase,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'statements',
 		'typeInfo',
@@ -13,7 +13,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
 	|testCase|
 	testCase := self new.
@@ -149,7 +149,7 @@ SSTestCase >> addStatement: newExpression before: aStatement [
 		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 SSTestCase >> addStatementOfType: aType before: aExpression [
 	| newExpression |
 	newExpression := self
@@ -166,12 +166,12 @@ SSTestCase >> addStatements: collStatements [
 	statements addAll: collStatements
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> allVarNames [
 	^ statements collect: [ :stm | stm reference printString ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
 	| returnType |
 	returnType := aFactoryMessage returnType.
@@ -183,7 +183,7 @@ SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
 		ifNone: [ SFactoryMessage default: returnType ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExpression [
 	| returnType receiver |
 	receiver := aFieldAccessMessage receiver.
@@ -200,7 +200,7 @@ SSTestCase >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExpres
 				, aFieldAccessMessage printString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> alternativeMessage: aMessage before: aExpression [
 	| returnType receiver |
 	receiver := aMessage receiver.
@@ -215,7 +215,7 @@ SSTestCase >> alternativeMessage: aMessage before: aExpression [
 		error: 'not found alternative of message: ' , aMessage printString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 	| returnType |
 	
@@ -227,7 +227,7 @@ SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 	^ (self addStatementOfType: returnType before: aExpression) reference
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> assignId [
 	| idToAssign assignedIds |
 	assignedIds := self assignedIds.
@@ -242,7 +242,7 @@ SSTestCase >> assignedIds [
 	^ statements collect: #id
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> buildArgs: argTypes before: aStatement [
 	argTypes
 		ifNotNil: [ | types typesToAdd |
@@ -261,7 +261,7 @@ SSTestCase >> buildArgs: argTypes before: aStatement [
 						before: aStatement ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> changeStatement [
 	statements copy shuffle
 		do: [ :stm | 
@@ -270,7 +270,7 @@ SSTestCase >> changeStatement [
 				do: [  ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> changeStatement: aStatement [
 	|statementChanged|
 	statementChanged := aStatement copy repairOn: self changing: aStatement.
@@ -284,7 +284,7 @@ SSTestCase >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> computeFitnessUsing: fitnessBlock [
 	fitness := fitnessBlock value: self
 ]
@@ -298,7 +298,7 @@ SSTestCase >> copy [
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestCase >> defaultNumberStatements [
 	^ 54
 ]
@@ -308,7 +308,7 @@ SSTestCase >> error: aString [
 	^ SError signal: aString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> factoryMessageUsing: method before: aStatement [
 	self buildArgs: method argTypes before: aStatement.
 			^ SFactoryMessage
@@ -328,14 +328,14 @@ SSTestCase >> fitness [
 	^ fitness
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> generateAssertionsUsing: classInvariants [
 	^ generatorInvariant
 		generateAssertionsOf: self
 		testCaseUsing: classInvariants
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> generateStatements [
 	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain data.'.
 	[ self numberStatements < self numMaxStatements ]
@@ -358,7 +358,7 @@ SSTestCase >> initialize [
 	generatorInvariant := SSGeneratorInvariant new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> insertAsParameter: aExpression after: aStatement [
 
 	(statements
@@ -378,7 +378,7 @@ SSTestCase >> insertExpression: aExpression after: aStatement [
 		after: aStatement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> insertRandomStatement [
 	#(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:)
 		shuffle
@@ -388,7 +388,7 @@ SSTestCase >> insertRandomStatement [
 				do: [  ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> insertStatement [
 	| l stop alpha count random |
 	statements ifEmpty: [ ^ #() ].
@@ -403,7 +403,7 @@ SSTestCase >> insertStatement [
 			count := count + 1 ].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> insertStatementOfSelector: selector [
 
 	statements copy shuffle
@@ -415,7 +415,7 @@ SSTestCase >> insertStatementOfSelector: selector [
 		error: 'Cant insert statement of selector: ' , selector printString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> messageUsing: method and: receiver before: aStatement [
 
 	self buildArgs: method argTypes before: aStatement.
@@ -542,7 +542,7 @@ SSTestCase >> numberStatements [
 	^ statements size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> perform: selector inStatement: stm [
 	^ stm
 		perform: selector
@@ -611,7 +611,7 @@ SSTestCase >> randomStatement [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestCase >> referencesIndexes: aExpression [
 	^ ((aExpression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
 ]
@@ -641,7 +641,7 @@ SSTestCase >> removeStatementOfVarName: varName [
 	^ self removeStatement: (self statementOfVarName: varName) copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> repairExpression: anExpression before: aStatement [
 	| aType replacement |
 	aType := anExpression returnType.
@@ -655,7 +655,7 @@ SSTestCase >> repairExpression: anExpression before: aStatement [
 		by: replacement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> repairParameters: expressions of: aStatement [
 	|exprsToDelete|
 	exprsToDelete := OrderedCollection new.
@@ -683,7 +683,7 @@ SSTestCase >> statements [
 	^ statements
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> statementsOfType: aType before: aExpression [
 	(statements includes: aExpression)
 		ifFalse: [ self error: 'not found statement' ].
@@ -691,7 +691,7 @@ SSTestCase >> statementsOfType: aType before: aExpression [
 		select: [ :stm | stm returnType = aType ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	|stop|
 	stop := statements indexOf: aStatement.
@@ -712,12 +712,12 @@ SSTestCase >> typeInfo: anObject [
 	typeInfo := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SSTestCase >> updateNextId [ 
 	nextId = 0 ifTrue: [ nextId := statements size ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SSTestCase >> validReferences [
 	| references |
 	references := Set new.

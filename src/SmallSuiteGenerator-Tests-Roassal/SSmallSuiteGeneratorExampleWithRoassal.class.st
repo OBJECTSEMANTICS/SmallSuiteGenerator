@@ -1,6 +1,6 @@
 Class {
 	#name : #SSmallSuiteGeneratorExampleWithRoassal,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Tests-Roassal'
 }
 

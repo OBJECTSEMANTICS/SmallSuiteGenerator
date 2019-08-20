@@ -1,6 +1,6 @@
 Class {
 	#name : #SEvent,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'discount',
 		'price'
@@ -34,7 +34,7 @@ SEvent >> price [
 	^ price - ((discount * price)/100)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SEvent >> price: aNumber [
 	price := aNumber
 ]

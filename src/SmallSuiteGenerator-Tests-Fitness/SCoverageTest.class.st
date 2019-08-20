@@ -1,6 +1,6 @@
 Class {
 	#name : #SCoverageTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'utility'
 	],

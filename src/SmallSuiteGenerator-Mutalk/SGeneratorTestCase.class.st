@@ -1,6 +1,6 @@
 Class {
 	#name : #SGeneratorTestCase,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Mutalk'
 }
 

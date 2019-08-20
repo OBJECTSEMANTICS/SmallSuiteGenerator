@@ -1,6 +1,6 @@
 Class {
 	#name : #STypeObjectInfo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'typeInfo'
 	],
@@ -12,7 +12,7 @@ STypeObjectInfo class >> instance [
 	^ self new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 STypeObjectInfo >> joinWith: otherObject [
 	self subclassResponsibility 
 ]

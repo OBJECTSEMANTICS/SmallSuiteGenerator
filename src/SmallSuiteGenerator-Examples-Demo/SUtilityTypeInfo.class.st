@@ -1,6 +1,6 @@
 Class {
 	#name : #SUtilityTypeInfo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Examples-Demo'
 }
 

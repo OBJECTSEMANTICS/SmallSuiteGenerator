@@ -1,6 +1,6 @@
 Class {
 	#name : #SGACrossOverOperationTestWithRoassal,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'utility',
 		'operation',

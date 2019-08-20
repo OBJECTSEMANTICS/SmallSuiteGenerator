@@ -19,33 +19,51 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'SBTestCoverage'
 				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
 			spec
-				package: 'SmallSuiteGenerator-Generator';
-				package: 'SmallSuiteGenerator-Info';
-				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator-Generator' 'MuTalk') ];
+				baseline: 'Pharo2VW'
+				with: [ spec repository: 'github://ObjectProfile/Pharo2VW' ].
+			spec
+				package: 'SmallSuiteGenerator-Extensions';
+				package: 'SmallSuiteGenerator-Nodes' with: [spec requires: 'SmallSuiteGenerator-Extensions'];
+				package: 'SmallSuiteGenerator' with: [spec requires: 'SmallSuiteGenerator-Nodes'];
+				package: 'SmallSuiteGenerator-Examples' with: [spec requires: 'SmallSuiteGenerator'];
+				package: 'SmallSuiteGenerator-Exporter'
+					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator' 'Pharo2VW') ];
 				package: 'SmallSuiteGenerator-Fitness'
-					with: [ spec requires: 'SBTestCoverage' ];
+					with: [ spec requires: #('SmallSuiteGenerator' 'SBTestCoverage') ];
+				package: 'SmallSuiteGenerator-Info' with: [spec requires: 'SmallSuiteGenerator'];	
+				package: 'SmallSuiteGenerator-Profiler' with: [ spec requires: 'Spy2'];
+				package: 'SmallSuiteGenerator-Assertion' with: [spec requires: 'SmallSuiteGenerator'];
 				package: 'SmallSuiteGenerator-GeneticAlgorithm'
-					with: [ spec requires: 'SmallSuiteGenerator' ];
-				package: 'SmallSuiteGenerator-Assertion';
-				package: 'SmallSuiteGenerator-Examples';
+					with: [ spec requires: #('SmallSuiteGenerator' 'MuTalk') ];
+				package: 'SmallSuiteGenerator-Facade'
+					with: [ spec
+						requires: #('SmallSuiteGenerator' 'SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Fitness') ];
+				package: 'SmallSuiteGenerator-Invariant'
+				with: [ spec
+						requires: #('SmallSuiteGenerator' 'SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Assertion') ];
+				
 				package: 'SmallSuiteGenerator-Examples-Demo'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Info' 'SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples') ];
+						
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Info') ];
+						
 				package: 'SmallSuiteGenerator-Tests-Assertion'
-					with: [ spec requires: 'SmallSuiteGenerator-Assertion' ];
+					with: [ spec requires: #('SmallSuiteGenerator-Assertion' 'SmallSuiteGenerator-Info' 'SmallSuiteGenerator-Invariant') ];
+					
 				package: 'SmallSuiteGenerator-Tests-Fitness'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator') ];
-				package: 'SmallSuiteGenerator-Tests-Generator'
+						
+				package: 'SmallSuiteGenerator-Tests-Nodes'
 					with: [ spec
-						requires: #('SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Tests') ];
+						requires: #('SmallSuiteGenerator-Nodes' 'SmallSuiteGenerator-Tests') ];
+					
 				package: 'SmallSuiteGenerator-Tests-GeneticAlgorithm'
 					with: [ spec
 						requires:

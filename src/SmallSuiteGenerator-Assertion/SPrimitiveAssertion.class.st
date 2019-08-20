@@ -1,10 +1,10 @@
 Class {
 	#name : #SPrimitiveAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#category : #'SmallSuiteGenerator-Assertion'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 SPrimitiveAssertion class >> applyOn: aName with: aLiteral of: testCase [
 	| instance |
 	(self preconditionChecking: aLiteral)

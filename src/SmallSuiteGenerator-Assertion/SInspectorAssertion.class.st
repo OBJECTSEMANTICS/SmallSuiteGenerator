@@ -1,10 +1,10 @@
 Class {
 	#name : #SInspectorAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#category : #'SmallSuiteGenerator-Assertion'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 SInspectorAssertion class >> applyOn: aName with: aObject of: testCase [
 	| instance selector |
 	selector := self preconditionChecking: aObject using: testCase.
@@ -16,7 +16,7 @@ SInspectorAssertion class >> applyOn: aName with: aObject of: testCase [
 	^ Array with: instance
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #preconditions }
 SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 	| typeClass selector methods |
 	selector := nil.

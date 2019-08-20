@@ -1,6 +1,6 @@
 Class {
 	#name : #SSAssertionTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Assertion'
 }
 

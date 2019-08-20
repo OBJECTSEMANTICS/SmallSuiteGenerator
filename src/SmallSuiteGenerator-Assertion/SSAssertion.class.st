@@ -1,15 +1,15 @@
 Class {
 	#name : #SSAssertion,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'comparableValue',
 		'valueAssert',
 		'nameValue'
 	],
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#category : #'SmallSuiteGenerator-Assertion'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 SSAssertion class >> applyOn: aName with: aCollection of: aTestCase [
 	self subclassResponsibility 
 ]
@@ -32,11 +32,6 @@ SSAssertion >> nameValue [
 { #category : #accessing }
 SSAssertion >> nameValue: anObject [
 	nameValue := anObject
-]
-
-{ #category : #'as yet unclassified' }
-SSAssertion >> statement [
-	^ nameValue asString, ' := ', valueAssert storeString
 ]
 
 { #category : #accessing }

@@ -1,10 +1,10 @@
 Class {
 	#name : #SStringAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#category : #'SmallSuiteGenerator-Assertion'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 SStringAssertion class >> applyOn: aName with: aObject of: testCase [
 	| instance |
 	(self preconditionChecking: aObject)
@@ -24,7 +24,7 @@ SStringAssertion class >> preconditionChecking: aObject [
 	ifNone: [ false ].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #strings }
 SStringAssertion >> adjust: aString [
 	^ aString copyWithRegex: '''+' matchesReplacedWith: ''''''
 ]

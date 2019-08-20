@@ -1,6 +1,6 @@
 Class {
 	#name : #SGACrossoverOperationTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'mutationOperation',
 		'operation',

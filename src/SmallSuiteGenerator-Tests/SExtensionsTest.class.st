@@ -1,6 +1,6 @@
 Class {
 	#name : #SExtensionsTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Core'
 }
 

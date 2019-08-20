@@ -1,6 +1,6 @@
 Class {
 	#name : #SCleanerStatementTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'cleaner'
 	],

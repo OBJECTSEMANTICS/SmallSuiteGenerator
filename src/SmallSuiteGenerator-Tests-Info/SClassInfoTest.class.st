@@ -1,6 +1,6 @@
 Class {
 	#name : #SClassInfoTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#category : #'SmallSuiteGenerator-Tests-Info'
 }
 
@@ -42,7 +42,7 @@ SClassInfoTest >> testType [
 							#(#SmallInteger)
 							false)))).
 	classInfo
-		typeMethod:
+		addTypeMethod:
 			#returnNum
 				->
 					#(#SmallInteger

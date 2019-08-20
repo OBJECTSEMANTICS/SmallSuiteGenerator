@@ -30,7 +30,7 @@ STypeReturnInfo >> initialize [
 	types := Set new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 STypeReturnInfo >> joinWith: otherTypeReturn [
 	otherTypeReturn types do: [ :aType | self type: aType ]
 ]

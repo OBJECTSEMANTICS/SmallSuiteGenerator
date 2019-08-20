@@ -27,7 +27,7 @@ STypeMethodInfo >> addType: aType [
 	returnType type: aType
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeMethodInfo >> allArgTypes [
 	^ argTypes flatCollect:[:arg | arg types]
 ]
@@ -70,7 +70,7 @@ STypeMethodInfo >> isQuick: aBoolean [
 	isQuick := aBoolean
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 STypeMethodInfo >> joinWith: otherTypeMethod [
 	argTypes ifNotNil: [argTypes
 		with: otherTypeMethod argTypes

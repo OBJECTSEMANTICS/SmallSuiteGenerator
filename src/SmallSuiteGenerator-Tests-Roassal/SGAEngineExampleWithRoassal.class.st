@@ -1,6 +1,6 @@
 Class {
 	#name : #SGAEngineExampleWithRoassal,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Tests-Roassal'
 }
 

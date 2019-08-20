@@ -1,10 +1,10 @@
 Class {
 	#name : #SComparisonAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#category : #'SmallSuiteGenerator-Assertion'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 SComparisonAssertion class >> applyOn: aName with: aObject of: testCase [
 	| instance |
 	instance := self new

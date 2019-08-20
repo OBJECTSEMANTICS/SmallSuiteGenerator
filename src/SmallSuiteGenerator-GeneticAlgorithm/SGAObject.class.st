@@ -1,6 +1,6 @@
 Class {
 	#name : #SGAObject,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'random'
 	],
@@ -19,12 +19,12 @@ SGAObject >> random: aRandomNumberGenerator [
 	random := aRandomNumberGenerator
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SGAObject >> randomNumber [
 	^ random next
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 SGAObject >> randomNumber: aInt [
 	^ random nextInt: aInt
 ]

@@ -1,6 +1,6 @@
 Class {
 	#name : #STestCaseTestWithRoassal,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'utility'
 	],

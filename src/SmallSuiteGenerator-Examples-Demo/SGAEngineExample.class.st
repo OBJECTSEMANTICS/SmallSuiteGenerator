@@ -1,6 +1,6 @@
 Class {
 	#name : #SGAEngineExample,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Examples-Demo'
 }
 

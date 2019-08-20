@@ -1,6 +1,6 @@
 Class {
 	#name : #SGAMutationOperationTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'operation',
 		'utility'

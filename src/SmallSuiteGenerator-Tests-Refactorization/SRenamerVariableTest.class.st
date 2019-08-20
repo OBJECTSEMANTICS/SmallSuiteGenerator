@@ -1,6 +1,6 @@
 Class {
 	#name : #SRenamerVariableTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'renamer'
 	],

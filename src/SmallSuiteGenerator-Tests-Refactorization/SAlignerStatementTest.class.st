@@ -1,6 +1,6 @@
 Class {
 	#name : #SAlignerStatementTest,
-	#superclass : #TestCase,
+	#superclass : #SUnitTestCase,
 	#instVars : [
 		'aligner'
 	],
