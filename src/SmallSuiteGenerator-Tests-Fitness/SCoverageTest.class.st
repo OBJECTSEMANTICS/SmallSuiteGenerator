@@ -9,16 +9,16 @@ Class {
 
 { #category : #'public - profiling' }
 SCoverageTest >> profile: aBlock onClass: aClass [
-	^ SBProfiler new
-		profileInstrumented: aBlock onClass: aClass;
-		yourself.
+	^ SBProfiler 
+		profile: aBlock onClass: aClass;
+		yourself
 ]
 
 { #category : #'public - profiling' }
 SCoverageTest >> profile: aBlock onPackages: regex [
-	^ SBProfiler new
-		profileInstrumented: aBlock onPackagesMatching: regex;
-		yourself.
+	^ SBProfiler
+		profile: aBlock onPackagesMatching: regex;
+		yourself
 ]
 
 { #category : #running }

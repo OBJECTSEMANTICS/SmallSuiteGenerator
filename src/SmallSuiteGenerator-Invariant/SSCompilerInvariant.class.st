@@ -35,20 +35,20 @@ SSCompilerInvariant >> compile: aBlock [
 SSCompilerInvariant >> compiledTest [
 		| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 |
 _var0 := #('abcd' 'efg' 'hij' 'klmn').
-_var1 := #('abcd' 'efg' 'hij' 'klmn').
-_var2 := SStack newStackWith: _var0.
-_var3 := 'opqr'.
-_var4 := _var2 push: _var3.
+_var1 := SStack newStackWith: _var0.
+_var2 := #('abcd' 'efg' 'hij' 'klmn').
+_var3 := #('abcd' 'efg' 'hij' 'klmn').
+_var4 := _var1 pop.
 _var5 := 'opqr'.
 _var6 := SStack newStackWith: _var0.
-_var7 := SStack newStackWith: _var1.
-_var8 := _var2 initialize.
-_var9 := SStack newStackWith: _var0.
-_var10 := SStack newStackWith: _var1.
-_var11 := 'opqr'.
-_var12 := #('abcd' 'efg' 'hij' 'klmn').
-_var13 := SStack newStackWith: _var12.
-_var14 := SStack newStackWith: _var1.
+_var7 := #('abcd' 'efg' 'hij' 'klmn').
+_var8 := SStack newStackWith: _var2.
+_var9 := 'opqr'.
+_var10 := #('abcd' 'efg' 'hij' 'klmn').
+_var11 := SStack newStackWith: _var7.
+_var12 := SStack newStackWith: _var0.
+_var13 := _var1 initialize.
+_var14 := SStack newStackWith: _var7.
 ^ self analyze: thisContext
 ]
 

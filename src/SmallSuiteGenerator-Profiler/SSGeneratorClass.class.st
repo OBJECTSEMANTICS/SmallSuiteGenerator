@@ -1,6 +1,6 @@
 Class {
 	#name : #SSGeneratorClass,
-	#superclass : #S2Class,
+	#superclass : #ClassSpy,
 	#category : #'SmallSuiteGenerator-Profiler'
 }
 

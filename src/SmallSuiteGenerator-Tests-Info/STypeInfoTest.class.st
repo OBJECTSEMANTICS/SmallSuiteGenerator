@@ -59,9 +59,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 				isNil.
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements:
-			#(#OrderedCollection  #Stack  #ByteString  #SmallInteger
-			#SmallFloat64)
+		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #SmallFloat64)
 ]
 
 { #category : #tests }

@@ -1,6 +1,6 @@
 Class {
 	#name : #SSGenerator,
-	#superclass : #S2Profiler,
+	#superclass : #Profiler,
 	#instVars : [
 		'scalars'
 	],
@@ -9,7 +9,7 @@ Class {
 
 { #category : #hooks }
 SSGenerator class >> spyClassForPackage [
-	 ^ SSGeneratorPackage
+	^ SSGeneratorPackage
 ]
 
 { #category : #initialization }
@@ -31,9 +31,9 @@ SSGenerator >> asTypeInfo [
 { #category : #accessing }
 SSGenerator >> classes: collectionClass [
 	allClassesAsDictionaryCache := IdentityDictionary new.
-	collectionClass 
+	collectionClass
 		do: [ :cls | allClassesAsDictionaryCache at: cls className put: cls ].
-	allClassesCache := collectionClass 
+	"allClassesCache := collectionClass"
 ]
 
 { #category : #initialization }

@@ -15,7 +15,7 @@ SFoo class >> score: aNumber [
 ]
 
 { #category : #'initailize-release' }
-SFoo >> initialize [
+SFoo >> initialize [ 
 	score := 0
 ]
 

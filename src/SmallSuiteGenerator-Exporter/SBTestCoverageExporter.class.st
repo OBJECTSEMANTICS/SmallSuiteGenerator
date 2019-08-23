@@ -1,16 +1,15 @@
-"
-I a m a basic exporter to visualworks
-"
 Class {
-	#name : #SmallSuitExporter,
+	#name : #SBTestCoverageExporter,
 	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Exporter'
 }
 
 { #category : #exporting }
-SmallSuitExporter >> codeToSort [
+SBTestCoverageExporter >> codeToSort [
 	<script: 'self new codeToSort'>
-	GTPlayground openContents: '
+	GTPlayground
+		openContents:
+			'
 "Execute in a Visualworks playground after load the file.st"
 | main classes cat pkg |
 main := Registry bundleNamed: ''SmallSuiteGenerator''.
@@ -29,30 +28,25 @@ classes do: [ :cls |
 ]
 
 { #category : #exporting }
-SmallSuitExporter >> exportPackages [
+SBTestCoverageExporter >> exportPackages [
 	<script: 'self new exportPackages'>
 	self exporter export
 ]
 
 { #category : #'instance creation' }
-SmallSuitExporter >> exporter [
+SBTestCoverageExporter >> exporter [
 	| blacklist res packages notNeededPckgs |
 	"rename Spy2-Core to Spy2 in order to use externalNamespaces"
-	notNeededPckgs := {'SmallSuiteGenerator-Assertion'.
-	'SmallSuiteGenerator-Examples' . 'SmallSuiteGenerator-Examples-Demo'.
-	'SmallSuiteGenerator-Exporter' . 'SmallSuiteGenerator-Facade'.
-	'SmallSuiteGenerator-Fitness' . 'SmallSuiteGenerator-GeneticAlgorithm'.
-	'SmallSuiteGenerator-Info' . 'SmallSuiteGenerator-Invariant'.
-	'SmallSuiteGenerator-Profiler' . 'SmallSuiteGenerator-Tests-Assertion'.
-	'SmallSuiteGenerator-Tests-Fitness' . 'SmallSuiteGenerator-Tests-GeneticAlgorithm'.
-	'SmallSuiteGenerator-Tests-Info'}.
+	notNeededPckgs := {}.
 	packages := RPackage organizer packageNames
-		select: [ :pkgname | 'SmallSuiteGenerator*' match: pkgname ].
+		select: [ :pkgname | 'SBTestCoverage*' match: pkgname ].
+	packages := packages
+		reject: [ :pkgname | '*Roassal*' match: pkgname ].
 	blacklist := {}.
 	res := Pharo2VW exporter
-		namespace: #SmallSuiteGenerator;
+		namespace: #SBTestCoverage;
 		packages: packages without: notNeededPckgs;
-		externalNamespaces: #('Spy2');
+		externalNamespaces: #('Spy');
 		yourself.
 	res methodsBlacklist: blacklist.
 	^ res

@@ -1,7 +1,7 @@
 Class {
 	#name : #SObject,
 	#superclass : #Object,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Base'
 }
 
 { #category : #'instance creation' }

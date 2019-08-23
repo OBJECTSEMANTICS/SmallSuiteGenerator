@@ -1,6 +1,6 @@
 Class {
 	#name : #SSGeneratorMethod,
-	#superclass : #S2Method,
+	#superclass : #MethodSpy,
 	#instVars : [
 		'returnType',
 		'argTypes'
@@ -74,7 +74,6 @@ SSGeneratorMethod >> returnType [
 
 { #category : #hooks }
 SSGeneratorMethod >> returnValue: value [
-
 	returnType type: value class name.
 	self checkIfArgIsScalar: value
 ]
