@@ -1,16 +1,23 @@
 Class {
 	#name : #SCoverageWithProfiler,
-	#superclass : #SFitness,
-	#instVars : [
-		'numIteration',
-		'maxNumOfIterations'
-	],
+	#superclass : #SSimpleFitnessFunction,
 	#classInstVars : [
 		'compilerClassOfCoverage',
-		'profiler'
+		'profiler',
+		'numIteration'
 	],
 	#category : #'SmallSuiteGenerator-Fitness'
 }
+
+{ #category : #accessing }
+SCoverageWithProfiler class >> clear [
+	profiler
+		ifNotNil: [ [ profiler cleanInstrumentation ]
+				on: AssertionFailure
+				do: [ ].
+			profiler := nil.
+			numIteration := 0 ]
+]
 
 { #category : #accessing }
 SCoverageWithProfiler class >> compilerClassOfCoverage [
@@ -21,19 +28,82 @@ SCoverageWithProfiler class >> compilerClassOfCoverage [
 ]
 
 { #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> computeFitness: aTestCase [
+	self
+		assert: [ aTestCase notNil ]
+		description: 'testCase must not be nil'.
+	self
+		assert: [ profiler notNil ]
+		description: 'Need to set a profiler of coverage'.
+	numIteration <= self maxNumIterations
+		ifTrue: [ [ self compilerClassOfCoverage
+				compile:
+					'compileTestCase' , String cr
+						, (self nodeFormattedOf: aTestCase) body formattedCode ]
+				on: Error
+				do: [ :e | 
+					self halt.
+					numIteration := numIteration + 1 ].
+			self executeStatementsOf: aTestCase ].
+	^ self coverage
+]
+
+{ #category : #metric }
+SCoverageWithProfiler class >> coverage [ 
+	^ self subclassResponsibility 
+]
+
+{ #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> coverageOf: aBlock onClass: aClass [
 	profiler
-		ifNil: [ profiler := SBProfiler new
-				profileInstrumented: aBlock onClass: aClass;
+		ifNil: [ self defaultInitialization .
+			profiler := SBProfiler new
+				profile: aBlock onClass: aClass;
 				yourself ]
 ]
 
 { #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> coverageOf: aBlock onPackagesMatching: regex [
 	profiler
-		ifNil: [ profiler := SBProfiler new
-				profileInstrumented: aBlock onPackagesMatching: regex;
+		ifNil: [ self defaultInitialization .
+			profiler := SBProfiler new
+				profile: aBlock onPackagesMatching: regex;
 				yourself ]
+]
+
+{ #category : #'class initialization' }
+SCoverageWithProfiler class >> defaultInitialization [
+	numIteration := 0.
+	operator := #>
+]
+
+{ #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
+	[ self profiler
+		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ] ]
+		on: Exception
+		do: [ :exception | 
+			self halt.
+			numIteration := numIteration + 1
+
+			"(aTestCase
+				changeStatementsOfClassName: (self signalerOfException: exception))
+				ifTrue: [ ^ self
+						calculateCoverageOf: aTestCase
+						using: profiler
+						inLevel: numLevel + 1 ]" ]
+]
+
+{ #category : #testing }
+SCoverageWithProfiler class >> is: aTestCase1 betterThan: aTestCase2 [
+	^ (aTestCase1 fitness first)
+				perform: self comparisonOperator
+				with: (aTestCase2 fitness first)
+]
+
+{ #category : #accessing }
+SCoverageWithProfiler class >> maxNumIterations [
+	^ 3
 ]
 
 { #category : #compiling }
@@ -54,13 +124,10 @@ SCoverageWithProfiler class >> profiler [
 	^ profiler
 ]
 
-{ #category : #running }
-SCoverageWithProfiler class >> run: aTestCase [
-	| instance |
-	instance := self new.
-	profiler ifNil: [ ^ self error: 'Need to set profiler'  ].
-	instance profiler: profiler.
-	^ instance run: aTestCase
+{ #category : #accessing }
+SCoverageWithProfiler class >> profiler: aProfiler [
+	profiler ifNil: [ self defaultInitialization ].
+	profiler := aProfiler
 ]
 
 { #category : #'as yet unclassified' }
@@ -69,70 +136,4 @@ SCoverageWithProfiler class >> stringToCreateNewClass [
     instanceVariableNames: ''''
     classVariableNames: ''''
     package: ''SmallSuiteGenerator-Core'''
-]
-
-{ #category : #metric }
-SCoverageWithProfiler >> coverage [ 	
-	^ self subclassResponsibility 
-]
-
-{ #category : #'as yet unclassified' }
-SCoverageWithProfiler >> executeStatementsOf: aTestCase [
-	[ self class profiler
-		executeBlock: [ self class compilerClassOfCoverage new perform: #compileTestCase ] ]
-		on: Exception
-		do: [ :exception | 
-			self halt.
-			numIteration := numIteration + 1
-
-			"(aTestCase
-				changeStatementsOfClassName: (self signalerOfException: exception))
-				ifTrue: [ ^ self
-						calculateCoverageOf: aTestCase
-						using: profiler
-						inLevel: numLevel + 1 ]" ]
-]
-
-{ #category : #initialization }
-SCoverageWithProfiler >> initialize [
-	numIteration := 0.
-	maxNumOfIterations := 3
-]
-
-{ #category : #accessing }
-SCoverageWithProfiler >> maxNumOfIterations: anObject [
-	maxNumOfIterations := anObject
-]
-
-{ #category : #accessing }
-SCoverageWithProfiler >> profiler: anObject [
-	profiler := anObject
-]
-
-{ #category : #running }
-SCoverageWithProfiler >> run: aSTestCase [
-	self
-		assert: [ aSTestCase notNil ]
-		description: 'testCase must not be nil'.
-	self
-		assert: [ profiler notNil ]
-		description: 'Need to set a profiler of coverage'.
-	numIteration <= maxNumOfIterations
-		ifTrue: [ [ self class compilerClassOfCoverage
-				compile:
-					'compileTestCase' , String cr
-						, (self class nodeFormattedOf: aSTestCase) body formattedCode ]
-				on: Error
-				do: [ :e | 
-					self halt.
-					numIteration := numIteration + 1
-					"(aTestCase removeNumStatements: 5)
-				ifTrue: [ ^ self
-						calculateCoverageOf: aTestCase
-						using: profiler
-						inLevel: numLevel + 1 ]
-				ifFalse: [ ^ profiler dictCoverage ]" ].
-			self executeStatementsOf: aSTestCase ].
-	"profiler cleanInstrumentation."
-	^ self coverage
 ]

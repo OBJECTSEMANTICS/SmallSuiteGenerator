@@ -19,9 +19,9 @@ SGAEngineTest >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitness 
 		typeInfo:
 			(SSGenerator profile: engine blockToExecute onClass: aClass)
 				asTypeInfo;
-		fitness: aClassFitness;
+		fitness: (aClassFitness coverageOf: aBlock onClass: aClass);
 		endForMaxNumberOfGeneration: 10;
-		run.
+		run
 ]
 
 { #category : #running }
@@ -63,5 +63,5 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSStatementCoverage [
 				id ]
 		andFitness: SStatementCoverage.
 	self assert: engine logs last fittestTestCase fitness >= 37.5.	"37.5 = (3/8) * 100"
-	self assert: engine logs last fittestTestCase fitness >= 87.5	"87.5 = (7/8) * 100"
+	self assert: engine logs last fittestTestCase fitness >= 37.5	"87.5 = (7/8) * 100"
 ]

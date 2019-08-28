@@ -73,12 +73,12 @@ SSTestCase >> addFieldAccessMessage [
 ]
 
 { #category : #actions }
-SSTestCase >> addFieldAccessMessage: aSelector from: aClass [
+SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
-	anAccessor := (typeInfo classAt: aClass) methodOf: aSelector.
+	anAccessor := (typeInfo classAt: aClassName) methodOf: aSelector.
 	anAccessor isQuick
 		ifFalse: [ self error: 'the method must be an accessor message' ].
-	receiver := self pickOrCreateObjectVariableOf: aClass.
+	receiver := self pickOrCreateObjectVariableOf: aClassName.
 	^ self addFieldAccessMessage: anAccessor withReceiver: receiver
 ]
 
@@ -285,9 +285,10 @@ SSTestCase >> changeStatementOfVarName: varName [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> computeFitnessUsing: fitnessClass [
+SSTestCase >> computeFitness: fitnessClass [
 	"fitness := fitnessBlock value: self"
-	fitness := fitnessClass run: self
+
+	fitness add: (fitnessClass computeFitness: self)
 ]
 
 { #category : #copying }
@@ -357,6 +358,7 @@ SSTestCase >> initialize [
 	nextId := 0.
 	numMaxStatements := 0.
 	generatorInvariant := SSGeneratorInvariant new.
+	fitness := OrderedCollection new
 ]
 
 { #category : #'as yet unclassified' }

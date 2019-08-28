@@ -90,7 +90,13 @@ STypeInfo >> joinWith: otherTypeInfo [
 STypeInfo >> noneAbstractClasses [
 	noneAbstractClasses
 		ifNil: [ noneAbstractClasses := self classes
-				reject: [ :aClass | aClass isAbstract or: [ (aClass methods select: #isAbstract) isNotEmpty  ] ] ].
+				reject: [ :aClass | 
+					aClass isAbstract
+						or: [ (aClass methods select: #isAbstract) isNotEmpty or: [ 
+								(aClass methods select: [ :meth | meth literals includes: #subclassResponsibility ]) isNotEmpty
+								
+								 ] ] ] ].
+				
 	^ noneAbstractClasses
 ]
 

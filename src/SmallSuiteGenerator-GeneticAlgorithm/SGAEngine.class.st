@@ -280,6 +280,7 @@ SGAEngine >> result [
 { #category : #running }
 SGAEngine >> run [
 	| t |
+	self halt.
 	self beforeRun.
 	self initializePopulation.
 	selection initialPopulation: population.
@@ -289,14 +290,13 @@ SGAEngine >> run [
 			| gen |
 			gen := 0.
 			[ self shouldTerminate ]
-				whileFalse: [ 
-					gen := gen + 1.
+				whileFalse: [ gen := gen + 1.
 					bar label: gen asString.
 					self microPause.
 					t := Time now asSeconds.
 					self produceNewPopulation.
 					logs add: (self logWithGenerationNumber: gen atTime: t) ].
-				"coverageProfiler cleanInstrumentation" ]
+			fitness clear ]
 ]
 
 { #category : #accessing }

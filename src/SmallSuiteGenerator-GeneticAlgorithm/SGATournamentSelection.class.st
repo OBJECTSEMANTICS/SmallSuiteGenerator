@@ -49,9 +49,11 @@ SGATournamentSelection >> doSelection [
 	fittest := initialPopulation first.
 	initialPopulation
 		do: [ :testCase | 
-			testCase computeFitnessUsing: fitness.
+			fitness computeFitness: testCase.
+			(fitness is: testCase betterThan: fittest)
+				ifTrue: [ fittest := testCase	"testCase computeFitnessUsing: fitness.
 			(self isTestCase: testCase betterThan: fittest)
-				ifTrue: [ fittest := testCase ] ].
+				ifTrue: [ fittest := testCase ]" ] ].
 	self createNewPopulation.
 	initialPopulation := population
 ]
