@@ -60,7 +60,7 @@ SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants invariantsAn
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
+SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass with: aClassFitness [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
@@ -73,18 +73,12 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	engine blockToExecute: aBlock.
 	engine
 		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass);
-		fitness: (SMethodCoverage coverageOf: aBlock onClass: aClass)"[ :aTestCase | 
-			| fitness |
-			fitness := SMethodCoverage new
-				profiler:
-					(SBProfiler new
-						profileInstrumented: engine onClass: aClass;
-						yourself).
-			fitness run: aTestCase ]"
+		fitness: (aClassFitness coverageOf: aBlock onClass: aClass).
+	^ engine
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
+SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex with: aClassFitness [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
@@ -95,15 +89,7 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 	engine blockToExecute: aBlock.
 	engine
 		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex);
-		fitness: (SMethodCoverage coverageOf: aBlock onPackagesMatching: regex).	"[ :aTestCase | 
-			| fitness |
-			fitness := SMethodCoverage new
-				profiler:
-					(SBProfiler new
-						profileInstrumented: engine blockToExecute
-							onPackagesMatching: regex;
-						yourself).
-			fitness run: aTestCase ]"
+		fitness: (aClassFitness coverageOf: aBlock onPackagesMatching: regex).	
 	^ engine
 ]
 
