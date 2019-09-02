@@ -35,7 +35,6 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 	self
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
-	
 	numIteration <= self maxNumIterations
 		ifTrue: [ [ self compilerClassOfCoverage
 				compile:

@@ -6,7 +6,7 @@ Class {
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTAMItemOnClass [
-	| smallSuiteGenerator block invariants |
+	| smallSuiteGenerator block invariants aClass funcFitness |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
@@ -15,14 +15,17 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTAMItemOnClass [
 		row: 'France';
 		column: 'Customer Relationship';
 		color: Color lightGreen ].
-	smallSuiteGenerator generateTestsOf: block blockOnClass: RTAMItem with: SMethodCoverage .
+	aClass := RTAMItem.
+	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
+	funcFitness := SMethodCoverage coverageOf: block onClass: aClass.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTAMItemOnPackages [
-	| smallSuiteGenerator block regex |
+	| smallSuiteGenerator block regex funcFitness |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	block := [ RTAMItem new
@@ -34,48 +37,58 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTAMItemOnPackages [
 	regex := 'Roassal2'.
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnPackagesMatching: regex with: SStatementCoverage.
+		blockOnPackagesMatching: regex.
+	funcFitness := SStatementCoverage.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: #()
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTBorderAttachPointOnClass [
-	| smallSuiteGenerator block invariants |
+	| smallSuiteGenerator block invariants aClass funcFitness |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
 	block := [ RTBorderAttachPoint instance offset: -4.12 ].
+	aClass := RTBorderAttachPoint.
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnClass: RTBorderAttachPoint with: SStatementCoverage .
+		blockOnClass: aClass.
+	funcFitness := SStatementCoverage coverageOf: block onClass: aClass.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTBorderAttachPointOnPackages [
-	| smallSuiteGenerator block regex |
+	| smallSuiteGenerator block regex funcFitness |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	block := [ RTBorderAttachPoint instance offset: 4 ].
 	regex := 'Roassal2-Cor*'.
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnPackagesMatching: regex with: SStatementCoverage .
+		blockOnPackagesMatching: regex.
+	funcFitness :=  SStatementCoverage.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTBoxOnClass [
-	| smallSuiteGenerator block invariants |
+	| smallSuiteGenerator block invariants aClass funcFitness |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
 	block := [ RTBox new
 		defaultWidth;
 		borderStyle ].
-	smallSuiteGenerator generateTestsOf: block blockOnClass: RTBox with: SMethodCoverage.
+	aClass := RTBox.
+	smallSuiteGenerator generateTestsOf: block blockOnClass: aClass.
+	funcFitness := SMethodCoverage coverageOf: block onClass: aClass.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
@@ -89,22 +102,21 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnClass [
 	block := [ RTDirectedLine instance
 		pointsFrom: 1 @ 3 To: 3 @ 5;
 		offset: 6.5 ].
-	functionFitness := SMultiFitnessFunction.
-	functionFitness addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: block
-				onClass: RTDirectedLine);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnClass: RTDirectedLine with: functionFitness .
+		blockOnClass: RTDirectedLine.
+	functionFitness := SMultiFitnessFunction.
+	functionFitness
+		addFitnessFunction: (SMethodCoverage coverageOf: block onClass: RTDirectedLine);
+		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+	smallSuiteGenerator fitness: functionFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnPackages [
-	| smallSuiteGenerator block regex invariants |
+	| smallSuiteGenerator block regex invariants funcFitness|
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
@@ -114,14 +126,16 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnPackages [
 	regex := 'Roassal2-Cor*'.
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnPackagesMatching: regex with: SMethodCoverage .
+		blockOnPackagesMatching: regex.
+	funcFitness := SMethodCoverage.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTLineSegmentOnClass [
-	| smallSuiteGenerator block invariants |
+	| smallSuiteGenerator block invariants funcFitness aClass |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
@@ -130,9 +144,12 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTLineSegmentOnClass [
 		angleInRad;
 		cotan;
 		bottom ].
+	aClass := RTLineSegment.
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnClass: RTLineSegment with: SStatementCoverage .
+		blockOnClass: aClass.
+	funcFitness := SStatementCoverage coverageOf: block onClass: aClass.
+	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	smallSuiteGenerator generateAssertionsUsing: invariants
 ]
@@ -148,14 +165,13 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTLineSegmentOnPackages [
 		cotan;
 		bottom ].
 	regex := 'Roassal2-Cor*'.
-	functionFitness := SMultiFitnessFunction.
-	functionFitness addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: block
-				onPackagesMatching: regex);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
 	smallSuiteGenerator
 		generateTestsOf: block
-		blockOnPackagesMatching: regex with: functionFitness .
+		blockOnPackagesMatching: regex.
+	functionFitness := SMultiFitnessFunction.
+	functionFitness
+		addFitnessFunction: (SMethodCoverage coverageOf: block onPackagesMatching: regex);
+		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+	smallSuiteGenerator fitness: functionFitness.
 	smallSuiteGenerator runGeneration
 ]

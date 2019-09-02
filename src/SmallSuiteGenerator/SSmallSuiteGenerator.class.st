@@ -39,7 +39,7 @@ SSmallSuiteGenerator >> engine [
 ]
 
 { #category : #accessing }
-SSmallSuiteGenerator >> fitnessBlock: aClassFitness [
+SSmallSuiteGenerator >> fitness: aClassFitness [
 	engine fitness: aClassFitness
 ]
 
@@ -60,7 +60,7 @@ SSmallSuiteGenerator >> generateAssertionsUsing: selectedInvariants invariantsAn
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass with: aClassFitness [
+SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
@@ -72,13 +72,13 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnClass: aClass with: aClas
 	"execute the engine"
 	engine blockToExecute: aBlock.
 	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass);
-		fitness: (aClassFitness coverageOf: aBlock onClass: aClass).
+		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass).	
+	"fitness: (aClassFitness coverageOf: aBlock onClass: aClass)"
 	^ engine
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex with: aClassFitness [
+SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
@@ -88,8 +88,8 @@ SSmallSuiteGenerator >> generateTestsOf: aBlock blockOnPackagesMatching: regex w
 	engine modelClasses: (self classesForRegex: {regex}).
 	engine blockToExecute: aBlock.
 	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex);
-		fitness: (aClassFitness coverageOf: aBlock onPackagesMatching: regex).	
+		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex).
+	"fitness: (aClassFitness coverageOf: aBlock onPackagesMatching: regex)"
 	^ engine
 ]
 

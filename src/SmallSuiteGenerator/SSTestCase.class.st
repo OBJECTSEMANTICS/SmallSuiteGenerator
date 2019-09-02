@@ -287,8 +287,9 @@ SSTestCase >> changeStatementOfVarName: varName [
 { #category : #'as yet unclassified' }
 SSTestCase >> computeFitness: fitnessClass [
 	"fitness := fitnessBlock value: self"
-
-	fitness add: (fitnessClass computeFitness: self)
+	|valueFitness |
+	valueFitness := fitnessClass computeFitness: self.
+	[fitness addAll: valueFitness ] on: MessageNotUnderstood do: [ fitness add: valueFitness ]
 ]
 
 { #category : #copying }

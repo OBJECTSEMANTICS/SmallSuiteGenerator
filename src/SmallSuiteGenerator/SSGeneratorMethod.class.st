@@ -25,6 +25,7 @@ SSGeneratorMethod >> asTypeInfo [
 { #category : #hooks }
 SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 	self initArgsTypesWith: listOfArguments.
+	"listOfArguments ifNotEmpty: [ self halt ]."
 	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ]
 ]
 
