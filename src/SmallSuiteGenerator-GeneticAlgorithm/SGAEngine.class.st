@@ -188,7 +188,10 @@ SGAEngine >> initializePopulation [
 { #category : #testing }
 SGAEngine >> isTestCase: aTestCase betterThan: aFittestTestCase [
 	"Compare an testCase against the fittest testCase of the population"
-	^ compareFitness value: aTestCase fitness value: aFittestTestCase fitness
+
+	^ compareFitness
+		value: aTestCase
+		value: aFittestTestCase
 ]
 
 { #category : #running }
@@ -210,7 +213,7 @@ SGAEngine >> logs [
 SGAEngine >> maximizeComparator [
 	"change by statementCoverage or methodCoverage"
 
-	compareFitness := [ :f1 :f2 | f1  > f2 ]
+	compareFitness := [ :tC1 :tC2 |  fitness is: tC1 betterThan: tC2 ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -289,14 +292,13 @@ SGAEngine >> run [
 			| gen |
 			gen := 0.
 			[ self shouldTerminate ]
-				whileFalse: [ 
-					gen := gen + 1.
+				whileFalse: [ gen := gen + 1.
 					bar label: gen asString.
 					self microPause.
 					t := Time now asSeconds.
 					self produceNewPopulation.
 					logs add: (self logWithGenerationNumber: gen atTime: t) ].
-				"coverageProfiler cleanInstrumentation" ]
+			fitness clear ]
 ]
 
 { #category : #accessing }

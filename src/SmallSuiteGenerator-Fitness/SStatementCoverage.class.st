@@ -5,6 +5,6 @@ Class {
 }
 
 { #category : #metric }
-SStatementCoverage >> coverage [ 
-	^ profiler statementCoverage
+SStatementCoverage class >> coverage [
+	^ self profiler statementCoverage
 ]

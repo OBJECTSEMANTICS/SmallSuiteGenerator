@@ -6,6 +6,8 @@ Class {
 
 { #category : #actions }
 SGAEngineExampleWithRoassal >> clean [
+	SMultiFitnessFunction clear.
+	SCoverageWithProfiler allSubclassesDo: #clear.
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove

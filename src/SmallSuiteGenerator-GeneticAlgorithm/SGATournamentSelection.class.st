@@ -49,7 +49,7 @@ SGATournamentSelection >> doSelection [
 	fittest := initialPopulation first.
 	initialPopulation
 		do: [ :testCase | 
-			testCase computeFitnessUsing: fitness.
+			testCase computeFitness: fitness.
 			(self isTestCase: testCase betterThan: fittest)
 				ifTrue: [ fittest := testCase ] ].
 	self createNewPopulation.
@@ -90,7 +90,7 @@ SGATournamentSelection >> getGoodTestCase [
 		timesRepeat: [ testCase := initialPopulation
 				at: (self randomNumber: initialPopulation size).
 			(best isNil
-				or: [ compareFitness value: testCase fitness value: best fitness ])
+				or: [ compareFitness value: testCase value: best ])
 				ifTrue: [ best := testCase ] ].
 	^ best
 ]
