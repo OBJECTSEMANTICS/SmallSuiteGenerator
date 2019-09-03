@@ -45,7 +45,7 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 					self halt.
 					numIteration := numIteration + 1 ].
 			self executeStatementsOf: aTestCase ].
-	^ self coverage
+	^ (self nameFunction -> self coverage)
 ]
 
 { #category : #metric }
@@ -96,9 +96,9 @@ SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
 
 { #category : #testing }
 SCoverageWithProfiler class >> is: aTestCase1 betterThan: aTestCase2 [
-	^ (aTestCase1 fitness first)
+	^ (aTestCase1 fitness at: self nameFunction)
 				perform: self comparisonOperator
-				with: (aTestCase2 fitness first)
+				with: (aTestCase2 fitness at: self nameFunction)
 ]
 
 { #category : #accessing }

@@ -44,7 +44,7 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnFactoryMessage [
 						return: #(1 5 6) ]
 				onClass: SFoo);
 		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	res := function computeFitness: aTestCase.
+	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(33.33 28.57)
 ]
 
@@ -63,7 +63,7 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnFieldAccessMessage [
 						return: #(1 5 6) ]
 				onClass: SFoo);
 		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	res := function computeFitness: aTestCase.
+	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(44.44 35.71)
 ]
 
@@ -82,7 +82,7 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnLiteral [
 						return: #(1 5 6) ]
 				onClass: SFoo);
 		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	res := function computeFitness: aTestCase.
+	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(0 0)
 ]
 
@@ -101,7 +101,7 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnMessage [
 						return: #(1 5 6) ]
 				onClass: SFoo);
 		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	res := function computeFitness: aTestCase.
+	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(44.44 42.86)
 ]
 

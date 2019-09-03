@@ -30,7 +30,7 @@ SMethodCoverageTest >> testCoverageClassSEvent [
 				price;
 				discount ]
 		onClass: SEvent.
-	self assert: (fitness computeFitness: testCase) <= 83.33	"83.33 = (5/6) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 83.33	"83.33 = (5/6) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -46,7 +46,7 @@ SMethodCoverageTest >> testCoverageClassSFoo [
 				score;
 				return: #(1 5 6) ]
 		onClass: SFoo.
-	self assert: (fitness computeFitness: testCase) <= 77.78	"77.78 = (7/9) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 77.78	"77.78 = (7/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -60,7 +60,7 @@ SMethodCoverageTest >> testCoverageOnClassSSTeacher [
 				nickname;
 				yearsWorkExperience ]
 		onClass: SSTeacher.
-	self assert: (fitness computeFitness: testCase) <= 60.0	"60.0 = (3/5) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 60.0	"60.0 = (3/5) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -75,7 +75,7 @@ SMethodCoverageTest >> testCoverageOnClassSStack [
 				pop;
 				top ]
 		onClass: SStack.
-	self assert: (fitness computeFitness: testCase) <= 57.14	"57.14 = (4/7) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 57.14	"57.14 = (4/7) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -90,7 +90,7 @@ SMethodCoverageTest >> testCoverageOnClassSStudent [
 				scoreStudent: 10;
 				scoreStudent ]
 		onClass: SStudent.
-	self assert: (fitness computeFitness: testCase) <= 80.0	"80.0 = (4/5) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 80.0	"80.0 = (4/5) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -109,7 +109,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 				price;
 				discount ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples'.
-	self assert: (fitness computeFitness: testCase) <= 83.33
+	self assert: (fitness computeFitness: testCase) value <= 83.33
 ]
 
 { #category : #tests }
@@ -132,7 +132,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 				score;
 				return: #(1 5 6) ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples'.
-	self assert: (fitness computeFitness: testCase) <= 77.78	"77.78 = (7/9) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 77.78	"77.78 = (7/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -151,7 +151,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 				nickname;
 				yearsWorkExperience ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples'.
-	self assert: (fitness computeFitness: testCase) <= 60.0	"77.78 = (7/9) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 60.0	"77.78 = (7/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -172,7 +172,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSStack [
 				pop;
 				top ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples'.
-	self assert: (fitness computeFitness: testCase) <= 57.14	"57.14 = (4/7) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 57.14	"57.14 = (4/7) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -193,5 +193,5 @@ SMethodCoverageTest >> testCoverageOnPackagesSStudent [
 				scoreStudent: 10;
 				scoreStudent ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples'.
-	self assert: (fitness computeFitness: testCase) <= 80.0
+	self assert: (fitness computeFitness: testCase) value <= 80.0
 ]
