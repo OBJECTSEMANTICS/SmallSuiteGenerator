@@ -359,7 +359,7 @@ SSTestCase >> initialize [
 	nextId := 0.
 	numMaxStatements := 0.
 	generatorInvariant := SSGeneratorInvariant new.
-	fitness := OrderedCollection new
+	fitness := Dictionary new
 ]
 
 { #category : #'as yet unclassified' }

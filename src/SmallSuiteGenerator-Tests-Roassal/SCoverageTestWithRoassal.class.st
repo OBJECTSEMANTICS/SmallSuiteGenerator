@@ -58,13 +58,12 @@ SCoverageTestWithRoassal >> testCoverageClassRTAMItemWithMethodCoverage [
 						column: 'Customer Relationship';
 						color: Color lightGreen ]
 				onClass: RTAMItem).
-	self assert: (fitness computeFitness: testCase) > 0	"28.57 = (4/14) * 100"
+	self assert: (fitness computeFitness: testCase) value > 0	"28.57 = (4/14) * 100"
 ]
 
 { #category : #tests }
 SCoverageTestWithRoassal >> testCoverageClassRTAMItemWithStatementCoverage [
 	| testCase fitness |
-
 	fitness := SStatementCoverage.
 	testCase := self
 		testCase: utility typeInfosRTAMItem second
@@ -78,7 +77,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTAMItemWithStatementCoverage [
 						column: 'Customer Relationship';
 						color: Color lightGreen ]
 				onClass: RTAMItem).
-	self assert: (fitness computeFitness: testCase) > 0	"21.05 = (4/19) * 100"
+	self assert: (fitness computeFitness: testCase) value > 0	"21.05 = (4/19) * 100"
 ]
 
 { #category : #tests }
@@ -93,7 +92,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTBorderAttachPointWithMethodCovera
 			(self
 				profile: [ RTBorderAttachPoint new offset: 4 ]
 				onClass: RTBorderAttachPoint).
-	self assert: (fitness computeFitness: testCase) <= 25	"25 = (2/8) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 25	"25 = (2/8) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -108,7 +107,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTBorderAttachPointWithStatementCov
 			(self
 				profile: [ RTBorderAttachPoint new offset: 4 ]
 				onClass: RTBorderAttachPoint).
-	self assert: (fitness computeFitness: testCase) <= 9.68	"9.68 = (3/31) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 9.68	"9.68 = (3/31) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -125,7 +124,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTBoxWithMethodCoverage [
 						defaultWidth;
 						borderStyle ]
 				onClass: RTBox).
-	self assert: (fitness computeFitness: testCase) <= 20	"20 = (1/5) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 20	"20 = (1/5) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -142,7 +141,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTBoxWithStatementCoverage [
 						defaultWidth;
 						borderStyle ]
 				onClass: RTBox).
-	self assert: (fitness computeFitness: testCase) <= 22.22	"(2/9) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 22.22	"(2/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -159,7 +158,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTDirectedLineWithMethodCoverage [
 						pointsFrom: 1 @ 3 To: 3 @ 5;
 						offset: 6.5 ]
 				onClass: RTDirectedLine).
-	self assert: (fitness computeFitness: testCase) <= 60	"60 = (3/5) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 60	"60 = (3/5) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -176,7 +175,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTDirectedLineWithStatementCoverage
 						pointsFrom: 1 @ 3 To: 3 @ 5;
 						offset: 6.5 ]
 				onClass: RTDirectedLine).
-	self assert: (fitness computeFitness: testCase) <= 54.55	"54.55 = (6/11) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 54.55	"54.55 = (6/11) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -195,7 +194,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTLineSegmentWithMethodCoverage [
 						cotan;
 						bottom ]
 				onClass: RTLineSegment).
-	self assert: (fitness computeFitness: testCase) <= 23.53.	"23.53 = (8/34) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 23.53	"23.53 = (8/34) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -214,7 +213,7 @@ SCoverageTestWithRoassal >> testCoverageClassRTLineSegmentWithStatementCoverage 
 						cotan;
 						bottom ]
 				onClass: RTLineSegment).
-	self assert: (fitness computeFitness: testCase) <= 13.46	"13.46 = (14/104) * 100 round: 2"
+	self assert: (fitness computeFitness: testCase) value <= 13.46	"13.46 = (14/104) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -236,7 +235,7 @@ SCoverageTestWithRoassal >> testCoverageOnPackagesRTAMItem [
 						itemName: 'Bonus Card';
 						color: Color lightCyan ]
 				onPackages: 'Roassal2').
-	self assert: (fitness computeFitness: testCase) <= 21.05
+	self assert: (fitness computeFitness: testCase) value <= 21.05
 ]
 
 { #category : #tests }
@@ -251,7 +250,7 @@ SCoverageTestWithRoassal >> testCoverageOnPackagesRTAMItemSimpleInstruction [
 		withNumStatements: 20.
 	fitness
 		profiler: (self profile: [ RTAMItem basicNew ] onPackages: 'Roassal2').
-	self assert: (fitness computeFitness: testCase) <= 21.05
+	self assert: (fitness computeFitness: testCase) value <= 21.05
 ]
 
 { #category : #tests }
@@ -269,7 +268,7 @@ SCoverageTestWithRoassal >> testCoverageOnPackagesRTBorderAttachPoint [
 			(self
 				profile: [ RTBorderAttachPoint new offset: 4 ]
 				onPackages: 'Roassal2-Cor*').
-	self assert: (fitness computeFitness: testCase) <= 9.68
+	self assert: (fitness computeFitness: testCase) value <= 9.68
 ]
 
 { #category : #tests }
@@ -291,7 +290,7 @@ SCoverageTestWithRoassal >> testCoverageOnPackagesRTDirectedLine [
 						pointsFrom: 1 @ 3 To: 3 @ 5;
 						offset: 6.5 ]
 				onPackages: 'Roassal2-Cor*').
-	self assert: (fitness computeFitness: testCase) <= 54.55
+	self assert: (fitness computeFitness: testCase) value <= 54.55
 ]
 
 { #category : #tests }
@@ -317,5 +316,5 @@ SCoverageTestWithRoassal >> testCoverageOnPackagesRTLineSegment [
 						cotan;
 						bottom ]
 				onPackages: 'Roassal2-Cor*').
-	self assert: (fitness computeFitness: testCase) <= 13.46
+	self assert: (fitness computeFitness: testCase) value <= 13.46
 ]

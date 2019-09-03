@@ -31,3 +31,8 @@ SFitnessFunction class >> computeFitness: aTestCase [
 SFitnessFunction class >> is: aTestCase1 betterThan: aTestCase2 [
 	^ self subclassResponsibility 
 ]
+
+{ #category : #'as yet unclassified' }
+SFitnessFunction class >> nameFunction [
+	^ self name
+]

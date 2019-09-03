@@ -2,7 +2,8 @@ Class {
 	#name : #SMultiFitnessFunction,
 	#superclass : #SFitnessFunction,
 	#instVars : [
-		'functions'
+		'functions',
+		'selectorMethod'
 	],
 	#classInstVars : [
 		'multiFitnessFunction'
@@ -40,6 +41,11 @@ SMultiFitnessFunction class >> is: aTestCase1 betterThan: aTestCase2 [
 	^ multiFitnessFunction is: aTestCase1 betterThan: aTestCase2
 ]
 
+{ #category : #'as yet unclassified' }
+SMultiFitnessFunction class >> linearSum: aFitness [
+	"realiza una suma ponderada de los objetivos: res = sum(w* f(x))."
+]
+
 { #category : #accessing }
 SMultiFitnessFunction class >> multiFitnessFunction [
 	^ multiFitnessFunction
@@ -54,6 +60,12 @@ SMultiFitnessFunction class >> multiFitnessFunction: anObject [
 SMultiFitnessFunction class >> numFunctions [
 	self validateInstance.
 	^ multiFitnessFunction numFunctions
+]
+
+{ #category : #'as yet unclassified' }
+SMultiFitnessFunction class >> selectorMethod: aSelectorMethod [
+	self validateInstance.
+	^ multiFitnessFunction selectorMethod: aSelectorMethod 
 ]
 
 { #category : #'as yet unclassified' }
@@ -72,7 +84,10 @@ SMultiFitnessFunction >> addFitnessFunction: aFitnessFunction [
 
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction >> computeFitness: aTestCase [
-	^ functions collect: [ :f | f computeFitness: aTestCase ]
+	|dict|
+	dict := Dictionary new.
+	functions collect: [ :f | f computeFitness: aTestCase] thenDo: [:assoc | dict add: assoc].
+	^ dict
 ]
 
 { #category : #accessing }
@@ -91,18 +106,28 @@ SMultiFitnessFunction >> initialize [
 	functions := OrderedCollection new
 ]
 
+{ #category : #initialization }
+SMultiFitnessFunction >> initializeDefaultSelectorMethod [
+	selectorMethod := SGreaterThanMethod functions: self functions
+]
+
 { #category : #testing }
 SMultiFitnessFunction >> is: aTestCase1 betterThan: aTestCase2 [
-	|isBetter|
-	isBetter := false.
-	functions doWithIndex: [ :f :index | 
-		isBetter := (aTestCase1 fitness at: index) perform: f comparisonOperator with: (aTestCase2 fitness at: index).
-		isBetter ifFalse: [ (aTestCase1 fitness at: index) = (aTestCase2 fitness at: index) ifFalse: [ ^ false ] ]
-		].
-	^ isBetter
+	selectorMethod ifNil: [ self initializeDefaultSelectorMethod ].
+	^ selectorMethod is: aTestCase1 betterThan: aTestCase2
 ]
 
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction >> numFunctions [
 	^ functions size
+]
+
+{ #category : #accessing }
+SMultiFitnessFunction >> selectorMethod [
+	^ selectorMethod
+]
+
+{ #category : #accessing }
+SMultiFitnessFunction >> selectorMethod: anObject [
+	selectorMethod := anObject
 ]
