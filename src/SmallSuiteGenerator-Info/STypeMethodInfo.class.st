@@ -29,7 +29,8 @@ STypeMethodInfo >> addType: aType [
 
 { #category : #'as yet unclassified' }
 STypeMethodInfo >> allArgTypes [
-	^ argTypes flatCollect:[:arg | arg types]
+	argTypes ifNil: [ ^ #() ].
+	^ argTypes flatCollect: [ :arg | arg types ]
 ]
 
 { #category : #accessing }

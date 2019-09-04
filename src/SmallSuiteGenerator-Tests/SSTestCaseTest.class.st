@@ -242,6 +242,24 @@ SSTestCaseTest >> testAddMessage [
 ]
 
 { #category : #'mutation-change' }
+SSTestCaseTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
+	| testCase changed |
+	testCase := SSTestCase with: utility typeInfoAthensCairo.
+	testCase addFactoryMessage.
+	testCase addLiteral.
+	testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			#('_var0 := AthensCairoCanvas new.' '_var1 := ''hello''.' '_var2 := AthensCairoCanvas new.').
+	changed := testCase changeStatementOfClassName: #AthensCairoCanvas.
+	self assert: changed equals: false.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: #('_var1 := ''hello''.')
+]
+
+{ #category : #'mutation-change' }
 SSTestCaseTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	| testCase expression expressionChanged |
 	testCase := SSTestCase with: self typeInfoSFoo.

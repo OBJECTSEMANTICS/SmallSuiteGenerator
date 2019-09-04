@@ -16,6 +16,15 @@ SGACrossOverOperationTestWithRoassal >> setUp [
 	mutationOperation := SGAMutationOperation new random: Random new
 ]
 
+{ #category : #running }
+SGACrossOverOperationTestWithRoassal >> tearDown [ 
+	SMultiFitnessFunction clear.
+	SCoverageWithProfiler allSubclassesDo: #clear.
+	S2Lock value: false.
+	S2Context value: nil.
+	S2Profiler remove
+]
+
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOver: listTestCase [
 	| offSprings offSpring1 offSpring2 |
@@ -54,6 +63,30 @@ SGACrossOverOperationTestWithRoassal >> testCrossOverToRTDirectedLine [
 { #category : #tests }
 SGACrossOverOperationTestWithRoassal >> testCrossOverToRTLineSegment [
 	self testCrossOver: utility testSuiteRTLineSegment
+]
+
+{ #category : #tests }
+SGACrossOverOperationTestWithRoassal >> testCrossOverToRTUMLClassBuilder [
+	| typeInfo testCase1 testCase2 |
+	typeInfo := (SSGenerator
+		profile: [ | someClasses allMethodCategories b n |
+			someClasses := RTShape withAllSubclasses.
+			allMethodCategories := (someClasses flatCollect: #protocols) asSet
+				asArray.
+			b := RTUMLClassBuilder new.
+			n := RTMultiLinearColorForIdentity new objects: allMethodCategories.
+			b methodShape color: [ :m | n rtValue: m protocol ].
+			b methodsNames: [ :cls | cls rtmethods sortedAs: #protocol ].
+			b addObjects: someClasses.
+			b treeLayout.
+			b build.
+			b view ]
+		onClass: RTUMLClassBuilder) asTypeInfo.
+	testCase1 := SSTestCase with: typeInfo.
+	testCase2 := SSTestCase with: typeInfo.
+	self testCrossOver: (Array with: testCase1 with: testCase2).
+	self
+		testCrossOverWithMutation: (Array with: testCase1 with: testCase2)
 ]
 
 { #category : #tests }

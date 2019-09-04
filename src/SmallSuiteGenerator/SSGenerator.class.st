@@ -14,8 +14,12 @@ SSGenerator class >> spyClassForPackage [
 
 { #category : #initialization }
 SSGenerator >> addScalar: anObject [
-	| value |
-	value := scalars at: anObject class name ifAbsentPut: [ Set new ].
+	| value objectName |
+	objectName := anObject class name.
+	"objectName := anObject isClass
+		ifTrue: [ anObject name ]
+		ifFalse: [ anObject class name ]."
+	value := scalars at: objectName ifAbsentPut: [ Set new ].
 	value add: anObject
 ]
 

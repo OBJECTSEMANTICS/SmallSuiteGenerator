@@ -42,7 +42,8 @@ STypeReturnInfo >> type [
 
 { #category : #'accessing structure variables' }
 STypeReturnInfo >> type: aClassName [
-	types add: aClassName
+	aClassName ~= #nil ifTrue: [ 
+	types add: aClassName]
 ]
 
 { #category : #accessing }

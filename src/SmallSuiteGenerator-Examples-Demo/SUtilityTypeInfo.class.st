@@ -37,10 +37,10 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 				addLiteral: #ByteString;
 				addFieldAccessMessage: #idStudent from: #SStudent;
 				addMessage: #scoreStudent: from: #SStudent;
-					addFactoryMessage: #SStudent ofSelector: #new;
+				addFactoryMessage: #SStudent ofSelector: #new;
 				addFieldAccessMessage: #scoreStudent from: #SStudent;
 				yourself);
-			add:
+		add:
 			((SSTestCase with: self typeInfosSStudent first)
 				addLiteral: #SmallInteger;
 				addFactoryMessage: #SStudent ofSelector: #new;
@@ -48,7 +48,30 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 				addFactoryMessage: #SStudent ofSelector: #new;
 				addFieldAccessMessage: #idStudent from: #SStudent;
 				yourself);
-			yourself
+				add:
+			((SSTestCase with: self typeInfosSStudent first)
+				addFactoryMessage: #SStudent ofSelector: #new;
+				addLiteral: #SmallInteger;
+				addMessage: #scoreStudent: from: #SStudent;
+				addLiteral: #SmallInteger;
+				addFactoryMessage: #SStudent ofSelector: #new;
+				yourself);
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoAthensCairo [
+	^ STypeInfo new
+		type:
+			#AthensCairoCanvas
+				->
+					(Array
+						with:
+							(Array
+								with: #fillPreserve -> #(#nil #() false)
+								with: #textPath -> #(#nil #() false))
+						with: #());
+		scalar: #ByteString with: #('hello')
 ]
 
 { #category : #'as yet unclassified' }

@@ -272,11 +272,32 @@ SSTestCase >> changeStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> changeStatement: aStatement [
-	|statementChanged|
-	statementChanged := aStatement copy repairOn: self changing: aStatement.
-	(self statementAt: aStatement)
-		replaceBy: statementChanged.
-		^ statementChanged
+	| statementChanged |
+	statementChanged := aStatement copy
+		repairOn: self
+		changing: aStatement.
+	(self statementAt: aStatement) replaceBy: statementChanged.
+	self validReferences
+		ifFalse: [ self halt ].
+	^ statementChanged
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> changeStatementOfClassName: aClassName [
+	| varFactoryMethods changed |
+	varFactoryMethods := (self factoryMessageVariablesBefore: nil)
+		select: [ :fM | fM returnType = aClassName ].
+	changed := false.
+	"if the factoryMethod can't be replaced by another of same class, then it will be removed"
+	varFactoryMethods
+		do: [ :varFM | 
+			| changedStm origStm |
+			origStm := self statementOfVarName: varFM printString.
+			changedStm := self changeStatement: origStm.
+			changedStm = origStm
+				ifTrue: [ self removeStatement: origStm ]
+				ifFalse: [ changed := true ] ].
+	^ changed
 ]
 
 { #category : #removing }
@@ -405,6 +426,8 @@ SSTestCase >> insertStatement [
 		whileTrue: [ self insertRandomStatement.
 			l := l + 1.
 			count := count + 1 ].
+		self validReferences
+		ifFalse: [ self halt ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -626,7 +649,8 @@ SSTestCase >> removeStatement [
 
 	statements ifEmpty: [ ^ #() ].
 	self
-		removeStatement: (statements at: (1 to: self numberStatements) atRandom)
+		removeStatement: (statements at: (1 to: self numberStatements) atRandom).
+		self validReferences ifFalse: [ self halt ].
 ]
 
 { #category : #removing }

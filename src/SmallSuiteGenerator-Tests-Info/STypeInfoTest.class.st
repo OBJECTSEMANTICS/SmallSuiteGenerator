@@ -65,6 +65,59 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 ]
 
 { #category : #tests }
+STypeInfoTest >> testAsTypeInfoSFooWithClass [
+	| profile typeInfo methodInfo |
+	profile := SSGenerator
+		profile: [ SFoo new return: OrderedCollection ]
+		onClass: SFoo.
+	typeInfo := profile asTypeInfo.
+	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
+	self
+		assert: (typeInfo types at: #SFoo) classMethodTypes size
+		equals: 1.
+	self
+		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType type
+		equals: #SFoo.
+	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	self
+		assertCollection: methodInfo returnType types
+		hasSameElements: #(#'OrderedCollection class').
+	self
+		assertCollection: methodInfo allArgTypes
+		hasSameElements: #(#'OrderedCollection class').
+
+]
+
+{ #category : #tests }
+STypeInfoTest >> testAsTypeInfoSFooWithNil [
+	| profile typeInfo methodInfo |
+	profile := SSGenerator
+		profile: [ SFoo new return: nil ]
+		onClass: SFoo.
+	typeInfo := profile asTypeInfo.
+	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
+	self
+		assert: (typeInfo types at: #SFoo) classMethodTypes size
+		equals: 1.
+	self
+		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType type
+		equals: #SFoo.
+	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	self
+		assertCollection: methodInfo returnType types
+		hasSameElements: #(#UndefinedObject).
+	self
+		assertCollection: methodInfo allArgTypes
+		hasSameElements: #(#UndefinedObject).
+	self
+		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType types isEmpty.
+	self
+		assert:
+			(typeInfo typeOf: #returnCollection from: #SFoo) returnType types
+				isEmpty
+]
+
+{ #category : #tests }
 STypeInfoTest >> testJoinWith [
 	| typeInfo methodInfo otherTypeInfo |
 	typeInfo := STypeInfo new

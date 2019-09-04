@@ -84,7 +84,11 @@ SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
 		on: Exception
 		do: [ :exception | 
 			self halt.
-			numIteration := numIteration + 1
+			aTestCase
+				changeStatementOfClassName: (self signalerException: exception).
+			 numIteration := numIteration + 1.
+					self computeFitness: aTestCase
+
 
 			"(aTestCase
 				changeStatementsOfClassName: (self signalerOfException: exception))
@@ -128,6 +132,14 @@ SCoverageWithProfiler class >> profiler [
 SCoverageWithProfiler class >> profiler: aProfiler [
 	profiler ifNil: [ self defaultInitialization ].
 	profiler := aProfiler
+]
+
+{ #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> signalerException: exception [
+	"get the className of exception"
+	^ [ exception signaler name ]
+		on: MessageNotUnderstood
+		do: [ exception signaler className ]
 ]
 
 { #category : #'as yet unclassified' }

@@ -175,14 +175,20 @@ SGAEngine >> initializeMutationOperator [
 
 { #category : #'as yet unclassified' }
 SGAEngine >> initializePopulation [
-	population := OrderedCollection new.
-	populationSize
-		timesRepeat: [ population
-				add:
-					(SSTestCase new
-						typeInfo: typeInfo;
-						numMaxStatements: numberOfStatements;
-						generateStatements) ]
+	population
+		ifNil: [ population := OrderedCollection new.
+			populationSize
+				timesRepeat: [ population
+						add:
+							(SSTestCase new
+								typeInfo: typeInfo;
+								numMaxStatements: numberOfStatements;
+								generateStatements) ] ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> initializePopulationWith: testCases [
+	population := testCases
 ]
 
 { #category : #testing }

@@ -40,6 +40,11 @@ SSGeneratorMethod >> checkIfArgIsScalar: arg [
 SSGeneratorMethod >> initArgsTypesWith: args [
 	| classNames |
 	classNames := args collect: [ :arg | arg class name ].
+	"classNames := args
+		collect: [ :arg | 
+			arg isClass
+				ifTrue: [ arg name ]
+				ifFalse: [ arg class name ] ]."
 	argTypes
 		ifNil: [ classNames
 				ifNotEmpty: [ argTypes := classNames
