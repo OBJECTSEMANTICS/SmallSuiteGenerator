@@ -19,20 +19,23 @@ SMultiFitnessFunction class >> addFitnessFunction: aFitnessFunction [
 ]
 
 { #category : #accessing }
-SMultiFitnessFunction class >> clear [ 
-	multiFitnessFunction := nil
+SMultiFitnessFunction class >> allFitnessFunction [
+	self validateInstance.
+	^ multiFitnessFunction allFitnessFunction
+]
+
+{ #category : #accessing }
+SMultiFitnessFunction class >> clear [
+	multiFitnessFunction ifNotNil: [ 
+		multiFitnessFunction allFitnessFunction do: #clear. 
+		multiFitnessFunction := nil
+	].
 ]
 
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction class >> computeFitness: aTestCase [
 	self validateInstance.
 	^ multiFitnessFunction computeFitness: aTestCase
-]
-
-{ #category : #accessing }
-SMultiFitnessFunction class >> functions [
-	self validateInstance.
-	^ multiFitnessFunction functions
 ]
 
 { #category : #testing }
@@ -72,8 +75,13 @@ SMultiFitnessFunction class >> selectorMethod: aSelectorMethod [
 SMultiFitnessFunction class >> validateInstance [
 	self
 		assert: (multiFitnessFunction isNotNil
-		and: [ multiFitnessFunction functions isNotEmpty ])
+		and: [ multiFitnessFunction allFitnessFunction isNotEmpty ])
 		description: 'Set a multiFitnessFunction with its respectives fitness functions'
+]
+
+{ #category : #adding }
+SMultiFitnessFunction class >> with: aFitnessFunction [
+	self addFitnessFunction: aFitnessFunction
 ]
 
 { #category : #adding }
@@ -82,17 +90,17 @@ SMultiFitnessFunction >> addFitnessFunction: aFitnessFunction [
 	
 ]
 
+{ #category : #accessing }
+SMultiFitnessFunction >> allFitnessFunction [
+	^ functions
+]
+
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction >> computeFitness: aTestCase [
 	|dict|
 	dict := Dictionary new.
 	functions collect: [ :f | f computeFitness: aTestCase] thenDo: [:assoc | dict add: assoc].
 	^ dict
-]
-
-{ #category : #accessing }
-SMultiFitnessFunction >> functions [
-	^ functions
 ]
 
 { #category : #accessing }
@@ -108,7 +116,7 @@ SMultiFitnessFunction >> initialize [
 
 { #category : #initialization }
 SMultiFitnessFunction >> initializeDefaultSelectorMethod [
-	selectorMethod := SGreaterThanMethod functions: self functions
+	selectorMethod := SGreaterThanMethod functions: self allFitnessFunction
 ]
 
 { #category : #testing }

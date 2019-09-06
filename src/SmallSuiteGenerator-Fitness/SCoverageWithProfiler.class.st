@@ -32,6 +32,7 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 	self
 		assert: [ aTestCase notNil ]
 		description: 'testCase must not be nil'.
+	profiler ifNil: [ self defaultInitializationFitness ].
 	self
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
@@ -45,7 +46,7 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 					self halt.
 					numIteration := numIteration + 1 ].
 			self executeStatementsOf: aTestCase ].
-	^ (self nameFunction -> self coverage)
+	^ self nameFunction -> self coverage
 ]
 
 { #category : #metric }
@@ -75,6 +76,24 @@ SCoverageWithProfiler class >> coverageOf: aBlock onPackagesMatching: regex [
 SCoverageWithProfiler class >> defaultInitialization [
 	numIteration := 0.
 	operator := #>
+]
+
+{ #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> defaultInitializationFitness [
+	SCoverageWithProfiler allSubclasses
+		detect: [ :cls | cls profiler isNotNil ]
+		ifFound: [ :cls | self profiler: cls profiler ]
+		ifNone: [ 
+			| instanceFacade |
+			instanceFacade := SSmallSuiteGenerator instance.
+			instanceFacade
+				ifNotNil: [ | dataProfiler |
+					dataProfiler := instanceFacade dataFitnessCoverage.
+					instanceFacade ofClass
+						ifTrue: [ self coverageOf: dataProfiler first onClass: dataProfiler second ]
+						ifFalse: [ self
+								coverageOf: dataProfiler first
+								onPackagesMatching: dataProfiler second ] ] ]
 ]
 
 { #category : #'as yet unclassified' }

@@ -107,7 +107,7 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnMessage [
 
 { #category : #tests }
 SMultiFitnessFunctionTest >> testIsBetterThan [
-	| testCase1 testCase2 |
+	| testCase1 testCase2 functions |
 	testCase1 := utility testSuiteSStudentManual second.
 	testCase2 := utility testSuiteSStudentManual second.
 	testCase2 addFieldAccessMessage: #scoreStudent from: #SStudent.
@@ -119,10 +119,11 @@ SMultiFitnessFunctionTest >> testIsBetterThan [
 						idStudent ]
 				onClass: SStudent);
 		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	testCase1 computeFitness: function functions first.
-	testCase1 computeFitness: function functions second.
-	testCase2 computeFitness: function functions first.
-	testCase2 computeFitness: function functions second.
+	functions := function allFitnessFunction.
+	testCase1 computeFitness: functions first.
+	testCase1 computeFitness: functions second.
+	testCase2 computeFitness: functions first.
+	testCase2 computeFitness: functions second.
 	self deny: (function is: testCase1 betterThan: testCase2).
 	self assert: (function is: testCase2 betterThan: testCase1)
 ]

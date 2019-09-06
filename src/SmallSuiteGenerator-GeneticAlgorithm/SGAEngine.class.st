@@ -17,7 +17,8 @@ Class {
 		'operators',
 		'evaluationStrategy',
 		'typeInfo',
-		'fitness'
+		'fitness',
+		'numberOfGenerations'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -104,8 +105,9 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 
 { #category : #'as yet unclassified' }
 SGAEngine >> endForMaxNumberOfGeneration: nbOfGenerations [
-    "End the algorithm after a fixed number of generations"
-    terminationBlock := [ logs last generationNumber >= nbOfGenerations ]
+	"End the algorithm after a fixed number of generations"
+	numberOfGenerations := nbOfGenerations.
+	terminationBlock := [ logs last generationNumber >= nbOfGenerations ]
 ]
 
 { #category : #accessing }
@@ -124,25 +126,25 @@ SGAEngine >> fitness: aFitness [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> generateAssertionsUsing: selectedInvariants [
-	self
-		assert: logs isNotEmpty
-		description: 'In this point the logs must not be empty'.
-	self logs
-		do: [ :log | 
-			log fittestTestCase generateAssertionsUsing: selectedInvariants.
-			"log mutationResult: self analyzeMutants" ]
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> generateAssertionsUsing: selectedInvariants invariantsAndApplyPrettyCodeWith: kindsRefactoring [
+SGAEngine >> generateTestWith: selectedInvariants andPrettyCodeUsing: kindsRefactoring [
 	self
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
 	self logs
 		do: [ :log | 
 			"log fittestTestCase prettyCodeApplying: kindsRefactoring."
-			log fittestTestCase generateAssertionsUsing: selectedInvariants.
+			log fittestTestCase generateTestsWith: selectedInvariants.
+			"log mutationResult: self analyzeMutants" ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> generateTestsWith: selectedInvariants [
+	self
+		assert: logs isNotEmpty
+		description: 'In this point the logs must not be empty'.
+	self logs
+		do: [ :log | 
+			log fittestTestCase generateTestsWith: selectedInvariants.
 			"log mutationResult: self analyzeMutants" ]
 ]
 
@@ -157,7 +159,8 @@ SGAEngine >> initialize [
 	self initializeMutationOperator.
 	self initializeCrossoverOperator.
 	self selection: SGATournamentSelection new.
-	modelClasses := #()
+	modelClasses := #().
+	numberOfGenerations := 0
 ]
 
 { #category : #initialization }
@@ -173,7 +176,7 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator random: random.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 SGAEngine >> initializePopulation [
 	population := OrderedCollection new.
 	populationSize
@@ -292,13 +295,14 @@ SGAEngine >> run [
 			| gen |
 			gen := 0.
 			[ self shouldTerminate ]
-				whileFalse: [ gen := gen + 1.
-					bar label: gen asString.
+				whileFalse: [ "fitness clear"
+					gen := gen + 1.
+					bar label: 'Iteration: ' , gen asString.
 					self microPause.
 					t := Time now asSeconds.
 					self produceNewPopulation.
-					logs add: (self logWithGenerationNumber: gen atTime: t) ].
-			fitness clear ]
+					logs add: (self logWithGenerationNumber: gen atTime: t).
+					bar current: ((gen / numberOfGenerations) asFloat * 100) asInteger ] ]
 ]
 
 { #category : #accessing }

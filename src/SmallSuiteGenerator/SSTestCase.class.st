@@ -149,7 +149,7 @@ SSTestCase >> addStatement: newExpression before: aStatement [
 		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 SSTestCase >> addStatementOfType: aType before: aExpression [
 	| newExpression |
 	newExpression := self
@@ -332,13 +332,6 @@ SSTestCase >> fitness [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> generateAssertionsUsing: classInvariants [
-	^ generatorInvariant
-		generateAssertionsOf: self
-		testCaseUsing: classInvariants
-]
-
-{ #category : #'as yet unclassified' }
 SSTestCase >> generateStatements [
 	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain data.'.
 	[ self numberStatements < self numMaxStatements ]
@@ -346,6 +339,13 @@ SSTestCase >> generateStatements [
 				perform:
 					#(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral)
 						shuffle anyOne ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> generateTestsWith: classInvariants [
+	^ generatorInvariant
+		generateAssertionsOf: self
+		testCaseUsing: classInvariants
 ]
 
 { #category : #comparing }
