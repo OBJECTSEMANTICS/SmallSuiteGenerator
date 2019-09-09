@@ -16,7 +16,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTAMItemOnClass [
 		column: 'Customer Relationship';
 		color: Color lightGreen ].
 	aClass := RTAMItem.
-	smallSuiteGenerator seed: block onClass: aClass.
+	smallSuiteGenerator seed: block;
+	profilingOnClass:  aClass.
 	funcFitness := SMethodCoverage coverageOf: block onClass: aClass.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run.
@@ -35,7 +36,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTAMItemOnPackages [
 		color: Color lightGreen;
 		color ].
 	regex := 'Roassal2'.
-	smallSuiteGenerator seed: block onPackagesMatching: regex.
+	smallSuiteGenerator seed: block;
+	profilingOnPackagesMatching: regex.
 	funcFitness := SStatementCoverage.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run.
@@ -50,7 +52,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTBorderAttachPointOnClass [
 	invariants := #().
 	block := [ RTBorderAttachPoint instance offset: -4.12 ].
 	aClass := RTBorderAttachPoint.
-	smallSuiteGenerator seed: block onClass: aClass.
+	smallSuiteGenerator seed: block;
+	profilingOnClass:  aClass.
 	funcFitness := SStatementCoverage coverageOf: block onClass: aClass.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run.
@@ -64,7 +67,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTBorderAttachPointOnPackages [
 	SSGeneratorInvariant resetNumTest.
 	block := [ RTBorderAttachPoint instance offset: 4 ].
 	regex := 'Roassal2-Cor*'.
-	smallSuiteGenerator seed: block onPackagesMatching: regex.
+	smallSuiteGenerator seed: block;
+	profilingOnPackagesMatching: regex.
 	funcFitness := SStatementCoverage.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run
@@ -80,7 +84,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTBoxOnClass [
 		defaultWidth;
 		borderStyle ].
 	aClass := RTBox.
-	smallSuiteGenerator seed: block onClass: aClass.
+	smallSuiteGenerator seed: block;
+	profilingOnClass: aClass.
 	funcFitness := SMethodCoverage coverageOf: block onClass: aClass.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run.
@@ -96,9 +101,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnClass [
 	block := [ RTDirectedLine instance
 		pointsFrom: 1 @ 3 To: 3 @ 5;
 		offset: 6.5 ].
-	smallSuiteGenerator
-		seed: block
-		onClass: RTDirectedLine.
+	smallSuiteGenerator seed: block;
+	profilingOnClass:  RTDirectedLine.
 	functionFitness := SMultiFitnessFunction.
 	functionFitness
 		addFitnessFunction: (SMethodCoverage coverageOf: block onClass: RTDirectedLine);
@@ -110,7 +114,7 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnClass [
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnPackages [
-	| smallSuiteGenerator block regex invariants funcFitness|
+	| smallSuiteGenerator block regex invariants funcFitness |
 	smallSuiteGenerator := SSmallSuiteGenerator new.
 	SSGeneratorInvariant resetNumTest.
 	invariants := #().
@@ -118,9 +122,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTDirectedLineOnPackages [
 		pointsFrom: 1 @ 3 To: 3 @ 5;
 		offset: 6.5 ].
 	regex := 'Roassal2-Cor*'.
-	smallSuiteGenerator
-		seed: block
-		onPackagesMatching: regex.
+	smallSuiteGenerator seed: block;
+	profilingOnPackagesMatching: regex.
 	funcFitness := SMethodCoverage.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run.
@@ -139,9 +142,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTLineSegmentOnClass [
 		cotan;
 		bottom ].
 	aClass := RTLineSegment.
-	smallSuiteGenerator
-		seed: block
-		onClass: aClass.
+	smallSuiteGenerator seed: block;
+	profilingOnClass: aClass.
 	funcFitness := SStatementCoverage coverageOf: block onClass: aClass.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator run.
@@ -159,9 +161,8 @@ SSmallSuiteGeneratorExampleWithRoassal >> exampleRTLineSegmentOnPackages [
 		cotan;
 		bottom ].
 	regex := 'Roassal2-Cor*'.
-	smallSuiteGenerator
-		seed: block
-		onPackagesMatching: regex.
+	smallSuiteGenerator seed: block;
+	profilingOnPackagesMatching: regex.
 	functionFitness := SMultiFitnessFunction.
 	functionFitness
 		addFitnessFunction: (SMethodCoverage coverageOf: block onPackagesMatching: regex);

@@ -25,11 +25,9 @@ SMultiFitnessFunction class >> allFitnessFunction [
 ]
 
 { #category : #accessing }
-SMultiFitnessFunction class >> clear [
-	multiFitnessFunction ifNotNil: [ 
-		multiFitnessFunction allFitnessFunction do: #clear. 
-		multiFitnessFunction := nil
-	].
+SMultiFitnessFunction class >> clean [
+	multiFitnessFunction
+		ifNotNil: [ multiFitnessFunction allFitnessFunction do: #clean ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -63,6 +61,11 @@ SMultiFitnessFunction class >> multiFitnessFunction: anObject [
 SMultiFitnessFunction class >> numFunctions [
 	self validateInstance.
 	^ multiFitnessFunction numFunctions
+]
+
+{ #category : #accessing }
+SMultiFitnessFunction class >> reset [
+	multiFitnessFunction := nil
 ]
 
 { #category : #'as yet unclassified' }

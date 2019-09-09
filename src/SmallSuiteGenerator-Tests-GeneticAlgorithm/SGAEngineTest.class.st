@@ -39,9 +39,8 @@ SGAEngineTest >> tearDown [
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove.
-	SMultiFitnessFunction clear.
-	SCoverageWithProfiler allSubclassesDo: #clear
-	
+	SMultiFitnessFunction clean.
+	SCoverageWithProfiler allSubclassesDo: #clean
 ]
 
 { #category : #tests }
@@ -92,7 +91,7 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSMultiFitnessFunction [
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).	
 	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
-	self assert: (firstFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
+	self assert: (lastFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
 ]
 
 { #category : #tests }

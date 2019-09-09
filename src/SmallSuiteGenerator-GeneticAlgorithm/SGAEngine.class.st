@@ -92,6 +92,11 @@ SGAEngine >> checkTypeInfo [
 		description: 'Set a typeInfo'
 ]
 
+{ #category : #accessing }
+SGAEngine >> clean [
+	fitness clean
+]
+
 { #category : #'as yet unclassified' }
 SGAEngine >> crossover: testCaseA with: testCaseB [
 	^ crossoverOperator crossover: testCaseA with: testCaseB
@@ -178,14 +183,7 @@ SGAEngine >> initializeMutationOperator [
 
 { #category : #initialization }
 SGAEngine >> initializePopulation [
-	population := OrderedCollection new.
-	populationSize
-		timesRepeat: [ population
-				add:
-					(SSTestCase new
-						typeInfo: typeInfo;
-						numMaxStatements: numberOfStatements;
-						generateStatements) ]
+	population := self randomlyGeneratedPopulation
 ]
 
 { #category : #testing }
@@ -276,6 +274,20 @@ SGAEngine >> populationSize: aInteger [
 SGAEngine >> produceNewPopulation [
 	selection doSelection.
 	population := selection population.
+]
+
+{ #category : #initialization }
+SGAEngine >> randomlyGeneratedPopulation [
+	|collection |
+	collection := OrderedCollection new.
+	populationSize
+		timesRepeat: [ collection
+				add:
+					(SSTestCase new
+						typeInfo: typeInfo;
+						numMaxStatements: numberOfStatements;
+						generateStatements) ].
+	^ collection
 ]
 
 { #category : #accessing }

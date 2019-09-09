@@ -16,7 +16,7 @@ SStatementCoverageTest >> setUp [
 { #category : #running }
 SStatementCoverageTest >> tearDown [
 	super tearDown.
-	fitness clear
+	fitness clean
 ]
 
 { #category : #tests }

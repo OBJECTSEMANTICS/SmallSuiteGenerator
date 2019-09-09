@@ -5,210 +5,163 @@ Class {
 }
 
 { #category : #accessing }
-SSmallSuiteGeneratorExample >> clear [
-	SMultiFitnessFunction clear.
-	SCoverageWithProfiler allSubclassesDo: #clear.
-	SSmallSuiteGenerator resetInstance.
-]
-
-{ #category : #accessing }
-SSmallSuiteGeneratorExample >> clearProfiler [
-	S2Lock value: false.
-	S2Context value: nil.
-	S2Profiler remove.
+SSmallSuiteGeneratorExample >> clean [
+	SMultiFitnessFunction
+		clean;
+		reset.
+	SSAssertionGeneratorTest methodsDo: #removeFromSystem
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
 	| smallSuiteGenerator block regex funcFitness |
-	self clear.
+	self clean.
 	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
 	SSGeneratorInvariant resetNumTest.
 	block := [  ].
 	regex := 'SmallSuiteGenerator-Examples'.
-	smallSuiteGenerator seed: block onPackagesMatching: regex.
+	smallSuiteGenerator
+		seed: block;
+		profilingOnPackagesMatching: regex.
 	funcFitness := SMethodCoverage.
 	smallSuiteGenerator fitness: funcFitness.
-	smallSuiteGenerator run.
-	self clearProfiler
+	smallSuiteGenerator run
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSSTeacherOnClass [
-	| smallSuiteGenerator block aClass invariants funcFitness |
-	self clear.
+	| smallSuiteGenerator |
+	self clean.
 	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
-	SSGeneratorInvariant resetNumTest.
-	invariants := #().
-	block := [ (SSTeacher name: 'Ann' with: 34)
-		name;
-		nickname;
-		yearsWorkExperience;
-		idTeacher;
-		id ].
-	aClass := SSTeacher.
-	smallSuiteGenerator seed: block onClass: aClass.
-	funcFitness := SMethodCoverage coverageOf: block onClass: aClass.
-	smallSuiteGenerator fitness: funcFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: invariants.
-	self clearProfiler
+	smallSuiteGenerator
+		seed: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ];
+		profilingOnClass: SSTeacher.
+	smallSuiteGenerator fitness: SMethodCoverage.
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [
-	| smallSuiteGenerator block regex functionFitness |
-	self clear.
-	smallSuiteGenerator := SSmallSuiteGenerator instance.
-	SSGeneratorInvariant resetNumTest.
-	block := [ (SSTeacher name: 'Ann' with: 34)
-		name;
-		nickname;
-		yearsWorkExperience;
-		idTeacher;
-		id ].
-	regex := 'SmallSuiteGenerator-Examples'.
-	smallSuiteGenerator seed: block onPackagesMatching: regex.
-	functionFitness := SMultiFitnessFunction.
-	functionFitness
-		addFitnessFunction: (SMethodCoverage coverageOf: block onPackagesMatching: regex);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	smallSuiteGenerator fitness: functionFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: #().
-	self clearProfiler
+	| smallSuiteGenerator |
+	self clean.
+	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
+	smallSuiteGenerator
+		seed: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ];
+		profilingOnPackagesMatching: 'SmallSuiteGenerator-Examples';
+		fitness:
+			(SMultiFitnessFunction
+				with: SMethodCoverage;
+				with: SStatementCoverage).
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSStackOnClass [
-	| smallSuiteGenerator block invariants aClass functionFitness grapher |
-	self clear.
+	| smallSuiteGenerator |
+	self clean.
 	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
-	SSGeneratorInvariant resetNumTest.
-	invariants := #().
-	block := [ (SStack newStackWith: #(1 5 3 2))
-		pop;
-		top;
-		push: 4 ].
-	aClass := SStack.
-	smallSuiteGenerator seed: block onClass: aClass.
-	functionFitness := SMultiFitnessFunction.
-	functionFitness
-		addFitnessFunction: (SMethodCoverage coverageOf: block onClass: aClass);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	smallSuiteGenerator fitness: functionFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: invariants.
-	grapher := smallSuiteGenerator visualize.
-	self clearProfiler.
-	^ grapher
+	smallSuiteGenerator
+		seed: [ (SStack newStackWith: #(1 5 3 2))
+				pop;
+				top;
+				push: 4 ];
+		profilingOnClass: SStack;
+		fitness:
+			(SMultiFitnessFunction
+				with: SMethodCoverage;
+				with: SStatementCoverage).
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleSStackOnPackages [
-	| smallSuiteGenerator block regex funcFitness grapher |
-	self clear.
-	smallSuiteGenerator := SSmallSuiteGenerator instance.
-	SSGeneratorInvariant resetNumTest.
-	block := [ (SStack newStackWith: #(1 5 3 2))
-		pop;
-		top;
-		push: 4 ].
-	regex := 'SmallSuiteGenerator-Examples'.
-	smallSuiteGenerator seed: block onPackagesMatching: regex.
-	funcFitness := SStatementCoverage
-		coverageOf: block
-		onPackagesMatching: regex.
-	smallSuiteGenerator fitness: funcFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: #().
-	grapher := smallSuiteGenerator visualize.
-	self clearProfiler.
-	^ grapher
+	| smallSuiteGenerator |
+	self clean.
+	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
+	smallSuiteGenerator
+		seed: [ (SStack newStackWith: #(1 5 3 2))
+				pop;
+				top;
+				push: 4 ];
+		profilingOnPackagesMatching: 'SmallSuiteGenerator-Examples';
+		fitness: SStatementCoverage.
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
-	| smallSuiteGenerator block aClass invariants funcFitness |
-	self clear.
+	| smallSuiteGenerator |
+	self clean.
 	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
-	SSGeneratorInvariant resetNumTest.
-	invariants := #().
-	block := [ (SStudent name: 'Ann' with: 34)
-		nickname;
-		idStudent;
-		scoreStudent: 45;
-		scoreStudent ].
-	aClass := SStudent.
-	smallSuiteGenerator seed: block onClass: aClass.
-	funcFitness := SStatementCoverage coverageOf: block onClass: aClass.
-	smallSuiteGenerator fitness: funcFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: invariants.
-	self clearProfiler
+	smallSuiteGenerator
+		seed: [ (SStudent name: 'Ann' with: 34)
+				nickname;
+				idStudent;
+				scoreStudent: 45;
+				scoreStudent ];
+		profilingOnClass: SStudent;
+		fitness: SStatementCoverage.
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
-	| smallSuiteGenerator block aClass invariants functionFitness |
-	self clear.
-	smallSuiteGenerator := SSmallSuiteGenerator instance.
-	SSGeneratorInvariant resetNumTest.
-	invariants := #().
-	block := [ (SStudent name: 'Ann' with: 34)
-		nickname;
-		idStudent;
-		scoreStudent: 45;
-		scoreStudent ].
-	aClass := SSTeacher.
-	smallSuiteGenerator seed: block onClass: aClass.
-	functionFitness := SMultiFitnessFunction.
-	functionFitness
-		addFitnessFunction: (SMethodCoverage coverageOf: block onClass: aClass);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	smallSuiteGenerator fitness: functionFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: invariants.
-	self clearProfiler
+	| smallSuiteGenerator |
+	self clean.
+	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
+	smallSuiteGenerator
+		seed: [ (SStudent name: 'Ann' with: 34)
+				nickname;
+				idStudent;
+				scoreStudent: 45;
+				scoreStudent ];
+		profilingOnClass: SSTeacher;
+		fitness:
+			(SMultiFitnessFunction
+				with: SMethodCoverage;
+				with: SStatementCoverage).
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
-	| smallSuiteGenerator block aClass invariants funcFitness |
-	self clear.
+	| smallSuiteGenerator |
+	self clean.
 	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
-	SSGeneratorInvariant resetNumTest.
-	invariants := #().
-	block := [ (SStudent name: 'Ann' with: 34)
-		nickname;
-		idStudent;
-		scoreStudent: 45;
-		scoreStudent ].
-	aClass := SFoo.
-	smallSuiteGenerator seed: block onClass: aClass.
-	funcFitness := SStatementCoverage coverageOf: block onClass: aClass.
-	smallSuiteGenerator fitness: funcFitness.
-	smallSuiteGenerator run.
-	smallSuiteGenerator generateTestsWith: invariants.
-	self clearProfiler
+	smallSuiteGenerator
+		seed: [ (SStudent name: 'Ann' with: 34)
+				nickname;
+				idStudent;
+				scoreStudent: 45;
+				scoreStudent ];
+		profilingOnClass: SFoo;
+		fitness: SStatementCoverage.
+	^ smallSuiteGenerator run
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleWithWrongRegexToRun [
-	| smallSuiteGenerator block regex functionFitness |
-	self clear.
-	smallSuiteGenerator := SSmallSuiteGenerator instance.
-	SSGeneratorInvariant resetNumTest.
-	block := [ (SStudent name: 'Ann' with: 34)
-		nickname;
-		idStudent ].
-	regex := 'SmallSuiteGenerator-Fitness'.
-	smallSuiteGenerator seed: block onPackagesMatching: regex.
-	functionFitness := SMultiFitnessFunction.
-	functionFitness
-		addFitnessFunction: (SMethodCoverage coverageOf: block onPackagesMatching: regex);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	smallSuiteGenerator fitness: functionFitness.
-	smallSuiteGenerator run.
-	self clearProfiler
+	| smallSuiteGenerator |
+	self clean.
+	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
+	smallSuiteGenerator
+		seed: [ (SStudent name: 'Ann' with: 34)
+				nickname;
+				idStudent ];
+		profilingOnPackagesMatching: 'SmallSuiteGenerator-Fitness';
+		fitness:
+			(SMultiFitnessFunction
+				with: SMethodCoverage;
+				with: SStatementCoverage).
+	^ smallSuiteGenerator run
 ]

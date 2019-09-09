@@ -12,7 +12,7 @@ Class {
 { #category : #running }
 SMultiFitnessFunctionTest >> setUp [
 	function := SMultiFitnessFunction.
-	function clear.
+	function clean.
 	fitnessFunctions := Array
 		with: SMethodCoverage
 		with: SStatementCoverage.
@@ -25,8 +25,8 @@ SMultiFitnessFunctionTest >> tearDown [
 	"S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove."
-	fitnessFunctions do: #clear.	" do: #clear."
-	function clear
+	fitnessFunctions do: #clean.	" do: #clear."
+	function clean
 ]
 
 { #category : #tests }

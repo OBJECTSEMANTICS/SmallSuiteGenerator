@@ -16,7 +16,7 @@ SMethodCoverageTest >> setUp [
 { #category : #running }
 SMethodCoverageTest >> tearDown [
 	super tearDown.
-	fitness clear
+	fitness clean
 ]
 
 { #category : #tests }

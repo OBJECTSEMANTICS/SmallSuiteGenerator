@@ -28,8 +28,8 @@ SCoverageTestWithRoassal >> setUp [
 
 { #category : #running }
 SCoverageTestWithRoassal >> tearDown [
-	SMultiFitnessFunction clear.
-	SCoverageWithProfiler allSubclassesDo: #clear.	
+	SMultiFitnessFunction clean.
+	SCoverageWithProfiler allSubclassesDo: #clean.
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove

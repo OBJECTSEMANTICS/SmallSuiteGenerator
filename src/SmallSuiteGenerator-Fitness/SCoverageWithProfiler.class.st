@@ -10,13 +10,18 @@ Class {
 }
 
 { #category : #accessing }
-SCoverageWithProfiler class >> clear [
+SCoverageWithProfiler class >> clean [
 	profiler
-		ifNotNil: [ [ profiler cleanInstrumentation ]
-				on: AssertionFailure
-				do: [ ].
+		ifNotNil: [ self cleanInstrumentation.
 			profiler := nil.
 			numIteration := 0 ]
+]
+
+{ #category : #accessing }
+SCoverageWithProfiler class >> cleanInstrumentation [
+[ profiler cleanInstrumentation ]
+				on: AssertionFailure
+				do: [  ].
 ]
 
 { #category : #accessing }
@@ -83,17 +88,7 @@ SCoverageWithProfiler class >> defaultInitializationFitness [
 	SCoverageWithProfiler allSubclasses
 		detect: [ :cls | cls profiler isNotNil ]
 		ifFound: [ :cls | self profiler: cls profiler ]
-		ifNone: [ 
-			| instanceFacade |
-			instanceFacade := SSmallSuiteGenerator instance.
-			instanceFacade
-				ifNotNil: [ | dataProfiler |
-					dataProfiler := instanceFacade dataFitnessCoverage.
-					instanceFacade ofClass
-						ifTrue: [ self coverageOf: dataProfiler first onClass: dataProfiler second ]
-						ifFalse: [ self
-								coverageOf: dataProfiler first
-								onPackagesMatching: dataProfiler second ] ] ]
+		ifNone: [ self initializeProfiler ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -111,6 +106,20 @@ SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
 						calculateCoverageOf: aTestCase
 						using: profiler
 						inLevel: numLevel + 1 ]" ]
+]
+
+{ #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> initializeProfiler [
+	| instanceFacade |
+			instanceFacade := SSmallSuiteGenerator instance.
+			instanceFacade
+				ifNotNil: [ | dataProfiler |
+					dataProfiler := instanceFacade dataFitnessCoverage.
+					instanceFacade ofClass
+						ifTrue: [ self coverageOf: dataProfiler first onClass: dataProfiler second ]
+						ifFalse: [ self
+								coverageOf: dataProfiler first
+								onPackagesMatching: dataProfiler second ] ]
 ]
 
 { #category : #testing }

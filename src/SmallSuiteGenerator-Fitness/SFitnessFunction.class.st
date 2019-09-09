@@ -13,7 +13,7 @@ SFitnessFunction class >> allFitnessFunction [
 ]
 
 { #category : #accessing }
-SFitnessFunction class >> clear [
+SFitnessFunction class >> clean [
 	self subclassResponsibility
 ]
 

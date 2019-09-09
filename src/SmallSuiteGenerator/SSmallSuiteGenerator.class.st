@@ -5,7 +5,8 @@ Class {
 		'engine',
 		'typeInfo',
 		'dataFitnessCoverage',
-		'ofClass'
+		'ofClass',
+		'invariants'
 	],
 	#classInstVars : [
 		'instance'
@@ -20,12 +21,14 @@ SSmallSuiteGenerator class >> instance [
 
 { #category : #accessing }
 SSmallSuiteGenerator class >> newInstance [
-	instance ifNil: [ instance := self new ].
+	self resetInstance.
+	instance := self new.
 	^ instance
 ]
 
 { #category : #initialization }
 SSmallSuiteGenerator class >> resetInstance [
+	instance ifNotNil: [ instance engine clean ].
 	instance := nil
 ]
 
@@ -41,6 +44,13 @@ SSmallSuiteGenerator >> classesForRegex: regexExpressions [
 { #category : #accessing }
 SSmallSuiteGenerator >> dataFitnessCoverage [
 	^ dataFitnessCoverage
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> end [
+	engine clean.
+	"self class resetInstance."
+	SSGeneratorInvariant resetNumTest
 ]
 
 { #category : #accessing }
@@ -68,8 +78,9 @@ SSmallSuiteGenerator >> fitnessValues [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Run the generation before'.
-	nameFunctions := engine fitness allFitnessFunction collect: #name.
-	^ nameFunctions
+	nameFunctions := engine fitness allFitnessFunction
+		collect: #name.
+	^ nameFunctions asSet
 		collect: [ :nameFunction | 
 			nameFunction
 				->
@@ -97,7 +108,8 @@ SSmallSuiteGenerator >> generateTestsWith: selectedInvariants [
 SSmallSuiteGenerator >> initialize [
 	engine := self engineDefault.
 	dataFitnessCoverage := #().
-	ofClass := false
+	ofClass := false.
+	invariants := #()
 ]
 
 { #category : #'as yet unclassified' }
@@ -121,6 +133,48 @@ SSmallSuiteGenerator >> populationSize: aInt [
 ]
 
 { #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> profilingOnClass: aClass [
+	| aBlock |
+	aBlock := engine blockToExecute.
+	self
+		assert: aBlock isNotNil
+		description: 'Need to provide a block to generate the tests'.
+	self
+		assert: aClass isNotNil
+		description: 'Need to provide a class to generate the tests'.
+	ofClass := true.
+	"save data of fitness coverage"
+	dataFitnessCoverage := Array with: aBlock with: aClass.
+	"save the class to evaluate mutants killed or alived"
+	engine modelClasses: (Array with: aClass).
+	"execute the engine"
+	engine
+		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass).
+
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> profilingOnPackagesMatching: regex [
+	| aBlock |
+	aBlock := engine blockToExecute.
+	self
+		assert: aBlock isNotNil
+		description: 'Need to provide a block to generate the tests'.
+	self
+		assert: (regex isNotNil and: [ regex isNotEmpty ])
+		description: 'Need to provide a valid regex to generate the tests'.
+	dataFitnessCoverage := Array with: aBlock with: regex.
+	engine modelClasses: (self classesForRegex: (Array with: regex)).
+	engine
+		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex).
+]
+
+{ #category : #initialization }
+SSmallSuiteGenerator >> randomlyGeneratedPopulation [ 
+	^ engine randomlyGeneratedPopulation 
+]
+
+{ #category : #running }
 SSmallSuiteGenerator >> run [
 	self
 		assert: engine typeInfo isNotNil
@@ -134,45 +188,23 @@ SSmallSuiteGenerator >> run [
 	self
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
-	^ engine run
+	engine run.
+	engine generateTestsWith: invariants. self end
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> seed: aBlock onClass: aClass [
+SSmallSuiteGenerator >> runWith: collection [
+	invariants := collection.
+	self run
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> seed: aBlock [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
-	self
-		assert: aClass isNotNil
-		description: 'Need to provide a class to generate the tests'.
-	ofClass := true.
-	"save data of fitness coverage"
-	dataFitnessCoverage := Array with: aBlock with: aClass.
-	"save the class to evaluate mutants killed or alived"
-	engine modelClasses: (Array with: aClass).
-	"execute the engine"
+	"set the block to execute on engine"
 	engine blockToExecute: aBlock.
-	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass).
-	"fitness: (aClassFitness coverageOf: aBlock onClass: aClass)"
-	^ engine
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> seed: aBlock onPackagesMatching: regex [
-	self
-		assert: aBlock isNotNil
-		description: 'Need to provide a block to generate the tests'.
-	self
-		assert: (regex isNotNil and: [ regex isNotEmpty ])
-		description: 'Need to provide a valid regex to generate the tests'.
-	dataFitnessCoverage := Array with: aBlock with: regex.
-	engine modelClasses: (self classesForRegex: (Array with: regex));
-	blockToExecute: aBlock.
-	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex).
-	"fitness: (aClassFitness coverageOf: aBlock onPackagesMatching: regex)"
-	^ engine
 ]
 
 { #category : #accessing }
