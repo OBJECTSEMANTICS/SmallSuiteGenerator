@@ -30,10 +30,15 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 
 { #category : #accessing }
 STypeInfo >> classes [
-	classes ifNil:[
-		classes := types keys collect:[ :className | Smalltalk at: className].
-		].
-	^ classes.
+	"classes
+		ifNil: [ classes := types keys
+				collect: [ :className | Smalltalk at: className ] ]."
+
+	classes
+		ifNil: [ classes := Dictionary new.
+			types keysDo:
+					[ :aClassName | classes at: aClassName put: (Smalltalk at: aClassName) ] ].
+	^ classes
 ]
 
 { #category : #copying }
@@ -89,14 +94,13 @@ STypeInfo >> joinWith: otherTypeInfo [
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
 	noneAbstractClasses
-		ifNil: [ noneAbstractClasses := self classes
+		ifNil: [ noneAbstractClasses := self classes values
 				reject: [ :aClass | 
 					aClass isAbstract
-						or: [ (aClass methods select: #isAbstract) isNotEmpty or: [ 
-								(aClass methods select: [ :meth | meth literals includes: #subclassResponsibility ]) isNotEmpty
-								
-								 ] ] ] ].
-				
+						or: [ (aClass methods select: #isAbstract) isNotEmpty
+								or: [ (aClass methods
+										select: [ :meth | meth literals includes: #subclassResponsibility ])
+										isNotEmpty ] ] ] ].
 	^ noneAbstractClasses
 ]
 

@@ -35,7 +35,10 @@ STypeClassInfo class >> type: aAssoc [
 
 { #category : #private }
 STypeClassInfo >> accessMessages [
-	^ (methodTypes values select: #isQuick) select: [ :meth | meth returnType type isNotNil ]
+	^ methodTypes values
+		select: [ :methType | 
+			methType isDeprecated not
+				and: [ methType isQuick and: [ methType returnType isNotNil ] ] ]
 ]
 
 { #category : #adding }
@@ -111,7 +114,8 @@ STypeClassInfo >> joinWith: otherTypeClass [
 
 { #category : #private }
 STypeClassInfo >> messages [
-	^ (methodTypes values reject: #isQuick) select: [ :meth | meth returnType type isNotNil ]
+	^ (methodTypes values reject: #isQuick)
+		select: [ :meth | meth isDeprecated not and: [meth returnType type isNotNil] ]
 ]
 
 { #category : #'as yet unclassified' }

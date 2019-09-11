@@ -43,13 +43,18 @@ SVariable >> initialize [
 SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
 		ifFalse: [ #() ]
-		ifTrue: [ {self} ]
+		ifTrue: [ (Array with: self) ]
 ]
 
 { #category : #printing }
 SVariable >> printOn: aStream [
 	aStream nextPutAll: varName.
 	id ifNotNil: [ aStream nextPutAll: id asString ]
+]
+
+{ #category : #accessing }
+SVariable >> referenceTo: aClassName [
+	^ self returnType = aClassName
 ]
 
 { #category : #mutation }

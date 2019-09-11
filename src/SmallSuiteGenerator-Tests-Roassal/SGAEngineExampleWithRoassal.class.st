@@ -6,8 +6,8 @@ Class {
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> assert: engine fitness: function [
-	self assert: (engine logs first fittestTestCase fitness
-		at: function nameFunction <= engine logs last fittestTestCase fitness
+	self assert: ((engine logs first fittestTestCase fitness
+		at: function nameFunction) <= engine logs last fittestTestCase fitness
 		at: function nameFunction)
 ]
 
@@ -403,9 +403,7 @@ edges := { 1 -> 2 . 1 -> 4 . 4 -> 3 }.
 			b layout force.
 			b ]
 		andFitness: SMethodCoverage.
-	self
-		assert:
-			engine fitness: SMethodCoverage .
+	self assert: engine fitness: SMethodCoverage.
 	self clean
 ]
 
@@ -455,9 +453,14 @@ SGAEngineExampleWithRoassal >> exampleRTPieBuilderOnClass [
 			b normalizer distinctColor.
 			b ]
 		andFitness: SMethodCoverage.
-	self assert: engine logs first fitness: SMethodCoverage greaterThanValue: 16.67.
-	self assert: engine logs last fitness: SMethodCoverage greaterThanValue:  16.67.
-	"statementCoverage: >= 15"
+	self
+		assert: engine logs first
+		fitness: SMethodCoverage
+		greaterThanValue: 16.67.
+	self
+		assert: engine logs last
+		fitness: SMethodCoverage
+		greaterThanValue: 16.67.
 	self clean
 ]
 
@@ -535,9 +538,7 @@ SGAEngineExampleWithRoassal >> exampleRTSVGOnPackage [
 			RTGridLayout on: elements.
 			v ]
 		andFitness: SStatementCoverage.
-	self
-		assert:
-			engine fitness: SStatementCoverage .
+	self assert: engine fitness: SStatementCoverage.
 	self clean
 ]
 

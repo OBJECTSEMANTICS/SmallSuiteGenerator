@@ -21,7 +21,10 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 		ifFalse: [ ^ SError error: 'statements dont contain some types of method' ].
 	dict := Dictionary new.
 	statements copy shuffle
-		do: [ :stm | dict at: stm returnType put: stm variable copy ].
+		do: [ :stm | 
+			dict
+				at: stm returnType
+				put:  stm variable copy ].
 	^ aMethodTypeInfo argTypes
 		collect: [ :aTypeReturn | dict at: aTypeReturn type ]
 ]

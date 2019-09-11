@@ -84,18 +84,11 @@ SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
 		on: Exception
 		do: [ :exception | 
 			self halt.
-			aTestCase
-				changeStatementOfClassName: (self signalerException: exception).
-			 numIteration := numIteration + 1.
-					self computeFitness: aTestCase
+			SException solve: exception of: aTestCase.
+			numIteration := numIteration + 1.
+			self computeFitness: aTestCase
 
-
-			"(aTestCase
-				changeStatementsOfClassName: (self signalerOfException: exception))
-				ifTrue: [ ^ self
-						calculateCoverageOf: aTestCase
-						using: profiler
-						inLevel: numLevel + 1 ]" ]
+]
 ]
 
 { #category : #testing }

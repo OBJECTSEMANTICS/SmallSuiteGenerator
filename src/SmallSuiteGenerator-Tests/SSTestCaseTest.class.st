@@ -809,6 +809,31 @@ SSTestCaseTest >> testRemoveReceiverMessage [
 			'_var2 := ''hello''.' '_var3 := _var4 return: _var2.')
 ]
 
+{ #category : #'mutation-remove' }
+SSTestCaseTest >> testRemoveStatementNoRepairing [
+	| testCase statement |
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	statement := testCase addFactoryMessage.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+	testCase removeStatementNoRepairing: statement.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: #('_var0 := 7.3.').
+	testCase := SSTestCase with: self class typeInfoSFoo.
+	statement := testCase addFactoryMessage.
+	testCase addMessage: #returnFloat from: #SFoo.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnFloat.').
+	testCase removeStatementNoRepairing: statement.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: #('_var0 := 7.3.')
+]
+
 { #category : #'mutation-change' }
 SSTestCaseTest >> typeInfoSFoo [
 	^ self class typeInfoSFoo

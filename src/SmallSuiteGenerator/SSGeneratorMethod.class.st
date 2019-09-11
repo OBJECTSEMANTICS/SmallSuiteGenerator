@@ -19,7 +19,8 @@ SSGeneratorMethod >> asTypeInfo [
 		selector: selector;
 		returnType: self returnType;
 		argTypes: self argTypes;
-		isQuick: self isQuick
+		isQuick: self isQuick;
+		isDeprecated: originalMethod isDeprecated 
 ]
 
 { #category : #hooks }

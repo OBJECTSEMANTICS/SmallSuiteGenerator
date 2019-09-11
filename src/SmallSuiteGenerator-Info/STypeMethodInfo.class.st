@@ -5,7 +5,8 @@ Class {
 		'selector',
 		'returnType',
 		'argTypes',
-		'isQuick'
+		'isQuick',
+		'isDeprecated'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -58,7 +59,19 @@ STypeMethodInfo >> copy [
 { #category : #initialization }
 STypeMethodInfo >> initialize [
 	argTypes := #().
-	isQuick := false. returnType := STypeReturnInfo new
+	isQuick := false.
+	returnType := STypeReturnInfo new.
+	isDeprecated := false
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> isDeprecated [
+	^ isDeprecated
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> isDeprecated: anObject [
+	isDeprecated := anObject
 ]
 
 { #category : #accessing }

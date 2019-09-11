@@ -28,7 +28,9 @@ SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
 	smallSuiteGenerator
 		generateTestsOf: block
 		blockOnPackagesMatching: regex.
-	funcFitness := SMethodCoverage.
+	funcFitness := SMethodCoverage
+		coverageOf: block
+		onPackagesMatching: regex.
 	smallSuiteGenerator fitness: funcFitness.
 	smallSuiteGenerator runGeneration.
 	self clearProfiler
