@@ -23,6 +23,7 @@ SException class >> signalerName: exception [
 SException class >> solve: aException of: aTestCase [
 	^ self subclasses
 		detect: [ :subClass | subClass solveException: aException of: aTestCase ]
+		ifFound: [ true ]
 		ifNone: [  false ]
 ]
 
