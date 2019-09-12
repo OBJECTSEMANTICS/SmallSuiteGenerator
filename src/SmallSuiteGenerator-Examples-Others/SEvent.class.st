@@ -5,12 +5,17 @@ Class {
 		'discount',
 		'price'
 	],
-	#category : #'SmallSuiteGenerator-Examples'
+	#category : #'SmallSuiteGenerator-Examples-Others'
 }
 
 { #category : #'as yet unclassified' }
 SEvent class >> price: aNumber [
 	^ self new price: aNumber
+]
+
+{ #category : #testing }
+SEvent >> canRegister: aPerson [
+	^ aPerson canRegister: self
 ]
 
 { #category : #accessing }

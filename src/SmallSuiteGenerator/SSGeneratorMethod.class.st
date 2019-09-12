@@ -3,7 +3,8 @@ Class {
 	#superclass : #S2Method,
 	#instVars : [
 		'returnType',
-		'argTypes'
+		'argTypes',
+		'receiverType'
 	],
 	#category : #'SmallSuiteGenerator-Profiler'
 }
@@ -26,7 +27,7 @@ SSGeneratorMethod >> asTypeInfo [
 { #category : #hooks }
 SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 	self initArgsTypesWith: listOfArguments.
-	"listOfArguments ifNotEmpty: [ self halt ]."
+	self saveReceiver: receiver.
 	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ]
 ]
 
@@ -49,14 +50,15 @@ SSGeneratorMethod >> initArgsTypesWith: args [
 	argTypes
 		ifNil: [ classNames
 				ifNotEmpty: [ argTypes := classNames
-						collect: [ :aName | STypeReturnInfo new: aName ] ] ]
+						collect: [ :aName | SMultiTypeInfo new: aName ] ] ]
 		ifNotNil: [ self mergeArgsTypes: classNames ]
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> initialize [
 	super initialize.
-	returnType := STypeReturnInfo new
+	returnType := SMultiTypeInfo new.
+	receiverType := SMultiTypeInfo new
 ]
 
 { #category : #hooks }
@@ -84,4 +86,9 @@ SSGeneratorMethod >> returnValue: value [
 
 	returnType type: value class name.
 	self checkIfArgIsScalar: value
+]
+
+{ #category : #hooks }
+SSGeneratorMethod >> saveReceiver: aObject [
+	receiverType type: aObject class name
 ]

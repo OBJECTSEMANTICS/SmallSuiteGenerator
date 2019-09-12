@@ -262,6 +262,11 @@ SSTestCase >> buildArgs: argTypes before: aStatement [
 ]
 
 { #category : #'as yet unclassified' }
+SSTestCase >> changeMessageNotUnderstood: aSelector from: aClassName [
+	^ false
+]
+
+{ #category : #'as yet unclassified' }
 SSTestCase >> changeStatement [
 	statements copy shuffle
 		do: [ :stm | 

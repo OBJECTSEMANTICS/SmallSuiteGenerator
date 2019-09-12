@@ -5,6 +5,50 @@ Class {
 }
 
 { #category : #tests }
+STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
+	| profile typeInfo methodInfo |
+	profile := SSGenerator
+		profile: [ | aConference aPerson |
+			aConference := SConference new offerPrice: 95.
+			aPerson := SStudent new name: 'Mary'.
+			aConference canRegister: aPerson ]
+		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others'.
+	typeInfo := profile asTypeInfo.
+	
+	self assert: (typeInfo types at: #SEvent) methodTypes size equals: 6.
+	self
+		assert: (typeInfo types at: #SEvent) classMethodTypes size equals: 1.
+		self assert: (typeInfo types at: #SConference) methodTypes size equals: 7.
+	self
+		assert: (typeInfo types at: #SConference) classMethodTypes isEmpty.
+	self assert: (typeInfo types at: #SParty) methodTypes size equals: 2.
+	self
+		assert: (typeInfo types at: #SParty) classMethodTypes isEmpty.
+	self
+		assert: (typeInfo typeOf: #initialize from: #SEvent) returnType type
+		equals: nil.
+	self
+		assert: (typeInfo typeOf: #initialize from: #SConference) returnType type
+		equals: #SConference.
+	self
+		assert: (typeInfo typeOf: #initialize from: #SParty) returnType type
+		equals: nil.
+	
+	methodInfo := typeInfo typeOf: #canRegister: from: #SEvent.
+	self
+		assertCollection: methodInfo returnType types
+		hasSameElements: (Array with: #False).
+	self
+		assertCollection: methodInfo allArgTypes
+		hasSameElements: (Array with: #SStudent).
+	self assertCollection: methodInfo allReceivers hasSameElements: (Array with: #SConference). 
+	
+	self
+		assertCollection: typeInfo scalars keys
+		hasSameElements: #(#SStudent #SmallInteger #False)
+]
+
+{ #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFoo [
 	| profile typeInfo methodInfo |
 	profile := SSGenerator

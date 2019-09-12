@@ -31,6 +31,12 @@ SSPerson >> age: aNumber [
 	^ aNumber
 ]
 
+{ #category : #testing }
+SSPerson >> canRegister: aConference [
+	^ aConference price - aConference offerPrice
+		> (aConference price * 0.05)
+]
+
 { #category : #'as yet unclassified' }
 SSPerson >> fullIdentifier [
 	^ name, '_', nickname, '_', id asString

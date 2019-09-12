@@ -19,6 +19,15 @@ SCoverageWithProfiler class >> clear [
 			numIteration := 0 ]
 ]
 
+{ #category : #compiling }
+SCoverageWithProfiler class >> compileTestCase: aTestCase [
+	self compilerClassOfCoverage
+				compile:
+					'compileTestCase' , String cr
+						, (self nodeFormattedOf: aTestCase) body formattedCode
+	
+]
+
 { #category : #accessing }
 SCoverageWithProfiler class >> compilerClassOfCoverage [
 	compilerClassOfCoverage
@@ -36,16 +45,16 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
 	numIteration <= self maxNumIterations
-		ifTrue: [ [ self compilerClassOfCoverage
+		ifTrue: [ [ self compileTestCase: aTestCase "self compilerClassOfCoverage
 				compile:
 					'compileTestCase' , String cr
-						, (self nodeFormattedOf: aTestCase) body formattedCode ]
+						, (self nodeFormattedOf: aTestCase) body formattedCode" ]
 				on: Error
 				do: [ :e | 
 					self halt.
 					numIteration := numIteration + 1 ].
 			self executeStatementsOf: aTestCase ].
-	^ (self nameFunction -> self coverage)
+	^ self nameFunction -> self coverage
 ]
 
 { #category : #metric }
@@ -78,17 +87,23 @@ SCoverageWithProfiler class >> defaultInitialization [
 ]
 
 { #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> executeStatements [
+	self profiler
+		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ]
+]
+
+{ #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
-	[ self profiler
-		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ] ]
+	[ self executeStatements
+	"self profiler
+		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ] " ]
 		on: Exception
 		do: [ :exception | 
 			self halt.
-			SException solve: exception of: aTestCase.
+			(SException solve: exception of: aTestCase)
+				ifFalse: [ ^ exception ].
 			numIteration := numIteration + 1.
-			self computeFitness: aTestCase
-
-]
+			self computeFitness: aTestCase ]
 ]
 
 { #category : #testing }

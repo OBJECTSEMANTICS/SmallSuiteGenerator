@@ -17,8 +17,8 @@ STypeMethodInfo class >> type: aAssoc [
 	aValue := aAssoc value.
 	^ self new
 		selector: aAssoc key;
-		returnType: (STypeReturnInfo new: aValue first);
-		argTypes: (aValue second collect: [:aType | STypeReturnInfo new: aType]);
+		returnType: (SMultiTypeInfo new: aValue first);
+		argTypes: (aValue second collect: [:aType | SMultiTypeInfo new: aType]);
 		isQuick: aValue third
 ]
 
@@ -60,7 +60,7 @@ STypeMethodInfo >> copy [
 STypeMethodInfo >> initialize [
 	argTypes := #().
 	isQuick := false.
-	returnType := STypeReturnInfo new.
+	returnType := SMultiTypeInfo new.
 	isDeprecated := false
 ]
 

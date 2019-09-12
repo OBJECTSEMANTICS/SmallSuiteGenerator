@@ -86,7 +86,6 @@ SGAMutationOperationTest >> testMutationSStudentWithValidReferences [
 	| testCase mutatedTestCase testSuite |
 	testSuite := utility testSuiteSStudentManual.
 	testCase := testSuite third.
-	self halt.
 	"testCase generateStatements."
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.

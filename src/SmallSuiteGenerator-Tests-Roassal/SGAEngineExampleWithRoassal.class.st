@@ -537,7 +537,7 @@ SGAEngineExampleWithRoassal >> exampleRTSVGOnPackage [
 			v addAll: elements.
 			RTGridLayout on: elements.
 			v ]
-		andFitness: SStatementCoverage.
+		andFitness: SStatementCoverage.self halt.
 	self assert: engine fitness: SStatementCoverage.
 	self clean
 ]

@@ -75,6 +75,38 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfosOnPackageExamplesOthers [
+	"the first typeInfo is about a class has as argument other class from other package"
+
+	^ OrderedCollection new
+		add:
+			(STypeInfo new
+				type:
+					#SEvent
+						->
+							(Array
+								with:
+									(Array
+										with: #canRegister: -> #(#False #(#SStudent) false)
+										with: #price -> #(#SmallInteger #() false))
+								with: #());
+				type:
+					#SConference
+						->
+							(Array
+								with:
+									(Array
+										with: #initialize -> #(#SEvent #() false)
+										with: #offerPrice -> #(#SmallInteger #() true)
+										with: #offerPrice: -> #(#SConference #(#SmallInteger) false))
+								with: #());
+				scalar: #SmallInteger with: #(95 100);
+				scalar: #False with: #(false);
+				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary')));
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfosSEvent [
 	^ OrderedCollection new
 		add:

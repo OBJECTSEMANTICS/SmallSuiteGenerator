@@ -1,5 +1,5 @@
 Class {
-	#name : #STypeReturnInfo,
+	#name : #SMultiTypeInfo,
 	#superclass : #STypeObjectInfo,
 	#instVars : [
 		'types'
@@ -8,17 +8,17 @@ Class {
 }
 
 { #category : #'instance creation' }
-STypeReturnInfo class >> new: aType [
+SMultiTypeInfo class >> new: aType [
 	^ self new type: aType
 ]
 
 { #category : #comparing }
-STypeReturnInfo >> = otherType [
+SMultiTypeInfo >> = otherType [
 	^ types includes: otherType
 ]
 
 { #category : #copying }
-STypeReturnInfo >> copy [
+SMultiTypeInfo >> copy [
 	| copy |
 	copy := self class instance.
 	types do: [ :aType | copy type: aType ].
@@ -26,27 +26,27 @@ STypeReturnInfo >> copy [
 ]
 
 { #category : #initialization }
-STypeReturnInfo >> initialize [
+SMultiTypeInfo >> initialize [
 	types := Set new
 ]
 
 { #category : #'as yet unclassified' }
-STypeReturnInfo >> joinWith: otherTypeReturn [
+SMultiTypeInfo >> joinWith: otherTypeReturn [
 	otherTypeReturn types do: [ :aType | self type: aType ]
 ]
 
 { #category : #accessing }
-STypeReturnInfo >> type [
+SMultiTypeInfo >> type [
 	^ types ifEmpty: [nil] ifNotEmpty: [types asArray shuffle anyOne]
 ]
 
 { #category : #'accessing structure variables' }
-STypeReturnInfo >> type: aClassName [
+SMultiTypeInfo >> type: aClassName [
 	aClassName ~= #nil ifTrue: [ 
 	types add: aClassName]
 ]
 
 { #category : #accessing }
-STypeReturnInfo >> types [ 	
+SMultiTypeInfo >> types [ 	
 	^ types
 ]
