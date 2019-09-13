@@ -32,14 +32,6 @@ SSGenerator >> asTypeInfo [
 	^ typeInfo
 ]
 
-{ #category : #accessing }
-SSGenerator >> classes: collectionClass [
-	allClassesAsDictionaryCache := IdentityDictionary new.
-	collectionClass 
-		do: [ :cls | allClassesAsDictionaryCache at: cls className put: cls ].
-	allClassesCache := collectionClass 
-]
-
 { #category : #initialization }
 SSGenerator >> initialize [
 	super initialize.
@@ -52,19 +44,6 @@ SSGenerator >> isScalar: anObject [
 		at: anObject class name
 		ifAbsent: [ ^ true ].
 	^ false
-]
-
-{ #category : #accessing }
-SSGenerator >> methods: aOrdCollection [
-	allMethodsCache := aOrdCollection 
-]
-
-{ #category : #accessing }
-SSGenerator >> packages: aDictionary [
-	self
-		assert: (aDictionary values allSatisfy: [ :each | each class = SSGeneratorPackage ])
-		description: 'Items must be of class SSGeneratorPackage'.
-	packages := aDictionary 
 ]
 
 { #category : #initialization }

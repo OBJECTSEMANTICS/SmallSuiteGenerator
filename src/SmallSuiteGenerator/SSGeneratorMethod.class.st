@@ -63,14 +63,6 @@ SSGeneratorMethod >> initialize [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> isFactory [
-	"so its class is meta and it is returning an object of this class"
-
-	returnType type ifNil: [ ^ false ].
-	^ returnType type name == self classSpy nonMetaClassName
-]
-
-{ #category : #hooks }
 SSGeneratorMethod >> mergeArgsTypes: args [
 	argTypes
 		with: args
