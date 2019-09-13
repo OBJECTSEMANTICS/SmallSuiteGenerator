@@ -45,7 +45,7 @@ SMessageNotUnderstoodTest >> testCanResolve [
 		should: [ SStatementCoverage executeStatements ]
 		raise: MessageNotUnderstood.
 	[ SStatementCoverage executeStatements ]
-		on: Exception
+		on: MessageNotUnderstood 
 		do: [ :exception | aException := exception ].
 	self assert: (SMessageNotUnderstood canResolve: aException)
 ]

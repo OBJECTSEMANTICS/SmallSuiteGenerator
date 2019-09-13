@@ -68,8 +68,8 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 					(Array
 						with:
 							(Array
-								with: #fillPreserve -> #(#nil #() false)
-								with: #textPath -> #(#nil #() false))
+								with: #fillPreserve -> #(#AthensCairoCanvas #nil #() false)
+								with: #textPath -> #(#AthensCairoCanvas #nil #() false))
 						with: #());
 		scalar: #ByteString with: #('hello')
 ]
@@ -87,8 +87,8 @@ SUtilityTypeInfo >> typeInfosOnPackageExamplesOthers [
 							(Array
 								with:
 									(Array
-										with: #canRegister: -> #(#False #(#SStudent) false)
-										with: #price -> #(#SmallInteger #() false))
+										with: #canRegister: -> #(#SConference #False #(#SStudent) false)
+										with: #price -> #(#SConference #SmallInteger #() false))
 								with: #());
 				type:
 					#SConference
@@ -96,9 +96,9 @@ SUtilityTypeInfo >> typeInfosOnPackageExamplesOthers [
 							(Array
 								with:
 									(Array
-										with: #initialize -> #(#SEvent #() false)
-										with: #offerPrice -> #(#SmallInteger #() true)
-										with: #offerPrice: -> #(#SConference #(#SmallInteger) false))
+										with: #initialize -> #(#SConference #SEvent #() false)
+										with: #offerPrice -> #(#SConference #SmallInteger #() true)
+										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false))
 								with: #());
 				scalar: #SmallInteger with: #(95 100);
 				scalar: #False with: #(false);
@@ -117,22 +117,25 @@ SUtilityTypeInfo >> typeInfosSEvent [
 							(Array
 								with:
 									(Array
-										with: #initialize -> #(#SEvent #() false)
-										with: #discount -> #(#SmallInteger #() true)
-										with: #discount: -> #(#SEvent #(#SmallInteger) false)
-										with: #price -> #(#SmallInteger #() true)
-										with: #price: -> #(#SEvent #(#SmallInteger) false))
-								with: (Array with: #price: -> #(#SEvent #(#SmallInteger) false)));
+										with: #initialize -> #(#SEvent #SEvent #() false)
+										with: #discount -> #(#SEvent #SmallInteger #() true)
+										with: #discount: -> #(#SEvent #SEvent #(#SmallInteger) false)
+										with: #price -> #(#SEvent #SmallInteger #() true)
+										with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false))
+								with: (Array with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false)));
 				scalar: #SmallInteger with: #(0 1 8 30));
 		add:
 			(STypeInfo new
 				type:
 					#SEvent
 						->
-							(Array with: (Array with: (#initialize -> #(#SEvent #() false)) with:
-							(#discount -> #(#SmallInteger #() true)) with:
-							(#price -> #(#SmallInteger #() true))) with:
-							(Array with: (#price: -> #(#SEvent #(#SmallInteger) false))));
+							(Array
+								with:
+									(Array
+										with: #initialize -> #(#SEvent #SEvent #() false)
+										with: #discount -> #(#SEvent #SmallInteger #() true)
+										with: #price -> #(#SEvent #SmallInteger #() true))
+								with: (Array with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false)));
 				scalar: #SmallInteger with: #(0 15));
 		yourself
 ]
@@ -148,19 +151,25 @@ SUtilityTypeInfo >> typeInfosSFoo [
 							(Array
 								with:
 									(Array
-										with:
-											#returnNum -> #(#SmallInteger #() false)
-										with:
-											#returnFloat -> #(#SmallFloat64 #() false)
-										with:
-											#returnString -> #(#ByteString #() false)
-										with:
-											#score -> #(#SmallFloat64 #() true)
-										with:
-											#return: -> #(#ByteString #(#ByteString) false))
+										with: #returnNum -> #(#SFoo #SmallInteger #() false)
+										with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+										with: #returnString -> #(#SFoo #ByteString #() false)
+										with: #score -> #(#SFoo #SmallFloat64 #() true)
+										with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallFloat64) false)));
+				scalar: #ByteString with: #('hello');
+				scalar: #SmallInteger with: #(5);
+				scalar: #SmallFloat64 with: #(7.3));
+		add:
+			(STypeInfo new
+				type:
+					#SFoo
+						->
+							(Array
 								with:
 									(Array with:
-										#score: -> #(#SFoo #(#SmallFloat64) false)));
+										#return: -> #(#SFoo #SFoo #(#SFoo) false))
+								with: #());
 				scalar: #ByteString with: #('hello');
 				scalar: #SmallInteger with: #(5);
 				scalar: #SmallFloat64 with: #(7.3));
@@ -169,50 +178,22 @@ SUtilityTypeInfo >> typeInfosSFoo [
 				type:
 					#SFoo
 						->
-							(Array with: (Array with: (#return:
-								->
-									#(#SFoo
-									#(#SFoo)
-									false))) with:
-							#());
-				scalar: #ByteString with: #('hello');
-				scalar: #SmallInteger with: #(5);
-				scalar: #SmallFloat64 with: #(7.3));
-		add:
-			(STypeInfo new
-				type:
-					#SFoo
-						->
-							(Array with: (Array with: (#returnNum
-								->
-									#(#SmallInteger
-									#()
-									false)) with:
-							(#returnFloat
-								->
-									#(#SmallFloat64
-									#()
-									false)) with:
-							(#returnString
-								->
-									#(#ByteString
-									#()
-									false)) with:
-							(#score
-								->
-									#(#SmallInteger
-									#()
-									true)) with:
-							(#score:
-								->
-									#(#SFoo
-									#(#SmallInteger)
-									false))) with:
-							(Array with: (#score:
-								->
-									#(#SFoo
-									#(#SmallInteger)
-									false))));
+							(Array
+								with:
+									(Array
+										with:
+											#returnNum -> #(#SFoo #SmallInteger #() false)
+										with:
+											#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+										with:
+											#returnString -> #(#SFoo #ByteString #() false)
+										with:
+											#score -> #(#SFoo #SmallInteger #() true)
+										with:
+											#score: -> #(#SFoo #SFoo #(#SmallInteger) false))
+								with:
+									(Array with:
+										#score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
 				scalar: #ByteString with: #('Hello');
 				scalar: #SmallInteger with: #(4);
 				scalar: #SmallFloat64 with: #(2.3));
@@ -221,31 +202,20 @@ SUtilityTypeInfo >> typeInfosSFoo [
 				type:
 					#SFoo
 						->
-							(Array with: (Array with: (#returnCollection
-								->
-									#(#OrderedCollection
-									#()
-									false)) with:
-							(#returnFloat
-								->
-									#(#SmallFloat64
-									#()
-									false)) with:
-							(#score
-								->
-									#(#SmallInteger
-									#()
-									true)) with:
-							(#return:
-								->
-									#(#Array
-									#(#Array)
-									false))) with: 
-							(Array with: (#score:
-								->
-									#(#SFoo
-									#(#SmallInteger)
-									false))));
+							(Array
+								with:
+									(Array
+										with:
+											#returnCollection -> #(#SFoo #OrderedCollection #() false)
+										with:
+											#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+										with:
+											#score -> #(#SFoo #SmallInteger #() true)
+										with:
+											#return: -> #(#SFoo #Array #(#Array) false))
+								with:
+									(Array with:
+										#score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
 				scalar: #OrderedCollection
 					with: (Array with: OrderedCollection new);
 				scalar: #Array with: (Array with: #(1 5 6));
@@ -262,22 +232,16 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 				type:
 					#SSTeacher
 						->
-							(Array with: (Array with: (#initialize
-								->
-									#(#SSTeacher
-									#()
-									false)) with: 
-							(#yearsWorkExperience
-								->
-									#(#SmallInteger
-									#()
-									true)) with: 
-							(#yearsWorkExperience:
-								->
-									#(#SSTeacher
-									#(#SmallInteger)
-									false))) with: 
-							#());
+							(Array
+								with:
+									(Array
+										with:
+											#initialize -> #(#SSTeacher #SSTeacher #() false)
+										with:
+											#yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true)
+										with:
+											#yearsWorkExperience: -> #(#SSTeacher #SSTeacher #(#SmallInteger) false))
+								with: #());
 				scalar: #SmallInteger with: #(0 100);
 				scalar: #ByteString with: #('teacher_Ann'));
 		add:
@@ -285,27 +249,18 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 				type:
 					#SSTeacher
 						->
-							(Array with: (Array with: (#initialize
-								->
-									#(#SSTeacher
-									#()
-									false)) with:
-							(#idTeacher
-								->
-									#(#SmallInteger
-									#()
-									true)) with:
-							(#yearsWorkExperience:
-								->
-									#(#SSTeacher
-									#(#SmallInteger)
-									false)) with:
-							(#nickname
-								->
-									#(#ByteString
-									#()
-									false))) with: 
-							#());
+							(Array
+								with:
+									(Array
+										with:
+											#initialize -> #(#SSTeacher #SSTeacher #() false)
+										with:
+											#idTeacher -> #(#SSTeacher #SmallInteger #() true)
+										with:
+											#yearsWorkExperience: -> #(#SSTeacher#SSTeacher #(#SmallInteger) false)
+										with:
+											#nickname -> #(#SSTeacher #ByteString #() false))
+								with: #());
 				scalar: #SmallInteger with: #(1 29 -7 9);
 				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark'));
 		add:
@@ -313,22 +268,16 @@ SUtilityTypeInfo >> typeInfosSSTeacher [
 				type:
 					#SSTeacher
 						->
-							(Array with: (Array with: (#initialize
-								->
-									#(#SSTeacher
-									#()
-									false)) with: 
-							(#yearsWorkExperience
-								->
-									#(#SmallInteger
-									#()
-									false)) with: 
-							(#nickname
-								->
-									#(#ByteString
-									#()
-									false))) with: 
-							#());
+							(Array
+								with:
+									(Array
+										with:
+											#initialize -> #(#SSTeacher #SSTeacher #() false)
+										with:
+											#yearsWorkExperience -> #(#SSTeacher #SmallInteger #() false)
+										with:
+											#nickname -> #(#SSTeacher #ByteString #() false))
+								with: #());
 				scalar: #SmallInteger with: #(1 10);
 				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark'));
 		yourself
@@ -345,15 +294,10 @@ SUtilityTypeInfo >> typeInfosSStack [
 							(Array
 								with:
 									(Array
-										with:
-											#firstLinkStack -> #(#SmallInteger #() true)
-										with:
-											#pop -> #(#SmallInteger #() false)
-										with:
-											#push: -> #(#SmallInteger #(#SmallInteger) false))
-								with:
-									(Array with:
-										#newStackWith: -> #(#SStack #(#Array) false)));
+										with: #firstLinkStack -> #(#SStack #SmallInteger #() true)
+										with: #pop -> #(#SStack #SmallInteger #() false)
+										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false))
+								with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 				scalar: #Array with: #(#(2 4 6 1));
 				scalar: #SmallInteger with: #(1 2 4 6 8));
 		add:
@@ -364,17 +308,13 @@ SUtilityTypeInfo >> typeInfosSStack [
 							(Array
 								with:
 									(Array
-										with:
-											#lastLinkStack -> #(#SmallInteger #()  true)
-										with:
-											#pop -> #(#SmallInteger #() false)
-										with:
-											#top -> #(#SmallInteger #() false))
+										with: #lastLinkStack -> #(#SStack #SmallInteger #() true)
+										with: #pop -> #(#SStack #SmallInteger #() false)
+										with: #top -> #(#SStack #SmallInteger #() false))
 								with:
 									(Array
-										with: #newStack -> #(#SStack #() false)
-										with:
-											#newStackWith: -> #(#SStack #(#Array) false)));
+										with: #newStack -> #(#SStack #SStack #() false)
+										with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 				scalar: #Array with: #(#(2 4 6 1) #(5 7 9 0));
 				scalar: #SmallInteger with: #(1 2 5 8 9));
 		add:
@@ -385,15 +325,10 @@ SUtilityTypeInfo >> typeInfosSStack [
 							(Array
 								with:
 									(Array
-										with:
-											#pop -> #(#SmallInteger #() false)
-										with:
-											#push: -> #(#SmallInteger #(#SmallInteger) false)
-										with:
-											#top -> #(#SmallInteger #() false))
-								with:
-									(Array with:
-										#newStackWith: -> #(#SStack #(#Array) false)));
+										with: #pop -> #(#SStack #SmallInteger #() false)
+										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+										with: #top -> #(#SStack #SmallInteger #() false))
+								with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 				scalar: #Array with: (Array with: #(2 4 6 1));
 				scalar: #SmallInteger with: #(7 5 9 1));
 		yourself
@@ -407,27 +342,18 @@ SUtilityTypeInfo >> typeInfosSStudent [
 				type:
 					#SStudent
 						->
-							(Array with: (Array with: (#initialize
-								->
-									#(#SStudent
-									#()
-									false)) with: 
-							(#scoreStudent
-								->
-									#(#SmallInteger
-									#()
-									true)) with: 
-							(#scoreStudent:
-								->
-									#(#SStudent
-									#(#SmallInteger)
-									false)) with:
-							(#idStudent
-								->
-									#(#SmallInteger
-									#()
-									true))) with: 
-							#());
+							(Array
+								with:
+									(Array
+										with:
+											#initialize -> #(#SStudent #SStudent #() false)
+										with:
+											#scoreStudent -> #(#SStudent #SmallInteger #() true)
+										with:
+											#scoreStudent: -> #(#SStudent #SStudent #(#SmallInteger) false)
+										with:
+											#idStudent -> #(#SStudent #SmallInteger #() true))
+								with: #());
 				scalar: #SmallInteger with: #(1);
 				scalar: #ByteString with: #('student_Jane'));
 		add:
@@ -435,18 +361,15 @@ SUtilityTypeInfo >> typeInfosSStudent [
 				type:
 					#SStudent
 						->
-							(Array with: (Array with: (#scoreStudent:
-								->
-									#(#SStudent
-									#(#SmallInteger)
-									false)) with:
-							(#nickname
-								->
-									#(#ByteString
-									#()
-									false))) with: 
-							#());
+							(Array
+								with:
+									(Array
+										with:
+											#scoreStudent: -> #(#SStudent #SStudent #(#SmallInteger) false)
+										with:
+											#nickname -> #(#SStudent #ByteString #() false))
+								with: #());
 				scalar: #SmallInteger with: #(1 6 8);
-				scalar: #ByteString with: #('Jane'  'Ann'  'Peter'));
+				scalar: #ByteString with: #('Jane' 'Ann' 'Peter'));
 		yourself
 ]

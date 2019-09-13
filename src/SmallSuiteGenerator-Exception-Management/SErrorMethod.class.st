@@ -21,7 +21,7 @@ SErrorMethod class >> solveException: aException of: aTestCase [
 		ifFalse: [ ^ false ].
 	className := self signalerName: aException.
 	^ [ aTestCase changeStatementOfClassName: className.
-	aTestCase addMessage: aException message selector from: className.
+	aTestCase addMessage: (aException messageText splitOn: ' ') second allButFirst asSymbol from: className.
 	true ]
 		on: SError
 		do: [ false ]

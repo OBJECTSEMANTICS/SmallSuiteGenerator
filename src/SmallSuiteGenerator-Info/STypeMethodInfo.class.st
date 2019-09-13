@@ -6,7 +6,8 @@ Class {
 		'returnType',
 		'argTypes',
 		'isQuick',
-		'isDeprecated'
+		'isDeprecated',
+		'receiver'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -17,9 +18,11 @@ STypeMethodInfo class >> type: aAssoc [
 	aValue := aAssoc value.
 	^ self new
 		selector: aAssoc key;
-		returnType: (SMultiTypeInfo new: aValue first);
-		argTypes: (aValue second collect: [:aType | SMultiTypeInfo new: aType]);
-		isQuick: aValue third
+		receiver: (SMultiTypeInfo new: aValue first);
+		returnType: (SMultiTypeInfo new: aValue second);
+		argTypes: (aValue third collect: [ :aType | SMultiTypeInfo new: aType ]);
+		isQuick: aValue fourth";
+		isDeprecated: aValue fifth"
 ]
 
 { #category : #adding }
@@ -32,6 +35,11 @@ STypeMethodInfo >> addType: aType [
 STypeMethodInfo >> allArgTypes [
 	argTypes ifNil: [ ^ #() ].
 	^ argTypes flatCollect: [ :arg | arg types ]
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> allReceivers [
+	^ receiver types
 ]
 
 { #category : #accessing }
@@ -50,9 +58,12 @@ STypeMethodInfo >> copy [
 	copy := self class instance.
 	copy
 		selector: selector;
-		returnType: returnType copy;
+		
 		isQuick: isQuick;
-		argTypes: argTypes copy.
+		isDeprecated: isDeprecated;
+		returnType: returnType copy;
+		argTypes: argTypes copy;
+		receiver: receiver copy.
 	^ copy
 ]
 
@@ -61,6 +72,7 @@ STypeMethodInfo >> initialize [
 	argTypes := #().
 	isQuick := false.
 	returnType := SMultiTypeInfo new.
+	receiver := SMultiTypeInfo new.
 	isDeprecated := false
 ]
 
@@ -91,6 +103,16 @@ STypeMethodInfo >> joinWith: otherTypeMethod [
 		do: [ :argType :otherArgType | argType joinWith: otherArgType ].  ].
 	
 	returnType joinWith: otherTypeMethod returnType
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> receiver [
+	^ receiver
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> receiver: anObject [
+	receiver := anObject
 ]
 
 { #category : #accessing }

@@ -14,36 +14,19 @@ SSTestCaseTest class >> typeInfoSFoo [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#returnNum
-						->
-							#(#SmallInteger
-							#()
-							false)) with: 
-					(#returnFloat
-						->
-							#(#SmallFloat64
-							#()
-							false)) with: 
-					(#returnString
-						->
-							#(#ByteString
-							#()
-							false)) with:
-					(#score
-						->
-							#(#SmallFloat64
-							#()
-							true)) with: 
-					(#return:
-						->
-							#(#ByteString
-							#(#ByteString)
-							false))) with: 
-					(Array with: (#score:
-						->
-							#(#SFoo
-							#(#SmallFloat64)
-							false))));
+					(Array
+						with:
+							(Array
+								with: #returnNum -> #(#SFoo #SmallInteger #() false)
+								with:
+									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #score -> #(#SFoo #SmallFloat64 #() true)
+								with:
+									#return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with:
+							(Array with:
+								#score: -> #(#SFoo #SFoo #(#SmallFloat64) false)));
 		scalar: #ByteString with: #('hello');
 		scalar: #SmallInteger with: #(5);
 		scalar: #SmallFloat64 with: #(7.3).
@@ -57,12 +40,10 @@ SSTestCaseTest class >> typeInfoSFoo2 [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#return:
-						->
-							#(#SFoo
-							#(#SFoo)
-							false))) with:
-					#());
+					(Array
+						with:
+							(Array with: #return: -> #(#SFoo #SFoo #(#SFoo) false))
+						with: #());
 		scalar: #ByteString with: #('hello');
 		scalar: #SmallInteger with: #(5);
 		scalar: #SmallFloat64 with: #(7.3).
@@ -76,41 +57,22 @@ SSTestCaseTest class >> typeInfoSStack [
 		type:
 			#SStack
 				->
-					(Array with: (Array with: (#firstLinkStack
-						->
-							#(#SmallInteger
-							#()
-							true)) with:
-					(#lastLinkStack
-						->
-							#(#SmallInteger
-							#()
-							true)) with:
-					(#pop
-						->
-							#(#SmallInteger
-							#()
-							false)) with:
-					(#push:
-						->
-							#(#SmallInteger
-							#(#SmallInteger)
-							false)) with:
-					(#top
-						->
-							#(#SmallInteger
-							#()
-							false))) with: 
-					(Array with: (#newStack
-						->
-							#(#SStack
-							#()
-							false)) with: 
-					(#newStackWith:
-						->
-							#(#SStack
-							#(#Array)
-							false))));
+					(Array
+						with:
+							(Array
+								with:
+									#firstLinkStack -> #(#SStack #SmallInteger #() true)
+								with:
+									#lastLinkStack -> #(#SStack #SmallInteger #() true)
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with:
+									#push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with:
+							(Array
+								with: #newStack -> #(#SStack #SStack #() false)
+								with:
+									#newStackWith: -> #(#SStack #SStack #(#Array) false)));
 		scalar: #SmallInteger with: #(5);
 		scalar: #Array with: #(#(1 4 5)).
 	^ typeInfo
@@ -129,16 +91,12 @@ SSTestCaseTest >> testAddFactoryMessage [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#returnString
-						->
-							#(#ByteString
-							#()
-							false))) with:
-					(Array with: (#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)))).
+					(Array
+						with:
+							(Array with: #returnString -> #(#SFoo #ByteString #() false))
+						with:
+							(Array with:
+								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
 	aTypeInfo scalar: #SmallInteger with: #(3).
 	testCase typeInfo: aTypeInfo.
 	testCase addFactoryMessage.
@@ -150,23 +108,16 @@ SSTestCaseTest >> testAddFactoryMessage [
 		type:
 			#SStack
 				->
-					(Array with: (Array with: (#top
-						->
-							#(nil
-							#()
-							false))) with:
-					(Array with: (#newStack:
-						->
-							#(#SStack
-							#(#Array)
-							false)))).
+					(Array
+						with: (Array with: #top -> #(#SStack nil #() false))
+						with:
+							(Array with: #newStack: -> #(#SStack #SStack #(#Array) false))).
 	aTypeInfo scalar: #Array with: #(#(1 3 2)).
 	testCase addFactoryMessage: #SStack.
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			#('_var0 := 3.' '_var1 := SFoo score: _var0.'
-			'_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
+			#('_var0 := 3.' '_var1 := SFoo score: _var0.' '_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
 ]
 
 { #category : #tests }
@@ -177,12 +128,12 @@ SSTestCaseTest >> testAddLiteral [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#return:
-						->
-							#(#OrderedCollection
-							#(#OrderedCollection)
-							false))) with:
-					#()).
+					(Array
+						with:
+							(Array
+								with:
+									#return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false))
+						with: #()).
 	aTypeInfo
 		scalar: #OrderedCollection
 		with: (Array with: (OrderedCollection newFrom: #(1 4))).
@@ -197,8 +148,7 @@ SSTestCaseTest >> testAddLiteral [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			#('_var0 := ''World''.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
-			'_var2 := 2.')
+			#('_var0 := ''World''.' '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).' '_var2 := 2.')
 ]
 
 { #category : #tests }
@@ -209,12 +159,12 @@ SSTestCaseTest >> testAddMessage [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#return:
-						->
-							#(#OrderedCollection
-							#(#OrderedCollection)
-							false))) with: 
-					#()).
+					(Array
+						with:
+							(Array
+								with:
+									#return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false))
+						with: #()).
 	aTypeInfo
 		scalar: #OrderedCollection
 		with: (Array with: (OrderedCollection newFrom: #(1 4))).
@@ -224,21 +174,14 @@ SSTestCaseTest >> testAddMessage [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			#('_var0 := SFoo new.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
-			'_var2 := _var0 return: _var1.').
+			#('_var0 := SFoo new.' '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).' '_var2 := _var0 return: _var1.').
 	(aTypeInfo classAt: #SFoo)
-		typeMethod:
-			#returnString
-				->
-					#(#ByteString
-					#()
-					false).
+		typeMethod: #returnString -> #(#SFoo #ByteString #() false).
 	testCase addMessage: #returnString from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			#('_var0 := SFoo new.'  '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).'
-			'_var2 := _var0 return: _var1.' '_var3 := _var0 returnString.')
+			#('_var0 := SFoo new.' '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).' '_var2 := _var0 return: _var1.' '_var3 := _var0 returnString.')
 ]
 
 { #category : #'mutation-change' }
@@ -360,32 +303,18 @@ SSTestCaseTest >> testCopy [
 				->
 					(Array
 						with:
-							(Array with: (#returnNum
-								->
-									#(#SmallInteger
-									#()
-									false)) with: 
-							(#returnFloat
-								->
-									#(#SmallFloat64
-									#()
-									false)) with: 
-							(#score
-								->
-									#(#SmallInteger
-									#()
-									true)) with: 
-							(#return:
-								->
-									#(#ByteString
-									#(#ByteString)
-									false)))
+							(Array
+								with:
+									#returnNum -> #(#SFoo #SmallInteger #() false)
+								with:
+									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with:
+									#score -> #(#SFoo #SmallInteger #() true)
+								with:
+									#return: -> #(#SFoo #ByteString #(#ByteString) false))
 						with:
-							(Array with: (#score:
-								->
-									#(#SFoo
-									#(#SmallFloat64)
-									false)))).
+							(Array with:
+								#score: -> #(#SFoo #SFoo #(#SmallFloat64) false))).
 	typeInfo scalar: #ByteString with: #('hello').
 	typeInfo scalar: #SmallInteger with: #(5).
 	typeInfo scalar: #SmallFloat64 with: #(7.3).
@@ -403,16 +332,11 @@ SSTestCaseTest >> testCopy [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
-			'_var2 := _var1 returnNum.'  '_var3 := _var1 score.'
-			'_var4 := 5.'  '_var5 := ''hello''.').
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnNum.' '_var3 := _var1 score.' '_var4 := 5.' '_var5 := ''hello''.').
 	self
 		assertCollection: (otherTestCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
-			'_var2 := _var1 returnNum.'  '_var3 := _var1 score.'
-			'_var4 := 5.'  '_var5 := _var1 returnFloat.'
-			'_var6 := ''hello''.'  '_var7 := _var1 return: _var6.')
+			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnNum.' '_var3 := _var1 score.' '_var4 := 5.' '_var5 := _var1 returnFloat.' '_var6 := ''hello''.' '_var7 := _var1 return: _var6.')
 ]
 
 { #category : #tests }
@@ -423,21 +347,15 @@ SSTestCaseTest >> testFieldAccessMessage [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#score
-						->
-							#(#SmallInteger
-							#()
-							true)) with:
-					(#score:
-						->
-							#(#SmallInteger
-							#(#SmallInteger)
-							false))) with: 
-					(Array with: (#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)))).
+					(Array
+						with:
+							(Array
+								with: #score -> #(#SFoo #SmallInteger #() true)
+								with:
+									#score: -> #(#SFoo #SmallInteger #(#SmallInteger) false))
+						with:
+							(Array with:
+								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
 	aTypeInfo scalar: #SmallInteger with: #(5).
 	testCase typeInfo: aTypeInfo.
 	testCase addFieldAccessMessage.
@@ -445,8 +363,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			#('_var0 := 5.'  '_var1 := SFoo score: _var0.'
-			'_var2 := _var1 score.')
+			#('_var0 := 5.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.')
 ]
 
 { #category : #tests }

@@ -11,46 +11,25 @@ SClassInfoTest >> testType [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#returnFloat
-						->
-							#(#SmallFloat64
-							#()
-							false)) with:
-					(#returnString
-						->
-							#(#ByteString
-							#()
-							false)) with:
-					(#return:
-						->
-							#(#OrderedCollection
-							#(#OrderedCollection)
-							false)) with:
-					(#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)) with:
-					(#score
-						->
-							#(#SmallInteger
-							#()
-							true))) with: 
-					(Array with: (#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)))).
-	classInfo
-		typeMethod:
-			#returnNum
-				->
-					#(#SmallInteger
-					#()
-					false).
+					(Array
+						with:
+							(Array
+								with:
+									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with:
+									#return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false)
+								with:
+									#score: -> #(#SFoo #SFoo #(#SmallInteger) false)
+								with: #score -> #(#SFoo #SmallInteger #() true))
+						with:
+							(Array with:
+								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
+	classInfo typeMethod: #returnNum -> #(#SFoo #SmallInteger #() false).
 	self assert: classInfo methodTypes size equals: 6.
 	self assert: classInfo classMethodTypes size equals: 1.
 	methodInfo := classInfo methodTypes at: #return:.
+	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #OrderedCollection.
 	self
 		assertCollection: methodInfo allArgTypes
@@ -65,6 +44,7 @@ SClassInfoTest >> testType [
 		assert: (classInfo methodTypes at: #score) returnType type
 		equals: #SmallInteger.
 	methodInfo := classInfo methodTypes at: #score:.
+	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: methodInfo allArgTypes

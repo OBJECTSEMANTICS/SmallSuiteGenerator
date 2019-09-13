@@ -14,26 +14,23 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 			aConference canRegister: aPerson ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others'.
 	typeInfo := profile asTypeInfo.
-	
 	self assert: (typeInfo types at: #SEvent) methodTypes size equals: 6.
 	self
-		assert: (typeInfo types at: #SEvent) classMethodTypes size equals: 1.
-		self assert: (typeInfo types at: #SConference) methodTypes size equals: 7.
+		assert: (typeInfo types at: #SEvent) classMethodTypes size
+		equals: 1.
+	self
+		assert: (typeInfo types at: #SConference) methodTypes size
+		equals: 7.
 	self
 		assert: (typeInfo types at: #SConference) classMethodTypes isEmpty.
 	self assert: (typeInfo types at: #SParty) methodTypes size equals: 2.
-	self
-		assert: (typeInfo types at: #SParty) classMethodTypes isEmpty.
+	self assert: (typeInfo types at: #SParty) classMethodTypes isEmpty.
 	self
 		assert: (typeInfo typeOf: #initialize from: #SEvent) returnType type
 		equals: nil.
 	self
 		assert: (typeInfo typeOf: #initialize from: #SConference) returnType type
 		equals: #SConference.
-	self
-		assert: (typeInfo typeOf: #initialize from: #SParty) returnType type
-		equals: nil.
-	
 	methodInfo := typeInfo typeOf: #canRegister: from: #SEvent.
 	self
 		assertCollection: methodInfo returnType types
@@ -41,8 +38,9 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: (Array with: #SStudent).
-	self assertCollection: methodInfo allReceivers hasSameElements: (Array with: #SConference). 
-	
+	self
+		assertCollection: methodInfo allReceivers
+		hasSameElements: (Array with: #SConference).
 	self
 		assertCollection: typeInfo scalars keys
 		hasSameElements: #(#SStudent #SmallInteger #False)
@@ -168,54 +166,33 @@ STypeInfoTest >> testJoinWith [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#return:
-						->
-							#(#OrderedCollection
-							#(#OrderedCollection)
-							false)) with:
-					(#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)) with:
-					(#score
-						->
-							#(#SmallInteger
-							#()
-							true))) with: 
-					(Array with: (#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)))).
+					(Array
+						with:
+							(Array
+								with: #return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false)
+								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
+								with: #score -> #(#SFoo #SmallInteger #() true))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
 	otherTypeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#returnFloat
-						->
-							#(#SmallFloat64
-							#()
-							false)) with:
-					(#returnString
-						->
-							#(#ByteString
-							#()
-							false)) with:
-					(#return:
-						->
-							#(#Stack
-							#(#Stack)
-							false))) with:
-					#()).
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #return: -> #(#SFoo #Stack #(#Stack) false))
+						with: #()).
 	typeInfo joinWith: otherTypeInfo.
 	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 5.
 	self
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
 	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	self assert: methodInfo receiver type equals: #SFoo.
 	self
-		assertCollection: #(#OrderedCollection  #Stack)
+		assertCollection: #(#OrderedCollection #Stack)
 		hasSameElements: methodInfo returnType types.
 	self
 		assertCollection: #(#OrderedCollection #Stack)
@@ -230,6 +207,7 @@ STypeInfoTest >> testJoinWith [
 		assert: (typeInfo typeOf: #score from: #SFoo) returnType type
 		equals: #SmallInteger.
 	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: (methodInfo argTypes flatCollect: [ :argType | argType types ])
@@ -270,41 +248,26 @@ STypeInfoTest >> testType [
 		type:
 			#SFoo
 				->
-					(Array with: (Array with: (#returnFloat
-						->
-							#(#SmallFloat64
-							#()
-							false)) with:
-					(#returnString
-						->
-							#(#ByteString
-							#()
-							false)) with: 
-					(#return:
-						->
-							#(#OrderedCollection
-							#(#OrderedCollection)
-							false)) with:
-					(#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)) with: 
-					(#score
-						->
-							#(#SmallInteger
-							#()
-							true))) with: 
-					(Array with: (#score:
-						->
-							#(#SFoo
-							#(#SmallInteger)
-							false)))).
+					(Array
+						with:
+							(Array
+								with:
+									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with:
+									#return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false)
+								with:
+									#score: -> #(#SFoo #SFoo #(#SmallInteger) false)
+								with: #score -> #(#SFoo #SmallInteger #() true))
+						with:
+							(Array with:
+								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
 	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 5.
 	self
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
 	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #OrderedCollection.
 	self
 		assertCollection: methodInfo allArgTypes
@@ -319,6 +282,7 @@ STypeInfoTest >> testType [
 		assert: (typeInfo typeOf: #score from: #SFoo) returnType type
 		equals: #SmallInteger.
 	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: methodInfo allArgTypes

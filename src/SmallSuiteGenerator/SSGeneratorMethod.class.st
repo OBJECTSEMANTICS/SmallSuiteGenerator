@@ -18,10 +18,11 @@ SSGeneratorMethod >> argTypes [
 SSGeneratorMethod >> asTypeInfo [
 	^ STypeMethodInfo new
 		selector: selector;
+		receiver: self receiverType;
 		returnType: self returnType;
 		argTypes: self argTypes;
 		isQuick: self isQuick;
-		isDeprecated: originalMethod isDeprecated 
+		isDeprecated: originalMethod isDeprecated
 ]
 
 { #category : #hooks }
@@ -74,6 +75,11 @@ SSGeneratorMethod >> mergeArgsTypes: args [
 	argTypes
 		with: args
 		do: [ :argType :otherArgType | argType type: otherArgType ]
+]
+
+{ #category : #accessing }
+SSGeneratorMethod >> receiverType [
+	^ receiverType
 ]
 
 { #category : #accessing }
