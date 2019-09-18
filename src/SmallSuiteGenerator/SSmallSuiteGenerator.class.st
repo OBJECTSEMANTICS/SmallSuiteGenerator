@@ -6,7 +6,8 @@ Class {
 		'typeInfo',
 		'dataFitnessCoverage',
 		'ofClass',
-		'invariants'
+		'invariants',
+		'classNameOfTest'
 	],
 	#classInstVars : [
 		'instance'
@@ -33,12 +34,25 @@ SSmallSuiteGenerator class >> resetInstance [
 ]
 
 { #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> classNameOfTest: aString [
+	classNameOfTest := aString
+]
+
+{ #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> classesForRegex: regexExpressions [
 	^ ((regexExpressions
 		flatCollect: [ :regex | 
 			RPackage organizer packages
 				select: [ :p | regex match: p name asString ] ]) asSet)
 		flatCollect: #definedClasses
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> configureTestCaseClass [
+	"here it necessary to add messages to configure the name of the test class and it compile in a determinated package"
+	SSGeneratorInvariant resetClassOfTest.
+	SSGeneratorInvariant createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
+	
 ]
 
 { #category : #accessing }
@@ -50,7 +64,8 @@ SSmallSuiteGenerator >> dataFitnessCoverage [
 SSmallSuiteGenerator >> end [
 	engine clean.
 	"self class resetInstance."
-	SSGeneratorInvariant resetNumTest
+	SSGeneratorInvariant resetNumTest.
+	"SSGeneratorInvariant resetClassOfTest"
 ]
 
 { #category : #accessing }
@@ -107,6 +122,7 @@ SSmallSuiteGenerator >> generateTestsWith: selectedInvariants [
 { #category : #initialization }
 SSmallSuiteGenerator >> initialize [
 	engine := self engineDefault.
+	classNameOfTest := 'STestCaseGenerated'.
 	dataFitnessCoverage := #().
 	ofClass := false.
 	invariants := #()
@@ -174,6 +190,12 @@ SSmallSuiteGenerator >> randomlyGeneratedPopulation [
 	^ engine randomlyGeneratedPopulation 
 ]
 
+{ #category : #accessing }
+SSmallSuiteGenerator >> resetClassOfTest [
+	SSGeneratorInvariant resetNumTest.
+	SSGeneratorInvariant resetClassOfTest
+]
+
 { #category : #running }
 SSmallSuiteGenerator >> run [
 	self
@@ -189,7 +211,9 @@ SSmallSuiteGenerator >> run [
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
 	engine run.
-	engine generateTestsWith: invariants. self end
+	self configureTestCaseClass.
+	engine generateTestsWith: invariants.
+	self end
 ]
 
 { #category : #'as yet unclassified' }

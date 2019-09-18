@@ -6,7 +6,35 @@ Class {
 
 { #category : #running }
 SSAssertionTest >> setUp [
-	SSGeneratorInvariant resetNumTest
+	SSGeneratorInvariant resetNumTest.
+	SSGeneratorInvariant resetClassOfTest
+]
+
+{ #category : #running }
+SSAssertionTest >> tearDown [ 
+	SSGeneratorInvariant resetClassOfTest 
+]
+
+{ #category : #tests }
+SSAssertionTest >> testCreateCompilerClass [
+	|  testCase |
+	testCase := SSTestCase
+		with:
+			(STypeInfo new
+				type:
+					#SFoo
+						->
+							(Array
+								with:
+									(Array
+										with: #score: -> #(#SFoo #(#Array) false)
+										with: #initialize -> #(#SFoo #() false))
+								with: (Array with: #score: -> #(#SFoo #(#Array) false)));
+				scalar: #Array with: #(#(2 4))).
+	testCase addLiteral.
+	SSGeneratorInvariant createCompilerClass: 'SFooTest'.
+	testCase generateTestsWith: #().
+	self assert: (Smalltalk classNamed: 'SFooTest') isNotNil
 ]
 
 { #category : #tests }
