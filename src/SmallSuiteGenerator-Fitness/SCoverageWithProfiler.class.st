@@ -28,7 +28,7 @@ SCoverageWithProfiler class >> cleanInstrumentation [
 SCoverageWithProfiler class >> compilerClassOfCoverage [
 	compilerClassOfCoverage
 		ifNil: [ compilerClassOfCoverage := self compiler
-				evaluate: self stringToCreateNewClass ].
+				evaluate: (self stringToCreateNewClass: 'SCompilerTestCase' with: 'Object' and: 'SmallSuiteGenerator-Core') ].
 	^ compilerClassOfCoverage
 ]
 
@@ -159,9 +159,9 @@ SCoverageWithProfiler class >> profiler: aProfiler [
 ]
 
 { #category : #'as yet unclassified' }
-SCoverageWithProfiler class >> stringToCreateNewClass [
-	^ 'Object subclass: #SCompilerTestCase
+SCoverageWithProfiler class >> stringToCreateNewClass: aClassName with: aSuperClassName and: aPackageName [
+	^ aSuperClassName, ' subclass: #', aClassName, ' 
     instanceVariableNames: ''''
     classVariableNames: ''''
-    package: ''SmallSuiteGenerator-Core'''
+    package: ''', aPackageName, ''''
 ]
