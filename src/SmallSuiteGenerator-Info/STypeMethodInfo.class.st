@@ -86,6 +86,11 @@ STypeMethodInfo >> isDeprecated: anObject [
 	isDeprecated := anObject
 ]
 
+{ #category : #testing }
+STypeMethodInfo >> isFromReceiver: aClassName [
+	^ receiver types includes: aClassName
+]
+
 { #category : #accessing }
 STypeMethodInfo >> isQuick [
 	^ isQuick
@@ -94,6 +99,11 @@ STypeMethodInfo >> isQuick [
 { #category : #accessing }
 STypeMethodInfo >> isQuick: aBoolean [
 	isQuick := aBoolean
+]
+
+{ #category : #testing }
+STypeMethodInfo >> isWithReturnType: aClassName [
+	^ returnType types includes: aClassName
 ]
 
 { #category : #'as yet unclassified' }

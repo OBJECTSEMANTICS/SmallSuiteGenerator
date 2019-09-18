@@ -47,13 +47,13 @@ SSTestCase >> addFactoryMessage: aClassName [
 
 { #category : #adding }
 SSTestCase >> addFactoryMessage: aClassName ofSelector: aSelector [
-	
-	^ [self
+	^ [ self
 		addAssignment:
 			(self
-				factoryMessageUsing: (self typeInfo typeOf: aSelector fromMetaClassName: aClassName)
-				before: nil)] on: KeyNotFound 
-			do: [ self addFactoryMessage: aClassName ]
+				factoryMessageUsing: (typeInfo type: aSelector fromMetaClassName: aClassName)
+				before: nil) ]
+		on: SError
+		do: [ self addFactoryMessage: aClassName ]
 ]
 
 { #category : #adding }
@@ -76,8 +76,12 @@ SSTestCase >> addFieldAccessMessage [
 SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
 	anAccessor := (typeInfo classAt: aClassName) methodOf: aSelector.
-	anAccessor isQuick
-		ifFalse: [ self error: 'the method must be an accessor message' ].
+	anAccessor := (self pickAccessorsOf: aClassName)
+		detect: [ :accessor | accessor selector = aSelector ]
+		ifNone: [ self
+				error:
+					'the receiver of: ' , aSelector , ' does not match with: '
+						, aClassName ].
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
 	^ self addFieldAccessMessage: anAccessor withReceiver: receiver
 ]
@@ -111,9 +115,14 @@ SSTestCase >> addMessage [
 
 { #category : #actions }
 SSTestCase >> addMessage: aSelector from: aClassName [
-	| receiver aMethod typeClassInfo |
-	typeClassInfo := typeInfo classAt: aClassName.
-	aMethod := [typeClassInfo methodOf: aSelector] on: KeyNotFound do: [typeClassInfo classMethodOf: aSelector].
+	| receiver aMethod |
+	aMethod := (self pickMessagesOf: aClassName)
+		, (typeInfo factoryMessagesFrom: aClassName)
+		detect: [ :aMessage | aMessage selector = aSelector ]
+		ifNone: [ self
+				error:
+					'the receiver of: ' , aSelector , ' does not match with: '
+						, aClassName ].
 	aMethod isQuick
 		ifTrue: [ self error: 'the method must be a message, not accessor message' ].
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
@@ -177,7 +186,7 @@ SSTestCase >> allVarNames [
 SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
 	| returnType |
 	returnType := aFactoryMessage returnType.
-	^ (typeInfo factoryMethods: returnType)
+	^ (typeInfo factoryMessagesFrom: returnType)
 		detect: [ :meth | 
 			meth returnType = returnType
 				and: [ meth selector ~= aFactoryMessage selector ] ]
@@ -310,10 +319,12 @@ SSTestCase >> changeStatementOfVarName: varName [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> computeFitness: fitnessClass [
-	"fitness := fitnessBlock value: self"
-	|valueFitness |
+
+	| valueFitness |
 	valueFitness := fitnessClass computeFitness: self.
-	[fitness addAll: valueFitness ] on: MessageNotUnderstood do: [ fitness add: valueFitness ]
+	[ fitness addAll: valueFitness ]
+		on: MessageNotUnderstood
+		do: [ fitness add: valueFitness ]
 ]
 
 { #category : #copying }
@@ -491,7 +502,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 	^ typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
-			methods := typeInfo factoryMethods: aClassName.
+			methods := typeInfo factoryMessagesFrom: aClassName.
 			methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
 				ifNotEmpty: [ self newFactoryMessageUsing: methods and: aStatement ] ]
@@ -603,9 +614,9 @@ SSTestCase >> perform: selector inStatement: stm [
 { #category : #querying }
 SSTestCase >> pickAccessorsOf: aType [
 	^ typeInfo types
-		at: aType
-		ifPresent: [ :value | value accessMessages ]
-		ifAbsent: [ #() ]
+		flatCollect: [ :aClassType | 
+			aClassType accessMessages
+				select: [ :accessMessage | accessMessage receiver types includes: aType ] ]
 ]
 
 { #category : #querying }
@@ -618,7 +629,7 @@ SSTestCase >> pickAnObjectVariable [
 
 { #category : #querying }
 SSTestCase >> pickMessagesOf: aType [
-	^ (typeInfo types at: aType) messages
+	^ typeInfo messagesFrom: aType
 ]
 
 { #category : #querying }

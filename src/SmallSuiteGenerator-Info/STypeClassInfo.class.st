@@ -35,10 +35,7 @@ STypeClassInfo class >> type: aAssoc [
 
 { #category : #private }
 STypeClassInfo >> accessMessages [
-	^ methodTypes values
-		select: [ :methType | 
-			methType isDeprecated not
-				and: [ methType isQuick and: [ methType returnType isNotNil ] ] ]
+	^ self messagesAndAccessMessages select: #isQuick
 ]
 
 { #category : #adding }
@@ -98,6 +95,19 @@ STypeClassInfo >> copy [
 	^ copy
 ]
 
+{ #category : #private }
+STypeClassInfo >> factoryMessages [
+	^ classMethodTypes values
+]
+
+{ #category : #private }
+STypeClassInfo >> factoryMessagesFrom: aClassName [
+	^ self factoryMessages
+		select: [ :factMessage | 
+			(factMessage isFromReceiver: aClassName)
+				and: [ factMessage isWithReturnType: aClassName ] ]
+]
+
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
@@ -114,8 +124,15 @@ STypeClassInfo >> joinWith: otherTypeClass [
 
 { #category : #private }
 STypeClassInfo >> messages [
-	^ (methodTypes values reject: #isQuick)
-		select: [ :meth | meth isDeprecated not and: [meth returnType type isNotNil] ]
+	^ self messagesAndAccessMessages reject: #isQuick
+]
+
+{ #category : #private }
+STypeClassInfo >> messagesAndAccessMessages [
+	^ methodTypes values
+		select: [ :methType | 
+			methType isDeprecated not
+				 and: [ methType returnType isNotNil ] ]
 ]
 
 { #category : #'as yet unclassified' }

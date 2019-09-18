@@ -26,7 +26,10 @@ SMessageNotUnderstoodTest >> testCanResolve [
 	| testCase aException |
 	testCase := SSTestCase
 		with: utility typeInfosOnPackageExamplesOthers first.
-	testCase addMessage: #canRegister: from: #SEvent.
+	self
+		should: [ testCase addMessage: #canRegister: from: #SEvent ]
+		raise: SError.
+	testCase addMessage: #canRegister: from: #SConference.
 	SStatementCoverage
 		coverageOf: [ | aConference aPerson |
 			aConference := SConference new offerPrice: 95.
@@ -37,7 +40,7 @@ SMessageNotUnderstoodTest >> testCanResolve [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := SEvent new.'
+				with: '_var0 := SConference new.'
 				with: '_var1 := ' , (SStudent new name: 'Mary') storeString , '.'
 				with: '_var2 := _var0 canRegister: _var1.').
 	SStatementCoverage compileTestCase: testCase.
@@ -45,7 +48,7 @@ SMessageNotUnderstoodTest >> testCanResolve [
 		should: [ SStatementCoverage executeStatements ]
 		raise: MessageNotUnderstood.
 	[ SStatementCoverage executeStatements ]
-		on: MessageNotUnderstood 
+		on: MessageNotUnderstood
 		do: [ :exception | aException := exception ].
 	self assert: (SMessageNotUnderstood canResolve: aException)
 ]
@@ -68,7 +71,7 @@ SMessageNotUnderstoodTest >> testSolveExceptionOf [
 			(Array
 				with: '_var0 := SEvent new.'
 				with: '_var1 := ' , (SStudent new name: 'Mary') storeString , '.'
-				with: '_var2 := _var0 canRegister: _var1.').
+				with: '_var2 := _var0 canRegister: _var1.').self halt.
 	SStatementCoverage compileTestCase: testCase.
 	self
 		should: [ SStatementCoverage executeStatements ]

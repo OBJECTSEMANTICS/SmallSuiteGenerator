@@ -10,6 +10,14 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #'as yet unclassified' }
+STypeInfo >> accessMessagesFrom: aClassName [
+	^ types
+		flatCollect: [ :aClassType | 
+			aClassType accessMessages
+				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
+]
+
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
 	aTypeClassInfo typeInfo: self.
@@ -30,13 +38,10 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 
 { #category : #accessing }
 STypeInfo >> classes [
-	"classes
-		ifNil: [ classes := types keys
-				collect: [ :className | Smalltalk at: className ] ]."
-
 	classes
 		ifNil: [ classes := Dictionary new.
-			types keysDo:
+			types
+				keysDo:
 					[ :aClassName | classes at: aClassName put: (Smalltalk at: aClassName) ] ].
 	^ classes
 ]
@@ -57,14 +62,11 @@ STypeInfo >> error: aString [
 ]
 
 { #category : #lookup }
-STypeInfo >> factoryMethods: className [
+STypeInfo >> factoryMessagesFrom: aClassName [
 	^ types
-		at: className
-		ifPresent: [ :classInfo | 
-			classInfo classMethodTypes associations
-				select: [ :assoc | assoc value returnType type = className ]
-				thenCollect: [ :assoc | assoc value ] ]
-		ifAbsent: [ #() ]
+		flatCollect: [ :aClassType | 
+			aClassType factoryMessages
+				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
 ]
 
 { #category : #initialization }
@@ -89,6 +91,14 @@ STypeInfo >> joinWith: otherTypeInfo [
 	otherTypeInfo types
 		valuesDo: [ :aTypeClass | self addClassInfo: aTypeClass ].
 		self joinScalars: otherTypeInfo scalars
+]
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> messagesFrom: aClassName [
+	^ types
+		flatCollect: [ :aClassType | 
+			aClassType messages
+				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
 ]
 
 { #category : #accessing }
@@ -131,13 +141,18 @@ STypeInfo >> type: aAssoc [
 ]
 
 { #category : #lookup }
-STypeInfo >> typeOf: aSelector from: aClassName [
-	^ (types at: aClassName) methodOf: aSelector
+STypeInfo >> type: aSelector from: aClassName [
+	types valuesDo: [ :aTypeClassInfo | 
+			aTypeClassInfo messagesAndAccessMessages
+				detect: [ :aMessage | 
+					(aMessage isFromReceiver: aClassName)
+						and: [ aMessage selector = aSelector ] ] ifFound: [:aMessage | ^ aMessage ] ifNone: [false]].
+		^ self error: aSelector , ' not found in: ' , aClassName
 ]
 
 { #category : #lookup }
-STypeInfo >> typeOf: aSelector fromMetaClassName: aClassName [
-	^ (types at: aClassName) classMethodOf: aSelector
+STypeInfo >> type: aSelector fromMetaClassName: aClassName [
+	^ (self factoryMessagesFrom: aClassName) detect: [ :aMessage | aMessage selector = aSelector  ] ifNone: [ self error: aSelector , ' not found in: ' , aClassName ]
 ]
 
 { #category : #accessing }

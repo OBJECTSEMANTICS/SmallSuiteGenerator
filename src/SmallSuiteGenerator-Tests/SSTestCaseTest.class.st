@@ -184,6 +184,24 @@ SSTestCaseTest >> testAddMessage [
 			#('_var0 := SFoo new.' '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).' '_var2 := _var0 return: _var1.' '_var3 := _var0 returnString.')
 ]
 
+{ #category : #tests }
+SSTestCaseTest >> testAddMessageWithDifferentReceiver [
+	| testCase |
+	testCase := SSTestCase new.
+	testCase typeInfo: utility typeInfosOnPackageExamplesOthers first.
+	self
+		should: [ testCase addMessage: #canRegister: from: #SEvent ]
+		raise: SError.
+	testCase addMessage: #canRegister: from: #SConference.
+	self
+		assertCollection: (testCase statements collect: #asString)
+		hasSameElements:
+			(Array
+				with: '_var0 := SConference new.'
+				with: '_var1 := ' , (SStudent new name: 'Mary') storeString , '.'
+				with: '_var2 := _var0 canRegister: _var1.')
+]
+
 { #category : #'mutation-change' }
 SSTestCaseTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	| testCase changed |
@@ -280,7 +298,7 @@ SSTestCaseTest >> testChangeStatementOfMessage [
 	testCase := SSTestCase with: self typeInfoSStack.
 	testCase
 		addFactoryMessage: #SStack
-		withMethod: (testCase typeInfo typeOf: #newStack fromMetaClassName: #SStack).
+		withMethod: (testCase typeInfo type: #newStack fromMetaClassName: #SStack).
 	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -604,6 +622,42 @@ SSTestCaseTest >> testInsertStatementOfSelectorRandomMessageInMessage [
 			#('_var0 := 7.3.'  '_var1 := SFoo score: _var0.'
 			'_var2 := ''hello''.'  '_var3 := _var1 return: _var2.'
 			'_var4 := _var1 return: _var2.')
+]
+
+{ #category : #tests }
+SSTestCaseTest >> testPickAccessorsOf [
+	| testCase |
+	testCase := SSTestCase new.
+	testCase typeInfo: utility typeInfosOnPackageExamplesOthers first.
+	self assert: (testCase pickAccessorsOf: #SEvent) isEmpty.
+	self
+		assertCollection: ((testCase pickAccessorsOf: #SConference) collect: #selector)
+		hasSameElements: #(#discount #offerPrice)
+]
+
+{ #category : #tests }
+SSTestCaseTest >> testPickFactoryMessagesFrom [
+	| testCase |
+	testCase := SSTestCase new.
+	testCase typeInfo: utility typeInfosOnPackageExamplesOthers second.
+	self
+		should: [ testCase addMessage: #price: from: #SEvent ]
+		raise: SError.
+	testCase addFactoryMessage: #SConference ofSelector: #price:.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: #('_var0 := 95.' '_var1 := SConference price: _var0.')
+]
+
+{ #category : #tests }
+SSTestCaseTest >> testPickMessagesOf [
+	| testCase |
+	testCase := SSTestCase new.
+	testCase typeInfo: utility typeInfosOnPackageExamplesOthers first.
+	self assert: (testCase pickMessagesOf: #SEvent) isEmpty.
+	self
+		assertCollection: ((testCase pickMessagesOf: #SConference) collect: #selector)
+		hasSameElements: #(#initialize #offerPrice: #canRegister: #price)
 ]
 
 { #category : #'mutation-remove' }

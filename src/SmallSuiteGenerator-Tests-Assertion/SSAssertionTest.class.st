@@ -211,8 +211,8 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 						with: #());
 		scalar: #SmallInteger with: #(1);
 		scalar: #ByteString with: #('hello').
-	(typeInfo typeOf: #push: from: #SStack) addType: #SmallInteger.
-	(typeInfo typeOf: #pop from: #SStack) addType: #SmallInteger.
+	(typeInfo type: #push: from: #SStack) addType: #SmallInteger.
+	(typeInfo type: #pop from: #SStack) addType: #SmallInteger.
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.

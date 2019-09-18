@@ -71,6 +71,7 @@ SSGeneratorMethod >> mergeArgsTypes: args [
 
 { #category : #accessing }
 SSGeneratorMethod >> receiverType [
+	
 	^ receiverType
 ]
 
@@ -88,5 +89,6 @@ SSGeneratorMethod >> returnValue: value [
 
 { #category : #hooks }
 SSGeneratorMethod >> saveReceiver: aObject [
-	receiverType type: aObject class name
+	receiverType
+		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
 ]

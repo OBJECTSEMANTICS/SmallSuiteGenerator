@@ -75,6 +75,69 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfosOnPackageExamples [
+	"the first typeInfo is about a class has as argument other class from other package"
+"review and modify"
+	^ OrderedCollection new
+		add:
+			(STypeInfo new
+				type:
+					#SSTeacher
+						->
+							(Array
+								with:
+									(OrderedCollection new
+										add: #name: -> #(#SSTeacher #SSTeacher #(#ByteString) false);
+										add: #id: -> #(#SSTeacher #SSTeacher #(#SmallInteger) false);
+										add: #nickname: -> #(#SSTeacher #SSTeacher #(#ByteString) false);
+										add: #initialize -> #(#SSTeacher #SSTeacher #() false);
+										add: #nickname -> #(#SSTeacher #ByteString #() false);
+										add: #name -> #(#SSTeacher #ByteString #() true);
+										add: #id -> #(#SSTeacher #SmallInteger #() true);
+										add: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true);
+										add: #idTeacher -> #(#SSTeacher #SmallInteger #() true);
+										yourself)
+								with: Array
+								with:
+									#name:with:
+										-> #(#SSTeacher #SSTeacher #(#ByteString #SmallInteger) false));
+				type:
+					#SConference
+						->
+							(Array
+								with:
+									(Array
+										with: #initialize -> #(#SConference #SConference #() false)
+										with: #offerPrice -> #(#SConference #SmallInteger #() true)
+										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
+										with: #discount -> #(#SConference #SmallInteger #() true))
+								with: #());
+				scalar: #SmallInteger with: #(95 100);
+				scalar: #False with: #(false);
+				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary')));
+		add:
+			(STypeInfo new
+				type:
+					#SEvent
+						->
+							(Array
+								with:
+									(Array
+										with: #price: -> #(#SConference #SConference #(#SmallInteger) false))
+								with:
+									(Array
+										with: #price: -> #(#SConference #SConference #(#SmallInteger) false)));
+				type:
+					#SConference
+						->
+							(Array
+								with: (Array with: #initialize -> #(#SConference #SConference #() false))
+								with: #());
+				scalar: #SmallInteger with: #(95));
+		yourself
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfosOnPackageExamplesOthers [
 	"the first typeInfo is about a class has as argument other class from other package"
 
@@ -96,13 +159,29 @@ SUtilityTypeInfo >> typeInfosOnPackageExamplesOthers [
 							(Array
 								with:
 									(Array
-										with: #initialize -> #(#SConference #SEvent #() false)
+										with: #initialize -> #(#SConference #SConference #() false)
 										with: #offerPrice -> #(#SConference #SmallInteger #() true)
-										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false))
+										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
+										with: #discount -> #(#SConference #SmallInteger #() true))
 								with: #());
 				scalar: #SmallInteger with: #(95 100);
 				scalar: #False with: #(false);
 				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary')));
+		add:
+			(STypeInfo new
+				type:
+					#SEvent
+						->
+							(Array
+								with: (Array with: (#price: -> #(#SConference #SConference #(#SmallInteger) false)))
+								with: (Array with: (#price: -> #(#SConference #SConference #(#SmallInteger) false))));
+				type:
+					#SConference
+						->
+							(Array
+								with: (Array with: (#initialize -> #(#SConference #SConference #() false)))
+								with: #());
+				scalar: #SmallInteger with: #(95));
 		yourself
 ]
 

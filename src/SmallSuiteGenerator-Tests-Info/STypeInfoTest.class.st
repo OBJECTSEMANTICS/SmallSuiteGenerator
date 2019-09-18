@@ -5,15 +5,55 @@ Class {
 }
 
 { #category : #tests }
+STypeInfoTest >> testAccesssMessagesFrom [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #score -> #(#SFoo #SmallInteger #() true))
+						with: #()).
+	
+	self assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector) hasSameElements: #(#score).
+]
+
+{ #category : #tests }
+STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
+	| typeInfo messages |
+	typeInfo := (SSGenerator
+		profile: [ SConference price: 95 ]
+		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others')
+		asTypeInfo.
+	messages := typeInfo messagesFrom: #SConference.
+	self
+		assertCollection: (messages collect: #selector)
+		hasSameElements: #(#initialize #price:).
+	self
+		assert:
+			((messages flatCollect: [ :aMessage | aMessage receiver types ])
+				allSatisfy: [ :aType | aType = #SConference ]).
+	self assert: (typeInfo messagesFrom: #SEvent) isEmpty.
+	self assert: (typeInfo messagesFrom: #SParty) isEmpty.
+	messages := typeInfo factoryMessagesFrom: #SConference.
+	self
+		assertCollection: (messages collect: #selector)
+		hasSameElements: #(#price:)
+]
+
+{ #category : #tests }
 STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
-	| profile typeInfo methodInfo |
-	profile := SSGenerator
+	| typeInfo messages methodInfo |
+	typeInfo := (SSGenerator
 		profile: [ | aConference aPerson |
 			aConference := SConference new offerPrice: 95.
 			aPerson := SStudent new name: 'Mary'.
 			aConference canRegister: aPerson ]
-		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others'.
-	typeInfo := profile asTypeInfo.
+		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others')
+		asTypeInfo.
 	self assert: (typeInfo types at: #SEvent) methodTypes size equals: 6.
 	self
 		assert: (typeInfo types at: #SEvent) classMethodTypes size
@@ -25,13 +65,16 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		assert: (typeInfo types at: #SConference) classMethodTypes isEmpty.
 	self assert: (typeInfo types at: #SParty) methodTypes size equals: 2.
 	self assert: (typeInfo types at: #SParty) classMethodTypes isEmpty.
+	messages := typeInfo messagesFrom: #SConference.
 	self
-		assert: (typeInfo typeOf: #initialize from: #SEvent) returnType type
-		equals: nil.
+		assertCollection: (messages collect: #selector)
+		hasSameElements: #(#initialize #offerPrice: #canRegister: #price).
 	self
-		assert: (typeInfo typeOf: #initialize from: #SConference) returnType type
-		equals: #SConference.
-	methodInfo := typeInfo typeOf: #canRegister: from: #SEvent.
+		assert:
+			((messages flatCollect: [ :aMessage | aMessage receiver types ])
+				allSatisfy: [ :aType | aType = #SConference ]).
+	methodInfo := messages
+		detect: [ :aMessage | aMessage selector = #canRegister: ].
 	self
 		assertCollection: methodInfo returnType types
 		hasSameElements: (Array with: #False).
@@ -66,9 +109,9 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
 	self
-		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType type
+		assert: (typeInfo type: #initialize from: #SFoo) returnType type
 		equals: #SFoo.
-	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	methodInfo := typeInfo type: #return: from: #SFoo.
 	self
 		assertCollection: methodInfo returnType types
 		hasSameElements: {#OrderedCollection . #Stack}.
@@ -76,38 +119,34 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: {#OrderedCollection . #Stack}.
 	self
-		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType type
+		assert: (typeInfo type: #returnFloat from: #SFoo) returnType type
 		equals: #SmallFloat64.
 	self
-		assert: (typeInfo typeOf: #returnCollection from: #SFoo) returnType type
+		assert: (typeInfo type: #returnCollection from: #SFoo) returnType type
 		equals: #OrderedCollection.
 	self
-		assert: (typeInfo typeOf: #returnString from: #SFoo) returnType type
+		assert: (typeInfo type: #returnString from: #SFoo) returnType type
 		equals: #ByteString.
 	self
-		assert: (typeInfo typeOf: #returnNum from: #SFoo) returnType type
+		assert: (typeInfo type: #returnNum from: #SFoo) returnType type
 		equals: #SmallInteger.
 	self
-		assert: (typeInfo typeOf: #score from: #SFoo) returnType type
+		assert: (typeInfo type: #score from: #SFoo) returnType type
 		equals: #SmallInteger.
-	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	methodInfo := typeInfo type: #score: from: #SFoo.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: #(#SmallInteger).
 	self
-		assert:
-			(typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType type
-				isNil.
+		assert: (typeInfo factoryMessagesFrom: #SFoo) isEmpty. "the factoryMessage has not been executed"
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements:
-			#(#OrderedCollection  #Stack  #ByteString  #SmallInteger
-			#SmallFloat64)
+		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #SmallFloat64)
 ]
 
 { #category : #tests }
-STypeInfoTest >> testAsTypeInfoSFooWithClass [
+STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	| profile typeInfo methodInfo |
 	profile := SSGenerator
 		profile: [ SFoo new return: OrderedCollection ]
@@ -118,16 +157,16 @@ STypeInfoTest >> testAsTypeInfoSFooWithClass [
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
 	self
-		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType type
+		assert: (typeInfo type: #initialize from: #SFoo) returnType type
 		equals: #SFoo.
-	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	methodInfo := typeInfo type: #return: from: #SFoo.
 	self
 		assertCollection: methodInfo returnType types
 		hasSameElements: #(#'OrderedCollection class').
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: #(#'OrderedCollection class').
-
+	self assertCollection: ((typeInfo messagesFrom: #SFoo) collect: #selector) hasSameElements: #(#initialize #return:)
 ]
 
 { #category : #tests }
@@ -142,21 +181,87 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
 	self
-		assert: (typeInfo typeOf: #initialize from: #SFoo) returnType type
+		assert: (typeInfo type: #initialize from: #SFoo) returnType type
 		equals: #SFoo.
-	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	methodInfo := typeInfo type: #return: from: #SFoo.
 	self
 		assertCollection: methodInfo returnType types
 		hasSameElements: #(#UndefinedObject).
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: #(#UndefinedObject).
+	self assertCollection: ((typeInfo messagesFrom: #SFoo) collect: #selector) hasSameElements: #(#initialize #return:).
+	
+]
+
+{ #category : #tests }
+STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
+	| typeInfo |
+	typeInfo := (SSGenerator
+		profile: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ]
+		onClass: SSTeacher) asTypeInfo.
 	self
-		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType types isEmpty.
+		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
+		hasSameElements:
+			#(#idTeacher #initialize #nickname #yearsWorkExperience #yearsWorkExperience:).
+	self assert: (typeInfo types at: #SSTeacher) classMethodTypes isEmpty.
 	self
-		assert:
-			(typeInfo typeOf: #returnCollection from: #SFoo) returnType types
-				isEmpty
+		assertCollection: ((typeInfo messagesFrom: #SSTeacher) collect: #selector)
+		hasSameElements: #(#initialize #nickname).
+	self
+		assertCollection: ((typeInfo accessMessagesFrom: #SSTeacher) collect: #selector)
+		hasSameElements: #(#idTeacher #yearsWorkExperience)
+]
+
+{ #category : #tests }
+STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
+	| typeInfo |
+	typeInfo := (SSGenerator
+		profile: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ]
+		onPackagesMatching: 'SmallSuiteGenerator-Examples') asTypeInfo.
+	self
+		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
+		hasSameElements:
+			#(#idTeacher #initialize #nickname #yearsWorkExperience #yearsWorkExperience:).
+	self assertCollection: ((typeInfo factoryMessagesFrom: #SSTeacher) collect: #selector) hasSameElements: #(#name:with:).
+	self
+		assertCollection: ((typeInfo messagesFrom: #SSTeacher) collect: #selector)
+		hasSameElements: #(#initialize #nickname #id: #nickname: #name: ).
+	self
+		assertCollection: ((typeInfo accessMessagesFrom: #SSTeacher) collect: #selector)
+		hasSameElements: #(#idTeacher #yearsWorkExperience #name #id)
+]
+
+{ #category : #tests }
+STypeInfoTest >> testFactoryMessages [
+	| typeInfo |
+	typeInfo := (SSGenerator
+		profile: [ SStudent name: 'Mary' ]
+		onClass: SStudent) asTypeInfo.
+	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
+	typeInfo := (SSGenerator
+		profile: [ SStudent name: 'Mary' ]
+		onPackagesMatching: 'SmallSuiteGenerator-Examples') asTypeInfo.
+	self
+		assertCollection: ((typeInfo factoryMessagesFrom: #SStudent) collect: #selector)
+		hasSameElements: #(#name:).
+	typeInfo := (SSGenerator
+		profile: [ SConference price: 95 ]
+		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others')
+		asTypeInfo.
+	self
+		assertCollection: ((typeInfo factoryMessagesFrom: #SConference) collect: #selector)
+		hasSameElements: #(#price:)
 ]
 
 { #category : #tests }
@@ -189,7 +294,7 @@ STypeInfoTest >> testJoinWith [
 	self
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
-	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	methodInfo := typeInfo type: #return: from: #SFoo.
 	self assert: methodInfo receiver type equals: #SFoo.
 	self
 		assertCollection: #(#OrderedCollection #Stack)
@@ -198,23 +303,41 @@ STypeInfoTest >> testJoinWith [
 		assertCollection: #(#OrderedCollection #Stack)
 		hasSameElements: (methodInfo argTypes flatCollect: [ :argType | argType types ]).
 	self
-		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType type
+		assert: (typeInfo type: #returnFloat from: #SFoo) returnType type
 		equals: #SmallFloat64.
 	self
-		assert: (typeInfo typeOf: #returnString from: #SFoo) returnType type
+		assert: (typeInfo type: #returnString from: #SFoo) returnType type
 		equals: #ByteString.
 	self
-		assert: (typeInfo typeOf: #score from: #SFoo) returnType type
+		assert: (typeInfo type: #score from: #SFoo) returnType type
 		equals: #SmallInteger.
-	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	methodInfo := typeInfo type: #score: from: #SFoo.
 	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: (methodInfo argTypes flatCollect: [ :argType | argType types ])
 		hasSameElements: #(#SmallInteger).
 	self
-		assert: (typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType type
+		assert: (typeInfo type: #score: fromMetaClassName: #SFoo) returnType type
 		equals: #SFoo
+]
+
+{ #category : #tests }
+STypeInfoTest >> testMessagesFrom [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #score -> #(#SFoo #SmallInteger #() true))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
+		self assertCollection: ((typeInfo messagesFrom: #SFoo) collect: #selector) hasSameElements: #(#returnFloat #returnString).
+		"self assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector) hasSameElements: #(#score)."
 ]
 
 { #category : #tests }
@@ -266,28 +389,28 @@ STypeInfoTest >> testType [
 	self
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
 		equals: 1.
-	methodInfo := typeInfo typeOf: #return: from: #SFoo.
+	methodInfo := typeInfo type: #return: from: #SFoo.
 	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #OrderedCollection.
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: #(#OrderedCollection).
 	self
-		assert: (typeInfo typeOf: #returnFloat from: #SFoo) returnType type
+		assert: (typeInfo type: #returnFloat from: #SFoo) returnType type
 		equals: #SmallFloat64.
 	self
-		assert: (typeInfo typeOf: #returnString from: #SFoo) returnType type
+		assert: (typeInfo type: #returnString from: #SFoo) returnType type
 		equals: #ByteString.
 	self
-		assert: (typeInfo typeOf: #score from: #SFoo) returnType type
+		assert: (typeInfo type: #score from: #SFoo) returnType type
 		equals: #SmallInteger.
-	methodInfo := typeInfo typeOf: #score: from: #SFoo.
+	methodInfo := typeInfo type: #score: from: #SFoo.
 	self assert: methodInfo receiver type equals: #SFoo.
 	self assert: methodInfo returnType type equals: #SFoo.
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: #(#SmallInteger).
 	self
-		assert: (typeInfo typeOf: #score: fromMetaClassName: #SFoo) returnType type
+		assert: (typeInfo type: #score: fromMetaClassName: #SFoo) returnType type
 		equals: #SFoo
 ]
