@@ -18,6 +18,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 			spec
 				baseline: 'SBTestCoverage'
 				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
+			spec baseline: 'NeoCSV' with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 			spec
 				package: 'SmallSuiteGenerator-Generator';
 				package: 'SmallSuiteGenerator-Info';
@@ -56,5 +57,5 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				package: 'SmallSuiteGenerator-Tests-Info'
 					with: [ spec requires: #('SmallSuiteGenerator-Info' 'SmallSuiteGenerator') ];
 				package: 'SmallSuiteGenerator-Tests-Exception-Management'
-					with: [spec requires: 'SmallSuiteGenerator-Exception-Management'] ]
+					with: [ spec requires: 'SmallSuiteGenerator-Exception-Management' ] ]
 ]
