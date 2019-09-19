@@ -18,10 +18,14 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 			spec
 				baseline: 'SBTestCoverage'
 				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
-			spec baseline: 'NeoCSV' with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
+			spec
+				baseline: 'NeoCSV'
+				with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 			spec
 				package: 'SmallSuiteGenerator-Generator';
-				package: 'SmallSuiteGenerator-Info';
+				package: 'SmallSuiteGenerator-Info' with: [
+					spec requires: 'NeoCSV'
+					];
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator-Generator' 'MuTalk') ];
 				package: 'SmallSuiteGenerator-Exception-Management';
