@@ -5,7 +5,8 @@ Class {
 		'types',
 		'classes',
 		'noneAbstractClasses',
-		'scalars'
+		'scalars',
+		'filename'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -46,6 +47,11 @@ STypeInfo >> classes [
 	^ classes
 ]
 
+{ #category : #'as yet unclassified' }
+STypeInfo >> cleanFile [
+	filename asFileReference ensureDelete
+]
+
 { #category : #copying }
 STypeInfo >> copy [
 	| copy |
@@ -61,6 +67,23 @@ STypeInfo >> error: aString [
 	^ SError signal: aString
 ]
 
+{ #category : #'as yet unclassified' }
+STypeInfo >> exportAsCSV: neoCSVWriter [
+	types do: [ :type | type exportAsCSV: neoCSVWriter  ]
+]
+
+{ #category : #'export as CSV' }
+STypeInfo >> exportCSV: aString [
+	(self filename: aString)
+		writeStreamDo: [ :stream | 
+			| neoCSVWriter |
+			neoCSVWriter := (NeoCSVWriter on: stream)
+				nextPut:
+					#('ClassName' 'MethodName' 'Receivers' 'CommSupcls' 'ArgTypes' 'CommSupcls' 'ReturnTypes' 'CommSupcls').
+			self exportAsCSV: neoCSVWriter.
+			neoCSVWriter flush ]
+]
+
 { #category : #lookup }
 STypeInfo >> factoryMessagesFrom: aClassName [
 	^ types
@@ -69,11 +92,18 @@ STypeInfo >> factoryMessagesFrom: aClassName [
 				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
 ]
 
+{ #category : #accessing }
+STypeInfo >> filename: aString [
+filename := aString, '.csv'.
+	^ filename asFileReference
+]
+
 { #category : #initialization }
 STypeInfo >> initialize [
 	super initialize.
 	types := Dictionary new.
-	scalars := Dictionary new
+	scalars := Dictionary new.
+	filename := 'typeInfo'
 ]
 
 { #category : #'as yet unclassified' }

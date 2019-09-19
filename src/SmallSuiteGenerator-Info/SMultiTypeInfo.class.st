@@ -17,6 +17,18 @@ SMultiTypeInfo >> = otherType [
 	^ types includes: otherType
 ]
 
+{ #category : #'as yet unclassified' }
+SMultiTypeInfo >> commonSuperclass [
+	| commonSuperclass |
+	types ifEmpty: [ ^ '' ].
+	commonSuperclass := Smalltalk classNamed: types anyOne.
+	types
+		do: [ :aType | 
+			commonSuperclass := commonSuperclass
+				commonSuperclassWith: (Smalltalk classNamed: aType asString) ].
+	^ commonSuperclass name
+]
+
 { #category : #copying }
 SMultiTypeInfo >> copy [
 	| copy |

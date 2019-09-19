@@ -67,6 +67,20 @@ STypeMethodInfo >> copy [
 	^ copy
 ]
 
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> dataCSV [
+	^ Array with: selector
+		withAll: (OrderedCollection new add: receiver types asArray;
+		add: receiver commonSuperclass;
+		add:
+			(argTypes
+				ifNil: [ #() ]
+				ifNotNil: [ (argTypes collect: [ :argType | argType types asArray ]) asArray ]);
+		add: (argTypes ifNil: [''] ifNotNil: [argTypes collect: [:argType | argType commonSuperclass]]);
+		add: returnType types asArray;
+		add: returnType commonSuperclass; yourself)
+]
+
 { #category : #initialization }
 STypeMethodInfo >> initialize [
 	argTypes := #().

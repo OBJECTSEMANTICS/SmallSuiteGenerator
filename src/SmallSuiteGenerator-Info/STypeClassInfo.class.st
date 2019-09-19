@@ -74,6 +74,11 @@ STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
 ]
 
+{ #category : #'accessing - read only' }
+STypeClassInfo >> allSelectorsMethods [
+	^ self allMethods collect: #selector
+]
+
 { #category : #'as yet unclassified' }
 STypeClassInfo >> classMethodOf: aSelector [
 	^ classMethodTypes at: aSelector
@@ -93,6 +98,14 @@ STypeClassInfo >> copy [
 		do: [ :classMethodType | copy addClassMethod: classMethodType copy ].
 	copy typeName: typeName.
 	^ copy
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> exportAsCSV: neoCSVWriter [
+	self allMethods
+		do: [ :aMethod | 
+			neoCSVWriter
+				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
 ]
 
 { #category : #private }
