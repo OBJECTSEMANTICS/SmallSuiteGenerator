@@ -93,13 +93,14 @@ SCoverageWithProfiler class >> defaultInitialization [
 ]
 
 { #category : #'as yet unclassified' }
-
 SCoverageWithProfiler class >> defaultInitializationFitness [
 	SCoverageWithProfiler allSubclasses
 		detect: [ :cls | cls profiler isNotNil ]
 		ifFound: [ :cls | self profiler: cls profiler ]
 		ifNone: [ self initializeProfiler ]
 ]
+
+{ #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> executeStatements [
 	self profiler
 		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ]
@@ -170,7 +171,6 @@ SCoverageWithProfiler class >> profiler: aProfiler [
 ]
 
 { #category : #'as yet unclassified' }
-
 SCoverageWithProfiler class >> stringToCreateNewClass: aClassName with: aSuperClassName and: aPackageName [
 	^ aSuperClassName, ' subclass: #', aClassName, ' 
     instanceVariableNames: ''''
@@ -178,6 +178,7 @@ SCoverageWithProfiler class >> stringToCreateNewClass: aClassName with: aSuperCl
     package: ''', aPackageName, ''''
 ]
 
+{ #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> signalerException: exception [
 	"get the className of exception"
 	^ [ exception signaler name ]
