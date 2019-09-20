@@ -367,13 +367,6 @@ SSTestCase >> fitness [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestCase >> generateAssertionsUsing: classInvariants [
-	^ generatorInvariant
-		generateAssertionsOf: self
-		testCaseUsing: classInvariants
-]
-
-{ #category : #'as yet unclassified' }
 SSTestCase >> generateStatements [
 	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain data.'.
 	[ self numberStatements < self numMaxStatements ]
@@ -381,6 +374,13 @@ SSTestCase >> generateStatements [
 				perform:
 					#(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral)
 						shuffle anyOne ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> generateTestsWith: classInvariants [
+	^ generatorInvariant
+		generateAssertionsOf: self
+		testCaseUsing: classInvariants
 ]
 
 { #category : #comparing }

@@ -36,12 +36,9 @@ SStack >> lastLinkStack [
 
 { #category : #removing }
 SStack >> pop [
-	
 	self isEmpty
-		ifTrue: [ 
-			^ nil ]
-		ifFalse: [ 
-			^ self removeFirst ]
+		ifTrue: [ ^ nil ]
+		ifFalse: [ ^ self removeFirst ]
 ]
 
 { #category : #adding }

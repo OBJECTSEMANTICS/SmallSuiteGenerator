@@ -66,7 +66,7 @@ SGeneratorTestCase >> packagesClassesAndMethodsOfTypeInfo: typeInfo filterBy: mu
 	assocMutation := (mutatedMethods
 		collect: [ :meth | meth originalClass name -> meth originalMethod selector ])
 		asSet.
-	(typeInfo types
+	(typeInfo types 
 		collect:
 			[ :assoc | assoc values do: [ :aMethod | assoc key -> aMethod selector ] ]
 		thenSelect: [ :assoc | assocMutation includes: assoc ]) asSet

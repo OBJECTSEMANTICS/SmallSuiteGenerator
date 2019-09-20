@@ -10,11 +10,9 @@ Class {
 }
 
 { #category : #accessing }
-SCoverageWithProfiler class >> clear [
+SCoverageWithProfiler class >> clean [
 	profiler
-		ifNotNil: [ [ profiler cleanInstrumentation ]
-				on: AssertionFailure
-				do: [ ].
+		ifNotNil: [ self cleanInstrumentation.
 			profiler := nil.
 			numIteration := 0 ]
 ]
@@ -29,10 +27,17 @@ SCoverageWithProfiler class >> compileTestCase: aTestCase [
 ]
 
 { #category : #accessing }
+SCoverageWithProfiler class >> cleanInstrumentation [
+[ profiler cleanInstrumentation ]
+				on: AssertionFailure
+				do: [  ].
+]
+
+{ #category : #accessing }
 SCoverageWithProfiler class >> compilerClassOfCoverage [
 	compilerClassOfCoverage
 		ifNil: [ compilerClassOfCoverage := self compiler
-				evaluate: self stringToCreateNewClass ].
+				evaluate: (self stringToCreateNewClass: 'SCompilerTestCase' with: 'Object' and: 'SmallSuiteGenerator-Core') ].
 	^ compilerClassOfCoverage
 ]
 
@@ -41,6 +46,7 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 	self
 		assert: [ aTestCase notNil ]
 		description: 'testCase must not be nil'.
+	profiler ifNil: [ self defaultInitializationFitness ].
 	self
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
@@ -87,6 +93,13 @@ SCoverageWithProfiler class >> defaultInitialization [
 ]
 
 { #category : #'as yet unclassified' }
+
+SCoverageWithProfiler class >> defaultInitializationFitness [
+	SCoverageWithProfiler allSubclasses
+		detect: [ :cls | cls profiler isNotNil ]
+		ifFound: [ :cls | self profiler: cls profiler ]
+		ifNone: [ self initializeProfiler ]
+]
 SCoverageWithProfiler class >> executeStatements [
 	self profiler
 		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ]
@@ -104,6 +117,20 @@ SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
 				ifFalse: [ ^ exception ].
 			numIteration := numIteration + 1.
 			self computeFitness: aTestCase ]
+]
+
+{ #category : #'as yet unclassified' }
+SCoverageWithProfiler class >> initializeProfiler [
+	| instanceFacade |
+			instanceFacade := SSmallSuiteGenerator instance.
+			instanceFacade
+				ifNotNil: [ | dataProfiler |
+					dataProfiler := instanceFacade dataFitnessCoverage.
+					instanceFacade ofClass
+						ifTrue: [ self coverageOf: dataProfiler first onClass: dataProfiler second ]
+						ifFalse: [ self
+								coverageOf: dataProfiler first
+								onPackagesMatching: dataProfiler second ] ]
 ]
 
 { #category : #testing }
@@ -143,17 +170,17 @@ SCoverageWithProfiler class >> profiler: aProfiler [
 ]
 
 { #category : #'as yet unclassified' }
+
+SCoverageWithProfiler class >> stringToCreateNewClass: aClassName with: aSuperClassName and: aPackageName [
+	^ aSuperClassName, ' subclass: #', aClassName, ' 
+    instanceVariableNames: ''''
+    classVariableNames: ''''
+    package: ''', aPackageName, ''''
+]
+
 SCoverageWithProfiler class >> signalerException: exception [
 	"get the className of exception"
 	^ [ exception signaler name ]
 		on: MessageNotUnderstood
 		do: [ exception signaler className ]
-]
-
-{ #category : #'as yet unclassified' }
-SCoverageWithProfiler class >> stringToCreateNewClass [
-	^ 'Object subclass: #SCompilerTestCase
-    instanceVariableNames: ''''
-    classVariableNames: ''''
-    package: ''SmallSuiteGenerator-Core'''
 ]

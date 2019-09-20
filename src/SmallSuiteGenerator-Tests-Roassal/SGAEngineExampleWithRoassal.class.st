@@ -27,8 +27,8 @@ SGAEngineExampleWithRoassal >> assert: log fitness: function greaterThanValue: a
 
 { #category : #actions }
 SGAEngineExampleWithRoassal >> clean [
-	SMultiFitnessFunction clear.
-	SCoverageWithProfiler allSubclassesDo: #clear.
+	SMultiFitnessFunction clean.
+	SCoverageWithProfiler allSubclassesDo: #clean.
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove

@@ -4,15 +4,8 @@ Class {
 	#category : #'SmallSuiteGenerator-Examples-Demo'
 }
 
-{ #category : #actions }
-SGAEngineExample >> clean [
-	S2Lock value: false.
-	S2Context value: nil.
-	S2Profiler remove.
-]
-
 { #category : #'examples - onClass' }
-SGAEngineExample >> exampleSSTeacherOnClass [
+SGAEngineExample >> exampleSSTeacherOnClassWithSMethodCoverage [
 	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
@@ -25,10 +18,20 @@ SGAEngineExample >> exampleSSTeacherOnClass [
 				id ]
 		andFitness: classFitness.
 	self
-		assert: (engine logs first fittestTestCase fitness at: classFitness nameFunction ) >= 20.	"20 = (1/5) * 100"
+		assert:
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction) >= 20.	"20 = (1/5) * 100"
 	self
-		assert: (engine logs last fittestTestCase fitness at: classFitness nameFunction)
+		assert:
+			(engine logs last fittestTestCase fitness
+				at: classFitness nameFunction)
 		equals: 80.	"80 = (4/5) * 100"
+	engine clean
+]
+
+{ #category : #'examples - onClass' }
+SGAEngineExample >> exampleSSTeacherOnClassWithSStatementCoverage [
+	| engine classFitness |
 	classFitness := SStatementCoverage.
 	engine := self
 		runOnClass: SSTeacher
@@ -41,18 +44,18 @@ SGAEngineExample >> exampleSSTeacherOnClass [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs last fittestTestCase fitness at: classFitness nameFunction)
-				>= 37.5.	"37.5 = (3/8) * 100"
+			(engine logs last fittestTestCase fitness
+				at: classFitness nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
 	self
 		assert:
-			(engine logs last fittestTestCase fitness at: classFitness nameFunction)
-				>= 87.5.	"87.5 = (7/8) * 100"
-	self clean
+			(engine logs last fittestTestCase fitness
+				at: classFitness nameFunction) >= 87.5.	"87.5 = (7/8) * 100"
+	engine clean
 ]
 
 { #category : #'examples - onPackages' }
-SGAEngineExample >> exampleSSTeacherOnPackage [
-	| engine classFitness|
+SGAEngineExample >> exampleSSTeacherOnPackageWithSMethodCoverage [
+	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
 		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
@@ -65,8 +68,17 @@ SGAEngineExample >> exampleSSTeacherOnPackage [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				<= (engine logs last fittestTestCase fitness at: classFitness nameFunction).
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction)
+				<=
+					(engine logs last fittestTestCase fitness
+						at: classFitness nameFunction).
+	engine clean
+]
+
+{ #category : #'examples - onPackages' }
+SGAEngineExample >> exampleSSTeacherOnPackageWithSStatementCoverage [
+	| engine classFitness |
 	classFitness := SStatementCoverage.
 	engine := self
 		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
@@ -79,13 +91,16 @@ SGAEngineExample >> exampleSSTeacherOnPackage [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				<= (engine logs last fittestTestCase fitness at: classFitness nameFunction).
-	self clean
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction)
+				<=
+					(engine logs last fittestTestCase fitness
+						at: classFitness nameFunction).
+	engine clean
 ]
 
 { #category : #'examples - onClass' }
-SGAEngineExample >> exampleSStackOnClass [
+SGAEngineExample >> exampleSStackOnClassWithSMethodCoverage [
 	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
@@ -97,12 +112,18 @@ SGAEngineExample >> exampleSStackOnClass [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				>= 14.28.	"14.28 = (1/7) * 100 round: 2"
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction) >= 14.28.	"14.28 = (1/7) * 100 round: 2"
 	self
 		assert:
-			(engine logs last fittestTestCase fitness at: classFitness nameFunction)
-				>= 57.14.	"57.14 = (4/7) * 100 round: 2"
+			(engine logs last fittestTestCase fitness
+				at: classFitness nameFunction) >= 57.14.	"57.14 = (4/7) * 100 round: 2"
+	engine clean
+]
+
+{ #category : #'examples - onClass' }
+SGAEngineExample >> exampleSStackOnClassWithSStatementCoverage [
+	| engine classFitness |
 	classFitness := SStatementCoverage.
 	engine := self
 		runOnClass: SStack
@@ -113,17 +134,17 @@ SGAEngineExample >> exampleSStackOnClass [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				>= 21.05.	"21.05 = (4/19) * 100 round: 2"
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction) >= 21.05.	"21.05 = (4/19) * 100 round: 2"
 	self
 		assert:
-			(engine logs last fittestTestCase fitness at: classFitness nameFunction)
-				>= 73.68.	"73.68 = (14/19) * 100 round: 2"
-	self clean
+			(engine logs last fittestTestCase fitness
+				at: classFitness nameFunction) >= 73.68.	"73.68 = (14/19) * 100 round: 2"
+	engine clean
 ]
 
 { #category : #'examples - onPackages' }
-SGAEngineExample >> exampleSStackOnPackage [
+SGAEngineExample >> exampleSStackOnPackageWithSMethodCoverage [
 	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
@@ -135,9 +156,18 @@ SGAEngineExample >> exampleSStackOnPackage [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				<= (engine logs last fittestTestCase fitness at: classFitness nameFunction).
-	classFitness := SStatementCoverage.
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction)
+				<=
+					(engine logs last fittestTestCase fitness
+						at: classFitness nameFunction).
+	engine clean
+]
+
+{ #category : #'examples - onPackages' }
+SGAEngineExample >> exampleSStackOnPackageWithSStatementCoverage [
+	| engine classFitness |
+	classFitness := SMethodCoverage.
 	engine := self
 		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
 		withBlock: [ (SStack newStackWith: #(2 4 6 1))
@@ -147,13 +177,16 @@ SGAEngineExample >> exampleSStackOnPackage [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction )
-				<= (engine logs last fittestTestCase fitness at: classFitness nameFunction).
-	self clean
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction)
+				<=
+					(engine logs last fittestTestCase fitness
+						at: classFitness nameFunction).
+	engine clean
 ]
 
 { #category : #'examples - onClass' }
-SGAEngineExample >> exampleSStudentOnClass [
+SGAEngineExample >> exampleSStudentOnClassWithSMethodCoverage [
 	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
@@ -173,6 +206,12 @@ SGAEngineExample >> exampleSStudentOnClass [
 			(engine logs last fittestTestCase fitness
 				at: classFitness nameFunction)
 		equals: 100.
+	engine clean
+]
+
+{ #category : #'examples - onClass' }
+SGAEngineExample >> exampleSStudentOnClassWithSStatementCoverage [
+	| engine classFitness |
 	classFitness := SStatementCoverage.
 	engine := self
 		runOnClass: SStudent
@@ -191,11 +230,11 @@ SGAEngineExample >> exampleSStudentOnClass [
 			(engine logs last fittestTestCase fitness
 				at: classFitness nameFunction)
 		equals: 100.
-	self clean
+	engine clean
 ]
 
 { #category : #'examples - onPackages' }
-SGAEngineExample >> exampleSStudentOnPackage [
+SGAEngineExample >> exampleSStudentOnPackageWithSMethodCoverage [
 	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
@@ -208,8 +247,17 @@ SGAEngineExample >> exampleSStudentOnPackage [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				<= (engine logs last fittestTestCase fitness at: classFitness nameFunction).
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction)
+				<=
+					(engine logs last fittestTestCase fitness
+						at: classFitness nameFunction).
+	engine clean
+]
+
+{ #category : #'examples - onPackages' }
+SGAEngineExample >> exampleSStudentOnPackageWithSStatementCoverage [
+	| engine classFitness |
 	classFitness := SStatementCoverage.
 	engine := self
 		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
@@ -221,9 +269,12 @@ SGAEngineExample >> exampleSStudentOnPackage [
 		andFitness: classFitness.
 	self
 		assert:
-			(engine logs first fittestTestCase fitness at: classFitness nameFunction)
-				<= (engine logs last fittestTestCase fitness at: classFitness nameFunction).
-	self clean
+			(engine logs first fittestTestCase fitness
+				at: classFitness nameFunction)
+				<=
+					(engine logs last fittestTestCase fitness
+						at: classFitness nameFunction).
+	engine clean
 ]
 
 { #category : #actions }
@@ -239,16 +290,9 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 		typeInfo:
 			(SSGenerator profile: engine blockToExecute onClass: aClass)
 				asTypeInfo;
-		fitness: (aClassFitness coverageOf: aBlock onClass: aClass);
+		fitness: aClassFitness;
 		endForMaxNumberOfGeneration: 15;
-		run.	"[ :aTestCase | 
-			| fitness |
-			fitness := aClassFitness new
-				profiler:
-					(SBProfiler new
-						profileInstrumented: engine blockToExecute onClass: aClass;
-						yourself).
-			fitness run: aTestCase ]"
+		run.
 	^ engine
 ]
 
@@ -265,16 +309,8 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: a
 		typeInfo:
 			(SSGenerator profile: engine blockToExecute onPackagesMatching: regex)
 				asTypeInfo;
-		fitness: (aClassFitness coverageOf: aBlock onPackagesMatching: regex);
+		fitness: aClassFitness;
 		endForMaxNumberOfGeneration: 15;
-		run.	"[ :aTestCase | 
-			| fitness |
-			fitness := aClassFitness new
-				profiler:
-					(SBProfiler new
-						profileInstrumented: engine blockToExecute
-							onPackagesMatching: regex;
-						yourself).
-			fitness run: aTestCase ]"
+		run.
 	^ engine
 ]

@@ -7,8 +7,13 @@ Class {
 	#category : #'SmallSuiteGenerator-Fitness'
 }
 
+{ #category : #'as yet unclassified' }
+SFitnessFunction class >> allFitnessFunction [
+	^ self subclassResponsibility 
+]
+
 { #category : #accessing }
-SFitnessFunction class >> clear [
+SFitnessFunction class >> clean [
 	self subclassResponsibility
 ]
 
