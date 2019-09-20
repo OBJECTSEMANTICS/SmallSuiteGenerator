@@ -47,13 +47,13 @@ SSTestCase >> addFactoryMessage: aClassName [
 
 { #category : #adding }
 SSTestCase >> addFactoryMessage: aClassName ofSelector: aSelector [
-	
-	^ [self
+	^ [ self
 		addAssignment:
 			(self
-				factoryMessageUsing: (self typeInfo typeOf: aSelector fromMetaClassName: aClassName)
-				before: nil)] on: KeyNotFound 
-			do: [ self addFactoryMessage: aClassName ]
+				factoryMessageUsing: (typeInfo type: aSelector fromMetaClassName: aClassName)
+				before: nil) ]
+		on: SError
+		do: [ self addFactoryMessage: aClassName ]
 ]
 
 { #category : #adding }
@@ -76,8 +76,12 @@ SSTestCase >> addFieldAccessMessage [
 SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
 	anAccessor := (typeInfo classAt: aClassName) methodOf: aSelector.
-	anAccessor isQuick
-		ifFalse: [ self error: 'the method must be an accessor message' ].
+	anAccessor := (self pickAccessorsOf: aClassName)
+		detect: [ :accessor | accessor selector = aSelector ]
+		ifNone: [ self
+				error:
+					'the receiver of: ' , aSelector , ' does not match with: '
+						, aClassName ].
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
 	^ self addFieldAccessMessage: anAccessor withReceiver: receiver
 ]
@@ -90,8 +94,9 @@ SSTestCase >> addFieldAccessMessage: method withReceiver: receiver [
 
 { #category : #adding }
 SSTestCase >> addLiteral [
-	typeInfo scalars ifEmpty: [ self error: 'scalars are not defined' ].
-	^ self addLiteral: typeInfo scalars keys shuffle anyOne
+
+	typeInfo scalars
+		ifNotEmpty: [ ^ self addLiteral: typeInfo scalars keys shuffle anyOne ]
 ]
 
 { #category : #adding }
@@ -111,7 +116,13 @@ SSTestCase >> addMessage [
 { #category : #actions }
 SSTestCase >> addMessage: aSelector from: aClassName [
 	| receiver aMethod |
-	aMethod := (typeInfo classAt: aClassName) methodOf: aSelector.
+	aMethod := (self pickMessagesOf: aClassName)
+		, (typeInfo factoryMessagesFrom: aClassName)
+		detect: [ :aMessage | aMessage selector = aSelector ]
+		ifNone: [ self
+				error:
+					'the receiver of: ' , aSelector , ' does not match with: '
+						, aClassName ].
 	aMethod isQuick
 		ifTrue: [ self error: 'the method must be a message, not accessor message' ].
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
@@ -175,7 +186,7 @@ SSTestCase >> allVarNames [
 SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
 	| returnType |
 	returnType := aFactoryMessage returnType.
-	^ (typeInfo factoryMethods: returnType)
+	^ (typeInfo factoryMessagesFrom: returnType)
 		detect: [ :meth | 
 			meth returnType = returnType
 				and: [ meth selector ~= aFactoryMessage selector ] ]
@@ -251,14 +262,17 @@ SSTestCase >> buildArgs: argTypes before: aStatement [
 				thenSelect: [ :aType | aType isNotNil ].
 			typesToAdd := ((argTypes flatCollect: [ :arg | arg types ])
 				reject: [ :aType | types includes: aType ]) asSet.
-			
-			(typeInfo scalars keys includesAll: typesToAdd)
-				ifFalse: [ ^ self error: 'error to create args' ].
+			typesToAdd := self satisfyTypes: typesToAdd before: aStatement.
 			typesToAdd
 				do: [ :type | 
 					self
 						addStatement: (self newAssignment: (self newLiteral: type))
 						before: aStatement ] ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> changeMessageNotUnderstood: aSelector from: aClassName [
+	^ false
 ]
 
 { #category : #'as yet unclassified' }
@@ -272,11 +286,30 @@ SSTestCase >> changeStatement [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> changeStatement: aStatement [
-	|statementChanged|
-	statementChanged := aStatement copy repairOn: self changing: aStatement.
-	(self statementAt: aStatement)
-		replaceBy: statementChanged.
-		^ statementChanged
+	| statementChanged |
+	statementChanged := aStatement copy
+		repairOn: self
+		changing: aStatement.
+	(self statementAt: aStatement) replaceBy: statementChanged.
+	^ statementChanged
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> changeStatementOfClassName: aClassName [
+	| varExpressions changed |
+	
+	varExpressions := self messagesVariablesFrom: aClassName.
+	changed := false.
+	"if the expression can't be replaced by another, then it will be removed"
+	varExpressions
+		do: [ :var | 
+			| changedStm origStm |
+			origStm := self statementOfVarName: var printString.
+			changedStm := self changeStatement: origStm.
+			changedStm = origStm
+				ifTrue: [ self removeStatementNoRepairing: origStm ]
+				ifFalse: [ changed := true ] ].
+	^ changed
 ]
 
 { #category : #removing }
@@ -286,10 +319,12 @@ SSTestCase >> changeStatementOfVarName: varName [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> computeFitness: fitnessClass [
-	"fitness := fitnessBlock value: self"
-	|valueFitness |
+
+	| valueFitness |
 	valueFitness := fitnessClass computeFitness: self.
-	[fitness addAll: valueFitness ] on: MessageNotUnderstood do: [ fitness add: valueFitness ]
+	[ fitness addAll: valueFitness ]
+		on: MessageNotUnderstood
+		do: [ fitness add: valueFitness ]
 ]
 
 { #category : #copying }
@@ -404,7 +439,7 @@ SSTestCase >> insertStatement [
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
 		whileTrue: [ self insertRandomStatement.
 			l := l + 1.
-			count := count + 1 ].
+			count := count + 1 ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -429,6 +464,27 @@ SSTestCase >> messageUsing: method and: receiver before: aStatement [
 				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> messagesVariablesFrom: aClassName [
+	|varExpressions|
+	varExpressions := self
+		messagesVariablesWhichContain: aClassName
+		before: nil.
+	varExpressions ifEmpty: [ 
+		(typeInfo classes at: aClassName) subclasses detect: [ :aClass | 
+			varExpressions := self messagesVariablesWhichContain: aClass name before: nil.
+			varExpressions isNotEmpty ] ifNone: [  ]
+		 ].
+	^ varExpressions
+]
+
+{ #category : #querying }
+SSTestCase >> messagesVariablesWhichContain: aClassName before: aStatement [
+	^ (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+		select: [ :stm | stm referenceTo: aClassName ]
+		thenCollect: [ :stm | stm variable ]
+]
+
 { #category : #'instance creation' }
 SSTestCase >> newAssignment: anExpression [
 	^ SAssignment
@@ -446,7 +502,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 	^ typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
-			methods := typeInfo factoryMethods: aClassName.
+			methods := typeInfo factoryMessagesFrom: aClassName.
 			methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
 				ifNotEmpty: [ self newFactoryMessageUsing: methods and: aStatement ] ]
@@ -523,11 +579,11 @@ SSTestCase >> newStatementOfType: aType before: aStatement [
 			[ ^ self
 				perform: message
 				withEnoughArguments:
-					{aType.
-					aStatement} ]
+					(Array with: aType with:
+					aStatement) ]
 				on: SError
 				do: [ "try with the next one" ] ].
-	^self
+	^ self
 		error: 'Cant create expression with the returnType: ' , aType asString
 ]
 
@@ -558,9 +614,9 @@ SSTestCase >> perform: selector inStatement: stm [
 { #category : #querying }
 SSTestCase >> pickAccessorsOf: aType [
 	^ typeInfo types
-		at: aType
-		ifPresent: [ :value | value accessMessages ]
-		ifAbsent: [ #() ]
+		flatCollect: [ :aClassType | 
+			aClassType accessMessages
+				select: [ :accessMessage | accessMessage receiver types includes: aType ] ]
 ]
 
 { #category : #querying }
@@ -573,7 +629,7 @@ SSTestCase >> pickAnObjectVariable [
 
 { #category : #querying }
 SSTestCase >> pickMessagesOf: aType [
-	^ (typeInfo types at: aType) messages
+	^ typeInfo messagesFrom: aType
 ]
 
 { #category : #querying }
@@ -627,6 +683,7 @@ SSTestCase >> removeStatement [
 	statements ifEmpty: [ ^ #() ].
 	self
 		removeStatement: (statements at: (1 to: self numberStatements) atRandom)
+
 ]
 
 { #category : #removing }
@@ -638,6 +695,18 @@ SSTestCase >> removeStatement: aStatement [
 		flatCollect:
 			[ :stm | self repairParameters: (stm pickUpReferences: stmToRemove) of: stm ].
 	stmtsToRemove do: [ :stm | self removeStatement: stm ]
+]
+
+{ #category : #removing }
+SSTestCase >> removeStatementNoRepairing: aStatement [
+	"remove all statements that reference to statement because this cant be fixed"
+
+	| stmToRemove |
+	stmToRemove := self statementAt: aStatement.
+	statements remove: stmToRemove.
+	(statements copy
+		flatCollect: [ :stm | (stm pickUpReferences: stmToRemove) ifEmpty: [ #() ] ifNotEmpty: [ Array with: stm ] ])
+		do: [ :stm | self removeStatementNoRepairing: stm ]
 ]
 
 { #category : #removing }
@@ -666,6 +735,18 @@ SSTestCase >> repairParameters: expressions of: aStatement [
 	expressions
 		do: [ :expr | [self repairExpression: expr before: aStatement] on: SError do: [ exprsToDelete add: expr. ] ].
 		^ exprsToDelete 
+]
+
+{ #category : #'as yet unclassified' }
+SSTestCase >> satisfyTypes: types before: aStatement [
+	| scalarsKeys scalarTypes nonScalarTypes |
+	scalarsKeys := typeInfo scalars keys.
+	scalarTypes := OrderedCollection new.
+	nonScalarTypes := OrderedCollection new.
+	types do: [ :aType | (scalarsKeys includes: aType) ifTrue: [ scalarTypes add: aType ] ifFalse: [ nonScalarTypes add: aType ]  ].
+	nonScalarTypes
+		do: [ :aType | self addStatementOfType: aType before: aStatement ].
+	^ scalarTypes
 ]
 
 { #category : #accessing }

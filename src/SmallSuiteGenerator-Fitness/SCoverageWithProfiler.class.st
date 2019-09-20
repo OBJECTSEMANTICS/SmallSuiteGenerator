@@ -17,6 +17,15 @@ SCoverageWithProfiler class >> clean [
 			numIteration := 0 ]
 ]
 
+{ #category : #compiling }
+SCoverageWithProfiler class >> compileTestCase: aTestCase [
+	self compilerClassOfCoverage
+				compile:
+					'compileTestCase' , String cr
+						, (self nodeFormattedOf: aTestCase) body formattedCode
+	
+]
+
 { #category : #accessing }
 SCoverageWithProfiler class >> cleanInstrumentation [
 [ profiler cleanInstrumentation ]
@@ -42,10 +51,10 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
 	numIteration <= self maxNumIterations
-		ifTrue: [ [ self compilerClassOfCoverage
+		ifTrue: [ [ self compileTestCase: aTestCase "self compilerClassOfCoverage
 				compile:
 					'compileTestCase' , String cr
-						, (self nodeFormattedOf: aTestCase) body formattedCode ]
+						, (self nodeFormattedOf: aTestCase) body formattedCode" ]
 				on: Error
 				do: [ :e | 
 					self halt.
@@ -84,28 +93,30 @@ SCoverageWithProfiler class >> defaultInitialization [
 ]
 
 { #category : #'as yet unclassified' }
+
 SCoverageWithProfiler class >> defaultInitializationFitness [
 	SCoverageWithProfiler allSubclasses
 		detect: [ :cls | cls profiler isNotNil ]
 		ifFound: [ :cls | self profiler: cls profiler ]
 		ifNone: [ self initializeProfiler ]
 ]
+SCoverageWithProfiler class >> executeStatements [
+	self profiler
+		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ]
+]
 
 { #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
-	[ self profiler
-		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ] ]
+	[ self executeStatements
+	"self profiler
+		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ] " ]
 		on: Exception
 		do: [ :exception | 
 			self halt.
-			numIteration := numIteration + 1
-
-			"(aTestCase
-				changeStatementsOfClassName: (self signalerOfException: exception))
-				ifTrue: [ ^ self
-						calculateCoverageOf: aTestCase
-						using: profiler
-						inLevel: numLevel + 1 ]" ]
+			(SException solve: exception of: aTestCase)
+				ifFalse: [ ^ exception ].
+			numIteration := numIteration + 1.
+			self computeFitness: aTestCase ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -159,9 +170,17 @@ SCoverageWithProfiler class >> profiler: aProfiler [
 ]
 
 { #category : #'as yet unclassified' }
+
 SCoverageWithProfiler class >> stringToCreateNewClass: aClassName with: aSuperClassName and: aPackageName [
 	^ aSuperClassName, ' subclass: #', aClassName, ' 
     instanceVariableNames: ''''
     classVariableNames: ''''
     package: ''', aPackageName, ''''
+]
+
+SCoverageWithProfiler class >> signalerException: exception [
+	"get the className of exception"
+	^ [ exception signaler name ]
+		on: MessageNotUnderstood
+		do: [ exception signaler className ]
 ]

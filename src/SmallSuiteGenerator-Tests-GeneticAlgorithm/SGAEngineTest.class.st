@@ -115,6 +115,26 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSStatementCoverage [
 ]
 
 { #category : #tests }
+SGAEngineTest >> testRunOnClassSStudentManual [
+	| testSuite block utility |
+	utility := SUtilityTypeInfo new.
+	block := [ SStudent new
+		scoreStudent: 34;
+		scoreStudent;
+		idStudent].
+	testSuite := utility testSuiteSStudentManual.
+	engine
+		populationSize: 3;
+		numberOfStatements: 10;
+		blockToExecute: block;
+		endForMaxNumberOfGeneration: 10;
+		typeInfo: utility typeInfosSStudent first;
+		initializePopulationWith: testSuite;
+		fitness: (SStatementCoverage coverageOf: block onClass: SStudent).
+	engine run
+]
+
+{ #category : #tests }
 SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
 	| firstFitness lastFitness function block nameFunction functions |
 	block := [ (SSTeacher name: 'Ann' with: 34)

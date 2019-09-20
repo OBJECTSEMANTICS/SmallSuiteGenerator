@@ -3,7 +3,8 @@ Class {
 	#superclass : #S2Method,
 	#instVars : [
 		'returnType',
-		'argTypes'
+		'argTypes',
+		'receiverType'
 	],
 	#category : #'SmallSuiteGenerator-Profiler'
 }
@@ -17,15 +18,17 @@ SSGeneratorMethod >> argTypes [
 SSGeneratorMethod >> asTypeInfo [
 	^ STypeMethodInfo new
 		selector: selector;
+		receiver: self receiverType;
 		returnType: self returnType;
 		argTypes: self argTypes;
-		isQuick: self isQuick
+		isQuick: self isQuick;
+		isDeprecated: originalMethod isDeprecated
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 	self initArgsTypesWith: listOfArguments.
-	"listOfArguments ifNotEmpty: [ self halt ]."
+	self saveReceiver: receiver.
 	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ]
 ]
 
@@ -40,25 +43,23 @@ SSGeneratorMethod >> checkIfArgIsScalar: arg [
 SSGeneratorMethod >> initArgsTypesWith: args [
 	| classNames |
 	classNames := args collect: [ :arg | arg class name ].
+	"classNames := args
+		collect: [ :arg | 
+			arg isClass
+				ifTrue: [ arg name ]
+				ifFalse: [ arg class name ] ]."
 	argTypes
 		ifNil: [ classNames
 				ifNotEmpty: [ argTypes := classNames
-						collect: [ :aName | STypeReturnInfo new: aName ] ] ]
+						collect: [ :aName | SMultiTypeInfo new: aName ] ] ]
 		ifNotNil: [ self mergeArgsTypes: classNames ]
 ]
 
 { #category : #hooks }
 SSGeneratorMethod >> initialize [
 	super initialize.
-	returnType := STypeReturnInfo new
-]
-
-{ #category : #hooks }
-SSGeneratorMethod >> isFactory [
-	"so its class is meta and it is returning an object of this class"
-
-	returnType type ifNil: [ ^ false ].
-	^ returnType type name == self classSpy nonMetaClassName
+	returnType := SMultiTypeInfo new.
+	receiverType := SMultiTypeInfo new
 ]
 
 { #category : #hooks }
@@ -66,6 +67,12 @@ SSGeneratorMethod >> mergeArgsTypes: args [
 	argTypes
 		with: args
 		do: [ :argType :otherArgType | argType type: otherArgType ]
+]
+
+{ #category : #accessing }
+SSGeneratorMethod >> receiverType [
+	
+	^ receiverType
 ]
 
 { #category : #accessing }
@@ -78,4 +85,10 @@ SSGeneratorMethod >> returnValue: value [
 
 	returnType type: value class name.
 	self checkIfArgIsScalar: value
+]
+
+{ #category : #hooks }
+SSGeneratorMethod >> saveReceiver: aObject [
+	receiverType
+		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
 ]

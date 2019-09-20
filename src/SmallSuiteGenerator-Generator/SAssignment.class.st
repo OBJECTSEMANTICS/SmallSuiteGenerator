@@ -78,6 +78,11 @@ SAssignment >> reference [
 	^ variable
 ]
 
+{ #category : #accessing }
+SAssignment >> referenceTo: aClassName [
+	^ value referenceTo: aClassName
+]
+
 { #category : #mutation }
 SAssignment >> repairOn: aTestCase changing: aExpression [
 	self reference = aExpression reference

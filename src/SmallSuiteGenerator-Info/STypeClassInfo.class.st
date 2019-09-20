@@ -35,7 +35,7 @@ STypeClassInfo class >> type: aAssoc [
 
 { #category : #private }
 STypeClassInfo >> accessMessages [
-	^ (methodTypes values select: #isQuick) select: [ :meth | meth returnType type isNotNil ]
+	^ self messagesAndAccessMessages select: #isQuick
 ]
 
 { #category : #adding }
@@ -74,6 +74,11 @@ STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
 ]
 
+{ #category : #'accessing - read only' }
+STypeClassInfo >> allSelectorsMethods [
+	^ self allMethods collect: #selector
+]
+
 { #category : #'as yet unclassified' }
 STypeClassInfo >> classMethodOf: aSelector [
 	^ classMethodTypes at: aSelector
@@ -95,6 +100,27 @@ STypeClassInfo >> copy [
 	^ copy
 ]
 
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> exportAsCSV: neoCSVWriter [
+	self allMethods
+		do: [ :aMethod | 
+			neoCSVWriter
+				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
+]
+
+{ #category : #private }
+STypeClassInfo >> factoryMessages [
+	^ classMethodTypes values
+]
+
+{ #category : #private }
+STypeClassInfo >> factoryMessagesFrom: aClassName [
+	^ self factoryMessages
+		select: [ :factMessage | 
+			(factMessage isFromReceiver: aClassName)
+				and: [ factMessage isWithReturnType: aClassName ] ]
+]
+
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
@@ -111,7 +137,15 @@ STypeClassInfo >> joinWith: otherTypeClass [
 
 { #category : #private }
 STypeClassInfo >> messages [
-	^ (methodTypes values reject: #isQuick) select: [ :meth | meth returnType type isNotNil ]
+	^ self messagesAndAccessMessages reject: #isQuick
+]
+
+{ #category : #private }
+STypeClassInfo >> messagesAndAccessMessages [
+	^ methodTypes values
+		select: [ :methType | 
+			methType isDeprecated not
+				 and: [ methType returnType isNotNil ] ]
 ]
 
 { #category : #'as yet unclassified' }

@@ -58,18 +58,23 @@ SUtilityRoassal >> typeInfoRTBorderAttachPoint [
 		type:
 			#RTBorderAttachPoint
 				->
-					{{(#initialize
-						->
-							{#RTBorderAttachPoint.
-							{}.
-							false}).
-					(#offset:
-						->
-							{#RTBorderAttachPoint.
-							{#SmallInteger}.
-							false})}.
-					#()};
-		scalar: #SmallInteger with: #(5 )
+					(Array
+						with:
+							(Array
+								with:
+									#initialize
+										->
+											(Array
+												with: #RTBorderAttachPoint
+												with: #RTBorderAttachPoint
+												with: #()
+												with: false)
+								with:
+									#offset:
+										->
+											(Array with: #RTBorderAttachPoint with: #RTBorderAttachPoint with: #(#SmallInteger) with: false))
+						with: #());
+		scalar: #SmallInteger with: #(5)
 ]
 
 { #category : #'as yet unclassified' }
@@ -78,12 +83,12 @@ SUtilityRoassal >> typeInfoRTBox [
 		type:
 			#RTBox
 				->
-					{{(#borderStyle
-						->
-							{#RTBorderStyle.
-							#().
-							false})}.
-					#()};
+					(Array
+						with:
+							(Array
+								with:
+									#borderStyle -> (Array with: #RTBox with: #RTBorderStyle with: #() with: false))
+						with: #());
 		scalar: #RTBorderStyle with: (Array with: RTBorderStyle new)
 ]
 
@@ -95,17 +100,19 @@ SUtilityRoassal >> typeInfosRTAMItem [
 				type:
 					#RTAMItem
 						->
-							{{(#color:
+							(Array with: (Array with: (#color:
 								->
-									{#RTAMItem.
-									{#Color}.
-									false}).
+									(Array with: #RTAMItem
+									with: #RTAMItem
+									with: #(#Color)
+									with: false)) with: 
 							(#itemName:
 								->
-									{#RTAMItem.
-									{#ByteString}.
-									false})}.
-							{}};
+									(Array with: #RTAMItem
+									with: #RTAMItem
+									with: #(#ByteString)
+									with: false))) with: 
+							#());
 				scalar: #ByteString with: #('Bonus Card');
 				scalar: #Color with: (Array with: Color lightCyan));
 		add:
@@ -113,33 +120,31 @@ SUtilityRoassal >> typeInfosRTAMItem [
 				type:
 					#RTAMItem
 						->
-							{{(#row:
+							(Array with: (Array with: (#row:
 								->
-									{#RTAMItem.
-									{#ByteString}.
-									false}).
+									(Array with: #RTAMItem with: #RTAMItem 
+									with: #(#ByteString)
+									with: false)) with: 
 							(#column:
 								->
-									{#RTAMItem.
-									{#ByteString}.
-									false}).
+									(Array with: #RTAMItem with: #RTAMItem
+									with: #(#ByteString)
+									with: false)) with:
 							(#color:
 								->
-									{#RTAMItem.
-									{#Color}.
-									false}).
+									(Array with: #RTAMItem with: #RTAMItem
+									with: #(#Color) with:
+									false)) with:
 							(#itemName:
 								->
-									{#RTAMItem.
-									{#ByteString}.
-									false})}.
-							{}};
+									(Array with: #RTAMItem with: #RTAMItem
+									with: #(#ByteString)
+									with: false))) 
+							with: #());
 				scalar: #ByteString
-					with: #('Corporate Services'  'Australia'  'Contact Management');
+					with: #('Corporate Services' 'Australia' 'Contact Management');
 				scalar: #Color
-					with:
-					(Array with: Color red with:
-					Color lightGreen));
+					with: (Array with: Color red with: Color lightGreen));
 		yourself
 ]
 
@@ -151,17 +156,17 @@ SUtilityRoassal >> typeInfosRTDirectedLine [
 				type:
 					#RTDirectedLine
 						->
-							{{(#initialize
+							(Array with: (Array with: (#initialize
 								->
-									{#RTDirectedLine.
-									{}.
-									false}).
+									(Array with: #RTDirectedLine with: #RTDirectedLine with: 
+									#() with: 
+									false)) with:
 							(#offset:
 								->
-									{#RTDirectedLine.
-									{#SmallFloat64}.
-									false})}.
-							{}};
+									(Array with: #RTDirectedLine with: #RTDirectedLine with: 
+									#(#SmallFloat64) with:
+									false))) with:
+							#());
 				scalar: #SmallFloat64 with: #(6.5);
 				scalar: #SmallInteger with: #(2));
 		add:
@@ -169,17 +174,17 @@ SUtilityRoassal >> typeInfosRTDirectedLine [
 				type:
 					#RTDirectedLine
 						->
-							{{(#pointsFrom:To:
+							(Array with: (Array with: (#pointsFrom:To:
 								->
-									{#Array.
-									{#Point . #Point}.
-									false}).
+									(Array with: #RTDirectedLine with: #Array with: 
+									#(#Point  #Point) with:
+									false)) with: 
 							(#initialize
 								->
-									{#RTDirectedLine.
-									#().
-									false})}.
-							#()};
+									(Array with: #RTDirectedLine with: #RTDirectedLine with: 
+									#() with: 
+									false))) with:
+							#());
 				scalar: #Array with: (Array with: (Array with: 0.0 @ 4.0));
 				scalar: #Point with: (Array with: 3 @ 5));
 		yourself
@@ -193,46 +198,72 @@ SUtilityRoassal >> typeInfosRTLineSegment [
 				type:
 					#RTLineSegment
 						->
-							{{(#to:
-								->
-									{#Point.
-									#(#Point).
-									false}).
-							(#initialize
-								->
-									{#RTLineSegment.
-									#().
-									false}).
-							(#c
-								->
-									{#SmallInteger.
-									#().
-									false}).
-							(#a
-								->
-									{#SmallInteger.
-									#().
-									false}).
-							(#from
-								->
-									{#Point.
-									#().
-									false}).
-							(#b
-								->
-									{#SmallInteger.
-									#().
-									false}).
-							(#from:to:
-								->
-									{#RTLineSegment.
-									#(#Point #Point).
-									false})}.
-							{(#from:to:
-								->
-									{#RTLineSegment.
-									#(#Point #Point).
-									false})}};
+							(Array
+								with:
+									(OrderedCollection new
+										add:
+											#to:
+												->
+													(Array
+														with: #RTLineSegment
+														with: #Point
+														with: #(#Point)
+														with: false);
+										add:
+											#initialize
+												->
+													(Array
+														with: #RTLineSegment
+														with: #RTLineSegment
+														with: #()
+														with: false);
+										add:
+											#c
+												->
+													(Array
+														with: #RTLineSegment
+														with: #SmallInteger
+														with: #()
+														with: false);
+										add:
+											#a
+												->
+													(Array
+														with: #RTLineSegment
+														with: #SmallInteger
+														with: #()
+														with: false);
+										add:
+											#from
+												->
+													(Array
+														with: #RTLineSegment
+														with: #Point
+														with: #()
+														with: false);
+										add:
+											#b
+												->
+													(Array
+														with: #RTLineSegment
+														with: #SmallInteger
+														with: #()
+														with: false);
+										add:
+											#from:to:
+												->
+													(Array with: #RTLineSegment with: #RTLineSegment with: #(#Point #Point) with: false);
+										yourself)
+								with:
+									(Array
+										with:
+											#from:to:
+												->
+													(Array
+														with: #RTLineSegment
+														with: #RTLineSegment
+														with: #(#Point #Point)
+														with: false)));
 				scalar: #Point with: (Array with: 3 @ 4);
 				scalar: #SmallInteger with: #(2 -3 14));
 		add:
@@ -240,46 +271,76 @@ SUtilityRoassal >> typeInfosRTLineSegment [
 				type:
 					#RTLineSegment
 						->
-							{{(#angleInDeg
-								->
-									{#SmallFloat64.
-									#().
-									false}).
-							(#initialize
-								->
-									{#RTLineSegment.
-									#().
-									false}).
-							(#vector
-								->
-									{#Point.
-									#().
-									false}).
-							(#from:to:
-								->
-									{#RTLineSegment.
-									#(#Point #Point).
-									false}).
-							(#cotan
-								->
-									{#Fraction.
-									#().
-									false}).
-							(#angleInRad
-								->
-									{#SmallFloat64.
-									#().
-									false}).
-							(#bottom
-								->
-									{#Point.
-									#().
-									false})}.
-							{(#from:to:
-								->
-									{#RTLineSegment.
-									#(#Point #Point).
-									false})}};
+							(Array
+								with:
+									(OrderedCollection new
+										add:
+											#angleInDeg
+												->
+													(Array
+														with: #RTLineSegment
+														with: #SmallFloat64
+														with: #()
+														with: false);
+										add:
+											#initialize
+												->
+													(Array
+														with: #RTLineSegment
+														with: #RTLineSegment
+														with: #()
+														with: false);
+										add:
+											#vector
+												->
+													(Array
+														with: #RTLineSegment
+														with: #Point
+														with: #()
+														with: false);
+										add:
+											#from:to:
+												->
+													(Array
+														with: #RTLineSegment
+														with: #RTLineSegment
+														with: #(#Point #Point)
+														with: false);
+										add:
+											#cotan
+												->
+													(Array
+														with: #RTLineSegment
+														with: #Fraction
+														with: #()
+														with: false);
+										add:
+											#angleInRad
+												->
+													(Array
+														with: #RTLineSegment
+														with: #SmallFloat64
+														with: #()
+														with: false);
+										add:
+											#bottom
+												->
+													(Array
+														with: #RTLineSegment
+														with: #Point
+														with: #()
+														with: false);
+										yourself)
+								with:
+									(Array
+										with:
+											#from:to:
+												->
+													(Array
+														with: #RTLineSegment
+														with: #RTLineSegment
+														with: #(#Point #Point)
+														with: false)));
 				scalar: #Point with: (Array with: 4 @ 9);
 				scalar: #Fraction with: #(#(1 / 9));
 				scalar: #SmallFloat64 with: #(83.6598 1.4601));

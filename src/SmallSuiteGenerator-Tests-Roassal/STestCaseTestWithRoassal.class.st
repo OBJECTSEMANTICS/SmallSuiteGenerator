@@ -13,6 +13,21 @@ STestCaseTestWithRoassal >> setUp [
 ]
 
 { #category : #tests }
+STestCaseTestWithRoassal >> testChangeMessageNotUnderstoodOnRTSVGOnPackage [
+	| engine |
+	engine := SGAEngineExample new
+		runOnPackagesMatching: 'Roassal2-C*'
+		withBlock: [ | v |
+			v := RTView new.
+			v @ RTDraggableView.
+			v ]
+		andFitness: SStatementCoverage.
+	self halt.
+	self assert: engine fitness: SStatementCoverage.
+	self clean
+]
+
+{ #category : #tests }
 STestCaseTestWithRoassal >> testOnRTAMItem [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfosRTAMItem first.

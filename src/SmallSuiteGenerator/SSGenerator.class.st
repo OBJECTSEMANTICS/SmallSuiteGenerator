@@ -14,8 +14,12 @@ SSGenerator class >> spyClassForPackage [
 
 { #category : #initialization }
 SSGenerator >> addScalar: anObject [
-	| value |
-	value := scalars at: anObject class name ifAbsentPut: [ Set new ].
+	| value objectName |
+	objectName := anObject class name.
+	"objectName := anObject isClass
+		ifTrue: [ anObject name ]
+		ifFalse: [ anObject class name ]."
+	value := scalars at: objectName ifAbsentPut: [ Set new ].
 	value add: anObject
 ]
 
@@ -26,14 +30,6 @@ SSGenerator >> asTypeInfo [
 	self allClasses do: [ :aSpyClass | aSpyClass fillTypesOn: typeInfo ].
 	typeInfo scalars: scalars copy.
 	^ typeInfo
-]
-
-{ #category : #accessing }
-SSGenerator >> classes: collectionClass [
-	allClassesAsDictionaryCache := IdentityDictionary new.
-	collectionClass 
-		do: [ :cls | allClassesAsDictionaryCache at: cls className put: cls ].
-	allClassesCache := collectionClass 
 ]
 
 { #category : #initialization }
@@ -48,19 +44,6 @@ SSGenerator >> isScalar: anObject [
 		at: anObject class name
 		ifAbsent: [ ^ true ].
 	^ false
-]
-
-{ #category : #accessing }
-SSGenerator >> methods: aOrdCollection [
-	allMethodsCache := aOrdCollection 
-]
-
-{ #category : #accessing }
-SSGenerator >> packages: aDictionary [
-	self
-		assert: (aDictionary values allSatisfy: [ :each | each class = SSGeneratorPackage ])
-		description: 'Items must be of class SSGeneratorPackage'.
-	packages := aDictionary 
 ]
 
 { #category : #initialization }

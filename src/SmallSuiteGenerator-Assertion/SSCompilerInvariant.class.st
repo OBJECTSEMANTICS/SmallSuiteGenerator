@@ -33,6 +33,7 @@ SSCompilerInvariant >> compile: aBlock [
 
 { #category : #'as yet unclassified' }
 SSCompilerInvariant >> compiledTest [
+	
 ]
 
 { #category : #'as yet unclassified' }

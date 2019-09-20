@@ -54,3 +54,8 @@ SFactoryMessage >> insertOn: aTestCase [
 SFactoryMessage >> isFactoryMessage [
 	^ true
 ]
+
+{ #category : #accessing }
+SFactoryMessage >> referenceTo: aClassName [
+	^ receiver referenceTo: aClassName
+]

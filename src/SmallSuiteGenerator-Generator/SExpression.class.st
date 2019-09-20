@@ -77,6 +77,11 @@ SExpression >> reference [
 	^ self
 ]
 
+{ #category : #accessing }
+SExpression >> referenceTo: aClassName [
+	^ false
+]
+
 { #category : #mutation }
 SExpression >> repairOn: aTestCase changing: aExpression [
 	

@@ -59,8 +59,9 @@ SSAssertionTest >> testGenerateInvariantCollections [
 					(Array
 						with:
 							(Array
-								with: #returnString -> #(#ByteString #() false)
-								with: #returnFloat -> #(#SmallFloat64 #() false))
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false))
+
 						with: #());
 		scalar: #ByteString with: #('hello');
 		scalar: #SmallFloat64 with: #(3.4).
@@ -96,10 +97,10 @@ SSAssertionTest >> testGenerateInvariantsArray [
 					(Array
 						with:
 							(Array
-								with: #score: -> #(#SFoo #(#Array) false)
-								with: #initialize -> #(#SFoo #() false))
-						with: (Array with: #score: -> #(#SFoo #(#Array) false)));
-		scalar: #Array with: #(#(2 4)).
+								with: #score: -> #(#SFoo #SFoo #(#Array) false)
+								with: #initialize -> #(#SFoo #SFoo #() false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#Array) false)));
+		scalar: #Array with: #(#(2 4)).	
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
 	invariants := testCase generateTestsWith: #().
@@ -120,10 +121,10 @@ SSAssertionTest >> testGenerateInvariantsArray [
 					(Array
 						with:
 							(Array
-								with: #score: -> #(#SFoo #(#Array) false)
-								with: #initialize -> #(#SFoo #() false))
+								with: #score: -> #(#SFoo #SFoo #(#Array) false)
+								with: #initialize -> #(#SFoo #SFoo #() false))
 						with:
-							(Array with: #score: -> #(#SFoo #(#Array) false)));
+							(Array with: #score: -> #(#SFoo #SFoo #(#Array) false)));
 		scalar: #Array with: #(#()).
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
@@ -161,8 +162,8 @@ SSAssertionTest >> testGenerateInvariantsStack [
 					(Array
 						with:
 							(Array
-								with: #push: -> #(#SmallInteger #(#SmallInteger) false)
-								with: #pop -> #(#SmallInteger #() false))
+								with: #push: -> #(#Stack #SmallInteger #(#SmallInteger) false)
+								with: #pop -> #(#Stack #SmallInteger #() false))
 						with: #());
 		scalar: #SmallInteger with: #(1 3).
 	testCase := SSTestCase with: typeInfo.
@@ -210,13 +211,13 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 					(Array
 						with:
 							(Array
-								with: #push: -> #(#ByteString #(#ByteString) false)
-								with: #pop -> #(#ByteString #() false))
+								with: #push: -> #(#SStack #ByteString #(#ByteString) false)
+								with: #pop -> #(#SStack #ByteString #() false))
 						with: #());
 		scalar: #SmallInteger with: #(1);
 		scalar: #ByteString with: #('hello').
-	(typeInfo typeOf: #push: from: #SStack) addType: #SmallInteger.
-	(typeInfo typeOf: #pop from: #SStack) addType: #SmallInteger.
+	(typeInfo type: #push: from: #SStack) addType: #SmallInteger.
+	(typeInfo type: #pop from: #SStack) addType: #SmallInteger.
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.
@@ -260,8 +261,8 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 					(Array
 						with:
 							(Array
-								with: #nickname -> #(#ByteString #() false)
-								with: #initialize -> #(#SStudent #() false))
+								with: #nickname -> #(#SStudent #ByteString #() false)
+								with: #initialize -> #(#SStudent #SStudent #() false))
 						with: #()).
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
@@ -307,8 +308,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 					(Array
 						with:
 							(Array
-								with: #initialize -> #(#SStack #() false)
-								with: #push: -> #(#SmallInteger #(#SmallInteger) false))
+								with: #initialize -> #(#SStack #SStack #() false)
+								with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false))
 						with: #());
 		scalar: #SmallInteger with: #(1).
 	testCase := SSTestCase with: typeInfo.
@@ -329,8 +330,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 					(Array
 						with:
 							(Array
-								with: #initialize -> #(#SFoo #() false)
-								with: #return: -> #(#ByteString #(#ByteString) false))
+								with: #initialize -> #(#SFoo #SFoo #() false)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
 						with: #());
 		scalar: #ByteString with: #('hello World').
 	testCase := SSTestCase with: typeInfo.
@@ -353,8 +354,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 					(Array
 						with:
 							(Array
-								with: #initialize -> #(#SFoo #() false)
-								with: #return: -> #(#SmallFloat64 #(#SmallFloat64) false))
+								with: #initialize -> #(#SFoo #SFoo #() false)
+								with: #return: -> #(#SFoo #SmallFloat64 #(#SmallFloat64) false))
 						with: #());
 		scalar: #SmallFloat64 with: #(2.34).
 	testCase := SSTestCase with: typeInfo.
@@ -375,8 +376,8 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 					(Array
 						with:
 							(Array
-								with: #initialize -> #(#SFoo #() false)
-								with: #return: -> #(#True #(#True) false))
+								with: #initialize -> #(#SFoo #SFoo #() false)
+								with: #return: -> #(#SFoo #True #(#True) false))
 						with: #());
 		scalar: #True with: {true}.
 	testCase := SSTestCase with: typeInfo.
@@ -402,11 +403,11 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 					(Array
 						with:
 							(Array
-								with: #initialize -> #(#SStack #() false)
-								with: #push: -> #(#SmallInteger #(#SmallInteger) false)
-								with: #pop -> #(#SmallInteger #() false)
-								with: #top -> #(#SmallInteger #() false))
-						with: (Array with: #newStackWith: -> #(#SStack #(#Array) false)));
+								with: #initialize -> #(#SStack #SStack #() false)
+								with: #push: -> #(#SStack  #SmallInteger #(#SmallInteger) false)
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 		scalar: #Array with: #(#(2 4 6 1));
 		scalar: #SmallInteger with: #(8).
 	testCase := SSTestCase with: typeInfo.
@@ -422,14 +423,14 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 					(Array
 						with:
 							(Array
-								with: #initialize -> #(#SStack #() false)
+								with: #initialize -> #(#SStack #SStack #() false)
 								with:
-									#push: -> #(#ByteString #(#ByteString) false)
-								with: #pop -> #(#ByteString #() false)
-								with: #top -> #(#ByteString #() false))
+									#push: -> #(#SStack #ByteString #(#ByteString) false)
+								with: #pop -> #(#SStack #ByteString #() false)
+								with: #top -> #(#SStack #ByteString #() false))
 						with:
 							(Array with:
-								#newStackWith: -> #(#SStack #(#Array) false)));
+								#newStackWith: -> #(#SStack #SStack #(#Array) false)));
 		scalar: #Array with: #(#('abcd' 'efg' 'hij' 'klmn'));
 		scalar: #ByteString with: #('opqr').
 	testCase := SSTestCase with: typeInfo.

@@ -22,26 +22,16 @@ SGAMutationOperationTest >> testMutation [
 		type:
 			#SStack
 				->
-					(Array with: (Array with: (#push:
-						->
-							#(#SmallInteger
-							#(#SmallInteger)
-							false)) with:
-					(#pop
-						->
-							#(#SmallInteger
-							#()
-							false)) with:
-					(#top
-						->
-							#(#SmallInteger
-							#()
-							false))) with: 
-					(Array with: (#newStackWith:
-						->
-							#(#SStack
-							#(#Array)
-							false)))).
+					(Array
+						with:
+							(Array
+								with:
+									#push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with:
+							(Array with:
+								#newStackWith: -> #(#SStack #SStack #(#Array) false))).
 	typeInfo
 		scalar: #SmallInteger with: #(8);
 		scalar: #Array with: #(#(2 4 6 1)).
@@ -75,6 +65,22 @@ SGAMutationOperationTest >> testMutationSStudentManual [
 	self assert: mutatedTestCase validReferences.
 	
 testCase := testSuite  second.
+	"testCase generateStatements."
+	mutatedTestCase := operation mutate: testCase.
+	mutatedTestCase := operation mutate: mutatedTestCase.
+	self assert: mutatedTestCase validReferences
+]
+
+{ #category : #tests }
+SGAMutationOperationTest >> testMutationSStudentWithValidReferences [
+	| testCase mutatedTestCase testSuite |
+	testSuite := utility testSuiteSStudentManual.
+	testCase := testSuite third.
+	"testCase generateStatements."
+	mutatedTestCase := operation mutate: testCase.
+	mutatedTestCase := operation mutate: mutatedTestCase.
+	self assert: mutatedTestCase validReferences.
+	testCase := testSuite third.
 	"testCase generateStatements."
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.

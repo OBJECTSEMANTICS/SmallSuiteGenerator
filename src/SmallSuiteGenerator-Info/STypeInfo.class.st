@@ -5,10 +5,19 @@ Class {
 		'types',
 		'classes',
 		'noneAbstractClasses',
-		'scalars'
+		'scalars',
+		'filename'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> accessMessagesFrom: aClassName [
+	^ types
+		flatCollect: [ :aClassType | 
+			aClassType accessMessages
+				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
+]
 
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
@@ -30,10 +39,17 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 
 { #category : #accessing }
 STypeInfo >> classes [
-	classes ifNil:[
-		classes := types keys collect:[ :className | Smalltalk at: className].
-		].
-	^ classes.
+	classes
+		ifNil: [ classes := Dictionary new.
+			types
+				keysDo:
+					[ :aClassName | classes at: aClassName put: (Smalltalk at: aClassName) ] ].
+	^ classes
+]
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> cleanFile [
+	filename asFileReference ensureDelete
 ]
 
 { #category : #copying }
@@ -51,22 +67,43 @@ STypeInfo >> error: aString [
 	^ SError signal: aString
 ]
 
+{ #category : #'as yet unclassified' }
+STypeInfo >> exportAsCSV: neoCSVWriter [
+	types do: [ :type | type exportAsCSV: neoCSVWriter  ]
+]
+
+{ #category : #'export as CSV' }
+STypeInfo >> exportCSV: aString [
+	(self filename: aString)
+		writeStreamDo: [ :stream | 
+			| neoCSVWriter |
+			neoCSVWriter := (NeoCSVWriter on: stream)
+				nextPut:
+					#('ClassName' 'MethodName' 'Receivers' 'CommSupcls' 'ArgTypes' 'CommSupcls' 'ReturnTypes' 'CommSupcls').
+			self exportAsCSV: neoCSVWriter.
+			neoCSVWriter flush ]
+]
+
 { #category : #lookup }
-STypeInfo >> factoryMethods: className [
+STypeInfo >> factoryMessagesFrom: aClassName [
 	^ types
-		at: className
-		ifPresent: [ :classInfo | 
-			classInfo classMethodTypes associations
-				select: [ :assoc | assoc value returnType type = className ]
-				thenCollect: [ :assoc | assoc value ] ]
-		ifAbsent: [ #() ]
+		flatCollect: [ :aClassType | 
+			aClassType factoryMessages
+				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
+]
+
+{ #category : #accessing }
+STypeInfo >> filename: aString [
+filename := aString, '.csv'.
+	^ filename asFileReference
 ]
 
 { #category : #initialization }
 STypeInfo >> initialize [
 	super initialize.
 	types := Dictionary new.
-	scalars := Dictionary new
+	scalars := Dictionary new.
+	filename := 'typeInfo'
 ]
 
 { #category : #'as yet unclassified' }
@@ -86,17 +123,24 @@ STypeInfo >> joinWith: otherTypeInfo [
 		self joinScalars: otherTypeInfo scalars
 ]
 
+{ #category : #'as yet unclassified' }
+STypeInfo >> messagesFrom: aClassName [
+	^ types
+		flatCollect: [ :aClassType | 
+			aClassType messages
+				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
+]
+
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
 	noneAbstractClasses
-		ifNil: [ noneAbstractClasses := self classes
+		ifNil: [ noneAbstractClasses := self classes values
 				reject: [ :aClass | 
 					aClass isAbstract
-						or: [ (aClass methods select: #isAbstract) isNotEmpty or: [ 
-								(aClass methods select: [ :meth | meth literals includes: #subclassResponsibility ]) isNotEmpty
-								
-								 ] ] ] ].
-				
+						or: [ (aClass methods select: #isAbstract) isNotEmpty
+								or: [ (aClass methods
+										select: [ :meth | meth literals includes: #subclassResponsibility ])
+										isNotEmpty ] ] ] ].
 	^ noneAbstractClasses
 ]
 
@@ -127,13 +171,18 @@ STypeInfo >> type: aAssoc [
 ]
 
 { #category : #lookup }
-STypeInfo >> typeOf: aSelector from: aClassName [
-	^ (types at: aClassName) methodOf: aSelector
+STypeInfo >> type: aSelector from: aClassName [
+	types valuesDo: [ :aTypeClassInfo | 
+			aTypeClassInfo messagesAndAccessMessages
+				detect: [ :aMessage | 
+					(aMessage isFromReceiver: aClassName)
+						and: [ aMessage selector = aSelector ] ] ifFound: [:aMessage | ^ aMessage ] ifNone: [false]].
+		^ self error: aSelector , ' not found in: ' , aClassName
 ]
 
 { #category : #lookup }
-STypeInfo >> typeOf: aSelector fromMetaClassName: aClassName [
-	^ (types at: aClassName) classMethodOf: aSelector
+STypeInfo >> type: aSelector fromMetaClassName: aClassName [
+	^ (self factoryMessagesFrom: aClassName) detect: [ :aMessage | aMessage selector = aSelector  ] ifNone: [ self error: aSelector , ' not found in: ' , aClassName ]
 ]
 
 { #category : #accessing }

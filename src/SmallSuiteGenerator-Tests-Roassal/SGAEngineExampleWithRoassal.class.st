@@ -4,6 +4,27 @@ Class {
 	#category : #'SmallSuiteGenerator-Tests-Roassal'
 }
 
+{ #category : #'examples - onPackages' }
+SGAEngineExampleWithRoassal >> assert: engine fitness: function [
+	self assert: ((engine logs first fittestTestCase fitness
+		at: function nameFunction) <= engine logs last fittestTestCase fitness
+		at: function nameFunction)
+]
+
+{ #category : #'examples - onPackages' }
+SGAEngineExampleWithRoassal >> assert: log fitness: function equals: aValue [
+	self
+		assert: (log fittestTestCase fitness at: function nameFunction) equals: aValue
+]
+
+{ #category : #'examples - onPackages' }
+SGAEngineExampleWithRoassal >> assert: log fitness: function greaterThanValue: aValue [
+	self
+		assert:
+			(log fittestTestCase fitness
+				at: function nameFunction) >= aValue
+]
+
 { #category : #actions }
 SGAEngineExampleWithRoassal >> clean [
 	SMultiFitnessFunction clean.
@@ -14,8 +35,9 @@ SGAEngineExampleWithRoassal >> clean [
 ]
 
 { #category : #'examples - onClass' }
-SGAEngineExampleWithRoassal >> exampleRTAMItemOnClass [
-	|engine |
+SGAEngineExampleWithRoassal >> exampleRTAMItemOnClassWithSMethodCoverage [
+	| engine function |
+	function := SMethodCoverage.
 	engine := SGAEngineExample new
 		runOnClass: RTAMItem
 		withBlock: [ RTAMItem new
@@ -23,9 +45,22 @@ SGAEngineExampleWithRoassal >> exampleRTAMItemOnClass [
 				row: 'France';
 				column: 'Customer Relationship';
 				color: Color lightGreen ]
-		andFitness: SMethodCoverage.
-	self assert: engine logs first fittestTestCase fitness >= 7.14.	"7.14 = (1/14) * 100"
-	self assert: engine logs last fittestTestCase fitness equals: 35.71.	"35.71 = (4/14) * 100"
+		andFitness: function.
+	self
+		assert:
+			(engine logs first fittestTestCase fitness
+				at: function nameFunction) >= 7.14.	"7.14 = (1/14) * 100"
+	self
+		assert:
+			(engine logs last fittestTestCase fitness
+				at: function nameFunction)
+		equals: 35.71	"35.71 = (4/14) * 100"
+]
+
+{ #category : #'examples - onClass' }
+SGAEngineExampleWithRoassal >> exampleRTAMItemOnClassWithSStatementCoverage [
+	|engine function |
+	function := SStatementCoverage.
 	engine := SGAEngineExample new
 		runOnClass: RTAMItem
 		withBlock: [ RTAMItem new
@@ -33,15 +68,16 @@ SGAEngineExampleWithRoassal >> exampleRTAMItemOnClass [
 				row: 'France';
 				column: 'Customer Relationship';
 				color: Color lightGreen ]
-		andFitness: SStatementCoverage.
-	self assert: engine logs first fittestTestCase fitness >= 31.58.	"31.58 = (6/19) * 100"
-	self assert: engine logs last fittestTestCase fitness equals: 52.63.	"52.63 = (10/19) * 100"
+		andFitness: function.
+	self assert: (engine logs first fittestTestCase fitness at: function nameFunction) >= 31.58.	"31.58 = (6/19) * 100"
+	self assert: (engine logs last fittestTestCase fitness at: function nameFunction) equals: 52.63.	"52.63 = (10/19) * 100"
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTAMItemOnPackage [
-	|  engine |
+	| engine function |
+	function := SStatementCoverage.
 	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2'
 		withBlock: [ RTAMItem new
@@ -49,11 +85,9 @@ SGAEngineExampleWithRoassal >> exampleRTAMItemOnPackage [
 				row: 'France';
 				column: 'Customer Relationship';
 				color: Color lightGreen ]
-		andFitness: SStatementCoverage.
+		andFitness: function.
 	self
-		assert:
-			engine logs first fittestTestCase fitness
-				<= engine logs last fittestTestCase fitness.
+		assert: engine fitness: function.
 	self clean
 ]
 
@@ -65,32 +99,27 @@ SGAEngineExampleWithRoassal >> exampleRTBorderAttachPointOnClass [
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
 		andFitness: SMethodCoverage.
 	"At least the constructor must be initialized"
-	
-	self assert: engine logs first fittestTestCase fitness >= 12.5.	"12.5 = (1/8) * 100"
-	self assert: engine logs last fittestTestCase fitness >= 25.	"25 = (2/8) * 100 round: 2"
-	
+	self assert: engine logs first fitness: SMethodCoverage greaterThanValue: 12.5.	"12.5 = (1/8) * 100"
+	self assert: engine logs last fitness: SMethodCoverage  greaterThanValue: 25.	"25 = (2/8) * 100 round: 2"
 	engine := SGAEngineExample new
 		runOnClass: RTBorderAttachPoint
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
 		andFitness: SStatementCoverage.
-	self assert: engine logs first fittestTestCase fitness >= 6.45.	"6.45 = (2/31) * 100"
-	self assert: engine logs last fittestTestCase fitness >= 9.68.	"9.68 = (3/31) * 100 round: 2"
-	
+	self assert: engine logs first fitness: SStatementCoverage greaterThanValue: 6.45.	"6.45 = (2/31) * 100"
+	self assert: engine logs last fitness: SStatementCoverage greaterThanValue: 9.68.	"9.68 = (3/31) * 100 round: 2"
 	self clean
 ]
 
 { #category : #'examples - onPackages' }
 SGAEngineExampleWithRoassal >> exampleRTBorderAttachPointPackage [
-	| engine  |
+	| engine |
 	engine := SGAEngineExample new
 		runOnPackagesMatching: 'Roassal2-Cor*'
 		withBlock: [ RTBorderAttachPoint instance offset: 4 ]
 		andFitness: SStatementCoverage.
 	self
 		assert:
-			engine logs first fittestTestCase fitness
-				<= engine logs last fittestTestCase fitness.
-	
+			engine fitness: SStatementCoverage.
 	self clean
 ]
 
@@ -102,17 +131,17 @@ SGAEngineExampleWithRoassal >> exampleRTBoxOnClass [
 		withBlock: [ RTBox new
 				defaultWidth;
 				borderStyle ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness equals: 20.	"20 = (1/5) * 100"
-	self assert: engine logs last fittestTestCase fitness equals: 20.	
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fitness: SMethodCoverage equals: 20.	"20 = (1/5) * 100"
+	self assert: engine logs last fitness: SMethodCoverage equals: 20.
 	engine := SGAEngineExample new
 		runOnClass: RTBox
 		withBlock: [ RTBox new
 				defaultWidth;
 				borderStyle ]
-		andFitness: SStatementCoverage .
-	self assert: engine logs first fittestTestCase fitness equals: 22.22.	"22.22 = (2/9) * 100"
-	self assert: engine logs last fittestTestCase fitness equals: 22.22.	
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fitness: SStatementCoverage  equals: 22.22.	"22.22 = (2/9) * 100"
+	self assert: engine logs last fitness: SStatementCoverage equals: 22.22.
 	self clean
 ]
 
@@ -124,11 +153,10 @@ SGAEngineExampleWithRoassal >> exampleRTBoxOnPackage [
 		withBlock: [ RTBox new
 				defaultWidth;
 				borderStyle ]
-		andFitness: SStatementCoverage .
+		andFitness: SStatementCoverage.
 	self
 		assert:
-			engine logs first fittestTestCase fitness
-				<= engine logs last fittestTestCase fitness.
+			engine fitness: SStatementCoverage .
 	self clean
 ]
 
@@ -178,11 +206,11 @@ SGAEngineExampleWithRoassal >> exampleRTCalendarBuilderOnClass [
 						, ' Methods' ].
 			b dates: (dictByDate keys min to: dictByDate keys max).
 			b ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness >= 4.17.	"4.17 = 1/24 * 100"
-	self assert: engine logs last fittestTestCase fitness >= 4.17.	
-	
-	
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fitness: SMethodCoverage greaterThanValue: 4.17.	"4.17 = 1/24 * 100"
+	self assert: engine logs last fitness: SMethodCoverage greaterThanValue:  4.17.
+
+
 	"StatementCoverage: >=17.36 = 21/121 * 100"
 	self clean
 ]
@@ -236,8 +264,7 @@ SGAEngineExampleWithRoassal >> exampleRTCalendarOnPackage [
 		andFitness: SStatementCoverage.
 	self
 		assert:
-			engine logs first fittestTestCase fitness
-				<= engine logs last fittestTestCase fitness.
+			engine fitness: SStatementCoverage .
 	self clean
 ]
 
@@ -249,19 +276,17 @@ SGAEngineExampleWithRoassal >> exampleRTDirectedLineOnClass [
 		withBlock: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness >= 20. "20 = (1/5) * 100 round: 2"
-	self assert: engine logs first fittestTestCase fitness equals: 60. "60 = (3/5) * 100 round: 2"
-	
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fitness: SMethodCoverage greaterThanValue:  20.	"20 = (1/5) * 100 round: 2"
+	self assert: engine logs first fitness: SMethodCoverage  equals: 60.	"60 = (3/5) * 100 round: 2"
 	engine := SGAEngineExample new
 		runOnClass: RTDirectedLine
 		withBlock: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
-		andFitness: SStatementCoverage  .
-	self assert: engine logs first fittestTestCase fitness >= 18.18. "18.18 = (2/11) * 100 round: 2"
-	self assert: engine logs first fittestTestCase fitness equals: 54.55. "54.55 = (6/11) * 100 round: 2"
-
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fitness: SStatementCoverage greaterThanValue:  18.18.	"18.18 = (2/11) * 100 round: 2"
+	self assert: engine logs first fitness: SStatementCoverage   equals: 54.55.	"54.55 = (6/11) * 100 round: 2"
 	self clean
 ]
 
@@ -273,11 +298,10 @@ SGAEngineExampleWithRoassal >> exampleRTDirectedLineOnPackage [
 		withBlock: [ RTDirectedLine instance
 				pointsFrom: 1 @ 3 To: 3 @ 5;
 				offset: 6.5 ]
-		andFitness: SMethodCoverage .
+		andFitness: SMethodCoverage.
 	self
 		assert:
-			engine logs first fittestTestCase fitness
-				<= engine logs last fittestTestCase fitness.
+			engine fitness: SMethodCoverage .
 	self clean
 ]
 
@@ -292,8 +316,8 @@ SGAEngineExampleWithRoassal >> exampleRTLineSegmentOnClass [
 				cotan;
 				bottom ]
 		andFitness: SMethodCoverage.
-	self assert: engine logs first fittestTestCase fitness >= 2.94.	"2.94 = (1/34) * 100 round: 2"
-	self assert: engine logs first fittestTestCase fitness >= 23.53.	"23.53 = (8/34) * 100 round: 2"
+	self assert: engine logs first fitness: SMethodCoverage greaterThanValue:  2.94.	"2.94 = (1/34) * 100 round: 2"
+	self assert: engine logs first fitness: SMethodCoverage greaterThanValue:  23.53.	"23.53 = (8/34) * 100 round: 2"
 	engine := SGAEngineExample new
 		runOnClass: RTLineSegment
 		withBlock: [ (RTLineSegment from: 4 @ 9 to: 5 @ 18)
@@ -302,8 +326,8 @@ SGAEngineExampleWithRoassal >> exampleRTLineSegmentOnClass [
 				cotan;
 				bottom ]
 		andFitness: SMethodCoverage.
-	self assert: engine logs first fittestTestCase fitness >= 2.88.	"2.88 = (3/104) * 100 round: 2"
-	self assert: engine logs first fittestTestCase fitness >= 13.46.	"13.46 = (14/104) * 100 round: 2"
+	self assert: engine logs first fitness: SStatementCoverage  greaterThanValue:  2.88.	"2.88 = (3/104) * 100 round: 2"
+	self assert: engine logs first fitness: SStatementCoverage  greaterThanValue:  13.46.	"13.46 = (14/104) * 100 round: 2"
 	self clean
 ]
 
@@ -317,9 +341,9 @@ SGAEngineExampleWithRoassal >> exampleRTLineSegmentOnPackage [
 				angleInRad;
 				cotan;
 				bottom ]
-		andFitness: SStatementCoverage .
-	self assert: engine logs first fittestTestCase fitness <=  engine logs last fittestTestCase fitness.
-	
+		andFitness: SStatementCoverage.
+	self
+		assert:engine fitness: SStatementCoverage .
 	self clean
 ]
 
@@ -347,11 +371,10 @@ edges := { 1 -> 2 . 1 -> 4 . 4 -> 3 }.
 			b edges source: edges connectFrom: #key to: #value.
 			b layout force.
 			b ]
-		andFitness: SStatementCoverage .
-	self assert: engine logs first fittestTestCase fitness >= 6.76. "6.76 = (5/74) * 100"
-	self assert: engine logs last fittestTestCase fitness >= 6.76.
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fitness: SStatementCoverage  greaterThanValue: 6.76.	"6.76 = (5/74) * 100"
+	self assert: engine logs last fitness: SStatementCoverage  greaterThanValue:  6.76.
 	"SMethodCoverage: >= 2.78. 2.78 = (1/36) * 100"
-	
 	self clean
 ]
 
@@ -379,10 +402,8 @@ edges := { 1 -> 2 . 1 -> 4 . 4 -> 3 }.
 			b edges source: edges connectFrom: #key to: #value.
 			b layout force.
 			b ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness <=
- engine logs last fittestTestCase fitness.
-
+		andFitness: SMethodCoverage.
+	self assert: engine fitness: SMethodCoverage.
 	self clean
 ]
 
@@ -404,8 +425,9 @@ SGAEngineExampleWithRoassal >> exampleRTNameCloudExampleOnPackage [
 		v open'.
 			b ]
 		andFitness: SStatementCoverage.
-	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
-
+	self
+		assert:
+			engine fitness: SStatementCoverage .
 	self clean
 ]
 
@@ -430,11 +452,15 @@ SGAEngineExampleWithRoassal >> exampleRTPieBuilderOnClass [
 			b slice: #numberOfMethods.
 			b normalizer distinctColor.
 			b ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness >= 16.67.
-	self assert: engine logs last fittestTestCase fitness >= 16.67.
-	"statementCoverage: >= 15" 
-	
+		andFitness: SMethodCoverage.
+	self
+		assert: engine logs first
+		fitness: SMethodCoverage
+		greaterThanValue: 16.67.
+	self
+		assert: engine logs last
+		fitness: SMethodCoverage
+		greaterThanValue: 16.67.
 	self clean
 ]
 
@@ -460,8 +486,9 @@ SGAEngineExampleWithRoassal >> exampleRTPieOnPackage [
 			b normalizer distinctColor.
 			b ]
 		andFitness: SStatementCoverage.
-	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
-	
+	self
+		assert:
+			engine fitness: SStatementCoverage .
 	self clean
 ]
 
@@ -510,9 +537,8 @@ SGAEngineExampleWithRoassal >> exampleRTSVGOnPackage [
 			v addAll: elements.
 			RTGridLayout on: elements.
 			v ]
-		andFitness: SStatementCoverage .
-	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
-
+		andFitness: SStatementCoverage.self halt.
+	self assert: engine fitness: SStatementCoverage.
 	self clean
 ]
 
@@ -561,11 +587,10 @@ SGAEngineExampleWithRoassal >> exampleRTSVGPathOnClass [
 			v addAll: elements.
 			RTGridLayout on: elements.
 			v ]
-		andFitness: SStatementCoverage .
-	self assert: engine logs first fittestTestCase fitness >= 3.45. "3.45 = (8/232) * 100"
-	self assert: engine logs last fittestTestCase fitness >= 3.45.
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fitness: SStatementCoverage  greaterThanValue:  3.45.	"3.45 = (8/232) * 100"
+	self assert: engine logs last fitness: SStatementCoverage  greaterThanValue:  3.45.
 	"sMethodCoverage: >= 1.07. 1.07 = (2/187) * 100"
-	
 	self clean
 ]
 
@@ -585,10 +610,10 @@ SGAEngineExampleWithRoassal >> exampleRTSpectrographOnClass [
 			b title: 'Proportion of class methods'.
 			b build.
 			b view ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness equals: 20. "20 = (1/5) * 100"
-	self assert: engine logs last fittestTestCase fitness equals: 20.
-	
+		andFitness: SMethodCoverage.
+	self assert: engine logs first fitness: SMethodCoverage equals: 20.	"20 = (1/5) * 100"
+	self assert: engine logs last fitness: SMethodCoverage equals: 20.
+
 	"statementCoverage: =22.22 = (2/9) * 100"
 	self clean
 ]
@@ -609,9 +634,10 @@ SGAEngineExampleWithRoassal >> exampleRTSpectrographOnPackage [
 			b title: 'Proportion of class methods'.
 			b build.
 			b view ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
-	
+		andFitness: SMethodCoverage.
+	self
+		assert:
+			engine fitness: SMethodCoverage .
 	self clean
 ]
 
@@ -632,12 +658,11 @@ SGAEngineExampleWithRoassal >> exampleRTUMLClassBuilderOnClass [
 			b treeLayout.
 			b build.
 			b view ]
-		andFitness: SStatementCoverage .
-	self assert: engine logs first fittestTestCase fitness >= 11.7. "11.7 = (20/171) * 100"
-	self assert: engine logs last fittestTestCase fitness >= 11.7.
-	
+		andFitness: SStatementCoverage.
+	self assert: engine logs first fitness: SStatementCoverage  greaterThanValue:  11.7.	"11.7 = (20/171) * 100"
+	self assert: engine logs last fitness: SStatementCoverage  greaterThanValue:  11.7.
+
 	"statementCoverage: >= 24.53 = (13/53) * 100"
-	
 	self clean
 ]
 
@@ -658,8 +683,8 @@ SGAEngineExampleWithRoassal >> exampleRTUMLClassBuilderOnPackage [
 			b treeLayout.
 			b build.
 			b view ]
-		andFitness: SMethodCoverage .
-	self assert: engine logs first fittestTestCase fitness <= engine logs last fittestTestCase fitness.
-	
+		andFitness: SMethodCoverage.
+	self assert: engine fitness: SMethodCoverage.
+	engine generateAssertionsUsing: #().
 	self clean
 ]

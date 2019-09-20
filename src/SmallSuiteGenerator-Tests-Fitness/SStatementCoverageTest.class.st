@@ -102,13 +102,13 @@ SStatementCoverageTest >> testCoverageOnPackagesSEvent [
 				profile: [ (SEvent price: 15)
 						price;
 						discount ]
-				onPackagesMatching: 'SmallSuiteGenerator-Examples') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Examples-Others') asTypeInfo
 		withNumStatements: 20.
 	fitness
 		coverageOf: [ (SEvent price: 15)
 				price;
 				discount ]
-		onPackagesMatching: 'SmallSuiteGenerator-Examples'.
+		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others'.
 	self assert: (fitness computeFitness: testCase) value <= 75.0
 ]
 

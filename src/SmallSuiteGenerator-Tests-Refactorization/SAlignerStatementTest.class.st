@@ -137,7 +137,7 @@ SAlignerStatementTest >> testAlignMethodStatements2 [
 	testCase := SSTestCase new
 		addStatement:
 			(SLiteral new
-				returnType: (STypeReturnInfo new returnType: #SmallInteger);
+				returnType: (SMultiTypeInfo new returnType: #SmallInteger);
 				value: 45);
 		addStatement:
 			(SFactoryMessage new
