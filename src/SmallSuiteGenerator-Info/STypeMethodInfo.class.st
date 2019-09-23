@@ -115,6 +115,74 @@ STypeMethodInfo >> isQuick: aBoolean [
 	isQuick := aBoolean
 ]
 
+{ #category : #metrics }
+STypeMethodInfo >> isSimpleTyped [
+	"
+	- one type of receiver only one type for each argument
+	"
+
+	^ (Array with: receiver hasOnlyOneType
+	with: returnType hasOnlyOneType
+	with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
+		allSatisfy: #yourself
+]
+
+{ #category : #metrics }
+STypeMethodInfo >> isSimpleTyped2 [
+	"
+	- this guy return the type that he receive 
+	"
+
+	^ (Array with: receiver hasOnlyOneType not
+	with: returnType hasOnlyOneType not
+	with: (receiver equals: returnType)
+	with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
+		allSatisfy: #yourself
+]
+
+{ #category : #metrics }
+STypeMethodInfo >> isSimpleTyped3 [
+	"
+	- this guy return the type that he receive 
+	"
+
+	^ (Array with: receiver hasOnlyOneType not
+	with: (receiver commonSuperclass ~= 'Object')
+	with: returnType hasOnlyOneType
+	with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
+		allSatisfy: #yourself
+]
+
+{ #category : #metrics }
+STypeMethodInfo >> isSimpleTyped4 [
+	"
+	
+	"
+
+	^ (Array with: receiver hasOnlyOneType
+	with: returnType hasOnlyOneType
+	with: (argTypes notNil
+		and: [ argTypes anySatisfy: [ :t | t hasOnlyOneType not ] ])
+	with: (argTypes notNil
+		and: [ argTypes
+				allSatisfy: [ :t | t hasOnlyOneType or: [ t isBlockSymbol ] ] ]))
+		allSatisfy: #yourself
+]
+
+{ #category : #metrics }
+STypeMethodInfo >> isSimpleTyped5 [
+	"
+	
+	"
+
+	^ (Array
+		with: receiver hasOnlyOneType
+		with: (returnType hasOnlyOneType not and: [returnType commonSuperclass = 'Object'])
+		with:
+			(argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
+		allSatisfy: #yourself
+]
+
 { #category : #testing }
 STypeMethodInfo >> isWithReturnType: aClassName [
 	^ returnType types includes: aClassName

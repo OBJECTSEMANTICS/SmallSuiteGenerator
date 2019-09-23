@@ -68,19 +68,24 @@ STypeInfo >> error: aString [
 ]
 
 { #category : #'as yet unclassified' }
-STypeInfo >> exportAsCSV: neoCSVWriter [
-	types do: [ :type | type exportAsCSV: neoCSVWriter  ]
+STypeInfo >> exportAsCSV: neoCSVWriter withFilter: aSymbol [
+	types do: [ :type | type exportAsCSV: neoCSVWriter withFilter: aSymbol ]
 ]
 
 { #category : #'export as CSV' }
 STypeInfo >> exportCSV: aString [
+	self exportCSV: aString withFilter: #all
+]
+
+{ #category : #'export as CSV' }
+STypeInfo >> exportCSV: aString withFilter: aSymbol [
 	(self filename: aString)
 		writeStreamDo: [ :stream | 
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
 				nextPut:
 					#('ClassName' 'MethodName' 'Receivers' 'CommSupcls' 'ArgTypes' 'CommSupcls' 'ReturnTypes' 'CommSupcls').
-			self exportAsCSV: neoCSVWriter.
+			self exportAsCSV: neoCSVWriter withFilter: aSymbol.
 			neoCSVWriter flush ]
 ]
 
@@ -94,7 +99,8 @@ STypeInfo >> factoryMessagesFrom: aClassName [
 
 { #category : #accessing }
 STypeInfo >> filename: aString [
-filename := aString, '.csv'.
+	filename := aString , '.csv'.
+	filename asFileReference ensureDelete.
 	^ filename asFileReference
 ]
 

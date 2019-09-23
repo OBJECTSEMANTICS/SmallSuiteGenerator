@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'typeName',
 		'methodTypes',
-		'classMethodTypes'
+		'classMethodTypes',
+		'setFilter'
 	],
 	#classInstVars : [
 		'classMethodTypes'
@@ -70,13 +71,13 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 ]
 
 { #category : #'accessing - read only' }
-STypeClassInfo >> allMethods [ 	
-	^ methodTypes values , classMethodTypes values
-]
-
-{ #category : #'accessing - read only' }
-STypeClassInfo >> allSelectorsMethods [
-	^ self allMethods collect: #selector
+STypeClassInfo >> allMethods [
+	"| ms |
+	ms := methodTypes values , classMethodTypes values.
+	#(#isSimpleTyped #isSimpleTyped2 #isSimpleTyped3 #isSimpleTyped4)
+		do: [ :key | ms := ms reject: key ].
+	^ ms"
+	^ methodTypes values, classMethodTypes values
 ]
 
 { #category : #'as yet unclassified' }
@@ -101,11 +102,12 @@ STypeClassInfo >> copy [
 ]
 
 { #category : #'as yet unclassified' }
-STypeClassInfo >> exportAsCSV: neoCSVWriter [
-	self allMethods
-		do: [ :aMethod | 
-			neoCSVWriter
-				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
+STypeClassInfo >> exportAsCSV: neoCSVWriter withFilter: aSymbol [
+	| methods |
+	methods := (setFilter includes: aSymbol)
+		ifTrue: [ self allMethods select: aSymbol ]
+		ifFalse: [ self filteredMethods: aSymbol ].
+	self writeCSV: neoCSVWriter with: methods
 ]
 
 { #category : #private }
@@ -121,10 +123,33 @@ STypeClassInfo >> factoryMessagesFrom: aClassName [
 				and: [ factMessage isWithReturnType: aClassName ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> filteredMethods: aSymbol [
+	^ aSymbol = #others
+		ifTrue: [ | methods |
+			methods := self allMethods.
+		setFilter do: [ :key | methods := methods reject: key ].
+		methods
+ ]
+		ifFalse: [ self allMethods ]
+]
+
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
-	classMethodTypes := Dictionary new
+	classMethodTypes := Dictionary new.
+	self initializeSetFilter
+]
+
+{ #category : #initialization }
+STypeClassInfo >> initializeSetFilter [
+	setFilter := Set new
+		add: #isSimpleTyped;
+		add: #isSimpleTyped2;
+		add: #isSimpleTyped3;
+		add: #isSimpleTyped4;
+		add: #isSimpleTyped5;
+		yourself
 ]
 
 { #category : #'as yet unclassified' }
@@ -176,4 +201,12 @@ STypeClassInfo >> typeName [
 { #category : #accessing }
 STypeClassInfo >> typeName: anObject [
 	typeName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> writeCSV: neoCSVWriter with: methods [
+	methods
+		do: [ :aMethod | 
+			neoCSVWriter
+				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
 ]

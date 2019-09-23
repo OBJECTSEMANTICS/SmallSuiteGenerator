@@ -37,9 +37,30 @@ SMultiTypeInfo >> copy [
 	^ copy
 ]
 
+{ #category : #comparing }
+SMultiTypeInfo >> equals: other [
+	(self types size = other types size) ifFalse:[ ^ false.].
+	
+	self types asOrderedCollection  with: (other types asOrderedCollection) do:[ :a :b|
+		(a = b) ifFalse:[^ false].
+	].
+	^ true.
+]
+
+{ #category : #metrics }
+SMultiTypeInfo >> hasOnlyOneType [
+	^ types size <= 1.
+]
+
 { #category : #initialization }
 SMultiTypeInfo >> initialize [
 	types := Set new
+]
+
+{ #category : #metrics }
+SMultiTypeInfo >> isBlockSymbol [
+	
+	^ types size =  2 and:[ (types anySatisfy:[ :t| t= #BlockClosure]) and:[ types anySatisfy:[ :t| t= #ByteSymbol]]].
 ]
 
 { #category : #'as yet unclassified' }
