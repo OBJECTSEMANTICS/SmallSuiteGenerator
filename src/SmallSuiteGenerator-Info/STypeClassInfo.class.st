@@ -4,8 +4,7 @@ Class {
 	#instVars : [
 		'typeName',
 		'methodTypes',
-		'classMethodTypes',
-		'setFilter'
+		'classMethodTypes'
 	],
 	#classInstVars : [
 		'classMethodTypes'
@@ -102,12 +101,9 @@ STypeClassInfo >> copy [
 ]
 
 { #category : #'as yet unclassified' }
-STypeClassInfo >> exportAsCSV: neoCSVWriter withFilter: aSymbol [
-	| methods |
-	methods := (setFilter includes: aSymbol)
-		ifTrue: [ self allMethods select: aSymbol ]
-		ifFalse: [ self filteredMethods: aSymbol ].
-	self writeCSV: neoCSVWriter with: methods
+STypeClassInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
+	
+	self writeDataCSV: neoCSVWriter using: (self filteredMethodsBy: aSymbol)
 ]
 
 { #category : #private }
@@ -124,32 +120,16 @@ STypeClassInfo >> factoryMessagesFrom: aClassName [
 ]
 
 { #category : #'as yet unclassified' }
-STypeClassInfo >> filteredMethods: aSymbol [
-	^ aSymbol = #others
-		ifTrue: [ | methods |
-			methods := self allMethods.
-		setFilter do: [ :key | methods := methods reject: key ].
-		methods
- ]
-		ifFalse: [ self allMethods ]
+STypeClassInfo >> filteredMethodsBy: aSymbol [
+	^ (STypeMethodInfo selectorsFilter includes: aSymbol)
+		ifTrue: [ self allMethods select: aSymbol ]
+		ifFalse: [ self remainingOrAllMethods: aSymbol ]
 ]
 
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
 	classMethodTypes := Dictionary new.
-	self initializeSetFilter
-]
-
-{ #category : #initialization }
-STypeClassInfo >> initializeSetFilter [
-	setFilter := Set new
-		add: #isSimpleTyped;
-		add: #isSimpleTyped2;
-		add: #isSimpleTyped3;
-		add: #isSimpleTyped4;
-		add: #isSimpleTyped5;
-		yourself
 ]
 
 { #category : #'as yet unclassified' }
@@ -184,6 +164,21 @@ STypeClassInfo >> methodTypes [
 ]
 
 { #category : #'as yet unclassified' }
+STypeClassInfo >> remainingOrAllMethods: aSymbol [
+	^ aSymbol = #others
+		ifTrue: [ | methods |
+			methods := self allMethods.
+			STypeMethodInfo selectorsFilter do: [ :key | methods := methods reject: key ].
+			methods ]
+		ifFalse: [ self allMethods ]
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> reportFrequencyByFilter: aSelector [
+	^ (self filteredMethodsBy: aSelector) size
+]
+
+{ #category : #'as yet unclassified' }
 STypeClassInfo >> typeClassMethod: aAssoc [
 	self addClassMethod: (STypeMethodInfo type: aAssoc)
 ]
@@ -204,7 +199,7 @@ STypeClassInfo >> typeName: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-STypeClassInfo >> writeCSV: neoCSVWriter with: methods [
+STypeClassInfo >> writeDataCSV: neoCSVWriter using: methods [
 	methods
 		do: [ :aMethod | 
 			neoCSVWriter
