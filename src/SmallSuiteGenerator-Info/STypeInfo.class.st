@@ -128,11 +128,16 @@ STypeInfo >> randomNoneAbstractClass [
 
 { #category : #'as yet unclassified' }
 STypeInfo >> reportFrequencyByFilter [
-	|report|
+	| report |
 	report := Dictionary new.
-	STypeMethodInfo selectorsFilter do: [ :aSelector | 
-		report at: aSelector put: (types inject: 0 into: [ :sum :type | sum + (type reportFrequencyByFilter: aSelector)]) 
-	 ].
+	(STypeMethodInfo selectorsFilter, #(#others #all))
+		do: [ :aSelector | 
+			report
+				at: aSelector
+				put:
+					(types
+						inject: 0
+						into: [ :sum :type | sum + (type reportFrequencyByFilter: aSelector) ]) ].
 	^ report
 ]
 

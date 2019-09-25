@@ -14,8 +14,9 @@ Class {
 
 { #category : #'as yet unclassified' }
 STypeMethodInfo class >> selectorsFilter [
-	^ self selectors
-		select: [ :aSelector | aSelector beginsWith: 'isSimpleTyped' ]
+	^ (self selectors
+		select: [ :aSelector | aSelector beginsWith: 'isSimpleTyped' ])
+		
 ]
 
 { #category : #'accessing structure variables' }

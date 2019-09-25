@@ -5,25 +5,24 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SReportTypeInfo class >> csvWriterCaseStudy: filename [
-	| neoCSVWriter |
-	(self fileReference: filename) writeStreamDo: [ :stream |
-			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut:
-					#('Classes (#)' 'Methods (#)' 'Test (#)' 'Coverage(%)').
-		 ].
-	^ neoCSVWriter 
-	
+SReportTypeInfo class >> dataCaseStudy: profiler from: projectName [
+		^	(Array
+				with: projectName
+				with: profiler numberOfClasses
+				with: profiler numberOfMethods
+				with:
+					(profiler allMethods
+						collect: #selector
+						thenSelect: [ :selector | selector beginsWith: 'test' ]) size
+				with:
+					(((profiler allMethods count: #wasExecuted) / profiler numberOfMethods)
+						asFloat round: 4) * 100)
 ]
 
 { #category : #'as yet unclassified' }
-SReportTypeInfo class >> csvWriterFrequency: filename [
-	| neoCSVWriter |
-	(self fileReference: filename)
-		writeStreamDo: [ :stream | 
-			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut: #('Patterns') , STypeMethodInfo selectorsFilter sort ].
-	^ neoCSVWriter
+SReportTypeInfo class >> dataFrequency: typeInfo from: projectName [
+	^ (Array with: projectName)
+		, (typeInfo reportFrequencyByFilter associations sort collect: #value)
 ]
 
 { #category : #'export as CSV' }
@@ -55,36 +54,31 @@ SReportTypeInfo class >> exportReportData: projectName usingFilter: aSymbol [
 
 { #category : #'export as CSV' }
 SReportTypeInfo class >> exportReportData: projectName withName: aString [
-	self exportData: (self profilerProject: projectName) onCSV: aString
+	self exportData: (self profilerProject: projectName) asTypeInfo onCSV: aString
 ]
 
 { #category : #'export as CSV' }
 SReportTypeInfo class >> exportReportData: projectName withName: aString usingFilter: aSymbol [
-	self exportData: (self profilerProject: projectName) onCSV: aString usingFilter: aSymbol
+	self exportData: (self profilerProject: projectName) asTypeInfo onCSV: aString usingFilter: aSymbol
 ]
 
 { #category : #'as yet unclassified' }
 SReportTypeInfo class >> exportReportsCaseStudyAndFrequency: nameFiles of: projectsName [
-	| csvWriterCaseStudy csvWriterFrequency |
+	| data |
 	self
 		assert: nameFiles size = 2
 		description: 'Set the nameFiles correctly'.
-	csvWriterCaseStudy := self csvWriterCaseStudy: nameFiles first.
-	csvWriterFrequency := self csvWriterFrequency: nameFiles second.
-	projectsName
-		do: [ :projectName | 
+	data := projectsName
+		collect: [ :projectName | 
 			| profiler |
 			profiler := self profilerProject: projectName.
-			self
-				writeReport: csvWriterCaseStudy
-				ofCaseStudy: profiler
-				from: projectName.
-			self
-				writeReport: csvWriterFrequency
-				ofFrequency: profiler asTypeInfo
-				from: projectName ].
-	csvWriterCaseStudy flush.
-	csvWriterFrequency flush
+			Array
+				with: (self dataCaseStudy: profiler from: projectName)
+				with: (self dataFrequency: profiler asTypeInfo from: projectName)].
+	self writeReport: nameFiles first ofCaseStudy: (data collect: #first).
+	self
+		writeReport: nameFiles second
+		ofFrequency: (data collect: #second)
 ]
 
 { #category : #'as yet unclassified' }
@@ -117,23 +111,23 @@ SReportTypeInfo class >> profilerProject: projectName [
 ]
 
 { #category : #'as yet unclassified' }
-SReportTypeInfo class >> writeReport: csvWriter ofCaseStudy: profiler from: projectName [
-	csvWriter
-		nextPut:
-			(Array
-				with: projectName
-				with: profiler numberOfClasses
-				with: profiler numberOfMethods
-				with:
-					(profiler allMethods
-						collect: #selector
-						thenSelect: [ :selector | selector beginsWith: 'test' ]) size
-				with:
-					(((profiler allMethods count: #wasExecuted) / profiler numberOfMethods)
-						asFloat round: 4) * 100)
+SReportTypeInfo class >> writeReport: filename ofCaseStudy: data [
+	(self fileReference: filename)
+		writeStreamDo: [ :stream | 
+			(NeoCSVWriter on: stream)
+				nextPut: #('Project' 'Classes (#)' 'Methods (#)' 'Test (#)' 'Coverage(%)');
+				nextPutAll: data;
+				flush ]
 ]
 
 { #category : #'as yet unclassified' }
-SReportTypeInfo class >> writeReport: csvWriter ofFrequency: typeInfo from: projectName [
-	csvWriter nextPut: ((Array with:projectName) join: typeInfo reportFrequencyByFilter associations sort values)
+SReportTypeInfo class >> writeReport: filename ofFrequency: data [
+	(self fileReference: filename)
+		writeStreamDo: [ :stream | 
+			(NeoCSVWriter on: stream)
+				nextPut:
+					#('Project')
+						, (STypeMethodInfo selectorsFilter , #(#others #all)) sort;
+				nextPutAll: data;
+				flush ]
 ]
