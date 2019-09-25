@@ -17,7 +17,7 @@ SSAssertionTest >> tearDown [
 
 { #category : #tests }
 SSAssertionTest >> testCreateCompilerClass [
-	|  testCase |
+	| testCase |
 	testCase := SSTestCase
 		with:
 			(STypeInfo new
@@ -27,9 +27,9 @@ SSAssertionTest >> testCreateCompilerClass [
 							(Array
 								with:
 									(Array
-										with: #score: -> #(#SFoo #(#Array) false)
-										with: #initialize -> #(#SFoo #() false))
-								with: (Array with: #score: -> #(#SFoo #(#Array) false)));
+										with: #score: -> #(#SFoo #SFoo #(#Array) false)
+										with: #initialize -> #(#SFoo #SFoo #() false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#Array) false)));
 				scalar: #Array with: #(#(2 4))).
 	testCase addLiteral.
 	SSGeneratorInvariant createCompilerClass: 'SFooTest'.

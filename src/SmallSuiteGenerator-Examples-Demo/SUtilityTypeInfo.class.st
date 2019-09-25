@@ -75,6 +75,23 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSimpletype [
+	^ STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnNum -> #(#SFoo #SmallInteger #() false)
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #score: -> #(#SFoo #SFoo #(#SmallFloat64) true))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallFloat64) false)));
+		scalar: #SmallInteger with: #(5);
+		scalar: #SmallFloat64 with: #(7.3)
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfosOnPackageExamples [
 	"the first typeInfo is about a class has as argument other class from other package"
 "review and modify"
