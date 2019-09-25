@@ -70,13 +70,8 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 ]
 
 { #category : #'accessing - read only' }
-STypeClassInfo >> allMethods [ 	
+STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
-]
-
-{ #category : #'accessing - read only' }
-STypeClassInfo >> allSelectorsMethods [
-	^ self allMethods collect: #selector
 ]
 
 { #category : #'as yet unclassified' }
@@ -101,11 +96,9 @@ STypeClassInfo >> copy [
 ]
 
 { #category : #'as yet unclassified' }
-STypeClassInfo >> exportAsCSV: neoCSVWriter [
-	self allMethods
-		do: [ :aMethod | 
-			neoCSVWriter
-				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
+STypeClassInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
+	
+	self writeDataCSV: neoCSVWriter using: (self filteredMethodsBy: aSymbol)
 ]
 
 { #category : #private }
@@ -121,10 +114,17 @@ STypeClassInfo >> factoryMessagesFrom: aClassName [
 				and: [ factMessage isWithReturnType: aClassName ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> filteredMethodsBy: aSymbol [
+	^ (STypeMethodInfo selectorsFilter includes: aSymbol)
+		ifTrue: [ self allMethods select: aSymbol ]
+		ifFalse: [ self remainingOrAllMethods: aSymbol ]
+]
+
 { #category : #initialization }
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
-	classMethodTypes := Dictionary new
+	classMethodTypes := Dictionary new.
 ]
 
 { #category : #'as yet unclassified' }
@@ -159,6 +159,21 @@ STypeClassInfo >> methodTypes [
 ]
 
 { #category : #'as yet unclassified' }
+STypeClassInfo >> remainingOrAllMethods: aSymbol [
+	^ aSymbol = #others
+		ifTrue: [ | methods |
+			methods := self allMethods.
+			STypeMethodInfo selectorsFilter do: [ :key | methods := methods reject: key ].
+			methods ]
+		ifFalse: [ self allMethods ]
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> reportFrequencyByFilter: aSelector [
+	^ (self filteredMethodsBy: aSelector) size
+]
+
+{ #category : #'as yet unclassified' }
 STypeClassInfo >> typeClassMethod: aAssoc [
 	self addClassMethod: (STypeMethodInfo type: aAssoc)
 ]
@@ -176,4 +191,12 @@ STypeClassInfo >> typeName [
 { #category : #accessing }
 STypeClassInfo >> typeName: anObject [
 	typeName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> writeDataCSV: neoCSVWriter using: methods [
+	methods
+		do: [ :aMethod | 
+			neoCSVWriter
+				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
 ]

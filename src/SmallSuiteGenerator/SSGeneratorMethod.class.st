@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'returnType',
 		'argTypes',
-		'receiverType'
+		'receiverType',
+		'executed'
 	],
 	#category : #'SmallSuiteGenerator-Profiler'
 }
@@ -29,7 +30,8 @@ SSGeneratorMethod >> asTypeInfo [
 SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 	self initArgsTypesWith: listOfArguments.
 	self saveReceiver: receiver.
-	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ]
+	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ].
+	executed := true.
 ]
 
 { #category : #hooks }
@@ -59,7 +61,8 @@ SSGeneratorMethod >> initArgsTypesWith: args [
 SSGeneratorMethod >> initialize [
 	super initialize.
 	returnType := SMultiTypeInfo new.
-	receiverType := SMultiTypeInfo new
+	receiverType := SMultiTypeInfo new.
+	executed := false.
 ]
 
 { #category : #hooks }
@@ -91,4 +94,9 @@ SSGeneratorMethod >> returnValue: value [
 SSGeneratorMethod >> saveReceiver: aObject [
 	receiverType
 		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
+]
+
+{ #category : #hooks }
+SSGeneratorMethod >> wasExecuted [
+	^ executed.
 ]

@@ -11,9 +11,11 @@ SSGeneratorClass class >> spyClassForMethod [
 
 { #category : #'as yet unclassified' }
 SSGeneratorClass >> fillTypesOn: aTypeInfo [
-	| aTypeClass |
+	| aTypeClass instanceMethods classMethods|
 	aTypeClass := STypeClassInfo newFrom: self className and: aTypeInfo.
-	aTypeClass addMethods: (self methods collect: #asTypeInfo);
-		addClassMethods: (self metaclassSpy methods collect: #asTypeInfo).
+	instanceMethods := (self methods reject:#isTest) select:#wasExecuted.
+	classMethods :=(self metaclassSpy methods reject:#isTest) select:#wasExecuted.
+	aTypeClass addMethods: (instanceMethods collect: #asTypeInfo);
+		addClassMethods: (classMethods collect: #asTypeInfo).
 	aTypeInfo addClassInfo: aTypeClass
 ]

@@ -5,8 +5,7 @@ Class {
 		'types',
 		'classes',
 		'noneAbstractClasses',
-		'scalars',
-		'filename'
+		'scalars'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -47,11 +46,6 @@ STypeInfo >> classes [
 	^ classes
 ]
 
-{ #category : #'as yet unclassified' }
-STypeInfo >> cleanFile [
-	filename asFileReference ensureDelete
-]
-
 { #category : #copying }
 STypeInfo >> copy [
 	| copy |
@@ -68,20 +62,9 @@ STypeInfo >> error: aString [
 ]
 
 { #category : #'as yet unclassified' }
-STypeInfo >> exportAsCSV: neoCSVWriter [
-	types do: [ :type | type exportAsCSV: neoCSVWriter  ]
-]
-
-{ #category : #'export as CSV' }
-STypeInfo >> exportCSV: aString [
-	(self filename: aString)
-		writeStreamDo: [ :stream | 
-			| neoCSVWriter |
-			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut:
-					#('ClassName' 'MethodName' 'Receivers' 'CommSupcls' 'ArgTypes' 'CommSupcls' 'ReturnTypes' 'CommSupcls').
-			self exportAsCSV: neoCSVWriter.
-			neoCSVWriter flush ]
+STypeInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
+	types
+		do: [ :type | type exportDataCSV: neoCSVWriter withFilter: aSymbol ]
 ]
 
 { #category : #lookup }
@@ -92,18 +75,11 @@ STypeInfo >> factoryMessagesFrom: aClassName [
 				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
 ]
 
-{ #category : #accessing }
-STypeInfo >> filename: aString [
-filename := aString, '.csv'.
-	^ filename asFileReference
-]
-
 { #category : #initialization }
 STypeInfo >> initialize [
 	super initialize.
 	types := Dictionary new.
-	scalars := Dictionary new.
-	filename := 'typeInfo'
+	scalars := Dictionary new
 ]
 
 { #category : #'as yet unclassified' }
@@ -148,6 +124,21 @@ STypeInfo >> noneAbstractClasses [
 STypeInfo >> randomNoneAbstractClass [
 	self assert: types isNotEmpty description: 'There is not a class'.
 	^ self noneAbstractClasses shuffle anyOne
+]
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> reportFrequencyByFilter [
+	| report |
+	report := Dictionary new.
+	(STypeMethodInfo selectorsFilter, #(#others #all))
+		do: [ :aSelector | 
+			report
+				at: aSelector
+				put:
+					(types
+						inject: 0
+						into: [ :sum :type | sum + (type reportFrequencyByFilter: aSelector) ]) ].
+	^ report
 ]
 
 { #category : #'as yet unclassified' }
