@@ -139,30 +139,22 @@ STypeMethodInfo >> isSimpleTyped10 [
 	"
 	
 	"
+
 	^ (Array
 		with: receiver hasOnlyOneType
-		with: (returnType hasOnlyOneType not and: [ returnType commonSuperclass = 'Object' ])
+		with:
+			(returnType hasOnlyOneType not
+				and: [ returnType commonSuperclass = 'Object' ])
 		with:
 			(argTypes notNil
 				and: [ argTypes anySatisfy: [ :t | t hasOnlyOneType not ] ])
 		with:
 			(argTypes notNil
 				and: [ argTypes
-						allSatisfy:
-							[ :t | t hasOnlyOneType or: [ t isBlockSymbol not and: [t commonSuperclass = 'Object' ]] ] ]))
+						allSatisfy: [ :t | 
+							t hasOnlyOneType
+								or: [ t isBlockSymbol not and: [ t commonSuperclass = 'Object' ] ] ] ]))
 		allSatisfy: #yourself
-	"^ (Array
-		with: receiver hasOnlyOneType
-		with: returnType hasOnlyOneType
-		with:
-			(argTypes notNil
-				and: [ argTypes anySatisfy: [ :t | t hasOnlyOneType not ] ])
-		with:
-			(argTypes notNil
-				and: [ argTypes
-						allSatisfy:
-							[ :t | t hasOnlyOneType or: [ t commonSuperclass ~= 'Object' ] ] ]))
-		allSatisfy: #yourself"
 ]
 
 { #category : #metrics }
@@ -258,17 +250,10 @@ STypeMethodInfo >> isSimpleTyped5 [
 		with:
 			(argTypes notNil
 				and: [ argTypes
-						allSatisfy: [ :t | t hasOnlyOneType
+						allSatisfy: [ :t | 
+							t hasOnlyOneType
 								or: [ t isBlockSymbol not and: [ t commonSuperclass = 'Object' ] ] ] ]))
 		allSatisfy: #yourself
-
-	"^ (Array
-		with: receiver hasOnlyOneType
-		with:
-			(returnType hasOnlyOneType not
-				and: [ returnType commonSuperclass = 'Object' ])
-		with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
-		allSatisfy: #yourself"
 ]
 
 { #category : #metrics }
@@ -276,6 +261,7 @@ STypeMethodInfo >> isSimpleTyped6 [
 	"
 	
 	"
+
 	^ (Array
 		with: receiver hasOnlyOneType
 		with: returnType hasOnlyOneType
@@ -285,23 +271,8 @@ STypeMethodInfo >> isSimpleTyped6 [
 		with:
 			(argTypes notNil
 				and: [ argTypes
-						allSatisfy:
-							[ :t | t hasOnlyOneType or: [ t commonSuperclass ~= 'Object' ] ] ]))
+						allSatisfy: [ :t | t hasOnlyOneType or: [ t commonSuperclass ~= 'Object' ] ] ]))
 		allSatisfy: #yourself
-
-	"^ (Array
-		with: receiver hasOnlyOneType
-		with: returnType hasOnlyOneType
-		with:
-			(argTypes notNil
-				and: [ argTypes anySatisfy: [ :t | t hasOnlyOneType not ] ])
-		with:
-			(argTypes notNil
-				and: [ argTypes
-						allSatisfy: [ :t | 
-							t hasOnlyOneType
-								or: [ t isBlockSymbol not and: [ t commonSuperclass = 'Object' ] ] ] ]))
-		allSatisfy: #yourself"
 ]
 
 { #category : #metrics }
@@ -309,34 +280,14 @@ STypeMethodInfo >> isSimpleTyped7 [
 	"
 	
 	"
-^ (Array
+
+	^ (Array
 		with: receiver hasOnlyOneType
 		with:
 			(returnType hasOnlyOneType not
 				and: [ returnType commonSuperclass = 'Object' ])
 		with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
 		allSatisfy: #yourself
-	"^ (Array
-		with: receiver hasOnlyOneType
-		with: returnType hasOnlyOneType not
-		with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
-		allSatisfy: #yourself"
-	"^ (Array
-		with:
-			(receiver hasOnlyOneType not
-				and: [ receiver commonSuperclass ~= 'Object' ])
-		with:
-			(returnType hasOnlyOneType not
-				and: [ returnType commonSuperclass ~= 'Object' ])
-		with:
-			(argTypes notNil
-				and: [ argTypes anySatisfy: [ :t | t hasOnlyOneType not ] ])
-		with:
-			(argTypes notNil
-				and: [ argTypes
-						allSatisfy:
-							[ :t | t hasOnlyOneType or: [ t commonSuperclass ~= 'Object' ] ] ]))
-		allSatisfy: #yourself"
 ]
 
 { #category : #metrics }
@@ -344,6 +295,7 @@ STypeMethodInfo >> isSimpleTyped8 [
 	"
 	
 	"
+
 	^ (Array
 		with: receiver hasOnlyOneType
 		with:
@@ -351,16 +303,6 @@ STypeMethodInfo >> isSimpleTyped8 [
 				and: [ returnType commonSuperclass ~= 'Object' ])
 		with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
 		allSatisfy: #yourself
-	"^ (Array
-		with:
-			(receiver hasOnlyOneType not
-				and: [ receiver commonSuperclass ~= 'Object' ])
-		with:
-			(returnType hasOnlyOneType not
-				and: [ returnType commonSuperclass ~= 'Object' ])
-		with: (receiver equals: returnType) not
-		with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
-		allSatisfy: #yourself"
 ]
 
 { #category : #metrics }
@@ -382,17 +324,8 @@ STypeMethodInfo >> isSimpleTyped9 [
 		with:
 			(argTypes notNil
 				and: [ argTypes
-						allSatisfy:
-							[ :t | t hasOnlyOneType or: [ t commonSuperclass ~= 'Object' ] ] ]))
+						allSatisfy: [ :t | t hasOnlyOneType or: [ t commonSuperclass ~= 'Object' ] ] ]))
 		allSatisfy: #yourself
-
-	"^ (Array
-		with: receiver hasOnlyOneType
-		with:
-			(returnType hasOnlyOneType not
-				and: [ returnType commonSuperclass ~= 'Object' ])
-		with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
-		allSatisfy: #yourself"
 ]
 
 { #category : #testing }

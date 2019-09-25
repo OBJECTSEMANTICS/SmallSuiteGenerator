@@ -71,12 +71,7 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 
 { #category : #'accessing - read only' }
 STypeClassInfo >> allMethods [
-	"| ms |
-	ms := methodTypes values , classMethodTypes values.
-	#(#isSimpleTyped #isSimpleTyped2 #isSimpleTyped3 #isSimpleTyped4)
-		do: [ :key | ms := ms reject: key ].
-	^ ms"
-	^ methodTypes values, classMethodTypes values
+	^ methodTypes values , classMethodTypes values
 ]
 
 { #category : #'as yet unclassified' }
