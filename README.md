@@ -78,5 +78,5 @@ Additionally to the described configurations, you can configure some parameters 
 smallSuiteGenerator populationSize: 30.
 smallSuiteGenerator numberOfGenerations: 20. "number of testCases to generate"
 smallSuiteGenerator numberOfStatements: 15. "number of statements that each testCase will have "
-smallSuiteGenerator classNameOfTest: 'SStudentTest'.
+smallSuiteGenerator classNameOfTest: 'SStudentTest'. "class that contains the test cases"
 ```
