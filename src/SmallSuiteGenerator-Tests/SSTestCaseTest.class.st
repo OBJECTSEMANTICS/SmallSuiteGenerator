@@ -394,6 +394,36 @@ SSTestCaseTest >> testGenerateStatements [
 ]
 
 { #category : #'mutation-insert' }
+SSTestCaseTest >> testInsertStatementAsParameterInMessage [
+	| testCase anExpression |
+	testCase := SSTestCase with: utility typeInfosSFoo fifth.
+	testCase addFactoryMessage: #SFoo.
+	testCase addLiteral.
+	testCase addMessage: #return: from: #SFoo.
+	anExpression := testCase addLiteral.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			(Array with: '_var0 := SFoo new.' 
+			with:  '_var1 := ', SStudent new storeString, '.'
+			with: '_var2 := _var0 return: _var1.'
+			with: '_var3 := ', SStudent new storeString, '.').
+	self
+		should: [ testCase
+				perform: #insertAsParameter:using:
+				inStatement: anExpression copy ]
+		raise: SError.
+	testCase addMessage: #return: from: #SFoo.
+	testCase
+		perform: #insertAsParameter:using:
+		inStatement: anExpression copy.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			#('_var0 := SFoo new.' '_var1 := (SStudent new ).' '_var2 := _var0 return: _var1.' '_var3 := (SStudent new ).' '_var4 := (SStudent new ).' '_var5 := _var0 return: _var4.')
+]
+
+{ #category : #'mutation-insert' }
 SSTestCaseTest >> testInsertStatementOfMixingSelectors [
 	| testCase fieldAccess message |
 	testCase := (SSTestCase with: utility typeInfosSStudent first)

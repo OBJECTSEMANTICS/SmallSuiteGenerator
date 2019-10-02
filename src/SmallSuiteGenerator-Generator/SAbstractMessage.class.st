@@ -152,7 +152,7 @@ SAbstractMessage >> repairOn: aTestCase changing: aExpression [
 
 { #category : #'as yet unclassified' }
 SAbstractMessage >> replaceArgBy: aExpression [
-	args ifEmpty: [ ^ self error: 'cant insert expression as parameter' ].
+	args ifEmpty: [ self error: 'cant insert expression as parameter' ].
 	args
 		do: [ :arg | 
 			[ ^ arg replaceArgBy: aExpression ]

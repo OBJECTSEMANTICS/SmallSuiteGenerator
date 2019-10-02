@@ -68,10 +68,10 @@ SVariable >> repairOn: aTestCase changing: aExpression [
 ]
 
 { #category : #'as yet unclassified' }
-SVariable >> replaceArgBy: aExpression [
-	returnType = aExpression returnType
+SVariable >> replaceArgBy: anExpression [
+	returnType = anExpression returnType
 		ifFalse: [ ^ self error: 'cant replace arg' ].
-	self replaceBy: aExpression
+	self replaceBy: anExpression
 ]
 
 { #category : #accessing }

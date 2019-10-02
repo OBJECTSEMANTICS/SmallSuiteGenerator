@@ -30,8 +30,7 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	"first alpha(P2) and last (1-alpha)(P1)"
 	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: alpha.
 	self checkReferencesOf: offSpring2 withDescription: 'offspring'.
-	^ Array with: offSpring1
-	with: offSpring2
+	^ Array with: offSpring1 with: offSpring2
 ]
 
 { #category : #'as yet unclassified' }

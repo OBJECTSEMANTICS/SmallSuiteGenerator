@@ -245,9 +245,7 @@ SUtilityTypeInfo >> typeInfosSFoo [
 					#SFoo
 						->
 							(Array
-								with:
-									(Array with:
-										#return: -> #(#SFoo #SFoo #(#SFoo) false))
+								with: (Array with: #return: -> #(#SFoo #SFoo #(#SFoo) false))
 								with: #());
 				scalar: #ByteString with: #('hello');
 				scalar: #SmallInteger with: #(5);
@@ -260,19 +258,13 @@ SUtilityTypeInfo >> typeInfosSFoo [
 							(Array
 								with:
 									(Array
-										with:
-											#returnNum -> #(#SFoo #SmallInteger #() false)
-										with:
-											#returnFloat -> #(#SFoo #SmallFloat64 #() false)
-										with:
-											#returnString -> #(#SFoo #ByteString #() false)
-										with:
-											#score -> #(#SFoo #SmallInteger #() true)
-										with:
-											#score: -> #(#SFoo #SFoo #(#SmallInteger) false))
+										with: #returnNum -> #(#SFoo #SmallInteger #() false)
+										with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+										with: #returnString -> #(#SFoo #ByteString #() false)
+										with: #score -> #(#SFoo #SmallInteger #() true)
+										with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))
 								with:
-									(Array with:
-										#score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+									(Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
 				scalar: #ByteString with: #('Hello');
 				scalar: #SmallInteger with: #(4);
 				scalar: #SmallFloat64 with: #(2.3));
@@ -284,22 +276,26 @@ SUtilityTypeInfo >> typeInfosSFoo [
 							(Array
 								with:
 									(Array
-										with:
-											#returnCollection -> #(#SFoo #OrderedCollection #() false)
-										with:
-											#returnFloat -> #(#SFoo #SmallFloat64 #() false)
-										with:
-											#score -> #(#SFoo #SmallInteger #() true)
-										with:
-											#return: -> #(#SFoo #Array #(#Array) false))
+										with: #returnCollection -> #(#SFoo #OrderedCollection #() false)
+										with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+										with: #score -> #(#SFoo #SmallInteger #() true)
+										with: #return: -> #(#SFoo #Array #(#Array) false))
 								with:
-									(Array with:
-										#score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+									(Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
 				scalar: #OrderedCollection
 					with: (Array with: OrderedCollection new);
 				scalar: #Array with: (Array with: #(1 5 6));
 				scalar: #SmallInteger with: #(15);
 				scalar: #SmallFloat64 with: #(2.3));
+		add:
+			(STypeInfo new
+				type:
+					#SFoo
+						->
+							(Array
+								with: (Array with: #initialize -> #(#SFoo #SFoo #() false) with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
+								with: #());
+				scalar: #SStudent with: (Array with: SStudent new));
 		yourself
 ]
 

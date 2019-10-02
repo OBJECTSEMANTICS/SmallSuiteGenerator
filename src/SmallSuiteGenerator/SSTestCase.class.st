@@ -399,7 +399,6 @@ SSTestCase >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestCase >> insertAsParameter: aExpression after: aStatement [
-
 	(statements
 		copyFrom: (statements indexOf: aStatement) + 1
 		to: self numberStatements) shuffle

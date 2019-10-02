@@ -9,7 +9,12 @@ Class {
 
 { #category : #comparing }
 SLiteral >> = other [
-	^ super = other and: [ value = other value ]
+	^ super = other
+		and: [ value isLiteral ifTrue: [ value = other value ] 
+			ifFalse: [ 
+			value isClass
+				ifTrue: [ value name = other value name ]
+				ifFalse: [ value className = other value className ]] ]
 ]
 
 { #category : #copying }
