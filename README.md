@@ -23,60 +23,60 @@ Initialize the class `SSmallSuiteGenerator`.
 
 ``` Smalltalk
 | smallSuiteGenerator |
-smallSuiteGenerator := SSmallSuiteGenerator new.
+smallSuiteGenerator := SSmallSuiteGenerator newInstance.
 ```
 
 ### Configuration
-To generate test cases of code within the block you have two options:
- * Execute the code using the class
- * Execute the code using the regular expression of packages matching
- 
-#### Configuration with class
-
-To generate test cases using the class you must send the block to analize and the class. In this example we send the block and the class `SStudent`
-
-```Smalltalk
-smallSuiteGenerator 
- generateTestsOf: [ (SStudent name: 'Ann' with: -34.234)
+The first step is to define the code block that will be analyzed.
+	``` Smalltalk
+	smallSuiteGenerator seed: [ (SStudent name: 'Ann' with: -34.234)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
-				scoreStudent ]  blockOnClass: SStudent. 
- ```
-#### Configuration with regular expression of package matching
-
-On the other hand, to generate test cases using packages you have to type the following message with the block to analize and the regular expression of the package, e.g:
+				scoreStudent ].
+	```
+				
+Another option to configure is the fitness that will be used in genetic algorithm  to improve this value either increasing or reducing, depending on the configuration. In this case we use: `SMultiFitnessFunction` to evaluate `SMethodCoverage` and `SStatementCoverage` at the same time.
 
 ```Smalltalk
-smallSuiteGenerator generateTestsOf: [ (SStudent name: 'Ann@323' with: -34)
-				nickname;
-				idStudent;
-				scoreStudent: -45.12;
-				scoreStudent ]
-		blockOnPackagesMatching: 'SmallSuiteGenerator-Examples'.
+smallSuiteGenerator fitness: (SMultiFitnessFunction 
+		with: SMethodCoverage; 
+		with: SStatementCoverage).
+```
+
+To analyze and profile the code you have two choices: 
+ * Define the class to profile the code
+ * Define a regular expression of packages matching, this option means that code will be profiled in all packages that match with the regular expression
+ 
+#### Defining the class
+
+Following the example, in this case we use the class `SStudent`
+
+```Smalltalk
+smallSuiteGenerator profilingOnClass: SStudent. 
+ ```
+ 
+#### Defining a regular expression of package matching
+
+```Smalltalk
+smallSuiteGenerator profilingOnPackagesMatching: 'SmallSuiteGenerator-Examples'.
 ```
 
 ### Execution
-Either using the class or regular expression execute the following code to generate the testCases: 
+Either using the class or regular expression execute the following code to generate the testCases with the genetic algorithm.
 
 ```Smalltalk
-smallSuiteGenerator runGeneration.
+smallSuiteGenerator run.
 ```
 
 This instruction will generate the testCases with the higher fitness of one population. You can see these testCases debugging in `smallSuiteGenerator engine logs`. Usually the last log contains the testCase with the highest fitness.
-By other side, you can configure some parameters before to generate test cases, e.g:
+The test cases also are created by default in the class: `STestCaseGenerated` in the package `SmallSuiteGenerator-Tests-Generated`.
+
+Additionally to the described configurations, you can configure some parameters before to generate test cases, e.g:
 
 ```Smalltalk 
 smallSuiteGenerator populationSize: 30.
 smallSuiteGenerator numberOfGenerations: 20. "number of testCases to generate"
 smallSuiteGenerator numberOfStatements: 15. "number of statements that each testCase will have "
+smallSuiteGenerator classNameOfTest: 'SStudentTest'. "class that contains the test cases"
 ```
-
-### Generation of invariants
-To generate assertions of each testCase execute:
-
-```Smalltalk
-smallSuiteGenerator generateAssertionsUsing: #()
-```
-This instruction must be executed after the generations of testCases.
-If you execute the code with an empty list, by default all subClasses of SSAssertion will be considered to generate the assertions. You can modify this list. 
