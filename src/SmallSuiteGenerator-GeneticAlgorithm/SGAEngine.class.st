@@ -94,7 +94,7 @@ SGAEngine >> checkTypeInfo [
 
 { #category : #accessing }
 SGAEngine >> clean [
-	fitness clean
+	fitness ifNotNil: [ fitness clean ]
 ]
 
 { #category : #'as yet unclassified' }
