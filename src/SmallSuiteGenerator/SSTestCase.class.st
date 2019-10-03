@@ -104,7 +104,7 @@ SSTestCase >> addLiteral [
 { #category : #adding }
 SSTestCase >> addLiteral: aClassName [
 	| literal |
-	literal := self newLiteral: aClassName.
+	literal := self literal: aClassName.
 	literal value
 		ifNil: [ self error: 'error to create literal' ]
 		ifNotNil: [ ^ self addAssignment: literal ]
@@ -269,7 +269,10 @@ SSTestCase >> buildArgs: argTypes before: aStatement [
 				reject: [ :aType | types includes: aType ]) asSet.
 			typesToAdd := self satisfyTypes: typesToAdd before: aStatement.
 			typesToAdd
-				do: [ :type | self addStatement: (self addLiteral: type) before: aStatement ] ]
+				do: [ :type | 
+					self
+						addStatement: (self newAssignment: ( self literal: type))
+						before: aStatement ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -453,6 +456,15 @@ SSTestCase >> insertStatementOfSelector: selector [
 				do: [  ] ].
 	self
 		error: 'Cant insert statement of selector: ' , selector printString
+]
+
+{ #category : #adding }
+SSTestCase >> literal: aClassName [
+	| literal |
+	literal := self newLiteral: aClassName.
+	literal value
+		ifNil: [ self error: 'error to create literal' ]
+		ifNotNil: [ ^ literal ]
 ]
 
 { #category : #'as yet unclassified' }

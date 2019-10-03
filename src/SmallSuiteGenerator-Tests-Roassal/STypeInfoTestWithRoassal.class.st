@@ -33,7 +33,7 @@ STypeInfoTestWithRoassal >> testAsTypeInfoRTUMLClassBuilder [
 	typeInfo := profile asTypeInfo.
 	self
 		assert: (typeInfo types at: #RTUMLClassBuilder) methodTypes size
-		equals: 53.
+		equals: 42.
 	self
 		assert:
 			(typeInfo scalars keys

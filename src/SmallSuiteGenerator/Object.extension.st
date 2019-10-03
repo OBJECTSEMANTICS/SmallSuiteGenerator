@@ -8,15 +8,14 @@ Object >> mutateToChange [
 { #category : #'*SmallSuiteGenerator' }
 Object >> smallStoreString [
 	| string |
-	SConfiguration  initLevelToPrint.
+	SConfiguration initLevelToPrint.
 	string := String
 		streamContents: [ :s | 
 			self storeOn: s.
-			SConfiguration  levelToPrint < 0
-				ifTrue: [ "^ s nextPutAll: '(' , self class name , ' new ) '" 
-					SError signal: 'error in storeString'
-					].
-			SConfiguration  initLevelToPrint ].
+			SConfiguration levelToPrint < 0
+				ifTrue:
+					[ "^ s nextPutAll: '(' , self class name , ' new ) '" SError signal: 'error in storeString' ].
+			SConfiguration initLevelToPrint ].
 	^ string
 ]
 
@@ -33,7 +32,7 @@ Object >> storeOn: aStream [
 				store: self basicSize;
 				nextPutAll: ') ' ]
 		ifFalse: [ aStream nextPutAll: self class name , ' basicNew' ].
-	SConfiguration  levelToPrint < 0
+	SConfiguration levelToPrint < 0
 		ifFalse: [ 1 to: self class instSize do: [ :i | 
 				aStream
 					nextPutAll: ' instVarAt: ';

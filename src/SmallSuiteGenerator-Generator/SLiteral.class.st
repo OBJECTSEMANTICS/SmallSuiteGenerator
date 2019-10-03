@@ -37,8 +37,9 @@ SLiteral >> insertOn: aTestCase [
 
 { #category : #printing }
 SLiteral >> printOn: aStream [
-	aStream nextPutAll: value storeString;
-	nextPut: $.
+	aStream
+		nextPutAll: value storeString;
+		nextPut: $.
 ]
 
 { #category : #accessing }

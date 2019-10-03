@@ -404,10 +404,11 @@ SSTestCaseTest >> testInsertStatementAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			(Array with: '_var0 := SFoo new.' 
-			with:  '_var1 := ', SStudent new storeString, '.'
-			with: '_var2 := _var0 return: _var1.'
-			with: '_var3 := ', SStudent new storeString, '.').
+			(Array
+				with: '_var0 := SFoo new.'
+				with: '_var1 := ' , SStudent new storeString , '.'
+				with: '_var2 := _var0 return: _var1.'
+				with: '_var3 := ' , SStudent new storeString , '.').
 	self
 		should: [ testCase
 				perform: #insertAsParameter:using:
@@ -420,7 +421,11 @@ SSTestCaseTest >> testInsertStatementAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := SFoo new.' '_var1 := (SStudent basicNew yourself).' '_var2 := _var0 return: _var1.' '_var3 := (SStudent basicNew yourself).' '_var4 := _var0 return: _var3.')
+			(Array with: '_var0 := SFoo new.' 
+			with: '_var1 := ', SStudent new storeString,'.'
+			with: '_var2 := _var0 return: _var1.' 
+			with: '_var3 := ', SStudent new storeString, '.'
+			with: '_var4 := _var0 return: _var3.')
 ]
 
 { #category : #'mutation-insert' }

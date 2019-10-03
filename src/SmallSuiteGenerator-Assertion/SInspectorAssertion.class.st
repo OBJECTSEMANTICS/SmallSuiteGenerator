@@ -33,7 +33,10 @@ SInspectorAssertion class >> preconditionChecking: aObject using: aTestCase [
 				and: [ (argTypes isNil or: [ argTypes isEmpty ])
 						and: [ meth selector ~= #initialize ] ] ].
 	methods ifNotEmpty: [ selector:= (methods collect: #selector) 
-		detect: [ :aSelector | SComparisonAssertion preconditionChecking: (aObject perform: aSelector) ]
+		detect: [ :aSelector | 
+			|value|
+			value := aObject perform: aSelector.
+			(SPrimitiveAssertion preconditionChecking: value) or: [SComparisonAssertion preconditionChecking: (aObject perform: aSelector)] ]
 		ifNone: [ nil ] ].
 	^ selector
 ]

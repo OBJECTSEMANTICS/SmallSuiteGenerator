@@ -31,7 +31,7 @@ SInspectorAssertionTest >> testPrintString [
 		with: SFoo new
 		of: nil.
 	self assert: assertions isEmpty.
-	typeInfo  := SUtilityTypeInfo new typeInfosSFoo third.
+	typeInfo := SUtilityTypeInfo new typeInfosSFoo third.
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.
