@@ -54,16 +54,15 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 			aConference canRegister: aPerson ]
 		onPackagesMatching: 'SmallSuiteGenerator-Examples-Others')
 		asTypeInfo.
-	self assert: (typeInfo types at: #SEvent) methodTypes size equals: 6.
+	self assert: (typeInfo types at: #SEvent) methodTypes size equals: 2.
 	self
-		assert: (typeInfo types at: #SEvent) classMethodTypes size
-		equals: 1.
+		assert: (typeInfo types at: #SEvent) classMethodTypes isEmpty.
 	self
 		assert: (typeInfo types at: #SConference) methodTypes size
-		equals: 7.
+		equals: 3.
 	self
 		assert: (typeInfo types at: #SConference) classMethodTypes isEmpty.
-	self assert: (typeInfo types at: #SParty) methodTypes size equals: 2.
+	self assert: (typeInfo types at: #SParty) methodTypes isEmpty.
 	self assert: (typeInfo types at: #SParty) classMethodTypes isEmpty.
 	messages := typeInfo messagesFrom: #SConference.
 	self
@@ -107,7 +106,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
 	self
 		assert: (typeInfo types at: #SFoo) classMethodTypes size
-		equals: 1.
+		equals: 0.
 	self
 		assert: (typeInfo type: #initialize from: #SFoo) returnType type
 		equals: #SFoo.
@@ -152,10 +151,9 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 		profile: [ SFoo new return: OrderedCollection ]
 		onClass: SFoo.
 	typeInfo := profile asTypeInfo.
-	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
+	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 2.
 	self
-		assert: (typeInfo types at: #SFoo) classMethodTypes size
-		equals: 1.
+		assert: (typeInfo types at: #SFoo) classMethodTypes isEmpty.
 	self
 		assert: (typeInfo type: #initialize from: #SFoo) returnType type
 		equals: #SFoo.
@@ -176,10 +174,9 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 		profile: [ SFoo new return: nil ]
 		onClass: SFoo.
 	typeInfo := profile asTypeInfo.
-	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 8.
+	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 2.
 	self
-		assert: (typeInfo types at: #SFoo) classMethodTypes size
-		equals: 1.
+		assert: (typeInfo types at: #SFoo) classMethodTypes isEmpty.
 	self
 		assert: (typeInfo type: #initialize from: #SFoo) returnType type
 		equals: #SFoo.
@@ -208,7 +205,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 	self
 		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
 		hasSameElements:
-			#(#idTeacher #initialize #nickname #yearsWorkExperience #yearsWorkExperience:).
+			#(#idTeacher #initialize #nickname #yearsWorkExperience).
 	self assert: (typeInfo types at: #SSTeacher) classMethodTypes isEmpty.
 	self
 		assertCollection: ((typeInfo messagesFrom: #SSTeacher) collect: #selector)
@@ -232,7 +229,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 	self
 		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
 		hasSameElements:
-			#(#idTeacher #initialize #nickname #yearsWorkExperience #yearsWorkExperience:).
+			#(#idTeacher #initialize #nickname #yearsWorkExperience).
 	self assertCollection: ((typeInfo factoryMessagesFrom: #SSTeacher) collect: #selector) hasSameElements: #(#name:with:).
 	self
 		assertCollection: ((typeInfo messagesFrom: #SSTeacher) collect: #selector)

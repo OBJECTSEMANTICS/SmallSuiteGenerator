@@ -6,6 +6,21 @@ Object >> mutateToChange [
 ]
 
 { #category : #'*SmallSuiteGenerator' }
+Object >> smallStoreString [
+	| string |
+	SConfiguration  initLevelToPrint.
+	string := String
+		streamContents: [ :s | 
+			self storeOn: s.
+			SConfiguration  levelToPrint < 0
+				ifTrue: [ "^ s nextPutAll: '(' , self class name , ' new ) '" 
+					SError signal: 'error in storeString'
+					].
+			SConfiguration  initLevelToPrint ].
+	^ string
+]
+
+{ #category : #'*SmallSuiteGenerator' }
 Object >> storeOn: aStream [
 	"Append to the argument aStream a sequence of characters that is an 
 	expression whose evaluation creates an object similar to the receiver."
@@ -34,20 +49,4 @@ Object >> storeOn: aStream [
 					store: (self basicAt: i);
 					nextPut: $; ] ].
 	aStream nextPutAll: ' yourself)'
-]
-
-{ #category : #'*SmallSuiteGenerator' }
-Object >> storeString [
-	"Answer a String representation of the receiver from which the receiver 
-	can be reconstructed."
-
-	| string |
-	SConfiguration  initLevelToPrint.
-	string := String
-		streamContents: [ :s | 
-			self storeOn: s.
-			SConfiguration  levelToPrint < 0
-				ifTrue: [ ^ s nextPutAll: '(' , self class name , ' new ) ' ].
-			SConfiguration  initLevelToPrint ].
-	^ string
 ]

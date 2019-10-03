@@ -18,6 +18,7 @@ SComparisonAssertion class >> applyOn: aName with: aObject of: testCase [
 SComparisonAssertion class >> preconditionChecking: aObject [
 	aObject isLiteral
 		ifTrue: [ ^ false ].
+	[aObject smallStoreString ] on: SError do: [  ^ false ].
 	^ (aObject class allSelectorsBelow: Object)
 		detect: [ :selector | selector = #= ]
 		ifFound: [ true ]

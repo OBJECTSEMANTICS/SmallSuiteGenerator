@@ -1,8 +1,27 @@
 Class {
 	#name : #SInspectorAssertionTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'utility'
+	],
 	#category : #'SmallSuiteGenerator-Tests-Assertion'
 }
+
+{ #category : #running }
+SInspectorAssertionTest >> setUp [ 
+	utility := SUtilityTypeInfo new
+]
+
+{ #category : #tests }
+SInspectorAssertionTest >> testPreconditionCheckingUsing [
+	| selector testCase |
+	testCase := SSTestCase with: utility typeInfosSFoo fifth.
+	testCase addFactoryMessage: #SFoo.
+	selector := SInspectorAssertion
+		preconditionChecking: SFoo new
+		using: testCase.
+	self assert: selector isNil
+]
 
 { #category : #tests }
 SInspectorAssertionTest >> testPrintString [

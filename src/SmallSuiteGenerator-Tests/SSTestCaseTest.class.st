@@ -420,7 +420,7 @@ SSTestCaseTest >> testInsertStatementAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := SFoo new.' '_var1 := (SStudent new ).' '_var2 := _var0 return: _var1.' '_var3 := (SStudent new ).' '_var4 := (SStudent new ).' '_var5 := _var0 return: _var4.')
+			#('_var0 := SFoo new.' '_var1 := (SStudent basicNew yourself).' '_var2 := _var0 return: _var1.' '_var3 := (SStudent basicNew yourself).' '_var4 := _var0 return: _var3.')
 ]
 
 { #category : #'mutation-insert' }

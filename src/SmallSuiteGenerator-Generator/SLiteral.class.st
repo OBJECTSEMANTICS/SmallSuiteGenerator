@@ -41,6 +41,13 @@ SLiteral >> printOn: aStream [
 	nextPut: $.
 ]
 
+{ #category : #accessing }
+SLiteral >> referenceTo: aClassName [
+	^( value isClass
+		ifTrue: [ value name ]
+		ifFalse: [ value className ]) = aClassName
+]
+
 { #category : #mutation }
 SLiteral >> repairOn: aTestCase changing: aExpression [
 	self value: value mutateToChange
@@ -58,5 +65,8 @@ SLiteral >> value [
 
 { #category : #accessing }
 SLiteral >> value: anObject [
-	value := anObject
+	[ anObject smallStoreString.
+	value := anObject ]
+		on: SError
+		do: [  ]
 ]
