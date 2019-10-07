@@ -96,12 +96,18 @@ SSTestCase >> addFieldAccessMessage: method withReceiver: receiver [
 SSTestCase >> addLiteral [
 
 	typeInfo scalars
-		ifNotEmpty: [ ^ self addLiteral: typeInfo scalars keys shuffle anyOne ]
+		ifNotEmpty: [typeInfo scalars keys shuffle do: [ :aClassName | 
+				[^ self addLiteral: aClassName] on: SError do: [  ]
+				 ] ]
 ]
 
 { #category : #adding }
 SSTestCase >> addLiteral: aClassName [
-	^ self addAssignment: (self newLiteral: aClassName)
+	| literal |
+	literal := self literal: aClassName.
+	literal value
+		ifNil: [ self error: 'error to create literal' ]
+		ifNotNil: [ ^ self addAssignment: literal ]
 ]
 
 { #category : #actions }
@@ -131,8 +137,7 @@ SSTestCase >> addMessage: aSelector from: aClassName [
 
 { #category : #actions }
 SSTestCase >> addMessage: method withReceiver: receiver [
-	^ self
-		addAssignment: (self messageUsing: method and: receiver before: nil)
+	^ self addAssignment: (self messageUsing: method and: receiver before: nil)
 ]
 
 { #category : #actions }
@@ -266,7 +271,7 @@ SSTestCase >> buildArgs: argTypes before: aStatement [
 			typesToAdd
 				do: [ :type | 
 					self
-						addStatement: (self newAssignment: (self newLiteral: type))
+						addStatement: (self newAssignment: ( self literal: type))
 						before: aStatement ] ]
 ]
 
@@ -349,9 +354,9 @@ SSTestCase >> error: aString [
 { #category : #'as yet unclassified' }
 SSTestCase >> factoryMessageUsing: method before: aStatement [
 	self buildArgs: method argTypes before: aStatement.
-			^ SFactoryMessage
-				method: method
-				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+	^ SFactoryMessage
+		method: method
+		previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 ]
 
 { #category : #querying }
@@ -370,10 +375,10 @@ SSTestCase >> fitness [
 SSTestCase >> generateStatements [
 	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain data.'.
 	[ self numberStatements < self numMaxStatements ]
-		whileTrue: [ self
+		whileTrue: [ [self
 				perform:
 					#(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral)
-						shuffle anyOne ]
+						shuffle anyOne] on: SError do: [  ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -453,14 +458,22 @@ SSTestCase >> insertStatementOfSelector: selector [
 		error: 'Cant insert statement of selector: ' , selector printString
 ]
 
+{ #category : #adding }
+SSTestCase >> literal: aClassName [
+	| literal |
+	literal := self newLiteral: aClassName.
+	literal value
+		ifNil: [ self error: 'error to create literal' ]
+		ifNotNil: [ ^ literal ]
+]
+
 { #category : #'as yet unclassified' }
 SSTestCase >> messageUsing: method and: receiver before: aStatement [
-
 	self buildArgs: method argTypes before: aStatement.
 	^ SMessage
-				newFromReceiver: receiver copy
-				method: method
-				andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+		newFromReceiver: receiver copy
+		method: method
+		andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 ]
 
 { #category : #'as yet unclassified' }
@@ -470,9 +483,12 @@ SSTestCase >> messagesVariablesFrom: aClassName [
 		messagesVariablesWhichContain: aClassName
 		before: nil.
 	varExpressions ifEmpty: [ 
-		(typeInfo classes at: aClassName) subclasses detect: [ :aClass | 
+		typeInfo classes at: aClassName ifPresent: [ (typeInfo classes at: aClassName) subclasses detect: [ :aClass | 
 			varExpressions := self messagesVariablesWhichContain: aClass name before: nil.
-			varExpressions isNotEmpty ] ifNone: [  ]
+			varExpressions isNotEmpty ] ] ifAbsent: [ 
+		typeInfo scalars at: aClassName ifPresent: [ 
+				varExpressions := self messagesVariablesWhichContain: aClassName before: nil.
+			varExpressions isNotEmpty ] ].
 		 ].
 	^ varExpressions
 ]
@@ -543,7 +559,7 @@ SSTestCase >> newLiteral: aClassName [
 	aObject := typeInfo scalars
 		at: aClassName
 		ifPresent: [ :values | values asArray shuffle anyOne ]
-		ifAbsent: [ ^ self error: 'scalars dont contain: ' , aClassName asString ].
+		ifAbsent: [ self error: 'scalars dont contain: ' , aClassName asString ].
 	^ SLiteral new
 		returnType: aClassName;
 		value: aObject

@@ -87,3 +87,12 @@ SLiteralTest >> testInsertParameterOn [
 		assert: insertedExpression printString
 		equals: '_var4 := _var1 return: _var3.'
 ]
+
+{ #category : #tests }
+SLiteralTest >> testReferenceTo [
+	literal value: 1.
+	self assert: ((SLiteral new value: 1) referenceTo: #SmallInteger).
+	literal value: SStudent new.
+	self
+		assert: ((SLiteral new value: SStudent new) referenceTo: #SStudent)
+]

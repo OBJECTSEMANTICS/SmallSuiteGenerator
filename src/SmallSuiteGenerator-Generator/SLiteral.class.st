@@ -37,8 +37,16 @@ SLiteral >> insertOn: aTestCase [
 
 { #category : #printing }
 SLiteral >> printOn: aStream [
-	aStream nextPutAll: value storeString;
-	nextPut: $.
+	aStream
+		nextPutAll: value storeString;
+		nextPut: $.
+]
+
+{ #category : #accessing }
+SLiteral >> referenceTo: aClassName [
+	^( value isClass
+		ifTrue: [ value name ]
+		ifFalse: [ value className ]) = aClassName
 ]
 
 { #category : #mutation }
@@ -58,5 +66,8 @@ SLiteral >> value [
 
 { #category : #accessing }
 SLiteral >> value: anObject [
-	value := anObject
+	[ anObject smallStoreString.
+	value := anObject ]
+		on: SError
+		do: [  ]
 ]

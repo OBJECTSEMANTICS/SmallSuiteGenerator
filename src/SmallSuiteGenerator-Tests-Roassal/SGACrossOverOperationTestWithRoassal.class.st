@@ -17,9 +17,9 @@ SGACrossOverOperationTestWithRoassal >> setUp [
 ]
 
 { #category : #running }
-SGACrossOverOperationTestWithRoassal >> tearDown [ 
-	SMultiFitnessFunction clear.
-	SCoverageWithProfiler allSubclassesDo: #clear.
+SGACrossOverOperationTestWithRoassal >> tearDown [
+	SMultiFitnessFunction clean.
+	SCoverageWithProfiler allSubclassesDo: #clean.
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove

@@ -13,6 +13,46 @@ STestCaseTestWithRoassal >> setUp [
 ]
 
 { #category : #tests }
+STestCaseTestWithRoassal >> testAddLiteral [
+	| testCase aTypeInfo |
+	testCase := SSTestCase new.
+	aTypeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #return: -> #(#SFoo #OrderedCollection #(#RTEdge) false))
+						with: #()).
+	aTypeInfo
+		scalar: #RTEdge
+		with: (Array with: (RTEdge new)).
+	testCase typeInfo: aTypeInfo.
+	self should: [testCase
+		addLiteral: #RTEdge] raise: SError.
+]
+
+{ #category : #tests }
+STestCaseTestWithRoassal >> testAddMessage [
+	| testCase aTypeInfo |
+	testCase := SSTestCase new.
+	aTypeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with: (Array with: #return: -> #(#SFoo #OrderedCollection #(#RTEdge) false))
+						with: #()).
+	aTypeInfo scalar: #RTEdge with: (Array with: RTEdge new).
+	testCase typeInfo: aTypeInfo.
+	self
+		should: [ testCase addMessage: #return: from: #SFoo ]
+		raise: SError.
+	self assertCollection: (testCase statements collect: #printString) hasSameElements: #('_var0 := SFoo new.')
+]
+
+{ #category : #tests }
 STestCaseTestWithRoassal >> testChangeMessageNotUnderstoodOnRTSVGOnPackage [
 	| engine |
 	engine := SGAEngineExample new

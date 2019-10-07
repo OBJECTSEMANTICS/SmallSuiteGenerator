@@ -18,7 +18,7 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 		collect: #returnType
 		thenSelect: [ :aType | aType isNotNil ]) asSet
 		includesAll: (aMethodTypeInfo argTypes flatCollect: [ :arg | arg types ]))
-		ifFalse: [ ^ SError error: 'statements dont contain some types of method' ].
+		ifFalse: [ ^ SError signal: 'statements dont contain some types of method' ].
 	dict := Dictionary new.
 	statements copy shuffle
 		do: [ :stm | 
