@@ -9,7 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> classAssertsGenerationTest [
-	SSGeneratorInvariant
+	SSTestSuiteGenerator
 		createCompilerClass: 'SSAssertionGeneratorTest'
 ]
 

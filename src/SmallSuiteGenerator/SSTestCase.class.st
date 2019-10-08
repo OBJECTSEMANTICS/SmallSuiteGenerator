@@ -3,12 +3,11 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'statements',
+		'assertions',
 		'typeInfo',
 		'nextId',
 		'numMaxStatements',
-		'fitness',
-		'generatorInvariant',
-		'refactorizer'
+		'fitness'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -26,7 +25,7 @@ SSTestCase >> = other [
 	^ self class = other class and: [ statements = other statements ]
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addAssignment: anExpression [
 	| assignment |
 	assignment := self newAssignment: anExpression.
@@ -34,18 +33,18 @@ SSTestCase >> addAssignment: anExpression [
 	^ assignment
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addFactoryMessage [
 	^ self addFactoryMessage: typeInfo randomNoneAbstractClass name
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addFactoryMessage: aClassName [
 	^ self
 		addAssignment: (self newFactoryMessage: aClassName before: nil)
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addFactoryMessage: aClassName ofSelector: aSelector [
 	^ [ self
 		addAssignment:
@@ -56,12 +55,12 @@ SSTestCase >> addFactoryMessage: aClassName ofSelector: aSelector [
 		do: [ self addFactoryMessage: aClassName ]
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addFactoryMessage: aClassName withMethod: aMethod [
 	^ self addAssignment: (self factoryMessageUsing: aMethod before: nil)
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addFieldAccessMessage [
 	| receiver methods |
 	receiver := self pickAnObjectVariable.
@@ -72,7 +71,7 @@ SSTestCase >> addFieldAccessMessage [
 				withReceiver: receiver ]
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
 	anAccessor := (typeInfo classAt: aClassName) methodOf: aSelector.
@@ -86,13 +85,13 @@ SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	^ self addFieldAccessMessage: anAccessor withReceiver: receiver
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addFieldAccessMessage: method withReceiver: receiver [
 	^ self
 		addAssignment: (SFieldAccessMessage newFromReceiver: receiver copy andMethod: method)
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addLiteral [
 
 	typeInfo scalars
@@ -101,7 +100,7 @@ SSTestCase >> addLiteral [
 				 ] ]
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addLiteral: aClassName [
 	| literal |
 	literal := self literal: aClassName.
@@ -110,7 +109,7 @@ SSTestCase >> addLiteral: aClassName [
 		ifNotNil: [ ^ self addAssignment: literal ]
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addMessage [
 	| receiver methods |
 	receiver := self pickAnObjectVariable.
@@ -119,7 +118,7 @@ SSTestCase >> addMessage [
 		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ]
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addMessage: aSelector from: aClassName [
 	| receiver aMethod |
 	aMethod := (self pickMessagesOf: aClassName)
@@ -135,17 +134,17 @@ SSTestCase >> addMessage: aSelector from: aClassName [
 	^ self addMessage: aMethod withReceiver: receiver
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addMessage: method withReceiver: receiver [
 	^ self addAssignment: (self messageUsing: method and: receiver before: nil)
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> addStatement: anExpression [
 	statements add: anExpression.
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addStatement: newExpression after: aStatement [
 	| anIndex |
 	anIndex := statements indexOf: aStatement.
@@ -156,16 +155,15 @@ SSTestCase >> addStatement: newExpression after: aStatement [
 	^ newExpression
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addStatement: newExpression before: aStatement [
-
-
+	"I add a newExpression before aStatement"
 	statements
 		add: newExpression
 		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addStatementOfType: aType before: aExpression [
 	| newExpression |
 	newExpression := self
@@ -174,7 +172,7 @@ SSTestCase >> addStatementOfType: aType before: aExpression [
 	^ newExpression
 ]
 
-{ #category : #adding }
+{ #category : #inserting }
 SSTestCase >> addStatements: collStatements [
 	self
 		assert: statements isEmpty
@@ -182,12 +180,12 @@ SSTestCase >> addStatements: collStatements [
 	statements addAll: collStatements
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestCase >> allVarNames [
 	^ statements collect: [ :stm | stm reference printString ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
 	| returnType |
 	returnType := aFactoryMessage returnType.
@@ -199,7 +197,7 @@ SSTestCase >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
 		ifNone: [ SFactoryMessage default: returnType ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExpression [
 	| returnType receiver |
 	receiver := aFieldAccessMessage receiver.
@@ -216,7 +214,7 @@ SSTestCase >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExpres
 				, aFieldAccessMessage printString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> alternativeMessage: aMessage before: aExpression [
 	| returnType receiver |
 	receiver := aMessage receiver.
@@ -231,7 +229,7 @@ SSTestCase >> alternativeMessage: aMessage before: aExpression [
 		error: 'not found alternative of message: ' , aMessage printString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 	| returnType |
 	
@@ -243,7 +241,18 @@ SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 	^ (self addStatementOfType: returnType before: aExpression) reference
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
+SSTestCase >> analyze [
+	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
+	^ STestSpyRunner new run: self.
+]
+
+{ #category : #accessing }
+SSTestCase >> assertions [
+	^ assertions
+]
+
+{ #category : #accessing }
 SSTestCase >> assignId [
 	| idToAssign assignedIds |
 	assignedIds := self assignedIds.
@@ -258,7 +267,7 @@ SSTestCase >> assignedIds [
 	^ statements collect: #id
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> buildArgs: argTypes before: aStatement [
 	argTypes
 		ifNotNil: [ | types typesToAdd |
@@ -275,12 +284,12 @@ SSTestCase >> buildArgs: argTypes before: aStatement [
 						before: aStatement ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SSTestCase >> changeMessageNotUnderstood: aSelector from: aClassName [
 	^ false
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SSTestCase >> changeStatement [
 	statements copy shuffle
 		do: [ :stm | 
@@ -289,7 +298,7 @@ SSTestCase >> changeStatement [
 				do: [  ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SSTestCase >> changeStatement: aStatement [
 	| statementChanged |
 	statementChanged := aStatement copy
@@ -299,7 +308,7 @@ SSTestCase >> changeStatement: aStatement [
 	^ statementChanged
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SSTestCase >> changeStatementOfClassName: aClassName [
 	| varExpressions changed |
 	
@@ -322,7 +331,7 @@ SSTestCase >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SSTestCase >> computeFitness: fitnessClass [
 
 	| valueFitness |
@@ -341,7 +350,7 @@ SSTestCase >> copy [
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestCase >> defaultNumberStatements [
 	^ 54
 ]
@@ -351,7 +360,7 @@ SSTestCase >> error: aString [
 	^ SError signal: aString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> factoryMessageUsing: method before: aStatement [
 	self buildArgs: method argTypes before: aStatement.
 	^ SFactoryMessage
@@ -371,21 +380,32 @@ SSTestCase >> fitness [
 	^ fitness
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
+SSTestCase >> generateAssertions [
+	^ self generateAssertions: {SComparisonAssertion . SInspectorAssertion . SPrimitiveAssertion . SStringAssertion}.
+]
+
+{ #category : #running }
+SSTestCase >> generateAssertions: classAssertions [
+	"
+	it analyze each kind of assertion an generate a set of assertion based on the test case -- double dispatch
+	"
+	|executionContext|
+	executionContext := self analyze.
+	assertions := classAssertions flatCollect:[ :assertion | assertion for: executionContext.].
+]
+
+{ #category : #running }
 SSTestCase >> generateStatements [
-	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain data.'.
+
+	self assert: typeInfo types isNotEmpty 
+			description: 'TypeInfo does not contain info at all.'.
+	
 	[ self numberStatements < self numMaxStatements ]
 		whileTrue: [ [self
 				perform:
 					#(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral)
 						shuffle anyOne] on: SError do: [  ] ]
-]
-
-{ #category : #'as yet unclassified' }
-SSTestCase >> generateTestsWith: classInvariants [
-	^ generatorInvariant
-		generateAssertionsOf: self
-		testCaseUsing: classInvariants
 ]
 
 { #category : #comparing }
@@ -396,13 +416,13 @@ SSTestCase >> hash [
 { #category : #initialization }
 SSTestCase >> initialize [
 	statements := OrderedCollection new.
+	assertions := OrderedCollection new.
 	nextId := 0.
 	numMaxStatements := 0.
-	generatorInvariant := SSGeneratorInvariant new.
 	fitness := Dictionary new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #inserting }
 SSTestCase >> insertAsParameter: aExpression after: aStatement [
 	(statements
 		copyFrom: (statements indexOf: aStatement) + 1
@@ -414,14 +434,14 @@ SSTestCase >> insertAsParameter: aExpression after: aStatement [
 	self error: 'cant insert as parameter'
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> insertExpression: aExpression after: aStatement [
 	^ self
 		addStatement: (self newAssignment: aExpression)
 		after: aStatement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #inserting }
 SSTestCase >> insertRandomStatement [
 	#(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:)
 		shuffle
@@ -431,7 +451,7 @@ SSTestCase >> insertRandomStatement [
 				do: [  ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #inserting }
 SSTestCase >> insertStatement [
 	| l stop alpha count random |
 	statements ifEmpty: [ ^ #() ].
@@ -446,7 +466,7 @@ SSTestCase >> insertStatement [
 			count := count + 1 ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #inserting }
 SSTestCase >> insertStatementOfSelector: selector [
 
 	statements copy shuffle
@@ -458,7 +478,7 @@ SSTestCase >> insertStatementOfSelector: selector [
 		error: 'Cant insert statement of selector: ' , selector printString
 ]
 
-{ #category : #adding }
+{ #category : #transformations }
 SSTestCase >> literal: aClassName [
 	| literal |
 	literal := self newLiteral: aClassName.
@@ -467,7 +487,7 @@ SSTestCase >> literal: aClassName [
 		ifNotNil: [ ^ literal ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> messageUsing: method and: receiver before: aStatement [
 	self buildArgs: method argTypes before: aStatement.
 	^ SMessage
@@ -476,7 +496,7 @@ SSTestCase >> messageUsing: method and: receiver before: aStatement [
 		andPreviousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> messagesVariablesFrom: aClassName [
 	|varExpressions|
 	varExpressions := self
@@ -512,7 +532,7 @@ SSTestCase >> newAssignment: anExpression [
 		value: anExpression copy
 ]
 
-{ #category : #actions }
+{ #category : #'instance creation' }
 SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 	^ typeInfo types
 		at: aClassName
@@ -524,7 +544,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 		ifAbsent: [ self error: 'error factoryMessage' ]
 ]
 
-{ #category : #actions }
+{ #category : #'instance creation' }
 SSTestCase >> newFactoryMessageUsing: methods and: aStatement [
 	methods shuffle
 		do: [ :method | 
@@ -534,7 +554,7 @@ SSTestCase >> newFactoryMessageUsing: methods and: aStatement [
 	self error: 'error factoryMessage'
 ]
 
-{ #category : #actions }
+{ #category : #'instance creation' }
 SSTestCase >> newFieldAccessMessageOfType: aType andReceiver: receiver [
 	^ (self pickAccessorsOf: receiver returnType)
 		detect: [ :aMethod | aMethod returnType = aType ]
@@ -543,7 +563,7 @@ SSTestCase >> newFieldAccessMessageOfType: aType andReceiver: receiver [
 		ifNone: [ self error: 'cant create field access of type: ' , aType asString ]
 ]
 
-{ #category : #actions }
+{ #category : #'instance creation' }
 SSTestCase >> newFieldAccessMessageOfType: aType before: aStatement [
 	(self factoryMessageVariablesBefore: aStatement)
 		do: [ :receiver | 
@@ -565,7 +585,7 @@ SSTestCase >> newLiteral: aClassName [
 		value: aObject
 ]
 
-{ #category : #actions }
+{ #category : #'instance creation' }
 SSTestCase >> newMessageOfType: aType before: aStatement [
 	(self factoryMessageVariablesBefore: aStatement)
 		do: [ :receiver | 
@@ -575,7 +595,7 @@ SSTestCase >> newMessageOfType: aType before: aStatement [
 	^self error: 'cant create message of type: ' , aType asString
 ]
 
-{ #category : #actions }
+{ #category : #'instance creation' }
 SSTestCase >> newMessageOfType: aType using: receiver before: aStatement [
 	(self pickMessagesOf: receiver returnType)
 		detect: [ :aMethod | aMethod returnType = aType ]
@@ -586,7 +606,7 @@ SSTestCase >> newMessageOfType: aType using: receiver before: aStatement [
 	^ self error: 'error to create message'
 ]
 
-{ #category : #adding }
+{ #category : #transformations }
 SSTestCase >> newStatementOfType: aType before: aStatement [
 	#(#newFactoryMessage:before: #newLiteral: #newFieldAccessMessageOfType:before: #newMessageOfType:before:)
 		shuffle
@@ -617,7 +637,30 @@ SSTestCase >> numberStatements [
 	^ statements size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
+SSTestCase >> parseTree [
+	
+	^ self parseTreeWith: self statements.
+]
+
+{ #category : #testing }
+SSTestCase >> parseTreeWith: statementCollection [
+	| node temporaries |
+	node := RBParser parseExpression: '[]'.
+	temporaries := self allVarNames
+		collect: [ :varName | RBParser parseExpression: varName ].
+	node body temporaries: temporaries.
+	statementCollection do: [ :stm | node body addNode: (RBParser parseExpression: stm printString) ].
+	^ node
+]
+
+{ #category : #testing }
+SSTestCase >> parseTreeWithAssertions [
+	
+	^ self parseTreeWith: self statements, self assertions.
+]
+
+{ #category : #transformations }
 SSTestCase >> perform: selector inStatement: stm [
 	^ stm
 		perform: selector
@@ -661,7 +704,7 @@ SSTestCase >> pickOrCreateObjectVariableOf: aClassName [
 		do: [ (self addFactoryMessage: aClassName) variable ]
 ]
 
-{ #category : #adding }
+{ #category : #transformations }
 SSTestCase >> randomIndexToAdd: aExpression before: aStatement [
 	| refIndexes anIndex |
 	anIndex := statements indexOf: aStatement.
@@ -680,13 +723,13 @@ SSTestCase >> randomIndexToAdd: aExpression before: aStatement [
 	^ (1 to: anIndex) atRandom
 ]
 
-{ #category : #actions }
+{ #category : #inserting }
 SSTestCase >> randomStatement [
 	^ statements at: (1 to: self numberStatements ) atRandom
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> referencesIndexes: aExpression [
 	^ ((aExpression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
 ]
@@ -729,7 +772,7 @@ SSTestCase >> removeStatementOfVarName: varName [
 	^ self removeStatement: (self statementOfVarName: varName) copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #repairing }
 SSTestCase >> repairExpression: anExpression before: aStatement [
 	| aType replacement |
 	aType := anExpression returnType.
@@ -743,7 +786,7 @@ SSTestCase >> repairExpression: anExpression before: aStatement [
 		by: replacement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #repairing }
 SSTestCase >> repairParameters: expressions of: aStatement [
 	|exprsToDelete|
 	exprsToDelete := OrderedCollection new.
@@ -752,7 +795,13 @@ SSTestCase >> repairParameters: expressions of: aStatement [
 		^ exprsToDelete 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
+SSTestCase >> run [
+	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
+	^ SSTestRunner new run: self.
+]
+
+{ #category : #transformations }
 SSTestCase >> satisfyTypes: types before: aStatement [
 	| scalarsKeys scalarTypes nonScalarTypes |
 	scalarsKeys := typeInfo scalars keys.
@@ -764,6 +813,10 @@ SSTestCase >> satisfyTypes: types before: aStatement [
 	^ scalarTypes
 ]
 
+{ #category : #running }
+SSTestCase >> setUp [
+]
+
 { #category : #accessing }
 SSTestCase >> statementAt: statement [
 	^ statements
@@ -771,7 +824,7 @@ SSTestCase >> statementAt: statement [
 		ifNone: [ self error: 'statement not found' ]
 ]
 
-{ #category : #testing }
+{ #category : #accessing }
 SSTestCase >> statementOfVarName: aString [
 	^ statements
 		detect: [ :stm | stm reference printString = aString ]
@@ -783,7 +836,7 @@ SSTestCase >> statements [
 	^ statements
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> statementsOfType: aType before: aExpression [
 	(statements includes: aExpression)
 		ifFalse: [ self error: 'not found statement' ].
@@ -791,7 +844,7 @@ SSTestCase >> statementsOfType: aType before: aExpression [
 		select: [ :stm | stm returnType = aType ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	|stop|
 	stop := statements indexOf: aStatement.
@@ -800,6 +853,10 @@ SSTestCase >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	( start <= stop )
 		ifFalse: [ ^ self error: 'Data must be in range' ].
 	^ statements copyFrom: start to: stop - 1.
+]
+
+{ #category : #running }
+SSTestCase >> tearDown [ 
 ]
 
 { #category : #accessing }
@@ -812,12 +869,12 @@ SSTestCase >> typeInfo: anObject [
 	typeInfo := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #transformations }
 SSTestCase >> updateNextId [ 
 	nextId = 0 ifTrue: [ nextId := statements size ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestCase >> validReferences [
 	| references |
 	references := Set new.

@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'varName'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #accessing }

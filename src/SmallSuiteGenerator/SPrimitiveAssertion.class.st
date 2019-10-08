@@ -1,7 +1,7 @@
 Class {
 	#name : #SPrimitiveAssertion,
-	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion-Assertion'
+	#superclass : #SAssertionMessage,
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'as yet unclassified' }
@@ -14,6 +14,26 @@ SPrimitiveAssertion class >> applyOn: aName with: aLiteral of: testCase [
 		valueAssert: aLiteral;
 		comparableValue: aLiteral.
 	^ Array with: instance
+]
+
+{ #category : #'instance creation' }
+SPrimitiveAssertion class >> for: anExecutionContext [
+	| assertions |
+	assertions := OrderedCollection new.
+	anExecutionContext keys
+		do: [ :varName | 
+			| value |
+			value := anExecutionContext at: varName.
+			(self isPrimitive: value)
+				ifTrue: [ assertions
+						add:
+							(self new
+								selector: #assert:equals:;
+								args:
+									{(SVariable name: varName).
+									(SLiteral new value: value printString)};
+								yourself) ] ].
+	^ assertions
 ]
 
 { #category : #preconditions }

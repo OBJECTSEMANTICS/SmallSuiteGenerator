@@ -1,7 +1,7 @@
 Class {
 	#name : #SFactoryMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #accessing }

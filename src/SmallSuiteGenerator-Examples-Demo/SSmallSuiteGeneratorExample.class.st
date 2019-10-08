@@ -9,8 +9,8 @@ SSmallSuiteGeneratorExample >> clean [
 	SMultiFitnessFunction
 		clean;
 		reset.
-	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassOfTest 
+	SSTestSuiteGenerator resetNumTest.
+	SSTestSuiteGenerator resetClassOfTest 
 	"SSAssertionGeneratorTest methodsDo: #removeFromSystem"
 ]
 
@@ -19,7 +19,7 @@ SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
 	| smallSuiteGenerator block regex funcFitness |
 	self clean.
 	smallSuiteGenerator := SSmallSuiteGenerator newInstance.
-	SSGeneratorInvariant resetNumTest.
+	SSTestSuiteGenerator resetNumTest.
 	block := [  ].
 	regex := 'SmallSuiteGenerator-Examples'.
 	smallSuiteGenerator

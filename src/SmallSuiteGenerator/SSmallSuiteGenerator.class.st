@@ -50,8 +50,8 @@ SSmallSuiteGenerator >> classesForRegex: regexExpressions [
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> configureTestCaseClass [
 	"here it necessary to add messages to configure the name of the test class and it compile in a determinated package"
-	SSGeneratorInvariant resetClassOfTest.
-	SSGeneratorInvariant createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
+	SSTestSuiteGenerator resetClassOfTest.
+	SSTestSuiteGenerator createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
 	
 ]
 
@@ -64,7 +64,7 @@ SSmallSuiteGenerator >> dataFitnessCoverage [
 SSmallSuiteGenerator >> end [
 	engine clean.
 	"self class resetInstance."
-	SSGeneratorInvariant resetNumTest.
+	SSTestSuiteGenerator resetNumTest.
 	"SSGeneratorInvariant resetClassOfTest"
 ]
 
@@ -192,8 +192,8 @@ SSmallSuiteGenerator >> randomlyGeneratedPopulation [
 
 { #category : #accessing }
 SSmallSuiteGenerator >> resetClassOfTest [
-	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassOfTest
+	SSTestSuiteGenerator resetNumTest.
+	SSTestSuiteGenerator resetClassOfTest
 ]
 
 { #category : #running }

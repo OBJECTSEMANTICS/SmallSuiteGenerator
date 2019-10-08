@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #comparing }
@@ -66,8 +66,5 @@ SLiteral >> value [
 
 { #category : #accessing }
 SLiteral >> value: anObject [
-	[ anObject smallStoreString.
-	value := anObject ]
-		on: SError
-		do: [  ]
+	value := anObject.
 ]

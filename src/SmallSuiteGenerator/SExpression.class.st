@@ -5,7 +5,7 @@ Class {
 		'returnType',
 		'id'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #comparing }

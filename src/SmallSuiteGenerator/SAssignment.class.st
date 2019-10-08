@@ -5,7 +5,7 @@ Class {
 		'variable',
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'instance creation' }

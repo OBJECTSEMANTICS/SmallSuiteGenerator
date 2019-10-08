@@ -1,8 +1,8 @@
 Class {
-	#name : #SSGeneratorInvariant,
+	#name : #SSTestSuiteGenerator,
 	#superclass : #Object,
 	#instVars : [
-		'compiler',
+		'testRunner',
 		'compilerClassOfTests',
 		'testClassName',
 		'testPackageName'
@@ -12,21 +12,21 @@ Class {
 		'classNameOfTest',
 		'compilerClassOfTests'
 	],
-	#category : #'SmallSuiteGenerator-Assertion-Invariant'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #accessing }
-SSGeneratorInvariant class >> compilerClassOfTests [ 
+SSTestSuiteGenerator class >> compilerClassOfTests [ 
 	^ compilerClassOfTests 
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> createCompilerClass: aClassName [
+SSTestSuiteGenerator class >> createCompilerClass: aClassName [
 	self createCompilerClass: aClassName of: 'SmallSuiteGenerator-Tests-Generated'
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> createCompilerClass: aClassName of: aPackageName [
+SSTestSuiteGenerator class >> createCompilerClass: aClassName of: aPackageName [
 	compilerClassOfTests
 		ifNil: [ compilerClassOfTests := self class compiler
 				evaluate:
@@ -38,23 +38,23 @@ SSGeneratorInvariant class >> createCompilerClass: aClassName of: aPackageName [
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> incrementNumTest [
+SSTestSuiteGenerator class >> incrementNumTest [
 	numTest := numTest + 1
 ]
 
 { #category : #'class initialization' }
-SSGeneratorInvariant class >> initialize [
+SSTestSuiteGenerator class >> initialize [
 	numTest := 0.
 	classNameOfTest := nil
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant class >> numTest [
+SSTestSuiteGenerator class >> numTest [
 	^ numTest
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> resetClassOfTest [
+SSTestSuiteGenerator class >> resetClassOfTest [
 	classNameOfTest
 		ifNotNil: [ Smalltalk removeClassNamed: classNameOfTest ].
 	classNameOfTest := nil.
@@ -62,12 +62,12 @@ SSGeneratorInvariant class >> resetClassOfTest [
 ]
 
 { #category : #initialization }
-SSGeneratorInvariant class >> resetNumTest [
+SSTestSuiteGenerator class >> resetNumTest [
 	numTest := 0
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
+SSTestSuiteGenerator >> compileStatementsOf: testCase with: invariants [
 	| node selector |
 	node := SCoverageWithProfiler nodeFormattedOf: testCase.
 	invariants
@@ -86,17 +86,18 @@ SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant >> compilerClassOfTests [
+SSTestSuiteGenerator >> compilerClassOfTests [
 	^ self class compilerClassOfTests ifNil: [self class createCompilerClass: testClassName of: testPackageName]
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant >> generateAssertionsOf: aSTestCase testCaseUsing: selectedInvariants [
+SSTestSuiteGenerator >> generateAssertionsOf: aSTestCase testCaseUsing: selectedInvariants [
 	| filteredInvariants compiled |
-	compiler compile: (self transformToNode: aSTestCase).
+	testRunner run: aSTestCase. 
+	"compile: (self transformToNode: aSTestCase).
 	filteredInvariants := compiler
 		executeMethodUsing: aSTestCase
-		testCaseAnd: selectedInvariants.
+		testCaseAnd: selectedInvariants."
 	compiled := self
 		compileStatementsOf: aSTestCase
 		with: filteredInvariants.
@@ -106,35 +107,35 @@ SSGeneratorInvariant >> generateAssertionsOf: aSTestCase testCaseUsing: selected
 ]
 
 { #category : #initialization }
-SSGeneratorInvariant >> initialize [
-	compiler := SSCompilerInvariant new.
+SSTestSuiteGenerator >> initialize [
+	testRunner := SSTestRunner new.
 	testClassName := 'SSAssertionGeneratorTest'.
 	testPackageName := 'SmallSuiteGenerator-Tests-Assertion'
 	"refactorizer := SRefactorizer new"
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant >> testClassName [
+SSTestSuiteGenerator >> testClassName [
 	^ testClassName
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant >> testClassName: anObject [
+SSTestSuiteGenerator >> testClassName: anObject [
 	testClassName := anObject
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant >> testPackageName [
+SSTestSuiteGenerator >> testPackageName [
 	^ testPackageName
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant >> testPackageName: anObject [
+SSTestSuiteGenerator >> testPackageName: anObject [
 	testPackageName := anObject
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant >> transformToNode: testCase [
+SSTestSuiteGenerator >> transformToNode: testCase [
 	| node |
 	node := SCoverageWithProfiler  nodeFormattedOf: testCase.
 	node body
