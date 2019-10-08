@@ -32,8 +32,11 @@ SMultiFitnessFunction class >> clean [
 
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction class >> computeFitness: aTestCase [
+	|result|
 	self validateInstance.
-	^ multiFitnessFunction computeFitness: aTestCase
+	result := multiFitnessFunction computeFitness: aTestCase.
+	self clean.
+	^ result
 ]
 
 { #category : #testing }

@@ -2,6 +2,8 @@ Class {
 	#name : #SFitnessFunction,
 	#superclass : #Object,
 	#classInstVars : [
+		'inputData',
+		'isOnClass',
 		'operator'
 	],
 	#category : #'SmallSuiteGenerator-Fitness'
@@ -32,9 +34,19 @@ SFitnessFunction class >> computeFitness: aTestCase [
 	^ self subclassResponsibility 
 ]
 
+{ #category : #accessing }
+SFitnessFunction class >> inputData: array [
+	inputData := array
+]
+
 { #category : #testing }
 SFitnessFunction class >> is: aTestCase1 betterThan: aTestCase2 [
 	^ self subclassResponsibility 
+]
+
+{ #category : #accessing }
+SFitnessFunction class >> isOnClass: boolean [
+	isOnClass := boolean
 ]
 
 { #category : #'as yet unclassified' }

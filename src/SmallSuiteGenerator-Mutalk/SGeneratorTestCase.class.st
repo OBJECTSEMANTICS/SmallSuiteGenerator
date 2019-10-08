@@ -5,20 +5,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SGeneratorTestCase >> methodsWithMutationFrom: testClasses mutating: classes using: operators with: evaluationStrategy [
-	| analysis |
-	analysis := MutationTestingAnalysis
-		testCasesFrom: testClasses
-		mutating:
-			classes
-		using: operators
-		with: evaluationStrategy .
-	analysis run.
-	^ analysis mutations
-]
-
-{ #category : #'as yet unclassified' }
-SGeneratorTestCase >> mutatedMethodsFrom: testClasses mutating: classes using: operators with: evaluationStrategy [
+SGeneratorTestCase >> mutations: testClasses afterMutating: classes using: operators with: evaluationStrategy [
 	| analysis |
 	analysis := MutationTestingAnalysis
 		testCasesFrom: testClasses

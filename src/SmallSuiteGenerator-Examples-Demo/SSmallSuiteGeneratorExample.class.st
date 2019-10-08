@@ -10,7 +10,7 @@ SSmallSuiteGeneratorExample >> clean [
 		clean;
 		reset.
 	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassOfTest 
+	SSGeneratorInvariant resetClassesOfTest 
 	"SSAssertionGeneratorTest methodsDo: #removeFromSystem"
 ]
 

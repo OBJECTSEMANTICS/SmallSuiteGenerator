@@ -9,32 +9,35 @@ Class {
 	],
 	#classInstVars : [
 		'numTest',
-		'classNameOfTest',
-		'compilerClassOfTests'
+		'testClassesCompilers',
+		'testClassesNames'
 	],
 	#category : #'SmallSuiteGenerator-Assertion-Invariant'
 }
 
-{ #category : #accessing }
-SSGeneratorInvariant class >> compilerClassOfTests [ 
-	^ compilerClassOfTests 
-]
-
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant class >> createCompilerClass: aClassName [
-	self createCompilerClass: aClassName of: 'SmallSuiteGenerator-Tests-Generated'
+	self
+		createCompilerClass: aClassName
+		of: 'SmallSuiteGenerator-Tests-Generated'
 ]
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant class >> createCompilerClass: aClassName of: aPackageName [
-	compilerClassOfTests
-		ifNil: [ compilerClassOfTests := self class compiler
+	| aCompiler |
+	testClassesCompilers
+		ifNil: [ testClassesCompilers := OrderedCollection new].
+			aCompiler := self class compiler
 				evaluate:
-					(SCoverageWithProfiler
+					(SCompilerMethod
 						stringToCreateNewClass: aClassName
 						with: 'TestCase'
 						and: aPackageName).
-						classNameOfTest := aClassName ]
+			testClassesCompilers add: aCompiler.
+			testClassesNames
+				ifNil: [ testClassesNames := OrderedCollection new ].
+			testClassesNames add: aClassName.
+	^ aCompiler
 ]
 
 { #category : #'as yet unclassified' }
@@ -45,7 +48,8 @@ SSGeneratorInvariant class >> incrementNumTest [
 { #category : #'class initialization' }
 SSGeneratorInvariant class >> initialize [
 	numTest := 0.
-	classNameOfTest := nil
+	testClassesNames := OrderedCollection new.
+	testClassesCompilers := OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -54,11 +58,12 @@ SSGeneratorInvariant class >> numTest [
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> resetClassOfTest [
-	classNameOfTest
-		ifNotNil: [ Smalltalk removeClassNamed: classNameOfTest ].
-	classNameOfTest := nil.
-	compilerClassOfTests := nil
+SSGeneratorInvariant class >> resetClassesOfTest [
+	testClassesNames
+		ifNotNil: [ testClassesNames
+				do: [ :string | Smalltalk removeClassNamed: string ] ].
+	testClassesNames := OrderedCollection new.
+	testClassesCompilers := OrderedCollection new
 ]
 
 { #category : #initialization }
@@ -67,13 +72,18 @@ SSGeneratorInvariant class >> resetNumTest [
 ]
 
 { #category : #accessing }
+SSGeneratorInvariant class >> testClassesCompilers [
+	^ testClassesCompilers 
+]
+
+{ #category : #accessing }
 SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
 	| node selector |
-	node := SCoverageWithProfiler nodeFormattedOf: testCase.
+	node := SCompilerMethod nodeFormedFrom: testCase.
 	invariants
 		do:
 			[ :invariant | node body addNode: (RBParser parseExpression: invariant asString) ].
-	selector := [ self compilerClassOfTests
+	selector := [ self testClassCompiler
 		compile:
 			'test' , self class numTest asString , String cr
 				, node body formattedCode ]
@@ -83,11 +93,6 @@ SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
 		ifNotNil: [ self class incrementNumTest.
 			^ true ].
 	^ false
-]
-
-{ #category : #'as yet unclassified' }
-SSGeneratorInvariant >> compilerClassOfTests [
-	^ self class compilerClassOfTests ifNil: [self class createCompilerClass: testClassName of: testPackageName]
 ]
 
 { #category : #'as yet unclassified' }
@@ -113,6 +118,13 @@ SSGeneratorInvariant >> initialize [
 	"refactorizer := SRefactorizer new"
 ]
 
+{ #category : #'as yet unclassified' }
+SSGeneratorInvariant >> testClassCompiler [
+	^ [ self class testClassesCompilers first ]
+		on: SubscriptOutOfBounds
+		do: [ self class createCompilerClass: testClassName of: testPackageName ]
+]
+
 { #category : #accessing }
 SSGeneratorInvariant >> testClassName [
 	^ testClassName
@@ -136,7 +148,7 @@ SSGeneratorInvariant >> testPackageName: anObject [
 { #category : #accessing }
 SSGeneratorInvariant >> transformToNode: testCase [
 	| node |
-	node := SCoverageWithProfiler  nodeFormattedOf: testCase.
+	node := SCompilerMethod nodeFormedFrom: testCase.
 	node body
 		addNode: (RBParser parseExpression: '^ self analyze: thisContext').
 	^ node

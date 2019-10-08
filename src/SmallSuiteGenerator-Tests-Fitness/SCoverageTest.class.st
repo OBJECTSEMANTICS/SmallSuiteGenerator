@@ -2,7 +2,8 @@ Class {
 	#name : #SCoverageTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'utility'
+		'utility',
+		'fitness'
 	],
 	#category : #'SmallSuiteGenerator-Tests-Fitness'
 }
@@ -15,9 +16,7 @@ SCoverageTest >> setUp [
 
 { #category : #running }
 SCoverageTest >> tearDown [
-	S2Lock value: false.
-	S2Context value: nil.
-	S2Profiler remove
+	fitness clean
 ]
 
 { #category : #tests }

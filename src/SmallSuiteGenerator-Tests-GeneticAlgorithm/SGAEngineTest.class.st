@@ -40,7 +40,9 @@ SGAEngineTest >> tearDown [
 	S2Context value: nil.
 	S2Profiler remove.
 	SMultiFitnessFunction clean.
-	SCoverageWithProfiler allSubclassesDo: #clean
+	SCoverageWithProfiler allSubclassesDo: #clean.
+	SMutationFunction clean.
+	SSGeneratorInvariant resetClassesOfTest 
 ]
 
 { #category : #tests }
@@ -92,6 +94,35 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSMultiFitnessFunction [
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).	
 	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
 	self assert: (lastFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
+]
+
+{ #category : #tests }
+SGAEngineTest >> testRunOnClassSSTeacherUsingSMutationFunction [
+	| first last classFitness |
+	classFitness := SMutationFunction.
+	self
+		settingEngineOnClass: SSTeacher
+		withBlock: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ].
+	engine
+		fitness:
+			(classFitness
+				mutationScoreOf: (Array with: SSTeacher)
+				using: #('SSTeacher1Test'));
+		endForMaxNumberOfGeneration: 3;
+		run.
+	self halt.
+	first := engine logs first fittestTestCase fitness
+		at: classFitness nameFunction.
+	last := engine logs last fittestTestCase fitness
+		at: classFitness nameFunction.
+	self assert: first <= last.
+	self assert: first >= 20.	"20 = (1/5) * 100"
+	self assert: last equals: 75
 ]
 
 { #category : #tests }

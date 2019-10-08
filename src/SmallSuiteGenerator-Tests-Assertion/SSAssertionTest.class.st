@@ -7,12 +7,12 @@ Class {
 { #category : #running }
 SSAssertionTest >> setUp [
 	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassOfTest
+	SSGeneratorInvariant resetClassesOfTest
 ]
 
 { #category : #running }
 SSAssertionTest >> tearDown [ 
-	SSGeneratorInvariant resetClassOfTest 
+	SSGeneratorInvariant resetClassesOfTest 
 ]
 
 { #category : #tests }

@@ -1,9 +1,6 @@
 Class {
 	#name : #SStatementCoverageTest,
 	#superclass : #SCoverageTest,
-	#instVars : [
-		'fitness'
-	],
 	#category : #'SmallSuiteGenerator-Tests-Fitness'
 }
 
@@ -11,12 +8,6 @@ Class {
 SStatementCoverageTest >> setUp [
 	super setUp.
 	fitness := SStatementCoverage
-]
-
-{ #category : #running }
-SStatementCoverageTest >> tearDown [
-	super tearDown.
-	fitness clean
 ]
 
 { #category : #tests }

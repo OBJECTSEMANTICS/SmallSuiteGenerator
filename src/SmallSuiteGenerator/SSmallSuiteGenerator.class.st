@@ -4,10 +4,10 @@ Class {
 	#instVars : [
 		'engine',
 		'typeInfo',
-		'dataFitnessCoverage',
-		'ofClass',
 		'invariants',
-		'classNameOfTest'
+		'classNameOfTest',
+		'mutantOperators',
+		'evaluationStrategy'
 	],
 	#classInstVars : [
 		'instance'
@@ -33,31 +33,22 @@ SSmallSuiteGenerator class >> resetInstance [
 	instance := nil
 ]
 
+{ #category : #accessing }
+SSmallSuiteGenerator >> classNameOfTest [
+	^ classNameOfTest 
+]
+
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> classNameOfTest: aString [
 	classNameOfTest := aString
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> classesForRegex: regexExpressions [
-	^ ((regexExpressions
-		flatCollect: [ :regex | 
-			RPackage organizer packages
-				select: [ :p | regex match: p name asString ] ]) asSet)
-		flatCollect: #definedClasses
-]
-
-{ #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> configureTestCaseClass [
 	"here it necessary to add messages to configure the name of the test class and it compile in a determinated package"
-	SSGeneratorInvariant resetClassOfTest.
+	SSGeneratorInvariant resetClassesOfTest.
 	SSGeneratorInvariant createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
 	
-]
-
-{ #category : #accessing }
-SSmallSuiteGenerator >> dataFitnessCoverage [
-	^ dataFitnessCoverage
 ]
 
 { #category : #accessing }
@@ -80,6 +71,17 @@ SSmallSuiteGenerator >> engineDefault [
 		numberOfStatements: 30;
 		endForMaxNumberOfGeneration: 15;
 		yourself.
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> evaluationStrategy [
+	^ evaluationStrategy
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> evaluationStrategy: anEvaluationStrategy [
+
+	evaluationStrategy := anEvaluationStrategy 
 ]
 
 { #category : #accessing }
@@ -123,9 +125,20 @@ SSmallSuiteGenerator >> generateTestsWith: selectedInvariants [
 SSmallSuiteGenerator >> initialize [
 	engine := self engineDefault.
 	classNameOfTest := 'STestCaseGenerated'.
-	dataFitnessCoverage := #().
-	ofClass := false.
+	mutantOperators := MutantOperator contents.
+	evaluationStrategy := AllTestsMethodsRunningMutantEvaluationStrategy
+		new.
 	invariants := #()
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> mutantOperators [
+	^ mutantOperators 
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> mutantOperators: collection [
+	mutantOperators := collection
 ]
 
 { #category : #'as yet unclassified' }
@@ -136,11 +149,6 @@ SSmallSuiteGenerator >> numberOfGenerations: aInt [
 { #category : #accessing }
 SSmallSuiteGenerator >> numberOfStatements: aInt [
 	engine numberOfStatements: aInt
-]
-
-{ #category : #accessing }
-SSmallSuiteGenerator >> ofClass [
-	^ ofClass
 ]
 
 { #category : #accessing }
@@ -158,15 +166,12 @@ SSmallSuiteGenerator >> profilingOnClass: aClass [
 	self
 		assert: aClass isNotNil
 		description: 'Need to provide a class to generate the tests'.
-	ofClass := true.
+	engine isOnClass: true.
 	"save data of fitness coverage"
-	dataFitnessCoverage := Array with: aBlock with: aClass.
-	"save the class to evaluate mutants killed or alived"
-	engine modelClasses: (Array with: aClass).
+	engine dataFitness: (Array with: aBlock with: aClass).
 	"execute the engine"
 	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass).
-
+		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass)
 ]
 
 { #category : #'as yet unclassified' }
@@ -179,10 +184,10 @@ SSmallSuiteGenerator >> profilingOnPackagesMatching: regex [
 	self
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
-	dataFitnessCoverage := Array with: aBlock with: regex.
-	engine modelClasses: (self classesForRegex: (Array with: regex)).
+	engine isOnClass: false.
+	engine inputData: (Array with: aBlock with: regex).
 	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex).
+		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex)
 ]
 
 { #category : #initialization }
@@ -191,9 +196,9 @@ SSmallSuiteGenerator >> randomlyGeneratedPopulation [
 ]
 
 { #category : #accessing }
-SSmallSuiteGenerator >> resetClassOfTest [
+SSmallSuiteGenerator >> resetClassesOfTest [
 	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassOfTest
+	SSGeneratorInvariant resetClassesOfTest
 ]
 
 { #category : #running }
@@ -257,6 +262,29 @@ SSmallSuiteGenerator >> typeInfoOf: blockToExecute onPackagesMatching: regex [
 				defaultGeneratorTypeInfoOf: blockToExecute
 				onPackagesMatching: regex ].
 	^ typeInfo
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> valid: aCollection ifNotValid: aBlock [
+	^ (aCollection isNil or: [ aCollection isEmpty ])
+		ifFalse: [ aCollection ]
+		ifTrue: [ aBlock value ]
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> validOperators [
+	|operators|
+	^ self
+		valid: operators
+		ifNotValid: [ SConfiguration defaultMutantOperators ]
+]
+
+{ #category : #'as yet unclassified' }
+SSmallSuiteGenerator >> validTestClasses [
+	|testClasses|
+	^ self
+		valid: testClasses
+		ifNotValid: [ SConfiguration classAssertsGenerationTest ]
 ]
 
 { #category : #visualization }
