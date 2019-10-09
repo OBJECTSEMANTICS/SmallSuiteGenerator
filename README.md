@@ -29,13 +29,13 @@ smallSuiteGenerator := SSmallSuiteGenerator newInstance.
 ### Configuration
 The first step is to define the code block that will be analyzed.
 
-	``` Smalltalk
-	smallSuiteGenerator seed: [ (SStudent name: 'Ann' with: -34.234)
-				nickname;
-				idStudent;
-				scoreStudent: 45;
-				scoreStudent ].
-	```
+```Smalltalk
+smallSuiteGenerator seed: [ (SStudent name: 'Ann' with: -34.234)
+			nickname;
+			idStudent;
+			scoreStudent: 45;
+			scoreStudent ].
+```
 				
 Another option to configure is the fitness that will be used in genetic algorithm  to improve this value either increasing or reducing, depending on the configuration. In this case we use: `SMultiFitnessFunction` to evaluate `SMethodCoverage` and `SStatementCoverage` at the same time.
 
