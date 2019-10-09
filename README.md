@@ -28,6 +28,7 @@ smallSuiteGenerator := SSmallSuiteGenerator newInstance.
 
 ### Configuration
 The first step is to define the code block that will be analyzed.
+
 	``` Smalltalk
 	smallSuiteGenerator seed: [ (SStudent name: 'Ann' with: -34.234)
 				nickname;
