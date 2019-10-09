@@ -44,5 +44,6 @@ SSTestRunner >> initialize [
 { #category : #running }
 SSTestRunner >> run: aSTestCase [
 	self compile: aSTestCase parseTreeWithAssertions.
-	^ super run: #performTest
+	self setTestSelector: #performTest.
+	^ self run.
 ]
