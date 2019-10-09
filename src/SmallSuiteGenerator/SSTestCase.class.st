@@ -244,7 +244,8 @@ SSTestCase >> alternativeOfVariable: aVariable before: aExpression [
 { #category : #running }
 SSTestCase >> analyze [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	^ STestSpyRunner new run: self.
+
+	^ SSTestRunner new evaluate: self
 ]
 
 { #category : #accessing }

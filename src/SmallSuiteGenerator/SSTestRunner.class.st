@@ -1,6 +1,6 @@
 Class {
 	#name : #SSTestRunner,
-	#superclass : #Object,
+	#superclass : #TestCase,
 	#instVars : [
 		'evaluator',
 		'testCase',
@@ -12,11 +12,11 @@ Class {
 { #category : #'test - instrumentation' }
 SSTestRunner >> analyze: aSmalltalkContext [
 	"it takes an snapshot of the thisContext object"
-	|sContext|
+	| sContext |
 	sContext := SSExecutionContext new.
 	aSmalltalkContext tempNames
-		doWithIndex: [ :varName :index | 
-			sContext at: varName put: (aSmalltalkContext namedTempAt: index).].
+		doWithIndex:
+			[ :varName :index | sContext at: varName put: (aSmalltalkContext namedTempAt: index) ].
 	^ sContext
 ]
 
@@ -26,26 +26,23 @@ SSTestRunner >> compile: aBlock [
 	',aBlock body formattedCode)
 ]
 
+{ #category : #running }
+SSTestRunner >> evaluate: aSTestCase [
+	| node |
+	node := aSTestCase parseTree.
+	node body addNode: (RBParser parseExpression: '^ self analyze: thisContext').
+	self compile: node.
+	^ self performTest
+]
+
 { #category : #initialization }
 SSTestRunner >> initialize [
 	evaluator := SSEvaluatorInvariant new.
 	invariants := OrderedCollection new.
 ]
 
-{ #category : #compiling }
-SSTestRunner >> load: aSTestCase [
-	| node |
-	node := aSTestCase parseTreeWithAssertions.
-	self compile: node.
-]
-
-{ #category : #running }
-SSTestRunner >> run [
-	^ self performTest.
-]
-
 { #category : #running }
 SSTestRunner >> run: aSTestCase [
-	self load: aSTestCase.
-	^ self run.
+	self compile: aSTestCase parseTreeWithAssertions.
+	^ super run: #performTest
 ]

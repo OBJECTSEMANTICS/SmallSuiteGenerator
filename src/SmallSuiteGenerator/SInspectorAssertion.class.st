@@ -28,8 +28,3 @@ SInspectorAssertion class >> for: anExecutionContext [
 														yourself) ] ] ].
 	^ assertions
 ]
-
-{ #category : #printing }
-SInspectorAssertion >> printString [ 	
-	^ 'self assert: ', nameValue asString, ' ', comparableValue asString , ' equals: ', (valueAssert perform: comparableValue) storeString
-]

@@ -7,6 +7,11 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
+{ #category : #parsing }
+SLiteral class >> value: aValue [
+	^ SLiteral new value: aValue; yourself.
+]
+
 { #category : #comparing }
 SLiteral >> = other [
 	^ super = other
@@ -37,9 +42,9 @@ SLiteral >> insertOn: aTestCase [
 
 { #category : #printing }
 SLiteral >> printOn: aStream [
+
 	aStream
-		nextPutAll: value storeString;
-		nextPut: $.
+		nextPutAll: ((value isNumber) ifTrue:[ value asString] ifFalse:[value storeString]).
 ]
 
 { #category : #accessing }

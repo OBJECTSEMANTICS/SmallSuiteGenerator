@@ -8,12 +8,10 @@ Class {
 SComparisonAssertion class >> for: anExecutionContext [
 	| assertions |
 	assertions := OrderedCollection new.
-	anExecutionContext keys
-		do: [ :varName1 | 
-			anExecutionContext keys
-				do: [ :varName2 | 
-					varName1 = varName2
-						ifFalse: [ | val1 val2 |
+	anExecutionContext keys combinations: 2 atATimeDo: [ :comb |
+							| varName1 varName2 val1 val2 |
+							varName1 := comb first.
+							varName2 := comb second.
 							val1 := anExecutionContext at: varName1.
 							val2 := anExecutionContext at: varName2.
 							val1 class = val2 class
@@ -30,6 +28,6 @@ SComparisonAssertion class >> for: anExecutionContext [
 														args:
 															{(SVariable name: varName1).
 															(SVariable name: varName2)};
-														yourself) ] ] ] ] ].
+														yourself) ] ] ].
 	^ assertions
 ]

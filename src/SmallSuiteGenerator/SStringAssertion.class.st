@@ -12,6 +12,7 @@ SStringAssertion class >> for: anExecutionContext [
 		do: [ :varName | 
 			| value |
 			value := anExecutionContext at: varName.
+			(self isPrimitive: value) ifFalse:[
 			(value class allSelectorsBelow: Object)
 				detect: [ :selector | selector = #printOn: or: [ selector = #printString ] ]
 				ifFound: [
@@ -27,16 +28,11 @@ SStringAssertion class >> for: anExecutionContext [
 										selector: #printString;
 										yourself).
 									(SLiteral new value: fieldValue)};
-								yourself) ] ].
+								yourself) ] ]].
 	^ assertions
 ]
 
 { #category : #'as yet unclassified' }
 SStringAssertion >> adjust: aString [
 	^ aString copyWithRegex: '''+' matchesReplacedWith: ''''''
-]
-
-{ #category : #printing }
-SStringAssertion >> printString [ 
-	^ 'self assert: ', nameValue asString, ' asString equals: ''', (self adjust: comparableValue asString), ''''
 ]

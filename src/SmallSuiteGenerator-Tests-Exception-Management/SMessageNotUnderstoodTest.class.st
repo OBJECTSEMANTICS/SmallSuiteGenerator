@@ -45,7 +45,7 @@ SMessageNotUnderstoodTest >> testCanResolve [
 				with: '_var2 := _var0 canRegister: _var1.').
 	SStatementCoverage compileTestCase: testCase.
 	self
-		should: [ SStatementCoverage executeStatements ]
+		should: [ testCase run]
 		raise: MessageNotUnderstood.
 	[ SStatementCoverage executeStatements ]
 		on: MessageNotUnderstood

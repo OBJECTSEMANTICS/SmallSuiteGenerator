@@ -123,7 +123,7 @@ SAbstractMessage >> printSelectors: aStream [
 					(index < stop and: [ withColon  ]) ifTrue: [ 
 						aStream nextPut: Character space.
 						 ] ] ].
-	aStream nextPut: $.
+	"aStream nextPut: $."
 ]
 
 { #category : #accessing }

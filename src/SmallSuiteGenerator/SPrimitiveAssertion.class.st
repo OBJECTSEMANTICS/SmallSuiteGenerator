@@ -40,9 +40,3 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 SPrimitiveAssertion class >> preconditionChecking: aObject [
 	^ aObject isLiteral
 ]
-
-{ #category : #printing }
-SPrimitiveAssertion >> printString [ 
-	^ ['self assert: ', nameValue asString, ' equals: ', comparableValue storeString ]
-	on: Error do: [ '' ]
-]
