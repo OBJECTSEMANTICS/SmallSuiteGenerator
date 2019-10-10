@@ -78,6 +78,11 @@ SGAEngine >> clean [
 	fitness ifNotNil: [ fitness clean ]
 ]
 
+{ #category : #accessing }
+SGAEngine >> cleanAll [
+	fitness ifNotNil: [ fitness cleanAll ]
+]
+
 { #category : #'as yet unclassified' }
 SGAEngine >> crossover: testCaseA with: testCaseB [
 	^ crossoverOperator crossover: testCaseA with: testCaseB
@@ -103,8 +108,12 @@ SGAEngine >> fitness [
 
 { #category : #accessing }
 SGAEngine >> fitness: aFitness [
-	self assert: (isOnClass isNotNil and: [inputData isNotNil]) description: 'Define if the instrumentation is in a class or not. Also define the input data (block, class or regex)'.
-	fitness := aFitness isOnClass: isOnClass; inputData: inputData
+	self assert: (isOnClass isNotNil and: [ inputData isNotNil ])
+		description:
+					'Define if the instrumentation is in a class or not. Also define the input data (block, class or regex)'.
+	fitness := aFitness
+		isOnClass: isOnClass;
+		inputData: inputData
 ]
 
 { #category : #'as yet unclassified' }

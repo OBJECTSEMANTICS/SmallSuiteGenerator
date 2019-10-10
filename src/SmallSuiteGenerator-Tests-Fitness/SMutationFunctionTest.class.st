@@ -18,7 +18,7 @@ SMutationFunctionTest >> setUp [
 { #category : #running }
 SMutationFunctionTest >> tearDown [
 	fitness class clean.
-	SSGeneratorInvariant resetClassesOfTest
+	SUtil resetCreatedClasses 
 ]
 
 { #category : #tests }
@@ -35,7 +35,7 @@ SMutationFunctionTest >> testComputeFitnessOnLiteral [
 	testCase := SSTestCase with: utility typeInfosSEvent second.
 	testCase addLiteral.
 	fitness class compileTestCase: testCase.
-	SSGeneratorInvariant createCompilerClass: 'SEvent1Test'.
+	SUtil createClass: 'SEvent1Test'.
 	fitness classesNames: #('SEvent1Test').
 	fitness classesToMutate: (Array with: SEvent).
 	self assert: (fitness computeFitness: testCase) equals: 0
@@ -47,7 +47,7 @@ SMutationFunctionTest >> testComputeFitnessOnMethod [
 	testCase := SSTestCase with: utility typeInfosSEvent first.
 	testCase addMessage: #discount: from: #SEvent.
 	fitness class compileTestCase: testCase.
-	SSGeneratorInvariant createCompilerClass: 'SEvent1Test'.
+	SUtil createClass: 'SEvent1Test'.
 	fitness classesNames: #('SEvent1Test').
 	fitness classesToMutate: (Array with: SEvent).
 	self assert: (fitness computeFitness: testCase) >= 27

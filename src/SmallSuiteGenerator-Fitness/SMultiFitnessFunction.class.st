@@ -13,9 +13,10 @@ Class {
 
 { #category : #adding }
 SMultiFitnessFunction class >> addFitnessFunction: aFitnessFunction [
-	multiFitnessFunction ifNil: [ 
-		multiFitnessFunction := self  new ].
-	multiFitnessFunction addFitnessFunction: aFitnessFunction 
+	multiFitnessFunction ifNil: [ multiFitnessFunction := self new ].
+	isOnClass ifNil: [ isOnClass := aFitnessFunction isOnClass ].
+	inputData ifNil: [ inputData := aFitnessFunction inputData ].
+	multiFitnessFunction addFitnessFunction: aFitnessFunction
 ]
 
 { #category : #accessing }
@@ -30,13 +31,36 @@ SMultiFitnessFunction class >> clean [
 		ifNotNil: [ multiFitnessFunction allFitnessFunction do: #clean ]
 ]
 
+{ #category : #actions }
+SMultiFitnessFunction class >> cleanAll [ 
+	multiFitnessFunction
+		ifNotNil: [ multiFitnessFunction allFitnessFunction do: #cleanAll ].
+	inputData := nil.
+	isOnClass := nil
+]
+
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction class >> computeFitness: aTestCase [
-	|result|
+	| result |
 	self validateInstance.
+	self configureFunctions.
 	result := multiFitnessFunction computeFitness: aTestCase.
 	self clean.
 	^ result
+]
+
+{ #category : #'as yet unclassified' }
+SMultiFitnessFunction class >> configureFunctions [
+	multiFitnessFunction allFitnessFunction do: [ :function | 
+		function isOnClass: isOnClass;
+		inputData: inputData ]
+]
+
+{ #category : #'as yet unclassified' }
+SMultiFitnessFunction class >> configureWith: smallSuiteGenerator [
+	multiFitnessFunction allFitnessFunction do: [ :fitnessFunction | 
+		fitnessFunction configureWith: smallSuiteGenerator 
+		 ]
 ]
 
 { #category : #testing }
@@ -68,7 +92,8 @@ SMultiFitnessFunction class >> numFunctions [
 
 { #category : #accessing }
 SMultiFitnessFunction class >> reset [
-	multiFitnessFunction := nil
+	self cleanAll.
+	multiFitnessFunction := nil.
 ]
 
 { #category : #'as yet unclassified' }
@@ -92,20 +117,21 @@ SMultiFitnessFunction class >> with: aFitnessFunction [
 
 { #category : #adding }
 SMultiFitnessFunction >> addFitnessFunction: aFitnessFunction [
-	functions add: aFitnessFunction 
-	
+	functions at: aFitnessFunction nameFunction put: aFitnessFunction
 ]
 
 { #category : #accessing }
 SMultiFitnessFunction >> allFitnessFunction [
-	^ functions
+	^ functions values
 ]
 
 { #category : #'as yet unclassified' }
 SMultiFitnessFunction >> computeFitness: aTestCase [
-	|dict|
+	| dict |
 	dict := Dictionary new.
-	functions collect: [ :f | f computeFitness: aTestCase] thenDo: [:assoc | dict add: assoc].
+	functions values
+		collect: [ :f | f computeFitness: aTestCase ]
+		thenDo: [ :assoc | dict add: assoc ].
 	^ dict
 ]
 
@@ -115,9 +141,9 @@ SMultiFitnessFunction >> functions: anObject [
 ]
 
 { #category : #initialization }
-SMultiFitnessFunction >> initialize [ 
+SMultiFitnessFunction >> initialize [
 	super initialize.
-	functions := OrderedCollection new
+	functions := Dictionary new
 ]
 
 { #category : #initialization }

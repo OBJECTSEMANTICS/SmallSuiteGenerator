@@ -45,27 +45,14 @@ SSmallSuiteGenerator >> classNameOfTest: aString [
 
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> configureTestCaseClass [
-	"here it necessary to add messages to configure the name of the test class and it compile in a determinated package"
-	SSGeneratorInvariant resetClassesOfTest.
-	SSGeneratorInvariant createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
-	
-]
+	"It is necessary to add messages to configure the name of the test class and it compile in a determinated package"
 
-{ #category : #accessing }
-SSmallSuiteGenerator >> end [
-	engine clean.
-	"self class resetInstance."
-	SSGeneratorInvariant resetNumTest.
-	"SSGeneratorInvariant resetClassOfTest"
-]
-
-{ #category : #accessing }
-SSmallSuiteGenerator >> engine [ 	
-	^ engine
+	SUtil resetCreatedClasses.
+	SUtil createClass: classNameOfTest.
 ]
 
 { #category : #initialization }
-SSmallSuiteGenerator >> engineDefault [
+SSmallSuiteGenerator >> defaultEngine [
 	^ SGAEngine new
 		populationSize: 30;
 		numberOfStatements: 30;
@@ -74,8 +61,16 @@ SSmallSuiteGenerator >> engineDefault [
 ]
 
 { #category : #accessing }
-SSmallSuiteGenerator >> evaluationStrategy [
-	^ evaluationStrategy
+SSmallSuiteGenerator >> end [
+	engine cleanAll.
+	"self class resetInstance."
+	SSGeneratorInvariant resetNumTest
+	"SSGeneratorInvariant resetClassOfTest"
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> engine [ 	
+	^ engine
 ]
 
 { #category : #accessing }
@@ -123,17 +118,12 @@ SSmallSuiteGenerator >> generateTestsWith: selectedInvariants [
 
 { #category : #initialization }
 SSmallSuiteGenerator >> initialize [
-	engine := self engineDefault.
+	engine := self defaultEngine.
 	classNameOfTest := 'STestCaseGenerated'.
 	mutantOperators := MutantOperator contents.
 	evaluationStrategy := AllTestsMethodsRunningMutantEvaluationStrategy
 		new.
 	invariants := #()
-]
-
-{ #category : #accessing }
-SSmallSuiteGenerator >> mutantOperators [
-	^ mutantOperators 
 ]
 
 { #category : #accessing }
@@ -147,13 +137,13 @@ SSmallSuiteGenerator >> numberOfGenerations: aInt [
 ]
 
 { #category : #accessing }
-SSmallSuiteGenerator >> numberOfStatements: aInt [
-	engine numberOfStatements: aInt
+SSmallSuiteGenerator >> numberOfStatements: integer [
+	engine numberOfStatements: integer
 ]
 
 { #category : #accessing }
-SSmallSuiteGenerator >> populationSize: aInt [
-	engine populationSize: aInt
+SSmallSuiteGenerator >> populationSize: integer [
+	engine populationSize: integer
 ]
 
 { #category : #'as yet unclassified' }
@@ -168,7 +158,7 @@ SSmallSuiteGenerator >> profilingOnClass: aClass [
 		description: 'Need to provide a class to generate the tests'.
 	engine isOnClass: true.
 	"save data of fitness coverage"
-	engine dataFitness: (Array with: aBlock with: aClass).
+	engine inputData: (Array with: aBlock with: aClass).
 	"execute the engine"
 	engine
 		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass)
@@ -198,7 +188,7 @@ SSmallSuiteGenerator >> randomlyGeneratedPopulation [
 { #category : #accessing }
 SSmallSuiteGenerator >> resetClassesOfTest [
 	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassesOfTest
+	SUtil resetCreatedClasses 
 ]
 
 { #category : #running }
@@ -215,8 +205,10 @@ SSmallSuiteGenerator >> run [
 	self
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
+	engine fitness configureWith: self.
 	engine run.
 	self configureTestCaseClass.
+	
 	engine generateTestsWith: invariants.
 	self end
 ]
@@ -262,29 +254,6 @@ SSmallSuiteGenerator >> typeInfoOf: blockToExecute onPackagesMatching: regex [
 				defaultGeneratorTypeInfoOf: blockToExecute
 				onPackagesMatching: regex ].
 	^ typeInfo
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> valid: aCollection ifNotValid: aBlock [
-	^ (aCollection isNil or: [ aCollection isEmpty ])
-		ifFalse: [ aCollection ]
-		ifTrue: [ aBlock value ]
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> validOperators [
-	|operators|
-	^ self
-		valid: operators
-		ifNotValid: [ SConfiguration defaultMutantOperators ]
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> validTestClasses [
-	|testClasses|
-	^ self
-		valid: testClasses
-		ifNotValid: [ SConfiguration classAssertsGenerationTest ]
 ]
 
 { #category : #visualization }

@@ -26,10 +26,13 @@ SMutationFunction class >> classesForRegex: regexExpressions [
 ]
 
 { #category : #accessing }
+SMutationFunction class >> classesNamesOfTest: strings [
+	classesNamesOfTest := strings
+]
+
+{ #category : #accessing }
 SMutationFunction class >> clean [
-	|smallSuiteGenerator|
-	smallSuiteGenerator := SSmallSuiteGenerator instance.
-	smallSuiteGenerator ifNotNil: [smallSuiteGenerator resetClassesOfTest ]
+	SUtil resetCreatedClasses 
 ]
 
 { #category : #'as yet unclassified' }
@@ -42,6 +45,12 @@ SMutationFunction class >> computeFitness: aTestCase [
 		assert: [ function notNil ]
 		description: 'Need to set an analyzer of coverage'.
 	^ super computeFitness: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SMutationFunction class >> configureWith: smallSuiteGenerator [
+	self
+		classesNamesOfTest: (Array with: smallSuiteGenerator classNameOfTest).
 ]
 
 { #category : #'as yet unclassified' }
@@ -100,9 +109,10 @@ SMutationFunction >> classes [
 	testNameClasses
 		do: [ :string | 
 			(Smalltalk classNamed: string)
-				ifNil: [ SSGeneratorInvariant createCompilerClass: string.
-					 ] ].
-			^ SSGeneratorInvariant testClassesCompilers 
+				ifNil: [ SUtil
+						createClass: string
+						ofPackage: SConfiguration defaultTestPackage ] ].
+	^ SUtil compilersTests 
 ]
 
 { #category : #accessing }

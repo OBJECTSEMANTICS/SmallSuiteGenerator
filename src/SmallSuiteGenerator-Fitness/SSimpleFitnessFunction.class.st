@@ -13,19 +13,12 @@ SSimpleFitnessFunction class >> allFitnessFunction [
 	^ Array with: self
 ]
 
-{ #category : #actions }
-SSimpleFitnessFunction class >> cleanAll [
-	self clean.
-	inputData := nil.
-	isOnClass := nil
-]
-
 { #category : #compiling }
 SSimpleFitnessFunction class >> compileTestCase: aTestCase [
 	self compilerTest
 		compile:
 			'compileTestCase' , String cr
-				, (SCompilerMethod nodeFormedFrom: aTestCase) body formattedCode
+				, (SUtil nodeFormedFrom: aTestCase) body formattedCode
 ]
 
 { #category : #accessing }
@@ -33,7 +26,7 @@ SSimpleFitnessFunction class >> compilerTest [
 	compilerTest
 		ifNil: [ compilerTest := self compiler
 				evaluate:
-					(SCompilerMethod
+					(SUtil
 						stringToCreateNewClass: 'SCompilerTestCase'
 						with: 'Object'
 						and: 'SmallSuiteGenerator-Core') ].

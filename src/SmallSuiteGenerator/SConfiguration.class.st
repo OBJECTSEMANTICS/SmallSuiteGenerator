@@ -8,17 +8,6 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SConfiguration class >> classAssertsGenerationTest [
-	SSGeneratorInvariant
-		createCompilerClass: 'SSAssertionGeneratorTest'
-]
-
-{ #category : #'as yet unclassified' }
-SConfiguration class >> defaultEvaluationStrategy [
-	^ AllTestsMethodsRunningMutantEvaluationStrategy new
-]
-
-{ #category : #'as yet unclassified' }
 SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute onClass: aClass [
 	^ (SSGenerator profile: blockToExecute onClass: aClass) asTypeInfo
 ]
@@ -31,8 +20,8 @@ SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute
 ]
 
 { #category : #'as yet unclassified' }
-SConfiguration class >> defaultMutantOperators [
-	^ MutantOperator contents
+SConfiguration class >> defaultTestPackage [
+	^ 'SmallSuiteGenerator-Tests-Generated'
 ]
 
 { #category : #'as yet unclassified' }

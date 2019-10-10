@@ -28,7 +28,8 @@ SCoverageWithProfiler class >> computeFitness: aTestCase [
 	self
 		assert: [ aTestCase notNil ]
 		description: 'testCase must not be nil'.
-	self defaultFitnessInitialization.
+	"self defaultFitnessInitialization."
+	self initializeProfiler.
 	self
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
@@ -64,10 +65,11 @@ SCoverageWithProfiler class >> coverageOf: aBlock onPackagesMatching: regex [
 
 { #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> defaultFitnessInitialization [
+	profiler ifNil:[
 	SCoverageWithProfiler allSubclasses
 		detect: [ :cls | cls profiler isNotNil ]
 		ifFound: [ :cls | self profiler: cls profiler ]
-		ifNone: [ self initializeProfiler ]
+		ifNone: [ self initializeProfiler ]]
 ]
 
 { #category : #'as yet unclassified' }

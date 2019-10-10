@@ -8,37 +8,10 @@ Class {
 		'testPackageName'
 	],
 	#classInstVars : [
-		'numTest',
-		'testClassesCompilers',
-		'testClassesNames'
+		'numTest'
 	],
 	#category : #'SmallSuiteGenerator-Assertion-Invariant'
 }
-
-{ #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> createCompilerClass: aClassName [
-	self
-		createCompilerClass: aClassName
-		of: 'SmallSuiteGenerator-Tests-Generated'
-]
-
-{ #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> createCompilerClass: aClassName of: aPackageName [
-	| aCompiler |
-	testClassesCompilers
-		ifNil: [ testClassesCompilers := OrderedCollection new].
-			aCompiler := self class compiler
-				evaluate:
-					(SCompilerMethod
-						stringToCreateNewClass: aClassName
-						with: 'TestCase'
-						and: aPackageName).
-			testClassesCompilers add: aCompiler.
-			testClassesNames
-				ifNil: [ testClassesNames := OrderedCollection new ].
-			testClassesNames add: aClassName.
-	^ aCompiler
-]
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant class >> incrementNumTest [
@@ -47,23 +20,12 @@ SSGeneratorInvariant class >> incrementNumTest [
 
 { #category : #'class initialization' }
 SSGeneratorInvariant class >> initialize [
-	numTest := 0.
-	testClassesNames := OrderedCollection new.
-	testClassesCompilers := OrderedCollection new.
+	numTest := 0
 ]
 
 { #category : #accessing }
 SSGeneratorInvariant class >> numTest [
 	^ numTest
-]
-
-{ #category : #'as yet unclassified' }
-SSGeneratorInvariant class >> resetClassesOfTest [
-	testClassesNames
-		ifNotNil: [ testClassesNames
-				do: [ :string | Smalltalk removeClassNamed: string ] ].
-	testClassesNames := OrderedCollection new.
-	testClassesCompilers := OrderedCollection new
 ]
 
 { #category : #initialization }
@@ -72,14 +34,9 @@ SSGeneratorInvariant class >> resetNumTest [
 ]
 
 { #category : #accessing }
-SSGeneratorInvariant class >> testClassesCompilers [
-	^ testClassesCompilers 
-]
-
-{ #category : #accessing }
 SSGeneratorInvariant >> compileStatementsOf: testCase with: invariants [
 	| node selector |
-	node := SCompilerMethod nodeFormedFrom: testCase.
+	node := SUtil nodeFormedFrom: testCase.
 	invariants
 		do:
 			[ :invariant | node body addNode: (RBParser parseExpression: invariant asString) ].
@@ -120,9 +77,9 @@ SSGeneratorInvariant >> initialize [
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> testClassCompiler [
-	^ [ self class testClassesCompilers first ]
-		on: SubscriptOutOfBounds
-		do: [ self class createCompilerClass: testClassName of: testPackageName ]
+	^ [ SUtil compilersTests first ]
+		on: MessageNotUnderstood 
+		do: [ SUtil createClass: testClassName ofPackage: testPackageName ]
 ]
 
 { #category : #accessing }
@@ -148,7 +105,7 @@ SSGeneratorInvariant >> testPackageName: anObject [
 { #category : #accessing }
 SSGeneratorInvariant >> transformToNode: testCase [
 	| node |
-	node := SCompilerMethod nodeFormedFrom: testCase.
+	node := SUtil nodeFormedFrom: testCase.
 	node body
 		addNode: (RBParser parseExpression: '^ self analyze: thisContext').
 	^ node

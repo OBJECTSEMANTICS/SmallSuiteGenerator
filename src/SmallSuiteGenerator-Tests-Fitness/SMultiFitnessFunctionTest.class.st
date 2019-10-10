@@ -12,7 +12,6 @@ Class {
 { #category : #running }
 SMultiFitnessFunctionTest >> setUp [
 	function := SMultiFitnessFunction.
-	function clean.
 	fitnessFunctions := Array
 		with: SMethodCoverage
 		with: SStatementCoverage.
@@ -22,11 +21,7 @@ SMultiFitnessFunctionTest >> setUp [
 { #category : #running }
 SMultiFitnessFunctionTest >> tearDown [
 	super tearDown.
-	"S2Lock value: false.
-	S2Context value: nil.
-	S2Profiler remove."
-	fitnessFunctions do: #clean.	" do: #clear."
-	function clean
+	function reset
 ]
 
 { #category : #tests }
@@ -35,15 +30,16 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnFactoryMessage [
 	aTestCase := SSTestCase with: utility typeInfosSFoo first.
 	aTestCase addFactoryMessage.
 	function
-		addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: [ (SFoo score: 15)
+		isOnClass: true;
+		inputData: (Array with: [ (SFoo score: 15)
 						returnCollection;
 						returnFloat;
 						score;
-						return: #(1 5 6) ]
-				onClass: SFoo);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+						return: #(1 5 6) ] with: SFoo);
+		addFitnessFunction:
+			SMethodCoverage
+				;
+		addFitnessFunction: SStatementCoverage.
 	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(33.33 28.57)
 ]
@@ -54,15 +50,17 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnFieldAccessMessage [
 	aTestCase := SSTestCase with: utility typeInfosSFoo first.
 	aTestCase addFieldAccessMessage: #score from: #SFoo.
 	function
-		addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: [ (SFoo score: 15)
+		isOnClass: true;
+		inputData:
+			(Array
+				with: [ (SFoo score: 15)
 						returnCollection;
 						returnFloat;
 						score;
 						return: #(1 5 6) ]
-				onClass: SFoo);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+				with: SFoo);
+		addFitnessFunction: SMethodCoverage;
+		addFitnessFunction: SStatementCoverage.
 	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(44.44 35.71)
 ]
@@ -73,15 +71,15 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnLiteral [
 	aTestCase := SSTestCase with: utility typeInfosSFoo first.
 	aTestCase addLiteral.
 	function
-		addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: [ (SFoo score: 15)
+		isOnClass: true;
+		inputData: (Array with: [ (SFoo score: 15)
 						returnCollection;
 						returnFloat;
 						score;
-						return: #(1 5 6) ]
-				onClass: SFoo);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+						return: #(1 5 6) ] with: SFoo);
+		addFitnessFunction:
+			SMethodCoverage;
+		addFitnessFunction: SStatementCoverage.
 	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(0 0)
 ]
@@ -92,38 +90,40 @@ SMultiFitnessFunctionTest >> testComputeFitnessOnMessage [
 	aTestCase := SSTestCase with: utility typeInfosSFoo first.
 	aTestCase addMessage: #returnFloat from: #SFoo.
 	function
-		addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: [ (SFoo score: 15)
+		isOnClass: true;
+		inputData: (Array with:
+				[ (SFoo score: 15)
 						returnCollection;
 						returnFloat;
 						score;
 						return: #(1 5 6) ]
-				onClass: SFoo);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+				with: SFoo);
+		addFitnessFunction:
+			SMethodCoverage;
+			
+		addFitnessFunction: SStatementCoverage.
 	res := (function computeFitness: aTestCase) values.
 	self assertCollection: res hasSameElements: #(44.44 42.86)
 ]
 
 { #category : #tests }
 SMultiFitnessFunctionTest >> testIsBetterThan [
-	| testCase1 testCase2 functions |
+	| testCase1 testCase2 |
 	testCase1 := utility testSuiteSStudentManual second.
 	testCase2 := utility testSuiteSStudentManual second.
 	testCase2 addFieldAccessMessage: #scoreStudent from: #SStudent.
 	function
-		addFitnessFunction:
-			(SMethodCoverage
-				coverageOf: [ SStudent new
+		isOnClass: true;
+		inputData:
+			(Array
+				with: [ SStudent new
 						scoreStudent: 4;
 						idStudent ]
-				onClass: SStudent);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
-	functions := function allFitnessFunction.
-	testCase1 computeFitness: functions first.
-	testCase1 computeFitness: functions second.
-	testCase2 computeFitness: functions first.
-	testCase2 computeFitness: functions second.
+				with: SStudent);
+		addFitnessFunction: SMethodCoverage;
+		addFitnessFunction: SStatementCoverage.
+	testCase1 computeFitness: function.
+	testCase2 computeFitness: function.
 	self deny: (function is: testCase1 betterThan: testCase2).
 	self assert: (function is: testCase2 betterThan: testCase1)
 ]
