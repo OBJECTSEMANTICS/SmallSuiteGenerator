@@ -33,25 +33,26 @@ SSAssertionTest >> testCreateCompilerClass [
 				scalar: #Array with: #(#(2 4))).
 	testCase addLiteral.
 	SSTestSuiteGenerator createCompilerClass: 'SFooTest'.
-	testCase generateTestsWith: #().
+	testCase generateAssertions: #().
 	self assert: (Smalltalk classNamed: 'SFooTest') isNotNil
 ]
 
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantCollections [
-	| typeInfo testCase invariants |
+	| typeInfo testCase  |
 	typeInfo := STypeInfo new type: #Stack -> (Array with: #() with: #()).
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
-	invariants := testCase generateTestsWith: #().
-	self assert: invariants size equals: 3.
-	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements:
-			(Array
-				with: SCollectionSizeAssertion
+	testCase  generateAssertions: (Array
+			
 				with: SStringAssertion
 				with: SComparisonAssertion).
+	self assert: testCase assertions size equals: 1.
+	self
+		assertCollection: (testCase assertions collect: [ :i | i class ])
+		hasSameElements:
+			(Array
+				with: SStringAssertion).
 	typeInfo := STypeInfo new
 		type:
 			#SFoo
@@ -67,29 +68,29 @@ SSAssertionTest >> testGenerateInvariantCollections [
 		scalar: #SmallFloat64 with: #(3.4).
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
-	invariants := testCase generateTestsWith: #().
-	self assert: invariants size equals: 2.
+	testCase generateAssertions: (Array with: SInspectorAssertion with: SComparisonAssertion).
+	self assert: testCase assertions size equals: 1.
 	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements: (Array with: SInspectorAssertion with: SComparisonAssertion).
+		assertCollection: (testCase assertions collect: [ :i | i class ])
+		hasSameElements: (Array with: SInspectorAssertion).
 	typeInfo := STypeInfo new type: #Array -> (Array with: #() with: #()).	
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
-	invariants := testCase generateTestsWith: #().
-	self assert: invariants size equals: 4.
-	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements:
-			(Array
+	testCase generateAssertions: (Array
 				with: SPrimitiveAssertion
 				with: SStringAssertion
-				with: SComparisonAssertion
-				with: SCollectionSizeAssertion)
+				with: SComparisonAssertion).
+	self assert: testCase assertions size equals: 1.
+	self
+		assertCollection: (testCase assertions collect: [ :i | i class ])
+		hasSameElements:
+			(Array
+				with: SStringAssertion)
 ]
 
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsArray [
-	| typeInfo testCase invariants |
+	| typeInfo testCase |
 	typeInfo := STypeInfo new
 		type:
 			#SFoo
@@ -103,17 +104,8 @@ SSAssertionTest >> testGenerateInvariantsArray [
 		scalar: #Array with: #(#(2 4)).	
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
-	invariants := testCase generateTestsWith: #().
-	self assert: invariants size equals: 5.
-	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements:
-			(Array
-				with: SCollectionSizeAssertion
-				with: SCollectionTypeSimilarityAssertion
-				with: SPrimitiveAssertion
-				with: SComparisonAssertion
-				with: SStringAssertion).
+	testCase generateAssertions: #().
+	self assert: testCase assertions isEmpty.
 	typeInfo := STypeInfo new
 		type:
 			#SFoo
@@ -128,15 +120,15 @@ SSAssertionTest >> testGenerateInvariantsArray [
 		scalar: #Array with: #(#()).
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
-	invariants := testCase generateTestsWith: #().
-	self assert: invariants size equals: 4.
-	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements:
-			(Array
-				with: SCollectionSizeAssertion
+	testCase generateAssertions: (Array
 				with: SPrimitiveAssertion
 				with: SComparisonAssertion
+				with: SStringAssertion).
+	self assert: testCase assertions size equals: 1.
+	self
+		assertCollection: (testCase assertions collect: [ :i | i class ])
+		hasSameElements:
+			(Array
 				with: SStringAssertion)
 ]
 
@@ -146,7 +138,7 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	typeInfo := STypeInfo new type: #Stack -> (Array with: #() with: #()).
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -169,7 +161,7 @@ SSAssertionTest >> testGenerateInvariantsStack [
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	"invariants is empty if the compiled method has failed"
 	self deny: invariants isEmpty.
 	self assert: invariants size equals: 11.
@@ -193,17 +185,13 @@ SSAssertionTest >> testGenerateInvariantsStack [
 
 { #category : #tests }
 SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
-	| typeInfo testCase invariants selectedInvariants |
+	| typeInfo testCase   |
 	typeInfo := STypeInfo new
 		type: #SStack -> (Array with: #() with: #()).
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
-	selectedInvariants := Array with: SCollectionSizeAssertion.
-	invariants := testCase generateTestsWith: selectedInvariants.
-	self assert: invariants size equals: 1.
-	self
-		assertCollection: (invariants collect: [ :i | i class ])
-		hasSameElements: selectedInvariants.
+	testCase generateAssertions: (Array with: SComparisonAssertion).
+	self assert: testCase assertions isEmpty.
 	typeInfo := STypeInfo new
 		type:
 			#SStack
@@ -221,34 +209,14 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStack [
 	testCase := SSTestCase with: typeInfo.
 	testCase addFactoryMessage.
 	testCase addMessage.
-	selectedInvariants := Array
-		with: SStringAssertion
-		with: SPrimitiveAssertion
-		with: SInspectorAssertion
-		with: SCollectionTypeSimilarityAssertion.
-	invariants := testCase generateTestsWith: selectedInvariants.
+	testCase generateAssertions: (Array
+		with: SStringAssertion).
 	"self assert: invariants size equals: 3."
 	self
-		assertCollection: (invariants collect: [ :i | i class ]) asSet
+		assertCollection: (testCase assertions collect: [ :i | i class ]) asSet
 		hasSameElements:
 			(Array
-				with: SStringAssertion
-				with: SPrimitiveAssertion
-				with: SInspectorAssertion).
-	"self
-		should: [ testCase generateAssertionsUsing: selectedInvariants ]
-		raise: Error."
-	selectedInvariants := Array
-		with: SStringAssertion
-		with: SPrimitiveAssertion
-		with: SCollectionTypeSimilarityAssertion.
-	invariants := testCase generateTestsWith: selectedInvariants.
-	"invariants is empty if the compiled method has failed"
-	self deny: invariants isEmpty.
-	"self assert: invariants size equals: 1."
-	self
-		assertCollection: (invariants collect: [ :i | i class ]) asSet
-		hasSameElements: (Array with: SStringAssertion with: SPrimitiveAssertion)
+				with: SStringAssertion).
 ]
 
 { #category : #tests }
@@ -268,7 +236,7 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 	testCase addFactoryMessage.
 	testCase addMessage.
 	selectedInvariants := Array with: SCollectionSizeAssertion.
-	invariants := testCase generateTestsWith: selectedInvariants.
+	invariants := testCase generateAssertions: selectedInvariants.
 	self
 		assert:
 			(invariants isEmpty
@@ -278,7 +246,7 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 		with: SCollectionSizeAssertion
 		with: SStringAssertion
 		with: SComparisonAssertion.
-	invariants := testCase generateTestsWith: selectedInvariants.
+	invariants := testCase generateAssertions: selectedInvariants.
 	classesInvariants := invariants collect: [ :i | i class ].
 	self
 		assert:
@@ -287,11 +255,11 @@ SSAssertionTest >> testGenerateInvariantsWithSelectionSStudent [
 	selectedInvariants := Array
 		with: SComparisonAssertion
 		with: SInspectorAssertion.
-	invariants := testCase generateTestsWith: selectedInvariants.
+	invariants := testCase generateAssertions: selectedInvariants.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
 		hasSameElements: selectedInvariants.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self
 		assert:
 			((invariants collect: [ :i | i class ])
@@ -314,7 +282,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		scalar: #SmallInteger with: #(1).
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -336,7 +304,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		scalar: #ByteString with: #('hello World').
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants size equals: 5.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -360,7 +328,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		scalar: #SmallFloat64 with: #(2.34).
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants size equals: 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -382,7 +350,7 @@ SSAssertionTest >> testGeneratePrimitiveAssertions [
 		scalar: #True with: {true}.
 	testCase := SSTestCase with: typeInfo.
 	testCase addLiteral.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants size >= 3.
 	self
 		assertCollection: (invariants collect: [ :i | i class ])
@@ -413,7 +381,7 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 	testCase := SSTestCase with: typeInfo.
 	testCase numMaxStatements: 15.
 	testCase generateStatements.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty.
 	typeInfo := STypeInfo new
@@ -436,7 +404,7 @@ SSAssertionTest >> testInvariantsSStackRandomlyInitialized [
 	testCase := SSTestCase with: typeInfo.
 	testCase numMaxStatements: 15.
 	testCase generateStatements.
-	invariants := testCase generateTestsWith: #().
+	invariants := testCase generateAssertions: #().
 	self assert: invariants isNotNil.
 	self deny: invariants isEmpty
 ]

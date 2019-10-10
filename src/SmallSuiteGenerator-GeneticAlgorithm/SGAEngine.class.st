@@ -148,7 +148,7 @@ SGAEngine >> generateTestsWith: selectedInvariants [
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
 	self population
-		do: [ :test |  test generateTestsWith: selectedInvariants. ].
+		do: [ :test |  test generateAssertions: selectedInvariants. ].
 ]
 
 { #category : #initialization }
