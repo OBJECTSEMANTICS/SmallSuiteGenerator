@@ -31,7 +31,7 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 								selector: #assert:equals:;
 								args:
 									{(SVariable name: varName).
-									(SLiteral new value: value printString)};
+									(SLiteral new value: value)};
 								yourself) ] ].
 	^ assertions
 ]

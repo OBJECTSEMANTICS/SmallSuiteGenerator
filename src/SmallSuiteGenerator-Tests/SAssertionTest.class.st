@@ -41,73 +41,106 @@ SAssertionTest >> parseVariableOrValue: aRBVariableOrLiteral [
 
 { #category : #tests }
 SAssertionTest >> testAssertComparison [
-	|test|
+	| test |
 	test := SSTestCase new.
-	test addStatements: (self parse:
-			'_var0 := 1.
+	test
+		addStatements:
+			(self
+				parse:
+					'_var0 := 1.
 			 _var1 := 1.
 			 _var2 := Point x: _var0 y: _var1.
 			 _var3 := Point x: _var1 y: _var0.').
-	test generateAssertions:{ SComparisonAssertion}.
- 	self assert: (test assertions size) equals: 2.
-	self assert: (test assertions first printString) equals: 'self assert: _var0 equals: _var1.'.
-	self assert: (test assertions second printString) equals: 'self assert: _var2 equals: _var3.'.
+	test generateAssertions: (Array with: SComparisonAssertion).
+	self assert: test assertions size equals: 2.
+	self
+		assert: test assertions first printString
+		equals: 'self assert: _var0 equals: _var1.'.
+	self
+		assert: test assertions second printString
+		equals: 'self assert: _var2 equals: _var3.'
 ]
 
 { #category : #tests }
 SAssertionTest >> testAssertComparison2 [
-	|test|
+	| test |
 	test := SSTestCase new.
-	test addStatements: (self parse:
-			'_var0 := 1.
+	test
+		addStatements:
+			(self
+				parse:
+					'_var0 := 1.
 			 _var1 := 2.
 			 _var2 := Point x: _var0 y: _var1.
 			 _var3 := Point x: _var1 y: _var0.').
-	test generateAssertions:{ SComparisonAssertion}.
- 	self assert: (test assertions size) equals: 2.
-	self assert: (test assertions first printString) equals: 'self deny: _var0 equals: _var1.'.
-	self assert: (test assertions second printString) equals: 'self deny: _var2 equals: _var3.'.
+	test generateAssertions: (Array with: SComparisonAssertion).
+	self assert: test assertions size equals: 2.
+	self
+		assert: test assertions first printString
+		equals: 'self deny: _var0 equals: _var1.'.
+	self
+		assert: test assertions second printString
+		equals: 'self deny: _var2 equals: _var3.'
 ]
 
 { #category : #tests }
 SAssertionTest >> testAssertInspector [
-	|test|
+	| test |
 	test := SSTestCase new.
-	test addStatements: (self parse:
-			'_var0 := 1.
+	test
+		addStatements:
+			(self
+				parse:
+					'_var0 := 1.
 			 _var1 := 2.
 			 _var3 := Point x: _var1 y: _var0.').
-	test generateAssertions:{SInspectorAssertion}.
-	 self assert: (test assertions size) equals: 2.
-	self assert: (test assertions first printString) equals: 'self assert: _var3 x equals: 2.'.
-	self assert: (test assertions second printString) equals: 'self assert: _var3 y equals: 1.'.
+	test generateAssertions: (Array with: SInspectorAssertion).
+	self assert: test assertions size equals: 2.
+	self
+		assert: test assertions first printString
+		equals: 'self assert: _var3 x equals: 2.'.
+	self
+		assert: test assertions second printString
+		equals: 'self assert: _var3 y equals: 1.'
 ]
 
 { #category : #tests }
 SAssertionTest >> testAssertPrimitive [
-	|test|
+	| test |
 	test := SSTestCase new.
-	test addStatements: (self parse:
-			'_var0 := 1.
+	test
+		addStatements:
+			(self
+				parse:
+					'_var0 := 1.
 			 _var1 := 2.
 			 _var3 := Point x: _var1 y: _var0.').
-	test generateAssertions:{SPrimitiveAssertion}.
- 	self assert: (test assertions size) equals: 2.
-	self assert: (test assertions first printString) equals: 'self assert: _var0 equals: 1.'.
-	self assert: (test assertions second printString) equals: 'self assert: _var1 equals: 2.'.
+	test generateAssertions: (Array with: SPrimitiveAssertion).
+	self assert: test assertions size equals: 2.
+	self
+		assert: test assertions first printString
+		equals: 'self assert: _var0 equals: 1.'.
+	self
+		assert: test assertions second printString
+		equals: 'self assert: _var1 equals: 2.'
 ]
 
 { #category : #tests }
 SAssertionTest >> testAssertString [
-	|test|
+	| test |
 	test := SSTestCase new.
-	test addStatements: (self parse:
-			'_var0 := 1.
+	test
+		addStatements:
+			(self
+				parse:
+					'_var0 := 1.
 			 _var1 := 2.
 			 _var3 := Point x: _var1 y: _var0.').
-	test generateAssertions:{SStringAssertion}.
-	self assert: (test assertions size) equals: 1.
-	self assert: (test assertions first printString) equals: 'self assert: _var3 printString equals: ''(2@1)''.'.
+	test generateAssertions: (Array with: SStringAssertion).
+	self assert: test assertions size equals: 1.
+	self
+		assert: test assertions first printString
+		equals: 'self assert: _var3 printString equals: ''(2@1)''.'
 ]
 
 { #category : #tests }

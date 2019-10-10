@@ -20,3 +20,9 @@ SAssertionMessage >> initialize [
 	receiver := SSelf new.
 	 
 ]
+
+{ #category : #printing }
+SAssertionMessage >> printOn: stream [
+	super printOn: stream.
+	stream nextPut: $.
+]
