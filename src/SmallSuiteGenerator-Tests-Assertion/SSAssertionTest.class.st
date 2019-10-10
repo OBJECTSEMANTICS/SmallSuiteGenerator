@@ -11,7 +11,7 @@ SSAssertionTest >> setUp [
 
 { #category : #running }
 SSAssertionTest >> tearDown [
-	SUtil resetCreatedClasses 
+	SUtil resetAllCreatedClasses 
 ]
 
 { #category : #tests }
@@ -31,7 +31,7 @@ SSAssertionTest >> testCreateCompilerClass [
 								with: (Array with: #score: -> #(#SFoo #SFoo #(#Array) false)));
 				scalar: #Array with: #(#(2 4))).
 	testCase addLiteral.
-	SUtil createClass: 'SFooTest'.
+	SUtil createClass: 'SFooTest' from: self class name.
 	testCase generateTestsWith: #().
 	self assert: (Smalltalk classNamed: 'SFooTest') isNotNil
 ]

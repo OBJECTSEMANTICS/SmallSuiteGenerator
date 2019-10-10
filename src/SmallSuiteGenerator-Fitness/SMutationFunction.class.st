@@ -32,7 +32,7 @@ SMutationFunction class >> classesNamesOfTest: strings [
 
 { #category : #accessing }
 SMutationFunction class >> clean [
-	SUtil resetCreatedClasses 
+	SUtil resetCreatedClassesFrom: self nameFunction 
 ]
 
 { #category : #'as yet unclassified' }
@@ -106,13 +106,16 @@ SMutationFunction class >> valueFunction: testCase [
 
 { #category : #accessing }
 SMutationFunction >> classes [
+	|aClassName |
+	aClassName := self class nameFunction.
 	testNameClasses
 		do: [ :string | 
 			(Smalltalk classNamed: string)
 				ifNil: [ SUtil
 						createClass: string
-						ofPackage: SConfiguration defaultTestPackage ] ].
-	^ SUtil compilersTests 
+						ofPackage: SConfiguration defaultTestPackage
+						from: aClassName ] ].
+	^ SUtil compilersTestsFrom: aClassName
 ]
 
 { #category : #accessing }

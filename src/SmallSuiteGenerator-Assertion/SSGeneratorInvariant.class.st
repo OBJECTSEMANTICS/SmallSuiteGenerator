@@ -77,9 +77,12 @@ SSGeneratorInvariant >> initialize [
 
 { #category : #'as yet unclassified' }
 SSGeneratorInvariant >> testClassCompiler [
-	^ [ SUtil compilersTests first ]
-		on: MessageNotUnderstood 
-		do: [ SUtil createClass: testClassName ofPackage: testPackageName ]
+	^ [ (SUtil compilersTestsFrom: self class name) first ]
+		on: MessageNotUnderstood
+		do: [ SUtil
+				createClass: testClassName
+				ofPackage: testPackageName
+				from: self class name ]
 ]
 
 { #category : #accessing }

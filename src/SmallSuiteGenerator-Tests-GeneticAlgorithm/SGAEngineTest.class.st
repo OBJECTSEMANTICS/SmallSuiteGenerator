@@ -42,7 +42,7 @@ SGAEngineTest >> tearDown [
 	SMultiFitnessFunction reset.
 	SCoverageWithProfiler allSubclassesDo: #cleanAll.
 	SMutationFunction cleanAll.
-	SUtil resetCreatedClasses.
+	SUtil resetAllCreatedClasses.
 	super tearDown 
 ]
 

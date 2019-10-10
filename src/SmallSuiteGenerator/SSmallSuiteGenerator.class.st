@@ -47,8 +47,8 @@ SSmallSuiteGenerator >> classNameOfTest: aString [
 SSmallSuiteGenerator >> configureTestCaseClass [
 	"It is necessary to add messages to configure the name of the test class and it compile in a determinated package"
 
-	SUtil resetCreatedClasses.
-	SUtil createClass: classNameOfTest.
+	SUtil resetAllCreatedClasses.
+	SUtil createClass: classNameOfTest from: self class name
 ]
 
 { #category : #initialization }
@@ -188,7 +188,7 @@ SSmallSuiteGenerator >> randomlyGeneratedPopulation [
 { #category : #accessing }
 SSmallSuiteGenerator >> resetClassesOfTest [
 	SSGeneratorInvariant resetNumTest.
-	SUtil resetCreatedClasses 
+	SUtil resetAllCreatedClasses 
 ]
 
 { #category : #running }

@@ -8,26 +8,31 @@ Class {
 }
 
 { #category : #accessing }
-SUtil class >> compilersTests [ 
-	^ compilersTests 
+SUtil class >> compilersTestsFrom: symbol [
+	^ compilersTests at: symbol ifAbsent: [ nil ]
 ]
 
 { #category : #operation }
-SUtil class >> createClass: aClassName [
-	^ self createClass: aClassName ofPackage: SConfiguration defaultTestPackage 
+SUtil class >> createClass: aClassName from: symbol [
+	^ self
+		createClass: aClassName
+		ofPackage: SConfiguration defaultTestPackage
+		from: symbol
 ]
 
 { #category : #operation }
-SUtil class >> createClass: aClassName ofPackage: aPackageName [
+SUtil class >> createClass: aClassName ofPackage: aPackageName from: symbol [
 	| compilerClass |
-	compilersTests ifNil: [ compilersTests := OrderedCollection new ].
+	compilersTests ifNil: [ compilersTests := Dictionary new ].
 	compilerClass := self compiler
 		evaluate:
 			(self
 				stringToCreateNewClass: aClassName
 				with: 'TestCase'
 				and: aPackageName).
-	compilersTests add: compilerClass.
+	compilersTests at: symbol 
+	ifPresent: [:collection | collection add: compilerClass ]
+	ifAbsentPut: [OrderedCollection new add: compilerClass; yourself].
 	^ compilerClass
 ]
 
@@ -45,12 +50,25 @@ SUtil class >> nodeFormedFrom: testCase [
 ]
 
 { #category : #initialization }
-SUtil class >> resetCreatedClasses [
-	self compilersTests
-		ifNotNil: [ self compilersTests
-				collect: #name
-				thenDo: [ :aClassName | Smalltalk removeClassNamed: aClassName ] ].
-		compilersTests := nil
+SUtil class >> resetAllCreatedClasses [
+	compilersTests
+		ifNotNil: [ (compilersTests values
+				flatCollect: [:collection | collection collect: #name])
+				do: [ :aClassName | Smalltalk removeClassNamed: aClassName ] ].
+	compilersTests := nil
+]
+
+{ #category : #initialization }
+SUtil class >> resetCreatedClassesFrom: symbol [
+	compilersTests
+		ifNotNil: [ compilersTests
+				at: symbol
+				ifPresent: [ :classes | 
+					classes
+						collect: #name
+						thenDo: [ :aClassName | Smalltalk removeClassNamed: aClassName ].
+				 ].
+			compilersTests removeKey: symbol ifAbsent: [ ] ]
 ]
 
 { #category : #'as yet unclassified' }

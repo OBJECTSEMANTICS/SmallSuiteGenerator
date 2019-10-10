@@ -388,6 +388,11 @@ SSTestCase >> generateTestsWith: classInvariants [
 		testCaseUsing: classInvariants
 ]
 
+{ #category : #accessing }
+SSTestCase >> generatorInvariant [
+	^ generatorInvariant 
+]
+
 { #category : #comparing }
 SSTestCase >> hash [
 	^ self statements hash

@@ -7,10 +7,9 @@ Class {
 { #category : #accessing }
 SSmallSuiteGeneratorExample >> clean [
 	SMultiFitnessFunction
-		clean;
 		reset.
 	SSGeneratorInvariant resetNumTest.
-	SUtil resetCreatedClasses
+	SUtil resetAllCreatedClasses
 ]
 
 { #category : #'examples - onPackages' }
