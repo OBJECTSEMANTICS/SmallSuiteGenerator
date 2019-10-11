@@ -22,12 +22,10 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'NeoCSV'
 				with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 			spec
-				package: 'SmallSuiteGenerator-Generator';
-				package: 'SmallSuiteGenerator-Info' with: [
-					spec requires: 'NeoCSV'
-					];
+				package: 'SmallSuiteGenerator-Info'
+					with: [ spec requires: 'NeoCSV' ];
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'SmallSuiteGenerator-Generator' 'MuTalk') ];
+					with: [ spec requires: #('Spy2' 'MuTalk') ];
 				package: 'SmallSuiteGenerator-Exception-Management';
 				package: 'SmallSuiteGenerator-Fitness'
 					with: [ spec
@@ -45,15 +43,10 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Examples-Others' 'SmallSuiteGenerator-Info') ];
-				package: 'SmallSuiteGenerator-Tests-Assertion'
-					with: [ spec requires: 'SmallSuiteGenerator-Assertion' ];
 				package: 'SmallSuiteGenerator-Tests-Fitness'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator') ];
-				package: 'SmallSuiteGenerator-Tests-Generator'
-					with: [ spec
-						requires: #('SmallSuiteGenerator-Generator' 'SmallSuiteGenerator-Tests') ];
 				package: 'SmallSuiteGenerator-Tests-GeneticAlgorithm'
 					with: [ spec
 						requires:

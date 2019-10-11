@@ -5,7 +5,7 @@ Class {
 		'utility',
 		'literal'
 	],
-	#category : #'SmallSuiteGenerator-Tests-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-Tests-AST'
 }
 
 { #category : #running }

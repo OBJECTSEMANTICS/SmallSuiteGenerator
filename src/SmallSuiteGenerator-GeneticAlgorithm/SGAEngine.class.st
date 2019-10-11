@@ -18,7 +18,8 @@ Class {
 		'evaluationStrategy',
 		'typeInfo',
 		'fitness',
-		'numberOfGenerations'
+		'numberOfGenerations',
+		'testRunner'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -131,24 +132,17 @@ SGAEngine >> fitness: aFitness [
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> generateTestWith: selectedInvariants andPrettyCodeUsing: kindsRefactoring [
-	self
-		assert: logs isNotEmpty
-		description: 'In this point the logs must not be empty'.
-	self logs
-		do: [ :log | 
-			"log fittestTestCase prettyCodeApplying: kindsRefactoring."
-			log fittestTestCase generateTestsWith: selectedInvariants.
-			"log mutationResult: self analyzeMutants" ]
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> generateTestsWith: selectedInvariants [
+SGAEngine >> generateAssertions: classAssertions on: aClass [
 	self
 		assert: logs isNotEmpty
 		description: 'In this point the logs must not be empty'.
 	self population
-		do: [ :test |  test generateTestsWith: selectedInvariants. ].
+		doWithIndex: [ :test :index | 
+			test generateAssertions: classAssertions.
+			testRunner
+				compile: test parseTreeWithAssertions
+				withName: ('test' , index asString) asSymbol
+				on: aClass ]
 ]
 
 { #category : #initialization }
@@ -162,6 +156,7 @@ SGAEngine >> initialize [
 	self initializeMutationOperator.
 	self initializeCrossoverOperator.
 	self selection: SGATournamentSelection new.
+	testRunner := SSTestRunner new.
 	modelClasses := #().
 	numberOfGenerations := 0
 ]

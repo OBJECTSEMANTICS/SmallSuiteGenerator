@@ -1,7 +1,7 @@
 Class {
 	#name : #SSEvaluatorInvariant,
 	#superclass : #Object,
-	#category : #'SmallSuiteGenerator-Assertion-Invariant'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'as yet unclassified' }

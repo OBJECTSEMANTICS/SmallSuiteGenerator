@@ -14,11 +14,8 @@ SMessageNotUnderstoodTest >> setUp [
 
 { #category : #running }
 SMessageNotUnderstoodTest >> tearDown [ 
-	SMultiFitnessFunction clear.
-	SCoverageWithProfiler allSubclassesDo: #clear.
-	S2Lock value: false.
-	S2Context value: nil.
-	S2Profiler remove.
+	SMultiFitnessFunction clean.
+	SCoverageWithProfiler allSubclassesDo: #clean.
 ]
 
 { #category : #tests }
@@ -45,7 +42,7 @@ SMessageNotUnderstoodTest >> testCanResolve [
 				with: '_var2 := _var0 canRegister: _var1.').
 	SStatementCoverage compileTestCase: testCase.
 	self
-		should: [ SStatementCoverage executeStatements ]
+		should: [ testCase run]
 		raise: MessageNotUnderstood.
 	[ SStatementCoverage executeStatements ]
 		on: MessageNotUnderstood

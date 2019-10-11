@@ -5,8 +5,13 @@ Class {
 		'returnType',
 		'id'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
+
+{ #category : #'instance creation' }
+SExpression class >> isPrimitive: anObject [
+	^ self new isPrimitive: anObject.
+]
 
 { #category : #comparing }
 SExpression >> = other [
@@ -41,23 +46,23 @@ SExpression >> id: anObject [
 	id := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SExpression >> insertAsParameter: aExpression using: aTestCase [
 	
 	^ aTestCase insertAsParameter: self copy after: aExpression
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SExpression >> insertMethodMessage: aExpression using: aTestCase [
 	self error: 'cant insert methodMessage'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SExpression >> insertOn: aTestCase [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SExpression >> insertRandomMessage: aExpression using: aTestCase [
 	self error: 'cant insert randomMessage'
 ]
@@ -67,7 +72,12 @@ SExpression >> isFactoryMessage [
 	^ false
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #comparing }
+SExpression >> isPrimitive: anObject [
+	^ ((anObject isKindOf: Magnitude) or: [ anObject isKindOf: Boolean ]) or: [ anObject isKindOf: String ]
+]
+
+{ #category : #mutation }
 SExpression >> pickUpReferences: aExpression [
 	^ #()
 ]
@@ -87,7 +97,7 @@ SExpression >> repairOn: aTestCase changing: aExpression [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SExpression >> replaceArgBy: aExpression [
 	self error: 'cant insert as parameter'
 ]
@@ -112,7 +122,7 @@ SExpression >> returnType: anObject [
 	returnType := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SExpression >> variablesWithId [
 	^ #()
 ]

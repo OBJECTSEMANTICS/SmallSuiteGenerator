@@ -5,13 +5,13 @@ Class {
 		'variable',
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'instance creation' }
 SAssignment class >> name: aVariable value: anExpression [
 	^ self new
-		variable: aVariable;
+		variable:  aVariable;
 		value: anExpression;
 		returnType: anExpression returnType;
 		yourself
@@ -70,7 +70,8 @@ SAssignment >> pickUpReferences: aExpression [
 SAssignment >> printOn: aStream [
 	variable printOn: aStream.
 	aStream nextPutAll: ' := '.
-	value printOn: aStream
+	value printOn: aStream.
+	aStream nextPut:$.
 ]
 
 { #category : #accessing }

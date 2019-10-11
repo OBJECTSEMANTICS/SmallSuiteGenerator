@@ -1,7 +1,7 @@
 Class {
 	#name : #SFactoryMessageTest,
 	#superclass : #TestCase,
-	#category : #'SmallSuiteGenerator-Tests-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-Tests-AST'
 }
 
 { #category : #tests }

@@ -26,7 +26,7 @@ SMultiFitnessFunctionTest >> tearDown [
 	S2Context value: nil.
 	S2Profiler remove."
 	fitnessFunctions do: #clean.	" do: #clear."
-	function clean
+	function clean; reset.
 ]
 
 { #category : #tests }

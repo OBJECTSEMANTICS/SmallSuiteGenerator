@@ -6,7 +6,7 @@ Class {
 		'selector',
 		'args'
 	],
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #creation }
@@ -83,7 +83,7 @@ SAbstractMessage >> id [
 
 { #category : #initialization }
 SAbstractMessage >> initialize [ 	
-	args := #().
+	args := OrderedCollection new:2.
 ]
 
 { #category : #'as yet unclassified' }
@@ -123,7 +123,7 @@ SAbstractMessage >> printSelectors: aStream [
 					(index < stop and: [ withColon  ]) ifTrue: [ 
 						aStream nextPut: Character space.
 						 ] ] ].
-	aStream nextPut: $.
+	"aStream nextPut: $."
 ]
 
 { #category : #accessing }

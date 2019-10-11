@@ -9,7 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> classAssertsGenerationTest [
-	SSGeneratorInvariant
+	SSTestSuiteGenerator
 		createCompilerClass: 'SSAssertionGeneratorTest'
 ]
 
@@ -47,5 +47,6 @@ SConfiguration class >> levelToPrint [
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> reduceLevel [
+	level ifNil: [ self initLevelToPrint  ].
 	level := level - 1
 ]

@@ -1,7 +1,7 @@
 Class {
 	#name : #SFieldAccessMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-Generator-Nodes'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'instance creation' }

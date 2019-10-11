@@ -50,8 +50,8 @@ SSmallSuiteGenerator >> classesForRegex: regexExpressions [
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> configureTestCaseClass [
 	"here it necessary to add messages to configure the name of the test class and it compile in a determinated package"
-	SSGeneratorInvariant resetClassOfTest.
-	SSGeneratorInvariant createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
+	SSTestSuiteGenerator resetClassOfTest.
+	SSTestSuiteGenerator createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
 	
 ]
 
@@ -64,7 +64,7 @@ SSmallSuiteGenerator >> dataFitnessCoverage [
 SSmallSuiteGenerator >> end [
 	engine clean.
 	"self class resetInstance."
-	SSGeneratorInvariant resetNumTest.
+	SSTestSuiteGenerator resetNumTest.
 	"SSGeneratorInvariant resetClassOfTest"
 ]
 
@@ -104,19 +104,13 @@ SSmallSuiteGenerator >> fitnessValues [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestWith: selectedInvariants andPrettyCodeUsing: kindsRefactoring [
-	self
-		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
-		description: 'Before must execute ''runGeneration''.'.
-	engine generateTestWith: selectedInvariants andPrettyCodeUsing: kindsRefactoring 
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsWith: selectedInvariants [
+SSmallSuiteGenerator >> generateAssertions: selectedInvariants [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Execute ''runGeneration'' before.'.
-	engine generateTestsWith: selectedInvariants
+	engine
+		generateAssertions: selectedInvariants
+		on: (SSTestSuiteGenerator compilerClassOfTests: classNameOfTest) 
 ]
 
 { #category : #initialization }
@@ -125,7 +119,10 @@ SSmallSuiteGenerator >> initialize [
 	classNameOfTest := 'STestCaseGenerated'.
 	dataFitnessCoverage := #().
 	ofClass := false.
-	invariants := #()
+	invariants := Array with: SComparisonAssertion
+			with: SInspectorAssertion
+			with: SPrimitiveAssertion
+			with: SStringAssertion
 ]
 
 { #category : #'as yet unclassified' }
@@ -192,8 +189,8 @@ SSmallSuiteGenerator >> randomlyGeneratedPopulation [
 
 { #category : #accessing }
 SSmallSuiteGenerator >> resetClassOfTest [
-	SSGeneratorInvariant resetNumTest.
-	SSGeneratorInvariant resetClassOfTest
+	SSTestSuiteGenerator resetNumTest.
+	SSTestSuiteGenerator resetClassOfTest
 ]
 
 { #category : #running }
@@ -211,8 +208,10 @@ SSmallSuiteGenerator >> run [
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
 	engine run.
-	self configureTestCaseClass.
-	engine generateTestsWith: invariants.
+	"self configureTestCaseClass."
+	engine
+				generateAssertions: invariants
+				on: (SSTestSuiteGenerator compilerClassOfTests: classNameOfTest).
 	self end
 ]
 
