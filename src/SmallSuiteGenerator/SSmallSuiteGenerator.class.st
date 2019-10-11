@@ -104,19 +104,13 @@ SSmallSuiteGenerator >> fitnessValues [
 ]
 
 { #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestWith: selectedInvariants andPrettyCodeUsing: kindsRefactoring [
-	self
-		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
-		description: 'Before must execute ''runGeneration''.'.
-	engine generateTestWith: selectedInvariants andPrettyCodeUsing: kindsRefactoring 
-]
-
-{ #category : #'as yet unclassified' }
-SSmallSuiteGenerator >> generateTestsWith: selectedInvariants [
+SSmallSuiteGenerator >> generateAssertions: selectedInvariants [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Execute ''runGeneration'' before.'.
-	engine generateTestsWith: selectedInvariants
+	engine
+		generateAssertions: selectedInvariants
+		on: (SSTestSuiteGenerator compilerClassOfTests: classNameOfTest) 
 ]
 
 { #category : #initialization }
@@ -125,7 +119,10 @@ SSmallSuiteGenerator >> initialize [
 	classNameOfTest := 'STestCaseGenerated'.
 	dataFitnessCoverage := #().
 	ofClass := false.
-	invariants := #()
+	invariants := Array with: SComparisonAssertion
+			with: SInspectorAssertion
+			with: SPrimitiveAssertion
+			with: SStringAssertion
 ]
 
 { #category : #'as yet unclassified' }
@@ -211,8 +208,10 @@ SSmallSuiteGenerator >> run [
 		assert: engine numberOfStatements > 0
 		description: 'Need to provide a number greater than 0 '.
 	engine run.
-	self configureTestCaseClass.
-	engine generateTestsWith: invariants.
+	"self configureTestCaseClass."
+	engine
+				generateAssertions: invariants
+				on: (SSTestSuiteGenerator compilerClassOfTests: classNameOfTest).
 	self end
 ]
 

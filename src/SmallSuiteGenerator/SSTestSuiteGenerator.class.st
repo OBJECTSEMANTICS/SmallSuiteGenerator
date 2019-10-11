@@ -20,6 +20,13 @@ SSTestSuiteGenerator class >> compilerClassOfTests [
 	^ compilerClassOfTests 
 ]
 
+{ #category : #accessing }
+SSTestSuiteGenerator class >> compilerClassOfTests: aClassName [
+	self resetClassOfTest.
+	self createCompilerClass: aClassName.
+	^ compilerClassOfTests 
+]
+
 { #category : #'as yet unclassified' }
 SSTestSuiteGenerator class >> createCompilerClass: aClassName [
 	self createCompilerClass: aClassName of: 'SmallSuiteGenerator-Tests-Generated'

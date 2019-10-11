@@ -26,6 +26,12 @@ SSTestRunner >> compile: aBlock [
 	',aBlock body formattedCode)
 ]
 
+{ #category : #compiling }
+SSTestRunner >> compile: aBlock withName: symbol on: aClass [
+	aClass
+		compile: symbol asString , String cr , aBlock body formattedCode
+]
+
 { #category : #running }
 SSTestRunner >> evaluate: aSTestCase [
 	| node |

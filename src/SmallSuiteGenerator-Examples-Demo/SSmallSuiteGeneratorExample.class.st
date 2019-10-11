@@ -9,8 +9,7 @@ SSmallSuiteGeneratorExample >> clean [
 	SMultiFitnessFunction
 		clean;
 		reset.
-	SSTestSuiteGenerator resetNumTest.
-	SSTestSuiteGenerator resetClassOfTest 
+	SSTestSuiteGenerator resetClassOfTest
 	"SSAssertionGeneratorTest methodsDo: #removeFromSystem"
 ]
 

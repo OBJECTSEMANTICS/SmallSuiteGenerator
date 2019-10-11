@@ -1,7 +1,7 @@
 Class {
 	#name : #SAssertionTest,
 	#superclass : #TestCase,
-	#category : #'SmallSuiteGenerator-Tests-Core'
+	#category : #'SmallSuiteGenerator-Tests-AST'
 }
 
 { #category : #tests }
