@@ -22,6 +22,11 @@ SLiteral >> = other [
 				ifFalse: [ value className = other value className ]] ]
 ]
 
+{ #category : #visiting }
+SLiteral >> accept: visitor [
+	^ visitor visitLiteral: self
+]
+
 { #category : #copying }
 SLiteral >> copy [ 
 	| copy|
@@ -38,6 +43,11 @@ SLiteral >> hash [
 { #category : #'as yet unclassified' }
 SLiteral >> insertOn: aTestCase [
 	^ aTestCase addLiteral: self returnType
+]
+
+{ #category : #accessing }
+SLiteral >> isLiteral [
+	^ true
 ]
 
 { #category : #printing }

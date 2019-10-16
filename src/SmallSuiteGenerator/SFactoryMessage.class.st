@@ -33,6 +33,11 @@ SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements 
 		yourself
 ]
 
+{ #category : #accessing }
+SFactoryMessage >> accept: visitor [
+	^ visitor visitFactoryMessage: self
+]
+
 { #category : #'as yet unclassified' }
 SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherFactoryMessage |

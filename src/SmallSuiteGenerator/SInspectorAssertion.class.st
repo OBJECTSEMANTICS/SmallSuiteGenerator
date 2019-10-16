@@ -28,3 +28,8 @@ SInspectorAssertion class >> for: anExecutionContext [
 														yourself) ] ] ].
 	^ assertions
 ]
+
+{ #category : #visiting }
+SInspectorAssertion >> accept: visitor [
+	visitor visitInspectorAssertion: self
+]

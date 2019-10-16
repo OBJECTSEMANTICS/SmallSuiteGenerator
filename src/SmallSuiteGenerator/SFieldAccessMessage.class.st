@@ -14,6 +14,11 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 ]
 
 { #category : #'as yet unclassified' }
+SFieldAccessMessage >> accept: visitor [
+	^ visitor visitFieldAccessMessage: self
+]
+
+{ #category : #'as yet unclassified' }
 SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherFieldAccessMessage |
 	otherFieldAccessMessage := aTestCase

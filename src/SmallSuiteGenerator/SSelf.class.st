@@ -4,6 +4,11 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
+{ #category : #visiting }
+SSelf >> accept: visitor [
+	visitor visitSelf: self.
+]
+
 { #category : #initialization }
 SSelf >> initialize [
 	super initialize.

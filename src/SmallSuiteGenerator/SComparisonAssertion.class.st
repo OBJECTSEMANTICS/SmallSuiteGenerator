@@ -31,3 +31,8 @@ SComparisonAssertion class >> for: anExecutionContext [
 														yourself) ] ] ].
 	^ assertions
 ]
+
+{ #category : #visiting }
+SComparisonAssertion >> accept: visitor [
+	visitor visitComparisonAssertion: self
+]

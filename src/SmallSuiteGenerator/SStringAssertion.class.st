@@ -32,6 +32,12 @@ SStringAssertion class >> for: anExecutionContext [
 	^ assertions
 ]
 
+{ #category : #visiting }
+SStringAssertion >> accept: visitor [
+	visitor visitStringAssertion: self.
+	
+]
+
 { #category : #'as yet unclassified' }
 SStringAssertion >> adjust: aString [
 	^ aString copyWithRegex: '''+' matchesReplacedWith: ''''''

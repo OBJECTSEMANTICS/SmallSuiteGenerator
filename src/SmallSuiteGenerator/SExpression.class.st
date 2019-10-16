@@ -19,6 +19,11 @@ SExpression >> = other [
 	
 ]
 
+{ #category : #visiting }
+SExpression >> accept: visitor [
+	self subclassResponsibility 
+]
+
 { #category : #copying }
 SExpression >> copy [
 	^ self class new
@@ -70,6 +75,11 @@ SExpression >> insertRandomMessage: aExpression using: aTestCase [
 { #category : #testing }
 SExpression >> isFactoryMessage [
 	^ false
+]
+
+{ #category : #accessing }
+SExpression >> isLiteral [
+	^ false.
 ]
 
 { #category : #comparing }

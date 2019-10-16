@@ -9,6 +9,11 @@ SAssertionMessage class >> for: aExecutionContext [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #visiting }
+SAssertionMessage >> accept: visitor [
+	visitor visitAssertion: self
+]
+
 { #category : #override }
 SAssertionMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	"not sure what it should return"

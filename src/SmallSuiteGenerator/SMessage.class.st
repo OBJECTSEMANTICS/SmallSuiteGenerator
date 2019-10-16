@@ -14,6 +14,11 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		yourself
 ]
 
+{ #category : #visiting }
+SMessage >> accept: visitor [
+	^ visitor visitMessage: self
+]
+
 { #category : #'as yet unclassified' }
 SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherMessage |

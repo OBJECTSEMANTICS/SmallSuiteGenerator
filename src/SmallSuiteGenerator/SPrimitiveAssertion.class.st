@@ -40,3 +40,8 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 SPrimitiveAssertion class >> preconditionChecking: aObject [
 	^ aObject isLiteral
 ]
+
+{ #category : #visiting }
+SPrimitiveAssertion >> accept: visitor [
+	visitor visitPrimitiveAssertion: self
+]

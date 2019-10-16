@@ -22,6 +22,11 @@ SAssignment >> = other [
 	^ (super = other) and: [ (variable = other variable) and: [ value = other value ] ]
 ]
 
+{ #category : #visiting }
+SAssignment >> accept: visitor [
+	^ visitor visitAssignment: self
+]
+
 { #category : #copying }
 SAssignment >> copy [ 
 	|copy|

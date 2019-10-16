@@ -20,6 +20,11 @@ SVariable >> = other [
 	^ super = other and: [ varName = other varName ]
 ]
 
+{ #category : #visiting }
+SVariable >> accept: visitor [
+	^ visitor visitVariable: self
+]
+
 { #category : #copying }
 SVariable >> copy [
 	| copy |
@@ -27,6 +32,11 @@ SVariable >> copy [
 	copy
 		varName: varName copy.
 	^ copy
+]
+
+{ #category : #'as yet unclassified' }
+SVariable >> fullVarName [
+	^ varName, id asString.
 ]
 
 { #category : #comparing }
