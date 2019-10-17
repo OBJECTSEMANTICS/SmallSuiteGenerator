@@ -121,6 +121,32 @@ SSTestCaseTest >> testAddFactoryMessage [
 ]
 
 { #category : #tests }
+SSTestCaseTest >> testAddFactoryMessageWithClassestoUse [
+	| testCase |
+	testCase := (SSTestCase
+		with: utility typeInfosOnPackageExamples first)
+		validateUsedClasses: true.
+	self should: [ testCase addFactoryMessage: #SSTeacher ] raise: SError.
+	testCase
+		addClassNameToUse: #SSTeacher;
+		addFactoryMessage: #SSTeacher.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			#('_var0 := 95.' '_var1 := ''Mary''.' '_var2 := SSTeacher name: _var1 with: _var0.').
+	self
+		should: [ testCase addFactoryMessage: #SConference ]
+		raise: SError.
+	testCase
+		addClassNameToUse: #SConference;
+		addFactoryMessage: #SConference.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			#('_var1 := ''Mary''.' '_var0 := 95.' '_var2 := SSTeacher name: _var1 with: _var0.' '_var3 := SConference new.')
+]
+
+{ #category : #tests }
 SSTestCaseTest >> testAddLiteral [
 	| testCase aTypeInfo |
 	testCase := SSTestCase new.
@@ -149,6 +175,16 @@ SSTestCaseTest >> testAddLiteral [
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
 			#('_var0 := ''World''.' '_var1 := ((OrderedCollection new) add: 1; add: 4; yourself).' '_var2 := 2.')
+]
+
+{ #category : #tests }
+SSTestCaseTest >> testAddLiteralNoComparable [
+	| testCase |
+	testCase := SSTestCase with: utility typeInfosSFoo fifth.
+	testCase
+		addLiteral.
+	self assertCollection: (testCase statements collect: #printString) 
+	hasSameElements: (Array with: ('_var0 := ', SStudent new storeString, '.')).
 ]
 
 { #category : #tests }

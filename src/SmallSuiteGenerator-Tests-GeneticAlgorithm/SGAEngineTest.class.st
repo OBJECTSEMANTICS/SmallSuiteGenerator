@@ -17,6 +17,16 @@ SGAEngineTest >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitness 
 		run
 ]
 
+{ #category : #actions }
+SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock baseClassName: symbol andFitness: aClass [
+	"	SSGeneratorInvariant resetNumTest."
+
+	self settingOnPackagesMatching: regex withBlock: aBlock and: symbol.
+	engine
+		fitness: (aClass coverageOf: aBlock onPackagesMatching: regex);
+		run
+]
+
 { #category : #running }
 SGAEngineTest >> setUp [ 
 	engine := SGAEngine new
@@ -28,10 +38,24 @@ SGAEngineTest >> settingEngineOnClass: aClass withBlock: aBlock [
 		populationSize: 10;
 		numberOfStatements: 10;
 		blockToExecute: aBlock;
-		endForMaxNumberOfGeneration: 10;
+		endForMaxNumberOfGeneration: 5;
 		typeInfo:
 			(SSGenerator profile: engine blockToExecute onClass: aClass)
-				asTypeInfo
+				asTypeInfo;
+		baseClassName: aClass name
+]
+
+{ #category : #actions }
+SGAEngineTest >> settingOnPackagesMatching: regex withBlock: aBlock and: symbol [
+	engine
+		populationSize: 10;
+		numberOfStatements: 10;
+		blockToExecute: aBlock;
+		endForMaxNumberOfGeneration: 5;
+		typeInfo:
+			(SSGenerator profile: engine blockToExecute onPackagesMatching: regex)
+				asTypeInfo;
+		baseClassName: symbol
 ]
 
 { #category : #running }
@@ -171,4 +195,50 @@ SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
 	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
 	self assert: (firstFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
+]
+
+{ #category : #tests }
+SGAEngineTest >> testRunUsingBaseClassNameSFoo [
+	"| first last classFitness |
+	classFitness := SMethodCoverage.
+	self
+		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
+		withBlock: [ (SFoo score: 4)
+				score;
+				returnCollection;
+				returnString;
+				score: 5;
+				return:
+					((SStudent name: 'Emily')
+						nickname;
+						scoreStudent;
+						yourself) ]
+		baseClassName: #SFoo
+		andFitness: classFitness.
+	first := engine logs first fittestTestCase fitness
+		at: classFitness nameFunction.
+	last := engine logs last fittestTestCase fitness
+		at: classFitness nameFunction.
+	self assert: first <= last"
+]
+
+{ #category : #tests }
+SGAEngineTest >> testRunUsingBaseClassNameSSTeacher [
+	| first last classFitness |
+	classFitness := SMethodCoverage.
+	self
+		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
+		withBlock: [ (SSTeacher name: 'Ann' with: 34)
+				name;
+				nickname;
+				yearsWorkExperience;
+				idTeacher;
+				id ]
+		baseClassName: #SSTeacher
+		andFitness: classFitness.
+	first := engine logs first fittestTestCase fitness
+		at: classFitness nameFunction.
+	last := engine logs last fittestTestCase fitness
+		at: classFitness nameFunction.
+	self assert: first <= last
 ]

@@ -77,7 +77,9 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 { #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfosOnPackageExamples [
 	"the first typeInfo is about a class has as argument other class from other package"
-"review and modify"
+
+	"review and modify"
+
 	^ OrderedCollection new
 		add:
 			(STypeInfo new
@@ -97,10 +99,10 @@ SUtilityTypeInfo >> typeInfosOnPackageExamples [
 										add: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true);
 										add: #idTeacher -> #(#SSTeacher #SmallInteger #() true);
 										yourself)
-								with: Array
+								with: (Array
 								with:
 									#name:with:
-										-> #(#SSTeacher #SSTeacher #(#ByteString #SmallInteger) false));
+										-> #(#SSTeacher #SSTeacher #(#ByteString #SmallInteger) false)));
 				type:
 					#SConference
 						->
@@ -112,9 +114,10 @@ SUtilityTypeInfo >> typeInfosOnPackageExamples [
 										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
 										with: #discount -> #(#SConference #SmallInteger #() true))
 								with: #());
-				scalar: #SmallInteger with: #(95 100);
+				scalar: #SmallInteger with: #(95);
 				scalar: #False with: #(false);
-				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary')));
+				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary'));
+				scalar: #ByteString with: #('Mary'));
 		add:
 			(STypeInfo new
 				type:

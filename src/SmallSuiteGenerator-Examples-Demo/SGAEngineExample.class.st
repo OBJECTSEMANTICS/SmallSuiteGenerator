@@ -291,6 +291,7 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 			(SSGenerator profile: engine blockToExecute onClass: aClass)
 				asTypeInfo;
 		fitness: aClassFitness;
+		baseClassName: aClass name;
 		endForMaxNumberOfGeneration: 15;
 		run.
 	^ engine

@@ -7,7 +7,10 @@ Class {
 		'typeInfo',
 		'nextId',
 		'numMaxStatements',
-		'fitness'
+		'fitness',
+		'mutator',
+		'classNamesToUse',
+		'validateUsedClasses'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -33,9 +36,17 @@ SSTestCase >> addAssignment: anExpression [
 	^ assignment
 ]
 
+{ #category : #adding }
+SSTestCase >> addClassNameToUse: aSymbol [
+	typeInfo types at: aSymbol ifAbsent: [ self error: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
+	classNamesToUse add: aSymbol
+]
+
 { #category : #inserting }
 SSTestCase >> addFactoryMessage [
-	^ self addFactoryMessage: typeInfo randomNoneAbstractClass name
+	typeInfo noneAbstractClasses shuffle
+		do: [ :aClass | [   ^ self addFactoryMessage: aClass name] on: SError do: [  ] ].
+	self error: 'Not able to create a factoryMessage'
 ]
 
 { #category : #inserting }
@@ -74,7 +85,7 @@ SSTestCase >> addFieldAccessMessage [
 { #category : #inserting }
 SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
-	anAccessor := (typeInfo classAt: aClassName) methodOf: aSelector.
+	
 	anAccessor := (self pickAccessorsOf: aClassName)
 		detect: [ :accessor | accessor selector = aSelector ]
 		ifNone: [ self
@@ -342,6 +353,11 @@ SSTestCase >> computeFitness: fitnessClass [
 		do: [ fitness add: valueFitness ]
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> controlClassNameToUse: aClassName [
+	(validateUsedClasses and: [ (classNamesToUse includes: aClassName) not ]) ifTrue: [ self error: 'Class: ', aClassName, ' is not able to be used.' ]
+]
+
 { #category : #copying }
 SSTestCase >> copy [
 	| copy |
@@ -418,9 +434,12 @@ SSTestCase >> hash [
 SSTestCase >> initialize [
 	statements := OrderedCollection new.
 	assertions := OrderedCollection new.
+	fitness := Dictionary new.
 	nextId := 0.
 	numMaxStatements := 0.
-	fitness := Dictionary new
+	mutator := SMutatorTestCase new testCase: self.
+	classNamesToUse := Set new.
+	validateUsedClasses := false
 ]
 
 { #category : #inserting }
@@ -443,28 +462,8 @@ SSTestCase >> insertExpression: aExpression after: aStatement [
 ]
 
 { #category : #inserting }
-SSTestCase >> insertRandomStatement [
-	#(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:)
-		shuffle
-		do: [ :selector | 
-			[ ^ self insertStatementOfSelector: selector ]
-				on: SError
-				do: [  ] ]
-]
-
-{ #category : #inserting }
 SSTestCase >> insertStatement [
-	| l stop alpha count random |
-	statements ifEmpty: [ ^ #() ].
-	l := 1.
-	count := 0.
-	stop := self numberStatements.
-	alpha := 0.5.
-	random := Random new seed: DateAndTime current nanoSecond / 100.
-	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
-		whileTrue: [ self insertRandomStatement.
-			l := l + 1.
-			count := count + 1 ]
+	mutator insertExpression
 ]
 
 { #category : #inserting }
@@ -538,6 +537,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 	^ typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
+			self controlClassNameToUse: aClassName.
 			methods := typeInfo factoryMessagesFrom: aClassName.
 			methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
@@ -619,7 +619,7 @@ SSTestCase >> newStatementOfType: aType before: aStatement [
 					aStatement) ]
 				on: SError
 				do: [ "try with the next one" ] ].
-	^ self
+	self
 		error: 'Cant create expression with the returnType: ' , aType asString
 ]
 
@@ -672,10 +672,7 @@ SSTestCase >> perform: selector inStatement: stm [
 
 { #category : #querying }
 SSTestCase >> pickAccessorsOf: aType [
-	^ typeInfo types
-		flatCollect: [ :aClassType | 
-			aClassType accessMessages
-				select: [ :accessMessage | accessMessage receiver types includes: aType ] ]
+	^ typeInfo accessMessagesFrom: aType
 ]
 
 { #category : #querying }
@@ -736,36 +733,35 @@ SSTestCase >> referencesIndexes: aExpression [
 ]
 
 { #category : #removing }
+SSTestCase >> removeFromStatements: expression [
+[statements remove: expression] on: NotFound do: [ self error: 'expression not found' ]
+]
+
+{ #category : #removing }
 SSTestCase >> removeStatement [
 	"If other statements refer the statement to remove, then this reference is replaced with another value out of the set which has the same type"
 
 	statements ifEmpty: [ ^ #() ].
 	self
 		removeStatement: (statements at: (1 to: self numberStatements) atRandom)
-
 ]
 
 { #category : #removing }
-SSTestCase >> removeStatement: aStatement [
-	| stmToRemove stmtsToRemove |
-	stmToRemove := self statementAt: aStatement.
-	statements remove: stmToRemove.
-	stmtsToRemove := statements copy
-		flatCollect:
-			[ :stm | self repairParameters: (stm pickUpReferences: stmToRemove) of: stm ].
-	stmtsToRemove do: [ :stm | self removeStatement: stm ]
+SSTestCase >> removeStatement: anExpression [
+	mutator removeExpression: (self statementAt: anExpression)
 ]
 
 { #category : #removing }
 SSTestCase >> removeStatementNoRepairing: aStatement [
 	"remove all statements that reference to statement because this cant be fixed"
-
-	| stmToRemove |
-	stmToRemove := self statementAt: aStatement.
-	statements remove: stmToRemove.
+	mutator removeExpressionWithoutRepairing: (self statementAt: aStatement)
+	"statements remove: stmToRemove.
 	(statements copy
-		flatCollect: [ :stm | (stm pickUpReferences: stmToRemove) ifEmpty: [ #() ] ifNotEmpty: [ Array with: stm ] ])
-		do: [ :stm | self removeStatementNoRepairing: stm ]
+		flatCollect: [ :stm | 
+			(stm pickUpReferences: stmToRemove)
+				ifEmpty: [ #() ]
+				ifNotEmpty: [ Array with: stm ] ])
+		do: [ :stm | self removeStatementNoRepairing: stm ]"
 ]
 
 { #category : #removing }
@@ -773,27 +769,11 @@ SSTestCase >> removeStatementOfVarName: varName [
 	^ self removeStatement: (self statementOfVarName: varName) copy
 ]
 
-{ #category : #repairing }
-SSTestCase >> repairExpression: anExpression before: aStatement [
-	| aType replacement |
-	aType := anExpression returnType.
-	replacement := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-		shuffle
-		detect:
-			[ :stm | stm reference ~= anExpression and: [ stm returnType = aType ] ]
-		ifNone: [ self addStatementOfType: anExpression returnType before: aStatement ].
-	(self statementAt: aStatement)
-		replaceExpression: anExpression
-		by: replacement
-]
-
-{ #category : #repairing }
-SSTestCase >> repairParameters: expressions of: aStatement [
-	|exprsToDelete|
-	exprsToDelete := OrderedCollection new.
-	expressions
-		do: [ :expr | [self repairExpression: expr before: aStatement] on: SError do: [ exprsToDelete add: expr. ] ].
-		^ exprsToDelete 
+{ #category : #transformations }
+SSTestCase >> replace: exprToReplace by: otherExpression on: expression [
+	(self statementAt: expression)
+		replaceExpression: exprToReplace 
+		by: otherExpression 
 ]
 
 { #category : #running }
@@ -891,4 +871,9 @@ SSTestCase >> validReferences [
 					false ] ]
 		ifFound: [ false ]
 		ifNone: [ true ]
+]
+
+{ #category : #accessing }
+SSTestCase >> validateUsedClasses: boolean [
+	validateUsedClasses := boolean
 ]

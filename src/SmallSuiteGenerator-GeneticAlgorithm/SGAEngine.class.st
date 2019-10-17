@@ -19,7 +19,8 @@ Class {
 		'typeInfo',
 		'fitness',
 		'numberOfGenerations',
-		'testRunner'
+		'testRunner',
+		'baseClassName'
 	],
 	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
 }
@@ -41,6 +42,11 @@ SGAEngine >> analyzeMutants [
 	^ analysis generalResult
 ]
 
+{ #category : #accessing }
+SGAEngine >> baseClassName: symbol [
+	baseClassName := symbol
+]
+
 { #category : #'as yet unclassified' }
 SGAEngine >> beforeRun [
 	self checkIfReadyToRun.
@@ -59,34 +65,42 @@ SGAEngine >> blockToExecute: aBlock [
 	blockToExecute := aBlock
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
+SGAEngine >> checkBaseClassName [
+	self
+		assert: [ baseClassName notNil and: [ typeInfo types includesKey: baseClassName ] ]
+		description: 'Need to set the base class name and it must be exist in the typeInfo'
+]
+
+{ #category : #testing }
 SGAEngine >> checkBlockToExecute [
 	self
 		assert: [ blockToExecute notNil ]
 		description: 'Need to set the block to analyze'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 SGAEngine >> checkFitness [
 	self
 		assert: [ fitness notNil ]
 		description: 'Need to set a fitnessBlock'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 SGAEngine >> checkIfReadyToRun [
 	self checkBlockToExecute.
 	self checkTypeInfo.
 	self checkFitness.
+	self checkBaseClassName.
 	self checkLogs
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 SGAEngine >> checkLogs [
 	self assert: [ logs isEmpty ] description: 'Already been run'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 SGAEngine >> checkTypeInfo [
 	self
 		assert: [ typeInfo notNil ]
@@ -271,7 +285,7 @@ SGAEngine >> produceNewPopulation [
 
 { #category : #initialization }
 SGAEngine >> randomlyGeneratedPopulation [
-	|collection |
+	| collection |
 	collection := OrderedCollection new.
 	populationSize
 		timesRepeat: [ collection
@@ -279,13 +293,10 @@ SGAEngine >> randomlyGeneratedPopulation [
 					(SSTestCase new
 						typeInfo: typeInfo;
 						numMaxStatements: numberOfStatements;
+						addClassNameToUse: baseClassName;
+						validateUsedClasses: true;
 						generateStatements) ].
 	^ collection
-]
-
-{ #category : #accessing }
-SGAEngine >> result [ 
-	^ self logs last fittestTestCase statements
 ]
 
 { #category : #running }
