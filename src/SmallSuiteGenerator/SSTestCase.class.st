@@ -74,7 +74,6 @@ SSTestCase >> addFieldAccessMessage [
 { #category : #inserting }
 SSTestCase >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
-	anAccessor := (typeInfo classAt: aClassName) methodOf: aSelector.
 	anAccessor := (self pickAccessorsOf: aClassName)
 		detect: [ :accessor | accessor selector = aSelector ]
 		ifNone: [ self
@@ -672,10 +671,7 @@ SSTestCase >> perform: selector inStatement: stm [
 
 { #category : #querying }
 SSTestCase >> pickAccessorsOf: aType [
-	^ typeInfo types
-		flatCollect: [ :aClassType | 
-			aClassType accessMessages
-				select: [ :accessMessage | accessMessage receiver types includes: aType ] ]
+^ typeInfo accessMessagesFrom: aType.
 ]
 
 { #category : #querying }
@@ -693,9 +689,12 @@ SSTestCase >> pickMessagesOf: aType [
 
 { #category : #querying }
 SSTestCase >> pickObjectVariableOf: aClassName [
-	^ (self factoryMessageVariablesBefore: nil)
-		detect: [ :var | var returnType = aClassName ]
-		ifNone: [ self error: 'Dont exist a constructor of class' , aClassName ]
+	(self subStatementsFrom: 1 toPrevIndexOf: nil) copy shuffle
+		detect: [ :stm | stm returnType = aClassName ]
+		ifFound: [ :stm | 
+			^ stm reference ]
+		ifNone: [  ].
+	self error: 'Dont exist a statement of class: ' , aClassName
 ]
 
 { #category : #querying }

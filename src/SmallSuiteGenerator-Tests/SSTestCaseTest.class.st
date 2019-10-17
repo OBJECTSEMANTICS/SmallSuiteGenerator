@@ -439,9 +439,10 @@ SSTestCaseTest >> testInsertStatementOfMixingSelectors [
 		addFieldAccessMessage: #idStudent from: #SStudent;
 		yourself.
 	self
-		assertCollection: (testCase statements collect: #printString)
+		assertCollection: (testCase statements collect: #printString) allButLast
 		hasSameElements:
-			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.' '_var4 := _var1 idStudent.').
+			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.'). 
+	self assert: (#('_var4 := _var1 idStudent.' '_var4 := _var2 idStudent.' '_var4 := _var3 idStudent.') includes: (testCase statementOfVarName: '_var4') printString).
 	fieldAccess := testCase statementOfVarName: '_var4'.
 	message := (testCase statementOfVarName: '_var2') value.
 	message := testCase insertExpression: message copy after: fieldAccess.
@@ -454,10 +455,6 @@ SSTestCaseTest >> testInsertStatementOfMixingSelectors [
 	self
 		assert: message printString
 		equals: '_var5 := _var1 scoreStudent: _var4.'.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.' '_var4 := _var1 idStudent.' '_var5 := _var1 scoreStudent: _var4.')
 ]
 
 { #category : #'mutation-insert' }
