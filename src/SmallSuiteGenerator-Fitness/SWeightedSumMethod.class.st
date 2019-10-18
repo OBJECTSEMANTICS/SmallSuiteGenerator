@@ -32,16 +32,16 @@ Class {
 { #category : #testing }
 SWeightedSumMethod class >> is: aTestCase1 betterThan: aTestCase2 [
 	| weightedSum1 weightedSum2 |
-	weightedSum1 := self weightedSum: aTestCase1.
-	weightedSum2 := self weightedSum: aTestCase2.
+	weightedSum1 := self sumWeights: aTestCase1.
+	weightedSum2 := self sumWeights: aTestCase2.
 	"it considers the first comparison operator of functions"
 	^ weightedSum1
-		perform: functions first comparisonOperator
+		perform: functions first operator
 		with: weightedSum2
 ]
 
 { #category : #'as yet unclassified' }
-SWeightedSumMethod class >> weightedSum: aTestCase [
+SWeightedSumMethod class >> sumWeights: aTestCase [
 	self assert: weights sum = 1 description: 'Verify that all weights must be sum one'.
 	^ (aTestCase fitness values * weights) sum
 ]

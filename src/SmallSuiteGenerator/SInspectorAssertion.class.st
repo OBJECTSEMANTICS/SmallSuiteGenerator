@@ -4,12 +4,12 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SInspectorAssertion class >> for: anExecutionContext [
 	| assertions |
 	assertions := OrderedCollection new.
-	anExecutionContext keys
-		do: [ :varName | 
+	anExecutionContext keys 
+	do: [ :varName | 
 			| value |
 			value := anExecutionContext at: varName.
 			(value class methods select: #isReturnField)
@@ -17,14 +17,18 @@ SInspectorAssertion class >> for: anExecutionContext [
 					| fieldValue |
 					fieldValue := value perform: compiledMethod selector.
 					(self isPrimitive: fieldValue)
-						ifTrue: [ assertions add: (self new
-														selector: #assert:equals:;
-														args:
-															{(SMessage new 
-																	receiver: (SVariable name: varName);
-																	selector: compiledMethod selector;
-																	yourself).
-															(SLiteral new value: fieldValue)};
-														yourself) ] ] ].
+						ifTrue: [ assertions
+								add:
+									(self new
+										selector: #assert:equals:;
+										args:
+											(Array
+												with:
+													(SMessage new
+														receiver: (SVariable name: varName);
+														selector: compiledMethod selector;
+														yourself)
+												with: (SLiteral new value: fieldValue));
+										yourself) ] ] ].
 	^ assertions
 ]

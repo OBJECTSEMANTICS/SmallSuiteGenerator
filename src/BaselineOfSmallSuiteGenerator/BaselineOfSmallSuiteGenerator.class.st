@@ -22,37 +22,25 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'NeoCSV'
 				with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 			spec
-				package: 'SmallSuiteGenerator-Info'
-					with: [ spec requires: 'NeoCSV' ];
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'MuTalk') ];
-				package: 'SmallSuiteGenerator-Exception-Management';
+					with: [ spec requires: #('Spy2' 'MuTalk' 'NeoCSV') ];
+				package: 'SmallSuiteGenerator-Exception';
+				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Fitness'
 					with: [ spec
-						requires: #('SBTestCoverage' 'SmallSuiteGenerator-Exception-Management') ];
+						requires: #('SBTestCoverage' 'SmallSuiteGenerator-Exception') ];
 				package: 'SmallSuiteGenerator-GeneticAlgorithm'
-					with: [ spec requires: 'SmallSuiteGenerator' ];
-				package: 'SmallSuiteGenerator-Assertion';
-				package: 'SmallSuiteGenerator-Examples';
-				package: 'SmallSuiteGenerator-Examples-Others';
-				package: 'SmallSuiteGenerator-Examples-Demo'
-					with: [ spec
-						requires:
-							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Info' 'SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Examples-Others') ];
+					with: [ spec requires: #('SmallSuiteGenerator' 'SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Scenario') ];
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:
-							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Examples-Others' 'SmallSuiteGenerator-Info') ];
-				package: 'SmallSuiteGenerator-Tests-Fitness'
+							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario') ];
+				package: 'SmallSuiteGenerator-Fitness-Tests'
 					with: [ spec
 						requires:
-							#('SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator') ];
-				package: 'SmallSuiteGenerator-Tests-GeneticAlgorithm'
+							#('SmallSuiteGenerator-Fitness' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator') ];
+				package: 'SmallSuiteGenerator-GeneticAlgorithm-Tests'
 					with: [ spec
 						requires:
-							#('SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Examples' 'SmallSuiteGenerator-Examples-Others') ];
-				package: 'SmallSuiteGenerator-Tests-Info'
-					with: [ spec requires: #('SmallSuiteGenerator-Info' 'SmallSuiteGenerator') ];
-				package: 'SmallSuiteGenerator-Tests-Exception-Management'
-					with: [ spec requires: 'SmallSuiteGenerator-Exception-Management' ] ]
+							#('SmallSuiteGenerator-GeneticAlgorithm' 'SmallSuiteGenerator-Scenario') ] ]
 ]

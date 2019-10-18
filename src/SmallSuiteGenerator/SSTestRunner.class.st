@@ -2,7 +2,6 @@ Class {
 	#name : #SSTestRunner,
 	#superclass : #TestCase,
 	#instVars : [
-		'evaluator',
 		'testCase',
 		'invariants'
 	],
@@ -43,8 +42,7 @@ SSTestRunner >> evaluate: aSTestCase [
 
 { #category : #initialization }
 SSTestRunner >> initialize [
-	evaluator := SSEvaluatorInvariant new.
-	invariants := OrderedCollection new.
+	invariants := OrderedCollection new
 ]
 
 { #category : #running }

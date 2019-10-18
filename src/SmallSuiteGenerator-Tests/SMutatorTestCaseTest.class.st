@@ -17,7 +17,7 @@ SMutatorTestCaseTest >> setUp [
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveArgsMethod [
 	| testCase expression numExprsBefore numExprsAfter |
-	testCase := SSTestCase with: utility typeInfosSFoo first.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
 	mutator := SMutatorTestCase with: testCase.
 	testCase addMessage: #return: from: #SFoo.
 	self
@@ -34,7 +34,7 @@ SMutatorTestCaseTest >> testRemoveArgsMethod [
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveExpression [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfosSFoo first.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
 	mutator := SMutatorTestCase with: testCase.
 	expression := testCase addLiteral.
 	mutator removeExpression: expression.
@@ -43,8 +43,8 @@ SMutatorTestCaseTest >> testRemoveExpression [
 
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
-	| testCase expression  |
-	testCase := SSTestCase with: utility typeInfosSFoo first.
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSFoo1.
 	mutator := SMutatorTestCase with: testCase.
 	testCase addMessage: #return: from: #SFoo.
 	self
@@ -55,14 +55,13 @@ SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 	mutator removeExpressionWithoutRepairing: expression.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' ).
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.')
 ]
 
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveInEmptyTestCase [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfosSFoo first.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
 	mutator := SMutatorTestCase with: testCase.
 	self should: [ mutator removeExpression: nil ] raise: SError
 ]
@@ -70,7 +69,7 @@ SMutatorTestCaseTest >> testRemoveInEmptyTestCase [
 { #category : #tests }
 SMutatorTestCaseTest >> testRepair [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfosSFoo first.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
 	mutator := SMutatorTestCase with: testCase.
 	testCase addMessage: #return: from: #SFoo.
 	self

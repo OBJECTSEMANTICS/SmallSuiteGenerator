@@ -76,7 +76,7 @@ SSTestSuiteGenerator class >> resetNumTest [
 { #category : #accessing }
 SSTestSuiteGenerator >> compileStatementsOf: testCase with: invariants [
 	| node selector |
-	node := SCoverageWithProfiler nodeFormattedOf: testCase.
+	node := testCase parseTree.
 	invariants
 		do:
 			[ :invariant | node body addNode: (RBParser parseExpression: invariant asString) ].
@@ -139,13 +139,4 @@ SSTestSuiteGenerator >> testPackageName [
 { #category : #accessing }
 SSTestSuiteGenerator >> testPackageName: anObject [
 	testPackageName := anObject
-]
-
-{ #category : #accessing }
-SSTestSuiteGenerator >> transformToNode: testCase [
-	| node |
-	node := SCoverageWithProfiler  nodeFormattedOf: testCase.
-	node body
-		addNode: (RBParser parseExpression: '^ self analyze: thisContext').
-	^ node
 ]

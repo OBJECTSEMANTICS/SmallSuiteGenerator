@@ -7,7 +7,8 @@ Class {
 		'dataFitnessCoverage',
 		'ofClass',
 		'invariants',
-		'classNameOfTest'
+		'classNameOfTest',
+		'testPackageName'
 	],
 	#classInstVars : [
 		'instance'
@@ -33,7 +34,7 @@ SSmallSuiteGenerator class >> resetInstance [
 	instance := nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSmallSuiteGenerator >> classNameOfTest: aString [
 	classNameOfTest := aString
 ]
@@ -50,9 +51,11 @@ SSmallSuiteGenerator >> classesForRegex: regexExpressions [
 { #category : #'as yet unclassified' }
 SSmallSuiteGenerator >> configureTestCaseClass [
 	"here it necessary to add messages to configure the name of the test class and it compile in a determinated package"
+
 	SSTestSuiteGenerator resetClassOfTest.
-	SSTestSuiteGenerator createCompilerClass: classNameOfTest of: 'SmallSuiteGenerator-Tests-Generated'
-	
+	SSTestSuiteGenerator
+		createCompilerClass: classNameOfTest
+		of: testPackageName
 ]
 
 { #category : #accessing }
@@ -103,7 +106,7 @@ SSmallSuiteGenerator >> fitnessValues [
 						withIndexCollect: [ :log :index | log fittestTestCase fitness at: nameFunction ]) ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SSmallSuiteGenerator >> generateAssertions: selectedInvariants [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
@@ -116,13 +119,15 @@ SSmallSuiteGenerator >> generateAssertions: selectedInvariants [
 { #category : #initialization }
 SSmallSuiteGenerator >> initialize [
 	engine := self engineDefault.
-	classNameOfTest := 'STestCaseGenerated'.
+	classNameOfTest := 'SGeneratedTestCase'.
 	dataFitnessCoverage := #().
 	ofClass := false.
-	invariants := Array with: SComparisonAssertion
-			with: SInspectorAssertion
-			with: SPrimitiveAssertion
-			with: SStringAssertion
+	testPackageName := 'SmallSuiteGenerator-Tests-AutomaticallyGenerated'.
+	invariants := Array
+		with: SComparisonAssertion
+		with: SInspectorAssertion
+		with: SPrimitiveAssertion
+		with: SStringAssertion
 ]
 
 { #category : #'as yet unclassified' }
@@ -158,12 +163,10 @@ SSmallSuiteGenerator >> profilingOnClass: aClass [
 	ofClass := true.
 	"save data of fitness coverage"
 	dataFitnessCoverage := Array with: aBlock with: aClass.
-	"save the class to evaluate mutants killed or alived"
-	engine modelClasses: (Array with: aClass).
+	engine targetClassName: aClass name.
 	"execute the engine"
 	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass).
-
+		typeInfo: (self typeInfoOf: engine blockToExecute onClass: aClass)
 ]
 
 { #category : #'as yet unclassified' }
@@ -177,9 +180,10 @@ SSmallSuiteGenerator >> profilingOnPackagesMatching: regex [
 		assert: (regex isNotNil and: [ regex isNotEmpty ])
 		description: 'Need to provide a valid regex to generate the tests'.
 	dataFitnessCoverage := Array with: aBlock with: regex.
-	engine modelClasses: (self classesForRegex: (Array with: regex)).
+	engine targetClassName
+		ifNil: [ engine targetClassName: (self classesForRegex: regex) shuffle anyOne name ].
 	engine
-		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex).
+		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex)
 ]
 
 { #category : #initialization }
@@ -221,13 +225,18 @@ SSmallSuiteGenerator >> runWith: collection [
 	self run
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SSmallSuiteGenerator >> seed: aBlock [
 	self
 		assert: aBlock isNotNil
 		description: 'Need to provide a block to generate the tests'.
 	"set the block to execute on engine"
 	engine blockToExecute: aBlock.
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> testPackageName: string [
+	testPackageName := string
 ]
 
 { #category : #accessing }

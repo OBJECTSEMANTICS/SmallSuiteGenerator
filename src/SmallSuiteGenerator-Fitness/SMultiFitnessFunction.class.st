@@ -20,7 +20,7 @@ SMultiFitnessFunction class >> addFitnessFunction: aFitnessFunction [
 
 { #category : #accessing }
 SMultiFitnessFunction class >> allFitnessFunction [
-	self validateInstance.
+	self validate.
 	^ multiFitnessFunction allFitnessFunction
 ]
 
@@ -30,15 +30,21 @@ SMultiFitnessFunction class >> clean [
 		ifNotNil: [ multiFitnessFunction allFitnessFunction do: #clean ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SMultiFitnessFunction class >> computeFitness: aTestCase [
-	self validateInstance.
+	self validate.
 	^ multiFitnessFunction computeFitness: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SMultiFitnessFunction class >> functionsSize [
+	self validate.
+	^ multiFitnessFunction functionsSize
 ]
 
 { #category : #testing }
 SMultiFitnessFunction class >> is: aTestCase1 betterThan: aTestCase2 [
-	self validateInstance.
+	self validate.
 	^ multiFitnessFunction is: aTestCase1 betterThan: aTestCase2
 ]
 
@@ -57,25 +63,19 @@ SMultiFitnessFunction class >> multiFitnessFunction: anObject [
 	multiFitnessFunction := anObject
 ]
 
-{ #category : #'as yet unclassified' }
-SMultiFitnessFunction class >> numFunctions [
-	self validateInstance.
-	^ multiFitnessFunction numFunctions
-]
-
 { #category : #accessing }
 SMultiFitnessFunction class >> reset [
 	multiFitnessFunction := nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SMultiFitnessFunction class >> selectorMethod: aSelectorMethod [
-	self validateInstance.
+	self validate.
 	^ multiFitnessFunction selectorMethod: aSelectorMethod 
 ]
 
-{ #category : #'as yet unclassified' }
-SMultiFitnessFunction class >> validateInstance [
+{ #category : #accessing }
+SMultiFitnessFunction class >> validate [
 	self
 		assert: (multiFitnessFunction isNotNil
 		and: [ multiFitnessFunction allFitnessFunction isNotEmpty ])
@@ -98,7 +98,7 @@ SMultiFitnessFunction >> allFitnessFunction [
 	^ functions
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SMultiFitnessFunction >> computeFitness: aTestCase [
 	|dict|
 	dict := Dictionary new.
@@ -109,6 +109,11 @@ SMultiFitnessFunction >> computeFitness: aTestCase [
 { #category : #accessing }
 SMultiFitnessFunction >> functions: anObject [
 	functions := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SMultiFitnessFunction >> functionsSize [
+	^ functions size
 ]
 
 { #category : #initialization }
@@ -126,11 +131,6 @@ SMultiFitnessFunction >> initializeDefaultSelectorMethod [
 SMultiFitnessFunction >> is: aTestCase1 betterThan: aTestCase2 [
 	selectorMethod ifNil: [ self initializeDefaultSelectorMethod ].
 	^ selectorMethod is: aTestCase1 betterThan: aTestCase2
-]
-
-{ #category : #'as yet unclassified' }
-SMultiFitnessFunction >> numFunctions [
-	^ functions size
 ]
 
 { #category : #accessing }

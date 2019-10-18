@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'random'
 	],
-	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm-Core'
 }
 
 { #category : #accessing }

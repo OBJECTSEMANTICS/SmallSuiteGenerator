@@ -9,8 +9,8 @@ Class {
 		'numMaxStatements',
 		'fitness',
 		'mutator',
-		'classNamesToUse',
-		'validateUsedClasses'
+		'targetClassesNames',
+		'validateTargetClasses'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -34,12 +34,6 @@ SSTestCase >> addAssignment: anExpression [
 	assignment := self newAssignment: anExpression.
 	self addStatement: assignment.
 	^ assignment
-]
-
-{ #category : #adding }
-SSTestCase >> addClassNameToUse: aSymbol [
-	typeInfo types at: aSymbol ifAbsent: [ self error: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
-	classNamesToUse add: aSymbol
 ]
 
 { #category : #inserting }
@@ -189,6 +183,12 @@ SSTestCase >> addStatements: collStatements [
 		assert: statements isEmpty
 		description: 'statements must be empty'.
 	statements addAll: collStatements
+]
+
+{ #category : #adding }
+SSTestCase >> addTargetClassName: aSymbol [
+	typeInfo types at: aSymbol ifAbsent: [ self error: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
+	targetClassesNames add: aSymbol
 ]
 
 { #category : #accessing }
@@ -353,11 +353,6 @@ SSTestCase >> computeFitness: fitnessClass [
 		do: [ fitness add: valueFitness ]
 ]
 
-{ #category : #'as yet unclassified' }
-SSTestCase >> controlClassNameToUse: aClassName [
-	(validateUsedClasses and: [ (classNamesToUse includes: aClassName) not ]) ifTrue: [ self error: 'Class: ', aClassName, ' is not able to be used.' ]
-]
-
 { #category : #copying }
 SSTestCase >> copy [
 	| copy |
@@ -438,8 +433,8 @@ SSTestCase >> initialize [
 	nextId := 0.
 	numMaxStatements := 0.
 	mutator := SMutatorTestCase new testCase: self.
-	classNamesToUse := Set new.
-	validateUsedClasses := false
+	targetClassesNames := Set new.
+	validateTargetClasses := false
 ]
 
 { #category : #inserting }
@@ -537,7 +532,7 @@ SSTestCase >> newFactoryMessage: aClassName before: aStatement [
 	^ typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
-			self controlClassNameToUse: aClassName.
+			self validTargetClassName: aClassName.
 			methods := typeInfo factoryMessagesFrom: aClassName.
 			methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
@@ -873,7 +868,12 @@ SSTestCase >> validReferences [
 		ifNone: [ true ]
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> validTargetClassName: aClassName [
+	(validateTargetClasses and: [ (targetClassesNames includes: aClassName) not ]) ifTrue: [ self error: 'Class: ', aClassName, ' is not able to be used.' ]
+]
+
 { #category : #accessing }
-SSTestCase >> validateUsedClasses: boolean [
-	validateUsedClasses := boolean
+SSTestCase >> validateTargetClasses: boolean [
+	validateTargetClasses := boolean
 ]

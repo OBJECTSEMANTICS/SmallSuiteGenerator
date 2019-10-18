@@ -7,7 +7,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Fitness'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SFitnessFunction class >> allFitnessFunction [
 	^ self subclassResponsibility 
 ]
@@ -17,19 +17,14 @@ SFitnessFunction class >> clean [
 	self subclassResponsibility
 ]
 
-{ #category : #'as yet unclassified' }
-SFitnessFunction class >> comparisonOperator [
-	^ operator
-]
-
-{ #category : #'as yet unclassified' }
-SFitnessFunction class >> comparisonOperator: aSymbol [
-	operator := aSymbol
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SFitnessFunction class >> computeFitness: aTestCase [
 	^ self subclassResponsibility 
+]
+
+{ #category : #accessing }
+SFitnessFunction class >> functionName [
+	^ self name
 ]
 
 { #category : #testing }
@@ -37,7 +32,7 @@ SFitnessFunction class >> is: aTestCase1 betterThan: aTestCase2 [
 	^ self subclassResponsibility 
 ]
 
-{ #category : #'as yet unclassified' }
-SFitnessFunction class >> nameFunction [
-	^ self name
+{ #category : #accessing }
+SFitnessFunction class >> operator [
+	^ operator
 ]

@@ -1,61 +1,46 @@
 Class {
 	#name : #SLiteralTest,
-	#superclass : #TestCase,
-	#instVars : [
-		'utility',
-		'literal'
-	],
+	#superclass : #SExpressionTest,
 	#category : #'SmallSuiteGenerator-Tests-AST'
 }
 
-{ #category : #running }
-SLiteralTest >> setUp [
-	utility := SUtilityTypeInfo new.
-	literal := SLiteral new
-]
-
 { #category : #tests }
 SLiteralTest >> testCopy [
-	| testCase expression copy |
-	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
-	expression := testCase addLiteral: #ByteString.
-	self assert: expression printString equals: '_var0 := ''hello''.'.
-	copy := expression copy.
-	copy value value: 'world'.
-	self assert: copy printString equals: '_var0 := ''world''.'.
-	copy variable varName: '_string'.
-	copy variable id: 2.
-	self assert: copy printString equals: '_string2 := ''world''.'.
-	self assert: expression printString equals: '_var0 := ''hello''.'
+	| literal copy |
+	literal := (SLiteral value: 'hello') returnType: #ByteString.
+	self assert: literal printString equals: '''hello'''.
+	copy := literal copy.
+	copy value: 'world'.
+	self assert: copy printString equals: '''world'''
 ]
 
 { #category : #tests }
 SLiteralTest >> testEqual [
-	literal value: 1.
-	self assert: (SLiteral new value: 1) equals: literal.
+	|literal|
+	literal := SLiteral value: 1.
+	self assert: (SLiteral value: 1) equals: literal.
 	literal value: 3.
-	self deny: (SLiteral new value: -3) equals: literal.
+	self deny: (SLiteral value: -3) equals: literal.
 	literal value: #().
-	self assert: (SLiteral new value: #()) equals: literal.
+	self assert: (SLiteral value: #()) equals: literal.
 	literal value: SStudent new.
-	self assert: (SLiteral new value: SStudent new) equals: literal
+	self assert: (SLiteral value: SStudent new) equals: literal
 ]
 
 { #category : #tests }
 SLiteralTest >> testInsertAsParameterUsing [
-	| testCase aExpression insertedExpression |
-	testCase := SSTestCase with: SSTestCaseTest typeInfoSFoo.
+	| testCase expression insertedExpression |
+	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase addLiteral: #ByteString.
-	aExpression := testCase addLiteral: #ByteString.
+	expression := testCase addLiteral: #ByteString.
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := ''hello''.'  '_var1 := ''hello''.'  '_var2 := 7.3.'
-			'_var3 := SFoo score: _var2.').
+			#('_var0 := ''hello''.' '_var1 := ''hello''.' '_var2 := 7.3.' '_var3 := SFoo score: _var2.').
 	testCase addMessage: #return: from: #SFoo.
-	insertedExpression := aExpression
-		insertAsParameter: aExpression
+	insertedExpression := expression
+		insertAsParameter: expression
 		using: testCase.
 	self
 		assert: insertedExpression printString
@@ -64,25 +49,29 @@ SLiteralTest >> testInsertAsParameterUsing [
 
 { #category : #tests }
 SLiteralTest >> testInsertParameterOn [
-	| testCase aExpression insertedExpression |
-	testCase := SSTestCase with: utility typeInfosSFoo fifth.
+	| testCase expression insertedExpression |
+	testCase := SSTestCase with: utility typeInfoSFoo5.
 	testCase addLiteral: #SStudent.
 	testCase addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			(Array with: '_var0 := ', SStudent new storeString, '.' 
-			with: '_var1 := SFoo new.' 
-			with: '_var2 := _var1 return: _var0.').
-	aExpression := testCase addLiteral: #SStudent.
-	
-	self should: [insertedExpression := aExpression
-		insertAsParameter: aExpression
-		using: testCase] raise: SError.
+			(Array
+				with: '_var0 := ' , SStudent new storeString , '.'
+				with: '_var1 := SFoo new.'
+				with: '_var2 := _var1 return: _var0.').
+	expression := testCase addLiteral: #SStudent.
+	self
+		should: [ insertedExpression := expression
+				insertAsParameter: expression
+				using: testCase ]
+		raise: SError.
 	testCase addMessage: #return: from: #SFoo.
-	self shouldnt: [ insertedExpression := aExpression
-		insertAsParameter: aExpression
-		using: testCase ] raise: SError.
+	self
+		shouldnt: [ insertedExpression := expression
+				insertAsParameter: expression
+				using: testCase ]
+		raise: SError.
 	self
 		assert: insertedExpression printString
 		equals: '_var4 := _var1 return: _var3.'
@@ -90,7 +79,8 @@ SLiteralTest >> testInsertParameterOn [
 
 { #category : #tests }
 SLiteralTest >> testReferenceTo [
-	literal value: 1.
+	|literal|
+	literal := SLiteral value: 1.
 	self assert: ((SLiteral new value: 1) referenceTo: #SmallInteger).
 	literal value: SStudent new.
 	self

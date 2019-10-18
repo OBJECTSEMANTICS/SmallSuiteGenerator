@@ -1,7 +1,7 @@
 Class {
 	#name : #SGACrossoverOperation,
 	#superclass : #SGAOperation,
-	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm-Core'
 }
 
 { #category : #accessing }

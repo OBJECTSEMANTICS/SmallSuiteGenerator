@@ -12,40 +12,14 @@ Class {
 		'terminationBlock',
 		'logs',
 		'blockToExecute',
-		'modelClasses',
-		'testClasses',
-		'operators',
-		'evaluationStrategy',
 		'typeInfo',
 		'fitness',
 		'numberOfGenerations',
 		'testRunner',
-		'baseClassName'
+		'targetClassName'
 	],
-	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm-Core'
 }
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> analyzeMutants [
-	| analysis |
-	self
-		assert: (modelClasses isNotNil and: [ modelClasses isNotEmpty ])
-		description: 'modelClasses must not be nil or empty'.
-	analysis := MutationTestingAnalysis
-		testCasesFrom: self validTestClasses
-		mutating: modelClasses
-		using: self validOperators
-		with:
-			(evaluationStrategy
-				ifNil: [ SConfiguration defaultEvaluationStrategy ]).
-	analysis run.
-	^ analysis generalResult
-]
-
-{ #category : #accessing }
-SGAEngine >> baseClassName: symbol [
-	baseClassName := symbol
-]
 
 { #category : #'as yet unclassified' }
 SGAEngine >> beforeRun [
@@ -68,7 +42,7 @@ SGAEngine >> blockToExecute: aBlock [
 { #category : #testing }
 SGAEngine >> checkBaseClassName [
 	self
-		assert: [ baseClassName notNil and: [ typeInfo types includesKey: baseClassName ] ]
+		assert: [ targetClassName notNil and: [ typeInfo types includesKey: targetClassName ] ]
 		description: 'Need to set the base class name and it must be exist in the typeInfo'
 ]
 
@@ -131,11 +105,6 @@ SGAEngine >> endForMaxNumberOfGeneration: nbOfGenerations [
 ]
 
 { #category : #accessing }
-SGAEngine >> evaluationStrategy: aEvaluationStrategy [
-	evaluationStrategy := aEvaluationStrategy 
-]
-
-{ #category : #accessing }
 SGAEngine >> fitness [
 	^ fitness
 ]
@@ -171,7 +140,6 @@ SGAEngine >> initialize [
 	self initializeCrossoverOperator.
 	self selection: SGATournamentSelection new.
 	testRunner := SSTestRunner new.
-	modelClasses := #().
 	numberOfGenerations := 0
 ]
 
@@ -231,17 +199,6 @@ SGAEngine >> microPause [
     World doOneCycleNow.
 ]
 
-{ #category : #accessing }
-SGAEngine >> modelClasses: classes [
-	self assert: (classes isNotNil and: [ classes isNotEmpty ]) description: 'The classes must not be nil or empty'.
-	modelClasses := classes
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> mutantOperators: mutantOperators [
-	operators := mutantOperators 
-]
-
 { #category : #'as yet unclassified' }
 SGAEngine >> mutate: testCase [
 	^ mutationOperator mutate: testCase
@@ -293,8 +250,8 @@ SGAEngine >> randomlyGeneratedPopulation [
 					(SSTestCase new
 						typeInfo: typeInfo;
 						numMaxStatements: numberOfStatements;
-						addClassNameToUse: baseClassName;
-						validateUsedClasses: true;
+						addTargetClassName: targetClassName;
+						validateTargetClasses: true;
 						generateStatements) ].
 	^ collection
 ]
@@ -311,14 +268,15 @@ SGAEngine >> run [
 			| gen |
 			gen := 0.
 			[ self shouldTerminate ]
-				whileFalse: [ "fitness clear"
+				whileFalse: [
 					gen := gen + 1.
 					bar label: 'Iteration: ' , gen asString.
 					self microPause.
 					t := Time now asSeconds.
 					self produceNewPopulation.
 					logs add: (self logWithGenerationNumber: gen atTime: t).
-					bar current: ((gen / numberOfGenerations) asFloat * 100) asInteger ] ]
+					bar
+						current: ((gen / numberOfGenerations) asFloat * 100) asInteger ] ]
 ]
 
 { #category : #accessing }
@@ -340,8 +298,13 @@ SGAEngine >> shouldTerminate [
 ]
 
 { #category : #accessing }
-SGAEngine >> testClasses: testCaseClasses [
-	testClasses := testCaseClasses 
+SGAEngine >> targetClassName [
+	^ targetClassName
+]
+
+{ #category : #accessing }
+SGAEngine >> targetClassName: symbol [
+	targetClassName := symbol
 ]
 
 { #category : #accessing }
@@ -353,23 +316,4 @@ SGAEngine >> typeInfo [
 SGAEngine >> typeInfo: aTypeInfo [
 	self checkBlockToExecute.
 	typeInfo := aTypeInfo
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> valid: aCollection
-		ifNotValid: aBlock [
-		^ (aCollection isNil or: [ aCollection isEmpty ]) ifFalse: [aCollection]
-		ifTrue: [ aBlock value ]
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> validOperators [
-	^ self
-				valid: operators
-				ifNotValid: [ SConfiguration defaultMutantOperators ]
-]
-
-{ #category : #'as yet unclassified' }
-SGAEngine >> validTestClasses [
-	^ self valid: testClasses ifNotValid: [ SConfiguration classAssertsGenerationTest ]
 ]
