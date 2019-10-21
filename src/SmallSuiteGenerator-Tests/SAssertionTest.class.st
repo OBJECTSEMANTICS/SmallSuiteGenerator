@@ -61,12 +61,7 @@ SAssertionTest >> testAssertInspector [
 			 _var3 := Point x: _var1 y: _var0.').
 	test generateAssertions: (Array with: SInspectorAssertion).
 	self assert: test assertions size equals: 2.
-	self
-		assert: test assertions first printString
-		equals: 'self assert: _var3 x equals: 2.'.
-	self
-		assert: test assertions second printString
-		equals: 'self assert: _var3 y equals: 1.'
+	self assertCollection: (test assertions collect: #printString) hasSameElements: #('self assert: _var3 x equals: 2.' 'self assert: _var3 y equals: 1.').
 ]
 
 { #category : #tests }
