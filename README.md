@@ -60,7 +60,13 @@ smallSuiteGenerator profilingOnClass: SSTeacher.
 #### Defining a regular expression of package matching
 
 ```Smalltalk
-smallSuiteGenerator profilingOnPackagesMatching: ''SmallSuiteGenerator-Scenario'.
+smallSuiteGenerator profilingOnPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+```
+
+#### Defining the target class name
+
+```Smalltalk
+smallSuiteGenerator targetClassName: #SSTeacher.
 ```
 
 ### Execution
