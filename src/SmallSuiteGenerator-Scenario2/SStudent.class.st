@@ -5,7 +5,7 @@ Class {
 		'scoreStudent',
 		'idStudent'
 	],
-	#category : #'SmallSuiteGenerator-Tests-Utility'
+	#category : #'SmallSuiteGenerator-Scenario2'
 }
 
 { #category : #accessing }

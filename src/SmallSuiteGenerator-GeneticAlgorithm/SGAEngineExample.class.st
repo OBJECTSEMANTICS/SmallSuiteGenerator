@@ -238,7 +238,7 @@ SGAEngineExample >> exampleSStudentOnPackageWithSMethodCoverage [
 	| engine classFitness |
 	classFitness := SMethodCoverage.
 	engine := self
-		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
+		runOnPackagesMatching: 'SmallSuiteGenerator-Scenario2'
 		withBlock: [ (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
@@ -260,7 +260,7 @@ SGAEngineExample >> exampleSStudentOnPackageWithSStatementCoverage [
 	| engine classFitness |
 	classFitness := SStatementCoverage.
 	engine := self
-		runOnPackagesMatching: 'SmallSuiteGenerator-Examples'
+		runOnPackagesMatching: 'SmallSuiteGenerator-Scenario2'
 		withBlock: [ (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;

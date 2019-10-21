@@ -26,6 +26,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with: [ spec requires: #('Spy2' 'MuTalk' 'NeoCSV') ];
 				package: 'SmallSuiteGenerator-Exception';
 				package: 'SmallSuiteGenerator-Scenario';
+				package: 'SmallSuiteGenerator-Scenario2';
 				package: 'SmallSuiteGenerator-Fitness'
 					with: [ spec
 						requires: #('SBTestCoverage' 'SmallSuiteGenerator-Exception') ];

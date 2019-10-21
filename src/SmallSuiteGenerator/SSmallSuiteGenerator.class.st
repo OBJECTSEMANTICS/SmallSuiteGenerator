@@ -7,8 +7,8 @@ Class {
 		'dataFitnessCoverage',
 		'ofClass',
 		'invariants',
-		'classNameOfTest',
-		'testPackageName'
+		'testPackageName',
+		'classNameOfTest'
 	],
 	#classInstVars : [
 		'instance'
@@ -181,7 +181,8 @@ SSmallSuiteGenerator >> profilingOnPackagesMatching: regex [
 		description: 'Need to provide a valid regex to generate the tests'.
 	dataFitnessCoverage := Array with: aBlock with: regex.
 	engine targetClassName
-		ifNil: [ engine targetClassName: (self classesForRegex: regex) shuffle anyOne name ].
+		ifNil: [ engine targetClassName: (self classesForRegex: (Array with: regex)) asArray shuffle anyOne name ].
+	self assert: engine targetClassName isNotNil description: 'Need to provide a target class name'.
 	engine
 		typeInfo: (self typeInfoOf: engine blockToExecute onPackagesMatching: regex)
 ]
@@ -232,6 +233,11 @@ SSmallSuiteGenerator >> seed: aBlock [
 		description: 'Need to provide a block to generate the tests'.
 	"set the block to execute on engine"
 	engine blockToExecute: aBlock.
+]
+
+{ #category : #accessing }
+SSmallSuiteGenerator >> targetClassName: symbol [
+	engine targetClassName: symbol
 ]
 
 { #category : #accessing }

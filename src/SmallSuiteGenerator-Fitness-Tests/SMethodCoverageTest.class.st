@@ -176,13 +176,13 @@ SMethodCoverageTest >> testCoverageOnPackagesSStudent [
 						idStudent;
 						scoreStudent: 10;
 						scoreStudent ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario2') asTypeInfo
 		withNumStatements: 20.
 	fitness
 		coverageOf: [ SStudent new
 				idStudent;
 				scoreStudent: 10;
 				scoreStudent ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario2'.
 	self assert: (fitness computeFitness: testCase) value <= 80.0
 ]
