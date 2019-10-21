@@ -30,11 +30,11 @@ smallSuiteGenerator := SSmallSuiteGenerator newInstance.
 The first step is to define the code block that will be analyzed.
 
 ```Smalltalk
-smallSuiteGenerator seed: [ (SStudent name: 'Ann' with: -34.234)
+smallSuiteGenerator seed: [ (SSTeacher name: 'Ann' with: 50)
 			nickname;
-			idStudent;
-			scoreStudent: 45;
-			scoreStudent ].
+			idTeacher;
+			yearsWorkExperience: 45;
+			yearsWorkExperience ]..
 ```
 				
 Another option to configure is the fitness that will be used in genetic algorithm  to improve this value either increasing or reducing, depending on the configuration. In this case we use: `SMultiFitnessFunction` to evaluate `SMethodCoverage` and `SStatementCoverage` at the same time.
@@ -51,16 +51,16 @@ To analyze and profile the code you have two choices:
  
 #### Defining the class
 
-Following the example, in this case we use the class `SStudent`
+Following the example, in this case we use the class `SSTeacher`
 
 ```Smalltalk
-smallSuiteGenerator profilingOnClass: SStudent. 
+smallSuiteGenerator profilingOnClass: SSTeacher. 
  ```
  
 #### Defining a regular expression of package matching
 
 ```Smalltalk
-smallSuiteGenerator profilingOnPackagesMatching: 'SmallSuiteGenerator-Examples'.
+smallSuiteGenerator profilingOnPackagesMatching: ''SmallSuiteGenerator-Scenario'.
 ```
 
 ### Execution
