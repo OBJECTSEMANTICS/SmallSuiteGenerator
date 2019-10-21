@@ -39,7 +39,7 @@ SVariable >> initialize [
 	varName := '_var'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
 		ifFalse: [ #() ]
@@ -67,7 +67,7 @@ SVariable >> repairOn: aTestCase changing: aExpression [
 	self id: otherVariable id.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SVariable >> replaceArgBy: anExpression [
 	returnType = anExpression returnType
 		ifFalse: [ ^ self error: 'cant replace arg' ].
@@ -103,7 +103,7 @@ SVariable >> varName: anObject [
 	varName := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SVariable >> variablesWithId [
 	^ id ifNotNil: [ (Array with: self) ] ifNil: [ super variablesWithId ]
 ]

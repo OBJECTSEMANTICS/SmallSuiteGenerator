@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'mutationRate'
 	],
-	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm-Core'
 }
 
 { #category : #'as yet unclassified' }

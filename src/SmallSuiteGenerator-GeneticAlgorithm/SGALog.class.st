@@ -7,7 +7,7 @@ Class {
 		'fittestTestCase',
 		'mutationResult'
 	],
-	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm-Core'
 }
 
 { #category : #accessing }

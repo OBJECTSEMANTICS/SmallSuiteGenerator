@@ -2,7 +2,7 @@ Class {
 	#name : #SCoverageWithProfiler,
 	#superclass : #SSimpleFitnessFunction,
 	#classInstVars : [
-		'compilerClassOfCoverage',
+		'testRunner',
 		'profiler',
 		'numIteration'
 	],
@@ -14,16 +14,8 @@ SCoverageWithProfiler class >> clean [
 	profiler
 		ifNotNil: [ self cleanInstrumentation.
 			profiler := nil.
-			numIteration := 0 ]
-]
-
-{ #category : #compiling }
-SCoverageWithProfiler class >> compileTestCase: aTestCase [
-	self compilerClassOfCoverage
-				compile:
-					'compileTestCase' , String cr
-						, (self nodeFormattedOf: aTestCase) body formattedCode
-	
+			numIteration := 0 ].
+	testRunner ifNotNil: [ SSTestRunner removeSelector: #compileTestCase ]
 ]
 
 { #category : #accessing }
@@ -33,34 +25,31 @@ SCoverageWithProfiler class >> cleanInstrumentation [
 				do: [  ].
 ]
 
-{ #category : #accessing }
-SCoverageWithProfiler class >> compilerClassOfCoverage [
-	compilerClassOfCoverage
-		ifNil: [ compilerClassOfCoverage := self compiler
-				evaluate: (self stringToCreateNewClass: 'SCompilerTestCase' with: 'Object' and: 'SmallSuiteGenerator-Core') ].
-	^ compilerClassOfCoverage
+{ #category : #compiling }
+SCoverageWithProfiler class >> compileTestCase: aTestCase [
+	testRunner
+		compile: aTestCase parseTree
+		withName: #compileTestCase
+		on: SSTestRunner
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 SCoverageWithProfiler class >> computeFitness: aTestCase [
 	self
 		assert: [ aTestCase notNil ]
 		description: 'testCase must not be nil'.
-	profiler ifNil: [ self defaultInitializationFitness ].
+	profiler ifNil: [ self defaultFitnessInitialization ].
 	self
 		assert: [ profiler notNil ]
 		description: 'Need to set a profiler of coverage'.
 	numIteration <= self maxNumIterations
-		ifTrue: [ [ self compileTestCase: aTestCase "self compilerClassOfCoverage
-				compile:
-					'compileTestCase' , String cr
-						, (self nodeFormattedOf: aTestCase) body formattedCode" ]
+		ifTrue: [ [ self compileTestCase: aTestCase ]
 				on: Error
 				do: [ :e | 
 					self halt.
 					numIteration := numIteration + 1 ].
 			self executeStatementsOf: aTestCase ].
-	^ self nameFunction -> self coverage
+	^ self functionName -> self coverage
 ]
 
 { #category : #metric }
@@ -86,31 +75,25 @@ SCoverageWithProfiler class >> coverageOf: aBlock onPackagesMatching: regex [
 				yourself ]
 ]
 
-{ #category : #'class initialization' }
-SCoverageWithProfiler class >> defaultInitialization [
-	numIteration := 0.
-	operator := #>
-]
-
 { #category : #'as yet unclassified' }
-SCoverageWithProfiler class >> defaultInitializationFitness [
+SCoverageWithProfiler class >> defaultFitnessInitialization [
 	SCoverageWithProfiler allSubclasses
 		detect: [ :cls | cls profiler isNotNil ]
 		ifFound: [ :cls | self profiler: cls profiler ]
 		ifNone: [ self initializeProfiler ]
 ]
 
-{ #category : #'as yet unclassified' }
-SCoverageWithProfiler class >> executeStatements [
-	self profiler
-		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ]
+{ #category : #'class initialization' }
+SCoverageWithProfiler class >> defaultInitialization [
+	numIteration := 0.
+	operator := #>.
+	self testRunner 
 ]
 
 { #category : #'as yet unclassified' }
 SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
-	[ self executeStatements
-	"self profiler
-		executeBlock: [ self compilerClassOfCoverage new perform: #compileTestCase ] " ]
+	[ self profiler
+		executeBlock: [ self testRunner perform: #compileTestCase ] ]
 		on: Exception
 		do: [ :exception | 
 			self halt.
@@ -120,7 +103,7 @@ SCoverageWithProfiler class >> executeStatementsOf: aTestCase [
 			self computeFitness: aTestCase ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 SCoverageWithProfiler class >> initializeProfiler [
 	| instanceFacade |
 			instanceFacade := SSmallSuiteGenerator instance.
@@ -136,27 +119,14 @@ SCoverageWithProfiler class >> initializeProfiler [
 
 { #category : #testing }
 SCoverageWithProfiler class >> is: aTestCase1 betterThan: aTestCase2 [
-	^ (aTestCase1 fitness at: self nameFunction)
-				perform: self comparisonOperator
-				with: (aTestCase2 fitness at: self nameFunction)
+	^ (aTestCase1 fitness at: self functionName)
+				perform: self operator
+				with: (aTestCase2 fitness at: self functionName)
 ]
 
 { #category : #accessing }
 SCoverageWithProfiler class >> maxNumIterations [
 	^ 3
-]
-
-{ #category : #compiling }
-SCoverageWithProfiler class >> nodeFormattedOf: testCase [
-	| node temporaries |
-	node := RBParser parseExpression: '[]'.
-	temporaries := testCase allVarNames
-		collect: [ :varName | RBParser parseExpression: varName ].
-	node body temporaries: temporaries.
-	testCase statements
-		collect: #printString
-		thenDo: [ :aString | node body addNode: (RBParser parseExpression: aString) ].
-	^ node
 ]
 
 { #category : #accessing }
@@ -178,10 +148,8 @@ SCoverageWithProfiler class >> stringToCreateNewClass: aClassName with: aSuperCl
     package: ''', aPackageName, ''''
 ]
 
-{ #category : #'as yet unclassified' }
-SCoverageWithProfiler class >> signalerException: exception [
-	"get the className of exception"
-	^ [ exception signaler name ]
-		on: MessageNotUnderstood
-		do: [ exception signaler className ]
+{ #category : #accessing }
+SCoverageWithProfiler class >> testRunner [
+	testRunner ifNil: [ testRunner := SSTestRunner new ].
+	^ testRunner 
 ]

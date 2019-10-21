@@ -13,7 +13,7 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #override }
 SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherFieldAccessMessage |
 	otherFieldAccessMessage := aTestCase
@@ -22,7 +22,7 @@ SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	self selector: otherFieldAccessMessage selector
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SFieldAccessMessage >> insertOn: aTestCase [
 	^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType
 ]

@@ -41,27 +41,27 @@ SAssignment >> id [
 	^ variable id
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> insertAsParameter: aExpression using: aTestCase [
 	^ variable insertAsParameter: aExpression using: aTestCase
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> insertMethodMessage: aExpression using: aTestCase [
 	^ value insertMethodMessage: aExpression using: aTestCase
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> insertOn: aTestCase [
 	^ value insertOn: aTestCase
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> insertRandomMessage: aExpression using: aTestCase [
 	^ value insertRandomMessage:aExpression using: aTestCase
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
 ]
@@ -91,7 +91,7 @@ SAssignment >> repairOn: aTestCase changing: aExpression [
 			[ value repairOn: aTestCase changing: aExpression ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> replaceArgBy: aExpression [
 	value replaceArgBy: aExpression
 ]
@@ -126,7 +126,7 @@ SAssignment >> variable: anObject [
 	variable := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAssignment >> variablesWithId [
 	^ variable variablesWithId, value variablesWithId
 ]

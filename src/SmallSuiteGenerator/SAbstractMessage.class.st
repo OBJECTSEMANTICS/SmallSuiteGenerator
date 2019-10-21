@@ -44,19 +44,19 @@ SAbstractMessage >> args: anObject [
 	args := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAbstractMessage >> changeArgsFrom: aExpression in: aTestCase [
 	args isEmpty
 		ifTrue: [ ^ self error: 'cannot change args' ].
 	args do: [ :arg | arg repairOn: aTestCase changing: aExpression ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAbstractMessage >> changeReceiverFrom: aExpression in: aTestCase [
 	receiver repairOn: aTestCase changing: aExpression
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #override }
 SAbstractMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	^ self subclassResponsibility
 ]
@@ -86,12 +86,12 @@ SAbstractMessage >> initialize [
 	args := OrderedCollection new:2.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAbstractMessage >> insertRandomMessage: aExpression using: aTestCase [
 	^ aTestCase insertExpression: self copy after: aExpression
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAbstractMessage >> pickUpReferences: aExpression [
 	^ (receiver pickUpReferences: aExpression)
 		, (args flatCollect: [ :arg | arg pickUpReferences: aExpression ])
@@ -120,10 +120,8 @@ SAbstractMessage >> printSelectors: aStream [
 					withColon
 						ifTrue: [ aStream nextPutAll: ': ' ].
 					aStream nextPutAll: arg asString.
-					(index < stop and: [ withColon  ]) ifTrue: [ 
-						aStream nextPut: Character space.
-						 ] ] ].
-	"aStream nextPut: $."
+					(index < stop and: [ withColon ])
+						ifTrue: [ aStream nextPut: Character space ] ] ]
 ]
 
 { #category : #accessing }
@@ -141,16 +139,18 @@ SAbstractMessage >> repairOn: aTestCase changing: aExpression [
 	#(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:)
 		shuffle
 		do: [ :aSelector | 
-			[^ self
+			[ ^ self
 				perform: aSelector
 				withArguments:
-					{aExpression.
-					aTestCase} ] on: SError do: []].
+					(Array with: aExpression
+					with: aTestCase) ]
+				on: SError
+				do: [  ] ].
 	self
-				error: 'cant change the statement: ', aExpression reference printString
+		error: 'cant change the statement: ' , aExpression reference printString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAbstractMessage >> replaceArgBy: aExpression [
 	args ifEmpty: [ self error: 'cant insert expression as parameter' ].
 	args
@@ -186,7 +186,7 @@ SAbstractMessage >> selector: anObject [
 	selector := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SAbstractMessage >> variablesWithId [
 	^ receiver variablesWithId , (args flatCollect: [:arg | arg variablesWithId])
 ]

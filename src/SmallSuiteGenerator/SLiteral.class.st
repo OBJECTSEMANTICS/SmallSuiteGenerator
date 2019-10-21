@@ -35,7 +35,7 @@ SLiteral >> hash [
 	^ super hash xor: value hash
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SLiteral >> insertOn: aTestCase [
 	^ aTestCase addLiteral: self returnType
 ]

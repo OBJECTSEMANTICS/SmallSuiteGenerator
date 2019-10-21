@@ -14,7 +14,7 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #override }
 SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherMessage |
 	otherMessage := aTestCase
@@ -24,12 +24,12 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 			self args: otherMessage args
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SMessage >> insertMethodMessage: aExpression using: aTestCase [
 	^ self insertRandomMessage: aExpression using: aTestCase
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #mutation }
 SMessage >> insertOn: aTestCase [
 	^ aTestCase addMessage: self selector from: self receiver returnType
 ]

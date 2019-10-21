@@ -11,7 +11,7 @@ Class {
 		'engine',
 		'tournamentSize'
 	],
-	#category : #'SmallSuiteGenerator-GeneticAlgorithm'
+	#category : #'SmallSuiteGenerator-GeneticAlgorithm-Core'
 }
 
 { #category : #accessing }
@@ -27,14 +27,11 @@ SGATournamentSelection >> createNewPopulation [
 	population := OrderedCollection new.
 	[ population size < self populationSize ]
 		whileTrue: [ parentA := self getGoodTestCase.
-			parentA validReferences ifFalse: [ self halt].
 			parentB := self getGoodTestCase.
-			parentB validReferences ifFalse: [ self halt].
 			offsprings := self crossover: parentA with: parentB.
 			offspringA := self mutate: offsprings first.
 			offspringB := self mutate: offsprings second.
-			(Array with: offspringA with: 
-			offspringB)
+			(Array with: offspringA with: offspringB)
 				do: [ :each | 
 					(self isTooLong: each)
 						ifFalse: [ population add: each ] ] ]
