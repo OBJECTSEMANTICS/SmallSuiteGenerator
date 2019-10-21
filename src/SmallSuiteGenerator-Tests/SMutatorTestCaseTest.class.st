@@ -87,7 +87,7 @@ SMutatorTestCaseTest >> testRepair [
 	self
 		assert:
 			(((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
-				collect: #printString) includes: '_var4 := ''hello''.')
+				collect: #printString) includesAny: #('_var4 := ''hello''.' '_var4 := _var1 returnString.'))
 ]
 
 { #category : #tests }
