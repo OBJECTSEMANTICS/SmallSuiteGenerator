@@ -537,15 +537,23 @@ SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
 			methods := typeInfo factoryMessagesFrom: aClassName.
 			methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
-				ifNotEmpty: [ self newFactoryMessageUsing: methods and: aStatement ] ]
+				ifNotEmpty: [ self newFactoryMessageUsing: aClassName and: aStatement ] ]
 		ifAbsent: [ self error: 'error factoryMessage' ]
 ]
 
 { #category : #'instance creation' }
-SSTestShifter >> newFactoryMessageUsing: methods and: aStatement [
+SSTestShifter >> newFactoryMessageUsing: aClassName and: aStatement [
+	|methods|
+	methods := typeInfo factoryMessagesFrom: aClassName.
 	methods shuffle
 		do: [ :method | 
-			[ ^ self factoryMessageUsing: method before: aStatement]
+			[ 
+			self buildArgs: method argTypes before: aStatement.
+			^ SFactoryMessage
+		method: method
+		class: aClassName
+		previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+			]
 				on: SError
 				do: [  ] ].
 	self error: 'error factoryMessage'

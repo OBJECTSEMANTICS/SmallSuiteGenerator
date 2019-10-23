@@ -54,7 +54,7 @@ STestCaseFactory >> engineDefault [
 		populationSize: 30;
 		fitness: fitness;
 		numberOfStatements: 30;
-		numberOfIterations: 100;
+		numberOfIterations: 15;
 		yourself.
 ]
 
@@ -152,8 +152,8 @@ STestCaseFactory >> run [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	profiler := SBProfiler new.
-	(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler.
-	profiler injectCodeToMethods.
+	"(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler.
+	profiler injectCodeToMethods."
 	fitness profiler: profiler.
 	engine fitness: fitness. 
 	engine typeInfo: self typeInfo.

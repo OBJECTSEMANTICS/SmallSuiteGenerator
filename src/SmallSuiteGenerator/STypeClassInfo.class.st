@@ -103,7 +103,7 @@ STypeClassInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 
 { #category : #private }
 STypeClassInfo >> factoryMessages [
-	^ classMethodTypes values
+	^ classMethodTypes values reject: [ :m | m selector = #basicNew ].
 ]
 
 { #category : #private }

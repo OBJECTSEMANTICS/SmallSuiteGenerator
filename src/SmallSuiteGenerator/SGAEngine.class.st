@@ -94,14 +94,14 @@ SGAEngine >> createNewPopulation [
 
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
-	^ (1 to: 30) collect:[ :val|
-			|value test|
-			value := SharedRandom globalGenerator next * 30+1.
+	^ (1 to: 30)
+		collect: [ :val | 
+			| value test |
+			value := SharedRandom globalGenerator next * 30 + 1.
 			test := SSTestCase with: typeInfo.
 			test addFactoryMessage: self targetClassName.
 			test generateStatements: value.
-			test].
-	
+			test ]
 ]
 
 { #category : #accessing }

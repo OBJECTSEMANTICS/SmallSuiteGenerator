@@ -18,6 +18,20 @@ SFactoryMessage class >> default: aClassName [
 ]
 
 { #category : #creation }
+SFactoryMessage class >> method: aMethodTypeInfo class: aClassName previousStatements: statements [
+	^ self new
+		receiver:
+			(SVariable new
+				varName: aClassName;
+				returnType: aClassName ;
+				yourself);
+		returnType: aClassName;
+		selector: aMethodTypeInfo selector;
+		args: (self args: aMethodTypeInfo with: statements);
+		yourself
+]
+
+{ #category : #creation }
 SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements [
 	|returnType|
 	returnType := aMethodTypeInfo returnType type.
