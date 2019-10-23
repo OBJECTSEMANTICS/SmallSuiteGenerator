@@ -11,15 +11,11 @@ Class {
 		'typeInfo',
 		'fitness',
 		'numberOfIterations',
-		'selectionStrategy'
+		'selectionStrategy',
+		'targetClassName'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
-
-{ #category : #'as yet unclassified' }
-SGAEngine class >> crossover: testCaseA with: testCaseB [
-	^ crossoverOperator crossover: testCaseA with: testCaseB
-]
 
 { #category : #testing }
 SGAEngine >> checkFitness [
@@ -30,10 +26,8 @@ SGAEngine >> checkFitness [
 
 { #category : #testing }
 SGAEngine >> checkIfReadyToRun [
-	self checkBlockToExecute.
 	self checkTypeInfo.
 	self checkFitness.
-	self checkBaseClassName.
 	self checkLogs
 ]
 
@@ -61,54 +55,52 @@ SGAEngine >> computeFitness [
 
 { #category : #actions }
 SGAEngine >> createNewPopulation [
-	|newPopulation TB|
-	self computeFitness.
+	| newPopulation TB |
 	TB := self pickBestTest.
 	newPopulation := OrderedCollection new.
 	selectionStrategy load: population copy.
 	selectionStrategy fitness: fitness.
-	[ newPopulation size < self populationSize ] whileTrue:[
-		|P1 P2 O1 O2 fp fo lp lo child parents|
-		P1 := selectionStrategy pickOne.
-		P2 := selectionStrategy pickOne.
-		(self shouldCrossOver) ifTrue:[
-			child := crossoverOperator crossover: P1 with: P2.	
-				O1 := child first.
-				O2 := child second.
-			] ifFalse:[
-				O1 := P1.
-				O2 := P2.].
-		mutationOperator mutate: O1.
-		mutationOperator mutate: O2.
-		fitness compute: {O1. O2}.
-		fp := (self fitnessFor: P1) min: (self fitnessFor: P2).
-		fo := (self fitnessFor: O1) min: (self fitnessFor: O2).
-		lp := P1 length + P2 length.
-		lo := O1 length + O2 length.
-		( fo < fp or:[fo= fp and:[lo<=fp]] ) ifTrue:[
-				parents := { P1 . P2 } shuffle.
-				{ O1 . O2 } do:[ :o|
-					(o length <= (2*TB length)) ifTrue:[
-						newPopulation add: o.
-						] ifFalse:[
-							newPopulation add: parents removeFirst. "it is p1 o p2" ].
-					].
-			] ifFalse:[
-				newPopulation addAll:{ P1 . P2}.
-			]
-	].
-	population := newPopulation.
-	
+	[ newPopulation size < self populationSize ]
+		whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child parents |
+			P1 := selectionStrategy pickOne.
+			P2 := selectionStrategy pickOne.
+			self shouldCrossOver
+				ifTrue: [ 
+					
+					child := crossoverOperator crossover: P1 with: P2.
+					Transcript show:'corows';cr.
+					O1 := child first.
+					O2 := child second ]
+				ifFalse: [ O1 := P1.
+					O2 := P2 ].
+			mutationOperator mutate: O1.
+			mutationOperator mutate: O2.
+			fitness compute:{O1.O2}.
+			fp := (self fitnessFor: P1) min: (self fitnessFor: P2).
+			fo := (self fitnessFor: O1) min: (self fitnessFor: O2).
+			lp := P1 length + P2 length.
+			lo := O1 length + O2 length.
+			(fo < fp or: [ fo = fp and: [ lo <= lp ] ])
+				ifTrue: [ 
+					parents := {P1. P2} shuffle asSortedCollection: [:a :b| a length < b length].
+					{O1. O2} do: [ :o | 
+							o length <= (2 *TB length)
+								ifTrue: [ newPopulation add: o ]
+								ifFalse: [ newPopulation add: parents removeFirst	"it is p1 o p2" ] ] ]
+				ifFalse: [ newPopulation
+						addAll: {P1.P2} ] ].
+	population := newPopulation
 ]
 
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
 	^ (1 to: 30) collect:[ :val|
-			|value|
-			value := SharedRandom globalGenerator next * 40+1.
-			(SSTestCase with: typeInfo) 
-						generateStatements: value; 
-						yourself].
+			|value test|
+			value := SharedRandom globalGenerator next * 30+1.
+			test := SSTestCase with: typeInfo.
+			test addFactoryMessage: self targetClassName.
+			test generateStatements: value.
+			test].
 	
 ]
 
@@ -130,7 +122,7 @@ SGAEngine >> fitness: aFitness [
 
 { #category : #actions }
 SGAEngine >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName.
+	^ aTestCase fitness at: fitness funtionName.
 ]
 
 { #category : #initialization }
@@ -141,7 +133,7 @@ SGAEngine >> initialize [
 	logs := OrderedCollection new.
 	random := Random new.
 	populationSize := 100.
-	numberOfIterations := 15.
+	numberOfIterations := 100.
 	selectionStrategy := SGATournamentSelection new.
 	self initializeMutationOperator.
 	self initializeCrossoverOperator.
@@ -166,6 +158,11 @@ SGAEngine >> logs [
 	^ logs copy
 ]
 
+{ #category : #accessing }
+SGAEngine >> logs1 [
+	^ logs
+]
+
 { #category : #actions }
 SGAEngine >> mutate: testCase [
 	^ mutationOperator mutate: testCase
@@ -174,6 +171,11 @@ SGAEngine >> mutate: testCase [
 { #category : #accessing }
 SGAEngine >> mutationRate: aFloat [
 	mutationOperator mutationRate: aFloat
+]
+
+{ #category : #accessing }
+SGAEngine >> numberOfIterations: anObject [
+	numberOfIterations := anObject
 ]
 
 { #category : #accessing }
@@ -192,8 +194,8 @@ SGAEngine >> pickBestTest [
 	best := population first.
 	population do:[:test|
 		|valA valB|
-		valA := best fitness at: fitness functionName.
-		valB := test fitness at: fitness functionName.
+		valA := self fitnessFor: best.
+		valB := self fitnessFor: test.
 		(valB > valA) ifTrue:[ best := test.].
 		].
 	^ best.
@@ -217,6 +219,7 @@ SGAEngine >> populationSize: aInteger [
 { #category : #actions }
 SGAEngine >> run [
 	population := self createRandomPopulation.
+	self computeFitness.
 	(1 to: numberOfIterations) do:[:iteration|
 		logs add: (SGALog new 
 						generationNumber: iteration; 
@@ -229,7 +232,17 @@ SGAEngine >> run [
 
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
-	^ SharedRandom globalGenerator next > 3/4.
+	^ SharedRandom globalGenerator next < (3/4).
+]
+
+{ #category : #accessing }
+SGAEngine >> targetClassName [
+	^ targetClassName
+]
+
+{ #category : #accessing }
+SGAEngine >> targetClassName: anObject [
+	targetClassName := anObject
 ]
 
 { #category : #accessing }

@@ -51,6 +51,7 @@ SSTestCase >> hash [
 { #category : #initialization }
 SSTestCase >> initialize [
 	super initialize.
+	
 ]
 
 { #category : #actions }

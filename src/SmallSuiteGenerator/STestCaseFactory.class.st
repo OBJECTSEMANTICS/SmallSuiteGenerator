@@ -7,31 +7,14 @@ Class {
 		'targetClassName',
 		'targetPackageRegex',
 		'outputPackageName',
-		'fitness'
+		'fitness',
+		'profiler'
 	],
 	#classInstVars : [
 		'instance'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
-
-{ #category : #accessing }
-STestCaseFactory class >> instance [
-	^ instance
-]
-
-{ #category : #accessing }
-STestCaseFactory class >> newInstance [
-	self resetInstance.
-	instance := self new.
-	^ instance
-]
-
-{ #category : #initialization }
-STestCaseFactory class >> resetInstance [
-	instance ifNotNil: [ instance engine clean ].
-	instance := nil
-]
 
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
@@ -71,7 +54,7 @@ STestCaseFactory >> engineDefault [
 		populationSize: 30;
 		fitness: fitness;
 		numberOfStatements: 30;
-		endForMaxNumberOfGeneration: 15;
+		numberOfIterations: 100;
 		yourself.
 ]
 
@@ -87,6 +70,16 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 			package: self outputPackageName ].
 	class compile: (aSelector,'
 	', aTestCase parseTreeWithAssertions formattedCode).
+]
+
+{ #category : #actions }
+STestCaseFactory >> exportTests [
+	|index|
+	index := 1. 
+	engine population do:[ :test|
+		self export: test with:('test',index asString).
+		index := index + 1. ].
+	
 ]
 
 { #category : #configuration }
@@ -158,9 +151,14 @@ STestCaseFactory >> run [
 
 { #category : #actions }
 STestCaseFactory >> setUp [
+	profiler := SBProfiler new.
+	(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler.
+	profiler injectCodeToMethods.
+	fitness profiler: profiler.
 	engine fitness: fitness. 
 	engine typeInfo: self typeInfo.
-	engine fitness tagetPackagesRegex: self targetPackageRegex.
+	engine targetClassName: self targetClassName.
+	
 ]
 
 { #category : #accessing }
@@ -171,7 +169,7 @@ STestCaseFactory >> targetClassName [
 { #category : #accessing }
 STestCaseFactory >> targetClassName: aSymbol [
 	targetClassName := aSymbol.
-	engine targetClassName: aSymbol
+
 ]
 
 { #category : #accessing }
@@ -191,11 +189,8 @@ STestCaseFactory >> targetPackagesRegex: anObject [
 
 { #category : #actions }
 STestCaseFactory >> tearDown [
-	|index|
-	index := 1. 
-	engine population do:[ :test|
-		self export: test with:('test',index asString).
-		index := index + 1. ].
+	profiler cleanInstrumentation.
+	self exportTests.
 ]
 
 { #category : #accessing }

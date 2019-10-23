@@ -7,14 +7,14 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAMutationOperation >> doMutate: aTestCase [
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase removeStatement. ].
+		ifTrue: [ aTestCase removeStatement.].
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase changeStatement.].
+		ifTrue: [ aTestCase changeStatement ].
 	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase insertStatement. ].
+		ifTrue: [ aTestCase insertStatement ]
 ]
 
 { #category : #initialization }
@@ -22,7 +22,7 @@ SGAMutationOperation >> initialize [
 	self mutationRate: (1 / 3) asFloat
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
 	newTestCase := aTestCase copy.

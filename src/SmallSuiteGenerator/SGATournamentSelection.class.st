@@ -32,7 +32,7 @@ SGATournamentSelection >> initialize [
 
 { #category : #accessing }
 SGATournamentSelection >> load: aTestCaseCollection [
-	population := aTestCaseCollection 
+	population := aTestCaseCollection asOrderedCollection copy.
 ]
 
 { #category : #actions }
@@ -40,7 +40,7 @@ SGATournamentSelection >> pickOne [
 	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
 	|sample selected|
 	
-	sample := population shuffle first: tournamentSize.
+	sample := population shuffle first: (tournamentSize min: population size).
 	sample := sample asSortedCollection: [ :a :b | (self fitnessFor: a)  < (self fitnessFor: b) ].
 	selected := sample last.
 	population remove: selected.

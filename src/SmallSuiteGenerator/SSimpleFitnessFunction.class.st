@@ -1,6 +1,9 @@
 Class {
 	#name : #SSimpleFitnessFunction,
 	#superclass : #SFitnessFunction,
+	#instVars : [
+		'profiler'
+	],
 	#category : #'SmallSuiteGenerator-GA'
 }
 
@@ -14,6 +17,11 @@ SSimpleFitnessFunction >> compute: testCaseCollection [
 { #category : #accesing }
 SSimpleFitnessFunction >> funtionName [
 	^ self subclassResponsibility
+]
+
+{ #category : #accesing }
+SSimpleFitnessFunction >> profiler: aProfiler [
+	profiler := aProfiler.
 ]
 
 { #category : #actions }

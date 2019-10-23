@@ -24,9 +24,12 @@ SSTestShifter >> addAssignment: anExpression [
 
 { #category : #inserting }
 SSTestShifter >> addFactoryMessage [
-	typeInfo noneAbstractClasses shuffle
+	|receiver|
+	"typeInfo noneAbstractClasses shuffle
 		do: [ :aClass | [   ^ self addFactoryMessage: aClass name] on: SError do: [  ] ].
-	self error: 'Not able to create a factoryMessage'
+	self error: 'Not able to create a factoryMessage'"
+	receiver := self pickAnObjectVariable.
+	self addFactoryMessage: receiver returnType.
 ]
 
 { #category : #inserting }
@@ -368,15 +371,12 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 { #category : #actions }
 SSTestShifter >> generateStatements [
-	
 	self assert: typeInfo types isNotEmpty 
 			description: 'TypeInfo does not contain info at all.'.
-	
 	[ self numberStatements < self maxNumberOfStatements]
-		whileTrue: [ [self
-				perform:
-					#(#addFactoryMessage #addFieldAccessMessage #addMessage #addLiteral)
-						shuffle anyOne] on: SError do: [  ] ]
+		whileTrue: [ 
+			[self addMessage] on: Error do:[:e| Transcript show: e printString;cr.].
+			].
 ]
 
 { #category : #actions }
@@ -456,6 +456,12 @@ SSTestShifter >> insertStatementOfSelector: selector [
 { #category : #repairing }
 SSTestShifter >> invariant [
 	self typeInfo ifNil: [ self error: 'Set the testCase with the correct typeInfo' ]
+]
+
+{ #category : #querying }
+SSTestShifter >> involvedClasses [
+	
+	^ (self objectVariables collect:[:var| var returnType]) asSet.
 ]
 
 { #category : #repairing }
@@ -628,6 +634,15 @@ SSTestShifter >> numberStatements [
 	^ statements size
 ]
 
+{ #category : #querying }
+SSTestShifter >> objectVariables [
+	
+	^ statements select:[:stm| 
+			|res|
+			res := self typeInfo classAt: stm returnType ifNone:[nil].
+			res isNotNil] thenCollect:[:stm| stm variable].
+]
+
 { #category : #parsing }
 SSTestShifter >> parseTree [
 	
@@ -668,9 +683,7 @@ SSTestShifter >> pickAccessorsOf: aType [
 { #category : #querying }
 SSTestShifter >> pickAnObjectVariable [
 	
-	(self factoryMessageVariablesBefore: nil)
-		ifEmpty: [ self addFactoryMessage ].
-	^ (self factoryMessageVariablesBefore: nil) shuffle anyOne
+	^ self objectVariables shuffle anyOne.
 ]
 
 { #category : #querying }

@@ -1,9 +1,6 @@
 Class {
 	#name : #SMethodCoverage,
 	#superclass : #SSimpleFitnessFunction,
-	#instVars : [
-		'profiler'
-	],
 	#category : #'SmallSuiteGenerator-GA'
 }
 
@@ -24,12 +21,10 @@ SMethodCoverage >> run: testCaseCollection [
 
 { #category : #actions }
 SMethodCoverage >> setUp [
-	profiler := SBProfiler new.
-	(S2CInstrumentator onPackagesMatching: tagetPackagesRegex) applyOn: profiler.
-	profiler injectCodeToMethods.
+
 ]
 
 { #category : #actions }
 SMethodCoverage >> tearDown [
-	profiler cleanInstrumentation.
+	
 ]
