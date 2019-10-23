@@ -24,7 +24,7 @@ STypeInfoTest >> testAccesssMessagesFrom [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 	| typeInfo messages |
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo.
 	messages := typeInfo messagesFrom: #SConference.
@@ -46,7 +46,7 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	| typeInfo messages methodInfo |
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ | aConference aPerson |
 			aConference := SConference new offerPrice: 95.
 			aPerson := SStudent new name: 'Mary'.
@@ -88,7 +88,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFoo [
 	| profile typeInfo methodInfo |
-	profile := SSGenerator
+	profile := SSTypeCollector
 		profile: [ SFoo new
 				return: Stack new;
 				return: OrderedCollection new;
@@ -144,7 +144,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	| profile typeInfo methodInfo |
-	profile := SSGenerator
+	profile := SSTypeCollector
 		profile: [ SFoo new return: OrderedCollection ]
 		onClass: SFoo.
 	typeInfo := profile asTypeInfo.
@@ -167,7 +167,7 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFooWithNil [
 	| profile typeInfo methodInfo |
-	profile := SSGenerator
+	profile := SSTypeCollector
 		profile: [ SFoo new return: nil ]
 		onClass: SFoo.
 	typeInfo := profile asTypeInfo.
@@ -191,7 +191,7 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 	| typeInfo |
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
@@ -215,7 +215,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 	| typeInfo |
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
@@ -240,17 +240,17 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testFactoryMessages [
 	| typeInfo |
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ SStudent name: 'Mary' ]
 		onClass: SStudent) asTypeInfo.
 	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ SStudent name: 'Mary' ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo.
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SStudent) collect: #selector)
 		hasSameElements: #(#name:).
-	typeInfo := (SSGenerator
+	typeInfo := (SSTypeCollector
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario')
 		asTypeInfo.

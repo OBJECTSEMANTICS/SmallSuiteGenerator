@@ -9,7 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> classAssertsGenerationTest [
-	SSTestSuiteGenerator
+	SSTestFactoryToDelete
 		createCompilerClass: 'SSAssertionGeneratorTest'
 ]
 
@@ -20,13 +20,13 @@ SConfiguration class >> defaultEvaluationStrategy [
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute onClass: aClass [
-	^ (SSGenerator profile: blockToExecute onClass: aClass) asTypeInfo
+	^ (SSTypeCollector profile: blockToExecute onClass: aClass) asTypeInfo
 ]
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute
 				onPackagesMatching: regex [
-^ (SSGenerator profile: blockToExecute onPackagesMatching: regex)
+^ (SSTypeCollector profile: blockToExecute onPackagesMatching: regex)
 				asTypeInfo
 ]
 

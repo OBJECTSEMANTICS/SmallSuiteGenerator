@@ -1,5 +1,5 @@
 Class {
-	#name : #SSGenerator,
+	#name : #SSTypeCollector,
 	#superclass : #S2Profiler,
 	#instVars : [
 		'scalars'
@@ -8,12 +8,18 @@ Class {
 }
 
 { #category : #hooks }
-SSGenerator class >> spyClassForPackage [
-	 ^ SSGeneratorPackage
+SSTypeCollector class >> profile: aBlock onPackagesMatching: regex [
+
+	^ (self new profile: aBlock onPackagesMatching: regex) asTypeInfo.
+]
+
+{ #category : #hooks }
+SSTypeCollector class >> spyClassForPackage [
+	 ^ SSTypeCollectorPackage
 ]
 
 { #category : #initialization }
-SSGenerator >> addScalar: anObject [
+SSTypeCollector >> addScalar: anObject [
 	| value objectName |
 	objectName := anObject class name.
 	"objectName := anObject isClass
@@ -24,7 +30,7 @@ SSGenerator >> addScalar: anObject [
 ]
 
 { #category : #accessing }
-SSGenerator >> asTypeInfo [
+SSTypeCollector >> asTypeInfo [
 	| typeInfo |
 	typeInfo := STypeInfo new.
 	self allClasses do: [ :aSpyClass | aSpyClass fillTypesOn: typeInfo ].
@@ -33,13 +39,13 @@ SSGenerator >> asTypeInfo [
 ]
 
 { #category : #initialization }
-SSGenerator >> initialize [
+SSTypeCollector >> initialize [
 	super initialize.
 	scalars := Dictionary new
 ]
 
 { #category : #initialization }
-SSGenerator >> isScalar: anObject [
+SSTypeCollector >> isScalar: anObject [
 	self allClassesAsDictionary
 		at: anObject class name
 		ifAbsent: [ ^ true ].
@@ -47,6 +53,6 @@ SSGenerator >> isScalar: anObject [
 ]
 
 { #category : #initialization }
-SSGenerator >> scalars [
+SSTypeCollector >> scalars [
 	^ scalars.
 ]

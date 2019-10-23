@@ -13,6 +13,11 @@ ManifestSmallSuiteGenerator class >> ruleRBModifiesCollectionRuleV1FalsePositive
 ]
 
 { #category : #'code-critics' }
+ManifestSmallSuiteGenerator class >> ruleRBStringConcatenationRuleV1FalsePositive [
+	^ #(#(#(#RGMethodDefinition #(#STestCaseFactory #tearDown #false)) #'2019-10-22T22:14:33.332959-04:00') )
+]
+
+{ #category : #'code-critics' }
 ManifestSmallSuiteGenerator class >> ruleRBkeysDoRuleV1FalsePositive [
 	^ #(#(#(#RGMethodDefinition #(#'SComparisonAssertion class' #for: #true)) #'2019-10-08T16:32:13.154793-04:00') )
 ]

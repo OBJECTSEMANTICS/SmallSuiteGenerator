@@ -96,7 +96,7 @@ SReportTypeInfo class >> fileReference: aString [
 
 { #category : #'as yet unclassified' }
 SReportTypeInfo class >> profilerProject: projectName [
-			^ SSGenerator
+			^ SSTypeCollector
 				profile: [ (TestCase withAllSubclasses
 						select: [ :t | t category beginsWith: projectName ])
 						do: [ :tc | 

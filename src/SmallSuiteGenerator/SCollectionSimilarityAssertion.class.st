@@ -1,7 +1,7 @@
 Class {
 	#name : #SCollectionSimilarityAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'as yet unclassified' }

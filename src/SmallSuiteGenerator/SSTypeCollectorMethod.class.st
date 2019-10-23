@@ -1,5 +1,5 @@
 Class {
-	#name : #SSGeneratorMethod,
+	#name : #SSTypeCollectorMethod,
 	#superclass : #S2Method,
 	#instVars : [
 		'returnType',
@@ -11,12 +11,12 @@ Class {
 }
 
 { #category : #accessing }
-SSGeneratorMethod >> argTypes [
+SSTypeCollectorMethod >> argTypes [
 	^ argTypes
 ]
 
 { #category : #converting }
-SSGeneratorMethod >> asTypeInfo [
+SSTypeCollectorMethod >> asTypeInfo [
 	^ STypeMethodInfo new
 		selector: selector;
 		receiver: self receiverType;
@@ -27,7 +27,7 @@ SSGeneratorMethod >> asTypeInfo [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
+SSTypeCollectorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 	self initArgsTypesWith: listOfArguments.
 	self saveReceiver: receiver.
 	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ].
@@ -35,14 +35,14 @@ SSGeneratorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> checkIfArgIsScalar: arg [
+SSTypeCollectorMethod >> checkIfArgIsScalar: arg [
 	
 	(self profiler isScalar: arg)
 		ifTrue: [ self profiler addScalar: arg ]
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> initArgsTypesWith: args [
+SSTypeCollectorMethod >> initArgsTypesWith: args [
 	| classNames |
 	classNames := args collect: [ :arg | arg class name ].
 	"classNames := args
@@ -58,7 +58,7 @@ SSGeneratorMethod >> initArgsTypesWith: args [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> initialize [
+SSTypeCollectorMethod >> initialize [
 	super initialize.
 	returnType := SMultiTypeInfo new.
 	receiverType := SMultiTypeInfo new.
@@ -66,37 +66,37 @@ SSGeneratorMethod >> initialize [
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> mergeArgsTypes: args [
+SSTypeCollectorMethod >> mergeArgsTypes: args [
 	argTypes
 		with: args
 		do: [ :argType :otherArgType | argType type: otherArgType ]
 ]
 
 { #category : #accessing }
-SSGeneratorMethod >> receiverType [
+SSTypeCollectorMethod >> receiverType [
 	
 	^ receiverType
 ]
 
 { #category : #accessing }
-SSGeneratorMethod >> returnType [
+SSTypeCollectorMethod >> returnType [
 	^ returnType
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> returnValue: value [
+SSTypeCollectorMethod >> returnValue: value [
 
 	returnType type: value class name.
 	self checkIfArgIsScalar: value
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> saveReceiver: aObject [
+SSTypeCollectorMethod >> saveReceiver: aObject [
 	receiverType
 		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
 ]
 
 { #category : #hooks }
-SSGeneratorMethod >> wasExecuted [
+SSTypeCollectorMethod >> wasExecuted [
 	^ executed.
 ]

@@ -1,16 +1,16 @@
 Class {
-	#name : #SSGeneratorClass,
+	#name : #SSTypeCollectorClass,
 	#superclass : #S2Class,
 	#category : #'SmallSuiteGenerator-Profiler'
 }
 
 { #category : #hooks }
-SSGeneratorClass class >> spyClassForMethod [
-	 ^ SSGeneratorMethod
+SSTypeCollectorClass class >> spyClassForMethod [
+	 ^ SSTypeCollectorMethod
 ]
 
 { #category : #'as yet unclassified' }
-SSGeneratorClass >> fillTypesOn: aTypeInfo [
+SSTypeCollectorClass >> fillTypesOn: aTypeInfo [
 	| aTypeClass instanceMethods classMethods|
 	aTypeClass := STypeClassInfo newFrom: self className and: aTypeInfo.
 	instanceMethods := (self methods reject:#isTest) select:#wasExecuted.

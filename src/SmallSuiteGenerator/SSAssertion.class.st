@@ -6,7 +6,7 @@ Class {
 		'valueAssert',
 		'nameValue'
 	],
-	#category : #'SmallSuiteGenerator-Assertion'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'as yet unclassified' }

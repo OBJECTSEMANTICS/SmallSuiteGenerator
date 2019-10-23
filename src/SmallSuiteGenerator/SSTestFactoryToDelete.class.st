@@ -1,5 +1,5 @@
 Class {
-	#name : #SSTestSuiteGenerator,
+	#name : #SSTestFactoryToDelete,
 	#superclass : #Object,
 	#instVars : [
 		'testRunner',
@@ -16,24 +16,24 @@ Class {
 }
 
 { #category : #accessing }
-SSTestSuiteGenerator class >> compilerClassOfTests [ 
+SSTestFactoryToDelete class >> compilerClassOfTests [ 
 	^ compilerClassOfTests 
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator class >> compilerClassOfTests: aClassName [
+SSTestFactoryToDelete class >> compilerClassOfTests: aClassName [
 	self resetClassOfTest.
 	self createCompilerClass: aClassName.
 	^ compilerClassOfTests 
 ]
 
 { #category : #'as yet unclassified' }
-SSTestSuiteGenerator class >> createCompilerClass: aClassName [
+SSTestFactoryToDelete class >> createCompilerClass: aClassName [
 	self createCompilerClass: aClassName of: 'SmallSuiteGenerator-Tests-Generated'
 ]
 
 { #category : #'as yet unclassified' }
-SSTestSuiteGenerator class >> createCompilerClass: aClassName of: aPackageName [
+SSTestFactoryToDelete class >> createCompilerClass: aClassName of: aPackageName [
 	compilerClassOfTests
 		ifNil: [ compilerClassOfTests := self class compiler
 				evaluate:
@@ -45,23 +45,23 @@ SSTestSuiteGenerator class >> createCompilerClass: aClassName of: aPackageName [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestSuiteGenerator class >> incrementNumTest [
+SSTestFactoryToDelete class >> incrementNumTest [
 	numTest := numTest + 1
 ]
 
 { #category : #'class initialization' }
-SSTestSuiteGenerator class >> initialize [
+SSTestFactoryToDelete class >> initialize [
 	numTest := 0.
 	classNameOfTest := nil
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator class >> numTest [
+SSTestFactoryToDelete class >> numTest [
 	^ numTest
 ]
 
 { #category : #'as yet unclassified' }
-SSTestSuiteGenerator class >> resetClassOfTest [
+SSTestFactoryToDelete class >> resetClassOfTest [
 	classNameOfTest
 		ifNotNil: [ Smalltalk removeClassNamed: classNameOfTest ].
 	classNameOfTest := nil.
@@ -69,12 +69,12 @@ SSTestSuiteGenerator class >> resetClassOfTest [
 ]
 
 { #category : #initialization }
-SSTestSuiteGenerator class >> resetNumTest [
+SSTestFactoryToDelete class >> resetNumTest [
 	numTest := 0
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator >> compileStatementsOf: testCase with: invariants [
+SSTestFactoryToDelete >> compileStatementsOf: testCase with: invariants [
 	| node selector |
 	node := testCase parseTree.
 	invariants
@@ -93,12 +93,12 @@ SSTestSuiteGenerator >> compileStatementsOf: testCase with: invariants [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestSuiteGenerator >> compilerClassOfTests [
+SSTestFactoryToDelete >> compilerClassOfTests [
 	^ self class compilerClassOfTests ifNil: [self class createCompilerClass: testClassName of: testPackageName]
 ]
 
 { #category : #'as yet unclassified' }
-SSTestSuiteGenerator >> generateAssertionsOf: aSTestCase testCaseUsing: selectedInvariants [
+SSTestFactoryToDelete >> generateAssertionsOf: aSTestCase testCaseUsing: selectedInvariants [
 	| filteredInvariants compiled |
 	testRunner run: aSTestCase. 
 	"compile: (self transformToNode: aSTestCase).
@@ -114,7 +114,7 @@ SSTestSuiteGenerator >> generateAssertionsOf: aSTestCase testCaseUsing: selected
 ]
 
 { #category : #initialization }
-SSTestSuiteGenerator >> initialize [
+SSTestFactoryToDelete >> initialize [
 	testRunner := SSTestRunner new.
 	testClassName := 'SSAssertionGeneratorTest'.
 	testPackageName := 'SmallSuiteGenerator-Tests-Assertion'
@@ -122,21 +122,21 @@ SSTestSuiteGenerator >> initialize [
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator >> testClassName [
+SSTestFactoryToDelete >> testClassName [
 	^ testClassName
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator >> testClassName: anObject [
+SSTestFactoryToDelete >> testClassName: anObject [
 	testClassName := anObject
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator >> testPackageName [
+SSTestFactoryToDelete >> testPackageName [
 	^ testPackageName
 ]
 
 { #category : #accessing }
-SSTestSuiteGenerator >> testPackageName: anObject [
+SSTestFactoryToDelete >> testPackageName: anObject [
 	testPackageName := anObject
 ]

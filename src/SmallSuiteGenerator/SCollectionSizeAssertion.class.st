@@ -1,7 +1,7 @@
 Class {
 	#name : #SCollectionSizeAssertion,
 	#superclass : #SSAssertion,
-	#category : #'SmallSuiteGenerator-Assertion'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'as yet unclassified' }
