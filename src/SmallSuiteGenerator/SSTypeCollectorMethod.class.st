@@ -96,6 +96,12 @@ SSTypeCollectorMethod >> saveReceiver: aObject [
 		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
 ]
 
+{ #category : #'as yet unclassified' }
+SSTypeCollectorMethod >> validReturnTypeWithReceiver [
+	^ self receiverType types = self returnType types
+	
+]
+
 { #category : #hooks }
 SSTypeCollectorMethod >> wasExecuted [
 	^ executed.

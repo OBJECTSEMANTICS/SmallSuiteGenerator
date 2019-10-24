@@ -116,7 +116,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		hasSameElements: {#OrderedCollection . #Stack}.
 	self
 		assert: (typeInfo type: #returnFloat from: #SFoo) returnType type
-		equals: #BoxedFloat64.
+		equals: #SmallFloat64.
 	self
 		assert: (typeInfo type: #returnCollection from: #SFoo) returnType type
 		equals: #OrderedCollection.
@@ -138,7 +138,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		assert: (typeInfo factoryMessagesFrom: #SFoo) isEmpty. "the factoryMessage has not been executed"
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #BoxedFloat64)
+		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #SmallFloat64)
 ]
 
 { #category : #tests }

@@ -51,28 +51,24 @@ SSTestCaseTest >> testAddFactoryMessage [
 
 { #category : #tests }
 SSTestCaseTest >> testAddFactoryMessageWithClassestoUse [
-	| testCase |
-	testCase := (SSTestCase
-		with: utility typeInfoOnPackage3)
+	| testCase expression |
+	testCase := (SSTestCase with: utility typeInfoOnPackage3)
 		validateTargetClasses: true.
 	self should: [ testCase addFactoryMessage: #SSTeacher ] raise: SError.
-	testCase
-		addTargetClassName: #SSTeacher;
-		addFactoryMessage: #SSTeacher.
+	testCase addTargetClassName: #SSTeacher.
+	expression := testCase addFactoryMessage: #SSTeacher.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 95.' '_var1 := ''Mary''.' '_var2 := SSTeacher name: _var1 with: _var0.').
+		assert:
+			(#('_var2 := SSTeacher name: _var0 with: _var1.' '_var2 := SSTeacher name: _var1 with: _var0.')
+				includes: expression printString).
 	self
 		should: [ testCase addFactoryMessage: #SConference ]
 		raise: SError.
-	testCase
-		addTargetClassName: #SConference;
-		addFactoryMessage: #SConference.
+	testCase addTargetClassName: #SConference.
+	expression := testCase addFactoryMessage: #SConference.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var1 := ''Mary''.' '_var0 := 95.' '_var2 := SSTeacher name: _var1 with: _var0.' '_var3 := SConference new.')
+		assert: expression printString
+		equals: '_var3 := SConference new.'
 ]
 
 { #category : #tests }

@@ -18,8 +18,7 @@ SSTypeCollectorClass >> fillTypesOn: aTypeInfo [
 	classMethods := (self metaclassSpy methods reject: #isTest)
 		select: [ :clsMethod | 
 			clsMethod wasExecuted
-				and: [ 
-					clsMethod returnType type = self className ] ].
+				and: [ clsMethod validReturnTypeWithReceiver ] ].
 	aTypeClass
 		addMethods: (instanceMethods collect: #asTypeInfo);
 		addClassMethods: (classMethods collect: #asTypeInfo).

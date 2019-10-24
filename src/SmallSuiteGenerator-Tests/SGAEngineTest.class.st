@@ -2,19 +2,29 @@ Class {
 	#name : #SGAEngineTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'engine'
+		'engine',
+		'profiler'
 	],
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
+
+{ #category : #'as yet unclassified' }
+SGAEngineTest >> profilerOf: symbol [
+	(S2CInstrumentator onPackagesMatching: symbol)
+		applyOn: profiler.
+	(profiler allMethods select: #isNotMethodExtension)
+		do: #installGhosts
+		displayingProgress: 'Instrumenting ' , symbol.
+]
 
 { #category : #actions }
 SGAEngineTest >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitness [
 	"	SSGeneratorInvariant resetNumTest."
 
 	self settingEngineOnClass: aClass withBlock: aBlock.
-	engine
+	"engine
 		fitness: (aClassFitness coverageOf: aBlock onClass: aClass);
-		run
+		run"
 ]
 
 { #category : #actions }
@@ -22,14 +32,15 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock baseClassName: s
 	"	SSGeneratorInvariant resetNumTest."
 
 	self settingOnPackagesMatching: regex withBlock: aBlock and: symbol.
-	engine
+	"engine
 		fitness: (aClass coverageOf: aBlock onPackagesMatching: regex);
-		run
+		run"
 ]
 
 { #category : #running }
-SGAEngineTest >> setUp [ 
-	engine := SGAEngine new
+SGAEngineTest >> setUp [
+	engine := SGAEngine new.
+	profiler := SBProfiler new.
 ]
 
 { #category : #actions }
@@ -38,7 +49,7 @@ SGAEngineTest >> settingEngineOnClass: aClass withBlock: aBlock [
 		populationSize: 10;
 		numberOfStatements: 10;
 		blockToExecute: aBlock;
-		endForMaxNumberOfGeneration: 5;
+		numberOfIterations: 5;
 		typeInfo:
 			(SSTypeCollector profile: engine blockToExecute onClass: aClass)
 				asTypeInfo;
@@ -51,39 +62,49 @@ SGAEngineTest >> settingOnPackagesMatching: regex withBlock: aBlock and: symbol 
 		populationSize: 10;
 		numberOfStatements: 10;
 		blockToExecute: aBlock;
-		endForMaxNumberOfGeneration: 5;
+		numberOfIterations: 5;
 		typeInfo:
-			(SSTypeCollector profile: engine blockToExecute onPackagesMatching: regex)
-				asTypeInfo;
+			(SSTypeCollector
+				profile: engine blockToExecute
+				onPackagesMatching: regex) asTypeInfo;
 		targetClassName: symbol
 ]
 
 { #category : #running }
 SGAEngineTest >> tearDown [
-	S2Lock value: false.
+	profiler cleanInstrumentation.
+	"S2Lock value: false.
 	S2Context value: nil.
-	S2Profiler remove.
-	SMultiFitnessFunction
+	S2Profiler remove"
+	"SMultiFitnessFunction
 		clean;
-		reset.
-	
+		reset."
 ]
 
 { #category : #tests }
 SGAEngineTest >> testRunOnClassSSTeacherUsingSMethodCoverage [
-	| first last classFitness |
-	classFitness := SMethodCoverage.
-	self
-		runOnClass: SSTeacher
-		withBlock: [ (SSTeacher name: 'Ann' with: 34)
+	| first last functionFitness typeInfo targetPackageRegex |
+	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
+	typeInfo := SSTypeCollector
+		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		andFitness: classFitness.
-	first := engine logs first fittestTestCase fitness at: classFitness functionName.
-	last := engine logs last fittestTestCase fitness at: classFitness functionName.
+		onPackagesMatching: targetPackageRegex.
+	self profilerOf: targetPackageRegex.
+	functionFitness := SMethodCoverage new profiler: profiler.
+	engine
+		typeInfo: typeInfo;
+		fitness: functionFitness;
+		targetClassName: #SSTeacher;
+		numberOfIterations: 5;
+		run.
+	first := engine logs first fittestTestCase fitness
+		at: functionFitness functionName.
+	last := engine logs last fittestTestCase fitness
+		at: functionFitness functionName.
 	self assert: first <= last.
 	self assert: first >= 20.	"20 = (1/5) * 100"
 	self assert: last equals: 80	"80 = (4/5) * 100"
@@ -100,22 +121,23 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSMultiFitnessFunction [
 		id ].
 	self settingEngineOnClass: SSTeacher withBlock: block.
 	function := SMultiFitnessFunction.
+	profiler := nil.
 	function
-		addFitnessFunction: (SMethodCoverage coverageOf: block onClass: SSTeacher);
-		addFitnessFunction: (SStatementCoverage profiler: SMethodCoverage profiler).
+		add: (SMethodCoverage new profiler: profiler) weight: 1;
+		add: (SStatementCoverage new profiler: profiler) weight: 1.
 	engine
 		fitness: function;
 		run.
 	firstFitness := engine logs first fittestTestCase fitness.
 	lastFitness := engine logs last fittestTestCase fitness.
-	nameFunction := SMethodCoverage functionName.
+	nameFunction := 'method-coverage'.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
 	self assert: (firstFitness at: nameFunction) >= 20.	"20 = (1/5) * 100"
 	self assert: (lastFitness at: nameFunction) equals: 80.	"80 = (4/5) * 100"
-	nameFunction := SStatementCoverage functionName.
+	nameFunction := 'block-coverage'.
 	self
-		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).	
+		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
 	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
 	self assert: (lastFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
 ]
@@ -171,7 +193,7 @@ SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
 		id ].
 	self settingEngineOnClass: SSTeacher withBlock: block.
 	function := SMultiFitnessFunction.
-	functions := Array
+	"functions := Array
 		with: (SMethodCoverage coverageOf: block onClass: SSTeacher)
 		with: (SStatementCoverage profiler: SMethodCoverage profiler).
 	function
@@ -181,18 +203,18 @@ SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
 		selectorMethod:
 			(SWeightedSumMethod
 				weights: #(0.7 0.3);
-				functions: functions).
+				functions: functions)."
 	engine
 		fitness: function;
 		run.
 	firstFitness := engine logs first fittestTestCase fitness.
 	lastFitness := engine logs last fittestTestCase fitness.
-	nameFunction := SMethodCoverage functionName.
+	nameFunction := SMethodCoverage new functionName.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
 	self assert: (firstFitness at: nameFunction) >= 20.	"20 = (1/5) * 100"
 	self assert: (lastFitness at: nameFunction) equals: 80.	"80 = (4/5) * 100"
-	nameFunction := SStatementCoverage functionName.
+	nameFunction := SStatementCoverage new functionName.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
 	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"

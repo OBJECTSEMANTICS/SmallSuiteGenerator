@@ -158,7 +158,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSStudent [
 						idStudent;
 						scoreStudent: 10;
 						scoreStudent ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario').
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario2').
 	testCase addFactoryMessage: #SStudent.
 	testCase generateStatements: 19.
 	self install.

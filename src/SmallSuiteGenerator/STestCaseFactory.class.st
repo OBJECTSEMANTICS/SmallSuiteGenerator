@@ -45,8 +45,8 @@ STestCaseFactory >> engine [
 	^ SGAEngine new
 		populationSize: 30;
 		numberOfStatements: 30;
-		endForMaxNumberOfGeneration: 15;
-		yourself.
+		numberOfIterations: 15;
+		yourself
 ]
 
 { #category : #accessing }
@@ -123,11 +123,6 @@ STestCaseFactory >> initialize [
 	engine := self engineDefault.
 	numberOfIterations :=20.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
-]
-
-{ #category : #configuration }
-STestCaseFactory >> numberOfGenerations: aInt [
-	engine endForMaxNumberOfGeneration: aInt
 ]
 
 { #category : #initialization }

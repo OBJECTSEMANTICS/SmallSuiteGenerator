@@ -99,7 +99,7 @@ SSTestShifter >> addLiteral [
 
 { #category : #inserting }
 SSTestShifter >> addLiteral: aClassName [
-	self addAssignment: (self newLiteral: aClassName).
+	^ self addAssignment: (self newLiteral: aClassName)
 ]
 
 { #category : #inserting }
