@@ -8,7 +8,8 @@ Class {
 		'targetPackageRegex',
 		'outputPackageName',
 		'fitness',
-		'profiler'
+		'profiler',
+		'numberOfIterations'
 	],
 	#classInstVars : [
 		'instance'
@@ -104,8 +105,7 @@ STestCaseFactory >> fitnessValues [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Run the generation before'.
-	nameFunctions := engine fitness allFitnessFunction
-		collect: #name.
+	nameFunctions := {engine fitness funtionName}.
 	^ nameFunctions asSet
 		collect: [ :nameFunction | 
 			nameFunction
@@ -121,12 +121,18 @@ STestCaseFactory >> initialize [
 	targetPackageRegex := nil.
 	fitness := SMethodCoverage new.
 	engine := self engineDefault.
-	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
+	numberOfIterations :=20.
+	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
 ]
 
 { #category : #configuration }
 STestCaseFactory >> numberOfGenerations: aInt [
 	engine endForMaxNumberOfGeneration: aInt
+]
+
+{ #category : #initialization }
+STestCaseFactory >> numberOfIterations: aNumber [
+	numberOfIterations := aNumber.
 ]
 
 { #category : #configuration }
@@ -158,10 +164,14 @@ STestCaseFactory >> run [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	profiler := SBProfiler new.
-	(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler."
-	"profiler injectCodeToMethods.
+	(S2CInstrumentator onPackagesMatching: self targetPackageRegex)
+		applyOn: profiler.
+	(profiler allMethods select: #isNotMethodExtension)
+		do: #installGhosts
+		displayingProgress: 'Instrumenting ' , self targetPackageRegex.
 	fitness profiler: profiler.
 	engine fitness: fitness.
+	engine numberOfIterations: numberOfIterations.
 	engine typeInfo: self typeInfo.
 	engine targetClassName: self targetClassName
 ]
@@ -223,5 +233,5 @@ STestCaseFactory >> visualize [
 			d y: #yourself.
 			g add: d ].
 	g legend addText: 'Fitness evolution'.
-	^ g
+	g open.
 ]

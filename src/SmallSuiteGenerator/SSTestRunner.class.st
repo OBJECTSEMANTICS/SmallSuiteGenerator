@@ -47,27 +47,12 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var15 _var16 _var17 _var18 _var19 |
-_var0 := SStudent new.
-_var1 := 1.
-_var2 := _var0 scoreStudent: _var1.
-_var3 := _var2 initialize.
-_var4 := _var3 initialize.
-_var5 := _var3 scoreStudent: _var1.
-_var6 := _var0 scoreStudent: _var1.
-_var7 := _var6 initialize.
-_var8 := _var0 scoreStudent: _var1.
-_var9 := _var4 initialize.
-_var10 := _var7 scoreStudent: _var1.
-_var11 := _var3 scoreStudent: _var1.
-_var12 := _var9 scoreStudent: _var1.
-_var13 := _var5 scoreStudent: _var1.
-_var14 := _var0 initialize.
-_var15 := _var11 initialize.
-_var16 := _var13 initialize.
-_var17 := _var0 initialize.
-_var18 := _var2 scoreStudent: _var1.
-_var19 := _var0 initialize
+	| _var0 _var1 _var2 _var3 |
+_var0 := RTView new.
+_var1 := _var0 initialize.
+_var2 := RTGroup new.
+_var3 := _var0 addAll: _var2.
+^ self analyze: thisContext
 ]
 
 { #category : #running }
