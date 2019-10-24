@@ -47,22 +47,10 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 |
-_var0 := RTView basicNew.
-_var1 := TRCanvas new.
-_var2 := _var0 setCanvas: _var1.
-_var3 := _var0 initializeContent.
-_var4 := RTGroup new.
-_var5 := _var3 addAll: _var4.
-_var6 := _var3 initializeContent.
-_var7 := RTElement basicNew.
-_var8 := RTAbstractScrollBuilder -> RTScrollBarBuilder.
-_var9 := RTEdge model: _var8.
-_var10 := _var4 add: _var7.
-_var11 := _var4 add: _var7.
-_var12 := _var3 add: _var7.
-_var13 := Point new.
-_var14 := _var4 translateTo: _var13
+	| _var0 _var1 |
+_var0 := SStack new.
+_var1 := 2.
+^ self analyze: thisContext
 ]
 
 { #category : #running }

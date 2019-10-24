@@ -375,7 +375,12 @@ SSTestShifter >> generateStatements [
 			description: 'TypeInfo does not contain info at all.'.
 	[ self numberStatements < self maxNumberOfStatements]
 		whileTrue: [ 
-			[self addMessage] on: Error do:[:e| Transcript show: e printString;cr.].
+			[
+			|selector|
+			selector := #(#addMessage #addLiteral) shuffle anyOne.
+			self perform: selector.
+			
+			] on: Error do:[:e| Transcript show: e printString;cr.].
 			].
 ]
 

@@ -61,12 +61,11 @@ SGAEngine >> createNewPopulation [
 	selectionStrategy load: population copy.
 	selectionStrategy fitness: fitness.
 	[ newPopulation size < self populationSize ]
-		whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child parents |
+		whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child options |
 			P1 := selectionStrategy pickOne.
 			P2 := selectionStrategy pickOne.
 			self shouldCrossOver
 				ifTrue: [ 
-					
 					child := crossoverOperator crossover: P1 with: P2.
 					Transcript show:'corows';cr.
 					O1 := child first.
@@ -75,20 +74,13 @@ SGAEngine >> createNewPopulation [
 					O2 := P2 ].
 			mutationOperator mutate: O1.
 			mutationOperator mutate: O2.
-			fitness compute:{O1.O2}.
-			fp := (self fitnessFor: P1) min: (self fitnessFor: P2).
-			fo := (self fitnessFor: O1) min: (self fitnessFor: O2).
-			lp := P1 length + P2 length.
-			lo := O1 length + O2 length.
-			(fo < fp or: [ fo = fp and: [ lo <= lp ] ])
-				ifTrue: [ 
-					parents := {P1. P2} shuffle asSortedCollection: [:a :b| a length < b length].
-					{O1. O2} do: [ :o | 
-							o length <= (2 *TB length)
-								ifTrue: [ newPopulation add: o ]
-								ifFalse: [ newPopulation add: parents removeFirst	"it is p1 o p2" ] ] ]
-				ifFalse: [ newPopulation
-						addAll: {P1.P2} ] ].
+			fitness compute: {O1.O2}.
+			options := { O1 . O2 . P1 . P2 } asSortedCollection: [ :a :b | 
+					(self fitnessFor: a) = (self fitnessFor: b) ifTrue:[
+						a length < b length
+						] ifFalse:[ (self fitnessFor:a)> (self fitnessFor:b)] ].
+			newPopulation addAll: (options first:2).
+			 ].
 	population := newPopulation
 ]
 

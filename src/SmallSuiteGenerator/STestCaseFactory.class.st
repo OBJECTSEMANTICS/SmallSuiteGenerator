@@ -54,22 +54,27 @@ STestCaseFactory >> engineDefault [
 		populationSize: 30;
 		fitness: fitness;
 		numberOfStatements: 30;
-		numberOfIterations: 15;
+		numberOfIterations: 20;
 		yourself.
 ]
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
-	|className class|
-	className := ('GA',self targetClassName, 'Test') asSymbol.
-	class := Smalltalk at: className ifAbsent:[nil].
-	class ifNil:[ 
-		class := TestCase subclass: className
-			instanceVariableNames: ''
-			classVariableNames: ''
-			package: self outputPackageName ].
-	class compile: (aSelector,'
-	', aTestCase parseTreeWithAssertions formattedCode).
+	| className class |
+	className := ('GA' , self targetClassName , 'Test') asSymbol.
+	class := Smalltalk at: className ifAbsent: [ nil ].
+	class
+		ifNil: [ class := TestCase
+				subclass: className
+				instanceVariableNames: ''
+				classVariableNames: ''
+				package: self outputPackageName ].
+	aTestCase generateAssertions.
+	class
+		compile:
+			aSelector,
+					'
+	' , aTestCase parseTreeWithAssertions body formattedCode
 ]
 
 { #category : #actions }
@@ -152,13 +157,12 @@ STestCaseFactory >> run [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	profiler := SBProfiler new.
-	"(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler.
-	profiler injectCodeToMethods."
+	(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler.
+	profiler injectCodeToMethods.
 	fitness profiler: profiler.
-	engine fitness: fitness. 
+	engine fitness: fitness.
 	engine typeInfo: self typeInfo.
-	engine targetClassName: self targetClassName.
-	
+	engine targetClassName: self targetClassName
 ]
 
 { #category : #accessing }
