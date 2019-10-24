@@ -489,8 +489,8 @@ SSTestShifter >> literal: aClassName [
 	| literal |
 	literal := self newLiteral: aClassName.
 	literal value
-		ifNil: [ self error: 'error to create literal' ]
-		ifNotNil: [ ^ literal ]
+		ifNotNil: [ ^ literal ].
+	^ nil
 ]
 
 { #category : #accessing }
