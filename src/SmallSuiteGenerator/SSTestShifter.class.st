@@ -99,12 +99,7 @@ SSTestShifter >> addLiteral [
 
 { #category : #inserting }
 SSTestShifter >> addLiteral: aClassName [
-	| literal |
-	literal := self literal: aClassName.
-	
-	literal value
-		ifNil: [ self error: 'error to create literal' ]
-		ifNotNil: [ ^ self addAssignment: literal ]
+	self addAssignment: (self newLiteral: aClassName).
 ]
 
 { #category : #inserting }
@@ -285,7 +280,7 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 							[(scalarsKeys includes: missType) ifTrue: [ 
 								self addLiteral: missType.
 							] ifFalse:[
-								self addStatementOfType: missType before: aStatement
+								self addAssignment: (self newFactoryMessage: missType before: aStatement).
 							].true] on: SError do:[false]
 						] ifNone:[   ^ self error: 'it is not possible to meet the arguments of this method call'].	
 				] ifTrue:[].
@@ -486,11 +481,8 @@ SSTestShifter >> involvedClasses [
 
 { #category : #repairing }
 SSTestShifter >> literal: aClassName [
-	| literal |
-	literal := self newLiteral: aClassName.
-	literal value
-		ifNil: [ self error: 'error to create literal' ]
-		ifNotNil: [ ^ literal ]
+	^  self newLiteral: aClassName.
+	
 ]
 
 { #category : #accessing }
@@ -600,14 +592,14 @@ SSTestShifter >> newFieldAccessMessageOfType: aType before: aStatement [
 
 { #category : #'instance creation' }
 SSTestShifter >> newLiteral: aClassName [
-	| aObject |
-	aObject := typeInfo scalars
+	typeInfo scalars
 		at: aClassName
-		ifPresent: [ :values | values asArray shuffle anyOne ]
-		ifAbsent: [ self error: 'scalars dont contain: ' , aClassName asString ].
-	^ SLiteral new
-		returnType: aClassName;
-		value: aObject
+		ifPresent: [ :values | 
+				^ SLiteral new
+					returnType: aClassName;
+					value: values asOrderedCollection shuffle first ].
+	self error: 'scalars dont contain: ' , aClassName asString.
+
 ]
 
 { #category : #'instance creation' }

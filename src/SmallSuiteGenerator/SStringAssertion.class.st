@@ -8,14 +8,15 @@ Class {
 SStringAssertion class >> for: anExecutionContext [
 	| assertions |
 	assertions := OrderedCollection new.
-	anExecutionContext
-		keys do: [ :varName | 
+	anExecutionContext keys
+		do: [ :varName | 
 			| value |
 			value := anExecutionContext at: varName.
 			(self isPrimitive: value)
 				ifFalse: [ (value class allSelectorsBelow: Object)
 						detect: [ :selector | selector = #printOn: or: [ selector = #printString ] ]
 						ifFound: [ | fieldValue |
+							[ 
 							fieldValue := value perform: #printString.
 							assertions
 								add:
@@ -29,6 +30,8 @@ SStringAssertion class >> for: anExecutionContext [
 														selector: #printString;
 														yourself)
 												with: (SLiteral new value: fieldValue));
-										yourself) ] ] ].
+										yourself) ] on: Error do:[ Transcript show: (value class name),' cant answer printString without error']
+										
+										] ] ].
 	^ assertions
 ]

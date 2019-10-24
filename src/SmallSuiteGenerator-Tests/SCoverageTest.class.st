@@ -25,9 +25,11 @@ SCoverageTest >> setUp [
 	fitness := self fitnessClass new.
 	profiler := SBProfiler new.
 	fitness tagetPackagesRegex: 'SmallSuiteGenerator-Scenario'.
-	(S2CInstrumentator onPackagesMatching: 'SmallSuiteGenerator-Scenario') applyOn: profiler.
+	S2Profiler clean.
+	(S2CInstrumentator onPackagesMatching: 'SmallSuiteGenerator-Scenario')
+		applyOn: profiler.
 	fitness profiler: profiler.
-	profiler injectCodeToMethods.
+	profiler injectCodeToMethods
 ]
 
 { #category : #running }

@@ -69,12 +69,18 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 				instanceVariableNames: ''
 				classVariableNames: ''
 				package: self outputPackageName ].
-	aTestCase generateAssertions.
+	[aTestCase generateAssertions.
 	class
 		compile:
 			aSelector,
 					'
-	' , aTestCase parseTreeWithAssertions body formattedCode
+	' , aTestCase parseTreeWithAssertions body formattedCode] on: Error do:[
+	
+		class compile: aSelector,'
+		self should:', aTestCase parseTree formattedCode,' raise:Error.
+		'
+	
+	]
 ]
 
 { #category : #actions }
@@ -152,8 +158,8 @@ STestCaseFactory >> run [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	profiler := SBProfiler new.
-	"(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler."
-	"profiler injectCodeToMethods."
+	(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler."
+	"profiler injectCodeToMethods.
 	fitness profiler: profiler.
 	engine fitness: fitness.
 	engine typeInfo: self typeInfo.
@@ -188,7 +194,7 @@ STestCaseFactory >> targetPackagesRegex: anObject [
 
 { #category : #actions }
 STestCaseFactory >> tearDown [
-	"profiler cleanInstrumentation."
+	profiler cleanInstrumentation.
 	self exportTests.
 ]
 

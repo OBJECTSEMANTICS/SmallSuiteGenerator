@@ -1,9 +1,6 @@
 Class {
 	#name : #SStatementCoverageTest,
 	#superclass : #SCoverageTest,
-	#instVars : [
-		'profiler'
-	],
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 

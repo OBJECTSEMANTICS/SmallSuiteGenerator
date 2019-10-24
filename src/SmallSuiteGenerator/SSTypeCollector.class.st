@@ -33,7 +33,7 @@ SSTypeCollector >> addScalar: anObject [
 SSTypeCollector >> asTypeInfo [
 	| typeInfo |
 	typeInfo := STypeInfo new.
-	self allClasses do: [ :aSpyClass | aSpyClass fillTypesOn: typeInfo ].
+	self allClasses do: [ :aSpyClass | (aSpyClass className = 'BlockClosure') ifFalse:[aSpyClass fillTypesOn: typeInfo ]].
 	typeInfo scalars: scalars copy.
 	^ typeInfo
 ]
@@ -46,6 +46,7 @@ SSTypeCollector >> initialize [
 
 { #category : #initialization }
 SSTypeCollector >> isScalar: anObject [
+	(anObject class name = 'BlockClosure') ifTrue:[^ true].
 	self allClassesAsDictionary
 		at: anObject class name
 		ifAbsent: [ ^ true ].

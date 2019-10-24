@@ -47,29 +47,27 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var15 _var16 |
-_var0 := RTEdgeBuilder new.
-_var1 := OrderedCollection new
-	add: RTElement basicNew yourself;
-	add: RTElement basicNew yourself;
-	add: RTElement basicNew yourself;
-	add: RTElement basicNew yourself;
-	yourself.
-_var2 := _var0 fromObjects: _var1.
-_var3 := _var0 fromElements.
-_var4 := _var2 fromObjects: _var1.
-_var5 := RTElement new.
-_var6 := Announcer basicNew yourself.
-_var7 := _var5 announcer: _var6.
-_var8 := _var4 createEdgeIfNecessaryFrom: _var5 to: _var5.
-_var9 := _var5 initialize.
-_var10 := _var9 updateShape.
-_var11 := Point new.
-_var12 := _var3 translateTo: _var11.
-_var13 := RTLine new.
-_var14 := _var5 addShape: _var13.
-_var15 := _var10 update.
-_var16 := _var15 translateBy: _var11
+	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var15 _var16 _var17 _var18 _var19 |
+_var0 := SStudent new.
+_var1 := 1.
+_var2 := _var0 scoreStudent: _var1.
+_var3 := _var2 initialize.
+_var4 := _var3 initialize.
+_var5 := _var3 scoreStudent: _var1.
+_var6 := _var0 scoreStudent: _var1.
+_var7 := _var6 initialize.
+_var8 := _var0 scoreStudent: _var1.
+_var9 := _var4 initialize.
+_var10 := _var7 scoreStudent: _var1.
+_var11 := _var3 scoreStudent: _var1.
+_var12 := _var9 scoreStudent: _var1.
+_var13 := _var5 scoreStudent: _var1.
+_var14 := _var0 initialize.
+_var15 := _var11 initialize.
+_var16 := _var13 initialize.
+_var17 := _var0 initialize.
+_var18 := _var2 scoreStudent: _var1.
+_var19 := _var0 initialize
 ]
 
 { #category : #running }

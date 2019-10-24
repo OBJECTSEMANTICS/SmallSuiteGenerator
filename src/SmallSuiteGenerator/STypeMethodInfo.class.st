@@ -362,6 +362,13 @@ STypeMethodInfo >> returnType: anObject [
 	returnType := anObject
 ]
 
+{ #category : #metrics }
+STypeMethodInfo >> returnTypeFor: aReceiver [
+	^ self isSimpleTyped2
+		ifTrue: [ aReceiver returnType ] "it is the same than his father"
+		ifFalse: [ self returnType type ] "it return one random"
+]
+
 { #category : #accessing }
 STypeMethodInfo >> selector [
 	^ selector

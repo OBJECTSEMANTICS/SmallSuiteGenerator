@@ -212,14 +212,17 @@ SGAEngine >> populationSize: aInteger [
 SGAEngine >> run [
 	population := self createRandomPopulation.
 	self computeFitness.
-	(1 to: numberOfIterations) do:[:iteration|
-		logs add: (SGALog new 
-						generationNumber: iteration; 
-						fittestTestCase: self pickBestTest; 
-						timeToProduceGeneration: Time now asSeconds; 
+	(1 to: numberOfIterations)
+		do: [ :iteration | 
+			logs
+				add:
+					(SGALog new
+						generationNumber: iteration;
+						fittestTestCase: self pickBestTest;
+						timeToProduceGeneration: Time now asSeconds;
 						yourself).
-		self createNewPopulation.
-		] displayingProgress:[:iteration| iteration asString].
+			self createNewPopulation ]
+		displayingProgress: [ :iteration | iteration asString ]
 ]
 
 { #category : #actions }
