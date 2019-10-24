@@ -63,8 +63,10 @@ SGAEngineTest >> tearDown [
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove.
-	SMultiFitnessFunction clean; reset.
-	SCoverageWithProfiler allSubclassesDo: #clean
+	SMultiFitnessFunction
+		clean;
+		reset.
+	
 ]
 
 { #category : #tests }
