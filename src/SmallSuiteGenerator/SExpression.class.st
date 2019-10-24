@@ -8,6 +8,12 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
+{ #category : #'error handling' }
+SExpression class >> error: string [
+	
+	^ SError signal: string 
+]
+
 { #category : #'instance creation' }
 SExpression class >> isPrimitive: anObject [
 	^ self new isPrimitive: anObject.

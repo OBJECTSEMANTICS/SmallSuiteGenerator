@@ -143,11 +143,6 @@ STestCaseFactory >> populationSize: aInt [
 	engine populationSize: aInt
 ]
 
-{ #category : #initialization }
-STestCaseFactory >> randomlyGeneratedPopulation [ 
-	^ engine randomlyGeneratedPopulation 
-]
-
 { #category : #actions }
 STestCaseFactory >> run [
 	engine run.
@@ -157,8 +152,8 @@ STestCaseFactory >> run [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	profiler := SBProfiler new.
-	(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler.
-	profiler injectCodeToMethods.
+	"(S2CInstrumentator onPackagesMatching: self targetPackageRegex) applyOn: profiler."
+	"profiler injectCodeToMethods."
 	fitness profiler: profiler.
 	engine fitness: fitness.
 	engine typeInfo: self typeInfo.
@@ -193,7 +188,7 @@ STestCaseFactory >> targetPackagesRegex: anObject [
 
 { #category : #actions }
 STestCaseFactory >> tearDown [
-	profiler cleanInstrumentation.
+	"profiler cleanInstrumentation."
 	self exportTests.
 ]
 

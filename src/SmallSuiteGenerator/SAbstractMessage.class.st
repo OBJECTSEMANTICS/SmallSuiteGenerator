@@ -14,11 +14,6 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	| dict |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
-	((statements
-		collect: #returnType
-		thenSelect: [ :aType | aType isNotNil ]) asSet
-		includesAll: (aMethodTypeInfo argTypes flatCollect: [ :arg | arg types ]))
-		ifFalse: [ ^ SError signal: 'statements dont contain some types of method' ].
 	dict := Dictionary new.
 	statements copy shuffle
 		do: [ :stm | 
@@ -26,7 +21,17 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 				at: stm returnType
 				put:  stm variable copy ].
 	^ aMethodTypeInfo argTypes
-		collect: [ :aTypeReturn | dict at: aTypeReturn type ]
+		collect: [ :aTypeReturn | 
+					|ft|
+			
+					ft := aTypeReturn types asOrderedCollection shuffle detect:[:type|
+							dict at: type ifPresent:[true] ifAbsent:[false]
+							] ifNone:[
+								nil
+							].
+					ft ifNil:[self error:'we cannot build this method call, even we tried to build the argument first'].
+					dict at: ft.
+					]
 ]
 
 { #category : #comparing }

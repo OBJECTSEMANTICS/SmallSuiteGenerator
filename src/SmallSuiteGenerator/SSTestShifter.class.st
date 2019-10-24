@@ -91,7 +91,6 @@ SSTestShifter >> addFieldAccessMessage: method withReceiver: receiver [
 
 { #category : #inserting }
 SSTestShifter >> addLiteral [
-
 	typeInfo scalars
 		ifNotEmpty: [typeInfo scalars keys shuffle do: [ :aClassName | 
 				[^ self addLiteral: aClassName] on: SError do: [  ]
@@ -102,6 +101,7 @@ SSTestShifter >> addLiteral [
 SSTestShifter >> addLiteral: aClassName [
 	| literal |
 	literal := self literal: aClassName.
+	
 	literal value
 		ifNil: [ self error: 'error to create literal' ]
 		ifNotNil: [ ^ self addAssignment: literal ]
@@ -268,19 +268,30 @@ SSTestShifter >> assignedIds [
 
 { #category : #repairing }
 SSTestShifter >> buildArgs: argTypes before: aStatement [
+	
 	argTypes
-		ifNotNil: [ | types typesToAdd |
-			types := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
+		ifNotNil: [ 
+			|prevTypes scalarsKeys|
+			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 				collect: #returnType
 				thenSelect: [ :aType | aType isNotNil ].
-			typesToAdd := ((argTypes flatCollect: [ :arg | arg types ])
-				reject: [ :aType | types includes: aType ]) asSet.
-			typesToAdd := self satisfyTypes: typesToAdd before: aStatement.
-			typesToAdd
-				do: [ :type | 
-					self
-						addStatement: (self newAssignment: ( self literal: type))
-						before: aStatement ] ]
+			scalarsKeys := typeInfo scalars keys.
+			argTypes do:[:arg|
+				|res|
+				res :=arg types anySatisfy:[:type|  prevTypes includes:type].
+				res ifFalse:[
+						arg types asOrderedCollection shuffle detect:[ :missType |
+							
+							[(scalarsKeys includes: missType) ifTrue: [ 
+								self addLiteral: missType.
+							] ifFalse:[
+								self addStatementOfType: missType before: aStatement
+							].true] on: SError do:[false]
+						] ifNone:[   ^ self error: 'it is not possible to meet the arguments of this method call'].	
+				] ifTrue:[].
+		].
+	].
+
 ]
 
 { #category : #modifying }
@@ -337,6 +348,7 @@ SSTestShifter >> defaultNumberStatements [
 
 { #category : #repairing }
 SSTestShifter >> error: string [
+	
 	^ SError signal: string 
 ]
 
@@ -382,10 +394,7 @@ SSTestShifter >> generateStatements [
 	[ self numberStatements < self maxNumberOfStatements]
 		whileTrue: [ 
 			[
-			|selector|
-			selector := #(#addMessage #addLiteral) shuffle anyOne.
-			self perform: selector.
-			
+			  self addMessage.
 			] on: Error do:[:e| Transcript show: e printString;cr.].
 			].
 ]

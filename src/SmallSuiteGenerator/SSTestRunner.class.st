@@ -47,10 +47,29 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 |
-_var0 := SStack new.
-_var1 := 2.
-^ self analyze: thisContext
+	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var15 _var16 |
+_var0 := RTEdgeBuilder new.
+_var1 := OrderedCollection new
+	add: RTElement basicNew yourself;
+	add: RTElement basicNew yourself;
+	add: RTElement basicNew yourself;
+	add: RTElement basicNew yourself;
+	yourself.
+_var2 := _var0 fromObjects: _var1.
+_var3 := _var0 fromElements.
+_var4 := _var2 fromObjects: _var1.
+_var5 := RTElement new.
+_var6 := Announcer basicNew yourself.
+_var7 := _var5 announcer: _var6.
+_var8 := _var4 createEdgeIfNecessaryFrom: _var5 to: _var5.
+_var9 := _var5 initialize.
+_var10 := _var9 updateShape.
+_var11 := Point new.
+_var12 := _var3 translateTo: _var11.
+_var13 := RTLine new.
+_var14 := _var5 addShape: _var13.
+_var15 := _var10 update.
+_var16 := _var15 translateBy: _var11
 ]
 
 { #category : #running }
