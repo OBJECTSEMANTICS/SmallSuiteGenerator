@@ -3,21 +3,36 @@ Class {
 	#superclass : #TestCase,
 	#instVars : [
 		'utility',
-		'fitness'
+		'fitness',
+		'profiler'
 	],
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 
 { #category : #running }
+SCoverageTest >> fitnessClass [
+	^ self subclassResponsibility.
+]
+
+{ #category : #tests }
+SCoverageTest >> fitnessOf: aTestCase [
+	^ aTestCase fitness at: (fitness funtionName).
+]
+
+{ #category : #running }
 SCoverageTest >> setUp [
-	super setUp.
-	utility := SUtilityTypeInfo new
+	utility := SUtilityTypeInfo new.
+	fitness := self fitnessClass new.
+	profiler := SBProfiler new.
+	fitness tagetPackagesRegex: 'SmallSuiteGenerator-Scenario'.
+	(S2CInstrumentator onPackagesMatching: 'SmallSuiteGenerator-Scenario') applyOn: profiler.
+	fitness profiler: profiler.
+	profiler injectCodeToMethods.
 ]
 
 { #category : #running }
 SCoverageTest >> tearDown [
-	fitness clean.
-	super tearDown 
+	profiler cleanInstrumentation.
 ]
 
 { #category : #tests }

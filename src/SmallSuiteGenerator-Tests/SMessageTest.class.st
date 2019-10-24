@@ -33,7 +33,7 @@ SMessageTest >> testCopy [
 SMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage.
+	testCase addFactoryMessage:#SFoo.
 	testCase addLiteral: #ByteString.
 	aExpression := testCase addMessage: #returnString from: #SFoo.
 	self

@@ -28,7 +28,7 @@ SSTestCaseTest >> testAddFactoryMessage [
 								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
 	aTypeInfo scalar: #SmallInteger with: #(3).
 	testCase typeInfo: aTypeInfo.
-	testCase addFactoryMessage.
+	testCase addFactoryMessage:#SFoo.
 	self assert: testCase statements size equals: 2.
 	self
 		assertCollection: (testCase statements collect: #asString)

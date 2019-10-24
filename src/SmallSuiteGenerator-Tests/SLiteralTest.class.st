@@ -33,7 +33,7 @@ SLiteralTest >> testInsertAsParameterUsing [
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase addLiteral: #ByteString.
 	expression := testCase addLiteral: #ByteString.
-	testCase addFactoryMessage.
+	testCase addFactoryMessage:#SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:

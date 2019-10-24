@@ -49,6 +49,7 @@ SFieldAccessMessageTest >> testInsertAsParameterUsing [
 SFieldAccessMessageTest >> testInsertRandomMessageUsing [
 	| testCase aExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addFactoryMessage: #SFoo.
 	aExpression := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)

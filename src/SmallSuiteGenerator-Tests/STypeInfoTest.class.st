@@ -26,7 +26,7 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 	| typeInfo messages |
 	typeInfo := (SSTypeCollector
 		profile: [ SConference price: 95 ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	messages := typeInfo messagesFrom: #SConference.
 	self
 		assertCollection: (messages collect: #selector)
@@ -51,7 +51,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 			aConference := SConference new offerPrice: 95.
 			aPerson := SStudent new name: 'Mary'.
 			aConference canRegister: aPerson ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self assert: (typeInfo types at: #SEvent) methodTypes size equals: 2.
 	self assert: (typeInfo types at: #SEvent) classMethodTypes isEmpty.
 	self
@@ -116,7 +116,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		hasSameElements: {#OrderedCollection . #Stack}.
 	self
 		assert: (typeInfo type: #returnFloat from: #SFoo) returnType type
-		equals: #SmallFloat64.
+		equals: #BoxedFloat64.
 	self
 		assert: (typeInfo type: #returnCollection from: #SFoo) returnType type
 		equals: #OrderedCollection.
@@ -138,7 +138,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		assert: (typeInfo factoryMessagesFrom: #SFoo) isEmpty. "the factoryMessage has not been executed"
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #SmallFloat64)
+		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #BoxedFloat64)
 ]
 
 { #category : #tests }
@@ -222,7 +222,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
 		hasSameElements: #(#idTeacher #initialize #nickname #yearsWorkExperience).
@@ -246,14 +246,13 @@ STypeInfoTest >> testFactoryMessages [
 	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
 	typeInfo := (SSTypeCollector
 		profile: [ SStudent name: 'Mary' ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SStudent) collect: #selector)
 		hasSameElements: #(#name:).
 	typeInfo := (SSTypeCollector
 		profile: [ SConference price: 95 ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario')
-		asTypeInfo.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SConference) collect: #selector)
 		hasSameElements: #(#price:)

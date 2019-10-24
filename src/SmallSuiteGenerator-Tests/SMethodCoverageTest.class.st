@@ -1,13 +1,15 @@
 Class {
 	#name : #SMethodCoverageTest,
 	#superclass : #SCoverageTest,
+	#instVars : [
+		'profiler'
+	],
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 
 { #category : #running }
-SMethodCoverageTest >> setUp [
-	super setUp.
-	fitness := SMethodCoverage
+SMethodCoverageTest >> fitnessClass [
+	^ SMethodCoverage
 ]
 
 { #category : #tests }
@@ -16,12 +18,8 @@ SMethodCoverageTest >> testCoverageClassSEvent [
 	testCase := self
 		testCase: utility typeInfoSEvent2 
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ (SEvent price: 15)
-				price;
-				discount ]
-		onClass: SEvent.
-	self assert: (fitness computeFitness: testCase) value <= 83.33	"83.33 = (5/6) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 83.33	"83.33 = (5/6) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -30,14 +28,8 @@ SMethodCoverageTest >> testCoverageClassSFoo [
 	testCase := self
 		testCase: utility typeInfoSFoo4
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ (SFoo score: 15)
-				returnCollection;
-				returnFloat;
-				score;
-				return: #(1 5 6) ]
-		onClass: SFoo.
-	self assert: (fitness computeFitness: testCase) value <= 77.78	"77.78 = (7/9) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 77.78	"77.78 = (7/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -46,12 +38,8 @@ SMethodCoverageTest >> testCoverageOnClassSSTeacher [
 	testCase := self
 		testCase: utility typeInfoSSTeacher3 
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ SSTeacher new
-				nickname;
-				yearsWorkExperience ]
-		onClass: SSTeacher.
-	self assert: (fitness computeFitness: testCase) value <= 60.0	"60.0 = (3/5) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 60.0	"60.0 = (3/5) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -60,13 +48,8 @@ SMethodCoverageTest >> testCoverageOnClassSStack [
 	testCase := self
 		testCase: utility typeInfoSStack3
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ (SStack newStackWith: #(2 4 6 1))
-				push: 8;
-				pop;
-				top ]
-		onClass: SStack.
-	self assert: (fitness computeFitness: testCase) value <= 57.14	"57.14 = (4/7) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 57.14	"57.14 = (4/7) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -75,13 +58,8 @@ SMethodCoverageTest >> testCoverageOnClassSStudent [
 	testCase := self
 		testCase: utility typeInfosSStudent first
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ SStudent new
-				idStudent;
-				scoreStudent: 10;
-				scoreStudent ]
-		onClass: SStudent.
-	self assert: (fitness computeFitness: testCase) value <= 80.0	"80.0 = (4/5) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 80.0	"80.0 = (4/5) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -93,14 +71,10 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 				profile: [ (SEvent price: 15)
 						price;
 						discount ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario')
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ (SEvent price: 15)
-				price;
-				discount ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
-	self assert: (fitness computeFitness: testCase) value <= 83.33
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 83.33
 ]
 
 { #category : #tests }
@@ -114,16 +88,10 @@ SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 						returnFloat;
 						score;
 						return: #(1 5 6) ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario')
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ (SFoo score: 15)
-				returnCollection;
-				returnFloat;
-				score;
-				return: #(1 5 6) ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
-	self assert: (fitness computeFitness: testCase) value <= 77.78	"77.78 = (7/9) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 77.78	"77.78 = (7/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -135,14 +103,10 @@ SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 				profile: [ SSTeacher new
 						nickname;
 						yearsWorkExperience ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario')
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ SSTeacher new
-				nickname;
-				yearsWorkExperience ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
-	self assert: (fitness computeFitness: testCase) value <= 60.0	"77.78 = (7/9) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase)<= 60.0	"77.78 = (7/9) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -155,15 +119,10 @@ SMethodCoverageTest >> testCoverageOnPackagesSStack [
 						push: 8;
 						pop;
 						top ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario')
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ (SStack newStackWith: #(2 4 6 1))
-				push: 8;
-				pop;
-				top ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
-	self assert: (fitness computeFitness: testCase) value <= 57.14	"57.14 = (4/7) * 100 round: 2"
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 57.14	"57.14 = (4/7) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -176,13 +135,8 @@ SMethodCoverageTest >> testCoverageOnPackagesSStudent [
 						idStudent;
 						scoreStudent: 10;
 						scoreStudent ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario2') asTypeInfo
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario2')
 		withNumStatements: 20.
-	fitness
-		coverageOf: [ SStudent new
-				idStudent;
-				scoreStudent: 10;
-				scoreStudent ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario2'.
-	self assert: (fitness computeFitness: testCase) value <= 80.0
+	fitness compute: {testCase}.
+	self assert: (self fitnessOf:testCase) <= 80.0
 ]

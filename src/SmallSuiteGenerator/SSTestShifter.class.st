@@ -24,12 +24,17 @@ SSTestShifter >> addAssignment: anExpression [
 
 { #category : #inserting }
 SSTestShifter >> addFactoryMessage [
-	|receiver|
-	"typeInfo noneAbstractClasses shuffle
+	|receiver variables|
+	
+	variables := self objectVariables.
+	variables isEmpty ifTrue:[
+		typeInfo noneAbstractClasses shuffle
 		do: [ :aClass | [   ^ self addFactoryMessage: aClass name] on: SError do: [  ] ].
-	self error: 'Not able to create a factoryMessage'"
-	receiver := self pickAnObjectVariable.
-	self addFactoryMessage: receiver returnType.
+			self error: 'Not able to create a factoryMessage'
+		] ifFalse:[
+			receiver := variables atRandom.
+			^ self addFactoryMessage: receiver returnType.
+		].
 ]
 
 { #category : #inserting }
@@ -104,11 +109,12 @@ SSTestShifter >> addLiteral: aClassName [
 
 { #category : #inserting }
 SSTestShifter >> addMessage [
-	| receiver methods |
+	| receiver methods|
 	receiver := self pickAnObjectVariable.
 	methods := self pickMessagesOf: receiver returnType.
 	methods
-		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ]
+		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ].
+	
 ]
 
 { #category : #inserting }
@@ -695,8 +701,11 @@ SSTestShifter >> pickAccessorsOf: aType [
 
 { #category : #querying }
 SSTestShifter >> pickAnObjectVariable [
-	
-	^ self objectVariables shuffle anyOne.
+	|variables|
+	variables := self objectVariables.
+	variables isEmpty ifTrue:[ self addFactoryMessage. variables := self objectVariables].
+	variables ifEmpty:[ self error:'it is not possible to create an object'].
+	^ variables atRandom.
 ]
 
 { #category : #querying }

@@ -28,7 +28,7 @@ SFactoryMessageTest >> testCopy [
 SFactoryMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo2.
-	aExpression := testCase addFactoryMessage.
+	aExpression := testCase addFactoryMessage:#SFoo.
 	testCase addMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -46,7 +46,7 @@ SFactoryMessageTest >> testInsertAsParameterUsing [
 SFactoryMessageTest >> testInsertMethodMessageUsing [
 	| testCase aExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	aExpression := testCase addFactoryMessage.
+	aExpression := testCase addFactoryMessage:#SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -59,7 +59,7 @@ SFactoryMessageTest >> testInsertMethodMessageUsing [
 SFactoryMessageTest >> testInsertRandomMessageUsing [
 	| testCase factoryMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	factoryMessage := testCase addFactoryMessage.
+	factoryMessage := testCase addFactoryMessage:#SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
