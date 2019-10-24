@@ -696,7 +696,7 @@ SSTestShifter >> pickAccessorsOf: aType [
 { #category : #querying }
 SSTestShifter >> pickAnObjectVariable [
 	
-	^ self objectVariables shuffle anyOne.
+	[^ self objectVariables shuffle anyOne] on: SubscriptOutOfBounds do: [self error: 'not exist a previous variable'].
 ]
 
 { #category : #querying }
