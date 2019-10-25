@@ -17,73 +17,50 @@ Metacello new
  repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
  load.
 ```
-## Usage
 
-Initialize the class `SSmallSuiteGenerator`.
+## Configuration
+
+The first step is to define the code block that will be instrumented to get the typeInfo. Define package's regular expression pattern also.
 
 ``` Smalltalk
-| smallSuiteGenerator |
-smallSuiteGenerator := SSmallSuiteGenerator newInstance.
+| typeinfo |
+typeInfo := SSTypeCollector profile:[ 
+		(SSTeacher name: 'Ann' with: 50)
+		nickname;
+		canRegister: ((SConference price: 50) offerPrice: 50);
+		idTeacher;
+		yearsWorkExperience ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
 ```
 
-### Configuration
-The first step is to define the code block that will be analyzed.
+The second step is to configure the class `STestCaseFactory`.
 
-```Smalltalk
-smallSuiteGenerator seed: [ (SSTeacher name: 'Ann' with: 50)
-			nickname;
-			idTeacher;
-			yearsWorkExperience: 45;
-			yearsWorkExperience ]..
+``` Smalltalk
+STestCaseFactory new
+    typeInfo: typeInfo;
+    fitness: SStatementCoverage new;
+    targetClassName: #SSTeacher;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    numberOfIterations: 20;
+    numberOfStatements: 3;
+    createTestCases;
+    visualize;
+    yourself.
 ```
 				
-Another option to configure is the fitness that will be used in genetic algorithm  to improve this value either increasing or reducing, depending on the configuration. In this case we use: `SMultiFitnessFunction` to evaluate `SMethodCoverage` and `SStatementCoverage` at the same time.
+Some other options to configure are:
 
-```Smalltalk
-smallSuiteGenerator fitness: (SMultiFitnessFunction 
-		with: SMethodCoverage; 
-		with: SStatementCoverage).
-```
+* `fitness`: it will be used in genetic algorithm to improve its value either increasing or reducing, depending on the function. In this case we use: `SStatementCoverage`.
+* `targetClassName`: It represents the target class name that will be analyzed in the package.
+* `targetPackagesRegex`: Regular expression of the package where the class is found.
+* `outputPackageName`: Package name where the tests cases will be created.
 
-To analyze and profile the code you have two choices: 
- * Define the class to profile the code
- * Define a regular expression of packages matching, this option means that code will be profiled in all packages that match with the regular expression
- 
-#### Defining the class
+To watch the evolution of fitness function call `visualize` method.
 
-Following the example, in this case we use the class `SSTeacher`
-
-```Smalltalk
-smallSuiteGenerator profilingOnClass: SSTeacher. 
- ```
- 
-#### Defining a regular expression of package matching
-
-```Smalltalk
-smallSuiteGenerator profilingOnPackagesMatching: 'SmallSuiteGenerator-Scenario'.
-```
-
-#### Defining the target class name
-
-```Smalltalk
-smallSuiteGenerator targetClassName: #SSTeacher.
-```
-
-### Execution
-Either using the class or regular expression execute the following code to generate the testCases with the genetic algorithm.
-
-```Smalltalk
-smallSuiteGenerator run.
-```
-
-This instruction will generate the testCases with the higher fitness of one population. You can see these testCases debugging in `smallSuiteGenerator engine logs`. Usually the last log contains the testCase with the highest fitness.
-The test cases also are created by default in the class: `STestCaseGenerated` in the package `SmallSuiteGenerator-Tests-Generated`.
+After to execute this script the testCases will be generated with the higher fitness of the population. In the output package name specified you can find the generated testCases. Usually the last enumerated testCases have the highests fitness.
 
 Additionally to the described configurations, you can configure some parameters before to generate test cases, e.g:
 
 ```Smalltalk 
-smallSuiteGenerator populationSize: 30.
-smallSuiteGenerator numberOfGenerations: 20. "number of testCases to generate"
-smallSuiteGenerator numberOfStatements: 15. "number of statements that each testCase will have "
-smallSuiteGenerator classNameOfTest: 'SStudentTest'. "class that contains the test cases"
+populationSize: 30.
 ```
