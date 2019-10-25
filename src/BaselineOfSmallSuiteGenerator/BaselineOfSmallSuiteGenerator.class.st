@@ -22,13 +22,15 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'NeoCSV'
 				with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 			spec
+	baseline: 'TinyLogger'
+	with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
+			spec
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'MuTalk' 'NeoCSV') ];
+					with: [ spec requires: #('Spy2' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
-				
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:
-							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ] ].
+							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ] ]
 ]
