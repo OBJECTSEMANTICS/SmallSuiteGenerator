@@ -16,10 +16,8 @@ Class {
 
 { #category : #inserting }
 SSTestShifter >> addAssignment: anExpression [
-	| assignment |
-	assignment := self newAssignment: anExpression.
-	self addStatement: assignment.
-	^ assignment
+	^ self addStatement: ( self newAssignment: anExpression).
+
 ]
 
 { #category : #inserting }
@@ -38,9 +36,10 @@ SSTestShifter >> addFactoryMessage [
 ]
 
 { #category : #inserting }
-SSTestShifter >> addFactoryMessage: aClassName [
-	^ self
-		addAssignment: (self newFactoryMessage: aClassName before: nil)
+SSTestShifter >> addFactoryMessage: symbol [
+	[ ^ self addAssignment: (self newFactoryMessage: symbol before: nil) ]
+		on: SError
+		do: [ :error | self error: error messageText ]
 ]
 
 { #category : #inserting }
@@ -528,27 +527,27 @@ SSTestShifter >> messagesVariablesWhichContain: aClassName before: aStatement [
 
 { #category : #'instance creation' }
 SSTestShifter >> newAssignment: anExpression [
-	^ SAssignment
+	[^ SAssignment
 		name:
 			(SVariable new
 				varName: '_var';
 				id: self assignId;
 				returnType: anExpression returnType;
 				yourself)
-		value: anExpression copy
+		value: anExpression copy] on: MessageNotUnderstood do: [ :error | self error: 'Error: ', anExpression printString , 'is not an expression.' ]
 ]
 
 { #category : #'instance creation' }
 SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
-	^ typeInfo types
+	typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
 			self validTargetClassName: aClassName.
 			methods := typeInfo factoryMessagesFrom: aClassName.
-			methods
+			^ methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
-				ifNotEmpty: [ self newFactoryMessageUsing: aClassName and: aStatement ] ]
-		ifAbsent: [ self error: 'error factoryMessage' ]
+				ifNotEmpty: [ self newFactoryMessageUsing: aClassName and: aStatement ] ].
+		self error: 'Error to create factoryMessage of: ', aClassName, ' because it is not found in typeInfo.'
 ]
 
 { #category : #'instance creation' }

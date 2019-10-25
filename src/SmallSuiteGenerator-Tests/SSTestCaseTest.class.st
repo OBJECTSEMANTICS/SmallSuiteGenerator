@@ -43,7 +43,7 @@ SSTestCaseTest >> testAddFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements: #('_var0 := 4.' '_var1 := SFoo score: _var0.').
-	self should: (testCase addFactoryMessage: #SStack) raise: SError.
+	self should: [(testCase addFactoryMessage: #SStack)] raise: SError.
 	aTypeInfo
 		type:
 			#SStack
@@ -56,7 +56,7 @@ SSTestCaseTest >> testAddFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #asString)
 		hasSameElements:
-			#('_var0 := 3.' '_var1 := SFoo score: _var0.' '_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
+			#('_var0 := 4.' '_var1 := SFoo score: _var0.' '_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
 ]
 
 { #category : #tests }
@@ -75,7 +75,7 @@ SSTestCaseTest >> testAddFactoryMessageWithClassestoUse [
 		should: [ testCase addFactoryMessage: #SConference ]
 		raise: SError.
 	testCase addTargetClassName: #SConference.
-	expression := testCase addFactoryMessage: #SConference.
+	expression := testCase addFactoryMessage: #SConference.self halt.
 	self
 		assert: expression printString
 		equals: '_var3 := SConference new.'
