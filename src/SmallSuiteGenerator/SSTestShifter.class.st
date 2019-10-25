@@ -91,14 +91,12 @@ SSTestShifter >> addFieldAccessMessage: method withReceiver: receiver [
 
 { #category : #inserting }
 SSTestShifter >> addLiteral [
-	typeInfo scalars
-		ifNotEmpty: [typeInfo scalars keys shuffle do: [ :aClassName | 
-				[^ self addLiteral: aClassName] on: SError do: [  ]
-				 ] ]
+	^ self addLiteral: self randomLiteralClassName
 ]
 
 { #category : #inserting }
 SSTestShifter >> addLiteral: aClassName [
+	
 	^ self addAssignment: (self newLiteral: aClassName)
 ]
 
@@ -748,6 +746,11 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 	anIndex = 0
 		ifTrue: [ ^ anIndex ].
 	^ (1 to: anIndex) atRandom
+]
+
+{ #category : #inserting }
+SSTestShifter >> randomLiteralClassName [
+	^ typeInfo scalars keys atRandom.
 ]
 
 { #category : #inserting }

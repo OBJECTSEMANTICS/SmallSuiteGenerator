@@ -10,37 +10,47 @@ Class {
 { #category : #tests }
 SSTestCaseTest >> setUp [
 	utility := SUtilityTypeInfo new.
+	SConfiguration fileLogger: 'STestCaseTestLogger.log'
+]
+
+{ #category : #running }
+SSTestCaseTest >> tearDown [
+	"SConfiguration clearFileLog: 'STestCaseTestLogger.log'"
+]
+
+{ #category : #tests }
+SSTestCaseTest >> testAddAssignment [
+	| testCase expression |
+	testCase := SSTestCase new.
+	expression := testCase addAssignment: (SLiteral new value: 3).
+	self assert: expression printString equals: '_var0 := 3.'.
+	expression := testCase
+		addAssignment:
+			(SMessage new
+				receiver: (SVariable new id: 0);
+				selector: #foo;
+				yourself).
+	self assert: expression printString equals: '_var1 := _var0 foo.'
 ]
 
 { #category : #tests }
 SSTestCaseTest >> testAddFactoryMessage [
 	| testCase aTypeInfo |
-	testCase := SSTestCase new.
-	aTypeInfo := STypeInfo new
-		type:
-			#SFoo
-				->
-					(Array
-						with:
-							(Array with: #returnString -> #(#SFoo #ByteString #() false))
-						with:
-							(Array with:
-								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
-	aTypeInfo scalar: #SmallInteger with: #(3).
-	testCase typeInfo: aTypeInfo.
-	testCase addFactoryMessage:#SFoo.
+	aTypeInfo := utility typeInfoSFoo3.
+	testCase := SSTestCase with: aTypeInfo.
+	testCase addFactoryMessage: #SFoo.
 	self assert: testCase statements size equals: 2.
 	self
 		assertCollection: (testCase statements collect: #asString)
-		hasSameElements: #('_var0 := 3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: #('_var0 := 4.' '_var1 := SFoo score: _var0.').
+	self should: (testCase addFactoryMessage: #SStack) raise: SError.
 	aTypeInfo
 		type:
 			#SStack
 				->
 					(Array
 						with: (Array with: #top -> #(#SStack nil #() false))
-						with:
-							(Array with: #newStack: -> #(#SStack #SStack #(#Array) false))).
+						with: (Array with: #newStack: -> #(#SStack #SStack #(#Array) false))).
 	aTypeInfo scalar: #Array with: #(#(1 3 2)).
 	testCase addFactoryMessage: #SStack.
 	self
