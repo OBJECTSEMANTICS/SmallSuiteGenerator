@@ -13,10 +13,9 @@ Class {
 }
 
 { #category : #'instance creation' }
-STypeClassInfo class >> newFrom: aClassName and: aTypeInfo [
+STypeClassInfo class >> newFrom: aClassName [
 	^ self new
-		typeName: aClassName;
-		typeInfo: aTypeInfo
+		typeName: aClassName
 ]
 
 { #category : #'accessing structure variables' }
@@ -33,6 +32,14 @@ STypeClassInfo class >> type: aAssoc [
 	^ inst
 ]
 
+{ #category : #comparing }
+STypeClassInfo >> = other [
+	^ self class = other class
+		and: [ typeName = other typeName
+				and: [ methodTypes = other methodTypes
+						and: [ classMethodTypes = other classMethodTypes ] ] ]
+]
+
 { #category : #private }
 STypeClassInfo >> accessMessages [
 	^ self messagesAndAccessMessages select: #isQuick
@@ -40,10 +47,11 @@ STypeClassInfo >> accessMessages [
 
 { #category : #adding }
 STypeClassInfo >> addClassMethod: methodTypeInfo [
-	methodTypeInfo typeInfo: typeInfo.
-	classMethodTypes at: methodTypeInfo selector 
-	ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
-	ifAbsentPut: methodTypeInfo
+	"methodTypeInfo typeInfo: typeInfo."
+	classMethodTypes
+		at: methodTypeInfo selector
+		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
+		ifAbsentPut: methodTypeInfo
 ]
 
 { #category : #adding }
@@ -55,11 +63,11 @@ STypeClassInfo >> addClassMethods: methodTypeInfos [
 
 { #category : #adding }
 STypeClassInfo >> addMethod: methodTypeInfo [
-	methodTypeInfo typeInfo: typeInfo.
+	"methodTypeInfo typeInfo: typeInfo."
 	methodTypes
 		at: methodTypeInfo selector
 		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
-		ifAbsentPut: [methodTypeInfo]
+		ifAbsentPut: [ methodTypeInfo ]
 ]
 
 { #category : #adding }
@@ -119,6 +127,11 @@ STypeClassInfo >> filteredMethodsBy: aSymbol [
 	^ (STypeMethodInfo selectorsFilter includes: aSymbol)
 		ifTrue: [ self allMethods select: aSymbol ]
 		ifFalse: [ self remainingOrAllMethods: aSymbol ]
+]
+
+{ #category : #comparing }
+STypeClassInfo >> hash [
+	^ typeName hash bitXor: (methodTypes hash bitXor: classMethodTypes hash)
 ]
 
 { #category : #initialization }
@@ -193,7 +206,7 @@ STypeClassInfo >> typeName: anObject [
 	typeName := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #writing }
 STypeClassInfo >> writeDataCSV: neoCSVWriter using: methods [
 	methods
 		do: [ :aMethod | 

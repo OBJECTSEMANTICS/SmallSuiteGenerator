@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#classInstVars : [
 		'level',
-		'nameLog'
+		'nameLog',
+		'random'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -63,10 +64,10 @@ SConfiguration class >> defaultNameLog [
 { #category : #'as yet unclassified' }
 SConfiguration class >> fileLogger: fileName [
 	self nameLog: fileName.
-	TinyLogger default fileLoggers
-		ifEmpty: [ self createFileLogger ].
+	TinyLogger default fileLoggers ifEmpty: [ self createFileLogger ].
 	^ TinyLogger default fileLoggers
-		detect: [ :fileLogger | fileLogger fileName = fileName ]
+		detect: [ :fileLogger | fileLogger fileName = fileName ] ifNone: [ self createFileLogger.
+			self fileLogger: fileName  ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -87,6 +88,16 @@ SConfiguration class >> nameLog [
 { #category : #accessing }
 SConfiguration class >> nameLog: string [
 	nameLog := string
+]
+
+{ #category : #accessing }
+SConfiguration class >> random [
+	^ random
+]
+
+{ #category : #accessing }
+SConfiguration class >> random: aRandom [
+	random := aRandom
 ]
 
 { #category : #'as yet unclassified' }

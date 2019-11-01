@@ -32,6 +32,12 @@ STypeMethodInfo class >> type: aAssoc [
 		isDeprecated: aValue fifth"
 ]
 
+{ #category : #comparing }
+STypeMethodInfo >> = other [
+
+	^ self class = other class and: [ selector = other selector and: [ receiver = other receiver and: [ returnType = other returnType and: [ argTypes = other argTypes and: [ isQuick = other isQuick  ] ] ] ] ]
+]
+
 { #category : #adding }
 STypeMethodInfo >> addType: aType [
 	argTypes do: [ :arg | arg type: aType ].
@@ -86,6 +92,12 @@ STypeMethodInfo >> dataCSV [
 		add: (argTypes ifNil: [''] ifNotNil: [argTypes collect: [:argType | argType commonSuperclass]]);
 		add: returnType types asArray;
 		add: returnType commonSuperclass; yourself)
+]
+
+{ #category : #comparing }
+STypeMethodInfo >> hash [
+	^ selector hash
+		bitXor: (receiver hash bitXor: (returnType hash bitXor: (argTypes hash bitXor: isQuick hash)))
 ]
 
 { #category : #initialization }

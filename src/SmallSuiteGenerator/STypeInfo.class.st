@@ -10,6 +10,17 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #comparing }
+STypeInfo >> = other [
+	^ self class = other class
+		and: [ types = other types
+				and: [ | otherScalars |
+					otherScalars := other scalars.
+					scalars keys = otherScalars keys
+						and: [ (scalars values collect: #size)
+								= (otherScalars values collect: #size) ] ] ]
+]
+
 { #category : #'as yet unclassified' }
 STypeInfo >> accessMessagesFrom: aClassName [
 	^ types
@@ -20,10 +31,11 @@ STypeInfo >> accessMessagesFrom: aClassName [
 
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
-	aTypeClassInfo typeInfo: self.
-	types at: aTypeClassInfo typeName
-	ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
-	 ifAbsentPut: aTypeClassInfo
+	"aTypeClassInfo typeInfo: self."
+	types
+		at: aTypeClassInfo typeName
+		ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
+		ifAbsentPut: aTypeClassInfo
 ]
 
 { #category : #accessing }
@@ -38,11 +50,10 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 
 { #category : #accessing }
 STypeInfo >> classes [
-	classes
-		ifNil: [ classes := Dictionary new.
-			types
-				keysDo:
-					[ :aClassName | classes at: aClassName put: (Smalltalk at: aClassName) ] ].
+	classes ifNil: [ classes := Dictionary new ].
+	types
+		keysDo:
+			[ :aClassName | classes at: aClassName ifAbsentPut: (Smalltalk at: aClassName) ].
 	^ classes
 ]
 
@@ -82,6 +93,18 @@ STypeInfo >> initialize [
 	scalars := Dictionary new
 ]
 
+{ #category : #accessing }
+STypeInfo >> isAbstractClass: symbol [
+	| aClass |
+	aClass := self classes at: symbol.
+	^ (aClass isAbstract
+		or:
+			[(aClass methods select: #isAbstract) isNotEmpty
+				or: [ (aClass methods
+						select: [ :meth | meth literals includes: #subclassResponsibility ])
+						isNotEmpty ]])
+]
+
 { #category : #'as yet unclassified' }
 STypeInfo >> joinScalars: aDict [
 	aDict associations
@@ -110,20 +133,16 @@ STypeInfo >> messagesFrom: aClassName [
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
 	noneAbstractClasses
-		ifNil: [ noneAbstractClasses := self classes values
-				reject: [ :aClass | 
-					aClass isAbstract
-						or: [ (aClass methods select: #isAbstract) isNotEmpty
-								or: [ (aClass methods
-										select: [ :meth | meth literals includes: #subclassResponsibility ])
-										isNotEmpty ] ] ] ].
+		ifNil: [ noneAbstractClasses := self classes associations
+				select: [ :assoc | (self isAbstractClass: assoc key) not ]
+				thenCollect: [ :assoc | assoc value ] ].
 	^ noneAbstractClasses
 ]
 
 { #category : #accessing }
 STypeInfo >> randomNoneAbstractClass [
 	self assert: types isNotEmpty description: 'There is not a class'.
-	^ self noneAbstractClasses shuffle anyOne
+	^ self noneAbstractClasses atRandom: (SConfiguration random)
 ]
 
 { #category : #'as yet unclassified' }
@@ -143,17 +162,18 @@ STypeInfo >> reportFrequencyByFilter [
 
 { #category : #'as yet unclassified' }
 STypeInfo >> scalar: aClassName with: aValue [
-	scalars at: aClassName put: aValue asSet
+	scalars at: aClassName put: aValue asSet asArray
 ]
 
 { #category : #accessing }
 STypeInfo >> scalars [
-	^ scalars 
+	^ scalars
 ]
 
 { #category : #accessing }
 STypeInfo >> scalars: aDictionary [
-	scalars := aDictionary
+	aDictionary
+		associationsDo: [ :assoc | self scalar: assoc key with: assoc value ]
 ]
 
 { #category : #'accessing structure variables' }

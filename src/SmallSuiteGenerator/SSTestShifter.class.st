@@ -8,7 +8,6 @@ Class {
 		'nextId',
 		'fitness',
 		'targetClassesNames',
-		'validateTargetClasses',
 		'maxNumberOfStatements'
 	],
 	#category : #'SmallSuiteGenerator-Core'
@@ -16,30 +15,29 @@ Class {
 
 { #category : #inserting }
 SSTestShifter >> addAssignment: anExpression [
-	^ self addStatement: ( self newAssignment: anExpression).
-
+	|assignment|
+	assignment := self newAssignment: anExpression.
+	self addStatement: assignment.
+	^ assignment
 ]
 
 { #category : #inserting }
 SSTestShifter >> addFactoryMessage [
-	|receiver variables|
-	
+	| variables |
 	variables := self objectVariables.
-	variables isEmpty ifTrue:[
-		typeInfo noneAbstractClasses shuffle
-		do: [ :aClass | [   ^ self addFactoryMessage: aClass name] on: SError do: [  ] ].
-			self error: 'Not able to create a factoryMessage'
-		] ifFalse:[
-			receiver := variables atRandom.
-			^ self addFactoryMessage: receiver returnType.
-		].
+	variables
+		ifEmpty: [ typeInfo noneAbstractClasses shuffle
+				do: [ :aClass | 
+					[ ^ self addFactoryMessage: aClass name ]
+						on: SError
+						do: [  ] ].
+			self error: 'Not able to create a factoryMessage' ]
+		ifNotEmpty: [ ^ self addFactoryMessage: variables atRandom returnType ]
 ]
 
 { #category : #inserting }
 SSTestShifter >> addFactoryMessage: symbol [
-	[ ^ self addAssignment: (self newFactoryMessage: symbol before: nil) ]
-		on: SError
-		do: [ :error | self error: error messageText ]
+	^ self addAssignment: (self newFactoryMessage: symbol before: nil)
 ]
 
 { #category : #inserting }
@@ -54,11 +52,6 @@ SSTestShifter >> addFactoryMessage: aClassName ofSelector: aSelector [
 ]
 
 { #category : #inserting }
-SSTestShifter >> addFactoryMessage: aClassName withMethod: aMethod [
-	^ self addAssignment: (self factoryMessageUsing: aMethod before: nil)
-]
-
-{ #category : #inserting }
 SSTestShifter >> addFieldAccessMessage [
 	| receiver methods |
 	receiver := self pickAnObjectVariable.
@@ -66,7 +59,8 @@ SSTestShifter >> addFieldAccessMessage [
 	methods
 		ifNotEmpty: [ ^ self
 				addFieldAccessMessage: methods shuffle anyOne
-				withReceiver: receiver ]
+				withReceiver: receiver ].
+	self error: 'cant create a field access message'
 ]
 
 { #category : #inserting }
@@ -101,26 +95,26 @@ SSTestShifter >> addLiteral: aClassName [
 
 { #category : #inserting }
 SSTestShifter >> addMessage [
-	| receiver methods|
+	| receiver methods |
 	receiver := self pickAnObjectVariable.
 	methods := self pickMessagesOf: receiver returnType.
 	methods
-		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ].
-	
+		ifEmpty: [ self error: 'There are no method typeInfos for: ', receiver returnType, '.' ]
+		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ]
 ]
 
 { #category : #inserting }
 SSTestShifter >> addMessage: aSelector from: aClassName [
 	| receiver aMethod |
-	aMethod := (self pickMessagesOf: aClassName)
-		, (typeInfo factoryMessagesFrom: aClassName)
+	aMethod := ((self pickMessagesOf: aClassName)
+		, (typeInfo factoryMessagesFrom: aClassName))
 		detect: [ :aMessage | aMessage selector = aSelector ]
 		ifNone: [ self
 				error:
 					'the receiver of: ' , aSelector , ' does not match with: '
 						, aClassName ].
-	aMethod isQuick
-		ifTrue: [ self error: 'the method must be a message, not accessor message' ].
+	"aMethod isQuick
+		ifTrue: [ self error: 'the method must be a message, not accessor message' ]."
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
 	^ self addMessage: aMethod withReceiver: receiver
 ]
@@ -407,7 +401,6 @@ SSTestShifter >> initialize [
 	nextId := 0.
 	maxNumberOfStatements := 10.
 	targetClassesNames := Set new.
-	validateTargetClasses := false
 ]
 
 { #category : #inserting }
@@ -423,9 +416,9 @@ SSTestShifter >> insertAsParameter: aExpression after: aStatement [
 ]
 
 { #category : #inserting }
-SSTestShifter >> insertExpression: aExpression after: aStatement [
+SSTestShifter >> insertExpression: expression after: aStatement [
 	^ self
-		addStatement: (self newAssignment: aExpression)
+		addStatement: (self newAssignment: expression)
 		after: aStatement
 ]
 
@@ -539,7 +532,18 @@ SSTestShifter >> newAssignment: anExpression [
 
 { #category : #'instance creation' }
 SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
-	typeInfo types
+	| methods |
+	typeInfo
+		classAt: aClassName
+		ifNone: [ self
+				error:
+					'Error to create factoryMessage of: ' , aClassName
+						, ' because it is not found in typeInfo.' ].
+	self validTargetClassName: aClassName.
+	methods := typeInfo factoryMessagesFrom: aClassName.
+	^ methods
+		ifEmpty: [ SFactoryMessage default: aClassName ]
+		ifNotEmpty: [ "typeInfo types
 		at: aClassName
 		ifPresent: [ | methods |
 			self validTargetClassName: aClassName.
@@ -547,7 +551,10 @@ SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
 			^ methods
 				ifEmpty: [ SFactoryMessage default: aClassName ]
 				ifNotEmpty: [ self newFactoryMessageUsing: aClassName and: aStatement ] ].
-		self error: 'Error to create factoryMessage of: ', aClassName, ' because it is not found in typeInfo.'
+	self
+		error:
+			'Error to create factoryMessage of: ' , aClassName
+				, ' because it is not found in typeInfo.'" self newFactoryMessageUsing: aClassName and: aStatement ]
 ]
 
 { #category : #'instance creation' }
@@ -699,11 +706,12 @@ SSTestShifter >> pickAccessorsOf: aType [
 
 { #category : #querying }
 SSTestShifter >> pickAnObjectVariable [
-	|variables|
+	| variables |
 	variables := self objectVariables.
-	variables isEmpty ifTrue:[ self addFactoryMessage. variables := self objectVariables].
-	variables ifEmpty:[ self error:'it is not possible to create an object'].
-	^ variables atRandom.
+	variables
+		ifEmpty: [ self addFactoryMessage.
+			variables := self objectVariables ].
+	^ variables atRandom
 ]
 
 { #category : #querying }
@@ -749,7 +757,7 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 
 { #category : #inserting }
 SSTestShifter >> randomLiteralClassName [
-	^ typeInfo scalars keys atRandom.
+	^ [typeInfo scalars keys atRandom] on: Error do: [ self error: 'TypeInfo does not have scalars, set scalars in typeInfo.' ]
 ]
 
 { #category : #inserting }
@@ -947,10 +955,7 @@ SSTestShifter >> validReferences [
 
 { #category : #accessing }
 SSTestShifter >> validTargetClassName: aClassName [
-	(validateTargetClasses and: [ (targetClassesNames includes: aClassName) not ]) ifTrue: [ self error: 'Class: ', aClassName, ' is not able to be used.' ]
-]
-
-{ #category : #accessing }
-SSTestShifter >> validateTargetClasses: boolean [
-	validateTargetClasses := boolean
+			((targetClassesNames includes: aClassName) not
+				or: [ typeInfo isAbstractClass: aClassName ])
+		ifTrue: [ self error: 'Class: ' , aClassName , ' is not able to be used.' ]
 ]

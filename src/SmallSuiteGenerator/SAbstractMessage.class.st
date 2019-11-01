@@ -92,8 +92,8 @@ SAbstractMessage >> initialize [
 ]
 
 { #category : #mutation }
-SAbstractMessage >> insertRandomMessage: aExpression using: aTestCase [
-	^ aTestCase insertExpression: self copy after: aExpression
+SAbstractMessage >> insertRandomMessage: expression using: aTestCase [
+	^ aTestCase insertExpression: self copy after: expression
 ]
 
 { #category : #mutation }
