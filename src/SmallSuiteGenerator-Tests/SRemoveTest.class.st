@@ -8,7 +8,9 @@ Class {
 SRemoveTest >> testRemoveArgsFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -23,7 +25,8 @@ SRemoveTest >> testRemoveArgsFactoryMessage [
 SRemoveTest >> testRemoveArgsMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;
+	addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -43,7 +46,8 @@ SRemoveTest >> testRemoveArgsMessage [
 SRemoveTest >> testRemoveFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage.
+	testCase addTargetClassName: #SFoo;
+	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -57,7 +61,8 @@ SRemoveTest >> testRemoveFactoryMessage [
 SRemoveTest >> testRemoveFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFieldAccessMessage.
+	testCase addTargetClassName: #SFoo;
+	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -72,7 +77,8 @@ SRemoveTest >> testRemoveFieldAccessMessage [
 SRemoveTest >> testRemoveMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;
+	addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -80,15 +86,15 @@ SRemoveTest >> testRemoveMessage [
 	testCase removeStatementOfVarName: '_var3'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.')
+		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.')
 ]
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFieldAccessMessage.
+	testCase addTargetClassName: #SFoo;
+	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -104,7 +110,8 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 SRemoveTest >> testRemoveReceiverMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;
+	addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -120,6 +127,7 @@ SRemoveTest >> testRemoveReceiverMessage [
 SRemoveTest >> testRemoveStatementNoRepairing [
 	| testCase statement |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	statement := testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -129,6 +137,7 @@ SRemoveTest >> testRemoveStatementNoRepairing [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.').
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	statement := testCase addFactoryMessage.
 	testCase addMessage: #returnFloat from: #SFoo.
 	self

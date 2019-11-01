@@ -14,9 +14,10 @@ SInsertTest >> setUp [
 SInsertTest >> testInsertStatementAsParameterInMessage [
 	| testCase anExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo4.
-	testCase addFactoryMessage: #SFoo.
-	testCase addLiteral.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;
+	addFactoryMessage: #SFoo;
+	addLiteral;
+	addMessage: #return: from: #SFoo.
 	anExpression := testCase addLiteral.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -50,6 +51,7 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 SInsertTest >> testInsertStatementOfMixingSelectors [
 	| testCase fieldAccess message |
 	testCase := (SSTestCase with: utility typeInfosSStudent first)
+		addTargetClassName: #SStudent;
 		addLiteral: #SmallInteger;
 		addFactoryMessage: #SStudent ofSelector: #new;
 		addMessage: #scoreStudent: from: #SStudent;
@@ -59,8 +61,11 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 	self
 		assertCollection: (testCase statements collect: #printString) allButLast
 		hasSameElements:
-			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.'). 
-	self assert: (#('_var4 := _var1 idStudent.' '_var4 := _var2 idStudent.' '_var4 := _var3 idStudent.') includes: (testCase statementOfVarName: '_var4') printString).
+			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.').
+	self
+		assert:
+			(#('_var4 := _var1 idStudent.' '_var4 := _var2 idStudent.' '_var4 := _var3 idStudent.')
+				includes: (testCase statementOfVarName: '_var4') printString).
 	fieldAccess := testCase statementOfVarName: '_var4'.
 	message := (testCase statementOfVarName: '_var2') value.
 	message := testCase insertExpression: message copy after: fieldAccess.
@@ -72,13 +77,14 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 		inStatement: fieldAccess.
 	self
 		assert: message printString
-		equals: '_var5 := _var1 scoreStudent: _var4.'.
+		equals: '_var5 := _var1 scoreStudent: _var4.'
 ]
 
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 	| testCase auxExpr expression |
 	testCase := SSTestCase with: utility typeInfoSFoo2.
+	testCase addTargetClassName: #SFoo.
 	expression := testCase addFactoryMessage.
 	testCase addFactoryMessage.
 	self
@@ -143,7 +149,8 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage.
+	testCase addTargetClassName: #SFoo;
+	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -156,6 +163,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
 	| testCase fieldMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	fieldMessage := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -185,6 +193,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 	| testCase message |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	message := testCase addMessage: #returnNum from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -203,7 +212,8 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage.
+	testCase addTargetClassName: #SFoo;
+	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -218,6 +228,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
 	| testCase fieldMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	fieldMessage := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -249,6 +260,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInMessage [
 	| testCase message |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	message := testCase addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)

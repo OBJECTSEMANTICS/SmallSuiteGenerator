@@ -7,10 +7,12 @@ Class {
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	| testCase changed |
-	testCase := SSTestCase with: utility typeInfoAthensCairo.
-	testCase addFactoryMessage.
-	testCase addLiteral.
-	testCase addFactoryMessage.
+	testCase := (SSTestCase with: utility typeInfoAthensCairo).
+	testCase
+		addTargetClassName: #AthensCairoCanvas;
+		addFactoryMessage;
+		addLiteral;
+		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -49,7 +51,8 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 	| testCase expressionChanged |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage.
+	testCase addTargetClassName: #SFoo;
+	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -65,7 +68,8 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 SChangeTest >> testChangeStatementOfFieldAccessMessage [
 	| testCase exprField exprFieldChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addFactoryMessage: #SStack ofSelector: #newStack.
+	testCase addTargetClassName: #SStack;
+	addFactoryMessage: #SStack ofSelector: #newStack.
 	exprField := (testCase
 		addFieldAccessMessage: #firstLinkStack
 		from: #SStack) copy.
@@ -97,9 +101,8 @@ SChangeTest >> testChangeStatementOfLiteral [
 SChangeTest >> testChangeStatementOfMessage [
 	| testCase exprMessage exprLiteralChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	"testCase
-		addFactoryMessage: #SStack
-		withMethod: (testCase typeInfo type: #newStack fromMetaClassName: #SStack)."
+	testCase addTargetClassName: #SStack;
+	addFactoryMessage: #SStack ofSelector: #newStack.
 	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
