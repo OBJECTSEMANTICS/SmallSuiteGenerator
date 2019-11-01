@@ -50,7 +50,7 @@ SLiteralTest >> testInsertAsParameterUsing [
 { #category : #tests }
 SLiteralTest >> testInsertParameterOn [
 	| testCase expression insertedExpression |
-	testCase := SSTestCase with: utility typeInfoSFoo5.
+	testCase := SSTestCase with: utility typeInfoSFoo4.
 	testCase addLiteral: #SStudent.
 	testCase addMessage: #return: from: #SFoo.
 	self

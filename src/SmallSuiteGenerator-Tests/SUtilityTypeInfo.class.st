@@ -200,6 +200,21 @@ SUtilityTypeInfo >> typeInfoOnPackage4 [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSAbstractClass [
+	^ STypeInfo new
+		type:
+			#SAbstractClass
+				->
+					(Array
+						with:
+							(Array
+								with: #id -> #(#SAbstractClass #SmallInteger #() false))
+						with:
+							#());
+		scalar: #SmallInteger with: #(1)
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoSEvent1 [
 	^ STypeInfo new
 				type:
@@ -255,16 +270,13 @@ SUtilityTypeInfo >> typeInfoSFoo1 [
 
 { #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoSFoo2 [
-	^  (STypeInfo new
-				type:
-					#SFoo
-						->
-							(Array
-								with: (Array with: #return: -> #(#SFoo #SFoo #(#SFoo) false))
-								with: #());
-				scalar: #ByteString with: #('hello');
-				scalar: #SmallInteger with: #(5);
-				scalar: #SmallFloat64 with: #(7.3))
+	^ STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with: (Array with: #return: -> #(#SFoo #SFoo #(#SFoo) false))
+						with: #())
 ]
 
 { #category : #'as yet unclassified' }
@@ -307,16 +319,53 @@ SUtilityTypeInfo >> typeInfoSFoo4 [
 { #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoSFoo5 [
 	^ STypeInfo new
-				type:
-					#SFoo
-						->
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false))
+						with: #());
+		scalar: #OrderedCollection
+			with:
+			(Array
+				with:
+					(OrderedCollection new
+						addAll: #(1 4 5);
+						yourself))
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSFooEmpty [
+	^ STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							#()
+						with: #())
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSSPerson1 [
+	^ STypeInfo new
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #name -> #(#SSPerson #ByteString #() true)
+								with: #id -> #(#SSPerson #SmallInteger #() false))
+						with:
 							(Array
 								with:
-									(Array
-										with: #initialize -> #(#SFoo #SFoo #() false)
-										with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
-								with: #());
-				scalar: #SStudent with: (Array with: SStudent new)
+									#name:with:
+										-> #(#SSPerson #SSPerson #(#ByteString #SmallInteger) false)));
+		scalar: #SmallInteger with: #(50);
+		scalar: #ByteString with: #('Ann')
 ]
 
 { #category : #'as yet unclassified' }
@@ -374,6 +423,23 @@ SUtilityTypeInfo >> typeInfoSSTeacher3 [
 								with: #());
 				scalar: #SmallInteger with: #(1 10);
 				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSSTeacher4 [
+	^ STypeInfo new
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
+							(Array
+								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
+								with: #idTeacher -> #(#SSTeacher #SmallInteger #() true)
+								with: #yearsWorkExperience -> #(#SSTeacher #SSTeacher #() true))
+						with: #());
+		scalar: #SmallInteger with: #(1 29 9);
+		scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
 ]
 
 { #category : #'as yet unclassified' }
@@ -453,6 +519,320 @@ SUtilityTypeInfo >> typeInfoSStack4 [
 										with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 				scalar: #SmallInteger with: #(5);
 				scalar: #Array with: #(#(1 4 5)))
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoStringSFoo6 [
+	"SSTypeCollector profile: [ SFoo new return: (Dictionary new at: 1 put: (SStack new push: (SStudent  name: 'Lian' with: 1); push: (SStudent name: 'Josh' with: 2); yourself ); at: 2 put: (OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself); yourself ) ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'."
+	^ 'STypeInfo {
+	#types : {
+		#SStack : STypeClassInfo {
+			#typeName : #SStack,
+			#methodTypes : {
+				#''push:'' : STypeMethodInfo {
+					#selector : #''push:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #SStudent ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStack ]
+				}
+			},
+			#classMethodTypes : { }
+		},
+		#SSPerson : STypeClassInfo {
+			#typeName : #SSPerson,
+			#methodTypes : {
+				#''id:'' : STypeMethodInfo {
+					#selector : #''id:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				},
+				#''nickname:'' : STypeMethodInfo {
+					#selector : #''nickname:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				},
+				#''name:'' : STypeMethodInfo {
+					#selector : #''name:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				}
+			},
+			#classMethodTypes : {
+				#''name:with:'' : STypeMethodInfo {
+					#selector : #''name:with:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ],
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				}
+			}
+		},
+		#SConference : STypeClassInfo {
+			#typeName : #SConference,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SEvent : STypeClassInfo {
+			#typeName : #SEvent,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SSTeacher : STypeClassInfo {
+			#typeName : #SSTeacher,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SParty : STypeClassInfo {
+			#typeName : #SParty,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SEventTest : STypeClassInfo {
+			#typeName : #SEventTest,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SFoo : STypeClassInfo {
+			#typeName : #SFoo,
+			#methodTypes : {
+				#initialize : STypeMethodInfo {
+					#selector : #initialize,
+					#returnType : SMultiTypeInfo [ #SFoo ],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				},
+				#''return:'' : STypeMethodInfo {
+					#selector : #''return:'',
+					#returnType : SMultiTypeInfo [ #Dictionary ],
+					#argTypes : [
+						SMultiTypeInfo [ #Dictionary ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				}
+			},
+			#classMethodTypes : { }
+		}
+	},
+	#scalars : {
+		#Dictionary : [
+			{
+				1 : SStack [
+					SStudent {
+						#name : ''Josh'',
+						#id : 2,
+						#nickname : ''Josh'',
+						#scoreStudent : 1,
+						#idStudent : 1
+					},
+					SStudent {
+						#name : ''Lian'',
+						#id : 1,
+						#nickname : ''Lian'',
+						#scoreStudent : 1,
+						#idStudent : 1
+					}
+				],
+				2 : OrderedCollection [
+					SStudent {
+						#name : ''Mery'',
+						#id : 5,
+						#nickname : ''Mery'',
+						#scoreStudent : 1,
+						#idStudent : 1
+					}
+				]
+			}
+		],
+		#ByteString : [
+			''Josh'',
+			''Lian'',
+			''Mery''
+		],
+		#SmallInteger : [
+			5,
+			1,
+			2
+		],
+		#SStudent : [
+			@65,
+			@68,
+			@66
+		]
+	}
+}'
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoStringSStack [
+	"SSTypeCollector profile: [ SStack new push: (OrderedCollection new add: (SStudent  name: 'Lian' with: 1); add: (SStudent name: 'Josh' with: 2); yourself); push: (OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself); yourself ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'."
+	^ 'STypeInfo {
+	#types : {
+		#SStack : STypeClassInfo {
+			#typeName : #SStack,
+			#methodTypes : {
+				#''push:'' : STypeMethodInfo {
+					#selector : #''push:'',
+					#returnType : SMultiTypeInfo [ #OrderedCollection ],
+					#argTypes : [
+						SMultiTypeInfo [ #OrderedCollection ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStack ]
+				}
+			},
+			#classMethodTypes : { }
+		},
+		#SSPerson : STypeClassInfo {
+			#typeName : #SSPerson,
+			#methodTypes : {
+				#''id:'' : STypeMethodInfo {
+					#selector : #''id:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				},
+				#''nickname:'' : STypeMethodInfo {
+					#selector : #''nickname:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				},
+				#''name:'' : STypeMethodInfo {
+					#selector : #''name:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				}
+			},
+			#classMethodTypes : {
+				#''name:with:'' : STypeMethodInfo {
+					#selector : #''name:with:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ],
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				}
+			}
+		},
+		#SConference : STypeClassInfo {
+			#typeName : #SConference,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SEvent : STypeClassInfo {
+			#typeName : #SEvent,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SSTeacher : STypeClassInfo {
+			#typeName : #SSTeacher,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SParty : STypeClassInfo {
+			#typeName : #SParty,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SEventTest : STypeClassInfo {
+			#typeName : #SEventTest,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SFoo : STypeClassInfo {
+			#typeName : #SFoo,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		}
+	},
+	#scalars : {
+		#OrderedCollection : [
+			OrderedCollection [
+				SStudent {
+					#name : ''Mery'',
+					#id : 5,
+					#nickname : ''Mery'',
+					#scoreStudent : 1,
+					#idStudent : 1
+				}
+			],
+			OrderedCollection [
+				SStudent {
+					#name : ''Lian'',
+					#id : 1,
+					#nickname : ''Lian'',
+					#scoreStudent : 1,
+					#idStudent : 1
+				},
+				SStudent {
+					#name : ''Josh'',
+					#id : 2,
+					#nickname : ''Josh'',
+					#scoreStudent : 1,
+					#idStudent : 1
+				}
+			]
+		],
+		#ByteString : [
+			''Josh'',
+			''Lian'',
+			''Mery''
+		],
+		#SmallInteger : [
+			5,
+			1,
+			2
+		],
+		#SStudent : [
+			@56,
+			@59,
+			@58
+		]
+	}
+}'
 ]
 
 { #category : #'as yet unclassified' }

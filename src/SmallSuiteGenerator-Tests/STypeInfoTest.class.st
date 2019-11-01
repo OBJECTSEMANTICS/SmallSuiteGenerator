@@ -238,6 +238,53 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 ]
 
 { #category : #tests }
+STypeInfoTest >> testEquals [
+	self
+		assert: (STypeInfo new type: #SFoo -> #(#() #()))
+		equals: (STypeInfo new type: #SFoo -> #(#() #())).
+	self
+		assert:
+			(STypeInfo new
+				type:
+					#SStudent
+						->
+							(Array
+								with: (Array with: #name -> #(#SStudent #ByteString #() false))
+								with: #());
+				scalar: #ByteString with: #('Abi'))
+		equals:
+			(STypeInfo new
+				type:
+					#SStudent
+						->
+							(Array
+								with: (Array with: #name -> #(#SStudent #ByteString #() false))
+								with: #());
+				scalar: #ByteString with: #('Abi')).
+	self
+		assert:
+			(STypeInfo new
+				type:
+					#SFoo
+						->
+							(Array
+								with: (Array with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+				scalar: #SmallInteger with: #(1 3 4);
+				scalar: #SStudent with: (Array with: (SStudent name: 'Nilson')))
+		equals:
+			(STypeInfo new
+				type:
+					#SFoo
+						->
+							(Array
+								with: (Array with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+				scalar: #SmallInteger with: #(1 3 4);
+				scalar: #SStudent with: (Array with: (SStudent name: 'Nilson')))
+]
+
+{ #category : #tests }
 STypeInfoTest >> testFactoryMessages [
 	| typeInfo |
 	typeInfo := (SSTypeCollector
@@ -256,6 +303,71 @@ STypeInfoTest >> testFactoryMessages [
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SConference) collect: #selector)
 		hasSameElements: #(#price:)
+]
+
+{ #category : #tests }
+STypeInfoTest >> testFactoryMessagesFrom [
+	"self halt"
+]
+
+{ #category : #tests }
+STypeInfoTest >> testFromString [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+		scalar: #SmallFloat64 with: #(2.3 4.6);
+		scalar: #ByteString with: #('hello' 'Abi').
+	self
+		assert:
+			(STON
+				fromString:
+					'STypeInfo {
+						#types: { 
+							#SFoo: STypeClassInfo { 
+							#typeName: #SFoo,
+							#methodTypes: {
+								#returnFloat: STypeMethodInfo {#selector: #returnFloat, #receiver: SMultiTypeInfo [#SFoo], #returnType: SMultiTypeInfo [#SmallFloat64], #argTypes: [], #isQuick: false}, 
+								#''return:'': STypeMethodInfo {#selector: #''return:'', #receiver: SMultiTypeInfo [#SFoo], #returnType: SMultiTypeInfo [#ByteString], #argTypes: [SMultiTypeInfo [#ByteString]], #isQuick: false}}, 
+							#classMethodTypes: { 
+								#''score:'': STypeMethodInfo {#selector: #''score:'', #receiver: SMultiTypeInfo [#SFoo], #returnType: SMultiTypeInfo [#SFoo], #argTypes: [SMultiTypeInfo [#SmallInteger]], #isQuick: false}
+							}}
+						},
+					#scalars: {
+						#SmallFloat64: [ 2.3, 4.6 ],
+						#ByteString: [ ''hello'', ''Abi'' ]
+					}}')
+		equals: typeInfo
+]
+
+{ #category : #tests }
+STypeInfoTest >> testIsAbstracClass [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #name -> #(#SSPerson #ByteString #() true)
+								with: #id -> #(#SSPerson #SmallInteger #() false))
+						with:
+							(Array
+								with:
+									#name:with:
+										-> #(#SSPerson #SSPerson #(#ByteString #SmallInteger) false)));
+		scalar: #SmallInteger with: #(50);
+		scalar: #ByteString with: #('Ann').
+	self assert: (typeInfo isAbstractClass: #SSPerson).
+			
 ]
 
 { #category : #tests }
@@ -335,6 +447,42 @@ STypeInfoTest >> testMessagesFrom [
 ]
 
 { #category : #tests }
+STypeInfoTest >> testNoneAbstractClasses [
+	| typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #name -> #(#SSPerson #ByteString #() true)
+								with: #id -> #(#SSPerson #SmallInteger #() false))
+						with:
+							(Array
+								with:
+									#name:with:
+										-> #(#SSPerson #SSPerson #(#ByteString #SmallInteger) false)));
+		type:
+			#SAbstractClass
+				->
+					(Array
+						with: (Array with: #id -> #(#SAbstractClass #SmallInteger #() true))
+						with: #());
+		type:
+			#SStudent
+				->
+					(Array
+						with: (Array with: #scoreStudent -> #(#SStudent #SmallInteger #() true))
+						with: #());
+		scalar: #SmallInteger with: #(50 1);
+		scalar: #ByteString with: #('Ann').
+	self
+		assertCollection: (typeInfo noneAbstractClasses collect: #name)
+		hasSameElements: #(#SStudent)
+]
+
+{ #category : #tests }
 STypeInfoTest >> testScalar [
 	| typeInfo |
 	typeInfo := STypeInfo new
@@ -356,6 +504,45 @@ STypeInfoTest >> testScalar [
 	self
 		assertCollection: ((typeInfo scalars at: #Stack) collect: #className)
 		hasSameElements: #(#Stack  #Stack)
+]
+
+{ #category : #tests }
+STypeInfoTest >> testToString [
+	| string typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+		scalar: #SmallFloat64 with: #(2.3 4.6);
+		scalar: #ByteString with: #('hello' 'Abi').
+	string := STON toString: typeInfo.
+	self
+		assert: (STON fromString: string) equals: typeInfo
+]
+
+{ #category : #tests }
+STypeInfoTest >> testToStringComplexScalar [
+	| string typeInfo |
+	typeInfo := STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: #());
+		scalar: #SStudent with: (Array with: (SStudent name: 'Abi')).
+	string := STON toString: typeInfo.
+	self assert: (STON fromString: string) equals: typeInfo.
+	
+
 ]
 
 { #category : #tests }

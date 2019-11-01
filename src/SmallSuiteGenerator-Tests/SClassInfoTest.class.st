@@ -5,6 +5,101 @@ Class {
 }
 
 { #category : #tests }
+SClassInfoTest >> testEquals [
+	self
+		assert: (STypeClassInfo type: #SFoo -> #(#() #()))
+		equals: (STypeClassInfo type: #SFoo -> #(#() #())).
+	self
+		assert:
+			(STypeClassInfo
+				type:
+					#SStudent
+						->
+							(Array
+								with: (Array with: #name -> #(#SStudent #ByteString #() false))
+								with: #()))
+		equals:
+			(STypeClassInfo
+				type:
+					#SStudent
+						->
+							(Array
+								with: (Array with: #name -> #(#SStudent #ByteString #() false))
+								with: #())).
+	self
+		assert:
+			(STypeClassInfo
+				type:
+					#SFoo
+						->
+							(Array
+								with: (Array with: #score -> #(#SFoo #SmallInteger #() false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))))
+		equals:
+			(STypeClassInfo
+				type:
+					#SFoo
+						->
+							(Array
+								with: (Array with: #score -> #(#SFoo #SmallInteger #() false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))))
+]
+
+{ #category : #tests }
+SClassInfoTest >> testFromString [
+	| typeClass |
+	typeClass := STypeClassInfo
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
+	self
+		assert:
+			(STON
+				fromString:
+					'STypeClassInfo {
+						#typeName: #SFoo,
+						#methodTypes: {
+							#returnFloat: STypeMethodInfo {#selector: #returnFloat, #receiver: SMultiTypeInfo [#SFoo], #returnType: SMultiTypeInfo [#SmallFloat64], #argTypes: [], #isQuick: false}, 
+							#''return:'': STypeMethodInfo {#selector: #''return:'', #receiver: SMultiTypeInfo [#SFoo], #returnType: SMultiTypeInfo [#ByteString], #argTypes: [SMultiTypeInfo [#ByteString]], #isQuick: false}}, 
+						#classMethodTypes: { 
+							#''score:'': STypeMethodInfo {#selector: #''score:'', #receiver: SMultiTypeInfo [#SFoo], #returnType: SMultiTypeInfo [#SFoo], #argTypes: [SMultiTypeInfo [#SmallInteger]], #isQuick: false}
+				}}')
+		equals: typeClass
+]
+
+{ #category : #tests }
+SClassInfoTest >> testToString [
+	| string |
+	string := STON toString: (STypeClassInfo
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)))).
+	self
+		assert: (STON fromString: string) equals: (STypeClassInfo
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))))
+]
+
+{ #category : #tests }
 SClassInfoTest >> testType [
 	| classInfo methodInfo |
 	classInfo := STypeClassInfo
