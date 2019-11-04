@@ -31,9 +31,9 @@ SLiteralTest >> testEqual [
 SLiteralTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addLiteral: #ByteString.
+	testCase addTargetClassName: #SFoo;addLiteral: #ByteString.
 	expression := testCase addLiteral: #ByteString.
-	testCase addFactoryMessage:#SFoo.
+	testCase addFactoryMessage: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -50,9 +50,8 @@ SLiteralTest >> testInsertAsParameterUsing [
 { #category : #tests }
 SLiteralTest >> testInsertParameterOn [
 	| testCase expression insertedExpression |
-	testCase := SSTestCase with: utility typeInfoSFoo5.
-	testCase addLiteral: #SStudent.
-	testCase addMessage: #return: from: #SFoo.
+	testCase := SSTestCase with: utility typeInfoSFoo4.
+	testCase addTargetClassName: #SFoo; addLiteral: #SStudent; addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:

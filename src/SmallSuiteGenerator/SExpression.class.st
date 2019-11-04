@@ -59,8 +59,8 @@ SExpression >> insertAsParameter: aExpression using: aTestCase [
 ]
 
 { #category : #mutation }
-SExpression >> insertMethodMessage: aExpression using: aTestCase [
-	self error: 'cant insert methodMessage'
+SExpression >> insertMethodMessage: expression using: aTestCase [
+	self error: 'cannot be inserted the methodMessage: ', expression printString
 ]
 
 { #category : #mutation }
@@ -69,8 +69,8 @@ SExpression >> insertOn: aTestCase [
 ]
 
 { #category : #mutation }
-SExpression >> insertRandomMessage: aExpression using: aTestCase [
-	self error: 'cant insert randomMessage'
+SExpression >> insertRandomMessage: expression using: aTestCase [
+	self error: 'cannot be inserted the randomMessage: ', expression printString
 ]
 
 { #category : #testing }
@@ -104,8 +104,8 @@ SExpression >> repairOn: aTestCase changing: aExpression [
 ]
 
 { #category : #mutation }
-SExpression >> replaceArgBy: aExpression [
-	self error: 'cant insert as parameter'
+SExpression >> replaceArgBy: expression [
+	self error: 'cannot be inserted: ', expression printString, ' as parameter'
 ]
 
 { #category : #accessing }

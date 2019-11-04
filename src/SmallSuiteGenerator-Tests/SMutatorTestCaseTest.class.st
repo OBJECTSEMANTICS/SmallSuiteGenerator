@@ -17,7 +17,7 @@ SMutatorTestCaseTest >> setUp [
 SMutatorTestCaseTest >> testRemoveArgsMethod [
 	| testCase expression numExprsBefore numExprsAfter |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -42,7 +42,7 @@ SMutatorTestCaseTest >> testRemoveExpression [
 SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -65,7 +65,7 @@ SMutatorTestCaseTest >> testRemoveInEmptyTestCase [
 SMutatorTestCaseTest >> testRepair [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -81,5 +81,6 @@ SMutatorTestCaseTest >> testRepair [
 	self
 		assert:
 			(((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
-				collect: #printString) includesAny: #('_var4 := ''hello''.' '_var4 := _var1 returnString.'))
+				collect: #printString)
+				includesAny: #('_var4 := ''hello''.' '_var4 := _var1 returnString.'))
 ]

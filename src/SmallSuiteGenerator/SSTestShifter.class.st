@@ -8,15 +8,35 @@ Class {
 		'nextId',
 		'fitness',
 		'targetClassesNames',
-		'validateTargetClasses',
-		'maxNumberOfStatements'
+		'maxNumberOfStatements',
+		'validatedTargetClassName'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #adding }
+SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and: scalarNames [
+	| res |
+	res := arg types anySatisfy: [ :type | prevTypes includes: type ].
+	res
+		ifFalse: [ arg types asArray shuffle
+				detect: [ :missType | 
+					[ (scalarNames includes: missType)
+						ifTrue: [ self
+								addStatement: (self newAssignment: (self newLiteral: missType))
+								before: aStatement ]
+						ifFalse: [ self
+								addAssignment: (self newFactoryMessage: missType before: aStatement) ].
+					true ]
+						on: SError
+						do: [ false ] ]
+				ifNone: [ self
+						error: 'It is not possible to meet the arguments of this method call' ] ]
+]
+
 { #category : #inserting }
 SSTestShifter >> addAssignment: anExpression [
-	| assignment |
+	|assignment|
 	assignment := self newAssignment: anExpression.
 	self addStatement: assignment.
 	^ assignment
@@ -24,23 +44,21 @@ SSTestShifter >> addAssignment: anExpression [
 
 { #category : #inserting }
 SSTestShifter >> addFactoryMessage [
-	|receiver variables|
-	
+	| variables |
 	variables := self objectVariables.
-	variables isEmpty ifTrue:[
-		typeInfo noneAbstractClasses shuffle
-		do: [ :aClass | [   ^ self addFactoryMessage: aClass name] on: SError do: [  ] ].
-			self error: 'Not able to create a factoryMessage'
-		] ifFalse:[
-			receiver := variables atRandom.
-			^ self addFactoryMessage: receiver returnType.
-		].
+	variables
+		ifEmpty: [ typeInfo noneAbstractClasses shuffle
+				do: [ :aClass | 
+					[ ^ self addFactoryMessage: aClass name ]
+						on: SError
+						do: [  ] ].
+			self error: 'Cannot create a factoryMessage.' ]
+		ifNotEmpty: [ ^ self addFactoryMessage: variables atRandom returnType ]
 ]
 
 { #category : #inserting }
-SSTestShifter >> addFactoryMessage: aClassName [
-	^ self
-		addAssignment: (self newFactoryMessage: aClassName before: nil)
+SSTestShifter >> addFactoryMessage: symbol [
+	^ self addAssignment: (self newFactoryMessage: symbol before: nil)
 ]
 
 { #category : #inserting }
@@ -55,11 +73,6 @@ SSTestShifter >> addFactoryMessage: aClassName ofSelector: aSelector [
 ]
 
 { #category : #inserting }
-SSTestShifter >> addFactoryMessage: aClassName withMethod: aMethod [
-	^ self addAssignment: (self factoryMessageUsing: aMethod before: nil)
-]
-
-{ #category : #inserting }
 SSTestShifter >> addFieldAccessMessage [
 	| receiver methods |
 	receiver := self pickAnObjectVariable.
@@ -67,7 +80,8 @@ SSTestShifter >> addFieldAccessMessage [
 	methods
 		ifNotEmpty: [ ^ self
 				addFieldAccessMessage: methods shuffle anyOne
-				withReceiver: receiver ]
+				withReceiver: receiver ].
+	self error: 'Cannot create a field access message.'
 ]
 
 { #category : #inserting }
@@ -75,10 +89,12 @@ SSTestShifter >> addFieldAccessMessage: aSelector from: aClassName [
 	| receiver anAccessor |
 	anAccessor := (self pickAccessorsOf: aClassName)
 		detect: [ :accessor | accessor selector = aSelector ]
-		ifNone: [ self
+		ifNone: [ nil ].
+	anAccessor
+		ifNil: [ self
 				error:
-					'the receiver of: ' , aSelector , ' does not match with: '
-						, aClassName ].
+					'None field access message of selector: ' , aSelector
+						, ' matches with: ' , aClassName ].
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
 	^ self addFieldAccessMessage: anAccessor withReceiver: receiver
 ]
@@ -91,25 +107,23 @@ SSTestShifter >> addFieldAccessMessage: method withReceiver: receiver [
 
 { #category : #inserting }
 SSTestShifter >> addLiteral [
-	typeInfo scalars
-		ifNotEmpty: [typeInfo scalars keys shuffle do: [ :aClassName | 
-				[^ self addLiteral: aClassName] on: SError do: [  ]
-				 ] ]
+	^ self addLiteral: self randomLiteralClassName
 ]
 
 { #category : #inserting }
 SSTestShifter >> addLiteral: aClassName [
+	
 	^ self addAssignment: (self newLiteral: aClassName)
 ]
 
 { #category : #inserting }
 SSTestShifter >> addMessage [
-	| receiver methods|
+	| receiver methods |
 	receiver := self pickAnObjectVariable.
 	methods := self pickMessagesOf: receiver returnType.
 	methods
-		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ].
-	
+		ifEmpty: [ self error: 'There are no method typeInfos for: ', receiver returnType, '.' ]
+		ifNotEmpty: [ ^ self addMessage: methods shuffle anyOne withReceiver: receiver ]
 ]
 
 { #category : #inserting }
@@ -118,12 +132,12 @@ SSTestShifter >> addMessage: aSelector from: aClassName [
 	aMethod := (self pickMessagesOf: aClassName)
 		, (typeInfo factoryMessagesFrom: aClassName)
 		detect: [ :aMessage | aMessage selector = aSelector ]
-		ifNone: [ self
+		ifNone: [ nil ].
+	aMethod
+		ifNil: [ self
 				error:
-					'the receiver of: ' , aSelector , ' does not match with: '
-						, aClassName ].
-	aMethod isQuick
-		ifTrue: [ self error: 'the method must be a message, not accessor message' ].
+					'None message of selector: ' , aSelector
+						, ' matches with: ' , aClassName ].
 	receiver := self pickOrCreateObjectVariableOf: aClassName.
 	^ self addMessage: aMethod withReceiver: receiver
 ]
@@ -158,11 +172,11 @@ SSTestShifter >> addStatement: newExpression before: aStatement [
 ]
 
 { #category : #inserting }
-SSTestShifter >> addStatementOfType: aType before: aExpression [
+SSTestShifter >> addStatementOfType: aType before: expression [
 	| newExpression |
 	newExpression := self
-		newAssignment: (self newStatementOfType: aType before: aExpression).
-	self addStatement: newExpression before: aExpression.
+		newAssignment: (self newStatementOfType: aType before: expression).
+	self addStatement: newExpression before: expression.
 	^ newExpression
 ]
 
@@ -178,6 +192,11 @@ SSTestShifter >> addStatements: collStatements [
 SSTestShifter >> addTargetClassName: aSymbol [
 	typeInfo types at: aSymbol ifAbsent: [ self error: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
 	targetClassesNames add: aSymbol
+]
+
+{ #category : #adding }
+SSTestShifter >> addTargetClassNames: symbols [
+	symbols do: [ :symbol | self addTargetClassName: symbol ]
 ]
 
 { #category : #accessing }
@@ -198,7 +217,7 @@ SSTestShifter >> alternativeFactoryMessage: aFactoryMessage before: aExpression 
 ]
 
 { #category : #repairing }
-SSTestShifter >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExpression [
+SSTestShifter >> alternativeFieldAccessMessage: aFieldAccessMessage [
 	| returnType receiver |
 	receiver := aFieldAccessMessage receiver.
 	returnType := aFieldAccessMessage returnType.
@@ -210,12 +229,12 @@ SSTestShifter >> alternativeFieldAccessMessage: aFieldAccessMessage before: aExp
 			[ :meth | ^ SFieldAccessMessage newFromReceiver: receiver andMethod: meth ].
 	self
 		error:
-			'not found alternative of fieldAccessMessage: '
-				, aFieldAccessMessage printString
+			'There is no alternative for fieldAccessMessage of selector: '
+				, aFieldAccessMessage selector
 ]
 
 { #category : #repairing }
-SSTestShifter >> alternativeMessage: aMessage before: aExpression [
+SSTestShifter >> alternativeMessage: aMessage before: expression [
 	| returnType receiver |
 	receiver := aMessage receiver.
 	returnType := aMessage returnType.
@@ -223,10 +242,12 @@ SSTestShifter >> alternativeMessage: aMessage before: aExpression [
 		detect: [ :meth | 
 			meth returnType = returnType
 				and: [ meth selector ~= aMessage selector ] ]
-		ifFound: [ :meth | 
-			^ self messageUsing: meth and: receiver before: aExpression].
+		ifFound:
+			[ :meth | ^ self messageUsing: meth and: receiver before: expression ].
 	self
-		error: 'not found alternative of message: ' , aMessage printString
+		error:
+			'There is no alternative for message of selector: '
+				, aMessage selector
 ]
 
 { #category : #repairing }
@@ -263,30 +284,20 @@ SSTestShifter >> assignedIds [
 
 { #category : #repairing }
 SSTestShifter >> buildArgs: argTypes before: aStatement [
-	
 	argTypes
-		ifNotNil: [ 
-			|prevTypes scalarsKeys|
+		ifNotNil: [ | prevTypes scalarsKeys |
 			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 				collect: #returnType
 				thenSelect: [ :aType | aType isNotNil ].
 			scalarsKeys := typeInfo scalars keys.
-			argTypes do:[:arg|
-				|res|
-				res :=arg types anySatisfy:[:type|  prevTypes includes:type].
-				res ifFalse:[
-						arg types asOrderedCollection shuffle detect:[ :missType |
-							
-							[(scalarsKeys includes: missType) ifTrue: [ 
-								self addLiteral: missType.
-							] ifFalse:[
-								self addAssignment: (self newFactoryMessage: missType before: aStatement).
-							].true] on: SError do:[false]
-						] ifNone:[   ^ self error: 'it is not possible to meet the arguments of this method call'].	
-				] ifTrue:[].
-		].
-	].
-
+			argTypes
+				do: [ :arg | 
+					self
+						addArgument: arg
+						before: aStatement
+						considering: prevTypes
+						and: scalarsKeys
+					 ] ]
 ]
 
 { #category : #modifying }
@@ -384,14 +395,13 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 { #category : #actions }
 SSTestShifter >> generateStatements [
-	self assert: typeInfo types isNotEmpty 
-			description: 'TypeInfo does not contain info at all.'.
-	[ self numberStatements < self maxNumberOfStatements]
-		whileTrue: [ 
-			[
-			  self addMessage.
-			] on: Error do:[:e| Transcript show: e printString;cr.].
-			].
+	self
+		assert: typeInfo types isNotEmpty
+		description: 'TypeInfo does not contain info at all.'.
+	[ self numberStatements < self maxNumberOfStatements ]
+		whileTrue: [ "self addMessage" [ self addMessage ]
+				on: SError
+				do: [  ] ]
 ]
 
 { #category : #actions }
@@ -410,25 +420,25 @@ SSTestShifter >> initialize [
 	nextId := 0.
 	maxNumberOfStatements := 10.
 	targetClassesNames := Set new.
-	validateTargetClasses := false
+	validatedTargetClassName := false
 ]
 
 { #category : #inserting }
-SSTestShifter >> insertAsParameter: aExpression after: aStatement [
+SSTestShifter >> insertAsParameter: expression after: aStatement [
 	(statements
 		copyFrom: (statements indexOf: aStatement) + 1
 		to: self numberStatements) shuffle
 		do: [ :stm | 
-			[ ^ stm replaceArgBy: aExpression ]
+			[ ^ stm replaceArgBy: expression ]
 				on: SError
 				do: [  ] ].
-	self error: 'cant insert as parameter'
+	self error: 'Cannot insert any parameter by: ', expression printString
 ]
 
 { #category : #inserting }
-SSTestShifter >> insertExpression: aExpression after: aStatement [
+SSTestShifter >> insertExpression: expression after: aStatement [
 	^ self
-		addStatement: (self newAssignment: aExpression)
+		addStatement: (self newAssignment: expression)
 		after: aStatement
 ]
 
@@ -458,19 +468,20 @@ SSTestShifter >> insertStatement [
 
 { #category : #inserting }
 SSTestShifter >> insertStatementOfSelector: selector [
-
 	statements copy shuffle
 		do: [ :stm | 
 			[ ^ self perform: selector inStatement: stm ]
 				on: SError
 				do: [  ] ].
 	self
-		error: 'Cant insert statement of selector: ' , selector printString
+		error: 'Cannot insert statement of selector: ' , selector printString
 ]
 
 { #category : #repairing }
 SSTestShifter >> invariant [
-	self typeInfo ifNil: [ self error: 'Set the testCase with the correct typeInfo' ]
+	self typeInfo
+		ifNil: [ self
+				error: 'TypeInfo is nil. Set the testCase with a typeInfo' ]
 ]
 
 { #category : #querying }
@@ -530,54 +541,62 @@ SSTestShifter >> messagesVariablesWhichContain: aClassName before: aStatement [
 
 { #category : #'instance creation' }
 SSTestShifter >> newAssignment: anExpression [
-	^ SAssignment
+	[ ^ SAssignment
 		name:
 			(SVariable new
 				varName: '_var';
 				id: self assignId;
 				returnType: anExpression returnType;
 				yourself)
-		value: anExpression copy
+		value: anExpression copy ]
+		on: MessageNotUnderstood
+		do: [ :error | 
+			self
+				error: anExpression printString , ' is not an expression.' ]
 ]
 
 { #category : #'instance creation' }
 SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
-	^ typeInfo types
-		at: aClassName
-		ifPresent: [ | methods |
-			self validTargetClassName: aClassName.
-			methods := typeInfo factoryMessagesFrom: aClassName.
-			methods
-				ifEmpty: [ SFactoryMessage default: aClassName ]
-				ifNotEmpty: [ self newFactoryMessageUsing: aClassName and: aStatement ] ]
-		ifAbsent: [ self error: 'error factoryMessage' ]
+	| methods |
+	typeInfo
+		classAt: aClassName
+		ifNone: [ self
+				error:
+					'Error to create factoryMessage of: ' , aClassName
+						, ' because it is not found in typeInfo.' ].
+	self validTargetClassName: aClassName.
+	methods := typeInfo factoryMessagesFrom: aClassName.
+	^ methods
+		ifEmpty: [ SFactoryMessage default: aClassName ]
+		ifNotEmpty: [  self newFactoryMessageUsing: aClassName and: aStatement ]
 ]
 
 { #category : #'instance creation' }
 SSTestShifter >> newFactoryMessageUsing: aClassName and: aStatement [
-	|methods|
+	| methods |
 	methods := typeInfo factoryMessagesFrom: aClassName.
 	methods shuffle
 		do: [ :method | 
-			[ 
-			self buildArgs: method argTypes before: aStatement.
+			[ self buildArgs: method argTypes before: aStatement.
 			^ SFactoryMessage
-		method: method
-		class: aClassName
-		previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-			]
+				method: method
+				class: aClassName
+				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ]
 				on: SError
 				do: [  ] ].
-	self error: 'error factoryMessage'
+	self error: 'Error to create a factoryMessage of: ', aClassName
 ]
 
 { #category : #'instance creation' }
 SSTestShifter >> newFieldAccessMessageOfType: aType andReceiver: receiver [
-	^ (self pickAccessorsOf: receiver returnType)
-		detect: [ :aMethod | aMethod returnType = aType ]
-		ifFound:
-			[ :aMethod | SFieldAccessMessage newFromReceiver: receiver copy andMethod: aMethod ]
-		ifNone: [ self error: 'cant create field access of type: ' , aType asString ]
+	(self pickAccessorsOf: receiver returnType)
+		detect: [ :aMethod | aMethod returnType includes: aType ]
+		ifFound: [ :aMethod | 
+			^ SFieldAccessMessage
+				newFromReceiver: receiver copy
+				andMethod: aMethod ]
+		ifNone:
+			[ self error: 'Cannot create a field access message of type: ' , aType, ' and receiver of type: ', receiver returnType ]
 ]
 
 { #category : #'instance creation' }
@@ -587,7 +606,7 @@ SSTestShifter >> newFieldAccessMessageOfType: aType before: aStatement [
 			[ ^ self newFieldAccessMessageOfType: aType andReceiver: receiver ]
 				on: SError
 				do: [  ] ].
-	^self error: 'cant create field access of type: ' , aType asString
+	self error: 'Cannot create a field access message of type: ' , aType
 ]
 
 { #category : #'instance creation' }
@@ -595,11 +614,10 @@ SSTestShifter >> newLiteral: aClassName [
 	typeInfo scalars
 		at: aClassName
 		ifPresent: [ :values | 
-				^ SLiteral new
-					returnType: aClassName;
-					value: values asOrderedCollection shuffle first ].
-	self error: 'scalars dont contain: ' , aClassName asString.
-
+			^ SLiteral new
+				returnType: aClassName;
+				value: values asOrderedCollection shuffle first ].
+	self error: 'Scalars dont include: ' , aClassName
 ]
 
 { #category : #'instance creation' }
@@ -609,18 +627,25 @@ SSTestShifter >> newMessageOfType: aType before: aStatement [
 			[ ^ self newMessageOfType: aType using: receiver before: aStatement ]
 				on: SError
 				do: [  ] ].
-	^self error: 'cant create message of type: ' , aType asString
+	self
+		error:
+			'Cannot create a message of type: ' , aType printString
+				,
+					'. A possible reason is because there is none factoryMessage which has a message of this return type.'
 ]
 
 { #category : #'instance creation' }
 SSTestShifter >> newMessageOfType: aType using: receiver before: aStatement [
 	(self pickMessagesOf: receiver returnType)
-		detect: [ :aMethod | aMethod returnType = aType ]
+		detect: [ :aMethod | aMethod returnType includes: aType ]
 		ifFound: [ :aMethod | 
 			[ ^ self messageUsing: aMethod and: receiver before: aStatement ]
 				on: SError
 				do: [  ] ].
-	^ self error: 'error to create message'
+	^ self
+		error:
+			'Error to create a message of type: ' , aType
+				, ' with receiver of type: ' , receiver returnType
 ]
 
 { #category : #repairing }
@@ -630,13 +655,11 @@ SSTestShifter >> newStatementOfType: aType before: aStatement [
 		do: [ :message | 
 			[ ^ self
 				perform: message
-				withEnoughArguments:
-					(Array with: aType with:
-					aStatement) ]
+				withEnoughArguments: (Array with: aType with: aStatement) ]
 				on: SError
 				do: [ "try with the next one" ] ].
 	self
-		error: 'Cant create expression with the returnType: ' , aType asString
+		error: 'Cannot create expression of returnType: ' , aType
 ]
 
 { #category : #accessing }
@@ -702,11 +725,12 @@ SSTestShifter >> pickAccessorsOf: aType [
 
 { #category : #querying }
 SSTestShifter >> pickAnObjectVariable [
-	|variables|
+	| variables |
 	variables := self objectVariables.
-	variables isEmpty ifTrue:[ self addFactoryMessage. variables := self objectVariables].
-	variables ifEmpty:[ self error:'it is not possible to create an object'].
-	^ variables atRandom.
+	variables
+		ifEmpty: [ self addFactoryMessage.
+			variables := self objectVariables ].
+	^ variables atRandom
 ]
 
 { #category : #querying }
@@ -718,10 +742,9 @@ SSTestShifter >> pickMessagesOf: aType [
 SSTestShifter >> pickObjectVariableOf: aClassName [
 	(self subStatementsFrom: 1 toPrevIndexOf: nil) copy shuffle
 		detect: [ :stm | stm returnType = aClassName ]
-		ifFound: [ :stm | 
-			^ stm reference ]
+		ifFound: [ :stm | ^ stm reference ]
 		ifNone: [  ].
-	self error: 'Dont exist a statement of class: ' , aClassName
+	self error: 'Does not exist a statement of type: ' , aClassName
 ]
 
 { #category : #querying }
@@ -729,6 +752,11 @@ SSTestShifter >> pickOrCreateObjectVariableOf: aClassName [
 	^ [ self pickObjectVariableOf: aClassName ]
 		on: SError
 		do: [ (self addFactoryMessage: aClassName) variable ]
+]
+
+{ #category : #printing }
+SSTestShifter >> printStatements [
+	^ statements collect: #printString
 ]
 
 { #category : #repairing }
@@ -751,14 +779,22 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 ]
 
 { #category : #inserting }
+SSTestShifter >> randomLiteralClassName [
+	^ [ typeInfo scalars keys atRandom ]
+		on: Error
+		do: [ self
+				error: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ]
+]
+
+{ #category : #inserting }
 SSTestShifter >> randomStatement [
 	^ statements at: (1 to: self numberStatements ) atRandom
 	
 ]
 
 { #category : #repairing }
-SSTestShifter >> referencesIndexes: aExpression [
-	^ ((aExpression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
+SSTestShifter >> referencesIndexes: expression [
+	^ ((expression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
 ]
 
 { #category : #removing }
@@ -783,7 +819,9 @@ SSTestShifter >> removeExpressionWithoutRepairing: expression [
 
 { #category : #removing }
 SSTestShifter >> removeFromStatements: expression [
-[statements remove: expression] on: NotFound do: [ self error: 'expression not found' ]
+	[ statements remove: expression ]
+		on: NotFound
+		do: [ self error: expression printString, ' is not found.' ]
 ]
 
 { #category : #removing }
@@ -803,14 +841,8 @@ SSTestShifter >> removeStatement: anExpression [
 { #category : #removing }
 SSTestShifter >> removeStatementNoRepairing: aStatement [
 	"remove all statements that reference to statement because this cant be fixed"
+
 	self removeExpressionWithoutRepairing: (self statementAt: aStatement)
-	"statements remove: stmToRemove.
-	(statements copy
-		flatCollect: [ :stm | 
-			(stm pickUpReferences: stmToRemove)
-				ifEmpty: [ #() ]
-				ifNotEmpty: [ Array with: stm ] ])
-		do: [ :stm | self removeStatementNoRepairing: stm ]"
 ]
 
 { #category : #removing }
@@ -824,7 +856,8 @@ SSTestShifter >> repair: expression [
 		on: SError
 		do: [ ^ self statements copy
 				flatCollect: [ :stm | self repairReferenceTo: expression of: stm ] ].
-	self error: 'expression must not exist in the testCase'
+	self
+		error: expression printString , ' does not exist.'
 ]
 
 { #category : #inserting }
@@ -876,14 +909,16 @@ SSTestShifter >> satisfyTypes: types before: aStatement [
 SSTestShifter >> statementAt: statement [
 	^ statements
 		detect: [ :stm | stm = statement ]
-		ifNone: [ self error: 'statement not found' ]
+		ifNone: [ self error: statement printString, ' is not found.' ]
 ]
 
 { #category : #accessing }
 SSTestShifter >> statementOfVarName: aString [
-	^ statements
+	statements
 		detect: [ :stm | stm reference printString = aString ]
-		ifNone: [ self error: 'Not found statement of varName: ' , aString ]
+		ifFound: [ :stm | ^ stm ].
+		
+	self error: 'Not found statement of varName: ' , aString
 ]
 
 { #category : #accessing }
@@ -892,22 +927,27 @@ SSTestShifter >> statements [
 ]
 
 { #category : #repairing }
-SSTestShifter >> statementsOfType: aType before: aExpression [
-	(statements includes: aExpression)
-		ifFalse: [ self error: 'not found statement' ].
-	^ (self subStatementsFrom: 1 toPrevIndexOf: aExpression)
+SSTestShifter >> statementsOfType: aType before: expression [
+	(statements includes: expression)
+		ifFalse: [ self error: expression printString , 'is not found.' ].
+	^ (self subStatementsFrom: 1 toPrevIndexOf: expression)
 		select: [ :stm | stm returnType = aType ]
 ]
 
 { #category : #repairing }
 SSTestShifter >> subStatementsFrom: start toPrevIndexOf: aStatement [
-	|stop|
+	| stop |
 	stop := statements indexOf: aStatement.
 	stop = 0
 		ifTrue: [ ^ statements ].
-	( start <= stop )
-		ifFalse: [ ^ self error: 'Data must be in range' ].
-	^ statements copyFrom: start to: stop - 1.
+	start <= stop
+		ifFalse: [ ^ self error: start printString, ' (indexIni) is greater than ', stop printString, ' (indexPos).' ].
+	^ statements copyFrom: start to: stop - 1
+]
+
+{ #category : #accessing }
+SSTestShifter >> targetClassesNames [
+	^ targetClassesNames 
 ]
 
 { #category : #accessing }
@@ -945,10 +985,14 @@ SSTestShifter >> validReferences [
 
 { #category : #accessing }
 SSTestShifter >> validTargetClassName: aClassName [
-	(validateTargetClasses and: [ (targetClassesNames includes: aClassName) not ]) ifTrue: [ self error: 'Class: ', aClassName, ' is not able to be used.' ]
-]
-
-{ #category : #accessing }
-SSTestShifter >> validateTargetClasses: boolean [
-	validateTargetClasses := boolean
+	(validatedTargetClassName
+		and: [ (targetClassesNames includes: aClassName) not
+				and: [ |classInfo|
+					classInfo := typeInfo classAt: aClassName ifNone: [].
+					classInfo isNotNil and: [ classInfo allMethods isNotEmpty ] ] ])
+		ifTrue: [ self addTargetClassName: aClassName ].
+	((targetClassesNames includes: aClassName) not
+		or: [ typeInfo isAbstractClass: aClassName ])
+		ifTrue: [ self error: 'Class: ' , aClassName , ' is not able to be used.' ]
+		ifFalse: [ validatedTargetClassName := true ]
 ]

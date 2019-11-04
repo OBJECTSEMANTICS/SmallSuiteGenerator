@@ -47,11 +47,10 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 |
-_var0 := RTView new.
-_var1 := _var0 initialize.
-_var2 := RTGroup new.
-_var3 := _var0 addAll: _var2.
+	| _var0 _var1 _var2 |
+_var0 := 1.
+_var1 := 2.
+_var2 := Point x: _var0 y: _var1.
 ^ self analyze: thisContext
 ]
 

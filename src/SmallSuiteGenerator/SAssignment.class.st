@@ -85,15 +85,14 @@ SAssignment >> referenceTo: aClassName [
 ]
 
 { #category : #mutation }
-SAssignment >> repairOn: aTestCase changing: aExpression [
-	self reference = aExpression reference
-		ifTrue:
-			[ value repairOn: aTestCase changing: aExpression ]
+SAssignment >> repairOn: aTestCase changing: expression [
+	self reference = expression reference
+		ifTrue: [ value repairOn: aTestCase changing: expression ]
 ]
 
 { #category : #mutation }
-SAssignment >> replaceArgBy: aExpression [
-	value replaceArgBy: aExpression
+SAssignment >> replaceArgBy: expression [
+	value replaceArgBy: expression
 ]
 
 { #category : #accessing }

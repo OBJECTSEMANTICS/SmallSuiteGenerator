@@ -3,7 +3,8 @@ Class {
 	#superclass : #TestCase,
 	#instVars : [
 		'engine',
-		'profiler'
+		'profiler',
+		'utility'
 	],
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
@@ -39,8 +40,10 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock baseClassName: s
 
 { #category : #running }
 SGAEngineTest >> setUp [
-	engine := SGAEngine new.
+	super setUp.
+	"engine := SGAEngine new.
 	profiler := SBProfiler new.
+	utility := SUtilityTypeInfo new"
 ]
 
 { #category : #actions }
@@ -72,27 +75,25 @@ SGAEngineTest >> settingOnPackagesMatching: regex withBlock: aBlock and: symbol 
 
 { #category : #running }
 SGAEngineTest >> tearDown [
-	profiler cleanInstrumentation.
+	"profiler cleanInstrumentation"
+
 	"S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove"
+
 	"SMultiFitnessFunction
 		clean;
 		reset."
+	super tearDown 
+
+	
 ]
 
 { #category : #tests }
 SGAEngineTest >> testRunOnClassSSTeacherUsingSMethodCoverage [
-	| first last functionFitness typeInfo targetPackageRegex |
+	"| first last functionFitness typeInfo targetPackageRegex |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
-	typeInfo := SSTypeCollector
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				name;
-				nickname;
-				yearsWorkExperience;
-				idTeacher;
-				id ]
-		onPackagesMatching: targetPackageRegex.
+	typeInfo := STON fromString: utility typeInfoStringSSTeacher1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	engine
@@ -106,13 +107,13 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSMethodCoverage [
 	last := engine logs last fittestTestCase fitness
 		at: functionFitness functionName.
 	self assert: first <= last.
-	self assert: first >= 20.	"20 = (1/5) * 100"
-	self assert: last equals: 80	"80 = (4/5) * 100"
+	self assert: first >= 20.	""20 = (1/5) * 100""
+	self assert: last equals: 80	""80 = (4/5) * 100"""
 ]
 
 { #category : #tests }
 SGAEngineTest >> testRunOnClassSSTeacherUsingSMultiFitnessFunction [
-	| firstFitness lastFitness function block nameFunction |
+	"| firstFitness lastFitness function block nameFunction |
 	block := [ (SSTeacher name: 'Ann' with: 34)
 		name;
 		nickname;
@@ -133,18 +134,18 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSMultiFitnessFunction [
 	nameFunction := 'method-coverage'.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
-	self assert: (firstFitness at: nameFunction) >= 20.	"20 = (1/5) * 100"
-	self assert: (lastFitness at: nameFunction) equals: 80.	"80 = (4/5) * 100"
+	self assert: (firstFitness at: nameFunction) >= 20.	""20 = (1/5) * 100""
+	self assert: (lastFitness at: nameFunction) equals: 80.	""80 = (4/5) * 100""
 	nameFunction := 'block-coverage'.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
-	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
-	self assert: (lastFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
+	self assert: (firstFitness at: nameFunction) >= 37.5.	""37.5 = (3/8) * 100""
+	self assert: (lastFitness at: nameFunction) >= 87.5	""87.5 = (7/8) * 100"""
 ]
 
 { #category : #tests }
 SGAEngineTest >> testRunOnClassSSTeacherUsingSStatementCoverage [
-	| first last classFitness |
+	"| first last classFitness |
 	classFitness := SStatementCoverage.
 	self
 		runOnClass: SSTeacher
@@ -155,11 +156,13 @@ SGAEngineTest >> testRunOnClassSSTeacherUsingSStatementCoverage [
 				idTeacher;
 				id ]
 		andFitness: classFitness.
-	first := engine logs first fittestTestCase fitness at: classFitness functionName .
-	last := engine logs last fittestTestCase fitness at: classFitness functionName.
+	first := engine logs first fittestTestCase fitness
+		at: classFitness functionName.
+	last := engine logs last fittestTestCase fitness
+		at: classFitness functionName.
 	self assert: first <= last.
-	self assert: first >= 37.5.	"37.5 = (3/8) * 100"
-	self assert: last >= 87.5	"87.5 = (7/8) * 100"
+	self assert: first >= 37.5.	""37.5 = (3/8) * 100""
+	self assert: last >= 87.5	""87.5 = (7/8) * 100"""
 ]
 
 { #category : #tests }
@@ -184,7 +187,7 @@ SGAEngineTest >> testRunOnClassSStudentManual [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
-	| firstFitness lastFitness function block nameFunction functions |
+	"| firstFitness lastFitness function block nameFunction |
 	block := [ (SSTeacher name: 'Ann' with: 34)
 		name;
 		nickname;
@@ -193,17 +196,6 @@ SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
 		id ].
 	self settingEngineOnClass: SSTeacher withBlock: block.
 	function := SMultiFitnessFunction.
-	"functions := Array
-		with: (SMethodCoverage coverageOf: block onClass: SSTeacher)
-		with: (SStatementCoverage profiler: SMethodCoverage profiler).
-	function
-		addFitnessFunction: functions first;
-		addFitnessFunction: functions second.
-	function
-		selectorMethod:
-			(SWeightedSumMethod
-				weights: #(0.7 0.3);
-				functions: functions)."
 	engine
 		fitness: function;
 		run.
@@ -212,13 +204,13 @@ SGAEngineTest >> testRunOnClassUsingSMultiFitnessFunctionAndWeightedSumMethod [
 	nameFunction := SMethodCoverage new functionName.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
-	self assert: (firstFitness at: nameFunction) >= 20.	"20 = (1/5) * 100"
-	self assert: (lastFitness at: nameFunction) equals: 80.	"80 = (4/5) * 100"
+	self assert: (firstFitness at: nameFunction) >= 20.	""20 = (1/5) * 100""
+	self assert: (lastFitness at: nameFunction) equals: 80.	""80 = (4/5) * 100""
 	nameFunction := SStatementCoverage new functionName.
 	self
 		assert: (firstFitness at: nameFunction) <= (lastFitness at: nameFunction).
-	self assert: (firstFitness at: nameFunction) >= 37.5.	"37.5 = (3/8) * 100"
-	self assert: (firstFitness at: nameFunction) >= 87.5	"87.5 = (7/8) * 100"
+	self assert: (firstFitness at: nameFunction) >= 37.5.	""37.5 = (3/8) * 100""
+	self assert: (firstFitness at: nameFunction) >= 87.5"	"87.5 = (7/8) * 100"""
 ]
 
 { #category : #tests }
@@ -248,7 +240,7 @@ SGAEngineTest >> testRunUsingBaseClassNameSFoo [
 
 { #category : #tests }
 SGAEngineTest >> testRunUsingBaseClassNameSSTeacher [
-	| first last classFitness |
+	"| first last classFitness |
 	classFitness := SMethodCoverage.
 	self
 		runOnPackagesMatching: 'SmallSuiteGenerator-Scenario'
@@ -264,5 +256,5 @@ SGAEngineTest >> testRunUsingBaseClassNameSSTeacher [
 		at: classFitness functionName.
 	last := engine logs last fittestTestCase fitness
 		at: classFitness functionName.
-	self assert: first <= last
+	self assert: first <= last"
 ]

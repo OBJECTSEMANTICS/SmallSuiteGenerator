@@ -6,163 +6,208 @@ Class {
 
 { #category : #accessing }
 SSmallSuiteGeneratorExample >> clean [
-	SMultiFitnessFunction
-		clean;
-		reset.
-	SSTestFactoryToDelete resetClassOfTest
-	"SSAssertionGeneratorTest methodsDo: #removeFromSystem"
+	Spy2 clean.
+S2Profiler remove.
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
-	| smallSuiteGenerator block regex funcFitness |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	SSTestFactoryToDelete resetNumTest.
-	block := [  ].
-	regex := 'SmallSuiteGenerator-Examples'.
-	smallSuiteGenerator
-		seed: block;
-		profilingOnPackagesMatching: regex.
-	funcFitness := SMethodCoverage.
-	smallSuiteGenerator fitness: funcFitness.
-	smallSuiteGenerator run
+	^ STestCaseFactory new
+		typeInfo:
+			(SSTypeCollector
+				profile: [  ]
+				onPackagesMatching: 'SmallSuiteGenerator-Scenario');
+		fitness: SMethodCoverage new;
+		targetClassName: #SFoo;
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
+		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
+		createTestCases;
+		visualize;
+		yourself
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSSTeacherOnClass [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SSTeacher name: 'Ann' with: 34)
+	typeInfo := SSTypeCollector profile:[
+   (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
-				id ];
-		profilingOnClass: SSTeacher.
-	smallSuiteGenerator fitness: SMethodCoverage.
-	^ smallSuiteGenerator run
+				id 
+            ] onClass: SSTeacher.
+	^ STestCaseFactory new
+		typeInfo: typeInfo;
+		fitness: SMethodCoverage new;
+		targetClassName: #SSTeacher;
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
+		outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself.
+
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SSTeacher name: 'Ann' with: 34)
+	typeInfo := SSTypeCollector
+		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
-				id ];
-		profilingOnPackagesMatching: 'SmallSuiteGenerator-Examples';
+				id ]
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+	^ STestCaseFactory new
+		typeInfo: typeInfo;
 		fitness:
-			(SMultiFitnessFunction
-				with: SMethodCoverage;
-				with: SStatementCoverage).
-	^ smallSuiteGenerator run
+			(SMultiFitnessFunction new
+				with: SMethodCoverage new;
+				with: SStatementCoverage new);
+		targetClassName: #SSTeacher;
+		targetPackagesRegex: 'SmallSuiteGenerator-Scenario';
+		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
+		createTestCases;
+		visualize;
+		yourself
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSStackOnClass [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SStack newStackWith: #(1 5 3 2))
+	typeInfo := SSTypeCollector profile:[
+    (SStack newStackWith: #(1 5 3 2))
 				pop;
 				top;
-				push: 4 ];
-		profilingOnClass: SStack;
-		fitness:
-			(SMultiFitnessFunction
-				with: SMethodCoverage;
-				with: SStatementCoverage).
-	^ smallSuiteGenerator run
+				push: 4 
+            ] onClass: SStack.
+	^ STestCaseFactory new
+		 typeInfo: typeInfo;
+    fitness: (SMultiFitnessFunction new
+				with: SMethodCoverage new;
+				with: SStatementCoverage new);
+    targetClassName:#SStack;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleSStackOnPackages [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SStack newStackWith: #(1 5 3 2))
+	typeInfo := SSTypeCollector profile:[
+    (SStack newStackWith: #(1 5 3 2))
 				pop;
 				top;
-				push: 4 ];
-		profilingOnPackagesMatching: 'SmallSuiteGenerator-Examples';
-		fitness: SStatementCoverage.
-	^ smallSuiteGenerator run
+				push: 4
+            ] onPackagesMatching:'SmallSuiteGenerator-Scenario'.
+	^ STestCaseFactory new
+		typeInfo: typeInfo;
+    fitness: SStatementCoverage new;
+    targetClassName:#SStack;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself.
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SStudent name: 'Ann' with: 34)
+	typeInfo := SSTypeCollector profile:[
+    (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
-				scoreStudent ];
-		profilingOnClass: SStudent;
-		fitness: SStatementCoverage.
-	^ smallSuiteGenerator run
+				scoreStudent
+            ] onClass: SStudent.
+	^ STestCaseFactory new
+		typeInfo: typeInfo;
+    fitness: SStatementCoverage new;
+    targetClassName:#SStudent;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself.
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SStudent name: 'Ann' with: 34)
+	typeInfo := SSTypeCollector profile:[
+    (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
-				scoreStudent ];
-		profilingOnClass: SSTeacher;
-		fitness:
-			(SMultiFitnessFunction
-				with: SMethodCoverage;
-				with: SStatementCoverage).
-	^ smallSuiteGenerator run
+				scoreStudent
+            ] onPackagesMatching:'SmallSuiteGenerator-Scenario2'.
+	^ STestCaseFactory new 
+		typeInfo: typeInfo;
+    fitness: (SMultiFitnessFunction new
+				with: SMethodCoverage new;
+				with: SStatementCoverage new);
+    targetClassName:#SStudent;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario2';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself.
 ]
 
 { #category : #'examples - onClass' }
 SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SStudent name: 'Ann' with: 34)
+	typeInfo := SSTypeCollector profile:[
+    (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
-				scoreStudent ];
-		profilingOnClass: SFoo;
-		fitness: SStatementCoverage.
-	^ smallSuiteGenerator run
+				scoreStudent 
+            ] onClass: SFoo.
+	^ STestCaseFactory new
+	 typeInfo: typeInfo;
+    fitness: SStatementCoverage new;
+    targetClassName:#SStudent;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario2';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself.
 ]
 
 { #category : #'examples - onPackages' }
 SSmallSuiteGeneratorExample >> exampleWithWrongRegexToRun [
-	| smallSuiteGenerator |
+	| typeInfo |
 	self clean.
-	smallSuiteGenerator := STestCaseFactory newInstance.
-	smallSuiteGenerator
-		seed: [ (SStudent name: 'Ann' with: 34)
+	typeInfo := SSTypeCollector profile:[
+    (SStudent name: 'Ann' with: 34)
 				nickname;
-				idStudent ];
-		profilingOnPackagesMatching: 'SmallSuiteGenerator-Fitness';
-		fitness:
-			(SMultiFitnessFunction
-				with: SMethodCoverage;
-				with: SStatementCoverage).
-	^ smallSuiteGenerator run
+				idStudent
+            ] onPackagesMatching:'SmallSuiteGenerator-Scenario'.
+
+	^ STestCaseFactory new
+		typeInfo: typeInfo;
+    fitness: (SMultiFitnessFunction new
+				with: SMethodCoverage new;
+				with: SStatementCoverage new);
+    targetClassName:#SStudent;
+    targetPackagesRegex:'SmallSuiteGenerator-Scenario';
+    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
+    createTestCases;
+	visualize;
+    yourself
 ]

@@ -13,8 +13,8 @@ SMultiTypeInfo class >> new: aType [
 ]
 
 { #category : #comparing }
-SMultiTypeInfo >> = otherType [
-	^ types includes: otherType
+SMultiTypeInfo >> = other [
+	^ self class = other class and: [ self types = other types ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -52,9 +52,35 @@ SMultiTypeInfo >> equals: other [
 	^ true.
 ]
 
+{ #category : #'as yet unclassified' }
+SMultiTypeInfo >> exportStoreString [
+	^ types size = 1
+		ifTrue: [ self type ]
+		ifFalse: [ self types printString ]
+]
+
+{ #category : #'instance creation' }
+SMultiTypeInfo >> fromSton: stonReader [
+	stonReader
+		parseListDo: [ :each :index | 
+			self type: each ]
+
+	
+]
+
 { #category : #metrics }
 SMultiTypeInfo >> hasOnlyOneType [
 	^ types size <= 1.
+]
+
+{ #category : #comparing }
+SMultiTypeInfo >> hash [
+	^ self types hash
+]
+
+{ #category : #testing }
+SMultiTypeInfo >> includes: aType [
+	^ self types includes: aType
 ]
 
 { #category : #initialization }
@@ -73,6 +99,13 @@ SMultiTypeInfo >> joinWith: otherTypeReturn [
 	otherTypeReturn types do: [ :aType | self type: aType ]
 ]
 
+{ #category : #'ston persistence' }
+SMultiTypeInfo >> stonOn: stonWriter [
+	stonWriter
+		writeObject: self
+		streamShortList: [ :array | self types do:[:type | array add: type] ]
+]
+
 { #category : #accessing }
 SMultiTypeInfo >> type [
 	^ types ifEmpty: [nil] ifNotEmpty: [types asArray shuffle anyOne]
@@ -85,6 +118,6 @@ SMultiTypeInfo >> type: aClassName [
 ]
 
 { #category : #accessing }
-SMultiTypeInfo >> types [ 	
-	^ types
+SMultiTypeInfo >> types [
+	^ types asArray
 ]

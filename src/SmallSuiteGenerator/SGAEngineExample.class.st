@@ -281,7 +281,6 @@ SGAEngineExample >> exampleSStudentOnPackageWithSStatementCoverage [
 SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitness [
 	| engine |
 	engine := SGAEngine new.
-	SSTestFactoryToDelete resetNumTest.
 	engine
 		populationSize: 30;
 		numberOfStatements: 15;
@@ -302,7 +301,6 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: aClassFitness [
 	| engine |
 	engine := SGAEngine new.
-	SSTestFactoryToDelete resetNumTest.
 	engine
 		populationSize: 30;
 		numberOfStatements: 15;
