@@ -100,7 +100,7 @@ SGAEngine >> createRandomPopulation [
 { #category : #accessing }
 SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator := aCrossoverOperator.
-	crossoverOperator random: random
+	crossoverOperator randomGenerator: randomGenerator 
 ]
 
 { #category : #accessing }
@@ -124,26 +124,25 @@ SGAEngine >> initialize [
 	self initializeMutationOperator.
 	self initializeCrossoverOperator.
 	logs := OrderedCollection new.
-	random := Random new.
+	randomGenerator := SConfiguration newRandomGenerator.
 	populationSize := 100.
 	numberOfIterations := 100.
 	selectionStrategy := SGATournamentSelection new.
 	self initializeMutationOperator.
-	self initializeCrossoverOperator.
-
+	self initializeCrossoverOperator
 ]
 
 { #category : #initialization }
 SGAEngine >> initializeCrossoverOperator [
 	crossoverOperator := SGACrossoverOperation new.
-	crossoverOperator random: random.
+	crossoverOperator randomGenerator: randomGenerator
 ]
 
 { #category : #initialization }
 SGAEngine >> initializeMutationOperator [
 	mutationOperator := SGAMutationOperation new.
 	mutationOperator mutationRate: (1 / 3) asFloat.
-	mutationOperator random: random.
+	mutationOperator randomGenerator: randomGenerator
 ]
 
 { #category : #accessing }

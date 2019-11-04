@@ -27,7 +27,8 @@ SGATournamentSelection >> fitnessFor: aTestCase [
 { #category : #initialization }
 SGATournamentSelection >> initialize [
 	population := OrderedCollection new.
-	tournamentSize := 5
+	tournamentSize := 5.
+	randomGenerator := SConfiguration newRandomGenerator 
 ]
 
 { #category : #accessing }
@@ -38,13 +39,15 @@ SGATournamentSelection >> load: aTestCaseCollection [
 { #category : #actions }
 SGATournamentSelection >> pickOne [
 	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
-	|sample selected|
-	
-	sample := population shuffle first: (tournamentSize min: population size).
-	sample := sample asSortedCollection: [ :a :b | (self fitnessFor: a)  < (self fitnessFor: b) ].
+
+	| sample selected |
+	sample := (randomGenerator collectAtRandom: population)
+		first: (tournamentSize min: population size).
+	sample := sample
+		asSortedCollection: [ :a :b | (self fitnessFor: a) < (self fitnessFor: b) ].
 	selected := sample last.
 	population remove: selected.
-	^ selected.
+	^ selected
 ]
 
 { #category : #accessing }

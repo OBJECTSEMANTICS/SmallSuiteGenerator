@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'returnType',
-		'id'
+		'id',
+		'randomGenerator'
 	],
 	#category : #'SmallSuiteGenerator-AST'
 }
@@ -52,6 +53,11 @@ SExpression >> id: anObject [
 	id := anObject
 ]
 
+{ #category : #initialization }
+SExpression >> initialize [
+	randomGenerator := SConfiguration randomGenerator
+]
+
 { #category : #mutation }
 SExpression >> insertAsParameter: aExpression using: aTestCase [
 	
@@ -86,6 +92,11 @@ SExpression >> isPrimitive: anObject [
 { #category : #mutation }
 SExpression >> pickUpReferences: aExpression [
 	^ #()
+]
+
+{ #category : #accessing }
+SExpression >> randomGenerator: anObject [
+	randomGenerator := anObject
 ]
 
 { #category : #accessing }

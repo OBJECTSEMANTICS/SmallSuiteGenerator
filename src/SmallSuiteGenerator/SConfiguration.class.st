@@ -4,7 +4,8 @@ Class {
 	#classInstVars : [
 		'level',
 		'nameLog',
-		'random'
+		'randomGenerator',
+		'seed'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -62,6 +63,11 @@ SConfiguration class >> defaultNameLog [
 ]
 
 { #category : #'as yet unclassified' }
+SConfiguration class >> defaultSeed [
+	^ 100
+]
+
+{ #category : #'as yet unclassified' }
 SConfiguration class >> fileLogger: fileName [
 	self nameLog: fileName.
 	TinyLogger default fileLoggers ifEmpty: [ self createFileLogger ].
@@ -90,18 +96,36 @@ SConfiguration class >> nameLog: string [
 	nameLog := string
 ]
 
-{ #category : #accessing }
-SConfiguration class >> random [
-	^ random
+{ #category : #'instance creation' }
+SConfiguration class >> newRandomGenerator [
+	^ SRandom seed: self seed
 ]
 
 { #category : #accessing }
-SConfiguration class >> random: aRandom [
-	random := aRandom
+SConfiguration class >> randomGenerator [
+	randomGenerator ifNil: [ randomGenerator := SRandom seed: self seed ].
+	^ randomGenerator 
+]
+
+{ #category : #accessing }
+SConfiguration class >> randomGenerator: sRandom [
+	randomGenerator := sRandom
 ]
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> reduceLevel [
 	level ifNil: [ self initLevelToPrint  ].
 	level := level - 1
+]
+
+{ #category : #accessing }
+SConfiguration class >> seed [ 	
+	seed ifNil: [ seed := self defaultSeed.
+		 ].
+	^ seed
+]
+
+{ #category : #'instance creation' }
+SConfiguration class >> seed: aNumber [
+	seed := aNumber
 ]

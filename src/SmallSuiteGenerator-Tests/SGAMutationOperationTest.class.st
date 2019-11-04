@@ -11,7 +11,7 @@ Class {
 { #category : #running }
 SGAMutationOperationTest >> setUp [
 	super setUp.
-	operation := SGAMutationOperation new random: Random new.
+	operation := SGAMutationOperation new randomGenerator: SConfiguration newRandomGenerator.
 	utility := SUtilityTypeInfo new
 ]
 

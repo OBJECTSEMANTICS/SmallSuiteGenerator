@@ -36,6 +36,7 @@ SVariable >> hash [
 
 { #category : #initialization }
 SVariable >> initialize [
+	super initialize.
 	varName := '_var'
 ]
 

@@ -11,23 +11,24 @@ Class {
 
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
-	| dict |
+	| dict randomGenerator |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
+	randomGenerator := SConfiguration randomGenerator.
 	dict := Dictionary new.
-	statements copy shuffle
+	(randomGenerator collectAtRandom: statements)
 		do: [ :stm | dict at: stm returnType put: stm variable copy ].
 	^ aMethodTypeInfo argTypes
 		collect: [ :aTypeReturn | 
 			| ft |
-			ft := aTypeReturn types asOrderedCollection shuffle
-				detect:
-					[ :type | dict at: type ifPresent: [ true ] ifAbsent: [ false ] ]
+			ft := (randomGenerator collectAtRandom: aTypeReturn types) "lack to update types of MultiTypeInfo"
+				detect: [ :type | dict at: type ifPresent: [ true ] ifAbsent: [ false ] ]
 				ifNone: [ nil ].
 			ft
 				ifNil: [ self
 						error:
-							'Cannot build the method call: ', aMethodTypeInfo selector,', even it was tried to build the argument first' ].
+							'Cannot build the method call: ' , aMethodTypeInfo selector
+								, ', even it was tried to build the argument first' ].
 			dict at: ft ]
 ]
 
@@ -84,8 +85,9 @@ SAbstractMessage >> id [
 ]
 
 { #category : #initialization }
-SAbstractMessage >> initialize [ 	
-	args := OrderedCollection new:2.
+SAbstractMessage >> initialize [
+	super initialize.
+	args := OrderedCollection new: 2
 ]
 
 { #category : #mutation }
@@ -138,16 +140,14 @@ SAbstractMessage >> receiver: anObject [
 
 { #category : #mutation }
 SAbstractMessage >> repairOn: aTestCase changing: expression [
-	#(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:)
-		shuffle
+	(randomGenerator collectAtRandom: #(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:))
 		do: [ :aSelector | 
 			[ ^ self
 				perform: aSelector
 				withArguments: (Array with: expression with: aTestCase) ]
 				on: SError
 				do: [  ] ].
-	self
-		error: 'Cannot change the statement: ' , expression printString
+	self error: 'Cannot change the statement: ' , expression printString
 ]
 
 { #category : #mutation }

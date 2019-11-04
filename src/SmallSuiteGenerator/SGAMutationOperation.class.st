@@ -9,16 +9,17 @@ Class {
 
 { #category : #actions }
 SGAMutationOperation >> doMutate: aTestCase [
-	self randomNumber <= mutationRate
-		ifTrue: [ aTestCase removeStatement.].
-	self randomNumber <= mutationRate
+	randomGenerator next <= mutationRate
+		ifTrue: [ aTestCase removeStatement ].
+	randomGenerator next <= mutationRate
 		ifTrue: [ aTestCase changeStatement ].
-	self randomNumber <= mutationRate
+	randomGenerator next <= mutationRate
 		ifTrue: [ aTestCase insertStatement ]
 ]
 
 { #category : #initialization }
 SGAMutationOperation >> initialize [
+	super initialize.
 	self mutationRate: (1 / 3) asFloat
 ]
 
@@ -28,11 +29,6 @@ SGAMutationOperation >> mutate: aTestCase [
 	newTestCase := aTestCase copy.
 	self doMutate: newTestCase.
 	^ newTestCase
-]
-
-{ #category : #accessing }
-SGAMutationOperation >> mutationRate [
-	^ mutationRate 
 ]
 
 { #category : #accessing }

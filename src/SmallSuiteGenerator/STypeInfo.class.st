@@ -142,7 +142,7 @@ STypeInfo >> noneAbstractClasses [
 { #category : #accessing }
 STypeInfo >> randomNoneAbstractClass [
 	self assert: types isNotEmpty description: 'There is not a class'.
-	^ self noneAbstractClasses atRandom: (SConfiguration random)
+	^ self noneAbstractClasses atRandom: SConfiguration random "to update"
 ]
 
 { #category : #'as yet unclassified' }

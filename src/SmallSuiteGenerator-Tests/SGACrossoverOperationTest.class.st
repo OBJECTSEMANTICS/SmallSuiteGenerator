@@ -12,8 +12,9 @@ Class {
 { #category : #running }
 SGACrossoverOperationTest >> setUp [
 	super setUp.
-	operation := SGACrossoverOperation new.
-	mutationOperation := SGAMutationOperation new random: Random new.
+	operation := SGACrossoverOperation new randomGenerator: SConfiguration newRandomGenerator.
+	mutationOperation := SGAMutationOperation new
+		randomGenerator: SConfiguration newRandomGenerator.
 	utility := SUtilityTypeInfo new
 ]
 

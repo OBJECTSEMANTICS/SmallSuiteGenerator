@@ -2,29 +2,14 @@ Class {
 	#name : #SGAObject,
 	#superclass : #Object,
 	#instVars : [
-		'random'
+		'randomGenerator'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
 
 { #category : #accessing }
-SGAObject >> random [ 
-	^ random
-]
-
-{ #category : #accessing }
-SGAObject >> random: aRandomNumberGenerator [
+SGAObject >> randomGenerator: sRandom [
 	"The argument must be an instance of Random"
 
-	random := aRandomNumberGenerator
-]
-
-{ #category : #'as yet unclassified' }
-SGAObject >> randomNumber [
-	^ random next
-]
-
-{ #category : #'as yet unclassified' }
-SGAObject >> randomNumber: aInt [
-	^ random nextInt: aInt
+	randomGenerator := sRandom
 ]

@@ -2,10 +2,11 @@ Extension { #name : #Character }
 
 { #category : #'*SmallSuiteGenerator' }
 Character >> mutateToChange [
-	|newValue interval|
-	interval := 33 to: 127.
-	newValue := interval atRandom.
+	| newValue interval randomGenerator |
+	randomGenerator := SConfiguration newRandomGenerator.
+	interval := (33 to: 127) asArray.
+	newValue := randomGenerator selectAtRandom: interval.
 	[ newValue == self asInteger ]
-		whileTrue: [ newValue := interval atRandom ].
+		whileTrue: [ newValue := randomGenerator selectAtRandom: interval ].
 	^ Character value: newValue
 ]
