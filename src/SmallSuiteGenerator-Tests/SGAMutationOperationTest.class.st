@@ -18,23 +18,8 @@ SGAMutationOperationTest >> setUp [
 { #category : #tests }
 SGAMutationOperationTest >> testMutation [
 	| testCase mutatedTestCase |
-	testCase := SSTestCase
-		with:
-			(STypeInfo new
-				type:
-					#SStack
-						->
-							(Array
-								with:
-									(Array
-										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
-										with: #pop -> #(#SStack #SmallInteger #() false)
-										with: #top -> #(#SStack #SmallInteger #() false))
-								with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
-				scalar: #SmallInteger with: #(8);
-				scalar: #Array with: #(#(2 4 6 1))).
-	testCase numMaxStatements: 30.
-	self should: [ testCase generateStatements ] raise: SError.
+	testCase := SSTestCase with: utility typeInfoSStack3.
+	testCase numMaxStatements: 10.
 	testCase
 		addTargetClassName: #SStack;
 		generateStatements.

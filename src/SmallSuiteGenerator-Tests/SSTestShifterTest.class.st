@@ -93,10 +93,8 @@ SSTestShifterTest >> testAddFactoryMessageOnPackage [
 			(#('_var2 := SSTeacher name: _var0 with: _var1.' '_var2 := SSTeacher name: _var1 with: _var0.')
 				includes: expression printString).
 	self
-		should: [ testCase addFactoryMessage: #SConference ]
+		shouldnt: [ expression := testCase addFactoryMessage: #SConference ]
 		raise: SError.
-	testCase addTargetClassName: #SConference.
-	expression := testCase addFactoryMessage: #SConference.
 	self
 		assert: expression printString
 		equals: '_var3 := SConference new.'
