@@ -33,8 +33,7 @@ SMessageTest >> testCopy [
 SMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addFactoryMessage:#SFoo.
-	testCase addLiteral: #ByteString.
+	testCase addTargetClassName: #SFoo; addFactoryMessage: #SFoo; addLiteral: #ByteString.
 	aExpression := testCase addMessage: #returnString from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -54,6 +53,7 @@ SMessageTest >> testInsertAsParameterUsing [
 SMessageTest >> testInsertMethodMessageUsing [
 	| testCase message |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
 	message := testCase addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)

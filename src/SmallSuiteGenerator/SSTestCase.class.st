@@ -38,6 +38,7 @@ SSTestCase >> computeFitness: fitnessClass [
 SSTestCase >> copy [
 	| copy |
 	copy := SSTestCase with: typeInfo copy.
+	copy addTargetClassNames: targetClassesNames.
 	statements do: [ :stm | copy addStatement: stm copy ].
 	copy updateNextId.
 	^ copy

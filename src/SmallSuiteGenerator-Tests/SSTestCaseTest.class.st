@@ -28,28 +28,24 @@ SSTestCaseTest >> testCopy [
 					(Array
 						with:
 							(Array
-								with:
-									#returnNum -> #(#SFoo #SmallInteger #() false)
-								with:
-									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
-								with:
-									#score -> #(#SFoo #SmallInteger #() true)
-								with:
-									#return: -> #(#SFoo #ByteString #(#ByteString) false))
-						with:
-							(Array with:
-								#score: -> #(#SFoo #SFoo #(#SmallFloat64) false))).
+								with: #returnNum -> #(#SFoo #SmallInteger #() false)
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #score -> #(#SFoo #SmallInteger #() true)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallFloat64) false))).
 	typeInfo scalar: #ByteString with: #('hello').
 	typeInfo scalar: #SmallInteger with: #(5).
 	typeInfo scalar: #SmallFloat64 with: #(7.3).
 	testCase := SSTestCase with: typeInfo.
 	testCase
+	addTargetClassName: #SFoo;
 		addMessage: #returnNum from: #SFoo;
 		addFieldAccessMessage: #score from: #SFoo;
 		addLiteral: #SmallInteger.
 	otherTestCase := testCase copy.
 	self assert: testCase numberStatements equals: 5.
 	self assert: testCase equals: otherTestCase.
+	self assertCollection: testCase targetClassesNames hasSameElements: #(#SFoo).
 	testCase addLiteral: #ByteString.
 	otherTestCase addMessage: #returnFloat from: #SFoo.
 	otherTestCase addMessage: #return: from: #SFoo.
@@ -65,9 +61,8 @@ SSTestCaseTest >> testCopy [
 
 { #category : #tests }
 SSTestCaseTest >> testFieldAccessMessage [
-	| testCase aTypeInfo |
-	testCase := SSTestCase new.
-	aTypeInfo := STypeInfo new
+	| testCase  |
+	testCase := SSTestCase with:( STypeInfo new
 		type:
 			#SFoo
 				->
@@ -75,27 +70,22 @@ SSTestCaseTest >> testFieldAccessMessage [
 						with:
 							(Array
 								with: #score -> #(#SFoo #SmallInteger #() true)
-								with:
-									#score: -> #(#SFoo #SmallInteger #(#SmallInteger) false))
-						with:
-							(Array with:
-								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
-	aTypeInfo scalar: #SmallInteger with: #(5).
-	testCase typeInfo: aTypeInfo.
-	testCase addFieldAccessMessage.
+								with: #score: -> #(#SFoo #SmallInteger #(#SmallInteger) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+	scalar: #SmallInteger with: #(5)).
+	testCase addTargetClassName: #SFoo;addFieldAccessMessage.
 	self assert: testCase statements size equals: 3.
 	self
 		assertCollection: (testCase statements collect: #asString)
-		hasSameElements:
-			#('_var0 := 5.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.')
+		hasSameElements: #('_var0 := 5.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.')
 ]
 
 { #category : #tests }
 SSTestCaseTest >> testGenerateStatements [
-	| testCase typeInfo |
-	typeInfo := utility typeInfoSFoo1.
-	testCase := SSTestCase with: typeInfo.
-	testCase numMaxStatements: 30.
+	| testCase  |
+	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo;
+	numMaxStatements: 30.
 	self shouldnt: [ testCase generateStatements ] raise: SError
 ]
 

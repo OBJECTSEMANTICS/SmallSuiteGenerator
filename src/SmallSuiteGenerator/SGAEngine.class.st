@@ -91,8 +91,9 @@ SGAEngine >> createRandomPopulation [
 			| value test |
 			value := SharedRandom globalGenerator next * 30 + 1.
 			test := SSTestCase with: typeInfo.
-			test addFactoryMessage: self targetClassName.
-			test generateStatements: value.
+			test addTargetClassName: self targetClassName;
+			addFactoryMessage: self targetClassName;
+			generateStatements: value.
 			test ]
 ]
 

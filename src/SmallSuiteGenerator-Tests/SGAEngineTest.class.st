@@ -3,7 +3,8 @@ Class {
 	#superclass : #TestCase,
 	#instVars : [
 		'engine',
-		'profiler'
+		'profiler',
+		'utility'
 	],
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
@@ -41,6 +42,7 @@ SGAEngineTest >> runOnPackagesMatching: regex withBlock: aBlock baseClassName: s
 SGAEngineTest >> setUp [
 	engine := SGAEngine new.
 	profiler := SBProfiler new.
+	utility := SUtilityTypeInfo new
 ]
 
 { #category : #actions }
@@ -85,14 +87,7 @@ SGAEngineTest >> tearDown [
 SGAEngineTest >> testRunOnClassSSTeacherUsingSMethodCoverage [
 	| first last functionFitness typeInfo targetPackageRegex |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
-	typeInfo := SSTypeCollector
-		profile: [ (SSTeacher name: 'Ann' with: 34)
-				name;
-				nickname;
-				yearsWorkExperience;
-				idTeacher;
-				id ]
-		onPackagesMatching: targetPackageRegex.
+	typeInfo := STON fromString: utility typeInfoStringSSTeacher1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	engine

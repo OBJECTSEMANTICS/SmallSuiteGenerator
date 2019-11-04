@@ -20,12 +20,11 @@ SCoverageTest >> fitnessOf: aTestCase [
 ]
 
 { #category : #running }
-SCoverageTest >> install [
-	fitness tagetPackagesRegex: 'SmallSuiteGenerator-Scenario'.
-	(S2CInstrumentator onPackagesMatching: 'SmallSuiteGenerator-Scenario')
+SCoverageTest >> installOn: aPackageName [
+	fitness tagetPackagesRegex: aPackageName.
+	(S2CInstrumentator onPackagesMatching: aPackageName )
 		applyOn: profiler.
 	fitness profiler: profiler.
-	
 	profiler injectCodeToMethods
 ]
 
@@ -34,8 +33,7 @@ SCoverageTest >> setUp [
 	utility := SUtilityTypeInfo new.
 	fitness := self fitnessClass new.
 	profiler := SBProfiler new.
-	fitness tagetPackagesRegex: 'SmallSuiteGenerator-Scenario'.
-
+	"fitness tagetPackagesRegex: 'SmallSuiteGenerator-Scenario'"
 ]
 
 { #category : #running }
@@ -44,10 +42,11 @@ SCoverageTest >> tearDown [
 ]
 
 { #category : #tests }
-SCoverageTest >> testCase: typeInfo withNumStatements: aNumber [
-	^ (SSTestCase with: typeInfo) 
-	numMaxStatements: aNumber;
-	generateStatements
+SCoverageTest >> testCase: typeInfo withNumStatements: aNumber andTargetClassName: symbol [
+	^ (SSTestCase with: typeInfo)
+		numMaxStatements: aNumber;
+		addTargetClassName: symbol;
+			generateStatements
 ]
 
 { #category : #running }

@@ -78,6 +78,11 @@ SMultiTypeInfo >> hash [
 	^ self types hash
 ]
 
+{ #category : #testing }
+SMultiTypeInfo >> includes: aType [
+	^ self types includes: aType
+]
+
 { #category : #initialization }
 SMultiTypeInfo >> initialize [
 	types := Set new

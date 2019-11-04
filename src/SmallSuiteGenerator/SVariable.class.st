@@ -68,10 +68,13 @@ SVariable >> repairOn: aTestCase changing: aExpression [
 ]
 
 { #category : #mutation }
-SVariable >> replaceArgBy: anExpression [
-	returnType = anExpression returnType
-		ifFalse: [ ^ self error: 'cant replace arg' ].
-	self replaceBy: anExpression
+SVariable >> replaceArgBy: expression [
+	returnType = expression returnType
+		ifFalse: [ ^ self
+				error:
+					'Cannot replace argument of type: ' , returnType , ' by: '
+						, expression returnType ].
+	self replaceBy: expression
 ]
 
 { #category : #accessing }

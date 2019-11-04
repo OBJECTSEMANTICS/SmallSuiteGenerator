@@ -183,17 +183,23 @@ STypeInfo >> type: aAssoc [
 
 { #category : #lookup }
 STypeInfo >> type: aSelector from: aClassName [
-	types valuesDo: [ :aTypeClassInfo | 
+	types
+		valuesDo: [ :aTypeClassInfo | 
 			aTypeClassInfo messagesAndAccessMessages
 				detect: [ :aMessage | 
 					(aMessage isFromReceiver: aClassName)
-						and: [ aMessage selector = aSelector ] ] ifFound: [:aMessage | ^ aMessage ] ifNone: [false]].
-		^ self error: aSelector , ' not found in: ' , aClassName
+						and: [ aMessage selector = aSelector ] ]
+				ifFound: [ :aMessage | ^ aMessage ]
+				ifNone: [ false ] ].
+	^ self error: aSelector , ' is not found in class: ' , aClassName
 ]
 
 { #category : #lookup }
 STypeInfo >> type: aSelector fromMetaClassName: aClassName [
-	^ (self factoryMessagesFrom: aClassName) detect: [ :aMessage | aMessage selector = aSelector  ] ifNone: [ self error: aSelector , ' not found in: ' , aClassName ]
+	(self factoryMessagesFrom: aClassName)
+		detect: [ :aMessage | aMessage selector = aSelector ]
+		ifFound: [ :aMessage | ^ aMessage ]
+		ifNone: [ self error: aSelector , ' is not found in metaClass: ' , aClassName ]
 ]
 
 { #category : #accessing }

@@ -17,27 +17,27 @@ SGAMutationOperationTest >> setUp [
 
 { #category : #tests }
 SGAMutationOperationTest >> testMutation [
-	| typeInfo testCase mutatedTestCase |
-	typeInfo := STypeInfo new
-		type:
-			#SStack
-				->
-					(Array
-						with:
+	| testCase mutatedTestCase |
+	testCase := SSTestCase
+		with:
+			(STypeInfo new
+				type:
+					#SStack
+						->
 							(Array
 								with:
-									#push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
-								with: #pop -> #(#SStack #SmallInteger #() false)
-								with: #top -> #(#SStack #SmallInteger #() false))
-						with:
-							(Array with:
-								#newStackWith: -> #(#SStack #SStack #(#Array) false))).
-	typeInfo
-		scalar: #SmallInteger with: #(8);
-		scalar: #Array with: #(#(2 4 6 1)).
-	testCase := SSTestCase with: typeInfo.
+									(Array
+										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+										with: #pop -> #(#SStack #SmallInteger #() false)
+										with: #top -> #(#SStack #SmallInteger #() false))
+								with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+				scalar: #SmallInteger with: #(8);
+				scalar: #Array with: #(#(2 4 6 1))).
 	testCase numMaxStatements: 30.
-	testCase generateStatements.
+	self should: [ testCase generateStatements ] raise: SError.
+	testCase
+		addTargetClassName: #SStack;
+		generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase validReferences
@@ -46,9 +46,10 @@ SGAMutationOperationTest >> testMutation [
 { #category : #tests }
 SGAMutationOperationTest >> testMutationSSteacher [
 	| typeInfo testCase mutatedTestCase |
-	typeInfo := utility typeInfoSSTeacher1 .
+	typeInfo := utility typeInfoSSTeacher1.
 	testCase := SSTestCase with: typeInfo.
-	testCase generateStatements.
+	testCase addTargetClassName: #SSTeacher;
+	generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase validReferences
@@ -63,8 +64,7 @@ SGAMutationOperationTest >> testMutationSStudentManual [
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase validReferences.
-	
-testCase := testSuite  second.
+	testCase := testSuite second.
 	"testCase generateStatements."
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.

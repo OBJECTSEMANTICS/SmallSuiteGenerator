@@ -283,8 +283,11 @@ SSTestShifterTest >> testAddMessageFrom [
 				with: '_var0 := 4.'
 				with: '_var1 := SFoo score: _var0.'
 				with: '_var2 := _var1 returnFloat.').
-	self assert: (testCase addMessage: #returnNum from: #SFoo) printString equals: '_var3 := _var1 returnNum.'.
-	self assert: (testCase addMessage: #score: from: #SFoo) printString equals: '_var4 := _var1 score: _var0.'
+	self
+		assert: (testCase addMessage: #returnNum from: #SFoo) printString
+		equals: '_var3 := _var1 returnNum.'.
+	self
+		assert: (#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.') includes: (testCase addMessage: #score: from: #SFoo) printString)
 ]
 
 { #category : #tests }
@@ -360,7 +363,7 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 	| testCase |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSStack).
+		with: (STON fromString: utility typeInfoStringSStack1).
 	testCase
 		addTargetClassName: #SStack;
 		addMessage: #push: from: #SStack.
@@ -466,6 +469,38 @@ SSTestShifterTest >> testAddStatementBefore [
 ]
 
 { #category : #tests }
+SSTestShifterTest >> testAddStatetementOfTypeBefore [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase addTargetClassName: #SEvent.
+	expression := testCase addStatementOfType: #SEvent before: nil.
+	self
+		assert: expression printString
+		equals: '_var1 := SEvent price: _var0.'.
+	expression := testCase
+		addStatementOfType: #SmallInteger
+		before: expression.
+	self assert: expression printString equals: '_var2 := 8.'.	"change the form to select randomly"
+	self
+		assert:
+			(#(#('_var0 := 8.' '_var2 := 8.' '_var1 := SEvent price: _var0.') #('_var2 := 8.' '_var0 := 8.' '_var1 := SEvent price: _var0.'))
+				includes: (testCase statements collect: #printString) asArray)
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testAddStatetementOfTypeBeforeFactoryMessage [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase addTargetClassName: #SEvent.
+	expression := testCase addFactoryMessage.
+	expression := testCase addStatementOfType: #SEvent before: expression.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements:
+			#('_var0 := 8.' '_var2 := SEvent price: _var0.' '_var1 := SEvent price: _var0.')
+]
+
+{ #category : #tests }
 SSTestShifterTest >> testAddTargetClassName [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoOnPackage3.
@@ -476,6 +511,118 @@ SSTestShifterTest >> testAddTargetClassName [
 		assert:
 			(#('_var2 := SSTeacher name: _var0 with: _var1.' '_var2 := SSTeacher name: _var1 with: _var0.')
 				includes: expression printString).
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testBuildArgsBefore [
+	| testCase typeInfo expression |
+	typeInfo := utility typeInfoSEvent1.
+	testCase := SSTestCase with: typeInfo.
+	testCase addTargetClassName: #SEvent.
+	expression := testCase addLiteral.
+	testCase buildArgs: ((typeInfo factoryMessagesFrom: #SEvent) first argTypes)  before: expression.
+	self
+		assertCollection: (testCase printStatements )
+		hasSameElements: #('_var1 := 8.' '_var0 := 8.')
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testNewFactoryMessageBefore [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase addTargetClassName: #SEvent.
+	expression := testCase addLiteral.
+	self
+		assert: (testCase newFactoryMessage: #SEvent before: expression) printString
+		equals: 'SEvent price: _var1'.
+	"default factoryMessage"
+	testCase := SSTestCase with: utility typeInfoSFoo5.
+	testCase addTargetClassName: #SFoo.
+	self
+		assert: (testCase newFactoryMessage: #SFoo before: nil) printString
+		equals: 'SFoo new'
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testNewFactoryMessageUsingAnd [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase addTargetClassName: #SEvent.
+	expression := testCase addLiteral.
+	self
+		assert: (testCase newFactoryMessageUsing: #SEvent and: expression) printString
+		equals: 'SEvent price: _var1'.
+	self assertCollection: testCase printStatements  hasSameElements: #('_var1 := 8.' '_var0 := 8.')
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testNewFieldAccessMessageOfTypeBefore [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
+	expression := testCase addLiteral: #SmallInteger.
+	self
+		should: [ testCase newFieldAccessMessageOfType: #SmallInteger before: expression ]
+		raise: SError.
+	testCase
+		addStatement:
+			(testCase
+				newAssignment: (testCase newFactoryMessage: #SFoo before: expression))
+		before: expression.
+	self
+		assert:
+			(testCase newFieldAccessMessageOfType: #SmallFloat64 before: expression)
+				printString
+		equals: '_var2 score'.
+	self
+		assertCollection: testCase printStatements
+		hasSameElements: #('_var1 := 7.3.' '_var2 := SFoo score: _var1.' '_var0 := 5.')
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testNewMessageOfTypeBefore [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase addTargetClassName: #SFoo.
+	expression := testCase addLiteral: #SmallInteger.
+	self
+		should: [ testCase newMessageOfType: #SmallInteger before: expression ]
+		raise: SError.
+	testCase
+		addStatement:
+			(testCase
+				newAssignment: (testCase newFactoryMessage: #SFoo before: expression))
+		before: expression.
+	self
+		assert:
+			(testCase newMessageOfType: #SmallInteger before: expression)
+				printString
+		equals: '_var2 returnNum'.
+	self
+		assertCollection: testCase printStatements
+		hasSameElements: #('_var1 := 7.3.' '_var2 := SFoo score: _var1.' '_var0 := 5.')
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testNewStatementOfTypeBefore [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase addTargetClassName: #SEvent.
+	expression := testCase
+		newAssignment: (testCase newStatementOfType: #SmallInteger before: nil).
+	testCase addStatement: expression before: nil.
+	self
+		assertCollection: testCase printStatements
+		hasSameElements: #('_var0 := 8.').
+	expression := testCase newStatementOfType: #SEvent before: expression.
+	self assert: expression printString equals: 'SEvent price: _var1'.
+	expression := testCase newAssignment: expression.
+	testCase
+		addStatement: expression
+		before: (testCase statementOfVarName: '_var0').
+	self
+		assertCollection: testCase printStatements
+		hasSameElements: #('_var1 := 8.' '_var2 := SEvent price: _var1.' '_var0 := 8.')
 ]
 
 { #category : #tests }
@@ -601,4 +748,66 @@ SSTestShifterTest >> testRandomLiteralClassNameWithEmptyScalars [
 	| testCase |
 	testCase := SSTestCase with: STypeInfo new.
 	self should: [testCase randomLiteralClassName] raise: SError
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testSubStatementsFromToPrevIndexOf [
+	| testCase expression |
+	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase addTargetClassName: #SEvent.
+	self
+		assert: (testCase subStatementsFrom: 1 toPrevIndexOf: nil) isEmpty.
+	expression := testCase addLiteral.
+	self
+		assert: (testCase subStatementsFrom: 1 toPrevIndexOf: expression) isEmpty.
+	expression := testCase addFactoryMessage.
+	self
+		assertCollection:
+			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
+				collect: #printString)
+		hasSameElements: #('_var0 := 8.').
+	expression := testCase addMessage: #discount: from: #SEvent.
+	self
+		assertCollection:
+			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
+				collect: #printString)
+		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.').
+	expression := testCase addFieldAccessMessage: #price from: #SEvent.
+	self
+		assertCollection:
+			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
+				collect: #printString)
+		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := _var1 discount: _var0.').
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testValidTargetClassName [
+	| testCase |
+	testCase := SSTestCase with: utility typeInfoOnPackage1.
+	self should: [ testCase validTargetClassName: #SEvent ] raise: SError.
+	testCase addTargetClassName: #SEvent.
+	self
+		shouldnt: [ testCase validTargetClassName: #SEvent ]
+		raise: SError.
+	self
+		shouldnt: [ testCase validTargetClassName: #SConference ]
+		raise: SError.
+	self should: [ testCase validTargetClassName: #SStudent ] raise: SError
+]
+
+{ #category : #tests }
+SSTestShifterTest >> testValidTargetClassNameWithLackTypeInfo [
+	| testCase |
+	testCase := SSTestCase with: utility typeInfoOnPackage4.
+	self should: [ testCase validTargetClassName: #SEvent ] raise: SError.
+	testCase addTargetClassName: #SEvent.
+	self
+		shouldnt: [ testCase validTargetClassName: #SEvent ]
+		raise: SError.
+	self
+		shouldnt: [ testCase validTargetClassName: #SConference ]
+		raise: SError.
+	self
+		should: [ testCase validTargetClassName: #SParty ]
+		raise: SError.
 ]

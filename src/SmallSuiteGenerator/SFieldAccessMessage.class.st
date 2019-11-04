@@ -14,11 +14,10 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 ]
 
 { #category : #override }
-SFieldAccessMessage >> changeSelectorFrom: aExpression in: aTestCase [
+SFieldAccessMessage >> changeSelectorFrom: expression in: aTestCase [
 	| otherFieldAccessMessage |
 	otherFieldAccessMessage := aTestCase
-		alternativeFieldAccessMessage: self
-		before: aExpression.
+		alternativeFieldAccessMessage: self.
 	self selector: otherFieldAccessMessage selector
 ]
 

@@ -34,11 +34,6 @@ SSAssertion >> nameValue: anObject [
 	nameValue := anObject
 ]
 
-{ #category : #'as yet unclassified' }
-SSAssertion >> statement [
-	^ nameValue asString, ' := ', valueAssert storeString
-]
-
 { #category : #accessing }
 SSAssertion >> valueAssert [
 	^ valueAssert

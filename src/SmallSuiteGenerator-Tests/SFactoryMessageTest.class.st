@@ -59,7 +59,8 @@ SFactoryMessageTest >> testInsertMethodMessageUsing [
 SFactoryMessageTest >> testInsertRandomMessageUsing [
 	| testCase factoryMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	factoryMessage := testCase addFactoryMessage:#SFoo.
+	testCase addTargetClassName: #SFoo.
+	factoryMessage := testCase addFactoryMessage: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
