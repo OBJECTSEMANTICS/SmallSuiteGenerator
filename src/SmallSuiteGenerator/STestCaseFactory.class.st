@@ -1,6 +1,6 @@
 Class {
 	#name : #STestCaseFactory,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'engine',
 		'typeInfo',

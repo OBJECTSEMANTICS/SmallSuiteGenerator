@@ -1,6 +1,6 @@
 Class {
 	#name : #SSTestShifter,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'statements',
 		'assertions',

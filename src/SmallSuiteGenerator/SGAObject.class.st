@@ -1,6 +1,6 @@
 Class {
 	#name : #SGAObject,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'randomGenerator'
 	],

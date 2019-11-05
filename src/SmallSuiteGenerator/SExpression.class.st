@@ -1,6 +1,6 @@
 Class {
 	#name : #SExpression,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'returnType',
 		'id',

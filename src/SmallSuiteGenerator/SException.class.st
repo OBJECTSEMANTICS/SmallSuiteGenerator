@@ -1,6 +1,6 @@
 Class {
 	#name : #SException,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#classInstVars : [
 		'nameException'
 	],

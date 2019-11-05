@@ -1,6 +1,6 @@
 Class {
 	#name : #SReportTypeInfo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Info'
 }
 

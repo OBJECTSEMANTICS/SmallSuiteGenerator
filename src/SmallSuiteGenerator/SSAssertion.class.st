@@ -1,6 +1,6 @@
 Class {
 	#name : #SSAssertion,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'comparableValue',
 		'valueAssert',

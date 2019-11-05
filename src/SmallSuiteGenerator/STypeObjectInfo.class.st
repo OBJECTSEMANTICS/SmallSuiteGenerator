@@ -1,6 +1,6 @@
 Class {
 	#name : #STypeObjectInfo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-Info'
 }
 

@@ -1,6 +1,6 @@
 Class {
 	#name : #SFitnessFunction,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'tagetPackagesRegex'
 	],

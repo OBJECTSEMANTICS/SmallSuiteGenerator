@@ -1,6 +1,6 @@
 Class {
 	#name : #SSExecutionContext,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'values'
 	],

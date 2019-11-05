@@ -1,6 +1,6 @@
 Class {
 	#name : #STypeInfo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'types',
 		'classes',

@@ -1,6 +1,6 @@
 Class {
 	#name : #SSmallSuiteGeneratorExample,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-GA'
 }
 

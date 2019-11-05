@@ -1,6 +1,6 @@
 Class {
 	#name : #SConfiguration,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#classInstVars : [
 		'level',
 		'nameLog',
