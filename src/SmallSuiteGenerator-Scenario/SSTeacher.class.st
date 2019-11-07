@@ -35,5 +35,6 @@ SSTeacher >> yearsWorkExperience [
 
 { #category : #accessing }
 SSTeacher >> yearsWorkExperience: anObject [
+
 	yearsWorkExperience := anObject
 ]

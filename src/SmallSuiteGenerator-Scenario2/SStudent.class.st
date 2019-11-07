@@ -16,13 +16,14 @@ SStudent >> idStudent [
 { #category : #initialization }
 SStudent >> initialize [
 	id := 1.
+
 	scoreStudent := 1.
 	idStudent := id
 ]
 
 { #category : #accessing }
 SStudent >> nickname [
-	^ 'student_' , (nickname ifNil: ['1'])
+	^ 'student_'	, (nickname ifNil: [ '1' ])
 ]
 
 { #category : #accessing }

@@ -10,7 +10,7 @@ SStatementCoverage >> computeFitness [
 ]
 
 { #category : #accesing }
-SStatementCoverage >> funtionName [
+SStatementCoverage >> functionName [
 	^ 'block-coverage'
 ]
 
@@ -20,7 +20,7 @@ SStatementCoverage >> run: testCaseCollection [
 	testCaseCollection do:[ :testCase|
 			profiler cleanBlocksOfMethods.
 			testCase runWithoutAssertions.
-			testCase fitness at: self funtionName put: profiler statementCoverage.].
+			testCase fitness at: self functionName put: profiler statementCoverage.].
 ]
 
 { #category : #actions }

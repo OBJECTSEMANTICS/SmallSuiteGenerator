@@ -105,7 +105,7 @@ STestCaseFactory >> fitnessValues [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Run the generation before'.
-	nameFunctions := {engine fitness funtionName}.
+	nameFunctions := (Array with: engine fitness functionName).
 	^ nameFunctions asSet
 		collect: [ :nameFunction | 
 			nameFunction
@@ -154,6 +154,11 @@ STestCaseFactory >> populationSize: aInt [
 STestCaseFactory >> run [
 	engine run.
 	
+]
+
+{ #category : #'instance creation' }
+STestCaseFactory >> seed: aNumber [ 	
+	SConfiguration seed: aNumber
 ]
 
 { #category : #actions }

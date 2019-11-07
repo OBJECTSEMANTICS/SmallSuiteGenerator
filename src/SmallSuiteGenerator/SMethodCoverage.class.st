@@ -5,7 +5,7 @@ Class {
 }
 
 { #category : #accesing }
-SMethodCoverage >> funtionName [
+SMethodCoverage >> functionName [
 	^ 'method-coverage'
 ]
 
@@ -15,7 +15,7 @@ SMethodCoverage >> run: testCaseCollection [
 	testCaseCollection do:[ :testCase|
 			profiler cleanBlocksOfMethods.
 			testCase runWithoutAssertions.
-			testCase fitness at: self funtionName put: profiler methodCoverage.
+			testCase fitness at: self functionName put: profiler methodCoverage.
 		].
 ]
 

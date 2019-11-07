@@ -48,6 +48,19 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 	^ types at: aClassName ifAbsent: aBlock
 ]
 
+{ #category : #lookup }
+STypeInfo >> classMethodType: aSelector from: aClassName [
+	aSelector = #new
+		ifTrue: [ ^ self defaultFactoryMessageFrom: aClassName ].
+	(self factoryMessagesFrom: aClassName)
+		detect: [ :aMessage | aMessage selector = aSelector ]
+		ifFound: [ :aMessage | ^ aMessage ].
+	self
+		error:
+			'ClassMethodType of selector: ' , aSelector
+				, ' is not found in class: ' , aClassName
+]
+
 { #category : #accessing }
 STypeInfo >> classes [
 	classes ifNil: [ classes := Dictionary new ].
@@ -65,6 +78,22 @@ STypeInfo >> copy [
 		valuesDo: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
 	copy scalars: scalars copy.
 	^ copy
+]
+
+{ #category : #'as yet unclassified' }
+STypeInfo >> defaultFactoryMessageFrom: aClassName [
+	(self messagesFrom: aClassName)
+		detect: [ :message | message selector = #initialize ]
+		ifFound: [ ^ STypeMethodInfo
+				type:
+					#new
+						->
+							(Array
+								with: aClassName
+								with: aClassName
+								with: #()
+								with: false) ].
+	self error: 'ClassMethodType of selector new cannot be applied at class: ', aClassName
 ]
 
 { #category : #'error handling' }
@@ -130,6 +159,19 @@ STypeInfo >> messagesFrom: aClassName [
 				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
 ]
 
+{ #category : #lookup }
+STypeInfo >> methodType: aSelector from: aClassName [
+	types
+		valuesDo: [ :aTypeClassInfo | 
+			aTypeClassInfo messagesAndAccessMessages
+				detect: [ :aMessage | 
+					(aMessage isFromReceiver: aClassName)
+						and: [ aMessage selector = aSelector ] ]
+				ifFound: [ :aMessage | ^ aMessage ]
+				ifNone: [ false ] ].
+	^ self error: 'MethodType of selector: ', aSelector , ' is not found in class: ' , aClassName
+]
+
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
 	noneAbstractClasses
@@ -137,12 +179,6 @@ STypeInfo >> noneAbstractClasses [
 				select: [ :assoc | (self isAbstractClass: assoc key) not ]
 				thenCollect: [ :assoc | assoc value ] ].
 	^ noneAbstractClasses
-]
-
-{ #category : #accessing }
-STypeInfo >> randomNoneAbstractClass [
-	self assert: types isNotEmpty description: 'There is not a class'.
-	^ self noneAbstractClasses atRandom: SConfiguration random "to update"
 ]
 
 { #category : #'as yet unclassified' }
@@ -179,27 +215,6 @@ STypeInfo >> scalars: aDictionary [
 { #category : #'accessing structure variables' }
 STypeInfo >> type: aAssoc [
 	self addClassInfo: (STypeClassInfo type: aAssoc)
-]
-
-{ #category : #lookup }
-STypeInfo >> type: aSelector from: aClassName [
-	types
-		valuesDo: [ :aTypeClassInfo | 
-			aTypeClassInfo messagesAndAccessMessages
-				detect: [ :aMessage | 
-					(aMessage isFromReceiver: aClassName)
-						and: [ aMessage selector = aSelector ] ]
-				ifFound: [ :aMessage | ^ aMessage ]
-				ifNone: [ false ] ].
-	^ self error: aSelector , ' is not found in class: ' , aClassName
-]
-
-{ #category : #lookup }
-STypeInfo >> type: aSelector fromMetaClassName: aClassName [
-	(self factoryMessagesFrom: aClassName)
-		detect: [ :aMessage | aMessage selector = aSelector ]
-		ifFound: [ :aMessage | ^ aMessage ]
-		ifNone: [ self error: aSelector , ' is not found in metaClass: ' , aClassName ]
 ]
 
 { #category : #accessing }

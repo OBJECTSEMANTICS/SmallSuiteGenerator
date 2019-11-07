@@ -16,7 +16,7 @@ SCoverageTest >> fitnessClass [
 
 { #category : #tests }
 SCoverageTest >> fitnessOf: aTestCase [
-	^ aTestCase fitness at: (fitness funtionName).
+	^ aTestCase fitness at: (fitness functionName).
 ]
 
 { #category : #running }

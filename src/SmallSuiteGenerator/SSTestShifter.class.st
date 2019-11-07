@@ -67,7 +67,7 @@ SSTestShifter >> addFactoryMessage: aClassName ofSelector: aSelector [
 	^ [ self
 		addAssignment:
 			(self
-				factoryMessageUsing: (typeInfo type: aSelector fromMetaClassName: aClassName)
+				factoryMessageUsing: (typeInfo classMethodType: aSelector from: aClassName)
 				before: nil) ]
 		on: SError
 		do: [ self addFactoryMessage: aClassName ]
@@ -907,9 +907,11 @@ SSTestShifter >> satisfyTypes: types before: aStatement [
 
 { #category : #accessing }
 SSTestShifter >> statementAt: statement [
-	^ statements
+	statements
 		detect: [ :stm | stm = statement ]
-		ifNone: [ self error: statement printString, ' is not found.' ]
+		ifFound: [ :stm | ^ stm ].
+	self
+		error: 'Statement: ' , statement printString , ' is not found in testCase.'
 ]
 
 { #category : #accessing }
@@ -917,8 +919,7 @@ SSTestShifter >> statementOfVarName: aString [
 	statements
 		detect: [ :stm | stm reference printString = aString ]
 		ifFound: [ :stm | ^ stm ].
-		
-	self error: 'Not found statement of varName: ' , aString
+	self error: 'Statement of varName: ' , aString, 'is not found.'
 ]
 
 { #category : #accessing }
@@ -929,7 +930,7 @@ SSTestShifter >> statements [
 { #category : #repairing }
 SSTestShifter >> statementsOfType: aType before: expression [
 	(statements includes: expression)
-		ifFalse: [ self error: expression printString , 'is not found.' ].
+		ifFalse: [ self error: 'Statement: ', expression printString , 'is not found in testCase.' ].
 	^ (self subStatementsFrom: 1 toPrevIndexOf: expression)
 		select: [ :stm | stm returnType = aType ]
 ]
