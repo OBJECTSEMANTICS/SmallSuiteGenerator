@@ -21,7 +21,7 @@ SGATournamentSelection >> fitness: aFitness [
 
 { #category : #actions }
 SGATournamentSelection >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness funtionName
+	^ aTestCase fitness at: fitness functionName
 ]
 
 { #category : #initialization }
@@ -33,7 +33,7 @@ SGATournamentSelection >> initialize [
 
 { #category : #accessing }
 SGATournamentSelection >> load: aTestCaseCollection [
-	population := aTestCaseCollection asOrderedCollection copy.
+	population := aTestCaseCollection	asOrderedCollection "copy"
 ]
 
 { #category : #actions }

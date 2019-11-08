@@ -60,22 +60,22 @@ SGAEngine >> createNewPopulation [
 	newPopulation := OrderedCollection new.
 	selectionStrategy load: population copy.
 	selectionStrategy fitness: fitness.
-	[ newPopulation size < self populationSize ]
+	[ (newPopulation size < self populationSize) and: [ selectionStrategy population size >= 2 ] ]
 		whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child options |
 			P1 := selectionStrategy pickOne.
 			P2 := selectionStrategy pickOne.
 			self shouldCrossOver
 				ifTrue: [ 
 					child := crossoverOperator crossover: P1 with: P2.
-					Transcript show:'corows';cr.
+					"Transcript show:'corows';cr."
 					O1 := child first.
 					O2 := child second ]
 				ifFalse: [ O1 := P1.
 					O2 := P2 ].
 			mutationOperator mutate: O1.
 			mutationOperator mutate: O2.
-			fitness compute: {O1.O2}.
-			options := { O1 . O2 . P1 . P2 } asSortedCollection: [ :a :b | 
+			fitness compute: (Array with: O1 with: O2).
+			options := (Array with: O1 with: O2 with: P1 with: P2 ) asSortedCollection: [ :a :b | 
 					(self fitnessFor: a) = (self fitnessFor: b) ifTrue:[
 						a length < b length
 						] ifFalse:[ (self fitnessFor:a)> (self fitnessFor:b)] ].
@@ -115,7 +115,7 @@ SGAEngine >> fitness: aFitness [
 
 { #category : #actions }
 SGAEngine >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness funtionName.
+	^ aTestCase fitness at: fitness functionName.
 ]
 
 { #category : #initialization }

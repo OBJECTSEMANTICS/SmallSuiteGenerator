@@ -774,6 +774,189 @@ SUtilityTypeInfo >> typeInfoStringSFoo2 [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoStringSFoo3 [
+	"SSTypeCollector profile:[ (SFoo score: 4)
+				score;
+				returnCollection;
+				returnString;
+				score: 5;
+				return:
+					((SStudent name: 'Emily')
+						nickname;
+						scoreStudent;
+						yourself) ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'."
+
+	^ 'STypeInfo {
+	#types : {
+		#SStack : STypeClassInfo {
+			#typeName : #SStack,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SSPerson : STypeClassInfo {
+			#typeName : #SSPerson,
+			#methodTypes : {
+				#''id:'' : STypeMethodInfo {
+					#selector : #''id:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				},
+				#''nickname:'' : STypeMethodInfo {
+					#selector : #''nickname:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				},
+				#''name:'' : STypeMethodInfo {
+					#selector : #''name:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				}
+			},
+			#classMethodTypes : {
+				#''name:'' : STypeMethodInfo {
+					#selector : #''name:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #ByteString ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SStudent ]
+				}
+			}
+		},
+		#SConference : STypeClassInfo {
+			#typeName : #SConference,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SEvent : STypeClassInfo {
+			#typeName : #SEvent,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SSTeacher : STypeClassInfo {
+			#typeName : #SSTeacher,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SParty : STypeClassInfo {
+			#typeName : #SParty,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SEventTest : STypeClassInfo {
+			#typeName : #SEventTest,
+			#methodTypes : { },
+			#classMethodTypes : { }
+		},
+		#SFoo : STypeClassInfo {
+			#typeName : #SFoo,
+			#methodTypes : {
+				#''score:'' : STypeMethodInfo {
+					#selector : #''score:'',
+					#returnType : SMultiTypeInfo [ #SFoo ],
+					#argTypes : [
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				},
+				#initialize : STypeMethodInfo {
+					#selector : #initialize,
+					#returnType : SMultiTypeInfo [ #SFoo ],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				},
+				#returnCollection : STypeMethodInfo {
+					#selector : #returnCollection,
+					#returnType : SMultiTypeInfo [ #OrderedCollection ],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				},
+				#returnString : STypeMethodInfo {
+					#selector : #returnString,
+					#returnType : SMultiTypeInfo [ #ByteString ],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				},
+				#''return:'' : STypeMethodInfo {
+					#selector : #''return:'',
+					#returnType : SMultiTypeInfo [ #SStudent ],
+					#argTypes : [
+						SMultiTypeInfo [ #SStudent ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				},
+				#score : STypeMethodInfo {
+					#selector : #score,
+					#returnType : SMultiTypeInfo [ #SmallInteger ],
+					#isQuick : true,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				}
+			},
+			#classMethodTypes : {
+				#''score:'' : STypeMethodInfo {
+					#selector : #''score:'',
+					#returnType : SMultiTypeInfo [ #SFoo ],
+					#argTypes : [
+						SMultiTypeInfo [ #SmallInteger ]
+					],
+					#isQuick : false,
+					#isDeprecated : false,
+					#receiver : SMultiTypeInfo [ #SFoo ]
+				}
+			}
+		}
+	},
+	#scalars : {
+		#OrderedCollection : [
+			OrderedCollection [ ]
+		],
+		#SmallInteger : [
+			5,
+			1,
+			4
+		],
+		#ByteString : [
+			''Emily'',
+			''Hello''
+		],
+		#SStudent : [
+			SStudent {
+				#name : ''Emily'',
+				#id : 1,
+				#nickname : ''Emily'',
+				#scoreStudent : 1
+			}
+		]
+	}
+}'
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoStringSFoo6 [
 	"SSTypeCollector profile: [ SFoo new return: (Dictionary new at: 1 put: (SStack new push: (SStudent  name: 'Lian' with: 1); push: (SStudent name: 'Josh' with: 2); yourself ); at: 2 put: (OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself); yourself ) ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'."
 	^ 'STypeInfo {

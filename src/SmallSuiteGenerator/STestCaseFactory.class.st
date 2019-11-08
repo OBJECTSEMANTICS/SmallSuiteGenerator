@@ -70,18 +70,20 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 				instanceVariableNames: ''
 				classVariableNames: ''
 				package: self outputPackageName ].
-	[aTestCase generateAssertions.
+	[ aTestCase generateAssertions.
 	class
 		compile:
-			aSelector,
-					'
-	' , aTestCase parseTreeWithAssertions body formattedCode] on: Error do:[
-	
-		class compile: aSelector,'
-		self should:', aTestCase parseTree formattedCode,' raise:Error.
-		'
-	
-	]
+			(RBParser
+				parseMethod:
+					aSelector , aTestCase descriptiveComment
+						, aTestCase parseTreeWithAssertions body formattedCode)
+				formattedCode ]
+		on: Error
+		do: [ class
+				compile:
+					aSelector , String cr , 'self should:'
+						, aTestCase parseTree formattedCode , String cr
+						, ' raise:Error.' , String cr ]
 ]
 
 { #category : #actions }
@@ -105,7 +107,7 @@ STestCaseFactory >> fitnessValues [
 	self
 		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
 		description: 'Run the generation before'.
-	nameFunctions := {engine fitness funtionName}.
+	nameFunctions := (Array with: engine fitness functionName).
 	^ nameFunctions asSet
 		collect: [ :nameFunction | 
 			nameFunction
@@ -146,14 +148,19 @@ STestCaseFactory >> outputPackageName: anObject [
 ]
 
 { #category : #configuration }
-STestCaseFactory >> populationSize: aInt [
-	engine populationSize: aInt
+STestCaseFactory >> populationSize: int [
+	engine populationSize: int
 ]
 
 { #category : #actions }
 STestCaseFactory >> run [
 	engine run.
 	
+]
+
+{ #category : #'instance creation' }
+STestCaseFactory >> seed: aNumber [ 	
+	SConfiguration seed: aNumber
 ]
 
 { #category : #actions }

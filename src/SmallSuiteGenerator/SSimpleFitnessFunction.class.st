@@ -15,7 +15,7 @@ SSimpleFitnessFunction >> compute: testCaseCollection [
 ]
 
 { #category : #accesing }
-SSimpleFitnessFunction >> funtionName [
+SSimpleFitnessFunction >> functionName [
 	^ self subclassResponsibility
 ]
 
