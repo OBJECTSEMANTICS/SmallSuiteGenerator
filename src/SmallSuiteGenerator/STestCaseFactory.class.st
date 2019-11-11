@@ -70,18 +70,20 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 				instanceVariableNames: ''
 				classVariableNames: ''
 				package: self outputPackageName ].
-	[aTestCase generateAssertions.
+	[ aTestCase generateAssertions.
 	class
 		compile:
-			aSelector,
-					'
-	' , aTestCase parseTreeWithAssertions body formattedCode] on: Error do:[
-	
-		class compile: aSelector,'
-		self should:', aTestCase parseTree formattedCode,' raise:Error.
-		'
-	
-	]
+			(RBParser
+				parseMethod:
+					aSelector , aTestCase descriptiveComment
+						, aTestCase parseTreeWithAssertions body formattedCode)
+				formattedCode ]
+		on: Error
+		do: [ class
+				compile:
+					aSelector , String cr , 'self should:'
+						, aTestCase parseTree formattedCode , String cr
+						, ' raise:Error.' , String cr ]
 ]
 
 { #category : #actions }
@@ -146,8 +148,8 @@ STestCaseFactory >> outputPackageName: anObject [
 ]
 
 { #category : #configuration }
-STestCaseFactory >> populationSize: aInt [
-	engine populationSize: aInt
+STestCaseFactory >> populationSize: int [
+	engine populationSize: int
 ]
 
 { #category : #actions }

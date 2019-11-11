@@ -10,7 +10,8 @@ Class {
 		'targetClassesNames',
 		'maxNumberOfStatements',
 		'validatedTargetClassName',
-		'randomGenerator'
+		'randomGenerator',
+		'fitnessByClass'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -354,6 +355,12 @@ SSTestShifter >> defaultNumberStatements [
 	^ 54
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestShifter >> descriptiveComment [
+	^ self summaryFitness, String cr, self summaryFitnessByClass.
+	
+]
+
 { #category : #repairing }
 SSTestShifter >> error: string [
 	
@@ -378,6 +385,11 @@ SSTestShifter >> factoryMessageVariablesBefore: aStatement [
 { #category : #accessing }
 SSTestShifter >> fitness [ 	
 	^ fitness
+]
+
+{ #category : #accessing }
+SSTestShifter >> fitnessByClass [
+	^ fitnessByClass 
 ]
 
 { #category : #actions }
@@ -419,6 +431,7 @@ SSTestShifter >> initialize [
 	statements := OrderedCollection new.
 	assertions := OrderedCollection new.
 	fitness := Dictionary new.
+	fitnessByClass := Dictionary new.
 	nextId := 0.
 	maxNumberOfStatements := 10.
 	targetClassesNames := Set new.
@@ -700,7 +713,9 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	temporaries := self allVarNames
 		collect: [ :varName | RBParser parseExpression: varName ].
 	node body temporaries: temporaries.
-	statementCollection do: [ :stm | node body addNode: (RBParser parseExpression: stm printString) ].
+	statementCollection
+		do:
+			[ :stm | node body addNode: (RBParser parseExpression: stm printString) ].
 	^ node
 ]
 
@@ -935,6 +950,18 @@ SSTestShifter >> statementsOfType: aType before: expression [
 		select: [ :stm | stm returnType = aType ]
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestShifter >> stringFunctionByClassName: dict on: stream [
+	(dict associationsSelect: [ :assoc | assoc value > 0 ])
+		associationsDo: [ :assoc | 
+			stream
+				nextPutAll: assoc key;
+				nextPut: $:;
+				nextPutAll: assoc value printString;
+				nextPut: $%;
+				nextPutAll: String cr ]
+]
+
 { #category : #repairing }
 SSTestShifter >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	| stop |
@@ -944,6 +971,42 @@ SSTestShifter >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	start <= stop
 		ifFalse: [ ^ self error: start printString, ' (indexIni) is greater than ', stop printString, ' (indexPos).' ].
 	^ statements copyFrom: start to: stop - 1
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> summaryFitness [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"Fitness: ';
+				nextPut: Character cr.
+			fitness
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: ': ';
+						nextPutAll: assoc value printString;
+						nextPut: Character cr ].
+			stream
+				nextPutAll: '"' ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> summaryFitnessByClass [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"This test covers: ';
+				nextPut: Character cr.
+			fitnessByClass
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: String cr.
+					self stringFunctionByClassName: assoc value on: stream ].
+			stream
+				nextPutAll: '"';
+				nextPutAll: String cr ]
 ]
 
 { #category : #accessing }
