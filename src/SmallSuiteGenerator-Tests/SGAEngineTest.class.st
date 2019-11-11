@@ -10,11 +10,10 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-SGAEngineTest >> profilerOf: string [ 
+SGAEngineTest >> profilerOf: string [
 	(S2CInstrumentator onPackagesMatching: string) applyOn: profiler.
 	(profiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
-	"displayingProgress: 'Instrumenting ' , symbol"
 ]
 
 { #category : #running }
@@ -27,19 +26,11 @@ SGAEngineTest >> setUp [
 
 { #category : #running }
 SGAEngineTest >> tearDown [
-	"profiler cleanInstrumentation"
-
 	profiler cleanInstrumentation.
 	S2Lock value: false.
 	S2Context value: nil.
-	S2Profiler remove. super tearDown
-
-	"SMultiFitnessFunction
-		clean;
-		reset."
-
-
-	"S2Profiler clean."
+	S2Profiler remove.
+	super tearDown
 ]
 
 { #category : #tests }

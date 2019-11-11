@@ -19,6 +19,7 @@ SMethodCoverage >> run: testCaseCollection [
 			testCase runWithoutAssertions.
 			testCase fitness at:string put: profiler methodCoverage.
 			testCase fitnessByClass at: string put: profiler methodCoverage1 ]
+		].
 ]
 
 { #category : #actions }
