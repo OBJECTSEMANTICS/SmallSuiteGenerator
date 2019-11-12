@@ -83,7 +83,7 @@ SMethodCoverageTest >> testCoverageOnClassSStudent [
 SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 	| testCase valueFitness |
 	testCase := self
-		testCase: (STON fromString: utility typeInfoStringSEvent)
+		testCase: utility typeInfoSEventOnPackage1 " (STON fromString: utility typeInfoStringSEvent)"
 		withNumStatements: 20
 		andTargetClassName: #SEvent.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
@@ -97,7 +97,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 	| testCase valueFitness |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSFoo2).
+		with: utility typeInfoSFooOnPackage2  "(STON fromString: utility typeInfoStringSFoo2)".
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage: #SFoo;
@@ -113,7 +113,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 	| testCase valueFitness |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSSTeacher2).
+		with: utility typeInfoSSTeacherOnPackage2."(STON fromString: utility typeInfoStringSSTeacher2)."
 	testCase
 		addTargetClassName: #SSTeacher;
 		addFactoryMessage: #SSTeacher;
@@ -129,7 +129,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 SMethodCoverageTest >> testCoverageOnPackagesSStack [
 	| testCase valueFitness |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSStack2).
+		with: utility typeInfoSStackOnPackage1. "(STON fromString: utility typeInfoStringSStack2)."
 	testCase
 		addTargetClassName: #SStack;
 		addFactoryMessage: #SStack;
@@ -145,7 +145,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSStack [
 SMethodCoverageTest >> testCoverageOnPackagesSStudent [
 	| testCase valueFitness |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSStudent1).
+		with: utility typeInfoSStudentOnPackage1. "(STON fromString: utility typeInfoStringSStudent1)."
 	testCase
 		addTargetClassName: #SStudent;
 		addFactoryMessage: #SStudent;

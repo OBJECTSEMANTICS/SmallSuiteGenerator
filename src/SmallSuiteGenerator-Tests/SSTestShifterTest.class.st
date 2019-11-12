@@ -334,7 +334,7 @@ SSTestShifterTest >> testAddMessageWithReceiver [
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 	| testCase |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSFoo6).
+		with: utility typeInfoSFooOnPackage3."(STON fromString: utility typeInfoStringSFoo6)."
 	testCase
 		addTargetClassName: #SFoo;
 		addMessage: #return: from: #SFoo.
@@ -361,25 +361,31 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 	| testCase |
 	testCase := SSTestCase
-		with: (STON fromString: utility typeInfoStringSStack1).
+		with: utility typeInfoSStackOnPackage2."(STON fromString: utility typeInfoStringSStack1)".
 	testCase
 		addTargetClassName: #SStack;
 		addMessage: #push: from: #SStack.
 	self assert: testCase statements size equals: 3.
 	self
-		assert: ((testCase statements collect: #printString)
-		includesAny:
-			(Array with: (OrderedCollection new
-				add: '_var0 := SStack new.';
-				add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
-				add: '_var2 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
-				add: '_var3 := ((OrderedCollection new) add: _var1; add: _var2; yourself).';
-				add: '_var4 := _var0 push: _var3.'; yourself)
-			with: (OrderedCollection new
-				add: '_var0 := SStack new.';
-				add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
-				add: '_var2 := ((OrderedCollection new) add: _var1; yourself).';
-				add: '_var3 := _var0 push: _var2.'; yourself)))
+		assert:
+			((testCase statements collect: #printString)
+				includesAny:
+					(Array
+						with:
+							(OrderedCollection new
+								add: '_var0 := SStack new.';
+								add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
+								add: '_var2 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
+								add: '_var3 := ((OrderedCollection new) add: _var1; add: _var2; yourself).';
+								add: '_var4 := _var0 push: _var3.';
+								yourself)
+						with:
+							(OrderedCollection new
+								add: '_var0 := SStack new.';
+								add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
+								add: '_var2 := ((OrderedCollection new) add: _var1; yourself).';
+								add: '_var3 := _var0 push: _var2.';
+								yourself)))
 ]
 
 { #category : #tests }

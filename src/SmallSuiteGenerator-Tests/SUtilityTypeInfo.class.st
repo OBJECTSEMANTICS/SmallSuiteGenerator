@@ -266,6 +266,30 @@ SUtilityTypeInfo >> typeInfoSEvent2 [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
+	^ STypeInfo new
+		type:
+			#SEvent
+				->
+					(Array
+						with:
+							(Array
+								with: #price -> #(#SEvent #SmallInteger #() false)
+								with: #discount -> #(#SEvent #SmallInteger #() true)
+								with: #initialize -> #(#SEvent #SEvent #() false)
+								with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false))
+						with: (Array with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false)));
+		type: #SSTeacher -> #(#() #());
+		type: #SSPerson -> #(#() #());
+		type: #SStack -> #(#() #());
+		type: #SConference -> #(#() #());
+		type: #SFoo -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SmallInteger with: #(15 0)
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoSFoo1 [ 
 	^ (STypeInfo new
 				type:
@@ -366,6 +390,141 @@ SUtilityTypeInfo >> typeInfoSFooEmpty [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
+	^ STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnCollection -> #(#SFoo #OrderedCollection #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #score -> #(#SFoo #SmallInteger #() true)
+								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
+								with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+		type: #SSPerson -> 
+		(Array with: 
+			(Array with: #id: -> #(#SStudent #SStudent #(#SmallInteger) false)
+			with: #nickname: -> #(#SStudent #SStudent #(#ByteString) false)
+			with: #name: -> #(#SStudent #SStudent #(#ByteString) false)) 
+			with: (Array with: #name: -> #(#SStudent #SStudent #(#ByteString) false)));
+		type: #SStack -> #(#() #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SSTeacher -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SmallInteger with: #(5 1 4);
+		scalar: #ByteString with: #('Emily' 'Hello');
+		scalar: #OrderedCollection
+			with: (Array with: OrderedCollection new);
+		scalar: #SStudent
+			with:
+			(Array
+				with:
+					((SStudent name: 'Emily')
+						nickname;
+						scoreStudent;
+						yourself))
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
+	^ STypeInfo new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnCollection -> #(#SFoo #OrderedCollection #() false)
+								with: #initialize -> #(#SFoo #SFoo #() false)
+								with: #score -> #(#SFoo #SmallInteger #() true)
+								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
+								with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+		type: #SSPerson -> #(#() #());
+		type: #SStack -> #(#() #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SSTeacher -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SmallInteger with: #(15);
+		scalar: #SmallFloat64 with: #(2.3);
+		scalar: #OrderedCollection
+			with: (Array with: OrderedCollection new);
+		scalar: #Array with: #(#(1 5 6))
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
+	^ STypeInfo new
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #id: -> #(#SStudent #SStudent #(#SmallInteger) false)
+								with: #nickname: -> #(#SStudent #SStudent #(#ByteString) false)
+								with: #name: -> #(#SStudent #SStudent #(#ByteString) false))
+						with:
+							(Array
+								with:
+									#name:with:
+										-> #(#SStudent #SStudent #(#ByteString #SMallInteger) false)));
+		type:
+			#SFoo
+				->
+					(Array
+						with:
+							(Array
+								with: #initialize -> #(#SFoo #SFoo #() false)
+								with: #return: -> #(#SFoo #Dictionary #(#Dictionary) false))
+						with: #());
+		type:
+			#SStack
+				->
+					(Array
+						with: (Array with: #push: -> #(#SStack #SStudent #(#SStudent) false))
+						with: #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SSTeacher -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SStudent
+			with:
+			(Array
+				with: (SStudent name: 'Mery' with: 5)
+				with: (SStudent name: 'Josh' with: 2)
+				with: (SStudent name: 'Lian'));
+		scalar: #Dictionary
+			with:
+			(Array
+				with:
+					(Dictionary new
+						at: 1
+							put:
+							(SStack new
+								push: (SStudent name: 'Josh' with: 2);
+								push: (SStudent name: 'Lian');
+								yourself);
+						at: 2
+							put:
+							(OrderedCollection new
+								add: (SStudent name: 'Mery' with: 5);
+								yourself);
+						yourself));
+		scalar: #SmallInteger with: #(5 1 2);
+		scalar: #ByteString with: #('Josh' 'Lian' 'Mery')
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoSSPerson1 [
 	^ STypeInfo new
 		type:
@@ -460,6 +619,76 @@ SUtilityTypeInfo >> typeInfoSSTeacher4 [
 ]
 
 { #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
+	^ STypeInfo new
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #id: -> #(#SSTeacher #SSTeacher #(#SmallInteger) false)
+								with: #nickname: -> #(#SSTeacher #SSTeacher #(#ByteString) false)
+								with: #name -> #(#SSTeacher #ByteString #() true)
+								with: #id -> #(#SSTeacher #SmallInteger #() true)
+								with: #name: -> #(#SSTeacher #SSTeacher #(#ByteString) false))
+						with:
+							(Array
+								with:
+									#name:with:
+										-> #(#SSTeacher #SSTeacher #(#ByteString #SmallInteger) false)));
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
+							(Array
+								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
+								with: #idTeacher -> #(#SSTeacher #SmallInteger #() true)
+								with:
+									#yearsWorkExperience:
+										-> #(#SSTeacher #SSTeacher #(#SmallInteger) false)
+								with: #nickname -> #(#SSTeacher #ByteString #() false))
+						with: #());
+		type: #SStack -> #(#() #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SFoo -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SmallInteger with: #(0 100 34);
+		scalar: #ByteString with: #('Ann' 'teacher_Ann')
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
+	^ STypeInfo new
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
+							(Array
+								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
+								with: #nickname -> #(#SSTeacher #SSTeacher #() false)
+								with: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true))
+						with:
+							#());
+		type:
+			#SSPerson
+				->
+					#(#() #());
+		type: #SStack -> #(#() #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SFoo -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SmallInteger with: #(0);
+		scalar: #ByteString with: #('teacher_1')
+]
+
+{ #category : #'as yet unclassified' }
 SUtilityTypeInfo >> typeInfoSStack1 [
 	^ STypeInfo new
 				type:
@@ -536,6 +765,101 @@ SUtilityTypeInfo >> typeInfoSStack4 [
 										with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 				scalar: #SmallInteger with: #(5);
 				scalar: #Array with: #(#(1 4 5)))
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
+	^ STypeInfo new
+		type:
+			#SStack
+				->
+					(Array
+						with:
+							(Array
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with:
+							(Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+		type: #SSPerson -> #(#() #());
+		type: #SSTeacher -> #(#() #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SFoo -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SmallInteger with: #(1 2 4 6 8);
+		scalar: #Array with: #(#(2 4 6 1))
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
+	^ STypeInfo new
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #id: -> #(#SStudent #SStudent #(#SmallInteger) false)
+								with: #nickname: -> #(#SStudent #SStudent #(#ByteString) false)
+								with: #name: -> #(#SStudent #SStudent #(#ByteString) false))
+						with:
+							(Array
+								with:
+									#name:with:
+										-> #(#SStudent #SStudent #(#ByteString #SMallInteger) false)));
+		type:
+			#SStack
+				->
+					(Array
+						with: (Array with: #push: -> #(#SStack #OrderedCollection #(#OrderedCollection) false))
+						with: #());
+				type:
+			#SFoo
+				->
+					#(#() #());
+		type: #SConference -> #(#() #());
+		type: #SEvent -> #(#() #());
+		type: #SParty -> #(#() #());
+		type: #SSTeacher -> #(#() #());
+		type: #SEventTest -> #(#() #());
+		scalar: #SStudent
+			with:
+			(Array
+				with: (SStudent name: 'Josh' with: 2)
+				with: (SStudent name: 'Mery' with: 5)
+				with: (SStudent name: 'Lian'));
+		scalar: #OrderedCollection
+			with:
+			(Array
+				with:
+					(OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself)
+					with: 
+							(OrderedCollection new
+								add: (SStudent name: 'Lian');
+								add: (SStudent name: 'Josh' with: 2);
+								yourself));
+		scalar: #SmallInteger with: #(5 1 2);
+		scalar: #ByteString with: #('Josh' 'Lian' 'Mery')
+]
+
+{ #category : #'as yet unclassified' }
+SUtilityTypeInfo >> typeInfoSStudentOnPackage1 [
+	^ STypeInfo new
+		type:
+			#SStudent
+				->
+					(Array
+						with:
+							(Array
+								with: #initialize -> #(#SStudent #SStudent #() false)
+								with: #idStudent -> #(#SStudent #SmallInteger #() true)
+								with: #scoreStudent -> #(#SStudent #SmallInteger #() true)
+								with: #scoreStudent: -> #(#SStudent #SmallInteger #(#SmallInteger) false))
+						with: #());
+		type: #SAbstractClass -> #(#() #());
+		scalar: #SmallInteger with: #(10 1)
 ]
 
 { #category : #'as yet unclassified' }

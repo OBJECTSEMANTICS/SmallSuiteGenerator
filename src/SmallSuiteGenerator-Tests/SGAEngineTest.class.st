@@ -26,7 +26,7 @@ SGAEngineTest >> setUp [
 
 { #category : #running }
 SGAEngineTest >> tearDown [
-	profiler cleanInstrumentation.
+	[profiler cleanInstrumentation] on: Error do: [].
 	S2Lock value: false.
 	S2Context value: nil.
 	S2Profiler remove.
@@ -55,14 +55,13 @@ SGAEngineTest >> testRunOnClassSStudentManual [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesMatchingSFoo [
-	| first last functionFitness typeInfo targetPackageRegex |
+	| first last functionFitness  targetPackageRegex |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
-	typeInfo := STON fromString: utility typeInfoStringSFoo3.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	engine
-		typeInfo: typeInfo;
+		typeInfo: utility typeInfoSFooOnPackage1; 	" STON fromString: utility typeInfoStringSFoo3."
 		fitness: functionFitness;
 		targetClassName: #SFoo;
 		numberOfIterations: 5;
@@ -77,14 +76,13 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
-	| first last functionFitness typeInfo targetPackageRegex |
+	| first last functionFitness targetPackageRegex |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
-	typeInfo := STON fromString: utility typeInfoStringSSTeacher1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	engine
-		typeInfo: typeInfo;
+		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
 		numberOfIterations: 5;
@@ -94,19 +92,18 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 	last := engine logs last fittestTestCase fitness
 		at: functionFitness functionName.
 	self assert: first > 0.	"20 = (1/5) * 100"
-	self assert:  first <= last.	"80 = (4/5) * 100"
+	self assert: first <= last	"80 = (4/5) * 100"
 ]
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
-	| first last functionFitness typeInfo targetPackageRegex |
-	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
-	typeInfo := STON fromString: utility typeInfoStringSSTeacher1.
+	| first last functionFitness targetPackageRegex |
+	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.	
 	self profilerOf: targetPackageRegex.
 	functionFitness := SStatementCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	engine
-		typeInfo: typeInfo;
+		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
 		numberOfIterations: 5;
