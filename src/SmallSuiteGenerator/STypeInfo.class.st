@@ -75,7 +75,7 @@ STypeInfo >> copy [
 	| copy |
 	copy := STypeInfo new.
 	types
-		valuesDo: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
+		do: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
 	copy scalars: scalars copy.
 	^ copy
 ]
@@ -147,7 +147,7 @@ STypeInfo >> joinScalars: aDict [
 { #category : #'as yet unclassified' }
 STypeInfo >> joinWith: otherTypeInfo [
 	otherTypeInfo types
-		valuesDo: [ :aTypeClass | self addClassInfo: aTypeClass ].
+		do: [ :aTypeClass | self addClassInfo: aTypeClass ].
 		self joinScalars: otherTypeInfo scalars
 ]
 
@@ -162,7 +162,7 @@ STypeInfo >> messagesFrom: aClassName [
 { #category : #lookup }
 STypeInfo >> methodType: aSelector from: aClassName [
 	types
-		valuesDo: [ :aTypeClassInfo | 
+		do: [ :aTypeClassInfo | 
 			aTypeClassInfo messagesAndAccessMessages
 				detect: [ :aMessage | 
 					(aMessage isFromReceiver: aClassName)
