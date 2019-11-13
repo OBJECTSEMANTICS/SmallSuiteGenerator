@@ -291,7 +291,7 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 		ifNotNil: [ | prevTypes scalarsKeys |
 			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 				collect: #returnType
-				thenSelect: [ :aType | aType isNotNil ].
+				thenSelect: [ :aType | aType isNil not ].
 			scalarsKeys := typeInfo scalars keys.
 			argTypes
 				do: [ :arg | 
@@ -697,7 +697,7 @@ SSTestShifter >> objectVariables [
 	^ statements select:[:stm| 
 			|res|
 			res := self typeInfo classAt: stm returnType ifNone:[nil].
-			res isNotNil] thenCollect:[:stm| stm variable].
+			res isNil not] thenCollect:[:stm| stm variable].
 ]
 
 { #category : #parsing }
@@ -1053,7 +1053,7 @@ SSTestShifter >> validTargetClassName: aClassName [
 		and: [ (targetClassesNames includes: aClassName) not
 				and: [ |classInfo|
 					classInfo := typeInfo classAt: aClassName ifNone: [].
-					classInfo isNotNil and: [ classInfo allMethods isNotEmpty ] ] ])
+					classInfo isNil not and: [ classInfo allMethods isNotEmpty ] ] ])
 		ifTrue: [ self addTargetClassName: aClassName ].
 	((targetClassesNames includes: aClassName) not
 		or: [ typeInfo isAbstractClass: aClassName ])

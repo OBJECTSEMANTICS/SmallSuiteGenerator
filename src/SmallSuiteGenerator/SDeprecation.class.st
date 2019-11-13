@@ -23,7 +23,7 @@ SDeprecation class >> modify: aTestCase solvingException: aException with: array
 SDeprecation class >> solveException: aException of: aTestCase [
 	| dataDeprecation methodName |
 	
-	((self canResolve: aException) and: [ aException deprecatedMethodName isNotNil ])
+	((self canResolve: aException) and: [ aException deprecatedMethodName isNil not ])
 		ifFalse: [ ^ false ].
 		methodName := aException deprecatedMethodName.
 	dataDeprecation := methodName splitOn: '>>'.

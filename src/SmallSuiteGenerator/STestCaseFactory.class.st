@@ -19,8 +19,8 @@ Class {
 
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
-	self assert: typeInfo isNotNil description: 'Please provide type information of the target project'.
-	self assert: targetPackageRegex isNotNil description: 'Please provide a regex that match the packages under analysis'
+	self assert: typeInfo isNil not description: 'Please provide type information of the target project'.
+	self assert: targetPackageRegex isNil not description: 'Please provide a regex that match the packages under analysis'
 ]
 
 { #category : #accessing }
@@ -105,7 +105,7 @@ STestCaseFactory >> fitness: aFitness [
 STestCaseFactory >> fitnessValues [
 	| nameFunctions |
 	self
-		assert: (engine isNotNil and: [ engine logs isNotEmpty ])
+		assert: (engine isNil not and: [ engine logs isNotEmpty ])
 		description: 'Run the generation before'.
 	nameFunctions := (Array with: engine fitness functionName).
 	^ nameFunctions asSet

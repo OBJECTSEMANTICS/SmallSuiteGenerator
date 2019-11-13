@@ -158,7 +158,7 @@ STypeClassInfo >> messagesAndAccessMessages [
 	^ methodTypes values
 		select: [ :methType | 
 			methType isDeprecated not
-				 and: [ methType returnType isNotNil ] ]
+				 and: [ methType returnType isNil not ] ]
 ]
 
 { #category : #'as yet unclassified' }
