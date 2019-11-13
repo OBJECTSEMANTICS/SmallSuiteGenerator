@@ -4,6 +4,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #'instance creation' }
+SRandom class >> seed: anObject [
+	^ self new seed: anObject
+]
+
 { #category : #'as yet unclassified' }
 SRandom >> collectAtRandom: collection [
 	| indexes |
