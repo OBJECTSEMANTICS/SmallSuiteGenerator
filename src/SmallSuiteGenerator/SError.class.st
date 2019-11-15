@@ -6,12 +6,11 @@ Class {
 
 { #category : #exceptioninstantiator }
 SError class >> signal: anObject [
-
 	^ self new signal: anObject 
 ]
 
 { #category : #signaling }
 SError >> signal: message [
-	SConfiguration defaultFileLogger record: message.
+	SConfiguration saveOnLog: message.
 	super signal: message
 ]

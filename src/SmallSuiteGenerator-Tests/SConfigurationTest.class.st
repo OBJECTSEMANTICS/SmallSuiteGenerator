@@ -7,7 +7,7 @@ Class {
 { #category : #running }
 SConfigurationTest >> tearDown [
 	SConfiguration clearLog.
-	SConfiguration cleanAllLogs 
+	SConfiguration cleanAllLogs
 ]
 
 { #category : #'as yet unclassified' }

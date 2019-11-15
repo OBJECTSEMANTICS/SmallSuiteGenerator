@@ -3,80 +3,69 @@ Class {
 	#superclass : #SObject,
 	#classInstVars : [
 		'level',
-		'nameLog',
 		'randomGenerator',
-		'seed'
+		'seed',
+		'configurationClass',
+		'logName'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
-SConfiguration class >> cleanAllLogs [
-	TinyLogger default removeAllLoggers 
+{ #category : #accessing }
+SConfiguration class >> classConfigurationName [
+	^ self subclassResponsibility 
+]
+
+{ #category : #accessing }
+SConfiguration class >> classTestCaseFactory [
+	^ self configurationClass classTestCaseFactory 
 ]
 
 { #category : #logging }
-SConfiguration class >> clearFileLog: string [
-	TinyLogger default fileLoggers
-		detect: [ :fileLogger | fileLogger fileName = string ]
-		ifFound: [ :fileLogger | fileLogger clearLog ]
+SConfiguration class >> cleanAllLogs [
+	self configurationClass cleanAllLogs 
 ]
 
 { #category : #logging }
 SConfiguration class >> clearLog [
-	TinyLogger default clearLog
+	self configurationClass clearLog
 ]
 
-{ #category : #'as yet unclassified' }
-SConfiguration class >> createFileLogger [
-	TinyLogger default ensureFileLoggerNamed: self nameLog
+{ #category : #accessing }
+SConfiguration class >> configurationClass [
+	configurationClass ifNil: [  
+	configurationClass := self subclasses
+		detect: [ :aClass | 
+			[ Smalltalk at: aClass classConfigurationName.
+			true ]
+				on: Error
+				do: [ false ] ]
+		ifNone: [ nil ].
+	configurationClass ifNil: [ self error: 'Error to look a configurationClass' ]].
+	^ configurationClass
 ]
 
-{ #category : #'as yet unclassified' }
-SConfiguration class >> defaultFileLogger [
-	TinyLogger default fileLoggers
-		ifEmpty: [ self createFileLogger ].
-	^ TinyLogger default fileLoggers
-		detect: [ :fileLogger | fileLogger fileName = self nameLog ]
-]
-
-{ #category : #'as yet unclassified' }
-SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute onClass: aClass [
-	^ (SSTypeCollector profile: blockToExecute onClass: aClass) asTypeInfo
-]
-
-{ #category : #'as yet unclassified' }
-SConfiguration class >> defaultGeneratorTypeInfoOf: blockToExecute
-				onPackagesMatching: regex [
-^ (SSTypeCollector profile: blockToExecute onPackagesMatching: regex)
-				asTypeInfo
-]
-
-{ #category : #'as yet unclassified' }
-SConfiguration class >> defaultMutantOperators [
-	^ MutantOperator contents
-]
-
-{ #category : #'as yet unclassified' }
-SConfiguration class >> defaultNameLog [
+{ #category : #accessing }
+SConfiguration class >> defaultLogName [
 	^ 'SmallSuiteLogger.log'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SConfiguration class >> defaultSeed [
 	^ 100
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SConfiguration class >> fileLogger: fileName [
-	self nameLog: fileName.
-	TinyLogger default fileLoggers ifEmpty: [ self createFileLogger ].
-	^ TinyLogger default fileLoggers
-		detect: [ :fileLogger | fileLogger fileName = fileName ] ifNone: [ self createFileLogger.
-			self fileLogger: fileName  ]
+	self configurationClass fileLogger: fileName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+SConfiguration class >> implementationType [
+	^ self subclassResponsibility 
+]
+
+{ #category : #accessing }
 SConfiguration class >> initLevelToPrint [ 	
 	level := 10
 ]
@@ -87,13 +76,13 @@ SConfiguration class >> levelToPrint [
 ]
 
 { #category : #accessing }
-SConfiguration class >> nameLog [ 
-	^ nameLog ifNil: [ self defaultNameLog  ]
+SConfiguration class >> logName [ 
+	^ logName ifNil: [ self defaultLogName  ]
 ]
 
 { #category : #accessing }
-SConfiguration class >> nameLog: string [
-	nameLog := string
+SConfiguration class >> logName: string [
+	logName := string
 ]
 
 { #category : #'instance creation' }
@@ -112,10 +101,20 @@ SConfiguration class >> randomGenerator: sRandom [
 	randomGenerator := sRandom
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SConfiguration class >> reduceLevel [
 	level ifNil: [ self initLevelToPrint  ].
 	level := level - 1
+]
+
+{ #category : #initialization }
+SConfiguration class >> resetConfigurationClass [
+	configurationClass := nil
+]
+
+{ #category : #logging }
+SConfiguration class >> saveOnLog: message [
+	self configurationClass saveOnLog: message
 ]
 
 { #category : #accessing }

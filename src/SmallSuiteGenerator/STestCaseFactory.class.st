@@ -8,8 +8,8 @@ Class {
 		'targetPackageRegex',
 		'outputPackageName',
 		'fitness',
-		'profiler',
-		'numberOfIterations'
+		'numberOfIterations',
+		'profiler'
 	],
 	#classInstVars : [
 		'instance'
@@ -30,6 +30,11 @@ STestCaseFactory >> classesForRegex: regexExpressions [
 			RPackage organizer packages
 				select: [ :p | regex match: p name asString ] ]) asSet)
 		flatCollect: #definedClasses
+]
+
+{ #category : #actions }
+STestCaseFactory >> cleanInstrumentation [
+	self subclassResponsibility
 ]
 
 { #category : #actions }
@@ -75,7 +80,7 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 		compile:
 			(RBParser
 				parseMethod:
-					aSelector , aTestCase descriptiveComment
+					aSelector , aTestCase printDescriptiveComment
 						, aTestCase parseTreeWithAssertions body formattedCode)
 				formattedCode ]
 		on: Error
@@ -127,6 +132,12 @@ STestCaseFactory >> initialize [
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
 ]
 
+{ #category : #actions }
+STestCaseFactory >> initializeProfiler [
+	self subclassResponsibility 
+	
+]
+
 { #category : #initialization }
 STestCaseFactory >> numberOfIterations: aNumber [
 	numberOfIterations := aNumber.
@@ -165,12 +176,7 @@ STestCaseFactory >> seed: aNumber [
 
 { #category : #actions }
 STestCaseFactory >> setUp [
-	profiler := SBProfiler new.
-	(S2CInstrumentator onPackagesMatching: self targetPackageRegex)
-		applyOn: profiler.
-	(profiler allMethods select: #isNotMethodExtension)
-		do: #installGhosts
-		displayingProgress: 'Instrumenting ' , self targetPackageRegex.
+	self initializeProfiler.
 	fitness profiler: profiler.
 	engine fitness: fitness.
 	engine numberOfIterations: numberOfIterations.
@@ -206,8 +212,8 @@ STestCaseFactory >> targetPackagesRegex: anObject [
 
 { #category : #actions }
 STestCaseFactory >> tearDown [
-	profiler cleanInstrumentation.
-	self exportTests.
+	self cleanInstrumentation.
+	self exportTests
 ]
 
 { #category : #accessing }

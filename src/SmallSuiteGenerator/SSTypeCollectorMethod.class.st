@@ -65,6 +65,12 @@ SSTypeCollectorMethod >> initialize [
 	executed := false.
 ]
 
+{ #category : #testing }
+SSTypeCollectorMethod >> isValidReturnTypeWithReceiver [
+	^ self receiverType types = self returnType types
+	
+]
+
 { #category : #hooks }
 SSTypeCollectorMethod >> mergeArgsTypes: args [
 	argTypes
@@ -94,12 +100,6 @@ SSTypeCollectorMethod >> returnValue: value [
 SSTypeCollectorMethod >> saveReceiver: aObject [
 	receiverType
 		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
-]
-
-{ #category : #'as yet unclassified' }
-SSTypeCollectorMethod >> validReturnTypeWithReceiver [
-	^ self receiverType types = self returnType types
-	
 ]
 
 { #category : #hooks }

@@ -12,7 +12,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeMethodInfo class >> selectorsFilter [
 	^ (self selectors
 		select: [ :aSelector | aSelector beginsWith: 'isSimpleTyped' ])
@@ -44,13 +44,13 @@ STypeMethodInfo >> addType: aType [
 	returnType type: aType
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeMethodInfo >> allArgTypes [
 	argTypes ifNil: [ ^ #() ].
 	^ argTypes flatCollect: [ :arg | arg types ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeMethodInfo >> allReceivers [
 	^ receiver types
 ]
@@ -80,7 +80,7 @@ STypeMethodInfo >> copy [
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeMethodInfo >> dataCSV [
 	^ Array with: selector
 		withAll: (OrderedCollection new add: receiver types asArray;
@@ -345,7 +345,7 @@ STypeMethodInfo >> isWithReturnType: aClassName [
 	^ returnType types includes: aClassName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeMethodInfo >> joinWith: otherTypeMethod [
 	argTypes ifNotNil: [argTypes
 		with: otherTypeMethod argTypes

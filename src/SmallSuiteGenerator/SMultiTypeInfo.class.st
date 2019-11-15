@@ -17,7 +17,7 @@ SMultiTypeInfo >> = other [
 	^ self class = other class and: [ self types = other types ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SMultiTypeInfo >> commonSuperclass [
 	| commonSuperclass |
 	types ifEmpty: [ ^ '' ].
@@ -50,13 +50,6 @@ SMultiTypeInfo >> equals: other [
 		(a = b) ifFalse:[^ false].
 	].
 	^ true.
-]
-
-{ #category : #'as yet unclassified' }
-SMultiTypeInfo >> exportStoreString [
-	^ types size = 1
-		ifTrue: [ self type ]
-		ifFalse: [ self types printString ]
 ]
 
 { #category : #'instance creation' }
@@ -94,7 +87,7 @@ SMultiTypeInfo >> isBlockSymbol [
 	^ types size =  2 and:[ (types anySatisfy:[ :t| t= #BlockClosure]) and:[ types anySatisfy:[ :t| t= #ByteSymbol]]].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SMultiTypeInfo >> joinWith: otherTypeReturn [
 	otherTypeReturn types do: [ :aType | self type: aType ]
 ]
