@@ -75,7 +75,7 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoAthensCairo [
 	^ STypeInfo new
 		type:
@@ -90,7 +90,7 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 		scalar: #ByteString with: #('hello')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage1 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
@@ -120,7 +120,7 @@ SUtilityTypeInfo >> typeInfoOnPackage1 [
 				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary'))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage2 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
@@ -144,7 +144,7 @@ SUtilityTypeInfo >> typeInfoOnPackage2 [
 				scalar: #SmallInteger with: #(95)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage3 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
@@ -189,7 +189,7 @@ SUtilityTypeInfo >> typeInfoOnPackage3 [
 				scalar: #ByteString with: #('Mary')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage4 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
@@ -216,7 +216,7 @@ SUtilityTypeInfo >> typeInfoOnPackage4 [
 		scalar: #SmallInteger with: #(95)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSAbstractClass [
 	^ STypeInfo new
 		type:
@@ -231,7 +231,7 @@ SUtilityTypeInfo >> typeInfoSAbstractClass [
 		scalar: #SmallInteger with: #(1)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent1 [
 	^ STypeInfo new
 		type:
@@ -249,7 +249,7 @@ SUtilityTypeInfo >> typeInfoSEvent1 [
 		scalar: #SmallInteger with: #(8)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent2 [
 	^ STypeInfo new
 				type:
@@ -265,7 +265,7 @@ SUtilityTypeInfo >> typeInfoSEvent2 [
 				scalar: #SmallInteger with: #(0 15)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
 	^ STypeInfo new
 		type:
@@ -289,7 +289,7 @@ SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
 		scalar: #SmallInteger with: #(15 0)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo1 [ 
 	^ (STypeInfo new
 				type:
@@ -309,7 +309,7 @@ SUtilityTypeInfo >> typeInfoSFoo1 [
 				scalar: #SmallFloat64 with: #(7.3))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo2 [
 	^ STypeInfo new
 		type:
@@ -320,7 +320,7 @@ SUtilityTypeInfo >> typeInfoSFoo2 [
 						with: #())
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo3 [
 	^ 
 			(STypeInfo new
@@ -341,7 +341,7 @@ SUtilityTypeInfo >> typeInfoSFoo3 [
 				scalar: #SmallFloat64 with: #(2.3))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo4 [
 	^ 
 		STypeInfo new
@@ -357,7 +357,7 @@ SUtilityTypeInfo >> typeInfoSFoo4 [
 				scalar: #SStudent with: (Array with: SStudent new)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo5 [
 	^ STypeInfo new
 		type:
@@ -377,7 +377,7 @@ SUtilityTypeInfo >> typeInfoSFoo5 [
 						yourself))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooEmpty [
 	^ STypeInfo new
 		type:
@@ -389,7 +389,7 @@ SUtilityTypeInfo >> typeInfoSFooEmpty [
 						with: #())
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 	^ STypeInfo new
 		type:
@@ -430,7 +430,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 						yourself))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
 	^ STypeInfo new
 		type:
@@ -460,7 +460,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
 		scalar: #Array with: #(#(1 5 6))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
 	^ STypeInfo new
 		type:
@@ -524,7 +524,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
 		scalar: #ByteString with: #('Josh' 'Lian' 'Mery')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSPerson1 [
 	^ STypeInfo new
 		type:
@@ -544,7 +544,7 @@ SUtilityTypeInfo >> typeInfoSSPerson1 [
 		scalar: #ByteString with: #('Ann')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher1 [
 	^ STypeInfo new
 				type:
@@ -563,7 +563,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher1 [
 				scalar: #ByteString with: #('teacher_Ann')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher2 [
 	^ 
 			(STypeInfo new
@@ -584,7 +584,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher2 [
 				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark'))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher3 [
 	^ STypeInfo new
 				type:
@@ -601,7 +601,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher3 [
 				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher4 [
 	^ STypeInfo new
 		type:
@@ -618,7 +618,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher4 [
 		scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
 	^ STypeInfo new
 		type:
@@ -660,7 +660,7 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
 		scalar: #ByteString with: #('Ann' 'teacher_Ann')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
 	^ STypeInfo new
 		type:
@@ -688,7 +688,7 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
 		scalar: #ByteString with: #('teacher_1')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack1 [
 	^ STypeInfo new
 				type:
@@ -705,7 +705,7 @@ SUtilityTypeInfo >> typeInfoSStack1 [
 				scalar: #SmallInteger with: #(1 2 4 6 8)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack2 [
 	^ 
 			(STypeInfo new
@@ -726,7 +726,7 @@ SUtilityTypeInfo >> typeInfoSStack2 [
 				scalar: #SmallInteger with: #(1 2 5 8 9))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack3 [
 	^ 
 		STypeInfo new
@@ -744,7 +744,7 @@ SUtilityTypeInfo >> typeInfoSStack3 [
 				scalar: #SmallInteger with: #(7 5 9 1)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack4 [
 	^ 
 			(STypeInfo new
@@ -767,7 +767,7 @@ SUtilityTypeInfo >> typeInfoSStack4 [
 				scalar: #Array with: #(#(1 4 5)))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
 	^ STypeInfo new
 		type:
@@ -792,7 +792,7 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
 		scalar: #Array with: #(#(2 4 6 1))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
 	^ STypeInfo new
 		type:
@@ -844,7 +844,7 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
 		scalar: #ByteString with: #('Josh' 'Lian' 'Mery')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSStudentOnPackage1 [
 	^ STypeInfo new
 		type:
@@ -862,7 +862,7 @@ SUtilityTypeInfo >> typeInfoSStudentOnPackage1 [
 		scalar: #SmallInteger with: #(10 1)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSEvent [
 	"(SSTypeCollector
 				profile: [ (SEvent price: 15)
@@ -964,7 +964,7 @@ SUtilityTypeInfo >> typeInfoStringSEvent [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSFoo2 [
 	"SSTypeCollector
 				profile: [ (SFoo score: 15)
@@ -1097,7 +1097,7 @@ SUtilityTypeInfo >> typeInfoStringSFoo2 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSFoo3 [
 	"SSTypeCollector profile:[ (SFoo score: 4)
 				score;
@@ -1280,7 +1280,7 @@ SUtilityTypeInfo >> typeInfoStringSFoo3 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSFoo6 [
 	"SSTypeCollector profile: [ SFoo new return: (Dictionary new at: 1 put: (SStack new push: (SStudent  name: 'Lian' with: 1); push: (SStudent name: 'Josh' with: 2); yourself ); at: 2 put: (OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself); yourself ) ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'."
 	^ 'STypeInfo {
@@ -1447,7 +1447,7 @@ SUtilityTypeInfo >> typeInfoStringSFoo6 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSSTeacher1 [
 	"SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
@@ -1600,7 +1600,7 @@ SUtilityTypeInfo >> typeInfoStringSSTeacher1 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSSTeacher2 [
 	"SSTypeCollector
 				profile: [ SSTeacher new
@@ -1683,7 +1683,7 @@ SUtilityTypeInfo >> typeInfoStringSSTeacher2 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSStack1 [
 	"SSTypeCollector profile: [ SStack new push: (OrderedCollection new add: (SStudent  name: 'Lian' with: 1); add: (SStudent name: 'Josh' with: 2); yourself); push: (OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself); yourself ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'."
 	^ 'STypeInfo {
@@ -1830,7 +1830,7 @@ SUtilityTypeInfo >> typeInfoStringSStack1 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSStack2 [
 	"SSTypeCollector
 				profile: [ (SStack newStackWith: #(2 4 6 1))
@@ -1937,7 +1937,7 @@ SUtilityTypeInfo >> typeInfoStringSStack2 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoStringSStudent1 [
 	"SSTypeCollector
 				profile: [ SStudent new
@@ -1999,7 +1999,7 @@ SUtilityTypeInfo >> typeInfoStringSStudent1 [
 }'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfosSStudent [
 	^ OrderedCollection new
 		add:

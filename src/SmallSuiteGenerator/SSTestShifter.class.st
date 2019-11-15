@@ -355,12 +355,6 @@ SSTestShifter >> defaultNumberStatements [
 	^ 54
 ]
 
-{ #category : #'as yet unclassified' }
-SSTestShifter >> descriptiveComment [
-	^ self summaryFitness, String cr, self summaryFitnessByClass.
-	
-]
-
 { #category : #repairing }
 SSTestShifter >> error: string [
 	
@@ -771,8 +765,62 @@ SSTestShifter >> pickOrCreateObjectVariableOf: aClassName [
 ]
 
 { #category : #printing }
+SSTestShifter >> printDescriptiveComment [
+	^ self printSummaryFitness, String cr, self printSummaryFitnessByClass.
+	
+]
+
+{ #category : #printing }
+SSTestShifter >> printFunctionByClassName: dict on: stream [
+	(dict associationsSelect: [ :assoc | assoc value > 0 ])
+		associationsDo: [ :assoc | 
+			stream
+				nextPutAll: assoc key;
+				nextPut: $:;
+				nextPutAll: assoc value printString;
+				nextPut: $%;
+				nextPutAll: String cr ]
+]
+
+{ #category : #printing }
 SSTestShifter >> printStatements [
 	^ statements collect: #printString
+]
+
+{ #category : #printing }
+SSTestShifter >> printSummaryFitness [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"Fitness: ';
+				nextPut: Character cr.
+			fitness
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: ': ';
+						nextPutAll: assoc value printString;
+						nextPut: Character cr ].
+			stream
+				nextPutAll: '"' ]
+]
+
+{ #category : #printing }
+SSTestShifter >> printSummaryFitnessByClass [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"This test covers: ';
+				nextPut: Character cr.
+			fitnessByClass
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: String cr.
+					self printFunctionByClassName: assoc value on: stream ].
+			stream
+				nextPutAll: '"';
+				nextPutAll: String cr ]
 ]
 
 { #category : #accessing }
@@ -950,18 +998,6 @@ SSTestShifter >> statementsOfType: aType before: expression [
 		select: [ :stm | stm returnType = aType ]
 ]
 
-{ #category : #'as yet unclassified' }
-SSTestShifter >> stringFunctionByClassName: dict on: stream [
-	(dict associationsSelect: [ :assoc | assoc value > 0 ])
-		associationsDo: [ :assoc | 
-			stream
-				nextPutAll: assoc key;
-				nextPut: $:;
-				nextPutAll: assoc value printString;
-				nextPut: $%;
-				nextPutAll: String cr ]
-]
-
 { #category : #repairing }
 SSTestShifter >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	| stop |
@@ -971,42 +1007,6 @@ SSTestShifter >> subStatementsFrom: start toPrevIndexOf: aStatement [
 	start <= stop
 		ifFalse: [ ^ self error: start printString, ' (indexIni) is greater than ', stop printString, ' (indexPos).' ].
 	^ statements copyFrom: start to: stop - 1
-]
-
-{ #category : #'as yet unclassified' }
-SSTestShifter >> summaryFitness [
-	^ String
-		streamContents: [ :stream | 
-			stream
-				nextPutAll: '"Fitness: ';
-				nextPut: Character cr.
-			fitness
-				associationsDo: [ :assoc | 
-					stream
-						nextPutAll: assoc key;
-						nextPutAll: ': ';
-						nextPutAll: assoc value printString;
-						nextPut: Character cr ].
-			stream
-				nextPutAll: '"' ]
-]
-
-{ #category : #'as yet unclassified' }
-SSTestShifter >> summaryFitnessByClass [
-	^ String
-		streamContents: [ :stream | 
-			stream
-				nextPutAll: '"This test covers: ';
-				nextPut: Character cr.
-			fitnessByClass
-				associationsDo: [ :assoc | 
-					stream
-						nextPutAll: assoc key;
-						nextPutAll: String cr.
-					self stringFunctionByClassName: assoc value on: stream ].
-			stream
-				nextPutAll: '"';
-				nextPutAll: String cr ]
 ]
 
 { #category : #accessing }

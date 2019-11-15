@@ -4,7 +4,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
 	|testCase|
 	testCase := self new.
