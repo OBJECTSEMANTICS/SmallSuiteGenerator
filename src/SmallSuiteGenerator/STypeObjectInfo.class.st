@@ -9,7 +9,7 @@ STypeObjectInfo class >> instance [
 	^ self new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeObjectInfo >> joinWith: otherObject [
 	self subclassResponsibility 
 ]

@@ -9,7 +9,7 @@ SSTypeCollectorClass class >> spyClassForMethod [
 	 ^ SSTypeCollectorMethod
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 SSTypeCollectorClass >> fillTypesOn: aTypeInfo [
 	| aTypeClass instanceMethods classMethods |
 	aTypeClass := STypeClassInfo newFrom: self className "and: aTypeInfo".
@@ -17,7 +17,7 @@ SSTypeCollectorClass >> fillTypesOn: aTypeInfo [
 		select: #wasExecuted.
 	classMethods := (self metaclassSpy methods reject: #isTest)
 		select:
-			[ :clsMethod | clsMethod wasExecuted and: [ clsMethod validReturnTypeWithReceiver ] ].
+			[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ].
 	aTypeClass
 		addMethods: (instanceMethods collect: #asTypeInfo);
 		addClassMethods: (classMethods collect: #asTypeInfo).

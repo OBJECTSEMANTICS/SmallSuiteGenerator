@@ -4,7 +4,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #export }
 SReportTypeInfo class >> dataCaseStudy: profiler from: projectName [
 		^	(Array
 				with: projectName
@@ -19,7 +19,7 @@ SReportTypeInfo class >> dataCaseStudy: profiler from: projectName [
 						asFloat round: 4) * 100)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #export }
 SReportTypeInfo class >> dataFrequency: typeInfo from: projectName [
 	^ (Array with: projectName)
 		, (typeInfo reportFrequencyByFilter associations sort collect: #value)
@@ -62,26 +62,26 @@ SReportTypeInfo class >> exportReportData: projectName withName: aString usingFi
 	self exportData: (self profilerProject: projectName) asTypeInfo onCSV: aString usingFilter: aSymbol
 ]
 
-{ #category : #'as yet unclassified' }
-SReportTypeInfo class >> exportReportsCaseStudyAndFrequency: nameFiles of: projectsName [
+{ #category : #export }
+SReportTypeInfo class >> exportReportsCaseStudyAndFrequency: fileNames of: projectsName [
 	| data |
 	self
-		assert: nameFiles size = 2
-		description: 'Set the nameFiles correctly'.
+		assert: fileNames size = 2
+		description: 'Set the fileNames correctly'.
 	data := projectsName
 		collect: [ :projectName | 
 			| profiler |
 			profiler := self profilerProject: projectName.
 			Array
 				with: (self dataCaseStudy: profiler from: projectName)
-				with: (self dataFrequency: profiler asTypeInfo from: projectName)].
-	self writeReport: nameFiles first ofCaseStudy: (data collect: #first).
+				with: (self dataFrequency: profiler asTypeInfo from: projectName) ].
+	self writeReport: fileNames first ofCaseStudy: (data collect: #first).
 	self
-		writeReport: nameFiles second
+		writeReport: fileNames second
 		ofFrequency: (data collect: #second)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #export }
 SReportTypeInfo class >> exportReportsCaseStudyAndFrequencyOf: projectsName [
 	self exportReportsCaseStudyAndFrequency: #('CaseStudy' 'Frequency') of: projectsName
 ]
@@ -94,7 +94,7 @@ SReportTypeInfo class >> fileReference: aString [
 	^ filename asFileReference
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #export }
 SReportTypeInfo class >> profilerProject: projectName [
 			^ SSTypeCollector
 				profile: [ (TestCase withAllSubclasses
@@ -110,7 +110,7 @@ SReportTypeInfo class >> profilerProject: projectName [
 				onPackagesMatching: projectName , '*' 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #writing }
 SReportTypeInfo class >> writeReport: filename ofCaseStudy: data [
 	(self fileReference: filename)
 		writeStreamDo: [ :stream | 
@@ -120,7 +120,7 @@ SReportTypeInfo class >> writeReport: filename ofCaseStudy: data [
 				flush ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #writing }
 SReportTypeInfo class >> writeReport: filename ofFrequency: data [
 	(self fileReference: filename)
 		writeStreamDo: [ :stream | 

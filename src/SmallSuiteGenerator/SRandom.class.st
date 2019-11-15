@@ -4,7 +4,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #enumerating }
 SRandom >> collectAtRandom: collection [
 	| indexes |
 	indexes := self shuffleCollection: collection size.
@@ -15,12 +15,12 @@ SRandom >> collectAtRandom: collection [
 			result ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #enumerating }
 SRandom >> selectAtRandom: collection [
 	^ collection at: (self nextInt: collection size)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #enumerating }
 SRandom >> shuffleCollection: stop [
 	|numbers|
 	numbers := (1 to: stop) asArray.

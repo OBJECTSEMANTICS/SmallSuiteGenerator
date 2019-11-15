@@ -82,7 +82,7 @@ STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing - read only' }
 STypeClassInfo >> classMethodOf: aSelector [
 	^ classMethodTypes at: aSelector
 ]
@@ -103,7 +103,7 @@ STypeClassInfo >> copy [
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeClassInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 	
 	self writeDataCSV: neoCSVWriter using: (self filteredMethodsBy: aSymbol)
@@ -122,7 +122,7 @@ STypeClassInfo >> factoryMessagesFrom: aClassName [
 				and: [ factMessage isWithReturnType: aClassName ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeClassInfo >> filteredMethodsBy: aSymbol [
 	^ (STypeMethodInfo selectorsFilter includes: aSymbol)
 		ifTrue: [ self allMethods select: aSymbol ]
@@ -140,7 +140,7 @@ STypeClassInfo >> initialize [
 	classMethodTypes := Dictionary new.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeClassInfo >> joinWith: otherTypeClass [
 	otherTypeClass methodTypes do: [ :aMethod | 
 		self addMethod: aMethod
@@ -161,7 +161,7 @@ STypeClassInfo >> messagesAndAccessMessages [
 				 and: [ methType returnType isNil not ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing - read only' }
 STypeClassInfo >> methodOf: aSelector [
 	^ methodTypes at: aSelector
 ]
@@ -171,7 +171,7 @@ STypeClassInfo >> methodTypes [
 	^ methodTypes
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeClassInfo >> remainingOrAllMethods: aSymbol [
 	^ aSymbol = #others
 		ifTrue: [ | methods |
@@ -181,17 +181,17 @@ STypeClassInfo >> remainingOrAllMethods: aSymbol [
 		ifFalse: [ self allMethods ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing - read only' }
 STypeClassInfo >> reportFrequencyByFilter: aSelector [
 	^ (self filteredMethodsBy: aSelector) size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeClassInfo >> typeClassMethod: aAssoc [
 	self addClassMethod: (STypeMethodInfo type: aAssoc)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeClassInfo >> typeMethod: aAssoc [
 	self addMethod: (STypeMethodInfo type: aAssoc)
 ]

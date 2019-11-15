@@ -21,7 +21,7 @@ STypeInfo >> = other [
 								= (otherScalars values collect: #size) ] ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeInfo >> accessMessagesFrom: aClassName [
 	^ types
 		flatCollect: [ :aClassType | 
@@ -80,7 +80,7 @@ STypeInfo >> copy [
 	^ copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing structure variables' }
 STypeInfo >> defaultFactoryMessageFrom: aClassName [
 	(self messagesFrom: aClassName)
 		detect: [ :message | message selector = #initialize ]
@@ -101,7 +101,7 @@ STypeInfo >> error: aString [
 	^ SError signal: aString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 	types
 		do: [ :type | type exportDataCSV: neoCSVWriter withFilter: aSymbol ]
@@ -134,7 +134,7 @@ STypeInfo >> isAbstractClass: symbol [
 						isNotEmpty ]])
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeInfo >> joinScalars: aDict [
 	aDict associations
 		do: [ :assoc | 
@@ -144,14 +144,14 @@ STypeInfo >> joinScalars: aDict [
 				ifAbsentPut: [ assoc value ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeInfo >> joinWith: otherTypeInfo [
 	otherTypeInfo types
 		do: [ :aTypeClass | self addClassInfo: aTypeClass ].
 		self joinScalars: otherTypeInfo scalars
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeInfo >> messagesFrom: aClassName [
 	^ types
 		flatCollect: [ :aClassType | 
@@ -181,7 +181,7 @@ STypeInfo >> noneAbstractClasses [
 	^ noneAbstractClasses
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STypeInfo >> reportFrequencyByFilter [
 	| report |
 	report := Dictionary new.
@@ -196,7 +196,7 @@ STypeInfo >> reportFrequencyByFilter [
 	^ report
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 STypeInfo >> scalar: aClassName with: aValue [
 	scalars at: aClassName put: aValue asSet asArray
 ]
