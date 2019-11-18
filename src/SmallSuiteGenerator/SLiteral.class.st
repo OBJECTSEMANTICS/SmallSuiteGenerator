@@ -53,7 +53,7 @@ SLiteral >> printOn: aStream [
 SLiteral >> referenceTo: aClassName [
 	^( value isClass
 		ifTrue: [ value name ]
-		ifFalse: [ value className ]) = aClassName
+		ifFalse: [ value className ]) = aClassName asString
 ]
 
 { #category : #mutation }
