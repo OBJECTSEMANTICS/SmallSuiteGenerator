@@ -13,11 +13,12 @@ SInsertTest >> setUp [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementAsParameterInMessage [
 	| testCase anExpression |
-	testCase := SSTestCase with: utility typeInfoSFoo4.
-	testCase addTargetClassName: #SFoo;
-	addFactoryMessage: #SFoo;
-	addLiteral;
-	addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo4.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage: #SFoo;
+		addLiteral;
+		addMessage: #return: from: #SFoo.
 	anExpression := testCase addLiteral.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -50,7 +51,7 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfMixingSelectors [
 	| testCase fieldAccess message |
-	testCase := (SSTestCase with: utility typeInfosSStudent first)
+	testCase := (SSTestCaseForTest with: utility typeInfosSStudent first)
 		addTargetClassName: #SStudent;
 		addLiteral: #SmallInteger;
 		addFactoryMessage: #SStudent ofSelector: #new;
@@ -83,7 +84,7 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 	| testCase auxExpr expression |
-	testCase := SSTestCase with: utility typeInfoSFoo2.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo2.
 	testCase addTargetClassName: #SFoo.
 	expression := testCase addFactoryMessage.
 	testCase addFactoryMessage.
@@ -104,7 +105,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	| testCase aExpression |
-	testCase := SSTestCase with: utility typeInfoSStack4.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack4.
 	testCase addFactoryMessage: #SStack ofSelector: #newStack.
 	aExpression := testCase
 		addFieldAccessMessage: #lastLinkStack
@@ -127,7 +128,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	| testCase aExpression |
-	testCase := SSTestCase with: utility typeInfoSStack4.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack4.
 	testCase addFactoryMessage: #SStack ofSelector: #newStackWith:.
 	aExpression := testCase addMessage: #pop from: #SStack.
 	testCase addLiteral: #SmallInteger.
@@ -148,9 +149,10 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addFactoryMessage.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -162,7 +164,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
 	| testCase fieldMessage |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	fieldMessage := testCase addFieldAccessMessage.
 	self
@@ -179,7 +181,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addLiteral: #SmallInteger.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -192,7 +194,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 	| testCase message |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	message := testCase addMessage: #returnNum from: #SFoo.
 	self
@@ -211,9 +213,10 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addFactoryMessage.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -227,7 +230,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
 	| testCase fieldMessage |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	fieldMessage := testCase addFieldAccessMessage.
 	self
@@ -246,7 +249,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addLiteral: #SmallFloat64.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -259,7 +262,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInMessage [
 	| testCase message |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	message := testCase addMessage: #return: from: #SFoo.
 	self

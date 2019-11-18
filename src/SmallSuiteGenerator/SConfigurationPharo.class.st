@@ -71,11 +71,6 @@ SConfigurationPharo class >> instanceLogger [
 	^ self classLogger default
 ]
 
-{ #category : #'as yet unclassified' }
-SConfigurationPharo class >> lookUpClass: aClassName [ 
-	^ Smalltalk at: aClassName ifAbsent: [ nil ]
-]
-
 { #category : #logging }
 SConfigurationPharo class >> saveOnLog: string [ 
 	self defaultFileLogger record: string

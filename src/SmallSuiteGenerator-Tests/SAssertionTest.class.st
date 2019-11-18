@@ -7,7 +7,7 @@ Class {
 { #category : #tests }
 SAssertionTest >> testAssertComparison [
 	| test |
-	test := SSTestCase new.
+	test := SSTestCaseForTest new.
 	test
 		addStatements:
 			(self
@@ -29,7 +29,7 @@ SAssertionTest >> testAssertComparison [
 { #category : #tests }
 SAssertionTest >> testAssertComparison2 [
 	| test |
-	test := SSTestCase new.
+	test := SSTestCaseForTest new.
 	test
 		addStatements:
 			(self
@@ -51,7 +51,7 @@ SAssertionTest >> testAssertComparison2 [
 { #category : #tests }
 SAssertionTest >> testAssertInspector [
 	| test |
-	test := SSTestCase new.
+	test := SSTestCaseForTest new.
 	test
 		addStatements:
 			(self
@@ -61,13 +61,15 @@ SAssertionTest >> testAssertInspector [
 			 _var3 := Point x: _var1 y: _var0.').
 	test generateAssertions: (Array with: SInspectorAssertion).
 	self assert: test assertions size equals: 2.
-	self assertCollection: (test assertions collect: #printString) hasSameElements: #('self assert: _var3 x equals: 2.' 'self assert: _var3 y equals: 1.').
+	self
+		assertCollection: (test assertions collect: #printString)
+		hasSameElements: #('self assert: _var3 x equals: 2.' 'self assert: _var3 y equals: 1.')
 ]
 
 { #category : #tests }
 SAssertionTest >> testAssertPrimitive [
 	| test |
-	test := SSTestCase new.
+	test := SSTestCaseForTest new.
 	test
 		addStatements:
 			(self
@@ -88,7 +90,7 @@ SAssertionTest >> testAssertPrimitive [
 { #category : #tests }
 SAssertionTest >> testAssertString [
 	| test |
-	test := SSTestCase new.
+	test := SSTestCaseForTest new.
 	test
 		addStatements:
 			(self
@@ -105,14 +107,17 @@ SAssertionTest >> testAssertString [
 
 { #category : #tests }
 SAssertionTest >> testExecutionContext [
-	|test context|
-	test := SSTestCase new.
-	test addStatements: (self parse:
-			'_var0 := 1.
+	| test context |
+	test := SSTestCaseForTest new.
+	test
+		addStatements:
+			(self
+				parse:
+					'_var0 := 1.
 			 _var1 := 2.
 			 _var2 := Point x: _var0 y: _var1.').
 	context := test analyze.
-	self assert: (context at:'_var0') equals: 1.
-	self assert: (context at:'_var1') equals: 2.
-	self assert: (context at:'_var2') equals: (1@2).
+	self assert: (context at: '_var0') equals: 1.
+	self assert: (context at: '_var1') equals: 2.
+	self assert: (context at: '_var2') equals: 1 @ 2
 ]

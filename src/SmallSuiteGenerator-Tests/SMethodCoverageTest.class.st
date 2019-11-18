@@ -96,8 +96,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 	| testCase valueFitness |
-	testCase := SSTestCase
-		with: utility typeInfoSFooOnPackage2  "(STON fromString: utility typeInfoStringSFoo2)".
+	testCase := SSTestCaseForTest with: utility typeInfoSFooOnPackage2.	"(STON fromString: utility typeInfoStringSFoo2)"
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage: #SFoo;
@@ -112,8 +111,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 	| testCase valueFitness |
-	testCase := SSTestCase
-		with: utility typeInfoSSTeacherOnPackage2."(STON fromString: utility typeInfoStringSSTeacher2)."
+	testCase := SSTestCaseForTest with: utility typeInfoSSTeacherOnPackage2.	"(STON fromString: utility typeInfoStringSSTeacher2)."
 	testCase
 		addTargetClassName: #SSTeacher;
 		addFactoryMessage: #SSTeacher;
@@ -128,8 +126,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSStack [
 	| testCase valueFitness |
-	testCase := SSTestCase
-		with: utility typeInfoSStackOnPackage1. "(STON fromString: utility typeInfoStringSStack2)."
+	testCase := SSTestCaseForTest with: utility typeInfoSStackOnPackage1.	"(STON fromString: utility typeInfoStringSStack2)."
 	testCase
 		addTargetClassName: #SStack;
 		addFactoryMessage: #SStack;
@@ -144,8 +141,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSStack [
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSStudent [
 	| testCase valueFitness |
-	testCase := SSTestCase
-		with: utility typeInfoSStudentOnPackage1. "(STON fromString: utility typeInfoStringSStudent1)."
+	testCase := SSTestCaseForTest with: utility typeInfoSStudentOnPackage1.	"(STON fromString: utility typeInfoStringSStudent1)."
 	testCase
 		addTargetClassName: #SStudent;
 		addFactoryMessage: #SStudent;

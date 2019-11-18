@@ -7,7 +7,7 @@ Class {
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveArgsFactoryMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage.
@@ -24,9 +24,10 @@ SRemoveTest >> testRemoveArgsFactoryMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveArgsMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -45,9 +46,10 @@ SRemoveTest >> testRemoveArgsMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveFactoryMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addFactoryMessage.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -60,9 +62,10 @@ SRemoveTest >> testRemoveFactoryMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveFieldAccessMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addFieldAccessMessage.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -76,9 +79,10 @@ SRemoveTest >> testRemoveFieldAccessMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -92,9 +96,10 @@ SRemoveTest >> testRemoveMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addFieldAccessMessage.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -109,9 +114,10 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveReceiverMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -126,7 +132,7 @@ SRemoveTest >> testRemoveReceiverMessage [
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveStatementNoRepairing [
 	| testCase statement |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	statement := testCase addFactoryMessage.
 	self
@@ -136,7 +142,7 @@ SRemoveTest >> testRemoveStatementNoRepairing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.').
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	statement := testCase addFactoryMessage.
 	testCase addMessage: #returnFloat from: #SFoo.

@@ -16,7 +16,7 @@ SSTestShifterTest >> setUp [
 { #category : #tests }
 SSTestShifterTest >> testAddAssignment [
 	| testCase expression |
-	testCase := SSTestCase new.
+	testCase := SSTestCaseForTest new.
 	expression := testCase addAssignment: (SLiteral new value: 3).
 	self assert: expression printString equals: '_var0 := 3.'.
 	expression := testCase
@@ -32,7 +32,7 @@ SSTestShifterTest >> testAddAssignment [
 SSTestShifterTest >> testAddFactoryMessage [
 	| testCase aTypeInfo |
 	aTypeInfo := utility typeInfoSFoo3.
-	testCase := SSTestCase with: aTypeInfo.
+	testCase := SSTestCaseForTest with: aTypeInfo.
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage: #SFoo.
@@ -61,7 +61,7 @@ SSTestShifterTest >> testAddFactoryMessage [
 { #category : #tests }
 SSTestShifterTest >> testAddFactoryMessageOfInexistentSelector [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo2.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo2.
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage: #SFoo ofSelector: #score:.
@@ -73,7 +73,7 @@ SSTestShifterTest >> testAddFactoryMessageOfInexistentSelector [
 { #category : #tests }
 SSTestShifterTest >> testAddFactoryMessageOfSelector [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo3.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo3.
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage: #SFoo ofSelector: #score:.
@@ -85,7 +85,7 @@ SSTestShifterTest >> testAddFactoryMessageOfSelector [
 { #category : #tests }
 SSTestShifterTest >> testAddFactoryMessageOnPackage [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoOnPackage3.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage3.
 	self should: [ testCase addFactoryMessage: #SSTeacher ] raise: SError.
 	testCase addTargetClassName: #SSTeacher.
 	expression := testCase addFactoryMessage: #SSTeacher.
@@ -104,10 +104,10 @@ SSTestShifterTest >> testAddFactoryMessageOnPackage [
 { #category : #tests }
 SSTestShifterTest >> testAddFactoryMessageWithAbstractClasses [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSSPerson1.
+	testCase := SSTestCaseForTest with: utility typeInfoSSPerson1.
 	self should: [ testCase addFactoryMessage ] raise: SError.
 	self should: [ testCase addFactoryMessage: #SSPerson ] raise: SError.
-	testCase := SSTestCase with: utility typeInfoSAbstractClass.
+	testCase := SSTestCaseForTest with: utility typeInfoSAbstractClass.
 	self should: [ testCase addFactoryMessage ] raise: SError.
 	self
 		should: [ testCase addFactoryMessage: #SAbstractClass ]
@@ -117,18 +117,18 @@ SSTestShifterTest >> testAddFactoryMessageWithAbstractClasses [
 { #category : #tests }
 SSTestShifterTest >> testAddFieldAccessMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSSTeacher2.
+	testCase := SSTestCaseForTest with: utility typeInfoSSTeacher2.
 	self should: [ testCase addFieldAccessMessage ] raise: SError.
 	testCase addTargetClassName: #SSTeacher.
 	self
 		assert: testCase addFieldAccessMessage printString
-		equals: '_var1 := _var0 idTeacher.'.
+		equals: '_var1 := _var0 idTeacher.'
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddFieldAccessMessageFrom [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo3.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo3.
 	self
 		should: [ testCase addFieldAccessMessage: #score from: #SFoo ]
 		raise: SError.
@@ -141,13 +141,13 @@ SSTestShifterTest >> testAddFieldAccessMessageFrom [
 { #category : #tests }
 SSTestShifterTest >> testAddFieldAccessMessageFromWithError [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo2.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo2.
 	self
 		should: [ testCase addFieldAccessMessage: #score from: #SFoo ]
 		raise: SError.
 	testCase addTargetClassName: #SFoo.
 	self
-		should: [testCase addFieldAccessMessage: #score from: #SFoo]
+		should: [ testCase addFieldAccessMessage: #score from: #SFoo ]
 		raise: SError.
 	self
 		should: [ testCase addFieldAccessMessage: #return: from: #SFoo ]
@@ -157,27 +157,27 @@ SSTestShifterTest >> testAddFieldAccessMessageFromWithError [
 { #category : #tests }
 SSTestShifterTest >> testAddFieldAccessMessageFromWithInvalidClassName [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo4.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo4.
 	testCase addTargetClassName: #SFoo.
 	self
 		should: [ testCase addFieldAccessMessage: #score from: #SStudent ]
-		raise: SError.
+		raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddFieldAccessMessageWithLackTypeInfo [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSSTeacher3.
+	testCase := SSTestCaseForTest with: utility typeInfoSSTeacher3.
 	self should: [ testCase addFieldAccessMessage ] raise: SError.
 	testCase addTargetClassName: #SSTeacher.
-	self should: [testCase addFieldAccessMessage] raise: SError
+	self should: [ testCase addFieldAccessMessage ] raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddFieldAccessMessageWithReceiver [
 	| testCase typeInfo receiver |
 	typeInfo := utility typeInfoSFoo1.
-	testCase := (SSTestCase with: typeInfo) addTargetClassName: #SFoo.
+	testCase := (SSTestCaseForTest with: typeInfo) addTargetClassName: #SFoo.
 	receiver := testCase addFactoryMessage variable.
 	self
 		assert:
@@ -190,12 +190,12 @@ SSTestShifterTest >> testAddFieldAccessMessageWithReceiver [
 { #category : #tests }
 SSTestShifterTest >> testAddInvalidAssignment [
 	| testCase |
-	testCase := SSTestCase new.
+	testCase := SSTestCaseForTest new.
 	self should: [ testCase addAssignment: 3 ] raise: SError.
 	self should: [ testCase addAssignment: 'hello' ] raise: SError.
 	self should: [ testCase addAssignment: #name ] raise: SError.
 	self should: [ testCase addAssignment: 3.4 ] raise: SError.
-	self should: [ testCase addAssignment: #() ] raise: SError.
+	self should: [ testCase addAssignment: #() ] raise: SError
 ]
 
 { #category : #tests }
@@ -208,7 +208,7 @@ SSTestShifterTest >> testAddLiteral [
 		scalar: #ByteString with: #('World');
 		scalar: #SmallInteger with: #(2);
 		scalar: #SStudent with: (Array with: SStudent new).
-	testCase := SSTestCase with: aTypeInfo.
+	testCase := SSTestCaseForTest with: aTypeInfo.
 	testCase
 		addLiteral: #ByteString;
 		addLiteral: #OrderedCollection;
@@ -234,26 +234,23 @@ SSTestShifterTest >> testAddLiteral [
 { #category : #tests }
 SSTestShifterTest >> testAddLiteralWithError [
 	| testCase |
-	testCase := SSTestCase with: STypeInfo new.
-	self should: [testCase addLiteral] raise: SError.
-
+	testCase := SSTestCaseForTest with: STypeInfo new.
+	self should: [ testCase addLiteral ] raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddLiteralWithWrongClassName [
 	| testCase aTypeInfo |
 	aTypeInfo := STypeInfo new.
-	aTypeInfo
-		scalar: #SmallInteger with: #(2).
-	testCase := SSTestCase with: aTypeInfo.
-	self should: [testCase
-		addLiteral: #ByteString] raise: SError.
+	aTypeInfo scalar: #SmallInteger with: #(2).
+	testCase := SSTestCaseForTest with: aTypeInfo.
+	self should: [ testCase addLiteral: #ByteString ] raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddMessage [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo5.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo5.
 	testCase
 		addTargetClassName: #SFoo;
 		addMessage.
@@ -270,7 +267,7 @@ SSTestShifterTest >> testAddMessage [
 { #category : #tests }
 SSTestShifterTest >> testAddMessageFrom [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo3.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo3.
 	testCase
 		addTargetClassName: #SFoo;
 		addMessage: #returnFloat from: #SFoo.
@@ -294,8 +291,7 @@ SSTestShifterTest >> testAddMessageFrom [
 { #category : #tests }
 SSTestShifterTest >> testAddMessageFromDifferentReceiver [
 	| testCase |
-	testCase := (SSTestCase
-		with: utility typeInfoOnPackage1)
+	testCase := (SSTestCaseForTest with: utility typeInfoOnPackage1)
 		addTargetClassName: #SEvent.
 	self
 		should: [ testCase addMessage: #canRegister: from: #SEvent ]
@@ -314,7 +310,7 @@ SSTestShifterTest >> testAddMessageFromDifferentReceiver [
 { #category : #tests }
 SSTestShifterTest >> testAddMessageWithEmptyTypeMethodInfo [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFooEmpty.
+	testCase := SSTestCaseForTest with: utility typeInfoSFooEmpty.
 	testCase addTargetClassName: #SFoo.
 	self should: [ testCase addMessage ] raise: SError
 ]
@@ -323,7 +319,7 @@ SSTestShifterTest >> testAddMessageWithEmptyTypeMethodInfo [
 SSTestShifterTest >> testAddMessageWithReceiver [
 	| testCase typeInfo receiver |
 	typeInfo := utility typeInfoSFoo2.
-	testCase := (SSTestCase with: typeInfo) addTargetClassName: #SFoo.
+	testCase := (SSTestCaseForTest with: typeInfo) addTargetClassName: #SFoo.
 	receiver := testCase addFactoryMessage variable.
 	self
 		assert:
@@ -336,8 +332,7 @@ SSTestShifterTest >> testAddMessageWithReceiver [
 { #category : #tests }
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 	| testCase |
-	testCase := SSTestCase
-		with: utility typeInfoSFooOnPackage3."(STON fromString: utility typeInfoStringSFoo6)."
+	testCase := SSTestCaseForTest with: utility typeInfoSFooOnPackage3.	"(STON fromString: utility typeInfoStringSFoo6)."
 	testCase
 		addTargetClassName: #SFoo;
 		addMessage: #return: from: #SFoo.
@@ -363,8 +358,7 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 { #category : #tests }
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 	| testCase |
-	testCase := SSTestCase
-		with: utility typeInfoSStackOnPackage2."(STON fromString: utility typeInfoStringSStack1)".
+	testCase := SSTestCaseForTest with: utility typeInfoSStackOnPackage2.	"(STON fromString: utility typeInfoStringSStack1)"
 	testCase
 		addTargetClassName: #SStack;
 		addMessage: #push: from: #SStack.
@@ -394,7 +388,7 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 { #category : #tests }
 SSTestShifterTest >> testAddStatementAfter [
 	| testCase expression1 expression2 |
-	testCase := SSTestCase with: utility typeInfoSSTeacher1.
+	testCase := SSTestCaseForTest with: utility typeInfoSSTeacher1.
 	expression1 := SAssignment
 		name: (SVariable new id: 0)
 		value: ((SLiteral value: 2) returnType: #SmallInteger).
@@ -440,7 +434,7 @@ SSTestShifterTest >> testAddStatementAfter [
 { #category : #tests }
 SSTestShifterTest >> testAddStatementBefore [
 	| testCase expression1 expression2 |
-	testCase := SSTestCase new.
+	testCase := SSTestCaseForTest new.
 	expression1 := SAssignment
 		name: (SVariable new id: 0)
 		value: ((SLiteral value: 2) returnType: #SmallInteger).
@@ -478,7 +472,7 @@ SSTestShifterTest >> testAddStatementBefore [
 { #category : #tests }
 SSTestShifterTest >> testAddStatetementOfTypeBefore [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase := SSTestCaseForTest with: utility typeInfoSEvent1.
 	testCase addTargetClassName: #SEvent.
 	expression := testCase addStatementOfType: #SEvent before: nil.
 	self
@@ -497,7 +491,7 @@ SSTestShifterTest >> testAddStatetementOfTypeBefore [
 { #category : #tests }
 SSTestShifterTest >> testAddStatetementOfTypeBeforeFactoryMessage [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase := SSTestCaseForTest with: utility typeInfoSEvent1.
 	testCase addTargetClassName: #SEvent.
 	expression := testCase addFactoryMessage.
 	expression := testCase addStatementOfType: #SEvent before: expression.
@@ -510,40 +504,44 @@ SSTestShifterTest >> testAddStatetementOfTypeBeforeFactoryMessage [
 { #category : #tests }
 SSTestShifterTest >> testAddTargetClassName [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoOnPackage3.
-	self should: [testCase addTargetClassName: #SEvent] raise: SError.
-	self shouldnt: [testCase addTargetClassName: #SSTeacher] raise: SError.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage3.
+	self should: [ testCase addTargetClassName: #SEvent ] raise: SError.
+	self
+		shouldnt: [ testCase addTargetClassName: #SSTeacher ]
+		raise: SError.
 	expression := testCase addFactoryMessage: #SSTeacher.
 	self
 		assert:
 			(#('_var2 := SSTeacher name: _var0 with: _var1.' '_var2 := SSTeacher name: _var1 with: _var0.')
-				includes: expression printString).
+				includes: expression printString)
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testBuildArgsBefore [
 	| testCase typeInfo expression |
 	typeInfo := utility typeInfoSEvent1.
-	testCase := SSTestCase with: typeInfo.
+	testCase := SSTestCaseForTest with: typeInfo.
 	testCase addTargetClassName: #SEvent.
 	expression := testCase addLiteral.
-	testCase buildArgs: ((typeInfo factoryMessagesFrom: #SEvent) first argTypes)  before: expression.
+	testCase
+		buildArgs: (typeInfo factoryMessagesFrom: #SEvent) first argTypes
+		before: expression.
 	self
-		assertCollection: (testCase printStatements )
+		assertCollection: testCase printStatements
 		hasSameElements: #('_var1 := 8.' '_var0 := 8.')
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testNewFactoryMessageBefore [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase := SSTestCaseForTest with: utility typeInfoSEvent1.
 	testCase addTargetClassName: #SEvent.
 	expression := testCase addLiteral.
 	self
 		assert: (testCase newFactoryMessage: #SEvent before: expression) printString
 		equals: 'SEvent price: _var1'.
 	"default factoryMessage"
-	testCase := SSTestCase with: utility typeInfoSFoo5.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo5.
 	testCase addTargetClassName: #SFoo.
 	self
 		assert: (testCase newFactoryMessage: #SFoo before: nil) printString
@@ -553,23 +551,27 @@ SSTestShifterTest >> testNewFactoryMessageBefore [
 { #category : #tests }
 SSTestShifterTest >> testNewFactoryMessageUsingAnd [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase := SSTestCaseForTest with: utility typeInfoSEvent1.
 	testCase addTargetClassName: #SEvent.
 	expression := testCase addLiteral.
 	self
 		assert: (testCase newFactoryMessageUsing: #SEvent and: expression) printString
 		equals: 'SEvent price: _var1'.
-	self assertCollection: testCase printStatements  hasSameElements: #('_var1 := 8.' '_var0 := 8.')
+	self
+		assertCollection: testCase printStatements
+		hasSameElements: #('_var1 := 8.' '_var0 := 8.')
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testNewFieldAccessMessageOfTypeBefore [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	expression := testCase addLiteral: #SmallInteger.
 	self
-		should: [ testCase newFieldAccessMessageOfType: #SmallInteger before: expression ]
+		should: [ testCase
+				newFieldAccessMessageOfType: #SmallInteger
+				before: expression ]
 		raise: SError.
 	testCase
 		addStatement:
@@ -578,8 +580,9 @@ SSTestShifterTest >> testNewFieldAccessMessageOfTypeBefore [
 		before: expression.
 	self
 		assert:
-			(testCase newFieldAccessMessageOfType: #SmallFloat64 before: expression)
-				printString
+			(testCase
+				newFieldAccessMessageOfType: #SmallFloat64
+				before: expression) printString
 		equals: '_var2 score'.
 	self
 		assertCollection: testCase printStatements
@@ -589,7 +592,7 @@ SSTestShifterTest >> testNewFieldAccessMessageOfTypeBefore [
 { #category : #tests }
 SSTestShifterTest >> testNewMessageOfTypeBefore [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	expression := testCase addLiteral: #SmallInteger.
 	self
@@ -613,7 +616,7 @@ SSTestShifterTest >> testNewMessageOfTypeBefore [
 { #category : #tests }
 SSTestShifterTest >> testNewStatementOfTypeBefore [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase := SSTestCaseForTest with: utility typeInfoSEvent1.
 	testCase addTargetClassName: #SEvent.
 	expression := testCase
 		newAssignment: (testCase newStatementOfType: #SmallInteger before: nil).
@@ -635,7 +638,7 @@ SSTestShifterTest >> testNewStatementOfTypeBefore [
 { #category : #tests }
 SSTestShifterTest >> testObjectVariables [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSSTeacher3.
+	testCase := SSTestCaseForTest with: utility typeInfoSSTeacher3.
 	self assert: testCase objectVariables isEmpty.
 	testCase
 		addTargetClassName: #SSTeacher;
@@ -648,21 +651,20 @@ SSTestShifterTest >> testObjectVariables [
 { #category : #tests }
 SSTestShifterTest >> testPickAccessorsOf [
 	| testCase |
-	testCase := (SSTestCase with: utility typeInfoSSTeacher4)
+	testCase := (SSTestCaseForTest with: utility typeInfoSSTeacher4)
 		addTargetClassName: #SSTeacher.
 	self
 		assertCollection: ((testCase pickAccessorsOf: #SSTeacher) collect: #selector)
 		hasSameElements: #(#yearsWorkExperience #idTeacher).
-	testCase := (SSTestCase with: utility typeInfoSSTeacher3)
+	testCase := (SSTestCaseForTest with: utility typeInfoSSTeacher3)
 		addTargetClassName: #SSTeacher.
-	self assert: (testCase pickAccessorsOf: #SSTeacher) isEmpty.
-	
+	self assert: (testCase pickAccessorsOf: #SSTeacher) isEmpty
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testPickAccessorsOfWithInvalidClassName [
 	| testCase |
-	testCase := (SSTestCase with: utility typeInfoSSTeacher4)
+	testCase := (SSTestCaseForTest with: utility typeInfoSSTeacher4)
 		addTargetClassName: #SSTeacher.
 	self assert: (testCase pickAccessorsOf: #SStudent) isEmpty
 ]
@@ -670,17 +672,19 @@ SSTestShifterTest >> testPickAccessorsOfWithInvalidClassName [
 { #category : #tests }
 SSTestShifterTest >> testPickAnObjectVariable [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSSTeacher3.
-	self should: [testCase  pickAnObjectVariable ] raise: SError.
+	testCase := SSTestCaseForTest with: utility typeInfoSSTeacher3.
+	self should: [ testCase pickAnObjectVariable ] raise: SError.
 	testCase addTargetClassName: #SSTeacher.
-	self assert: testCase pickAnObjectVariable printString equals: '_var0'
+	self
+		assert: testCase pickAnObjectVariable printString
+		equals: '_var0'
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testPickFactoryMessagesFrom [
 	| testCase |
-	testCase := SSTestCase new.
-	testCase typeInfo: utility typeInfoOnPackage2 .
+	testCase := SSTestCaseForTest new.
+	testCase typeInfo: utility typeInfoOnPackage2.
 	self
 		should: [ testCase addMessage: #price: from: #SEvent ]
 		raise: SError.
@@ -693,13 +697,13 @@ SSTestShifterTest >> testPickFactoryMessagesFrom [
 { #category : #tests }
 SSTestShifterTest >> testPickMessagesOf [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoOnPackage2.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage2.
 	self
 		assert: ((testCase pickMessagesOf: #SEvent) collect: #selector) isEmpty.
 	self
 		assertCollection: ((testCase pickMessagesOf: #SConference) collect: #selector)
 		hasSameElements: #(#price: #initialize).
-	testCase := SSTestCase with: utility typeInfoOnPackage3.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage3.
 	self
 		assertCollection: ((testCase pickMessagesOf: #SSTeacher) collect: #selector)
 		hasSameElements: #(#name: #id: #nickname: #initialize #nickname)
@@ -708,9 +712,9 @@ SSTestShifterTest >> testPickMessagesOf [
 { #category : #tests }
 SSTestShifterTest >> testPickMessagesOfWrongClassName [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoOnPackage2.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage2.
 	self assert: (testCase pickMessagesOf: #SSTeacher) isEmpty.
-	testCase := SSTestCase with: utility typeInfoOnPackage3.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage3.
 	self assert: (testCase pickMessagesOf: #SPerson) isEmpty.
 	self assert: (testCase pickMessagesOf: #SStudent) isEmpty
 ]
@@ -718,13 +722,15 @@ SSTestShifterTest >> testPickMessagesOfWrongClassName [
 { #category : #tests }
 SSTestShifterTest >> testPickOrCreateObjectVariableOf [
 	| testCase |
-	testCase := (SSTestCase with: utility typeInfoSFoo2)
+	testCase := (SSTestCaseForTest with: utility typeInfoSFoo2)
 		addTargetClassName: #SFoo.
 	self assert: testCase statements isEmpty.
 	self
 		assert: (testCase pickOrCreateObjectVariableOf: #SFoo) printString
 		equals: '_var0'.
-	self assertCollection: (testCase statements collect: #printString) hasSameElements: #('_var0 := SFoo new.').
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: #('_var0 := SFoo new.').
 	testCase pickOrCreateObjectVariableOf: #SFoo.
 	self assert: testCase statements size equals: 1
 ]
@@ -732,7 +738,7 @@ SSTestShifterTest >> testPickOrCreateObjectVariableOf [
 { #category : #tests }
 SSTestShifterTest >> testPickOrCreateObjectVariableOfWrongClassName [
 	| testCase |
-	testCase := (SSTestCase with: utility typeInfoSFoo2)
+	testCase := (SSTestCaseForTest with: utility typeInfoSFoo2)
 		addTargetClassName: #SFoo.
 	self
 		should: [ testCase pickOrCreateObjectVariableOf: #SSTeacher ]
@@ -742,25 +748,31 @@ SSTestShifterTest >> testPickOrCreateObjectVariableOfWrongClassName [
 { #category : #tests }
 SSTestShifterTest >> testRandomLiteralClassName [
 	| testCase |
-	testCase := SSTestCase
+	testCase := SSTestCaseForTest
 		with: (STypeInfo new scalar: #SmallInteger with: #(1 3 4)).
 	self assert: testCase randomLiteralClassName equals: #SmallInteger.
-	testCase := SSTestCase with: (STypeInfo new scalar: #ByteString with: #('hello'); 
-	scalar: #SmallInteger with: #(1 5 6)).
-	self assert: (#(#ByteString #SmallInteger) includes: testCase randomLiteralClassName )
+	testCase := SSTestCaseForTest
+		with:
+			(STypeInfo new
+				scalar: #ByteString with: #('hello');
+				scalar: #SmallInteger with: #(1 5 6)).
+	self
+		assert:
+			(#(#ByteString #SmallInteger)
+				includes: testCase randomLiteralClassName)
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testRandomLiteralClassNameWithEmptyScalars [
 	| testCase |
-	testCase := SSTestCase with: STypeInfo new.
-	self should: [testCase randomLiteralClassName] raise: SError
+	testCase := SSTestCaseForTest with: STypeInfo new.
+	self should: [ testCase randomLiteralClassName ] raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testSubStatementsFromToPrevIndexOf [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSEvent1.
+	testCase := SSTestCaseForTest with: utility typeInfoSEvent1.
 	testCase addTargetClassName: #SEvent.
 	self
 		assert: (testCase subStatementsFrom: 1 toPrevIndexOf: nil) isEmpty.
@@ -784,13 +796,14 @@ SSTestShifterTest >> testSubStatementsFromToPrevIndexOf [
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := _var1 discount: _var0.').
+		hasSameElements:
+			#('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := _var1 discount: _var0.')
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testValidTargetClassName [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoOnPackage1.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage1.
 	self should: [ testCase validTargetClassName: #SEvent ] raise: SError.
 	testCase addTargetClassName: #SEvent.
 	self
@@ -799,13 +812,15 @@ SSTestShifterTest >> testValidTargetClassName [
 	self
 		shouldnt: [ testCase validTargetClassName: #SConference ]
 		raise: SError.
-	self should: [ testCase validTargetClassName: #SStudent ] raise: SError
+	self
+		should: [ testCase validTargetClassName: #SStudent ]
+		raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testValidTargetClassNameWithLackTypeInfo [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoOnPackage4.
+	testCase := SSTestCaseForTest with: utility typeInfoOnPackage4.
 	self should: [ testCase validTargetClassName: #SEvent ] raise: SError.
 	testCase addTargetClassName: #SEvent.
 	self
@@ -814,7 +829,5 @@ SSTestShifterTest >> testValidTargetClassNameWithLackTypeInfo [
 	self
 		shouldnt: [ testCase validTargetClassName: #SConference ]
 		raise: SError.
-	self
-		should: [ testCase validTargetClassName: #SParty ]
-		raise: SError.
+	self should: [ testCase validTargetClassName: #SParty ] raise: SError
 ]

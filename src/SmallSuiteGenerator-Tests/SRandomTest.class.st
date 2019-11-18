@@ -25,7 +25,7 @@ SRandomTest >> testCollectAtRandom [
 SRandomTest >> testCollectAtRandomOnStatements [
 	| generator testCase |
 	generator := SRandom seed: 100.
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage;
@@ -50,7 +50,7 @@ SRandomTest >> testSelectAtRandom [
 SRandomTest >> testSelectAtRandomOnStatements [
 	| generator testCase stringStatements statements |
 	generator := SRandom seed: 100.
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase
 		addTargetClassName: #SFoo;
 		addFactoryMessage;
@@ -58,11 +58,11 @@ SRandomTest >> testSelectAtRandomOnStatements [
 		addFieldAccessMessage: #score from: #SFoo.
 	stringStatements := testCase printStatements.
 	statements := testCase statements.
-	100 timesRepeat: [
-		self
-		assert:
-			(stringStatements 
-				includes: (generator selectAtRandom: statements) printString)]
+	100
+		timesRepeat: [ self
+				assert:
+					(stringStatements
+						includes: (generator selectAtRandom: statements) printString) ]
 ]
 
 { #category : #tests }

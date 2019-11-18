@@ -7,7 +7,7 @@ Class {
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	| testCase changed |
-	testCase := (SSTestCase with: utility typeInfoAthensCairo).
+	testCase := SSTestCaseForTest with: utility typeInfoAthensCairo.
 	testCase
 		addTargetClassName: #AthensCairoCanvas;
 		addFactoryMessage;
@@ -27,7 +27,7 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	| testCase expression expressionChanged |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase
 		addLiteral: #SmallFloat64;
 		addLiteral: #SmallFloat64.
@@ -50,9 +50,10 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 	| testCase expressionChanged |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
-	addFactoryMessage.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
@@ -67,9 +68,10 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFieldAccessMessage [
 	| testCase exprField exprFieldChanged |
-	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: #SStack;
-	addFactoryMessage: #SStack ofSelector: #newStack.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack4.
+	testCase
+		addTargetClassName: #SStack;
+		addFactoryMessage: #SStack ofSelector: #newStack.
 	exprField := (testCase
 		addFieldAccessMessage: #firstLinkStack
 		from: #SStack) copy.
@@ -87,7 +89,7 @@ SChangeTest >> testChangeStatementOfFieldAccessMessage [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfLiteral [
 	| testCase exprLiteral exprLiteralChanged |
-	testCase := SSTestCase with: utility typeInfoSStack4.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack4.
 	exprLiteral := (testCase addLiteral: #SmallInteger) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -100,9 +102,10 @@ SChangeTest >> testChangeStatementOfLiteral [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfMessage [
 	| testCase exprMessage exprLiteralChanged |
-	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: #SStack;
-	addFactoryMessage: #SStack ofSelector: #newStack.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack4.
+	testCase
+		addTargetClassName: #SStack;
+		addFactoryMessage: #SStack ofSelector: #newStack.
 	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)

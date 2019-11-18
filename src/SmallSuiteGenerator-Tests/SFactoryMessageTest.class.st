@@ -27,7 +27,7 @@ SFactoryMessageTest >> testCopy [
 { #category : #tests }
 SFactoryMessageTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
-	testCase := SSTestCase with: utility typeInfoSFoo2.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo2.
 	testCase addTargetClassName: #SFoo.
 	expression := testCase addFactoryMessage: #SFoo.
 	testCase addMessage.
@@ -46,7 +46,7 @@ SFactoryMessageTest >> testInsertAsParameterUsing [
 { #category : #tests }
 SFactoryMessageTest >> testInsertMethodMessageUsing [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	expression := testCase addFactoryMessage: #SFoo.
 	self
@@ -60,7 +60,7 @@ SFactoryMessageTest >> testInsertMethodMessageUsing [
 { #category : #tests }
 SFactoryMessageTest >> testInsertRandomMessageUsing [
 	| testCase factoryMessage |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	factoryMessage := testCase addFactoryMessage: #SFoo.
 	self

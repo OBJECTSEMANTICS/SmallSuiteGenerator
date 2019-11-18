@@ -26,7 +26,7 @@ SFieldAccessMessageTest >> testCopy [
 { #category : #tests }
 SFieldAccessMessageTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
-	testCase := SSTestCase with: utility typeInfoSStack4.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack4.
 	testCase addFactoryMessage: #SStack ofSelector: #newStackWith:.
 	expression := testCase
 		addFieldAccessMessage: #firstLinkStack
@@ -48,8 +48,10 @@ SFieldAccessMessageTest >> testInsertAsParameterUsing [
 { #category : #tests }
 SFieldAccessMessageTest >> testInsertRandomMessageUsing [
 	| testCase aExpression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addFactoryMessage: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addFactoryMessage: #SFoo.
 	aExpression := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)

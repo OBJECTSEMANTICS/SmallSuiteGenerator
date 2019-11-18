@@ -16,8 +16,10 @@ SMutatorTestCaseTest >> setUp [
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveArgsMethod [
 	| testCase expression numExprsBefore numExprsAfter |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -32,7 +34,7 @@ SMutatorTestCaseTest >> testRemoveArgsMethod [
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveExpression [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	expression := testCase addLiteral.
 	testCase removeExpression: expression.
 	self assert: testCase statements isEmpty
@@ -41,8 +43,10 @@ SMutatorTestCaseTest >> testRemoveExpression [
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
@@ -57,15 +61,17 @@ SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 { #category : #tests }
 SMutatorTestCaseTest >> testRemoveInEmptyTestCase [
 	| testCase |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
 	self should: [ testCase removeExpression: nil ] raise: SError
 ]
 
 { #category : #tests }
 SMutatorTestCaseTest >> testRepair [
 	| testCase expression |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
+	testCase := SSTestCaseForTest with: utility typeInfoSFoo1.
+	testCase
+		addTargetClassName: #SFoo;
+		addMessage: #return: from: #SFoo.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:

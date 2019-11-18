@@ -18,7 +18,7 @@ SGAMutationOperationTest >> setUp [
 { #category : #tests }
 SGAMutationOperationTest >> testMutation [
 	| testCase mutatedTestCase |
-	testCase := SSTestCase with: utility typeInfoSStack3.
+	testCase := SSTestCaseForTest with: utility typeInfoSStack3.
 	testCase numMaxStatements: 10.
 	testCase
 		addTargetClassName: #SStack;
@@ -32,9 +32,10 @@ SGAMutationOperationTest >> testMutation [
 SGAMutationOperationTest >> testMutationSSteacher [
 	| typeInfo testCase mutatedTestCase |
 	typeInfo := utility typeInfoSSTeacher1.
-	testCase := SSTestCase with: typeInfo.
-	testCase addTargetClassName: #SSTeacher;
-	generateStatements.
+	testCase := SSTestCaseForTest with: typeInfo.
+	testCase
+		addTargetClassName: #SSTeacher;
+		generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
 	self assert: mutatedTestCase validReferences
