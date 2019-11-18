@@ -9,6 +9,9 @@ String >> mutateToChange [
 	stringCopy := self
 		ifEmpty: [ '' ]
 		ifNotEmpty: [ self copyFrom: 1 to: self size - 1 ].
-	^ ((Character value: (randomGenerator selectAtRandom: interval) ) asString , stringCopy
-		, (Character value: (randomGenerator selectAtRandom: interval )) asString) printString
+	^ ((Character value: (randomGenerator selectAtRandom: interval))
+		printString , stringCopy
+		,
+			(Character value: (randomGenerator selectAtRandom: interval)) printString)
+		printString
 ]

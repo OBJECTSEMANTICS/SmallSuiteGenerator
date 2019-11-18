@@ -39,7 +39,7 @@ SSPerson >> canRegister: aConference [
 
 { #category : #'as yet unclassified' }
 SSPerson >> fullIdentifier [
-	^ name, '_', nickname, '_', id asString
+	^ name , '_' , nickname , '_' , id printString
 ]
 
 { #category : #accessing }
@@ -53,8 +53,8 @@ SSPerson >> id: anObject [
 ]
 
 { #category : #accessing }
-SSPerson >> identifier [ 	
-	^ name, id asString
+SSPerson >> identifier [
+	^ name , id printString
 ]
 
 { #category : #accessing }

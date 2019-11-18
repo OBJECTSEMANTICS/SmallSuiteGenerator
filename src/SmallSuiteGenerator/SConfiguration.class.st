@@ -85,6 +85,11 @@ SConfiguration class >> logName: string [
 	logName := string
 ]
 
+{ #category : #'as yet unclassified' }
+SConfiguration class >> lookUpClass: aClassName [
+	^ self configurationClass lookUpClass: aClassName 
+]
+
 { #category : #'instance creation' }
 SConfiguration class >> newRandomGenerator [
 	^ SRandom seed: self seed

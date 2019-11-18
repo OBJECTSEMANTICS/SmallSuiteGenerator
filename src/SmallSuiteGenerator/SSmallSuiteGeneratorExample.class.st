@@ -73,7 +73,7 @@ SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [
 				with: SMethodCoverage new;
 				with: SStatementCoverage new);
 		targetClassName: #SSTeacher;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;
@@ -98,7 +98,7 @@ SSmallSuiteGeneratorExample >> exampleSStackOnClass [
 				with: SMethodCoverage new;
 				with: SStatementCoverage new);
 		targetClassName: #SStack;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;
@@ -120,7 +120,7 @@ SSmallSuiteGeneratorExample >> exampleSStackOnPackages [
 		typeInfo: typeInfo;
 		fitness: SStatementCoverage new;
 		targetClassName: #SStack;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;
@@ -143,7 +143,7 @@ SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
 		typeInfo: typeInfo;
 		fitness: SStatementCoverage new;
 		targetClassName: #SStudent;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;
@@ -169,7 +169,7 @@ SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
 				with: SMethodCoverage new;
 				with: SStatementCoverage new);
 		targetClassName: #SStudent;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario2';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario2';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;
@@ -192,7 +192,7 @@ SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
 		typeInfo: typeInfo;
 		fitness: SStatementCoverage new;
 		targetClassName: #SStudent;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario2';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario2';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;
@@ -216,7 +216,7 @@ SSmallSuiteGeneratorExample >> exampleWithWrongRegexToRun [
 				with: SMethodCoverage new;
 				with: SStatementCoverage new);
 		targetClassName: #SStudent;
-		targetPackagesRegex: 'SmallSuiteGenerator-Scenario';
+		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
 		visualize;

@@ -222,7 +222,7 @@ SGAEngine >> run [
 						timeToProduceGeneration: Time now asSeconds;
 						yourself).
 			self createNewPopulation ]
-		displayingProgress: [ :iteration | 'Evolving - Iteration',iteration asString ]
+		displayingProgress: [ :iteration | 'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }

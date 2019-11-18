@@ -65,8 +65,10 @@ STypeInfo >> classMethodType: aSelector from: aClassName [
 STypeInfo >> classes [
 	classes ifNil: [ classes := Dictionary new ].
 	types
-		keysDo:
-			[ :aClassName | classes at: aClassName ifAbsentPut: (Smalltalk at: aClassName) ].
+		keysDo: [ :aClassName | 
+			classes
+				at: aClassName
+				ifAbsentPut: (SConfiguration lookUpClass: aClassName) ].
 	^ classes
 ]
 

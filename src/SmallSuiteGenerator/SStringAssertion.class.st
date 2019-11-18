@@ -14,10 +14,9 @@ SStringAssertion class >> for: anExecutionContext [
 			value := anExecutionContext at: varName.
 			(self isPrimitive: value)
 				ifFalse: [ (value class allSelectorsBelow: Object)
-						detect: [ :selector | selector = #printOn: or: [ selector = #printString ] ]
+						detect: [ :selector | selector = #printOn: or: [ selector = #asString ] ]
 						ifFound: [ | fieldValue |
-							[ 
-							fieldValue := value perform: #printString.
+							[ fieldValue := value perform: #printString.
 							assertions
 								add:
 									(self new
@@ -30,8 +29,9 @@ SStringAssertion class >> for: anExecutionContext [
 														selector: #printString;
 														yourself)
 												with: (SLiteral new value: fieldValue));
-										yourself) ] on: Error do:[ Transcript show: (value class name),' cant answer printString without error']
-										
-										] ] ].
+										yourself) ]
+								on: Error
+								do: [ Transcript
+										show: value class name , ' cant answer printString without error' ] ] ] ].
 	^ assertions
 ]

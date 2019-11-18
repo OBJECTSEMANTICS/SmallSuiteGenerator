@@ -27,6 +27,8 @@ SCollectionTypeSimilarityAssertion class >> preconditionChecking: aObject [
 ]
 
 { #category : #converting }
-SCollectionTypeSimilarityAssertion >> printString [ 
-	^ 'self assert: ( ', nameValue asString, ' allSatisfy: [:element | element className = ', comparableValue storeString, '])'
+SCollectionTypeSimilarityAssertion >> printString [
+	^ 'self assert: ( ' , nameValue printString
+		, ' allSatisfy: [:element | element className = '
+		, comparableValue storeString , '])'
 ]

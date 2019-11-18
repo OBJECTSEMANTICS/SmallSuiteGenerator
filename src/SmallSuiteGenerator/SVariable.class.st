@@ -50,7 +50,7 @@ SVariable >> pickUpReferences: anExpression [
 { #category : #printing }
 SVariable >> printOn: aStream [
 	aStream nextPutAll: varName.
-	id ifNotNil: [ aStream nextPutAll: id asString ]
+	id ifNotNil: [ aStream nextPutAll: id printString ]
 ]
 
 { #category : #accessing }

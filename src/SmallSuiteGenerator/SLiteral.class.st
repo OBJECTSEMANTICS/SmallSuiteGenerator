@@ -42,9 +42,11 @@ SLiteral >> insertOn: aTestCase [
 
 { #category : #printing }
 SLiteral >> printOn: aStream [
-
 	aStream
-		nextPutAll: ((value isNumber) ifTrue:[ value asString] ifFalse:[value storeString]).
+		nextPutAll:
+			(value isNumber
+				ifTrue: [ value printString ]
+				ifFalse: [ value storeString ])
 ]
 
 { #category : #accessing }

@@ -1,5 +1,5 @@
 Class {
-	#name : #STestCaseFactoryVW,
+	#name : #STestCaseFactoryVisualWorks,
 	#superclass : #STestCaseFactory,
 	#category : #'SmallSuiteGenerator-Core'
 }

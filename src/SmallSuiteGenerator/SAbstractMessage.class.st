@@ -65,12 +65,13 @@ SAbstractMessage >> changeSelectorFrom: aExpression in: aTestCase [
 ]
 
 { #category : #copying }
-SAbstractMessage >> copy [ 
-	| copy|
+SAbstractMessage >> copy [
+	| copy |
 	copy := super copy.
-	copy args: args deepCopy;
-	receiver: receiver copy;
-	selector: selector copy.
+	copy
+		args: args deepCopy;
+		receiver: receiver copy;
+		selector: selector copy.
 	^ copy
 ]
 
@@ -123,7 +124,7 @@ SAbstractMessage >> printSelectors: aStream [
 					aStream nextPutAll: selectorPart.
 					withColon
 						ifTrue: [ aStream nextPutAll: ': ' ].
-					aStream nextPutAll: arg asString.
+					aStream nextPutAll: arg printString.
 					(index < stop and: [ withColon ])
 						ifTrue: [ aStream nextPut: Character space ] ] ]
 ]
@@ -165,8 +166,11 @@ SAbstractMessage >> replaceArgBy: expression [
 SAbstractMessage >> replaceBy: otherExpression [
 	receiver replaceBy: otherExpression receiver.
 	self selector: otherExpression selector.
-	self args size = otherExpression args size ifTrue: [ 
-	self args with: otherExpression args do: [ :arg :newArg | arg replaceBy: newArg ]] ifFalse: [ self args: otherExpression args deepCopy ]
+	self args size = otherExpression args size
+		ifTrue: [ self args
+				with: otherExpression args
+				do: [ :arg :newArg | arg replaceBy: newArg ] ]
+		ifFalse: [ self args: otherExpression args deepCopy ]
 ]
 
 { #category : #actions }

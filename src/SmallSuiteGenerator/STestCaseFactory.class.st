@@ -25,10 +25,10 @@ STestCaseFactory >> checkInvariants [
 
 { #category : #accessing }
 STestCaseFactory >> classesForRegex: regexExpressions [
-	^ ((regexExpressions
+	^ (regexExpressions
 		flatCollect: [ :regex | 
 			RPackage organizer packages
-				select: [ :p | regex match: p name asString ] ]) asSet)
+				select: [ :p | regex match: p name printString ] ]) asSet
 		flatCollect: #definedClasses
 ]
 
@@ -68,7 +68,7 @@ STestCaseFactory >> engineDefault [
 STestCaseFactory >> export: aTestCase with: aSelector [
 	| className class |
 	className := ('GA' , self targetClassName , 'Test') asSymbol.
-	class := Smalltalk at: className ifAbsent: [ nil ].
+	class := SConfiguration lookUpClass: className.
 	class
 		ifNil: [ class := TestCase
 				subclass: className
@@ -93,12 +93,12 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 
 { #category : #actions }
 STestCaseFactory >> exportTests [
-	|index|
-	index := 1. 
-	engine population do:[ :test|
-		self export: test with:('test',index asString).
-		index := index + 1. ].
-	
+	| index |
+	index := 1.
+	engine population
+		do: [ :test | 
+			self export: test with: 'test' , index printString.
+			index := index + 1 ]
 ]
 
 { #category : #configuration }
@@ -205,11 +205,6 @@ STestCaseFactory >> targetPackageRegex: anObject [
 	targetPackageRegex := anObject
 ]
 
-{ #category : #accessing }
-STestCaseFactory >> targetPackagesRegex: anObject [
-	targetPackageRegex := anObject
-]
-
 { #category : #actions }
 STestCaseFactory >> tearDown [
 	self cleanInstrumentation.
@@ -237,9 +232,9 @@ STestCaseFactory >> visualize [
 			d connectColor: (p at: index).
 			d noDot.
 			d points: assocation value.
-			d label: assocation key asString.
+			d label: assocation key printString.
 			d y: #yourself.
 			g add: d ].
 	g legend addText: 'Fitness evolution'.
-	g open.
+	g open
 ]

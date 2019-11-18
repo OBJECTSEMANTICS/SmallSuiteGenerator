@@ -66,9 +66,10 @@ SGALog >> mutationResult: mutationTestingResult [
 { #category : #printing }
 SGALog >> printOn: str [
 	super printOn: str.
-	str nextPut: $<;
-	nextPutAll: fittestTestCase statements asString;
-	nextPut: $>.
+	str
+		nextPut: $<;
+		nextPutAll: fittestTestCase statements printString;
+		nextPut: $>
 ]
 
 { #category : #accessing }

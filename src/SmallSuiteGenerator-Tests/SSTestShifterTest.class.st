@@ -38,7 +38,7 @@ SSTestShifterTest >> testAddFactoryMessage [
 		addFactoryMessage: #SFoo.
 	self assert: testCase statements size equals: 2.
 	self
-		assertCollection: (testCase statements collect: #asString)
+		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 4.' '_var1 := SFoo score: _var0.').
 	self should: [ testCase addFactoryMessage: #SStack ] raise: SError.
 	aTypeInfo
@@ -48,11 +48,12 @@ SSTestShifterTest >> testAddFactoryMessage [
 					(Array
 						with: (Array with: #top -> #(#SStack nil #() false))
 						with: (Array with: #newStack: -> #(#SStack #SStack #(#Array) false)));
-	scalar: #Array with: #(#(1 3 2)).
-	testCase addTargetClassName: #SStack;
-	addFactoryMessage: #SStack.
+		scalar: #Array with: #(#(1 3 2)).
+	testCase
+		addTargetClassName: #SStack;
+		addFactoryMessage: #SStack.
 	self
-		assertCollection: (testCase statements collect: #asString)
+		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			#('_var0 := 4.' '_var1 := SFoo score: _var0.' '_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
 ]
@@ -215,7 +216,7 @@ SSTestShifterTest >> testAddLiteral [
 		addLiteral: #SStudent.
 	self assert: testCase statements size equals: 4.
 	self
-		assertCollection: (testCase statements collect: #asString)
+		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
 				with: '_var0 := ''World''.'
@@ -258,11 +259,11 @@ SSTestShifterTest >> testAddMessage [
 		addMessage.
 	self assert: testCase statements size equals: 3.
 	self
-		assertCollection: (testCase statements collect: #asString)
+		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
 				with: '_var0 := SFoo new.'
-				with: '_var1 := ' , (OrderedCollection newFrom: #(1 4 5)) storeString, '.'
+				with: '_var1 := ' , (OrderedCollection newFrom: #(1 4 5)) storeString , '.'
 				with: '_var2 := _var0 return: _var1.')
 ]
 
@@ -275,7 +276,7 @@ SSTestShifterTest >> testAddMessageFrom [
 		addMessage: #returnFloat from: #SFoo.
 	self assert: testCase statements size equals: 3.
 	self
-		assertCollection: (testCase statements collect: #asString)
+		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
 				with: '_var0 := 4.'
@@ -285,7 +286,9 @@ SSTestShifterTest >> testAddMessageFrom [
 		assert: (testCase addMessage: #returnNum from: #SFoo) printString
 		equals: '_var3 := _var1 returnNum.'.
 	self
-		assert: (#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.') includes: (testCase addMessage: #score: from: #SFoo) printString)
+		assert:
+			(#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.')
+				includes: (testCase addMessage: #score: from: #SFoo) printString)
 ]
 
 { #category : #tests }

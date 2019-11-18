@@ -21,14 +21,15 @@ SMultiTypeInfo >> = other [
 SMultiTypeInfo >> commonSuperclass [
 	| commonSuperclass |
 	types ifEmpty: [ ^ '' ].
-	commonSuperclass := Smalltalk classNamed: types anyOne.
+	commonSuperclass := SConfiguration lookUpClass: types anyOne.
 	commonSuperclass ifNil: [ ^ '' ].
 	types
 		do: [ :aType | 
-			|otherClass|
-			otherClass := Smalltalk classNamed: aType asString.
+			| otherClass |
+			otherClass := SConfiguration lookUpClass: aType.
 			otherClass ifNil: [ ^ '' ].
-			(commonSuperclass isClass and: [ commonSuperclass name = #Object ]) ifTrue: [ ^ #Object ].
+			(commonSuperclass isClass and: [ commonSuperclass name = #Object ])
+				ifTrue: [ ^ #Object ].
 			commonSuperclass := commonSuperclass
 				commonSuperclassWith: otherClass ].
 	^ commonSuperclass name

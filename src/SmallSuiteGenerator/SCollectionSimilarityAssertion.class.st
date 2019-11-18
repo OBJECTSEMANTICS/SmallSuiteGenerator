@@ -25,6 +25,8 @@ SCollectionSimilarityAssertion class >> preconditionChecking: aObject [
 ]
 
 { #category : #printing }
-SCollectionSimilarityAssertion >> printString [ 
-	^ 'self assert: ( ', nameValue asString, ' allButFirst anySatisfy: [:element | element = ', comparableValue storeString, '])'.
+SCollectionSimilarityAssertion >> printString [
+	^ 'self assert: ( ' , nameValue printString
+		, ' allButFirst anySatisfy: [:element | element = '
+		, comparableValue storeString , '])'
 ]

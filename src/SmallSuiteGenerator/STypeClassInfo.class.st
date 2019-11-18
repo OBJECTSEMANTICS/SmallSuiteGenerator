@@ -211,5 +211,5 @@ STypeClassInfo >> writeDataCSV: neoCSVWriter using: methods [
 	methods
 		do: [ :aMethod | 
 			neoCSVWriter
-				nextPut: (Array with: typeName asString) , aMethod dataCSV ]
+				nextPut: (Array with: typeName printString) , aMethod dataCSV ]
 ]

@@ -61,22 +61,26 @@ SSTestCaseTest >> testCopy [
 
 { #category : #tests }
 SSTestCaseTest >> testFieldAccessMessage [
-	| testCase  |
-	testCase := SSTestCase with:( STypeInfo new
-		type:
-			#SFoo
-				->
-					(Array
-						with:
+	| testCase |
+	testCase := SSTestCase
+		with:
+			(STypeInfo new
+				type:
+					#SFoo
+						->
 							(Array
-								with: #score -> #(#SFoo #SmallInteger #() true)
-								with: #score: -> #(#SFoo #SmallInteger #(#SmallInteger) false))
-						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
-	scalar: #SmallInteger with: #(5)).
-	testCase addTargetClassName: #SFoo;addFieldAccessMessage.
+								with:
+									(Array
+										with: #score -> #(#SFoo #SmallInteger #() true)
+										with: #score: -> #(#SFoo #SmallInteger #(#SmallInteger) false))
+								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+				scalar: #SmallInteger with: #(5)).
+	testCase
+		addTargetClassName: #SFoo;
+		addFieldAccessMessage.
 	self assert: testCase statements size equals: 3.
 	self
-		assertCollection: (testCase statements collect: #asString)
+		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 5.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.')
 ]
 
