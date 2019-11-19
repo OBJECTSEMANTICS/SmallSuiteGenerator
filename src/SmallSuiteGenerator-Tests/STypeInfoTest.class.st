@@ -7,7 +7,7 @@ Class {
 { #category : #tests }
 STypeInfoTest >> testAccesssMessagesFrom [
 	| typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -17,8 +17,9 @@ STypeInfoTest >> testAccesssMessagesFrom [
 								with: #returnString -> #(#SFoo #ByteString #() false)
 								with: #score -> #(#SFoo #SmallInteger #() true))
 						with: #()).
-	
-	self assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector) hasSameElements: #(#score).
+	self
+		assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector)
+		hasSameElements: #(#score)
 ]
 
 { #category : #tests }
@@ -240,24 +241,30 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testClassMethodTypeFrom [
 	| typeInfo |
-	typeInfo := STypeInfo new type: #SFoo -> (Array with: #() with: #()).
+	typeInfo := STypeInfoForTest new type: #SFoo -> (Array with: #() with: #()).
 	self
 		should: [ typeInfo classMethodType: #new from: #SFoo ]
 		raise: SError.
-	typeInfo := STypeInfo new type: #SFoo -> (Array with: 
-	(Array with: #initialize -> #(#SFoo #SFoo #() false)) 
-	with:#()).
-	self shouldnt: [ typeInfo classMethodType: #new from: #SFoo ] raise: SError.
+	typeInfo := STypeInfoForTest new
+		type:
+			#SFoo
+				->
+					(Array
+						with: (Array with: #initialize -> #(#SFoo #SFoo #() false))
+						with: #()).
+	self
+		shouldnt: [ typeInfo classMethodType: #new from: #SFoo ]
+		raise: SError
 ]
 
 { #category : #tests }
 STypeInfoTest >> testEquals [
 	self
-		assert: (STypeInfo new type: #SFoo -> #(#() #()))
-		equals: (STypeInfo new type: #SFoo -> #(#() #())).
+		assert: (STypeInfoForTest new type: #SFoo -> #(#() #()))
+		equals: (STypeInfoForTest new type: #SFoo -> #(#() #())).
 	self
 		assert:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SStudent
 						->
@@ -266,7 +273,7 @@ STypeInfoTest >> testEquals [
 								with: #());
 				scalar: #ByteString with: #('Abi'))
 		equals:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SStudent
 						->
@@ -276,7 +283,7 @@ STypeInfoTest >> testEquals [
 				scalar: #ByteString with: #('Abi')).
 	self
 		assert:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SFoo
 						->
@@ -286,7 +293,7 @@ STypeInfoTest >> testEquals [
 				scalar: #SmallInteger with: #(1 3 4);
 				scalar: #SStudent with: (Array with: (SStudent name: 'Nilson')))
 		equals:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SFoo
 						->
@@ -326,7 +333,7 @@ STypeInfoTest >> testFactoryMessagesFrom [
 { #category : #tests }
 STypeInfoTest >> testFromString [
 	| typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -363,7 +370,7 @@ STypeInfoTest >> testFromString [
 { #category : #tests }
 STypeInfoTest >> testIsAbstracClass [
 	| typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SSPerson
 				->
@@ -379,14 +386,13 @@ STypeInfoTest >> testIsAbstracClass [
 										-> #(#SSPerson #SSPerson #(#ByteString #SmallInteger) false)));
 		scalar: #SmallInteger with: #(50);
 		scalar: #ByteString with: #('Ann').
-	self assert: (typeInfo isAbstractClass: #SSPerson).
-			
+	self assert: (typeInfo isAbstractClass: #SSPerson)
 ]
 
 { #category : #tests }
 STypeInfoTest >> testJoinWith [
 	| typeInfo methodInfo otherTypeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -397,7 +403,7 @@ STypeInfoTest >> testJoinWith [
 								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
 								with: #score -> #(#SFoo #SmallInteger #() true))
 						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
-	otherTypeInfo := STypeInfo new
+	otherTypeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -444,7 +450,7 @@ STypeInfoTest >> testJoinWith [
 { #category : #tests }
 STypeInfoTest >> testMessagesFrom [
 	| typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -455,14 +461,16 @@ STypeInfoTest >> testMessagesFrom [
 								with: #returnString -> #(#SFoo #ByteString #() false)
 								with: #score -> #(#SFoo #SmallInteger #() true))
 						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
-		self assertCollection: ((typeInfo messagesFrom: #SFoo) collect: #selector) hasSameElements: #(#returnFloat #returnString).
-		"self assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector) hasSameElements: #(#score)."
+	self
+		assertCollection: ((typeInfo messagesFrom: #SFoo) collect: #selector)
+		hasSameElements: #(#returnFloat #returnString)
+	"self assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector) hasSameElements: #(#score)."
 ]
 
 { #category : #tests }
 STypeInfoTest >> testNoneAbstractClasses [
 	| typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SSPerson
 				->
@@ -498,31 +506,29 @@ STypeInfoTest >> testNoneAbstractClasses [
 { #category : #tests }
 STypeInfoTest >> testScalar [
 	| typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		scalar: #SmallInteger with: #(1 5 6);
-		scalar: #ByteString with: #('hello'  'world');
+		scalar: #ByteString with: #('hello' 'world');
 		scalar: #Stack
-			with:
-			(Array with: Stack new with:
-			(Stack newFrom: #(2  5  8))).
+			with: (Array with: Stack new with: (Stack newFrom: #(2 5 8))).
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements: #(#Stack  #ByteString #SmallInteger).
+		hasSameElements: #(#Stack #ByteString #SmallInteger).
 	self
 		assertCollection: (typeInfo scalars at: #ByteString)
-		hasSameElements: #('hello'  'world').
+		hasSameElements: #('hello' 'world').
 	self
 		assertCollection: (typeInfo scalars at: #SmallInteger)
 		hasSameElements: #(1 5 6).
 	self
 		assertCollection: ((typeInfo scalars at: #Stack) collect: #className)
-		hasSameElements: #(#Stack  #Stack)
+		hasSameElements: #(#Stack #Stack)
 ]
 
 { #category : #tests }
 STypeInfoTest >> testToString [
 	| string typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -535,50 +541,41 @@ STypeInfoTest >> testToString [
 		scalar: #SmallFloat64 with: #(2.3 4.6);
 		scalar: #ByteString with: #('hello' 'Abi').
 	string := STON toString: typeInfo.
-	self
-		assert: (STON fromString: string) equals: typeInfo
+	self assert: (STON fromString: string) equals: typeInfo
 ]
 
 { #category : #tests }
 STypeInfoTest >> testToStringComplexScalar [
 	| string typeInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
 					(Array
 						with:
-							(Array
-								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+							(Array with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
 						with: #());
 		scalar: #SStudent with: (Array with: (SStudent name: 'Abi')).
 	string := STON toString: typeInfo.
-	self assert: (STON fromString: string) equals: typeInfo.
-	
-
+	self assert: (STON fromString: string) equals: typeInfo
 ]
 
 { #category : #tests }
 STypeInfoTest >> testType [
 	| typeInfo methodInfo |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
 					(Array
 						with:
 							(Array
-								with:
-									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
 								with: #returnString -> #(#SFoo #ByteString #() false)
-								with:
-									#return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false)
-								with:
-									#score: -> #(#SFoo #SFoo #(#SmallInteger) false)
+								with: #return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false)
+								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
 								with: #score -> #(#SFoo #SmallInteger #() true))
-						with:
-							(Array with:
-								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
 	self assert: (typeInfo types at: #SFoo) methodTypes size equals: 5.
 	self
 		assert: (typeInfo types at: #SFoo) classMethodTypes size

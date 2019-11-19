@@ -87,7 +87,7 @@ SConfiguration class >> logName: string [
 
 { #category : #'as yet unclassified' }
 SConfiguration class >> lookUpClass: aClassName [
-	^ self configurationClass lookUpClass: aClassName 
+	^ Smalltalk at: aClassName ifAbsent: [ nil ]
 ]
 
 { #category : #'instance creation' }

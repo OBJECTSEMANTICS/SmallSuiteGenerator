@@ -21,7 +21,7 @@ SSTestCaseTest >> tearDown [
 { #category : #tests }
 SSTestCaseTest >> testCopy [
 	| testCase typeInfo otherTestCase |
-	typeInfo := STypeInfo new
+	typeInfo := STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -38,14 +38,16 @@ SSTestCaseTest >> testCopy [
 	typeInfo scalar: #SmallFloat64 with: #(7.3).
 	testCase := SSTestCase with: typeInfo.
 	testCase
-	addTargetClassName: #SFoo;
+		addTargetClassName: #SFoo;
 		addMessage: #returnNum from: #SFoo;
 		addFieldAccessMessage: #score from: #SFoo;
 		addLiteral: #SmallInteger.
 	otherTestCase := testCase copy.
 	self assert: testCase numberStatements equals: 5.
 	self assert: testCase equals: otherTestCase.
-	self assertCollection: testCase targetClassesNames hasSameElements: #(#SFoo).
+	self
+		assertCollection: testCase targetClassesNames
+		hasSameElements: #(#SFoo).
 	testCase addLiteral: #ByteString.
 	otherTestCase addMessage: #returnFloat from: #SFoo.
 	otherTestCase addMessage: #return: from: #SFoo.
@@ -64,7 +66,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase
 		with:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SFoo
 						->

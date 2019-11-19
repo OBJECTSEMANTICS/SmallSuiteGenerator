@@ -77,7 +77,7 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoAthensCairo [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#AthensCairoCanvas
 				->
@@ -94,54 +94,54 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 SUtilityTypeInfo >> typeInfoOnPackage1 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
-	^ STypeInfo new
-				type:
-					#SEvent
-						->
+	^ STypeInfoForTest new
+		type:
+			#SEvent
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #canRegister: -> #(#SConference #False #(#SStudent) false)
-										with: #price -> #(#SConference #SmallInteger #() false))
-								with: #());
-				type:
-					#SConference
-						->
+								with: #canRegister: -> #(#SConference #False #(#SStudent) false)
+								with: #price -> #(#SConference #SmallInteger #() false))
+						with: #());
+		type:
+			#SConference
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #initialize -> #(#SConference #SConference #() false)
-										with: #offerPrice -> #(#SConference #SmallInteger #() true)
-										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
-										with: #discount -> #(#SConference #SmallInteger #() true))
-								with: #());
-				scalar: #SmallInteger with: #(95 100);
-				scalar: #False with: #(false);
-				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary'))
+								with: #initialize -> #(#SConference #SConference #() false)
+								with: #offerPrice -> #(#SConference #SmallInteger #() true)
+								with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
+								with: #discount -> #(#SConference #SmallInteger #() true))
+						with: #());
+		scalar: #SmallInteger with: #(95 100);
+		scalar: #False with: #(false);
+		scalar: #SStudent with: (Array with: (SStudent new name: 'Mary'))
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage2 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
-	^ STypeInfo new
-				type:
-					#SEvent
-						->
+	^ STypeInfoForTest new
+		type:
+			#SEvent
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #price: -> #(#SConference #SConference #(#SmallInteger) false))
-								with:
-									(Array
-										with: #price: -> #(#SConference #SConference #(#SmallInteger) false)));
-				type:
-					#SConference
-						->
+								with: #price: -> #(#SConference #SConference #(#SmallInteger) false))
+						with:
 							(Array
-								with: (Array with: #initialize -> #(#SConference #SConference #() false))
-								with: #());
-				scalar: #SmallInteger with: #(95)
+								with: #price: -> #(#SConference #SConference #(#SmallInteger) false)));
+		type:
+			#SConference
+				->
+					(Array
+						with: (Array with: #initialize -> #(#SConference #SConference #() false))
+						with: #());
+		scalar: #SmallInteger with: #(95)
 ]
 
 { #category : #examples }
@@ -150,43 +150,43 @@ SUtilityTypeInfo >> typeInfoOnPackage3 [
 
 	"review and modify"
 
-	^ STypeInfo new
-				type:
-					#SSTeacher
-						->
+	^ STypeInfoForTest new
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
+							(OrderedCollection new
+								add: #name: -> #(#SSTeacher #SSTeacher #(#ByteString) false);
+								add: #id: -> #(#SSTeacher #SSTeacher #(#SmallInteger) false);
+								add: #nickname: -> #(#SSTeacher #SSTeacher #(#ByteString) false);
+								add: #initialize -> #(#SSTeacher #SSTeacher #() false);
+								add: #nickname -> #(#SSTeacher #ByteString #() false);
+								add: #name -> #(#SSTeacher #ByteString #() true);
+								add: #id -> #(#SSTeacher #SmallInteger #() true);
+								add: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true);
+								add: #idTeacher -> #(#SSTeacher #SmallInteger #() true);
+								yourself)
+						with:
 							(Array
 								with:
-									(OrderedCollection new
-										add: #name: -> #(#SSTeacher #SSTeacher #(#ByteString) false);
-										add: #id: -> #(#SSTeacher #SSTeacher #(#SmallInteger) false);
-										add: #nickname: -> #(#SSTeacher #SSTeacher #(#ByteString) false);
-										add: #initialize -> #(#SSTeacher #SSTeacher #() false);
-										add: #nickname -> #(#SSTeacher #ByteString #() false);
-										add: #name -> #(#SSTeacher #ByteString #() true);
-										add: #id -> #(#SSTeacher #SmallInteger #() true);
-										add: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true);
-										add: #idTeacher -> #(#SSTeacher #SmallInteger #() true);
-										yourself)
-								with:
-									(Array
-										with:
-											#name:with:
-												-> #(#SSTeacher #SSTeacher #(#ByteString #SmallInteger) false)));
-				type:
-					#SConference
-						->
+									#name:with:
+										-> #(#SSTeacher #SSTeacher #(#ByteString #SmallInteger) false)));
+		type:
+			#SConference
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #initialize -> #(#SConference #SConference #() false)
-										with: #offerPrice -> #(#SConference #SmallInteger #() true)
-										with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
-										with: #discount -> #(#SConference #SmallInteger #() true))
-								with: #());
-				scalar: #SmallInteger with: #(95);
-				scalar: #False with: #(false);
-				scalar: #SStudent with: (Array with: (SStudent new name: 'Mary'));
-				scalar: #ByteString with: #('Mary')
+								with: #initialize -> #(#SConference #SConference #() false)
+								with: #offerPrice -> #(#SConference #SmallInteger #() true)
+								with: #offerPrice: -> #(#SConference #SConference #(#SmallInteger) false)
+								with: #discount -> #(#SConference #SmallInteger #() true))
+						with: #());
+		scalar: #SmallInteger with: #(95);
+		scalar: #False with: #(false);
+		scalar: #SStudent with: (Array with: (SStudent new name: 'Mary'));
+		scalar: #ByteString with: #('Mary')
 ]
 
 { #category : #examples }
@@ -195,7 +195,7 @@ SUtilityTypeInfo >> typeInfoOnPackage4 [
 
 	"review and modify"
 
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SEvent
 				->
@@ -218,22 +218,20 @@ SUtilityTypeInfo >> typeInfoOnPackage4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSAbstractClass [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SAbstractClass
 				->
 					(Array
 						with:
-							(Array
-								with: #id -> #(#SAbstractClass #SmallInteger #() false))
-						with:
-							#());
+							(Array with: #id -> #(#SAbstractClass #SmallInteger #() false))
+						with: #());
 		scalar: #SmallInteger with: #(1)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SEvent
 				->
@@ -251,23 +249,23 @@ SUtilityTypeInfo >> typeInfoSEvent1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent2 [
-	^ STypeInfo new
-				type:
-					#SEvent
-						->
+	^ STypeInfoForTest new
+		type:
+			#SEvent
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #initialize -> #(#SEvent #SEvent #() false)
-										with: #discount -> #(#SEvent #SmallInteger #() true)
-										with: #price -> #(#SEvent #SmallInteger #() true))
-								with: (Array with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false)));
-				scalar: #SmallInteger with: #(0 15)
+								with: #initialize -> #(#SEvent #SEvent #() false)
+								with: #discount -> #(#SEvent #SmallInteger #() true)
+								with: #price -> #(#SEvent #SmallInteger #() true))
+						with: (Array with: #price: -> #(#SEvent #SEvent #(#SmallInteger) false)));
+		scalar: #SmallInteger with: #(0 15)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SEvent
 				->
@@ -290,28 +288,28 @@ SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
 ]
 
 { #category : #examples }
-SUtilityTypeInfo >> typeInfoSFoo1 [ 
-	^ (STypeInfo new
-				type:
-					#SFoo
-						->
+SUtilityTypeInfo >> typeInfoSFoo1 [
+	^ STypeInfoForTest new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #returnNum -> #(#SFoo #SmallInteger #() false)
-										with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
-										with: #returnString -> #(#SFoo #ByteString #() false)
-										with: #score -> #(#SFoo #SmallFloat64 #() true)
-										with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
-								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallFloat64) false)));
-				scalar: #ByteString with: #('hello');
-				scalar: #SmallInteger with: #(5);
-				scalar: #SmallFloat64 with: #(7.3))
+								with: #returnNum -> #(#SFoo #SmallInteger #() false)
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #score -> #(#SFoo #SmallFloat64 #() true)
+								with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallFloat64) false)));
+		scalar: #ByteString with: #('hello');
+		scalar: #SmallInteger with: #(5);
+		scalar: #SmallFloat64 with: #(7.3)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo2 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -322,44 +320,42 @@ SUtilityTypeInfo >> typeInfoSFoo2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo3 [
-	^ 
-			(STypeInfo new
-				type:
-					#SFoo
-						->
+	^ STypeInfoForTest new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #returnNum -> #(#SFoo #SmallInteger #() false)
-										with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
-										with: #returnString -> #(#SFoo #ByteString #() false)
-										with: #score -> #(#SFoo #SmallInteger #() true)
-										with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))
-								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
-				scalar: #ByteString with: #('Hello');
-				scalar: #SmallInteger with: #(4);
-				scalar: #SmallFloat64 with: #(2.3))
+								with: #returnNum -> #(#SFoo #SmallInteger #() false)
+								with: #returnFloat -> #(#SFoo #SmallFloat64 #() false)
+								with: #returnString -> #(#SFoo #ByteString #() false)
+								with: #score -> #(#SFoo #SmallInteger #() true)
+								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))
+						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
+		scalar: #ByteString with: #('Hello');
+		scalar: #SmallInteger with: #(4);
+		scalar: #SmallFloat64 with: #(2.3)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo4 [
-	^ 
-		STypeInfo new
-				type:
-					#SFoo
-						->
+	^ STypeInfoForTest new
+		type:
+			#SFoo
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #initialize -> #(#SFoo #SFoo #() false)
-										with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
-								with: #());
-				scalar: #SStudent with: (Array with: SStudent new)
+								with: #initialize -> #(#SFoo #SFoo #() false)
+								with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
+						with: #());
+		scalar: #SStudent with: (Array with: SStudent new)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo5 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -379,19 +375,12 @@ SUtilityTypeInfo >> typeInfoSFoo5 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooEmpty [
-	^ STypeInfo new
-		type:
-			#SFoo
-				->
-					(Array
-						with:
-							#()
-						with: #())
+	^ STypeInfoForTest new type: #SFoo -> (Array with: #() with: #())
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -404,12 +393,16 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
 								with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
 						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
-		type: #SSPerson -> 
-		(Array with: 
-			(Array with: #id: -> #(#SStudent #SStudent #(#SmallInteger) false)
-			with: #nickname: -> #(#SStudent #SStudent #(#ByteString) false)
-			with: #name: -> #(#SStudent #SStudent #(#ByteString) false)) 
-			with: (Array with: #name: -> #(#SStudent #SStudent #(#ByteString) false)));
+		type:
+			#SSPerson
+				->
+					(Array
+						with:
+							(Array
+								with: #id: -> #(#SStudent #SStudent #(#SmallInteger) false)
+								with: #nickname: -> #(#SStudent #SStudent #(#ByteString) false)
+								with: #name: -> #(#SStudent #SStudent #(#ByteString) false))
+						with: (Array with: #name: -> #(#SStudent #SStudent #(#ByteString) false)));
 		type: #SStack -> #(#() #());
 		type: #SConference -> #(#() #());
 		type: #SEvent -> #(#() #());
@@ -432,7 +425,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SFoo
 				->
@@ -462,7 +455,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SSPerson
 				->
@@ -526,7 +519,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSPerson1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SSPerson
 				->
@@ -546,64 +539,63 @@ SUtilityTypeInfo >> typeInfoSSPerson1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher1 [
-	^ STypeInfo new
-				type:
-					#SSTeacher
-						->
+	^ STypeInfoForTest new
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
 							(Array
+								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
+								with: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true)
 								with:
-									(Array
-										with: #initialize -> #(#SSTeacher #SSTeacher #() false)
-										with: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true)
-										with:
-											#yearsWorkExperience:
-												-> #(#SSTeacher #SSTeacher #(#SmallInteger) false))
-								with: #());
-				scalar: #SmallInteger with: #(0 100);
-				scalar: #ByteString with: #('teacher_Ann')
+									#yearsWorkExperience:
+										-> #(#SSTeacher #SSTeacher #(#SmallInteger) false))
+						with: #());
+		scalar: #SmallInteger with: #(0 100);
+		scalar: #ByteString with: #('teacher_Ann')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher2 [
-	^ 
-			(STypeInfo new
-				type:
-					#SSTeacher
-						->
+	^ STypeInfoForTest new
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
 							(Array
+								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
+								with: #idTeacher -> #(#SSTeacher #SmallInteger #() true)
 								with:
-									(Array
-										with: #initialize -> #(#SSTeacher #SSTeacher #() false)
-										with: #idTeacher -> #(#SSTeacher #SmallInteger #() true)
-										with:
-											#yearsWorkExperience:
-												-> #(#SSTeacher #SSTeacher #(#SmallInteger) false)
-										with: #nickname -> #(#SSTeacher #ByteString #() false))
-								with: #());
-				scalar: #SmallInteger with: #(1 29 -7 9);
-				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark'))
+									#yearsWorkExperience:
+										-> #(#SSTeacher #SSTeacher #(#SmallInteger) false)
+								with: #nickname -> #(#SSTeacher #ByteString #() false))
+						with: #());
+		scalar: #SmallInteger with: #(1 29 -7 9);
+		scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher3 [
-	^ STypeInfo new
-				type:
-					#SSTeacher
-						->
+	^ STypeInfoForTest new
+		type:
+			#SSTeacher
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #initialize -> #(#SSTeacher #SSTeacher #() false)
-										with: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() false)
-										with: #nickname -> #(#SSTeacher #ByteString #() false))
-								with: #());
-				scalar: #SmallInteger with: #(1 10);
-				scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
+								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
+								with: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() false)
+								with: #nickname -> #(#SSTeacher #ByteString #() false))
+						with: #());
+		scalar: #SmallInteger with: #(1 10);
+		scalar: #ByteString with: #('teacher_Amy' 'teacher_Mark')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher4 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SSTeacher
 				->
@@ -620,7 +612,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SSPerson
 				->
@@ -662,7 +654,7 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SSTeacher
 				->
@@ -672,12 +664,8 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
 								with: #initialize -> #(#SSTeacher #SSTeacher #() false)
 								with: #nickname -> #(#SSTeacher #SSTeacher #() false)
 								with: #yearsWorkExperience -> #(#SSTeacher #SmallInteger #() true))
-						with:
-							#());
-		type:
-			#SSPerson
-				->
-					#(#() #());
+						with: #());
+		type: #SSPerson -> #(#() #());
 		type: #SStack -> #(#() #());
 		type: #SConference -> #(#() #());
 		type: #SEvent -> #(#() #());
@@ -690,86 +678,44 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack1 [
-	^ STypeInfo new
-				type:
-					#SStack
-						->
+	^ STypeInfoForTest new
+		type:
+			#SStack
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #firstLinkStack -> #(#SStack #SmallInteger #() true)
-										with: #pop -> #(#SStack #SmallInteger #() false)
-										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false))
-								with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
-				scalar: #Array with: #(#(2 4 6 1));
-				scalar: #SmallInteger with: #(1 2 4 6 8)
+								with: #firstLinkStack -> #(#SStack #SmallInteger #() true)
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false))
+						with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+		scalar: #Array with: #(#(2 4 6 1));
+		scalar: #SmallInteger with: #(1 2 4 6 8)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack2 [
-	^ 
-			(STypeInfo new
-				type:
-					#SStack
-						->
+	^ STypeInfoForTest new
+		type:
+			#SStack
+				->
+					(Array
+						with:
 							(Array
-								with:
-									(Array
-										with: #lastLinkStack -> #(#SStack #SmallInteger #() true)
-										with: #pop -> #(#SStack #SmallInteger #() false)
-										with: #top -> #(#SStack #SmallInteger #() false))
-								with:
-									(Array
-										with: #newStack -> #(#SStack #SStack #() false)
-										with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
-				scalar: #Array with: #(#(2 4 6 1) #(5 7 9 0));
-				scalar: #SmallInteger with: #(1 2 5 8 9))
+								with: #lastLinkStack -> #(#SStack #SmallInteger #() true)
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with:
+							(Array
+								with: #newStack -> #(#SStack #SStack #() false)
+								with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+		scalar: #Array with: #(#(2 4 6 1) #(5 7 9 0));
+		scalar: #SmallInteger with: #(1 2 5 8 9)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack3 [
-	^ 
-		STypeInfo new
-				type:
-					#SStack
-						->
-							(Array
-								with:
-									(Array
-										with: #pop -> #(#SStack #SmallInteger #() false)
-										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
-										with: #top -> #(#SStack #SmallInteger #() false))
-								with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
-				scalar: #Array with: (Array with: #(2 4 6 1));
-				scalar: #SmallInteger with: #(7 5 9 1)
-]
-
-{ #category : #examples }
-SUtilityTypeInfo >> typeInfoSStack4 [
-	^ 
-			(STypeInfo new
-				type:
-					#SStack
-						->
-							(Array
-								with:
-									(Array
-										with: #firstLinkStack -> #(#SStack #SmallInteger #() true)
-										with: #lastLinkStack -> #(#SStack #SmallInteger #() true)
-										with: #pop -> #(#SStack #SmallInteger #() false)
-										with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
-										with: #top -> #(#SStack #SmallInteger #() false))
-								with:
-									(Array
-										with: #newStack -> #(#SStack #SStack #() false)
-										with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
-				scalar: #SmallInteger with: #(5);
-				scalar: #Array with: #(#(1 4 5)))
-]
-
-{ #category : #examples }
-SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SStack
 				->
@@ -779,8 +725,46 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
 								with: #pop -> #(#SStack #SmallInteger #() false)
 								with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
 								with: #top -> #(#SStack #SmallInteger #() false))
+						with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+		scalar: #Array with: (Array with: #(2 4 6 1));
+		scalar: #SmallInteger with: #(7 5 9 1)
+]
+
+{ #category : #examples }
+SUtilityTypeInfo >> typeInfoSStack4 [
+	^ STypeInfoForTest new
+		type:
+			#SStack
+				->
+					(Array
 						with:
-							(Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+							(Array
+								with: #firstLinkStack -> #(#SStack #SmallInteger #() true)
+								with: #lastLinkStack -> #(#SStack #SmallInteger #() true)
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with:
+							(Array
+								with: #newStack -> #(#SStack #SStack #() false)
+								with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
+		scalar: #SmallInteger with: #(5);
+		scalar: #Array with: #(#(1 4 5))
+]
+
+{ #category : #examples }
+SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
+	^ STypeInfoForTest new
+		type:
+			#SStack
+				->
+					(Array
+						with:
+							(Array
+								with: #pop -> #(#SStack #SmallInteger #() false)
+								with: #push: -> #(#SStack #SmallInteger #(#SmallInteger) false)
+								with: #top -> #(#SStack #SmallInteger #() false))
+						with: (Array with: #newStackWith: -> #(#SStack #SStack #(#Array) false)));
 		type: #SSPerson -> #(#() #());
 		type: #SSTeacher -> #(#() #());
 		type: #SConference -> #(#() #());
@@ -794,7 +778,7 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SSPerson
 				->
@@ -813,12 +797,11 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
 			#SStack
 				->
 					(Array
-						with: (Array with: #push: -> #(#SStack #OrderedCollection #(#OrderedCollection) false))
+						with:
+							(Array
+								with: #push: -> #(#SStack #OrderedCollection #(#OrderedCollection) false))
 						with: #());
-				type:
-			#SFoo
-				->
-					#(#() #());
+		type: #SFoo -> #(#() #());
 		type: #SConference -> #(#() #());
 		type: #SEvent -> #(#() #());
 		type: #SParty -> #(#() #());
@@ -834,19 +817,21 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
 			with:
 			(Array
 				with:
-					(OrderedCollection new add: (SStudent name: 'Mery' with: 5); yourself)
-					with: 
-							(OrderedCollection new
-								add: (SStudent name: 'Lian');
-								add: (SStudent name: 'Josh' with: 2);
-								yourself));
+					(OrderedCollection new
+						add: (SStudent name: 'Mery' with: 5);
+						yourself)
+				with:
+					(OrderedCollection new
+						add: (SStudent name: 'Lian');
+						add: (SStudent name: 'Josh' with: 2);
+						yourself));
 		scalar: #SmallInteger with: #(5 1 2);
 		scalar: #ByteString with: #('Josh' 'Lian' 'Mery')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStudentOnPackage1 [
-	^ STypeInfo new
+	^ STypeInfoForTest new
 		type:
 			#SStudent
 				->
@@ -2003,36 +1988,30 @@ SUtilityTypeInfo >> typeInfoStringSStudent1 [
 SUtilityTypeInfo >> typeInfosSStudent [
 	^ OrderedCollection new
 		add:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SStudent
 						->
 							(Array
 								with:
 									(Array
-										with:
-											#initialize -> #(#SStudent #SStudent #() false)
-										with:
-											#scoreStudent -> #(#SStudent #SmallInteger #() true)
-										with:
-											#scoreStudent: -> #(#SStudent #SStudent #(#SmallInteger) false)
-										with:
-											#idStudent -> #(#SStudent #SmallInteger #() true))
+										with: #initialize -> #(#SStudent #SStudent #() false)
+										with: #scoreStudent -> #(#SStudent #SmallInteger #() true)
+										with: #scoreStudent: -> #(#SStudent #SStudent #(#SmallInteger) false)
+										with: #idStudent -> #(#SStudent #SmallInteger #() true))
 								with: #());
 				scalar: #SmallInteger with: #(1);
 				scalar: #ByteString with: #('student_Jane'));
 		add:
-			(STypeInfo new
+			(STypeInfoForTest new
 				type:
 					#SStudent
 						->
 							(Array
 								with:
 									(Array
-										with:
-											#scoreStudent: -> #(#SStudent #SStudent #(#SmallInteger) false)
-										with:
-											#nickname -> #(#SStudent #ByteString #() false))
+										with: #scoreStudent: -> #(#SStudent #SStudent #(#SmallInteger) false)
+										with: #nickname -> #(#SStudent #ByteString #() false))
 								with: #());
 				scalar: #SmallInteger with: #(1 6 8);
 				scalar: #ByteString with: #('Jane' 'Ann' 'Peter'));
