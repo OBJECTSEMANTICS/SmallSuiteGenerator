@@ -850,7 +850,7 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 
 { #category : #inserting }
 SSTestShifter >> randomLiteralClassName [
-	^ [ randomGenerator selectAtRandom: typeInfo scalars keys ]
+	^ [ randomGenerator selectAtRandom: typeInfo scalars keys asOrderedCollection  ]
 		on: Error
 		do: [ self
 				error: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ]
