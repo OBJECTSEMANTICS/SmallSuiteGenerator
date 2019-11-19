@@ -70,7 +70,7 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 	className := ('GA' , self targetClassName , 'Test') asSymbol.
 	class := SConfiguration lookUpClass: className.
 	class
-		ifNil: [ class := TestCase
+		ifNil: [ class := SConfiguration testCaseClass
 				subclass: className
 				instanceVariableNames: ''
 				classVariableNames: ''
@@ -78,7 +78,7 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 	[ aTestCase generateAssertions.
 	class
 		compile:
-			(RBParser
+			(SConfiguration rbParserClass
 				parseMethod:
 					aSelector , aTestCase printDescriptiveComment
 						, aTestCase parseTreeWithAssertions body formattedCode)

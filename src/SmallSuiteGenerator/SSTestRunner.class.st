@@ -35,7 +35,8 @@ SSTestRunner >> compile: aBlock withName: symbol on: aClass [
 SSTestRunner >> evaluate: aSTestCase [
 	| node |
 	node := aSTestCase parseTree.
-	node body addNode: (RBParser parseExpression: '^ self analyze: thisContext').
+	node body
+		addNode: (SConfiguration rbParserClass parseExpression: '^ self analyze: thisContext').
 	self compile: node.
 	^ self performTest
 ]

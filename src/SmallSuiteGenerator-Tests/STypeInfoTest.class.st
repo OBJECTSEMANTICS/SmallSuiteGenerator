@@ -349,7 +349,7 @@ STypeInfoTest >> testFromString [
 		assert:
 			(STON
 				fromString:
-					'STypeInfo {
+					'STypeInfoForTest {
 						#types: { 
 							#SFoo: STypeClassInfo { 
 							#typeName: #SFoo,

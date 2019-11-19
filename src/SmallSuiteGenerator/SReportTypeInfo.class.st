@@ -96,18 +96,18 @@ SReportTypeInfo class >> fileReference: aString [
 
 { #category : #export }
 SReportTypeInfo class >> profilerProject: projectName [
-			^ SSTypeCollector
-				profile: [ (TestCase withAllSubclasses
-						select: [ :t | t category beginsWith: projectName ])
-						do: [ :tc | 
-							[ tc buildSuite run ]
-								on: Exception
-								do: [ :e | 
-									Transcript
-										show: e printString;
-										cr ] ]
-						displayingProgress: 'working' ]
-				onPackagesMatching: projectName , '*' 
+	^ SSTypeCollector
+		profile: [ (SConfiguration testCaseClass withAllSubclasses
+				select: [ :t | t category beginsWith: projectName ])
+				do: [ :tc | 
+					[ tc buildSuite run ]
+						on: Exception
+						do: [ :e | 
+							Transcript
+								show: e printString;
+								cr ] ]
+				displayingProgress: 'working' ]
+		onPackagesMatching: projectName , '*'
 ]
 
 { #category : #writing }

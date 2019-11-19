@@ -71,7 +71,17 @@ SConfigurationPharo class >> instanceLogger [
 	^ self classLogger default
 ]
 
+{ #category : #'as yet unclassified' }
+SConfigurationPharo class >> rbParserClass [
+	^ RBParser
+]
+
 { #category : #logging }
 SConfigurationPharo class >> saveOnLog: string [ 
 	self defaultFileLogger record: string
+]
+
+{ #category : #tests }
+SConfigurationPharo class >> testCaseClass [
+	^ TestCase
 ]

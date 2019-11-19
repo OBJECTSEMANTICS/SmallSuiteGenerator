@@ -702,14 +702,15 @@ SSTestShifter >> parseTree [
 
 { #category : #parsing }
 SSTestShifter >> parseTreeWith: statementCollection [
-	| node temporaries |
-	node := RBParser parseExpression: '[]'.
+	| node temporaries rbParserClass |
+	rbParserClass := SConfiguration rbParserClass.
+	node := rbParserClass parseExpression: '[]'.
 	temporaries := self allVarNames
-		collect: [ :varName | RBParser parseExpression: varName ].
+		collect: [ :varName | rbParserClass parseExpression: varName ].
 	node body temporaries: temporaries.
 	statementCollection
 		do:
-			[ :stm | node body addNode: (RBParser parseExpression: stm printString) ].
+			[ :stm | node body addNode: (rbParserClass parseExpression: stm printString) ].
 	^ node
 ]
 

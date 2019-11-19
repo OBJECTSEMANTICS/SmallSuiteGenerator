@@ -106,6 +106,11 @@ SConfiguration class >> randomGenerator: sRandom [
 	randomGenerator := sRandom
 ]
 
+{ #category : #'as yet unclassified' }
+SConfiguration class >> rbParserClass [
+	^ self configurationClass rbParserClass
+]
+
 { #category : #actions }
 SConfiguration class >> reduceLevel [
 	level ifNil: [ self initLevelToPrint  ].
@@ -132,4 +137,9 @@ SConfiguration class >> seed [
 { #category : #'instance creation' }
 SConfiguration class >> seed: aNumber [
 	seed := aNumber
+]
+
+{ #category : #tests }
+SConfiguration class >> testCaseClass [
+	^ self configurationClass testCaseClass
 ]
