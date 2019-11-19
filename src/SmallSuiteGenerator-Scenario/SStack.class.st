@@ -42,15 +42,9 @@ SStack >> pop [
 ]
 
 { #category : #adding }
-SStack >> push: aObject [
-	| aLink |
-	aLink := aObject asLink.
-	self isEmpty
-		ifTrue: [
-			lastLink := aLink ].
-	aLink nextLink: firstLink.
-	firstLink := aLink.
-	^ aObject
+SStack >> push: anObject [
+	self addFirst: anObject.
+	^ anObject
 ]
 
 { #category : #accessing }

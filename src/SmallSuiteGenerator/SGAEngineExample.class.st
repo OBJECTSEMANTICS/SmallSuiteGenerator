@@ -105,7 +105,9 @@ SGAEngineExample >> exampleSStackOnClassWithSMethodCoverage [
 	classFitness := SMethodCoverage.
 	engine := self
 		runOnClass: SStack
-		withBlock: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+		withBlock: [ (SStack
+				newStackWith:
+				#(2 4 6 1))
 				push: 8;
 				pop;
 				top ]
@@ -127,7 +129,7 @@ SGAEngineExample >> exampleSStackOnClassWithSStatementCoverage [
 	classFitness := SStatementCoverage.
 	engine := self
 		runOnClass: SStack
-		withBlock: [ (SStack newStackWith: {2 . 4 . 6 . 1})
+		withBlock: [ (SStack newStackWith: #(2  4  6  1))
 				push: 8;
 				pop;
 				top ]
