@@ -1,6 +1,6 @@
 Class {
 	#name : #SEvent,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'discount',
 		'price'

@@ -1,6 +1,6 @@
 Class {
 	#name : #SFoo,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'score'
 	],

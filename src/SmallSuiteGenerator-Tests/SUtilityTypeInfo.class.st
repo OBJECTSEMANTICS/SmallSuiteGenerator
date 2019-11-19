@@ -77,7 +77,7 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoAthensCairo [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#AthensCairoCanvas
 				->
@@ -94,7 +94,7 @@ SUtilityTypeInfo >> typeInfoAthensCairo [
 SUtilityTypeInfo >> typeInfoOnPackage1 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SEvent
 				->
@@ -124,7 +124,7 @@ SUtilityTypeInfo >> typeInfoOnPackage1 [
 SUtilityTypeInfo >> typeInfoOnPackage2 [
 	"the first typeInfo is about a class has as argument other class from other package"
 
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SEvent
 				->
@@ -150,7 +150,7 @@ SUtilityTypeInfo >> typeInfoOnPackage3 [
 
 	"review and modify"
 
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSTeacher
 				->
@@ -195,7 +195,7 @@ SUtilityTypeInfo >> typeInfoOnPackage4 [
 
 	"review and modify"
 
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SEvent
 				->
@@ -218,20 +218,19 @@ SUtilityTypeInfo >> typeInfoOnPackage4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSAbstractClass [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SAbstractClass
 				->
 					(Array
-						with:
-							(Array with: #id -> #(#SAbstractClass #SmallInteger #() false))
+						with: (Array with: #id -> #(#SAbstractClass #SmallInteger #() false))
 						with: #());
 		scalar: #SmallInteger with: #(1)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SEvent
 				->
@@ -249,7 +248,7 @@ SUtilityTypeInfo >> typeInfoSEvent1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SEvent
 				->
@@ -265,7 +264,7 @@ SUtilityTypeInfo >> typeInfoSEvent2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SEvent
 				->
@@ -289,7 +288,7 @@ SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -309,7 +308,7 @@ SUtilityTypeInfo >> typeInfoSFoo1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -320,7 +319,7 @@ SUtilityTypeInfo >> typeInfoSFoo2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo3 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -340,7 +339,7 @@ SUtilityTypeInfo >> typeInfoSFoo3 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo4 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -355,7 +354,7 @@ SUtilityTypeInfo >> typeInfoSFoo4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo5 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -375,12 +374,12 @@ SUtilityTypeInfo >> typeInfoSFoo5 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooEmpty [
-	^ STypeInfoForTest new type: #SFoo -> (Array with: #() with: #())
+	^ STypeInfo new type: #SFoo -> (Array with: #() with: #())
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -425,7 +424,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SFoo
 				->
@@ -455,7 +454,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSPerson
 				->
@@ -519,7 +518,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSPerson1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSPerson
 				->
@@ -539,7 +538,7 @@ SUtilityTypeInfo >> typeInfoSSPerson1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSTeacher
 				->
@@ -558,7 +557,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSTeacher
 				->
@@ -578,7 +577,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher3 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSTeacher
 				->
@@ -595,7 +594,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher3 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher4 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSTeacher
 				->
@@ -612,7 +611,7 @@ SUtilityTypeInfo >> typeInfoSSTeacher4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSPerson
 				->
@@ -654,7 +653,7 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSTeacher
 				->
@@ -678,7 +677,7 @@ SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SStack
 				->
@@ -695,7 +694,7 @@ SUtilityTypeInfo >> typeInfoSStack1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SStack
 				->
@@ -715,7 +714,7 @@ SUtilityTypeInfo >> typeInfoSStack2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack3 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SStack
 				->
@@ -732,7 +731,7 @@ SUtilityTypeInfo >> typeInfoSStack3 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack4 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SStack
 				->
@@ -754,7 +753,7 @@ SUtilityTypeInfo >> typeInfoSStack4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SStack
 				->
@@ -778,7 +777,7 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SSPerson
 				->
@@ -831,7 +830,7 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStudentOnPackage1 [
-	^ STypeInfoForTest new
+	^ STypeInfo new
 		type:
 			#SStudent
 				->
@@ -1988,7 +1987,7 @@ SUtilityTypeInfo >> typeInfoStringSStudent1 [
 SUtilityTypeInfo >> typeInfosSStudent [
 	^ OrderedCollection new
 		add:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SStudent
 						->
@@ -2003,7 +2002,7 @@ SUtilityTypeInfo >> typeInfosSStudent [
 				scalar: #SmallInteger with: #(1);
 				scalar: #ByteString with: #('student_Jane'));
 		add:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SStudent
 						->

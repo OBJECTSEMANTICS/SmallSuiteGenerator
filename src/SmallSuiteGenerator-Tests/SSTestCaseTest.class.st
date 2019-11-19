@@ -21,7 +21,7 @@ SSTestCaseTest >> tearDown [
 { #category : #tests }
 SSTestCaseTest >> testCopy [
 	| testCase typeInfo otherTestCase |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -66,7 +66,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase
 		with:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SFoo
 						->

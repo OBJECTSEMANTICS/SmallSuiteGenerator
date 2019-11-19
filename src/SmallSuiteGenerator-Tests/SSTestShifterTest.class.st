@@ -201,7 +201,7 @@ SSTestShifterTest >> testAddInvalidAssignment [
 { #category : #tests }
 SSTestShifterTest >> testAddLiteral [
 	| testCase aTypeInfo |
-	aTypeInfo := STypeInfoForTest new.
+	aTypeInfo := STypeInfo new.
 	aTypeInfo
 		scalar: #OrderedCollection
 			with: (Array with: (OrderedCollection newFrom: #(1 4)));
@@ -234,14 +234,14 @@ SSTestShifterTest >> testAddLiteral [
 { #category : #tests }
 SSTestShifterTest >> testAddLiteralWithError [
 	| testCase |
-	testCase := SSTestCase with: STypeInfoForTest new.
+	testCase := SSTestCase with: STypeInfo new.
 	self should: [ testCase addLiteral ] raise: SError
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddLiteralWithWrongClassName [
 	| testCase aTypeInfo |
-	aTypeInfo := STypeInfoForTest new.
+	aTypeInfo := STypeInfo new.
 	aTypeInfo scalar: #SmallInteger with: #(2).
 	testCase := SSTestCase with: aTypeInfo.
 	self should: [ testCase addLiteral: #ByteString ] raise: SError
@@ -740,11 +740,11 @@ SSTestShifterTest >> testPickOrCreateObjectVariableOfWrongClassName [
 SSTestShifterTest >> testRandomLiteralClassName [
 	| testCase |
 	testCase := SSTestCase
-		with: (STypeInfoForTest new scalar: #SmallInteger with: #(1 3 4)).
+		with: (STypeInfo new scalar: #SmallInteger with: #(1 3 4)).
 	self assert: testCase randomLiteralClassName equals: #SmallInteger.
 	testCase := SSTestCase
 		with:
-			(STypeInfoForTest new
+			(STypeInfo new
 				scalar: #ByteString with: #('hello');
 				scalar: #SmallInteger with: #(1 5 6)).
 	self
@@ -756,7 +756,7 @@ SSTestShifterTest >> testRandomLiteralClassName [
 { #category : #tests }
 SSTestShifterTest >> testRandomLiteralClassNameWithEmptyScalars [
 	| testCase |
-	testCase := SSTestCase with: STypeInfoForTest new.
+	testCase := SSTestCase with: STypeInfo new.
 	self should: [ testCase randomLiteralClassName ] raise: SError
 ]
 

@@ -7,7 +7,7 @@ Class {
 { #category : #tests }
 STypeInfoTest >> testAccesssMessagesFrom [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -241,11 +241,12 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testClassMethodTypeFrom [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new type: #SFoo -> (Array with: #() with: #()).
+	typeInfo := STypeInfo new
+		type: #SFoo -> (Array with: #() with: #()).
 	self
 		should: [ typeInfo classMethodType: #new from: #SFoo ]
 		raise: SError.
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -260,11 +261,11 @@ STypeInfoTest >> testClassMethodTypeFrom [
 { #category : #tests }
 STypeInfoTest >> testEquals [
 	self
-		assert: (STypeInfoForTest new type: #SFoo -> #(#() #()))
-		equals: (STypeInfoForTest new type: #SFoo -> #(#() #())).
+		assert: (STypeInfo new type: #SFoo -> #(#() #()))
+		equals: (STypeInfo new type: #SFoo -> #(#() #())).
 	self
 		assert:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SStudent
 						->
@@ -273,7 +274,7 @@ STypeInfoTest >> testEquals [
 								with: #());
 				scalar: #ByteString with: #('Abi'))
 		equals:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SStudent
 						->
@@ -283,7 +284,7 @@ STypeInfoTest >> testEquals [
 				scalar: #ByteString with: #('Abi')).
 	self
 		assert:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SFoo
 						->
@@ -293,7 +294,7 @@ STypeInfoTest >> testEquals [
 				scalar: #SmallInteger with: #(1 3 4);
 				scalar: #SStudent with: (Array with: (SStudent name: 'Nilson')))
 		equals:
-			(STypeInfoForTest new
+			(STypeInfo new
 				type:
 					#SFoo
 						->
@@ -333,7 +334,7 @@ STypeInfoTest >> testFactoryMessagesFrom [
 { #category : #tests }
 STypeInfoTest >> testFromString [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -349,7 +350,7 @@ STypeInfoTest >> testFromString [
 		assert:
 			(STON
 				fromString:
-					'STypeInfoForTest {
+					'STypeInfo {
 						#types: { 
 							#SFoo: STypeClassInfo { 
 							#typeName: #SFoo,
@@ -370,7 +371,7 @@ STypeInfoTest >> testFromString [
 { #category : #tests }
 STypeInfoTest >> testIsAbstracClass [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SSPerson
 				->
@@ -392,7 +393,7 @@ STypeInfoTest >> testIsAbstracClass [
 { #category : #tests }
 STypeInfoTest >> testJoinWith [
 	| typeInfo methodInfo otherTypeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -403,7 +404,7 @@ STypeInfoTest >> testJoinWith [
 								with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)
 								with: #score -> #(#SFoo #SmallInteger #() true))
 						with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
-	otherTypeInfo := STypeInfoForTest new
+	otherTypeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -450,7 +451,7 @@ STypeInfoTest >> testJoinWith [
 { #category : #tests }
 STypeInfoTest >> testMessagesFrom [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -470,7 +471,7 @@ STypeInfoTest >> testMessagesFrom [
 { #category : #tests }
 STypeInfoTest >> testNoneAbstractClasses [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SSPerson
 				->
@@ -506,7 +507,7 @@ STypeInfoTest >> testNoneAbstractClasses [
 { #category : #tests }
 STypeInfoTest >> testScalar [
 	| typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		scalar: #SmallInteger with: #(1 5 6);
 		scalar: #ByteString with: #('hello' 'world');
 		scalar: #Stack
@@ -528,7 +529,7 @@ STypeInfoTest >> testScalar [
 { #category : #tests }
 STypeInfoTest >> testToString [
 	| string typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
@@ -547,13 +548,12 @@ STypeInfoTest >> testToString [
 { #category : #tests }
 STypeInfoTest >> testToStringComplexScalar [
 	| string typeInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->
 					(Array
-						with:
-							(Array with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+						with: (Array with: #return: -> #(#SFoo #ByteString #(#ByteString) false))
 						with: #());
 		scalar: #SStudent with: (Array with: (SStudent name: 'Abi')).
 	string := STON toString: typeInfo.
@@ -563,7 +563,7 @@ STypeInfoTest >> testToStringComplexScalar [
 { #category : #tests }
 STypeInfoTest >> testType [
 	| typeInfo methodInfo |
-	typeInfo := STypeInfoForTest new
+	typeInfo := STypeInfo new
 		type:
 			#SFoo
 				->

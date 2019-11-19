@@ -1,6 +1,6 @@
 Class {
 	#name : #SAbstractClass,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'id'
 	],

@@ -1,6 +1,6 @@
 Class {
 	#name : #SSPerson,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'name',
 		'id',
