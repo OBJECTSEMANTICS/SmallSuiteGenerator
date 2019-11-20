@@ -510,11 +510,17 @@ STypeInfoTest >> testScalar [
 	typeInfo := STypeInfo new
 		scalar: #SmallInteger with: #(1 5 6);
 		scalar: #ByteString with: #('hello' 'world');
-		scalar: #Stack
-			with: (Array with: Stack new with: (Stack newFrom: #(2 5 8))).
+		scalar: #Dictionary
+			with:
+			(Array
+				with: Dictionary new
+				with:
+					(Dictionary new
+						at: 2 put: 3;
+						yourself)).
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements: #(#Stack #ByteString #SmallInteger).
+		hasSameElements: #(#Dictionary #ByteString #SmallInteger).
 	self
 		assertCollection: (typeInfo scalars at: #ByteString)
 		hasSameElements: #('hello' 'world').
@@ -522,8 +528,8 @@ STypeInfoTest >> testScalar [
 		assertCollection: (typeInfo scalars at: #SmallInteger)
 		hasSameElements: #(1 5 6).
 	self
-		assertCollection: ((typeInfo scalars at: #Stack) collect: #className)
-		hasSameElements: #(#Stack #Stack)
+		assertCollection: ((typeInfo scalars at: #Dictionary) collect: #className)
+		hasSameElements: #('Dictionary' 'Dictionary')
 ]
 
 { #category : #tests }

@@ -292,15 +292,14 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
 				collect: #returnType
 				thenSelect: [ :aType | aType isNil not ].
-			scalarsKeys := typeInfo scalars keys.
+			scalarsKeys := typeInfo scalars keys asOrderedCollection .
 			argTypes
 				do: [ :arg | 
 					self
 						addArgument: arg
 						before: aStatement
 						considering: prevTypes
-						and: scalarsKeys
-					 ] ]
+						and: scalarsKeys ] ]
 ]
 
 { #category : #modifying }
@@ -469,7 +468,7 @@ SSTestShifter >> insertStatement [
 	count := 0.
 	stop := self numberStatements.
 	alpha := 0.5.
-	random := Random new seed: DateAndTime current nanoSecond / 100.
+	random := SConfiguration randomGenerator.
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
 		whileTrue: [ self insertExpressionRandomly.
 			l := l + 1.
@@ -884,8 +883,8 @@ SSTestShifter >> removeExpressionWithoutRepairing: expression [
 { #category : #removing }
 SSTestShifter >> removeFromStatements: expression [
 	[ statements remove: expression ]
-		on: NotFound
-		do: [ self error: expression printString, ' is not found.' ]
+		on: Error
+		do: [ self error: expression printString , ' is not found.' ]
 ]
 
 { #category : #removing }
@@ -960,10 +959,14 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 { #category : #repairing }
 SSTestShifter >> satisfyTypes: types before: aStatement [
 	| scalarsKeys scalarTypes nonScalarTypes |
-	scalarsKeys := typeInfo scalars keys.
+	scalarsKeys := typeInfo scalars keys asOrderedCollection .
 	scalarTypes := OrderedCollection new.
 	nonScalarTypes := OrderedCollection new.
-	types do: [ :aType | (scalarsKeys includes: aType) ifTrue: [ scalarTypes add: aType ] ifFalse: [ nonScalarTypes add: aType ]  ].
+	types
+		do: [ :aType | 
+			(scalarsKeys includes: aType)
+				ifTrue: [ scalarTypes add: aType ]
+				ifFalse: [ nonScalarTypes add: aType ] ].
 	nonScalarTypes
 		do: [ :aType | self addStatementOfType: aType before: aStatement ].
 	^ scalarTypes

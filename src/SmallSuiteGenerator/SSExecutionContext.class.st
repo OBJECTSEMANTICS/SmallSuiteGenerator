@@ -25,5 +25,5 @@ SSExecutionContext >> initialize [
 
 { #category : #initialization }
 SSExecutionContext >> keys [
-	^ values keys.
+	^ values keys asOrderedCollection 
 ]

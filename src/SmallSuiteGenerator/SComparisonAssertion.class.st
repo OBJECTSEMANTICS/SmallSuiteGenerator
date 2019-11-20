@@ -28,8 +28,9 @@ SComparisonAssertion class >> for: anExecutionContext [
 									(self new
 										selector: selector;
 										args:
-											(Array with: (SVariable name: varName1)
-											with: (SVariable name: varName2));
+											(Array
+												with: (SVariable name: varName1)
+												with: (SVariable name: varName2));
 										yourself) ] ] ].
 	^ assertions
 ]

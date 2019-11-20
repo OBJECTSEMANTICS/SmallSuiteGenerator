@@ -228,7 +228,7 @@ SGAEngine >> run [
 
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
-	^ SharedRandom globalGenerator next < (3/4).
+	^ SConfiguration randomGenerator next < (3 / 4)
 ]
 
 { #category : #accessing }

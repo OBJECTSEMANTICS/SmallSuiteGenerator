@@ -8,8 +8,7 @@ Class {
 SPrimitiveAssertion class >> for: anExecutionContext [
 	| assertions |
 	assertions := OrderedCollection new.
-	anExecutionContext
-		keys
+	anExecutionContext keys
 		do: [ :varName | 
 			| value |
 			value := anExecutionContext at: varName.
