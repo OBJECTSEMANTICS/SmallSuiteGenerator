@@ -14,5 +14,5 @@ SConfigurationTest >> tearDown [
 SConfigurationTest >> testFileLogger [
 	self
 		shouldnt: (SConfiguration fileLogger: 'STestLog.log')
-		raise: NotFound
+		raise: Error
 ]

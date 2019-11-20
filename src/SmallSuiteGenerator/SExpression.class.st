@@ -86,7 +86,7 @@ SExpression >> isFactoryMessage [
 
 { #category : #comparing }
 SExpression >> isPrimitive: anObject [
-	^ ((anObject isKindOf: Magnitude) or: [ anObject isKindOf: Boolean ]) or: [ anObject isKindOf: String ]
+	^ ((anObject isKindOf: Number) or: [ anObject isKindOf: Boolean ]) or: [ anObject isKindOf: String ]
 ]
 
 { #category : #mutation }

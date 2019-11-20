@@ -18,13 +18,6 @@ SSTestCase >> = other [
 ]
 
 { #category : #actions }
-SSTestCase >> analyze [
-	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-
-	^ SSTestRunner new evaluate: self
-]
-
-{ #category : #actions }
 SSTestCase >> computeFitness: fitnessClass [
 
 	| valueFitness |

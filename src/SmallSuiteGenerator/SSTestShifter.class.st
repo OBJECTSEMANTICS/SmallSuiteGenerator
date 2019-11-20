@@ -265,6 +265,13 @@ SSTestShifter >> alternativeOfVariable: aVariable before: aExpression [
 	^ (self addStatementOfType: returnType before: aExpression) reference
 ]
 
+{ #category : #actions }
+SSTestShifter >> analyze [
+	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
+
+	^ SSTestRunner new evaluate: self
+]
+
 { #category : #accessing }
 SSTestShifter >> assertions [
 	^ assertions
@@ -395,9 +402,11 @@ SSTestShifter >> generateAssertions: classAssertions [
 	"
 	it analyze each kind of assertion an generate a set of assertion based on the test case -- double dispatch
 	"
-	|executionContext|
+
+	| executionContext |
 	executionContext := self analyze.
-	assertions := classAssertions flatCollect:[ :assertion | assertion for: executionContext.].
+	assertions := classAssertions
+		flatCollect: [ :assertion | assertion for: executionContext ]
 ]
 
 { #category : #actions }
