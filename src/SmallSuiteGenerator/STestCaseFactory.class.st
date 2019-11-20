@@ -84,11 +84,13 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 						, aTestCase parseTreeWithAssertions body formattedCode)
 				formattedCode ]
 		on: Error
-		do: [ class
+		do: [ |carReturn|
+			carReturn := (String with: Character cr).
+			class
 				compile:
-					aSelector , String cr , 'self should:'
-						, aTestCase parseTree formattedCode , String cr
-						, ' raise:Error.' , String cr ]
+					aSelector , carReturn , 'self should:'
+						, aTestCase parseTree formattedCode , carReturn
+						, ' raise:Error.' , carReturn ]
 ]
 
 { #category : #actions }

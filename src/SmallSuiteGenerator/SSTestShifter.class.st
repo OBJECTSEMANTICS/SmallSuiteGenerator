@@ -766,8 +766,8 @@ SSTestShifter >> pickOrCreateObjectVariableOf: aClassName [
 
 { #category : #printing }
 SSTestShifter >> printDescriptiveComment [
-	^ self printSummaryFitness, String cr, self printSummaryFitnessByClass.
-	
+	^ self printSummaryFitness , (String with: Character cr)
+		, self printSummaryFitnessByClass
 ]
 
 { #category : #printing }
@@ -779,7 +779,7 @@ SSTestShifter >> printFunctionByClassName: dict on: stream [
 				nextPut: $:;
 				nextPutAll: assoc value printString;
 				nextPut: $%;
-				nextPutAll: String cr ]
+				nextPutAll: (String with: Character cr) ]
 ]
 
 { #category : #printing }
@@ -816,11 +816,11 @@ SSTestShifter >> printSummaryFitnessByClass [
 				associationsDo: [ :assoc | 
 					stream
 						nextPutAll: assoc key;
-						nextPutAll: String cr.
+						nextPutAll: (String with: Character cr).
 					self printFunctionByClassName: assoc value on: stream ].
 			stream
 				nextPutAll: '"';
-				nextPutAll: String cr ]
+				nextPutAll: (String with: Character cr) ]
 ]
 
 { #category : #accessing }

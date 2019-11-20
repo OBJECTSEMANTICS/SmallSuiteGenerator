@@ -28,7 +28,7 @@ SSTestRunner >> compile: aBlock [
 { #category : #compiling }
 SSTestRunner >> compile: aBlock withName: symbol on: aClass [
 	aClass
-		compile: symbol asString , String cr , aBlock body formattedCode
+		compile: symbol asString , (String with: Character cr) , aBlock body formattedCode
 ]
 
 { #category : #running }
