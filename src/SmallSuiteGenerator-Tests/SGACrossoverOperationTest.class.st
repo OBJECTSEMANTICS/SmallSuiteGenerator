@@ -9,17 +9,8 @@ Class {
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 
-{ #category : #running }
-SGACrossoverOperationTest >> setUp [
-	super setUp.
-	operation := SGACrossoverOperation new randomGenerator: SConfiguration newRandomGenerator.
-	mutationOperation := SGAMutationOperation new
-		randomGenerator: SConfiguration newRandomGenerator.
-	utility := SUtilityTypeInfo new
-]
-
 { #category : #tests }
-SGACrossoverOperationTest >> testCrossOver: listTestCase [
+SGACrossoverOperationTest >> crossOver: listTestCase [
 	| offSprings offSpring1 offSpring2 |
 	self assert: listTestCase size >= 2.
 	offSprings := operation
@@ -32,24 +23,7 @@ SGACrossoverOperationTest >> testCrossOver: listTestCase [
 ]
 
 { #category : #tests }
-SGACrossoverOperationTest >> testCrossOverToSStack [
-	self testCrossOver: utility testSuiteSStack .
-	self testCrossOverWithMutation: utility testSuiteSStack 
-]
-
-{ #category : #tests }
-SGACrossoverOperationTest >> testCrossOverToSStudent [
-	self testCrossOver: utility testSuiteSStudent 
-]
-
-{ #category : #tests }
-SGACrossoverOperationTest >> testCrossOverToSStudent2 [
-	self testCrossOver: utility testSuiteSStudentManual.
-	self testCrossOverWithMutation: utility testSuiteSStudentManual
-]
-
-{ #category : #tests }
-SGACrossoverOperationTest >> testCrossOverWithMutation: listTestCase [
+SGACrossoverOperationTest >> crossOverWithMutation: listTestCase [
 	| offSprings offSpring1 offSpring2 |
 	self assert: listTestCase size >= 2.
 	self assert: listTestCase first validReferences.
@@ -64,4 +38,30 @@ SGACrossoverOperationTest >> testCrossOverWithMutation: listTestCase [
 	offSprings := operation crossover: offSpring1 with: offSpring2.
 	self assert: offSpring1 validReferences.
 	self assert: offSpring2 validReferences
+]
+
+{ #category : #running }
+SGACrossoverOperationTest >> setUp [
+	super setUp.
+	operation := SGACrossoverOperation new randomGenerator: SConfiguration newRandomGenerator.
+	mutationOperation := SGAMutationOperation new
+		randomGenerator: SConfiguration newRandomGenerator.
+	utility := SUtilityTypeInfo new
+]
+
+{ #category : #tests }
+SGACrossoverOperationTest >> testCrossOverToSStack [
+	self crossOver: utility testSuiteSStack .
+	self crossOverWithMutation: utility testSuiteSStack 
+]
+
+{ #category : #tests }
+SGACrossoverOperationTest >> testCrossOverToSStudent [
+	self crossOver: utility testSuiteSStudent 
+]
+
+{ #category : #tests }
+SGACrossoverOperationTest >> testCrossOverToSStudent2 [
+	self crossOver: utility testSuiteSStudentManual.
+	self crossOverWithMutation: utility testSuiteSStudentManual
 ]

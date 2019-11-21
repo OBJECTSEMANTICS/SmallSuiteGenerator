@@ -20,7 +20,7 @@ SSExecutionContext >> at: aSymbol put: aValue [
 { #category : #initialization }
 SSExecutionContext >> initialize [
 	super initialize.
-	values := Dictionary new.
+	values := OrderedDictionary new
 ]
 
 { #category : #initialization }
