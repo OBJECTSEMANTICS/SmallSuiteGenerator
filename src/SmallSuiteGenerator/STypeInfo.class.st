@@ -128,12 +128,7 @@ STypeInfo >> initialize [
 STypeInfo >> isAbstractClass: symbol [
 	| aClass |
 	aClass := self classes at: symbol.
-	^ (aClass isAbstract
-		or:
-			[(aClass methods select: #isAbstract) isNotEmpty
-				or: [ (aClass methods
-						select: [ :meth | meth literals includes: #subclassResponsibility ])
-						isNotEmpty ]])
+	^  (aClass methods select: #isAbstract) isNotEmpty
 ]
 
 { #category : #actions }
