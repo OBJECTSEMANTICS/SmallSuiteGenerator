@@ -225,7 +225,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 				id ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
-		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
+		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes values collect: #selector)
 		hasSameElements: #(#idTeacher #initialize #nickname #yearsWorkExperience).
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SSTeacher) collect: #selector)
