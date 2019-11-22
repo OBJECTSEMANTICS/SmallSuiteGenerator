@@ -7,11 +7,6 @@ Class {
 	#category : #'SmallSuiteGenerator-Scenario2'
 }
 
-{ #category : #testing }
-SAbstractClass class >> isAbstract [
-	^ self name = #SAbstractClass
-]
-
 { #category : #accessing }
 SAbstractClass >> id [
 	^ id
@@ -20,6 +15,11 @@ SAbstractClass >> id [
 { #category : #accessing }
 SAbstractClass >> id: anObject [
 	id := anObject
+]
+
+{ #category : #accessing }
+SAbstractClass >> identifier [
+	^ self subclassResponsibility
 ]
 
 { #category : #initialization }
