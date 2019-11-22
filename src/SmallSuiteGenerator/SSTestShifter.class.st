@@ -394,7 +394,12 @@ SSTestShifter >> fitnessByClass [
 
 { #category : #actions }
 SSTestShifter >> generateAssertions [
-	^ self generateAssertions: {SComparisonAssertion . SInspectorAssertion . SPrimitiveAssertion . SStringAssertion}.
+	^ self
+		generateAssertions:
+			(Array with: SComparisonAssertion
+			with: SInspectorAssertion
+			with: SPrimitiveAssertion
+			with: SStringAssertion)
 ]
 
 { #category : #actions }
@@ -781,8 +786,8 @@ SSTestShifter >> printDescriptiveComment [
 
 { #category : #printing }
 SSTestShifter >> printFunctionByClassName: dict on: stream [
-	(dict associationsSelect: [ :assoc | assoc value > 0 ])
-		associationsDo: [ :assoc | 
+	(dict associations select: [ :assoc | assoc value > 0 ])
+		do: [ :assoc | 
 			stream
 				nextPutAll: assoc key;
 				nextPut: $:;
