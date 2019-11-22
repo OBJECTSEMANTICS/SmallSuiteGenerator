@@ -91,7 +91,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	| profile typeInfo methodInfo |
 	profile := SSTypeCollector
 		profile: [ SFoo new
-				return: Stack new;
+				return: Dictionary new;
 				return: OrderedCollection new;
 				returnFloat;
 				returnString;
@@ -111,10 +111,10 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	methodInfo := typeInfo methodType: #return: from: #SFoo.
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: {#OrderedCollection . #Stack}.
+		hasSameElements: (Array with: #OrderedCollection  with: #Dictionary).
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: {#OrderedCollection . #Stack}.
+		hasSameElements: (Array with: #OrderedCollection  with: #Dictionary).
 	self
 		assert: (typeInfo methodType: #returnFloat from: #SFoo) returnType type
 		equals: #SmallFloat64.
@@ -135,11 +135,11 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: #(#SmallInteger).
-	self
-		assert: (typeInfo factoryMessagesFrom: #SFoo) isEmpty. "the factoryMessage has not been executed"
+	self assert: (typeInfo factoryMessagesFrom: #SFoo) isEmpty.	"the factoryMessage has not been executed"
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements: #(#OrderedCollection #Stack #ByteString #SmallInteger #SmallFloat64)
+		hasSameElements:
+			#(#OrderedCollection #Dictionary #ByteString #SmallInteger #SmallFloat64)
 ]
 
 { #category : #tests }
@@ -158,10 +158,10 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	methodInfo := typeInfo methodType: #return: from: #SFoo.
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: #(#'OrderedCollection class').
+		hasSameElements: #('OrderedCollection class').
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: #(#'OrderedCollection class').
+		hasSameElements: #('OrderedCollection class').
 	self assertCollection: ((typeInfo messagesFrom: #SFoo) collect: #selector) hasSameElements: #(#initialize #return:)
 ]
 
@@ -201,9 +201,8 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 				id ]
 		onClass: SSTeacher) asTypeInfo.
 	self
-		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes collect: #selector)
-		hasSameElements:
-			#(#idTeacher #initialize #nickname #yearsWorkExperience).
+		assertCollection: ((typeInfo types at: #SSTeacher) methodTypes values collect: #selector)
+		hasSameElements: #(#idTeacher #initialize #nickname #yearsWorkExperience).
 	self assert: (typeInfo types at: #SSTeacher) classMethodTypes isEmpty.
 	self
 		assertCollection: ((typeInfo messagesFrom: #SSTeacher) collect: #selector)
