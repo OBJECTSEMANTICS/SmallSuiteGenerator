@@ -44,7 +44,8 @@ SSTypeCollectorMethod >> checkIfArgIsScalar: arg [
 { #category : #hooks }
 SSTypeCollectorMethod >> initArgsTypesWith: args [
 	| classNames |
-	classNames := args collect: [ :arg | arg class name ].
+	classNames := args
+		collect: [ :arg | self typeName: arg class ].
 	"classNames := args
 		collect: [ :arg | 
 			arg isClass
@@ -91,15 +92,22 @@ SSTypeCollectorMethod >> returnType [
 
 { #category : #hooks }
 SSTypeCollectorMethod >> returnValue: value [
-
-	returnType type: value class name.
+	returnType type: (self typeName: value class).
 	self checkIfArgIsScalar: value
 ]
 
 { #category : #hooks }
-SSTypeCollectorMethod >> saveReceiver: aObject [
+SSTypeCollectorMethod >> saveReceiver: anObject [
 	receiverType
-		type: (aObject isClass ifTrue: [aObject name] ifFalse: [aObject class name])
+		type:
+			(anObject isClass
+				ifTrue: [ self typeName: anObject ]
+				ifFalse: [ self typeName: anObject class ])
+]
+
+{ #category : #'as yet unclassified' }
+SSTypeCollectorMethod >> typeName: anObject [
+	^ SSTypeCollector typeNameOf: anObject
 ]
 
 { #category : #hooks }

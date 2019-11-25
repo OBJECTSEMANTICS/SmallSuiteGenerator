@@ -18,14 +18,15 @@ SSTypeCollector class >> spyClassForPackage [
 	 ^ SSTypeCollectorPackage
 ]
 
+{ #category : #hooks }
+SSTypeCollector class >> typeNameOf: anObject [
+	^ anObject name
+]
+
 { #category : #initialization }
 SSTypeCollector >> addScalar: anObject [
-	| value objectName |
-	objectName := anObject class name.
-	"objectName := anObject isClass
-		ifTrue: [ anObject name ]
-		ifFalse: [ anObject class name ]."
-	value := scalars at: objectName ifAbsentPut: [ Set new ].
+	| value  |
+	value := scalars at: (self class typeNameOf: anObject class) ifAbsentPut: [ Set new ].
 	value add: anObject
 ]
 
@@ -46,9 +47,10 @@ SSTypeCollector >> initialize [
 
 { #category : #initialization }
 SSTypeCollector >> isScalar: anObject [
-	(anObject class name = 'BlockClosure') ifTrue:[^ true].
+	anObject class name = 'BlockClosure'
+		ifTrue: [ ^ true ].
 	self allClassesAsDictionary
-		at: anObject class name
+		at: (self class typeNameOf: anObject class)
 		ifAbsent: [ ^ true ].
 	^ false
 ]
