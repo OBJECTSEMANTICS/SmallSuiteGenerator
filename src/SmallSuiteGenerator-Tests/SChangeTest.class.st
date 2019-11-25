@@ -7,17 +7,17 @@ Class {
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	| testCase changed |
-	testCase := (SSTestCase with: utility typeInfoAthensCairo).
+	testCase := (SSTestCase with: utility typeInfoArrayedCollection).
 	testCase
-		addTargetClassName: #AthensCairoCanvas;
+		addTargetClassName: #ArrayedCollection;
 		addFactoryMessage;
 		addLiteral;
 		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := AthensCairoCanvas new.' '_var1 := ''hello''.' '_var2 := AthensCairoCanvas new.').
-	changed := testCase changeStatementOfClassName: #AthensCairoCanvas.
+			#('_var0 := ArrayedCollection new.' '_var1 := ''hello''.' '_var2 := ArrayedCollection new.').
+	changed := testCase changeStatementOfClassName: #ArrayedCollection.
 	self assert: changed equals: false.
 	self
 		assertCollection: (testCase statements collect: #printString)

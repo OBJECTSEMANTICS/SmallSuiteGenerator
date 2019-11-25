@@ -76,16 +76,16 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 ]
 
 { #category : #examples }
-SUtilityTypeInfo >> typeInfoAthensCairo [
+SUtilityTypeInfo >> typeInfoArrayedCollection [
 	^ STypeInfo new
 		type:
-			#AthensCairoCanvas
+			#ArrayedCollection
 				->
 					(Array
 						with:
 							(Array
-								with: #fillPreserve -> #(#AthensCairoCanvas #nil #() false)
-								with: #textPath -> #(#AthensCairoCanvas #nil #() false))
+								with: #add -> #(#AthensCairoCanvas #nil #() false)
+								with: #size -> #(#AthensCairoCanvas #nil #() false))
 						with: #());
 		scalar: #ByteString with: #('hello')
 ]
