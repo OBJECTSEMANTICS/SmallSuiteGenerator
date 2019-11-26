@@ -72,11 +72,8 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 	class
 		ifNil: [ class := SConfiguration
 				createTestCaseClass: aClassName
-				inPackage: self outputPackageName	"SConfiguration testCaseClass
-				subclass: className
-				instanceVariableNames: ''
-				classVariableNames: ''
-				package: self outputPackageName" ].
+				inPackage: self outputPackageName].
+	self moveClass: class.
 	[ aTestCase generateAssertions.
 	class
 		compile:
@@ -140,6 +137,10 @@ STestCaseFactory >> initialize [
 STestCaseFactory >> initializeProfiler [
 	self subclassResponsibility 
 	
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseFactory >> moveClass: aClass [ 
 ]
 
 { #category : #initialization }

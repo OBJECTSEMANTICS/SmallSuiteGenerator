@@ -637,6 +637,7 @@ SSTestShifter >> newLiteral: aClassName [
 	typeInfo scalars
 		at: aClassName
 		ifPresent: [ :values | 
+			values ifEmpty: [self error: 'Scalar of type: ', aClassName, ' is empty.'].
 			^ SLiteral new
 				returnType: aClassName;
 				value: (randomGenerator selectAtRandom: values asOrderedCollection) ].
@@ -723,7 +724,10 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	node body temporaries: temporaries.
 	statementCollection
 		do:
-			[ :stm | node body addNode: (rbParserClass parseExpression: stm printString) ].
+			[ :stm | |aNode|
+			[aNode := (rbParserClass parseExpression: stm printString).
+			node body addNode: aNode.
+			] on: Error do: [  ] ].
 	^ node
 ]
 
