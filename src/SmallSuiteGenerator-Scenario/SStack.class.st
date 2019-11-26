@@ -1,6 +1,6 @@
 Class {
 	#name : #SStack,
-	#superclass : #Stack,
+	#superclass : #LinkedList,
 	#instVars : [
 		'firstLinkStack',
 		'lastLinkStack'

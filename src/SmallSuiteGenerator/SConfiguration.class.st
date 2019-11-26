@@ -45,6 +45,11 @@ SConfiguration class >> configurationClass [
 	^ configurationClass
 ]
 
+{ #category : #tests }
+SConfiguration class >> createTestCaseClass: aClassName inPackage: aPackageName [
+	^ self configurationClass createTestCaseClass: aClassName inPackage: aPackageName 
+]
+
 { #category : #accessing }
 SConfiguration class >> defaultLogName [
 	^ 'SmallSuiteLogger.log'

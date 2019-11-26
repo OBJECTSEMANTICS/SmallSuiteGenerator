@@ -41,6 +41,15 @@ SConfigurationPharo class >> createFileLogger [
 	self instanceLogger ensureFileLoggerNamed: self logName
 ]
 
+{ #category : #tests }
+SConfigurationPharo class >> createTestCaseClass: aClassName inPackage: aPackageName [
+	^ self testCaseClass
+		subclass: aClassName
+		instanceVariableNames: ''
+		classVariableNames: ''
+		package: aPackageName
+]
+
 { #category : #actions }
 SConfigurationPharo class >> defaultFileLogger [
 	self classLogger

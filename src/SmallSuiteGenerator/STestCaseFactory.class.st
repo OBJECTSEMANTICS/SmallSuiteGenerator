@@ -66,15 +66,17 @@ STestCaseFactory >> engineDefault [
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
-	| className class |
-	className := ('GA' , self targetClassName , 'Test') asSymbol.
-	class := SConfiguration lookUpClass: className.
+	| aClassName class |
+	aClassName := ('GA' , self targetClassName , 'Test') asSymbol.
+	class := SConfiguration lookUpClass: aClassName.
 	class
-		ifNil: [ class := SConfiguration testCaseClass
+		ifNil: [ class := SConfiguration
+				createTestCaseClass: aClassName
+				inPackage: self outputPackageName	"SConfiguration testCaseClass
 				subclass: className
 				instanceVariableNames: ''
 				classVariableNames: ''
-				package: self outputPackageName ].
+				package: self outputPackageName" ].
 	[ aTestCase generateAssertions.
 	class
 		compile:
@@ -84,8 +86,8 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 						, aTestCase parseTreeWithAssertions body formattedCode)
 				formattedCode ]
 		on: Error
-		do: [ |carReturn|
-			carReturn := (String with: Character cr).
+		do: [ | carReturn |
+			carReturn := String with: Character cr.
 			class
 				compile:
 					aSelector , carReturn , 'self should:'
