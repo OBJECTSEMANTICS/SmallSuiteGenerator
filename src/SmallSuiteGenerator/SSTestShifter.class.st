@@ -637,7 +637,9 @@ SSTestShifter >> newLiteral: aClassName [
 	typeInfo scalars
 		at: aClassName
 		ifPresent: [ :values | 
-			values ifEmpty: [self error: 'Scalar of type: ', aClassName, ' is empty.'].
+			values
+				ifEmpty: [ self error: 'Scalar of type: ' , aClassName , ' is empty.' ].
+			(aClassName includesAll: 'BlockClosure') ifTrue: [ self error: 'Can not create a literal of BlockClosure' ].
 			^ SLiteral new
 				returnType: aClassName;
 				value: (randomGenerator selectAtRandom: values asOrderedCollection) ].
@@ -717,17 +719,19 @@ SSTestShifter >> parseTree [
 { #category : #parsing }
 SSTestShifter >> parseTreeWith: statementCollection [
 	| node temporaries rbParserClass |
+	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
 	rbParserClass := SConfiguration rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
 	temporaries := self allVarNames
 		collect: [ :varName | rbParserClass parseExpression: varName ].
 	node body temporaries: temporaries.
 	statementCollection
-		do:
-			[ :stm | |aNode|
-			[aNode := (rbParserClass parseExpression: stm printString).
-			node body addNode: aNode.
-			] on: Error do: [  ] ].
+		do: [ :stm | 
+			| aNode |
+			[ aNode := rbParserClass parseExpression: stm printString.
+			node body addNode: aNode ]
+				on: Error
+				do: [  ] ].
 	^ node
 ]
 
@@ -1058,11 +1062,10 @@ SSTestShifter >> validReferences [
 	^ statements
 		detect: [ :stm | 
 			| variables |
-			variables := stm variablesWithId.
+			variables := stm variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
-				ifFalse: [ 
-					true ]
+				ifFalse: [ true ]
 				ifTrue: [ references addAll: variables.
 					false ] ]
 		ifFound: [ false ]
