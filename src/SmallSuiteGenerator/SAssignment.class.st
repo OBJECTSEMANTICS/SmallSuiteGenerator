@@ -1,3 +1,19 @@
+"
+SAssignment is a node which is compossed by a variable and an expression.
+
+	For example: 
+	1.	
+		_var0 := 1.
+	
+		_var0 -> Variable.
+		1 -> value (in this case a literal).
+		
+	2. 
+		_var1 := SFoo new.
+		
+		_var1 -> Varaible
+		SFoo new -> an instance of factoryMessage
+"
 Class {
 	#name : #SAssignment,
 	#superclass : #SExpression,

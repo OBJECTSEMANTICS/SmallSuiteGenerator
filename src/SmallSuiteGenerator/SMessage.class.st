@@ -1,3 +1,20 @@
+"
+SMessage is a node which represents method calls that not return an instance variable of a class. They are a little more complex. It can receive arguments also.
+
+	For example: 
+	1.	
+		_var1 returnCollection.
+	
+		_var1 -> Receiver which points to SFoo's factoryMessage.
+		#returnCollection -> selector of the method.
+		
+	2. 
+		_var1 return: _var2.
+		
+		_var1 -> Receiver
+		#return: -> selector
+		_var2 -> Argument of type ByteString
+"
 Class {
 	#name : #SMessage,
 	#superclass : #SAbstractMessage,

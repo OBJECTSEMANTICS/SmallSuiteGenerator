@@ -1,3 +1,13 @@
+"
+SFieldAccessMessage is a node which represents method calls that return an instance variable of a class.
+
+	For example: 
+	1.	
+		_var1 x.
+	
+		_var1 -> Receiver which points to Point's factoryMessage.
+		#x -> selector of the method
+"
 Class {
 	#name : #SFieldAccessMessage,
 	#superclass : #SAbstractMessage,

@@ -1,3 +1,6 @@
+"
+SMultiFitnessFunciton is the fitness function that contains simple fitness function's collection.
+"
 Class {
 	#name : #SMultiFitnessFunction,
 	#superclass : #SFitnessFunction,

@@ -1,3 +1,22 @@
+"
+A SComparisonAssertion selects the execution context values that are comparable.
+
+Collection's items of the same class are compared and for each one is created a new instance of this class with the selector depending the result of the comparison.
+
+For example: 
+
+	List with items that are comparable: 
+		Array with: '_var1'-> 9
+		with: '_var2' -> 5
+		with: '_var3' -> 9
+		with: '_var4' -> 'hello'.
+	It returns items like: 
+		self deny: _var1 equals: _var2.
+		self assert: _var1 equals: _var3.
+		
+
+
+"
 Class {
 	#name : #SComparisonAssertion,
 	#superclass : #SAssertionMessage,
@@ -5,15 +24,10 @@ Class {
 }
 
 { #category : #'instance creation' }
-SComparisonAssertion class >> for: anExecutionContext [
-	| assertions |
-	assertions := OrderedCollection new.
-	anExecutionContext keys
-		combinations: 2
-		atATimeDo: [ :comb | 
+SComparisonAssertion class >> comparisonAssertion: anExecutionContext with: array [
 			| varName1 varName2 val1 val2 |
-			varName1 := comb first.
-			varName2 := comb second.
+			varName1 := array first.
+			varName2 := array second.
 			val1 := anExecutionContext at: varName1.
 			val2 := anExecutionContext at: varName2.
 			val1 class = val2 class
@@ -23,14 +37,30 @@ SComparisonAssertion class >> for: anExecutionContext [
 							selector := val1 = val2
 								ifTrue: [ #assert:equals: ]
 								ifFalse: [ #deny:equals: ].
-							assertions
-								add:
-									(self new
+							^ self new
 										selector: selector;
 										args:
 											(Array
 												with: (SVariable name: varName1)
 												with: (SVariable name: varName2));
-										yourself) ] ] ].
+										yourself ]
+							 ].
+						^ nil
+]
+
+{ #category : #'instance creation' }
+SComparisonAssertion class >> for: anExecutionContext [
+	| assertions |
+	assertions := OrderedCollection new.
+	anExecutionContext keys
+		combinations: 2
+		atATimeDo: [ :comb | 
+			| compareAssert |
+			compareAssert := self
+				comparisonAssertion: anExecutionContext
+				with: comb.
+			compareAssert
+				ifNotNil: [ assertions add: compareAssert
+			 ] ].
 	^ assertions
 ]

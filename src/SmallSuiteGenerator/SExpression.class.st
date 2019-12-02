@@ -1,3 +1,13 @@
+"
+Superclass of all nodes for 
+	- expressions (they represent nodes which are used to create messages),
+	- messages (concerned with: assertion messages, factory messages, access messages and mesasges that modify the behavior of a class)
+	
+    Instance Variables
+	id:		<Integer>
+	randomGenerator:		<SRandom>
+	returnType:		<Symbol>
+"
 Class {
 	#name : #SExpression,
 	#superclass : #SObject,
@@ -86,7 +96,8 @@ SExpression >> isFactoryMessage [
 
 { #category : #comparing }
 SExpression >> isPrimitive: anObject [
-	^ ((anObject isKindOf: Number) or: [ anObject isKindOf: Boolean ]) or: [ anObject isKindOf: String ]
+	^ (anObject isKindOf: Number) or: [ (anObject isKindOf: Boolean)
+		or: [ anObject isKindOf: String ]]
 ]
 
 { #category : #mutation }

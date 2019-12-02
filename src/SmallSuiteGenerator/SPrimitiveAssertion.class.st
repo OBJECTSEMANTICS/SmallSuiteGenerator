@@ -1,3 +1,16 @@
+"
+A SPrimitiveAssertion collects instances of the class if the execution context's values are primitives.
+
+	For example: 
+	
+	List with items classified as primitive: 
+		Array with: '_var1' -> 'hello'
+		with: '_var2' -> 2
+		with: '_var3' -> (3@5).
+	It returns items like: 
+		self assert: _var1 equals: 'hello'.
+		self assert: _var2 equals: 2.
+"
 Class {
 	#name : #SPrimitiveAssertion,
 	#superclass : #SAssertionMessage,
@@ -6,21 +19,14 @@ Class {
 
 { #category : #'instance creation' }
 SPrimitiveAssertion class >> for: anExecutionContext [
-	| assertions |
-	assertions := OrderedCollection new.
-	anExecutionContext keys
-		do: [ :varName | 
-			| value |
-			value := anExecutionContext at: varName.
-			(self isPrimitive: value)
-				ifTrue: [ assertions
-						add:
-							(self new
-								selector: #assert:equals:;
-								args:
-									(Array
-										with: (SVariable name: varName)
-										with: (SLiteral new value: value));
-								yourself) ] ].
-	^ assertions
+	^ anExecutionContext associations
+		select: [ :assoc | self isPrimitive: assoc value ]
+		thenCollect: [ :assoc | 
+			self new
+				selector: #assert:equals:;
+				args:
+					(Array
+						with: (SVariable name: assoc key)
+						with: (SLiteral new value: assoc value));
+				yourself ]
 ]

@@ -1,3 +1,7 @@
+"
+SFoo is a proof class created to test project functionality
+
+"
 Class {
 	#name : #SFoo,
 	#superclass : #SObject,

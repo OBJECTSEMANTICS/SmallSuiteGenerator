@@ -1,3 +1,15 @@
+"
+STypeMethodInfo is an info type node for a method.
+
+    Instance Variables
+	argTypes:		<Array>
+	isDeprecated:		<Boolean>
+	isQuick:		<Boolean>
+	receiver:		<SMultiTypeInfo>
+	returnType:		<SMultiTypeInfo>
+	selector:		<Symbol>
+
+"
 Class {
 	#name : #STypeMethodInfo,
 	#superclass : #STypeObjectInfo,

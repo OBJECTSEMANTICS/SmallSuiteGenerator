@@ -1,3 +1,9 @@
+"
+SMultiTypeInfo is a set of types.
+
+    Instance Variables
+	types:		<Set>
+"
 Class {
 	#name : #SMultiTypeInfo,
 	#superclass : #STypeObjectInfo,

@@ -1,3 +1,11 @@
+"
+STypeClassInfo is an info type node for a class.
+
+    Instance Variables
+	classMethodTypes:		<Dictionary>
+	methodTypes:		<Dictionary>
+	typeName:		<Symbol>
+"
 Class {
 	#name : #STypeClassInfo,
 	#superclass : #STypeObjectInfo,

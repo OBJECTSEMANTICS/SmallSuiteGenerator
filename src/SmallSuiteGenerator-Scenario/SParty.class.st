@@ -1,3 +1,9 @@
+"
+SParty is a proof class created to test project functionality
+
+    Instance Variables
+	date:		<Object>
+"
 Class {
 	#name : #SParty,
 	#superclass : #SEvent,

@@ -1,3 +1,28 @@
+"
+SGAEngine is responsible for executing the genetic algorithm, it means that it follows the phases to get a testCase population with the highest fitness score.
+
+The phases followed are:
+	1. Create an initial population 
+	2. Use the fitness function established to calculate the fitness score of each testCase in the population
+	3. Determine the selection strategy to select the fittest testCases and let them pass their statements to the next generation
+	4. Apply the crossover operation to get offsprings (new testCases) by exchanging the statements of parents (testCases). 
+	5. Apply mutation operation with a low random probability to modify some statements.
+ 
+Internal Representation and Key Implementation Points.
+
+    Instance Variables
+	crossoverOperator:		<SGACrossoverOperator>
+	fitness:		<SFitnessFunction>
+	logs:		<OrderedCollection>
+	mutationOperator:		<SGAMutationOperator>
+	numberOfIterations:		<SmallInteger>
+	numberOfStatements:		<SmallInteger>
+	population:		<OrderedCollection>
+	populationSize:		<SmallInteger>
+	selectionStrategy:		<SGATournamentSelection>
+	targetClassName:		<ByteString>
+	typeInfo:		<STypeInfo>
+"
 Class {
 	#name : #SGAEngine,
 	#superclass : #SGAObject,
@@ -60,14 +85,13 @@ SGAEngine >> createNewPopulation [
 	newPopulation := OrderedCollection new.
 	selectionStrategy load: population copy.
 	selectionStrategy fitness: fitness.
-	[ (newPopulation size < self populationSize) and: [ selectionStrategy population size >= 2 ] ]
+	[ newPopulation size < self populationSize
+		and: [ selectionStrategy population size >= 2 ] ]
 		whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child options |
 			P1 := selectionStrategy pickOne.
 			P2 := selectionStrategy pickOne.
 			self shouldCrossOver
-				ifTrue: [ 
-					child := crossoverOperator crossover: P1 with: P2.
-					"Transcript show:'corows';cr."
+				ifTrue: [ child := crossoverOperator crossover: P1 with: P2.
 					O1 := child first.
 					O2 := child second ]
 				ifFalse: [ O1 := P1.
@@ -75,12 +99,16 @@ SGAEngine >> createNewPopulation [
 			mutationOperator mutate: O1.
 			mutationOperator mutate: O2.
 			fitness compute: (Array with: O1 with: O2).
-			options := (Array with: O1 with: O2 with: P1 with: P2 ) asSortedCollection: [ :a :b | 
-					(self fitnessFor: a) = (self fitnessFor: b) ifTrue:[
-						a length < b length
-						] ifFalse:[ (self fitnessFor:a)> (self fitnessFor:b)] ].
-			newPopulation addAll: (options first:2).
-			 ].
+			options := (Array
+				with: O1
+				with: O2
+				with: P1
+				with: P2)
+				asSortedCollection: [ :a :b | 
+					(self fitnessFor: a) = (self fitnessFor: b)
+						ifTrue: [ a length < b length ]
+						ifFalse: [ (self fitnessFor: a) > (self fitnessFor: b) ] ].
+			newPopulation addAll: (options first: 2) ].
 	population := newPopulation
 ]
 

@@ -1,3 +1,10 @@
+"
+SEVent is a proof class created to test project functionality
+
+    Instance Variables
+	discount:		<Object>
+	price:		<Object>
+"
 Class {
 	#name : #SEvent,
 	#superclass : #SObject,

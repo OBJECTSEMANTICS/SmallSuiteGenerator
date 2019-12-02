@@ -1,3 +1,9 @@
+"
+SSTypeCollector is a subclass of Profiler that collects project types
+
+    Instance Variables
+	scalars:		<Dictionary>
+"
 Class {
 	#name : #SSTypeCollector,
 	#superclass : #S2Profiler,

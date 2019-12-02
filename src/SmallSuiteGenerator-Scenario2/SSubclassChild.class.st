@@ -1,3 +1,6 @@
+"
+SSubclassChild is a proof class created to test project functionality
+"
 Class {
 	#name : #SSubclassChild,
 	#superclass : #SAbstractClass,

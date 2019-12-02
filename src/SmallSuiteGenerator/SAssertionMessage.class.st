@@ -1,3 +1,10 @@
+"
+Superclass of assertion messages nodes for 
+	- comparison assertion (it compares an object with other)
+	- inspector assertion (it compares the result of a method executed with a value)
+	- primitive assertion (it compares the primitive values)
+	- string assertion (it compares the way to represent an object as string with a string)
+"
 Class {
 	#name : #SAssertionMessage,
 	#superclass : #SAbstractMessage,

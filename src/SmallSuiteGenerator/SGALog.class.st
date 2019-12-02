@@ -1,3 +1,13 @@
+"
+SGALog saves some important data about genetic algorithm evolution like: genetic algotithm's generation number, testCase with the highest fitness and time in which is produced the generation.
+
+In each iteration of the genetic algorithm a new instance of the class is created.
+
+    Instance Variables
+	fittestTestCase:		<STestCase>
+	generationNumber:		<Smallnteger>
+	timeToProduceGeneration:		<SmallInteger>
+"
 Class {
 	#name : #SGALog,
 	#superclass : #SObject,

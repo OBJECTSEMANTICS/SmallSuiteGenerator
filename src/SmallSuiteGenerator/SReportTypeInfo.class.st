@@ -1,3 +1,18 @@
+"
+SReportTypeInfo exports data about coverage and patterns frequency of projects in Smalltalk. It exports two kinds of reports:
+	
+1. Project's coverage covered in the genetic algorithm. It presents 
+	- Project -> Project name in Smalltalk.
+	- Classes -> Number of classes executed in the project.
+	- Methods -> Number of methods executed in the project.
+	- Test -> Number of tests that are evaluated in the project.
+	- Coverage -> Project coverage percent covered.
+	
+2. Patterns frequency of type method info. Each type method info is categorized according its receiver, arguments and return type. The report contains:
+	- Project name
+	- Number of all methods
+	- Number of type method infos categorized in each pattern.
+"
 Class {
 	#name : #SReportTypeInfo,
 	#superclass : #SObject,

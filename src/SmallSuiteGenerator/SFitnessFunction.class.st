@@ -1,3 +1,10 @@
+"
+SFitnessFunction is an abstract class that represents a fitness abstract function used in genetic algorithm evolution to determine how fit a testCase is.
+
+
+
+
+"
 Class {
 	#name : #SFitnessFunction,
 	#superclass : #SObject,

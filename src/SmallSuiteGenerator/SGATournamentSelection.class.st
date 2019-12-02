@@ -1,3 +1,6 @@
+"
+SGATournamentSelection is responsible for select the fittest testCase based in their fitness.
+"
 Class {
 	#name : #SGATournamentSelection,
 	#superclass : #SGAObject,

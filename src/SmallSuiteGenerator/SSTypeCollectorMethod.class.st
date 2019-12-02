@@ -1,3 +1,12 @@
+"
+SSTypeCollectorMethod is a subclass of profiler method that collects method types.
+
+    Instance Variables
+	argTypes:		<Collection>
+	executed:		<False>
+	receiverType:		<SMultiTypeInfo>
+	returnType:		<SMultiTypeInfo>
+"
 Class {
 	#name : #SSTypeCollectorMethod,
 	#superclass : #S2Method,
@@ -44,13 +53,7 @@ SSTypeCollectorMethod >> checkIfArgIsScalar: arg [
 { #category : #hooks }
 SSTypeCollectorMethod >> initArgsTypesWith: args [
 	| classNames |
-	classNames := args
-		collect: [ :arg | self typeName: arg class ].
-	"classNames := args
-		collect: [ :arg | 
-			arg isClass
-				ifTrue: [ arg name ]
-				ifFalse: [ arg class name ] ]."
+	classNames := args collect: [ :arg | self typeName: arg class ].
 	argTypes
 		ifNil: [ classNames
 				ifNotEmpty: [ argTypes := classNames

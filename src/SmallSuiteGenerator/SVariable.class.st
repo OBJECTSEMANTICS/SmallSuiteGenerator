@@ -1,3 +1,19 @@
+"
+SVariable is a node which is represented by a name and id.
+
+	For example: 
+	1.	
+		_var2
+		
+		_var -> Name of variable.
+		2 -> Id of variable
+		
+	2. 
+		_int3
+		
+		'_int' -> Name
+		3 -> Id
+"
 Class {
 	#name : #SVariable,
 	#superclass : #SExpression,

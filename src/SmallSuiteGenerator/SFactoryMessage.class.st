@@ -1,3 +1,25 @@
+"
+SFactoryMessage is a node that represents the class' creation with methods of meta class.
+
+	For example: 
+	1.	
+		SStack newStack.
+	
+		#SStack -> It's the receiver 
+		#newStack -> It's a method of meta class.
+		
+	2. 
+		SFoo score: _var1.
+		
+		#SFoo -> Receiver
+		#score: -> Message of receiver
+		_var1 -> Argument 
+		
+	3. SFoo new.
+		
+		#SFoo new -> Receiver
+		#new -> Default selector
+"
 Class {
 	#name : #SFactoryMessage,
 	#superclass : #SAbstractMessage,

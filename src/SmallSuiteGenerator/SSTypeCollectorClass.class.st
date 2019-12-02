@@ -1,3 +1,6 @@
+"
+SSTypeCollectorClass is a subclass of profiler Class that collects class types.
+"
 Class {
 	#name : #SSTypeCollectorClass,
 	#superclass : #S2Class,

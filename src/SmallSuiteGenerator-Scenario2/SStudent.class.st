@@ -1,3 +1,6 @@
+"
+SStudent is a proof class created to test project functionality
+"
 Class {
 	#name : #SStudent,
 	#superclass : #SSPerson,

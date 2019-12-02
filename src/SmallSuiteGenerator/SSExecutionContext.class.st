@@ -7,6 +7,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #accessing }
+SSExecutionContext >> associations [
+	^ values associations
+]
+
 { #category : #initialization }
 SSExecutionContext >> at: aSymbol [
 	^ values at: aSymbol.

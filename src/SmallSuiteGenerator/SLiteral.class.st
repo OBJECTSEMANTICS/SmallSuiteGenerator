@@ -1,3 +1,17 @@
+"
+SLiteral is a node which is compossed by a value that is included in typeInfo scalars.
+
+	For example: 
+	1.	
+		10
+		
+		10 -> SmallInteger.
+		
+	2. 
+		'hello'
+		
+		'hello' -> ByteString.
+"
 Class {
 	#name : #SLiteral,
 	#superclass : #SExpression,

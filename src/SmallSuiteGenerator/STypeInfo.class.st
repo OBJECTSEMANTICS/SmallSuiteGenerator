@@ -1,3 +1,14 @@
+"
+STypeInfo is responsible for collecting the STypeCollector's main data and building a new instance from the collected data.
+
+It is composed of STypeClassInfo collection and each item likewise is formed by STypeMethodInfo collection.
+
+ Instance Variables
+	types:		<Dictionary>
+	classes:		<Dictionary>
+	noneAbstractClasses:		<Collection>
+	scalars: 		<Dictionary>
+"
 Class {
 	#name : #STypeInfo,
 	#superclass : #SObject,

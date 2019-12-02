@@ -1,3 +1,12 @@
+"
+SConference is a proof class created to test project functionality
+
+Instance Variables
+	date:		<Object>
+	offerPrice:		<Object>
+	speaker:		<Object>
+
+"
 Class {
 	#name : #SConference,
 	#superclass : #SEvent,

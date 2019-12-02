@@ -1,3 +1,6 @@
+"
+SSTeacher is a proof class created to test project functionality
+"
 Class {
 	#name : #SSTeacher,
 	#superclass : #SSPerson,

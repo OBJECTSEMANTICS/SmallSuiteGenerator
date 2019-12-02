@@ -1,3 +1,6 @@
+"
+SAbstractClass is a proof abstract class created to test project functionality
+"
 Class {
 	#name : #SAbstractClass,
 	#superclass : #SObject,

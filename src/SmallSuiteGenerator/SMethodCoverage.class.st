@@ -1,3 +1,6 @@
+"
+SMethodCoverage is responsible for calculating the method coverage in each testCase of a testSuite. It means that for each class defined in the testCase it calculates how many methods were edxecuted.
+"
 Class {
 	#name : #SMethodCoverage,
 	#superclass : #SSimpleFitnessFunction,

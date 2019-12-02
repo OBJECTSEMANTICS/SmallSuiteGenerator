@@ -1,3 +1,6 @@
+"
+SStack is a proof class created to test project functionality
+"
 Class {
 	#name : #SStack,
 	#superclass : #LinkedList,
