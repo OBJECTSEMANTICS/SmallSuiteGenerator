@@ -1,7 +1,7 @@
 "
 SMessage is a node which represents method calls that not return an instance variable of a class. They are a little more complex. It can receive arguments also.
 
-	For example: 
+For example: 
 	1.	
 		_var1 returnCollection.
 	

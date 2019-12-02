@@ -1,5 +1,5 @@
 "
-SError is a subclass of Error. It is used to represent error conditions in test generation process.
+SError is a subclass of Error. It is used to represent error's conditions in test generation process.
 
 Additionally, it saves in a log all the errors gotten.
 "

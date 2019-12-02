@@ -3,9 +3,10 @@ SGALog saves some important data about genetic algorithm evolution like: genetic
 
 In each iteration of the genetic algorithm a new instance of the class is created.
 
-    Instance Variables
-	fittestTestCase:		<STestCase>
-	generationNumber:		<Smallnteger>
+Instance Variables
+
+	fittestTestCase:				<STestCase>
+	generationNumber:				<Smallnteger>
 	timeToProduceGeneration:		<SmallInteger>
 "
 Class {

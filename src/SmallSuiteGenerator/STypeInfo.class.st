@@ -3,11 +3,11 @@ STypeInfo is responsible for collecting the STypeCollector's main data and build
 
 It is composed of STypeClassInfo collection and each item likewise is formed by STypeMethodInfo collection.
 
- Instance Variables
-	types:		<Dictionary>
-	classes:		<Dictionary>
-	noneAbstractClasses:		<Collection>
-	scalars: 		<Dictionary>
+Instance Variables
+	types:						<Dictionary>
+	classes:					<Dictionary>
+	noneAbstractClasses:	<Collection>
+	scalars: 					<Dictionary>
 "
 Class {
 	#name : #STypeInfo,

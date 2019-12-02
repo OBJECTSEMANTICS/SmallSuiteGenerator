@@ -1,7 +1,7 @@
 "
 SFieldAccessMessage is a node which represents method calls that return an instance variable of a class.
 
-	For example: 
+For example: 
 	1.	
 		_var1 x.
 	

@@ -12,11 +12,11 @@ For example if the parents are:
 	_var0 := SFoo new.
 	_var1 := _var0 returnString.
 	
-	The new offspring with a 50% of statements of each parent:
+The new offspring with a 50% of statements of each parent:
 	_var0 := 1.
 	_var1 := _var0 returnString.
 	
-	Like it has an inconsistency because '_var0' in the first parent is of type SFoo, it is repaired. Then the new offspring resultant is:
+Like it has an inconsistency because '_var0' in the first parent is of type SFoo, it is repaired. Then the new offspring resultant is:
 	_var0 := 1.
 	_var2 := SFoo new.
 	_var1 := _var2 returnString. 

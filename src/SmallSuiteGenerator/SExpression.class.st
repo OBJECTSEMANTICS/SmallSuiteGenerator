@@ -3,10 +3,10 @@ Superclass of all nodes for
 	- expressions (they represent nodes which are used to create messages),
 	- messages (concerned with: assertion messages, factory messages, access messages and mesasges that modify the behavior of a class)
 	
-    Instance Variables
-	id:		<Integer>
+Instance Variables
+	id:		               <Integer> 
 	randomGenerator:		<SRandom>
-	returnType:		<Symbol>
+	returnType:		      <Symbol>
 "
 Class {
 	#name : #SExpression,

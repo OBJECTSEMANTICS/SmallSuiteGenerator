@@ -3,17 +3,17 @@ SSTestShifter is responsible for creating, mutating and validating statements. I
 
 Genetic algorithm's evolution depends this class' increasing fitness. For this reason it is one of the main classes and essential for the project.
 
-    Instance Variables
-	assertions:		<OrderedCollection>
-	fitness:		<Dictionary>
-	fitnessByClass:		<Dictionary>
+Instance Variables
+	assertions:						<OrderedCollection>
+	fitness:							<Dictionary>
+	fitnessByClass:					<Dictionary>
 	maxNumberOfStatements:		<SmallInteger>
-	nextId:		<SmallInteger>
-	randomGenerator:		<SRandomGenerator>
-	statements:		<OrderedCollection>
-	targetClassesNames:		<Set>
-	typeInfo:		<STypeInfo>
-	validatedTargetClassName:		<Boolean>
+	nextId:							<SmallInteger>
+	randomGenerator:				<SRandomGenerator>
+	statements:						<OrderedCollection>
+	targetClassesNames:			<Set>
+	typeInfo:							<STypeInfo>
+	validatedTargetClassName:	<Boolean>
 "
 Class {
 	#name : #SSTestShifter,

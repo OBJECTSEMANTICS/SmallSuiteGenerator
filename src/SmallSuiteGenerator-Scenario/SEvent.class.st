@@ -1,9 +1,9 @@
 "
 SEVent is a proof class created to test project functionality
 
-    Instance Variables
+Instance Variables
 	discount:		<Object>
-	price:		<Object>
+	price:			<Object>
 "
 Class {
 	#name : #SEvent,

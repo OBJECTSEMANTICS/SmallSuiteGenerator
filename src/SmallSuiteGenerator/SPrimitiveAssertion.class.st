@@ -1,7 +1,7 @@
 "
 A SPrimitiveAssertion collects instances of the class if the execution context's values are primitives.
 
-	For example: 
+For example: 
 	
 	List with items classified as primitive: 
 		Array with: '_var1' -> 'hello'

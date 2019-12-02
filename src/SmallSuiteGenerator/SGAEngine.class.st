@@ -10,18 +10,19 @@ The phases followed are:
  
 Internal Representation and Key Implementation Points.
 
-    Instance Variables
-	crossoverOperator:		<SGACrossoverOperator>
-	fitness:		<SFitnessFunction>
-	logs:		<OrderedCollection>
-	mutationOperator:		<SGAMutationOperator>
+Instance Variables
+
+	crossoverOperator:			<SGACrossoverOperator>
+	fitness:						<SFitnessFunction>
+	logs:							<OrderedCollection>
+	mutationOperator:			<SGAMutationOperator>
 	numberOfIterations:		<SmallInteger>
 	numberOfStatements:		<SmallInteger>
-	population:		<OrderedCollection>
-	populationSize:		<SmallInteger>
-	selectionStrategy:		<SGATournamentSelection>
-	targetClassName:		<ByteString>
-	typeInfo:		<STypeInfo>
+	population:					<OrderedCollection>
+	populationSize:				<SmallInteger>
+	selectionStrategy:			<SGATournamentSelection>
+	targetClassName:			<ByteString>
+	typeInfo:						<STypeInfo>
 "
 Class {
 	#name : #SGAEngine,

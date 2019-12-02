@@ -1,10 +1,10 @@
 "
 SSTypeCollectorMethod is a subclass of profiler method that collects method types.
 
-    Instance Variables
-	argTypes:		<Collection>
-	executed:		<False>
-	receiverType:		<SMultiTypeInfo>
+Instance Variables
+	argTypes:			<Collection>
+	executed:			<False>
+	receiverType:	<SMultiTypeInfo>
 	returnType:		<SMultiTypeInfo>
 "
 Class {

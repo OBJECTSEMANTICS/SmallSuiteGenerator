@@ -1,7 +1,7 @@
 "
 SAssignment is a node which is compossed by a variable and an expression.
 
-	For example: 
+For example: 
 	1.	
 		_var0 := 1.
 	

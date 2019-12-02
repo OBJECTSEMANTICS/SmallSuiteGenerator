@@ -4,10 +4,10 @@ Abstract class of nodes for
 	- factory methods (to represent the class creation messages),
 	- assertion messages (to represent assertion messages that match with an according requirement)
 
-    Instance Variables
-	args:		<Collection>
-	receiver:		<Symbol>
-	selector:		<Symbol>
+Instance Variables
+	args:		    <Collection>
+	receiver:		 <Symbol>
+	selector:		 <Symbol>
 "
 Class {
 	#name : #SAbstractMessage,

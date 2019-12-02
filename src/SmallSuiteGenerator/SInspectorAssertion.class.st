@@ -1,7 +1,7 @@
 "
 A SInspectorAssertion selects methods categorized as returnField and creates an instance for each one if the execution result is primitive.
 
-	For example: 
+For example: 
 	
 	List with classes' items categorized as returnField: 
 		Array with: '_var2' -> (2@10).

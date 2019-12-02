@@ -1,7 +1,7 @@
 "
 SMultiTypeInfo is a set of types.
 
-    Instance Variables
+Instance Variables
 	types:		<Set>
 "
 Class {

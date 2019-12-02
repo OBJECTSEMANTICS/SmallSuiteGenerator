@@ -2,9 +2,9 @@
 SConference is a proof class created to test project functionality
 
 Instance Variables
-	date:		<Object>
+	date:				<Object>
 	offerPrice:		<Object>
-	speaker:		<Object>
+	speaker:			<Object>
 
 "
 Class {

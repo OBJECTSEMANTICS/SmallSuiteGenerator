@@ -4,7 +4,7 @@ SSimpleFitnessFunction is an abstract class of simple fitness function like:
 	- SMethodCoverage -> It calculates the number of class methods executed
 	- SStatementCoverage -> It calculates the number of statements executed 
 	
-	Instance Variables
+Instance Variables
 	profiler:		<SSTypeCollector>
 	
 

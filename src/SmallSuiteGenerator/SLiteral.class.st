@@ -1,7 +1,7 @@
 "
 SLiteral is a node which is compossed by a value that is included in typeInfo scalars.
 
-	For example: 
+For example: 
 	1.	
 		10
 		

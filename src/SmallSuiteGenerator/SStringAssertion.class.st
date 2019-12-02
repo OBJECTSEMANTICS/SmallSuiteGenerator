@@ -3,7 +3,7 @@ A SStringAssertion select execution context's values that their class implement 
 
 From the resulting collection each item is used to create an instance of the class using #printString as selector.
 
-	For example: 
+For example: 
 	
 	List with classes' items which have implemented printing methods: 
 		Array with: '_var1' -> 'hello'

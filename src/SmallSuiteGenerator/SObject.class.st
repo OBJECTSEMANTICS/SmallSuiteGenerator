@@ -4,7 +4,7 @@ Superclass of almost all project classes, between them:
 	- AST classes used to create statements and assertions
 	- Core classes which configure the environment, manage assertions creation and so.
 	- GA classes that are responsible for testCase's fitness increasing. It means coverage augmentation.
-	- Info classes which transform the profiler result in nodes that are easier to use in the assertions and statementsncreation.
+	- Info classes which transform the profiler result in nodes that are easier to use in the assertions and statements creation.
 	- Profiler classes which get classes' info types.
 "
 Class {

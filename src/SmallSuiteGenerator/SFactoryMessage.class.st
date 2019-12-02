@@ -1,7 +1,8 @@
 "
 SFactoryMessage is a node that represents the class' creation with methods of meta class.
 
-	For example: 
+For example: 
+
 	1.	
 		SStack newStack.
 	
@@ -15,7 +16,8 @@ SFactoryMessage is a node that represents the class' creation with methods of me
 		#score: -> Message of receiver
 		_var1 -> Argument 
 		
-	3. SFoo new.
+	3. 
+		SFoo new.
 		
 		#SFoo new -> Receiver
 		#new -> Default selector

@@ -1,7 +1,7 @@
 "
 SParty is a proof class created to test project functionality
 
-    Instance Variables
+Instance Variables
 	date:		<Object>
 "
 Class {

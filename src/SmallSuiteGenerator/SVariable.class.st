@@ -1,7 +1,7 @@
 "
 SVariable is a node which is represented by a name and id.
 
-	For example: 
+For example: 
 	1.	
 		_var2
 		
