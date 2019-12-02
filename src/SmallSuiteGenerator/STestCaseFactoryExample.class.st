@@ -1,17 +1,20 @@
+"
+STestCaseFactoryExample contains some examples to run and validate the project functionality
+"
 Class {
-	#name : #SSmallSuiteGeneratorExample,
+	#name : #STestCaseFactoryExample,
 	#superclass : #SObject,
 	#category : #'SmallSuiteGenerator-GA'
 }
 
 { #category : #accessing }
-SSmallSuiteGeneratorExample >> clean [
+STestCaseFactoryExample >> clean [
 	Spy2 clean.
 S2Profiler remove.
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
+STestCaseFactoryExample >> exampleEmptyBlockOnPackages [
 	|facade|
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -30,7 +33,7 @@ SSmallSuiteGeneratorExample >> exampleEmptyBlockOnPackages [
 ]
 
 { #category : #'examples - onClass' }
-SSmallSuiteGeneratorExample >> exampleSSTeacherOnClass [
+STestCaseFactoryExample >> exampleSSTeacherOnClass [
 	| typeInfo facade|
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -54,7 +57,7 @@ SSmallSuiteGeneratorExample >> exampleSSTeacherOnClass [
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [
+STestCaseFactoryExample >> exampleSSTeacherOnPackages [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -81,7 +84,7 @@ SSmallSuiteGeneratorExample >> exampleSSTeacherOnPackages [
 ]
 
 { #category : #'examples - onClass' }
-SSmallSuiteGeneratorExample >> exampleSStackOnClass [
+STestCaseFactoryExample >> exampleSStackOnClass [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -106,7 +109,7 @@ SSmallSuiteGeneratorExample >> exampleSStackOnClass [
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleSStackOnPackages [
+STestCaseFactoryExample >> exampleSStackOnPackages [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -128,7 +131,7 @@ SSmallSuiteGeneratorExample >> exampleSStackOnPackages [
 ]
 
 { #category : #'examples - onClass' }
-SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
+STestCaseFactoryExample >> exampleSStudentOnClass [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -151,7 +154,7 @@ SSmallSuiteGeneratorExample >> exampleSStudentOnClass [
 ]
 
 { #category : #'examples - onClass' }
-SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
+STestCaseFactoryExample >> exampleWithSubclassToRun [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -177,7 +180,7 @@ SSmallSuiteGeneratorExample >> exampleWithSubclassToRun [
 ]
 
 { #category : #'examples - onClass' }
-SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
+STestCaseFactoryExample >> exampleWithWrongClassToRun [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
@@ -200,7 +203,7 @@ SSmallSuiteGeneratorExample >> exampleWithWrongClassToRun [
 ]
 
 { #category : #'examples - onPackages' }
-SSmallSuiteGeneratorExample >> exampleWithWrongRegexToRun [
+STestCaseFactoryExample >> exampleWithWrongRegexToRun [
 	| typeInfo facade |
 	self clean.
 	facade := SConfiguration classTestCaseFactory.
