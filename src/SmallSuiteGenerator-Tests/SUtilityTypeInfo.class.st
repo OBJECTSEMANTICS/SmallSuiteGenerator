@@ -1,3 +1,6 @@
+"
+SUtilityTypeInfo is a class which declares typeInfos for tests. 
+"
 Class {
 	#name : #SUtilityTypeInfo,
 	#superclass : #Object,

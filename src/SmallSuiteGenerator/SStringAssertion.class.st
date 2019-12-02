@@ -25,7 +25,7 @@ SStringAssertion class >> for: anExecutionContext [
 	^ (anExecutionContext associations
 		reject: [ :assoc | self isPrimitive: assoc value ])
 		collect: [ :assoc | self stringAssertionsOf: assoc ]
-		thenSelect: [ :stringAssertion |  stringAssertion isNotNil ]
+		thenSelect: [ :stringAssertion | stringAssertion isNil not ]
 ]
 
 { #category : #'instance creation' }
