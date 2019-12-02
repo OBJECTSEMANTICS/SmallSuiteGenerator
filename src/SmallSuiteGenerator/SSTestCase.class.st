@@ -1,3 +1,6 @@
+"
+SSTestCase is a subclass that defines or initializes some instance variables which are util in the genetic algorithm evolution
+"
 Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,

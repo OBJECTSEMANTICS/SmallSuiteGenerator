@@ -1,3 +1,6 @@
+"
+STestCaseFactoryPharo is a subclass that it is called when the project runs in Pharo
+"
 Class {
 	#name : #STestCaseFactoryPharo,
 	#superclass : #STestCaseFactory,

@@ -1,3 +1,6 @@
+"
+STestCaseFactory is an abstract class that represents the project facade. It contains the main methods to run the project
+"
 Class {
 	#name : #STestCaseFactory,
 	#superclass : #SObject,

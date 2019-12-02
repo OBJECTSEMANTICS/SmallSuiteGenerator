@@ -1,3 +1,6 @@
+"
+SConfigurationPharo is a subclass called when the project environment is running in Pharo. Furthermore, it defines parameters used in Pharo.
+"
 Class {
 	#name : #SConfigurationPharo,
 	#superclass : #SConfiguration,

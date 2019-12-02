@@ -1,3 +1,9 @@
+"
+SSExecutionContext takes a snapshot of the SSTestRunner's instance context. It saves the tempNames of variables and values as dictionary
+
+    Instance Variables
+	values:		<Dictionary>
+"
 Class {
 	#name : #SSExecutionContext,
 	#superclass : #SObject,

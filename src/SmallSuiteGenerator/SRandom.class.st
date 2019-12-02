@@ -1,3 +1,6 @@
+"
+SRandom is a subclass of Random that is responsible for select an item of the collection or collect items randomly in a collection
+"
 Class {
 	#name : #SRandom,
 	#superclass : #Random,

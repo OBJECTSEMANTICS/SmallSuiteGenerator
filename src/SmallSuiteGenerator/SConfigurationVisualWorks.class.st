@@ -1,3 +1,6 @@
+"
+SConfigurationVisualWorks is a subclass called when the project environment is running in VisualWorks.
+"
 Class {
 	#name : #SConfigurationVisualWorks,
 	#superclass : #SConfiguration,

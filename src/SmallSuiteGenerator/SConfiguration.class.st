@@ -1,3 +1,8 @@
+"
+SConfiguration is responsible for defining or instantiating some classes or values used in the project.
+
+Furthermore, some configuration parameters are defined depending the environment, it means Pharo or VisualWorks
+"
 Class {
 	#name : #SConfiguration,
 	#superclass : #SObject,

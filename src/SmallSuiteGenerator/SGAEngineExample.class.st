@@ -1,3 +1,6 @@
+"
+SGAEngineExample contains some examples to validate correct project functionality 
+"
 Class {
 	#name : #SGAEngineExample,
 	#superclass : #SObject,
