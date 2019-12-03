@@ -64,7 +64,7 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 		typeInfo: utility typeInfoSFooOnPackage1; 	" STON fromString: utility typeInfoStringSFoo3."
 		fitness: functionFitness;
 		targetClassName: #SFoo;
-		numberOfIterations: 5;
+		numberOfGenerations: 5;
 		run.
 	first := engine logs first fittestTestCase fitness
 		at: functionFitness functionName.
@@ -85,7 +85,7 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
-		numberOfIterations: 5;
+		numberOfGenerations: 5;
 		run.
 	first := engine logs first fittestTestCase fitness
 		at: functionFitness functionName.
@@ -106,7 +106,7 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
 		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
-		numberOfIterations: 5;
+		numberOfGenerations: 5;
 		run.
 	first := engine logs first fittestTestCase fitness
 		at: functionFitness functionName.

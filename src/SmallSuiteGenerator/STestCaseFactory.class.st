@@ -53,7 +53,7 @@ STestCaseFactory >> engine [
 	^ SGAEngine new
 		populationSize: 30;
 		numberOfStatements: 30;
-		numberOfIterations: 15;
+		numberOfGenerations: 15;
 		yourself
 ]
 
@@ -63,7 +63,7 @@ STestCaseFactory >> engineDefault [
 		populationSize: 30;
 		fitness: fitness;
 		numberOfStatements: 30;
-		numberOfIterations: 20;
+		numberOfGenerations: 20;
 		yourself.
 ]
 
@@ -147,7 +147,7 @@ STestCaseFactory >> moveClass: aClass [
 ]
 
 { #category : #initialization }
-STestCaseFactory >> numberOfIterations: aNumber [
+STestCaseFactory >> numberOfGenerations: aNumber [
 	numberOfIterations := aNumber.
 ]
 
@@ -187,7 +187,7 @@ STestCaseFactory >> setUp [
 	self initializeProfiler.
 	fitness profiler: profiler.
 	engine fitness: fitness.
-	engine numberOfIterations: numberOfIterations.
+	engine numberOfGenerations: numberOfIterations.
 	engine typeInfo: self typeInfo.
 	engine targetClassName: self targetClassName
 ]

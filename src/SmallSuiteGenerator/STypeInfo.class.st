@@ -4,10 +4,10 @@ STypeInfo is responsible for collecting the STypeCollector's main data and build
 It is composed of STypeClassInfo collection and each item likewise is formed by STypeMethodInfo collection.
 
 Instance Variables
-	types:						<Dictionary>
+	types:						<Dictionary>	All the classes (represented as an instance of STypeClassInfo) for which information is collected
 	classes:					<Dictionary>
 	noneAbstractClasses:	<Collection>
-	scalars: 					<Dictionary>
+	scalars: 					<Dictionary>	collection of classes that cannot be instrumented
 "
 Class {
 	#name : #STypeInfo,
