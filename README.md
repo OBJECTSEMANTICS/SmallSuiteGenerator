@@ -35,13 +35,13 @@ typeInfo := SSTypeCollector profile:[
 The second step is to configure the class `STestCaseFactory`.
 
 ``` Smalltalk
-STestCaseFactory new
+STestCaseFactoryPharo new
     typeInfo: typeInfo;
     fitness: SStatementCoverage new;
     targetClassName: #SSTeacher;
-    targetPackagesRegex:'SmallSuiteGenerator-Scenario';
-    outputPackageName:'SmallSuiteGenerator-Tests-Generated';
-    numberOfIterations: 20;
+    targetPackageRegex: 'SmallSuiteGenerator-Scenario';
+    outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
+    numberOfGenerations: 20;
     numberOfStatements: 3;
     createTestCases;
     visualize;
@@ -50,8 +50,8 @@ STestCaseFactory new
 				
 Some other options to configure are:
 
-* `fitness`: it will be used in genetic algorithm to improve its value either increasing or reducing, depending on the function. In this case we use: `SStatementCoverage`.
-* `targetClassName`: It represents the target class name that will be analyzed in the package.
+* `fitness`: used in genetic algorithm to improve its value either increasing or reducing, depending on the function. In this case we use: `SStatementCoverage`, which means that our generator will try to increase the statement coverage.
+* `targetClassName`: accepted represents the target class name that will be analyzed in the package.
 * `targetPackagesRegex`: Regular expression of the package where the class is found.
 * `outputPackageName`: Package name where the tests cases will be created.
 
