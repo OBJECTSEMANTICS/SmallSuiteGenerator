@@ -297,7 +297,7 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 				asTypeInfo;
 		fitness: aClassFitness;
 		targetClassName: aClass name;
-		numberOfIterations: 15;
+		numberOfGenerations: 15;
 		run.
 	^ engine
 ]
@@ -316,7 +316,7 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: a
 				profile: engine blockToExecute
 				onPackagesMatching: regex) asTypeInfo;
 		fitness: aClassFitness;
-		numberOfIterations: 15;
+		numberOfGenerations: 15;
 		run.
 	^ engine
 ]

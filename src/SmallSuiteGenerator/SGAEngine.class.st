@@ -36,9 +36,9 @@ Class {
 		'logs',
 		'typeInfo',
 		'fitness',
-		'numberOfIterations',
 		'selectionStrategy',
-		'targetClassName'
+		'targetClassName',
+		'numberOfGenerations'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -156,7 +156,7 @@ SGAEngine >> initialize [
 	logs := OrderedCollection new.
 	randomGenerator := SConfiguration newRandomGenerator.
 	populationSize := 100.
-	numberOfIterations := 100.
+	numberOfGenerations := 100.
 	selectionStrategy := SGATournamentSelection new.
 	self initializeMutationOperator.
 	self initializeCrossoverOperator
@@ -196,8 +196,9 @@ SGAEngine >> mutationRate: aFloat [
 ]
 
 { #category : #accessing }
-SGAEngine >> numberOfIterations: anObject [
-	numberOfIterations := anObject
+SGAEngine >> numberOfGenerations: anInteger [
+	"Set the number of generation the genetic algorithm has to run"
+	numberOfGenerations := anInteger
 ]
 
 { #category : #accessing }
@@ -206,8 +207,10 @@ SGAEngine >> numberOfStatements [
 ]
 
 { #category : #accessing }
-SGAEngine >> numberOfStatements: aInt [
-	numberOfStatements := aInt
+SGAEngine >> numberOfStatements: anInteger [
+	"Set the number of statements the initial population should have.
+	Ideally, a small number, such as 3, is convenient. The evolution makes the individuals grow over time"
+	numberOfStatements := anInteger
 ]
 
 { #category : #actions }
@@ -242,7 +245,7 @@ SGAEngine >> populationSize: aInteger [
 SGAEngine >> run [
 	population := self createRandomPopulation.
 	self computeFitness.
-	(1 to: numberOfIterations)
+	(1 to: numberOfGenerations)
 		do: [ :iteration | 
 			logs
 				add:
