@@ -19,7 +19,8 @@ Class {
 		'argTypes',
 		'isQuick',
 		'isDeprecated',
-		'receiver'
+		'receiver',
+		'scalars'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -48,6 +49,15 @@ STypeMethodInfo class >> type: aAssoc [
 STypeMethodInfo >> = other [
 
 	^ self class = other class and: [ selector = other selector and: [ receiver = other receiver and: [ returnType = other returnType and: [ argTypes = other argTypes and: [ isQuick = other isQuick  ] ] ] ] ]
+]
+
+{ #category : #adding }
+STypeMethodInfo >> addScalars: aDictionary [
+	aDictionary
+		associationsDo: [ :assoc | 
+			| aSet |
+			aSet := scalars at: assoc key ifAbsentPut: [ Set new ].
+			aSet add: assoc value ]
 ]
 
 { #category : #adding }
@@ -83,11 +93,11 @@ STypeMethodInfo >> copy [
 	copy := self class instance.
 	copy
 		selector: selector;
-		
 		isQuick: isQuick;
 		isDeprecated: isDeprecated;
 		returnType: returnType copy;
 		argTypes: argTypes copy;
+		scalars: scalars copy;
 		receiver: receiver copy.
 	^ copy
 ]
@@ -118,7 +128,8 @@ STypeMethodInfo >> initialize [
 	isQuick := false.
 	returnType := SMultiTypeInfo new.
 	receiver := SMultiTypeInfo new.
-	isDeprecated := false
+	isDeprecated := false.
+	scalars := Dictionary new
 ]
 
 { #category : #accessing }
@@ -391,6 +402,11 @@ STypeMethodInfo >> returnTypeFor: aReceiver [
 	^ self isSimpleTyped2
 		ifTrue: [ aReceiver returnType ] "it is the same than his father"
 		ifFalse: [ self returnType type ] "it return one random"
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> scalars [ 	
+	^ scalars
 ]
 
 { #category : #accessing }

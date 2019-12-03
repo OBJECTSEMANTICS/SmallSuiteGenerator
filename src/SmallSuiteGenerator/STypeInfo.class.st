@@ -43,10 +43,12 @@ STypeInfo >> accessMessagesFrom: aClassName [
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
 	"aTypeClassInfo typeInfo: self."
+
 	types
 		at: aTypeClassInfo typeName
 		ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
-		ifAbsentPut: aTypeClassInfo
+		ifAbsentPut: aTypeClassInfo.
+	self joinScalars: aTypeClassInfo scalars
 ]
 
 { #category : #accessing }
@@ -144,6 +146,7 @@ STypeInfo >> isAbstractClass: symbol [
 
 { #category : #actions }
 STypeInfo >> joinScalars: aDict [
+	self halt.
 	aDict associations
 		do: [ :assoc | 
 			scalars

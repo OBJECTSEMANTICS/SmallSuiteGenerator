@@ -12,7 +12,8 @@ Class {
 	#instVars : [
 		'typeName',
 		'methodTypes',
-		'classMethodTypes'
+		'classMethodTypes',
+		'scalars'
 	],
 	#classInstVars : [
 		'classMethodTypes'
@@ -65,8 +66,8 @@ STypeClassInfo >> addClassMethod: methodTypeInfo [
 { #category : #adding }
 STypeClassInfo >> addClassMethods: methodTypeInfos [
 	methodTypeInfos
-		do: [ :aMethodType | 
-			self addClassMethod: aMethodType ]
+		do: [ :aMethodType | self addClassMethod: aMethodType.
+			self addScalars: aMethodType scalars  ]
 ]
 
 { #category : #adding }
@@ -80,9 +81,17 @@ STypeClassInfo >> addMethod: methodTypeInfo [
 
 { #category : #adding }
 STypeClassInfo >> addMethods: methodTypeInfos [
-	methodTypeInfos
-		do: [ :aMethodType | 
-			self addMethod: aMethodType ]
+	methodTypeInfos do: [ :aMethodType | self addMethod: aMethodType.
+		self addScalars: aMethodType scalars  ]
+]
+
+{ #category : #adding }
+STypeClassInfo >> addScalars: aDictionary [
+	aDictionary
+		associationsDo: [ :assoc | 
+			| aSet |
+			aSet := scalars at: assoc key ifAbsentPut: [ Set new ].
+			aSet addAll: assoc value ]
 ]
 
 { #category : #'accessing - read only' }
@@ -146,6 +155,7 @@ STypeClassInfo >> hash [
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
 	classMethodTypes := Dictionary new.
+	scalars := Dictionary new
 ]
 
 { #category : #actions }
@@ -192,6 +202,11 @@ STypeClassInfo >> remainingOrAllMethods: aSymbol [
 { #category : #'accessing - read only' }
 STypeClassInfo >> reportFrequencyByFilter: aSelector [
 	^ (self filteredMethodsBy: aSelector) size
+]
+
+{ #category : #accessing }
+STypeClassInfo >> scalars [ 
+	^ scalars 
 ]
 
 { #category : #actions }
