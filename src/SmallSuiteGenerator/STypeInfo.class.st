@@ -47,7 +47,7 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 	types
 		at: aTypeClassInfo typeName
 		ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
-		ifAbsentPut: aTypeClassInfo.
+		ifAbsentPut:[ aTypeClassInfo].
 	self joinScalars: aTypeClassInfo scalars
 ]
 
@@ -146,13 +146,12 @@ STypeInfo >> isAbstractClass: symbol [
 
 { #category : #actions }
 STypeInfo >> joinScalars: aDict [
-	self halt.
-	aDict associations
-		do: [ :assoc | 
-			scalars
-				at: assoc key
-				ifPresent: [ :values | scalars at: assoc key put: (values union: assoc value) ]
-				ifAbsentPut: [ assoc value ] ]
+	aDict associations do: [ :assoc | 
+		scalars
+			at: assoc key
+			ifPresent: [ :values | 
+			scalars at: assoc key put: (values union: assoc value) asArray ]
+			ifAbsentPut: [ assoc value asArray ] ]
 ]
 
 { #category : #actions }
@@ -219,8 +218,8 @@ STypeInfo >> scalars [
 
 { #category : #accessing }
 STypeInfo >> scalars: aDictionary [
-	aDictionary
-		associationsDo: [ :assoc | self scalar: assoc key with: assoc value ]
+	aDictionary associationsDo: [ :assoc | 
+		self scalar: assoc key with: assoc value ]
 ]
 
 { #category : #'accessing structure variables' }

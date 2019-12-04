@@ -57,17 +57,19 @@ STypeClassInfo >> accessMessages [
 { #category : #adding }
 STypeClassInfo >> addClassMethod: methodTypeInfo [
 	"methodTypeInfo typeInfo: typeInfo."
+
 	classMethodTypes
 		at: methodTypeInfo selector
 		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
-		ifAbsentPut: methodTypeInfo
+		ifAbsentPut: methodTypeInfo.
+	self addScalars: methodTypeInfo scalars 
 ]
 
 { #category : #adding }
 STypeClassInfo >> addClassMethods: methodTypeInfos [
-	methodTypeInfos
-		do: [ :aMethodType | self addClassMethod: aMethodType.
-			self addScalars: aMethodType scalars  ]
+	methodTypeInfos do: [ :aMethodType | 
+		self addClassMethod: aMethodType.
+		]
 ]
 
 { #category : #adding }
@@ -76,22 +78,22 @@ STypeClassInfo >> addMethod: methodTypeInfo [
 	methodTypes
 		at: methodTypeInfo selector
 		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
-		ifAbsentPut: [ methodTypeInfo ]
+		ifAbsentPut: [ methodTypeInfo ].
+	self addScalars: methodTypeInfo scalars
 ]
 
 { #category : #adding }
 STypeClassInfo >> addMethods: methodTypeInfos [
 	methodTypeInfos do: [ :aMethodType | self addMethod: aMethodType.
-		self addScalars: aMethodType scalars  ]
+		 ]
 ]
 
 { #category : #adding }
 STypeClassInfo >> addScalars: aDictionary [
-	aDictionary
-		associationsDo: [ :assoc | 
-			| aSet |
-			aSet := scalars at: assoc key ifAbsentPut: [ Set new ].
-			aSet addAll: assoc value ]
+	aDictionary associationsDo: [ :assoc | 
+		| set  |
+		set := scalars at: assoc key ifAbsentPut: [ Set new ].
+		set addAll: assoc value ]
 ]
 
 { #category : #'accessing - read only' }

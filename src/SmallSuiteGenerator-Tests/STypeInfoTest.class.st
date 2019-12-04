@@ -266,11 +266,11 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
 	self
-		assertCollection: typeInfo scalars
-		hasSameElements: (Array with: #SmallInteger -> #(95 0 100)).
+		assertCollection: (typeInfo scalars values flatCollect: [ :val| val ])
+		hasSameElements: #(95 0 100).
 		
 	typeInfo := SSTypeCollector profile: [ SFoo new returnCollection; returnFloat; returnNum; returnString ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
-	self assertCollection: typeInfo scalars hasSameElements: (Array with: #SmallInteger -> #(0 4)
+	self assertCollection: typeInfo scalars associations hasSameElements: (Array with: #SmallInteger -> #(0 4)
 	with: #OrderedCollection -> (Array with: OrderedCollection new) with: #ByteString -> #('Hello') with: #SmallFloat64 -> #(2.3)
 	)
 ]

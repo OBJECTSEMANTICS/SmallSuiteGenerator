@@ -28,13 +28,13 @@ SSTypeCollectorMethod >> argTypes [
 { #category : #converting }
 SSTypeCollectorMethod >> asTypeInfo [
 	^ STypeMethodInfo new
-		selector: selector;
-		receiver: self receiverType;
-		returnType: self returnType;
-		argTypes: self argTypes;
-		isQuick: self isQuick;
-		addScalars: self dictLiterals;
-		isDeprecated: originalMethod isDeprecated
+		  selector: selector;
+		  receiver: self receiverType;
+		  returnType: self returnType;
+		  argTypes: self argTypes;
+		  isQuick: self isQuick;
+		  scalars: self dictLiterals;
+		  isDeprecated: originalMethod isDeprecated
 ]
 
 { #category : #hooks }
@@ -56,6 +56,8 @@ SSTypeCollectorMethod >> checkIfArgIsScalar: arg [
 { #category : #'as yet unclassified' }
 SSTypeCollectorMethod >> dictLiterals [
 	^ literals
+
+	
 ]
 
 { #category : #hooks }

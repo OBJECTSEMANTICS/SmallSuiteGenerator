@@ -52,15 +52,6 @@ STypeMethodInfo >> = other [
 ]
 
 { #category : #adding }
-STypeMethodInfo >> addScalars: aDictionary [
-	aDictionary
-		associationsDo: [ :assoc | 
-			| aSet |
-			aSet := scalars at: assoc key ifAbsentPut: [ Set new ].
-			aSet add: assoc value ]
-]
-
-{ #category : #adding }
 STypeMethodInfo >> addType: aType [
 	argTypes do: [ :arg | arg type: aType ].
 	returnType type: aType
@@ -407,6 +398,11 @@ STypeMethodInfo >> returnTypeFor: aReceiver [
 { #category : #accessing }
 STypeMethodInfo >> scalars [ 	
 	^ scalars
+]
+
+{ #category : #adding }
+STypeMethodInfo >> scalars: aDictionary [
+	scalars := aDictionary
 ]
 
 { #category : #accessing }
