@@ -1,3 +1,9 @@
+"
+Visit any RBProgramNode in the sintax tree and evaluate literal values
+
+    Instance Variables
+	literals:		<Dictionary>
+"
 Class {
 	#name : #SVisitorNode,
 	#superclass : #RBProgramNodeVisitor,

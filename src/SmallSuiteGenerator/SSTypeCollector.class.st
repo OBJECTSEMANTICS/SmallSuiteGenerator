@@ -43,7 +43,6 @@ SSTypeCollector >> asTypeInfo [
 	self allClasses do: [ :aSpyClass | 
 		aSpyClass className = 'BlockClosure' ifFalse: [ 
 			aSpyClass fillTypesOn: typeInfo ] ].
-	"typeInfo scalars: scalars copy."
 	typeInfo joinScalars: scalars copy.
 	^ typeInfo
 ]
