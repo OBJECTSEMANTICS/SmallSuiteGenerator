@@ -116,7 +116,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 				returnNum;
 				score;
 				score: 5 ]
-		onClass: SFoo.
+		forClassNamed: classNameSFoo .
 	typeInfo := profile asTypeInfo.
 	self assert: (typeInfo types at: classNameSFoo) methodTypes size equals: 8.
 	self
