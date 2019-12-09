@@ -10,6 +10,9 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 	spec
 		for: #common
 		do: [ spec
+				baseline: 'SpyLite'
+				with: [ spec repository: 'github://Lin777/SpyLite:master/src' ].
+			spec
 				baseline: 'Spy2'
 				with: [ spec repository: 'github://ObjectProfile/Spy2:v1.0/src' ].
 			spec

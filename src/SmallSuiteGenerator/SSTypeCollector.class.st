@@ -6,7 +6,7 @@ Instance Variables
 "
 Class {
 	#name : #SSTypeCollector,
-	#superclass : #S2Profiler,
+	#superclass : #SLProfiler,
 	#instVars : [
 		'scalars'
 	],
@@ -16,7 +16,7 @@ Class {
 { #category : #hooks }
 SSTypeCollector class >> profile: aBlock onPackagesMatching: regex [
 
-	^ (self new profile: aBlock onPackagesMatching: regex) asTypeInfo.
+	^ (self profile: aBlock inPackagesMatching: regex) asTypeInfo.
 ]
 
 { #category : #hooks }

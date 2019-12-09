@@ -3,7 +3,7 @@ SSTypeCollectorPackage is a subclass of Package that collects packages types
 "
 Class {
 	#name : #SSTypeCollectorPackage,
-	#superclass : #S2Package,
+	#superclass : #SLPackage,
 	#category : #'SmallSuiteGenerator-Profiler'
 }
 

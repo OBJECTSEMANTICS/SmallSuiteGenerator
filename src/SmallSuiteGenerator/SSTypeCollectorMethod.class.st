@@ -9,7 +9,7 @@ Instance Variables
 "
 Class {
 	#name : #SSTypeCollectorMethod,
-	#superclass : #S2Method,
+	#superclass : #SLMethod,
 	#instVars : [
 		'returnType',
 		'argTypes',
