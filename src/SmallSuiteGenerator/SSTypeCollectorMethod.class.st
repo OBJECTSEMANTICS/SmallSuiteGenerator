@@ -14,7 +14,8 @@ Class {
 		'returnType',
 		'argTypes',
 		'receiverType',
-		'executed'
+		'executed',
+		'literals'
 	],
 	#category : #'SmallSuiteGenerator-Profiler'
 }
@@ -27,20 +28,22 @@ SSTypeCollectorMethod >> argTypes [
 { #category : #converting }
 SSTypeCollectorMethod >> asTypeInfo [
 	^ STypeMethodInfo new
-		selector: selector;
-		receiver: self receiverType;
-		returnType: self returnType;
-		argTypes: self argTypes;
-		isQuick: self isQuick;
-		isDeprecated: originalMethod isDeprecated
+		  selector: selector;
+		  receiver: self receiverType;
+		  returnType: self returnType;
+		  argTypes: self argTypes;
+		  isQuick: self isQuick;
+		  scalars: self dictLiterals;
+		  isDeprecated: originalMethod isDeprecated
 ]
 
 { #category : #hooks }
 SSTypeCollectorMethod >> beforeRun: methodName with: listOfArguments in: receiver [
 	self initArgsTypesWith: listOfArguments.
 	self saveReceiver: receiver.
+	self selectLiteralsOf: self originalMethod sourceCode.
 	listOfArguments do: [ :arg | self checkIfArgIsScalar: arg ].
-	executed := true.
+	executed := true
 ]
 
 { #category : #hooks }
@@ -48,6 +51,13 @@ SSTypeCollectorMethod >> checkIfArgIsScalar: arg [
 	
 	(self profiler isScalar: arg)
 		ifTrue: [ self profiler addScalar: arg ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTypeCollectorMethod >> dictLiterals [
+	^ literals
+
+	
 ]
 
 { #category : #hooks }
@@ -67,6 +77,7 @@ SSTypeCollectorMethod >> initialize [
 	returnType := SMultiTypeInfo new.
 	receiverType := SMultiTypeInfo new.
 	executed := false.
+	literals := Dictionary new
 ]
 
 { #category : #testing }
@@ -106,6 +117,15 @@ SSTypeCollectorMethod >> saveReceiver: anObject [
 			(anObject isClass
 				ifTrue: [ self typeName: anObject ]
 				ifFalse: [ self typeName: anObject class ])
+]
+
+{ #category : #hooks }
+SSTypeCollectorMethod >> selectLiteralsOf: string [
+	| node visitor |
+	node := RBParser parseMethod: string.
+	visitor := SVisitorNode new.
+	node acceptVisitor: visitor.
+	literals := visitor literals
 ]
 
 { #category : #'as yet unclassified' }

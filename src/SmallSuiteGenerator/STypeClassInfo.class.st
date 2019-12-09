@@ -12,7 +12,8 @@ Class {
 	#instVars : [
 		'typeName',
 		'methodTypes',
-		'classMethodTypes'
+		'classMethodTypes',
+		'scalars'
 	],
 	#classInstVars : [
 		'classMethodTypes'
@@ -56,17 +57,19 @@ STypeClassInfo >> accessMessages [
 { #category : #adding }
 STypeClassInfo >> addClassMethod: methodTypeInfo [
 	"methodTypeInfo typeInfo: typeInfo."
+
 	classMethodTypes
 		at: methodTypeInfo selector
 		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
-		ifAbsentPut: methodTypeInfo
+		ifAbsentPut: methodTypeInfo.
+	self addScalars: methodTypeInfo scalars 
 ]
 
 { #category : #adding }
 STypeClassInfo >> addClassMethods: methodTypeInfos [
-	methodTypeInfos
-		do: [ :aMethodType | 
-			self addClassMethod: aMethodType ]
+	methodTypeInfos do: [ :aMethodType | 
+		self addClassMethod: aMethodType.
+		]
 ]
 
 { #category : #adding }
@@ -75,14 +78,22 @@ STypeClassInfo >> addMethod: methodTypeInfo [
 	methodTypes
 		at: methodTypeInfo selector
 		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
-		ifAbsentPut: [ methodTypeInfo ]
+		ifAbsentPut: [ methodTypeInfo ].
+	self addScalars: methodTypeInfo scalars
 ]
 
 { #category : #adding }
 STypeClassInfo >> addMethods: methodTypeInfos [
-	methodTypeInfos
-		do: [ :aMethodType | 
-			self addMethod: aMethodType ]
+	methodTypeInfos do: [ :aMethodType | self addMethod: aMethodType.
+		 ]
+]
+
+{ #category : #adding }
+STypeClassInfo >> addScalars: aDictionary [
+	aDictionary associationsDo: [ :assoc | 
+		| set  |
+		set := scalars at: assoc key ifAbsentPut: [ Set new ].
+		set addAll: assoc value ]
 ]
 
 { #category : #'accessing - read only' }
@@ -146,6 +157,7 @@ STypeClassInfo >> hash [
 STypeClassInfo >> initialize [
 	methodTypes := Dictionary new.
 	classMethodTypes := Dictionary new.
+	scalars := Dictionary new
 ]
 
 { #category : #actions }
@@ -192,6 +204,11 @@ STypeClassInfo >> remainingOrAllMethods: aSymbol [
 { #category : #'accessing - read only' }
 STypeClassInfo >> reportFrequencyByFilter: aSelector [
 	^ (self filteredMethodsBy: aSelector) size
+]
+
+{ #category : #accessing }
+STypeClassInfo >> scalars [ 
+	^ scalars 
 ]
 
 { #category : #actions }

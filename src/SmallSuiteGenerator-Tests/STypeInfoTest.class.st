@@ -94,7 +94,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		hasSameElements: (Array with: classNameSConference).
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements: (Array with: classNameSStudent with: classNameSmallInteger with: (self nameOf: False) with: classNameByteString)
+		hasSameElements: (Array with: classNameSStudent with: classNameSmallInteger with: (self nameOf: False) with: classNameByteString with: (self nameOf: 2.3 class))
 ]
 
 { #category : #tests }
@@ -257,6 +257,22 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 	self
 		assertCollection: ((typeInfo accessMessagesFrom: (self nameOf: SSTeacher)) collect: #selector)
 		hasSameElements: #(#idTeacher #yearsWorkExperience #name #id)
+]
+
+{ #category : #tests }
+STypeInfoTest >> testAsTypeInfoScalars [
+	| typeInfo |
+	typeInfo := SSTypeCollector
+		profile: [ SConference price: 95 ]
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+	self
+		assertCollection: (typeInfo scalars values flatCollect: [ :val| val ])
+		hasSameElements: #(95 0 100).
+		
+	typeInfo := SSTypeCollector profile: [ SFoo new returnCollection; returnFloat; returnNum; returnString ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+	self assertCollection: typeInfo scalars associations hasSameElements: (Array with: #SmallInteger -> #(0 4)
+	with: #OrderedCollection -> (Array with: OrderedCollection new) with: #ByteString -> #('Hello') with: #SmallFloat64 -> #(2.3)
+	)
 ]
 
 { #category : #tests }

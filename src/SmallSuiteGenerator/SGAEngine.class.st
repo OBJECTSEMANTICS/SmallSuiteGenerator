@@ -115,16 +115,15 @@ SGAEngine >> createNewPopulation [
 
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
-	^ (1 to: 30)
-		collect: [ :val | 
-			| value test |
-			value := SConfiguration randomGenerator next * 30 + 1.
-			test := SSTestCase with: typeInfo.
-			test
-				addTargetClassName: self targetClassName;
-				addFactoryMessage: self targetClassName;
-				generateStatements: value.
-			test ]
+	^ (1 to: populationSize) collect: [ :val | 
+		  | value test |
+		  value := SConfiguration randomGenerator next * populationSize + 1.
+		  test := SSTestCase with: typeInfo.
+		  test
+			  addTargetClassName: self targetClassName;
+			  addFactoryMessage: self targetClassName;
+			  generateStatements: value.
+		  test ]
 ]
 
 { #category : #accessing }
@@ -178,11 +177,6 @@ SGAEngine >> initializeMutationOperator [
 { #category : #accessing }
 SGAEngine >> logs [
 	^ logs copy
-]
-
-{ #category : #accessing }
-SGAEngine >> logs1 [
-	^ logs
 ]
 
 { #category : #actions }
