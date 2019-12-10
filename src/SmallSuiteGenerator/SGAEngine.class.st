@@ -74,6 +74,18 @@ SGAEngine >> clean [
 	fitness ifNotNil: [ fitness tearDown ]
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> collectFitnessByName [
+	| dictFit |
+	dictFit := Dictionary new.
+	((population collect: #fitness) flatCollect: #associations) do: [ 
+		:assoc | 
+		| aValue |
+		aValue := dictFit at: assoc key ifAbsentPut: [ OrderedCollection new].
+		aValue add: assoc value].
+	^ dictFit
+]
+
 { #category : #actions }
 SGAEngine >> computeFitness [
 	fitness compute: population.
@@ -208,6 +220,12 @@ SGAEngine >> numberOfStatements: anInteger [
 ]
 
 { #category : #actions }
+SGAEngine >> pickAverageFitTest: aDictionary [
+	^ (aDictionary keys collect: [ :key | 
+		   key -> (aDictionary at: key) average ]) asDictionary
+]
+
+{ #category : #actions }
 SGAEngine >> pickBestTest [
 	|best|
 	best := population first.
@@ -218,6 +236,22 @@ SGAEngine >> pickBestTest [
 		(valB > valA) ifTrue:[ best := test.].
 		].
 	^ best.
+]
+
+{ #category : #actions }
+SGAEngine >> pickMinFitTest: aDictionary [
+	^ (aDictionary keys collect: [ :key | 
+		   key -> (aDictionary at: key) min ]) asDictionary
+	"| dictFit |
+	dictFit := population first fitness.
+	((population collect: #fitness) flatCollect: #associations) do: [ 
+		:assoc | 
+		| aValue |
+		aValue := dictFit at: assoc key ifAbsent: [ assoc key ].
+		dictFit
+			at: assoc key
+			put: (Array with: assoc value with: aValue) min ].
+	^ dictFit"
 ]
 
 { #category : #accessing }
@@ -241,15 +275,20 @@ SGAEngine >> run [
 	self computeFitness.
 	(1 to: numberOfGenerations)
 		do: [ :iteration | 
-			logs
-				add:
-					(SGALog new
-						generationNumber: iteration;
-						fittestTestCase: self pickBestTest;
-						timeToProduceGeneration: Time now asSeconds;
-						yourself).
+			| t log aDictionary |
+			t := Time now asSeconds.
+			log := SGALog new
+				       generationNumber: iteration;
+				       fittestTestCase: self pickBestTest;
+				       timeToProduceGeneration: Time now asSeconds - t.
+			aDictionary := self collectFitnessByName.
+			log
+				lowestFit: (self pickMinFitTest:  aDictionary);
+				averageFit: (self pickAverageFitTest: aDictionary).
+			logs add: log.
 			self createNewPopulation ]
-		displayingProgress: [ :iteration | 'Evolving - Iteration' , iteration printString ]
+		displayingProgress: [ :iteration | 
+		'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }
