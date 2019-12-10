@@ -13,9 +13,6 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'SpyLite'
 				with: [ spec repository: 'github://Lin777/SpyLite:master/src' ].
 			spec
-				baseline: 'Spy2'
-				with: [ spec repository: 'github://ObjectProfile/Spy2:v1.0/src' ].
-			spec
 				baseline: 'MuTalk'
 				with: [ spec repository: 'github://pavel-krivanek/mutalk/src' ].
 			spec
@@ -29,7 +26,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 	with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
 			spec
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('Spy2' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
+					with: [ spec requires: #('SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
 				package: 'SmallSuiteGenerator-Tests'
