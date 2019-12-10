@@ -165,7 +165,7 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	classNameSFoo := self nameOf: SFoo.
 	profile := SSTypeCollector
 		profile: [ SFoo new return: OrderedCollection ]
-		onClass: SFoo.
+		forClassNamed: classNameSFoo.
 	typeInfo := profile asTypeInfo.
 	self assert: (typeInfo types at: classNameSFoo) methodTypes size equals: 2.
 	self
@@ -190,7 +190,7 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 	classNameSFoo := self nameOf: SFoo.
 	profile := SSTypeCollector
 		profile: [ SFoo new return: nil ]
-		onClass: SFoo.
+		forClassNamed: classNameSFoo.
 	typeInfo := profile asTypeInfo.
 	self assert: (typeInfo types at: classNameSFoo) methodTypes size equals: 2.
 	self
@@ -220,7 +220,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onClass: SSTeacher) asTypeInfo.
+		forClassNamed: classNameSTeacher ) asTypeInfo.
 	self
 		assertCollection: ((typeInfo types at: classNameSTeacher) methodTypes values collect: #selector)
 		hasSameElements: #(#idTeacher #initialize #nickname #yearsWorkExperience).
@@ -344,10 +344,11 @@ STypeInfoTest >> testEquals [
 
 { #category : #tests }
 STypeInfoTest >> testFactoryMessages [
-	| typeInfo |
+	| typeInfo classNameStudent |
+	classNameStudent := self nameOf: SStudent.
 	typeInfo := (SSTypeCollector
 		profile: [ SStudent name: 'Mary' ]
-		onClass: SStudent) asTypeInfo.
+		forClassNamed: classNameStudent ) asTypeInfo.
 	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
 	typeInfo := (SSTypeCollector
 		profile: [ SStudent name: 'Mary' ]

@@ -16,11 +16,14 @@ SSTypeCollectorClass class >> spyClassForMethod [
 SSTypeCollectorClass >> fillTypesOn: aTypeInfo [
 	| aTypeClass instanceMethods classMethods |
 	aTypeClass := STypeClassInfo newFrom: self typeName.
+	instanceMethods := OrderedCollection new.
+	classMethods := OrderedCollection new.
+	(self typeName includesAll: ' class') ifFalse: [ 
 	instanceMethods := (self methods reject: #isTest)
-		select: #wasExecuted.
-	classMethods := (self metaclassSpy methods reject: #isTest)
+		select: #wasExecuted] ifTrue: [ 
+	classMethods := (self methods reject: #isTest)
 		select:
-			[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ].
+			[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ]].
 	aTypeClass
 		addMethods: (instanceMethods collect: #asTypeInfo);
 		addClassMethods: (classMethods collect: #asTypeInfo).
