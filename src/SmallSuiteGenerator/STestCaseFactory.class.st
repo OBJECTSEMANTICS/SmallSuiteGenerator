@@ -251,8 +251,7 @@ STestCaseFactory >> visualize [
 			connectColor: (p at: index);
 			noDot;
 			points: association value;
-			label: association key;
-			y: #yourself.
+			label: association key.
 		g add: d ].
 	g legend addText: 'Fitness evolution'.
 	g open

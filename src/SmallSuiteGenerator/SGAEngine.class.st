@@ -118,9 +118,7 @@ SGAEngine >> createNewPopulation [
 				with: P1
 				with: P2)
 				asSortedCollection: [ :a :b | 
-					(self fitnessFor: a) = (self fitnessFor: b)
-						ifTrue: [ a length < b length ]
-						ifFalse: [ (self fitnessFor: a) > (self fitnessFor: b) ] ].
+					self is: a betterThan: b ].
 			newPopulation addAll: (options first: 2) ].
 	population := newPopulation
 ]
@@ -186,6 +184,16 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator randomGenerator: randomGenerator
 ]
 
+{ #category : #testing }
+SGAEngine >> is: testCase1 betterThan: testCase2 [
+	|fitness1 fitness2|
+	fitness1 := self fitnessFor: testCase1.
+	fitness2 := self fitnessFor: testCase2.
+		^ 			fitness1 = fitness2
+						ifTrue: [ testCase1 length < testCase2 length ]
+						ifFalse: [ fitness1 > fitness2 ]
+]
+
 { #category : #accessing }
 SGAEngine >> logs [
 	^ logs copy
@@ -229,13 +237,10 @@ SGAEngine >> pickAverageFitTest: aDictionary [
 SGAEngine >> pickBestTest [
 	|best|
 	best := population first.
-	population do:[:test|
-		|valA valB|
-		valA := self fitnessFor: best.
-		valB := self fitnessFor: test.
-		(valB > valA) ifTrue:[ best := test.].
-		].
-	^ best.
+	population do: [ :test | 
+		(self is: test betterThan: best) ifTrue: [ best := test ]
+	].
+	^ best
 ]
 
 { #category : #actions }
