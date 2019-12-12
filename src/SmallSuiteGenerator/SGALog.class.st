@@ -16,10 +16,22 @@ Class {
 		'generationNumber',
 		'timeToProduceGeneration',
 		'fittestTestCase',
-		'mutationResult'
+		'mutationResult',
+		'lowestFit',
+		'averageFit'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
+
+{ #category : #accessing }
+SGALog >> averageFit [
+	^ averageFit 
+]
+
+{ #category : #accessing }
+SGALog >> averageFit: aNumber [
+	averageFit := aNumber
+]
 
 { #category : #accessing }
 SGALog >> fitness [ 	
@@ -50,6 +62,16 @@ SGALog >> generationNumber: anObject [
 { #category : #initialization }
 SGALog >> initialize [ 	
 	mutationResult := Dictionary new
+]
+
+{ #category : #accessing }
+SGALog >> lowestFit [
+	^ lowestFit
+]
+
+{ #category : #accessing }
+SGALog >> lowestFit: aNumber [
+	lowestFit := aNumber
 ]
 
 { #category : #accessing }
