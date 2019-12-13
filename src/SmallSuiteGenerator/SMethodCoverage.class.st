@@ -18,10 +18,11 @@ SMethodCoverage >> run: testCaseCollection [
 	string := self functionName.
 	testCaseCollection
 		do: [ :testCase | 
+			|aTestCase|
 			profiler cleanBlocksOfMethods.
-			testCase runWithoutAssertions.
-			testCase fitness at:string put: profiler methodCoverage.
-			testCase fitnessByClass at: string put: profiler methodCoverage1 ]
+			aTestCase := testCase runWithoutAssertions.
+			aTestCase fitness at:string put: profiler methodCoverage.
+			aTestCase fitnessByClass at: string put: profiler methodCoverage1 ]
 ]
 
 { #category : #actions }

@@ -894,6 +894,11 @@ SSTestShifter >> randomLiteralClassName [
 				error: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ]
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestShifter >> randomStatement [
+	^ randomGenerator selectAtRandom: self statements 
+]
+
 { #category : #repairing }
 SSTestShifter >> referencesIndexes: expression [
 	^ ((expression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])

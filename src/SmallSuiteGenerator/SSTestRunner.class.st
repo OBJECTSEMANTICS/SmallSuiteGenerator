@@ -2,7 +2,6 @@ Class {
 	#name : #SSTestRunner,
 	#superclass : #TestCase,
 	#instVars : [
-		'testCase',
 		'invariants'
 	],
 	#category : #'SmallSuiteGenerator-Core'
@@ -23,6 +22,24 @@ SSTestRunner >> analyze: aSmalltalkContext [
 SSTestRunner >> compile: aBlock [
 	self class compile: ('performTest
 	',aBlock body formattedCode)
+]
+
+{ #category : #compiling }
+SSTestRunner >> compile: aTestCase usingParsing: aSymbol [ 
+	| compiled testCaseCopy |
+	compiled := false.
+	testCaseCopy := aTestCase.
+	"testCaseCopy := aTestCase copy."
+	[ compiled ] whileFalse: [ 
+		|aBlock | 
+		aBlock := testCaseCopy perform: aSymbol.
+		[ self compile: aBlock.
+		compiled := true ] on: Error do: [ 
+		
+			testCaseCopy removeStatementNoRepairing: (testCaseCopy randomStatement) 
+		] 
+	].
+	^ testCaseCopy 
 ]
 
 { #category : #compiling }
@@ -59,14 +76,23 @@ _var4 := _var2 canRegister: _var3.
 
 { #category : #running }
 SSTestRunner >> run: aSTestCase [
-	self compile: aSTestCase parseTreeWithAssertions.
+	|testCase|
+  	[testCase := self compile: aSTestCase parseTreeWithAssertions] on: Error 
+	do: [ SError signal: 'Error to compile the testCase with assertions.' ].
+  	self runTest.
+	^ testCase
+]
+
+{ #category : #'as yet unclassified' }
+SSTestRunner >> runTest [
 	self setTestSelector: #performTest.
-	^ self run.
+	self run.
 ]
 
 { #category : #running }
 SSTestRunner >> runWithoutAssertions: aSTestCase [
-	self compile: aSTestCase parseTree.
-	self setTestSelector: #performTest.
-	^ self run.
+	| testCase |
+  	testCase := self compile: aSTestCase usingParsing: #parseTree.
+  	self runTest.
+	^ testCase
 ]

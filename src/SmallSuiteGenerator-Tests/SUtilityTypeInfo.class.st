@@ -8,6 +8,18 @@ Class {
 }
 
 { #category : #tests }
+SUtilityTypeInfo >> testCaseOf: aTypeInfo withTargetClassName: symbol [
+	^ (SSTestCase with: aTypeInfo ) 
+		addTargetClassName: symbol; 
+		generateStatements: 80 
+]
+
+{ #category : #tests }
+SUtilityTypeInfo >> testCaseSFoo [
+	^ self testCaseOf: self typeInfoSFoo1 withTargetClassName: #SFoo
+]
+
+{ #category : #tests }
 SUtilityTypeInfo >> testSuiteOf: aCollection withTargetClassName: symbol [
 	self
 		assert: aCollection size >= 2
