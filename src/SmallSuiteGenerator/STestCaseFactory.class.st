@@ -136,6 +136,14 @@ STestCaseFactory >> fitnessValues [
 	^ fitValues
 ]
 
+{ #category : #ui }
+STestCaseFactory >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'View';
+		initializeView: [ self visualize ]
+]
+
 { #category : #initialization }
 STestCaseFactory >> initialize [
 	super initialize.
@@ -254,5 +262,5 @@ STestCaseFactory >> visualize [
 			label: association key.
 		g add: d ].
 	g legend addText: 'Fitness evolution'.
-	g open
+	^ g
 ]
