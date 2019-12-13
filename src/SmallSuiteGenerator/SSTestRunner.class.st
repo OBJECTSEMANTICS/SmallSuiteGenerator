@@ -55,7 +55,9 @@ SSTestRunner >> evaluate: aSTestCase [
 	node body
 		addNode: (SConfiguration rbParserClass parseExpression: '^ self analyze: thisContext').
 	self compile: node.
-	^ self performTest
+	^ [ self performTest ] on: Error do: [ self halt.
+		aSTestCase removeStatementNoRepairing: (aSTestCase randomStatement ).
+		self evaluate: aSTestCase ]
 ]
 
 { #category : #initialization }
