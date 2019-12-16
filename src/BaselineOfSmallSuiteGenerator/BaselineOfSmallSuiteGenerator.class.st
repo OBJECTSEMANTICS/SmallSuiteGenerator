@@ -11,13 +11,10 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		for: #common
 		do: [ spec
 				baseline: 'SpyLite'
-				with: [ spec repository: 'github://Lin777/SpyLite:master/src' ].
+				with: [ spec repository: 'github://Lin777/SpyLite:SpyLite-Coverage/src' ].
 			spec
 				baseline: 'MuTalk'
 				with: [ spec repository: 'github://pavel-krivanek/mutalk/src' ].
-			spec
-				baseline: 'SBTestCoverage'
-				with: [ spec repository: 'github://OBJECTSEMANTICS/SBTestCoverage' ].
 			spec
 				baseline: 'NeoCSV'
 				with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
