@@ -30,4 +30,5 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ] ]
+					""
 ]
