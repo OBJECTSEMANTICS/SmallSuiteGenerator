@@ -36,11 +36,6 @@ STestCaseFactory >> classesForRegex: regexExpressions [
 ]
 
 { #category : #actions }
-STestCaseFactory >> cleanInstrumentation [
-	self subclassResponsibility
-]
-
-{ #category : #actions }
 STestCaseFactory >> createTestCases [
 	self checkInvariants.
 	self setUp.
@@ -215,7 +210,7 @@ STestCaseFactory >> targetPackageRegex: anObject [
 
 { #category : #actions }
 STestCaseFactory >> tearDown [
-	self cleanInstrumentation.
+	self uninstall.
 	self exportTests
 ]
 
@@ -227,6 +222,11 @@ STestCaseFactory >> typeInfo [
 { #category : #accessing }
 STestCaseFactory >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo
+]
+
+{ #category : #actions }
+STestCaseFactory >> uninstall [
+	self subclassResponsibility
 ]
 
 { #category : #visualization }
