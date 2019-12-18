@@ -21,6 +21,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #converting }
+STypeClassInfo class >> asClassInfo: aSpyClass [
+	^ self new asClassInfo: aSpyClass 
+]
+
 { #category : #'instance creation' }
 STypeClassInfo class >> newFrom: aClassName [
 	^ self new
@@ -99,6 +104,28 @@ STypeClassInfo >> addScalars: aDictionary [
 { #category : #'accessing - read only' }
 STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> asClassInfo: aSpyClass [
+	| aTypeClass instanceMethods classMethods |
+	aTypeClass := self class newFrom: aSpyClass typeName.
+	instanceMethods := OrderedCollection new.
+	classMethods := OrderedCollection new.
+	(aSpyClass typeName includesAll: ' class')
+		ifFalse: [ instanceMethods := (aSpyClass methods reject: #isTest)
+				select: #wasExecuted ]
+		ifTrue: [ classMethods := (aSpyClass methods reject: #isTest)
+				select:
+					[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ] ].
+	aTypeClass
+		addMethods:
+			(instanceMethods
+				collect: [ :instMeth | " #asTypeInfo" STypeMethodInfo methodAsInfo: instMeth ]);
+		addClassMethods:
+			(classMethods
+				collect: [ :instMeth | "#asTypeInfo" STypeMethodInfo methodAsInfo: instMeth ]).
+	^ aTypeClass
 ]
 
 { #category : #'accessing - read only' }

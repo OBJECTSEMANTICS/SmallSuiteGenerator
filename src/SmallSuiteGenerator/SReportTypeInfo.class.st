@@ -69,12 +69,17 @@ SReportTypeInfo class >> exportReportData: projectName usingFilter: aSymbol [
 
 { #category : #'export as CSV' }
 SReportTypeInfo class >> exportReportData: projectName withName: aString [
-	self exportData: (self profilerProject: projectName) asTypeInfo onCSV: aString
+	self
+		exportData: (STypeInfo asTypeInfo: (self profilerProject: projectName))
+		onCSV: aString
 ]
 
 { #category : #'export as CSV' }
 SReportTypeInfo class >> exportReportData: projectName withName: aString usingFilter: aSymbol [
-	self exportData: (self profilerProject: projectName) asTypeInfo onCSV: aString usingFilter: aSymbol
+	self
+		exportData: (STypeInfo asTypeInfo: (self profilerProject: projectName))
+		onCSV: aString
+		usingFilter: aSymbol
 ]
 
 { #category : #export }
@@ -89,7 +94,7 @@ SReportTypeInfo class >> exportReportsCaseStudyAndFrequency: fileNames of: proje
 			profiler := self profilerProject: projectName.
 			Array
 				with: (self dataCaseStudy: profiler from: projectName)
-				with: (self dataFrequency: profiler asTypeInfo from: projectName) ].
+				with: (self dataFrequency: (STypeInfo asTypeInfo: profiler) from: projectName) ].
 	self writeReport: fileNames first ofCaseStudy: (data collect: #first).
 	self
 		writeReport: fileNames second
