@@ -62,7 +62,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 		do: [ :aSpyClass | 
 			aSpyClass className = 'BlockClosure'
 				ifFalse: [ typeInfo addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
-	typeInfo joinScalars: scalars copy.
+	typeInfo joinScalars: aTypeCollector scalars copy.
 	^ typeInfo
 ]
 

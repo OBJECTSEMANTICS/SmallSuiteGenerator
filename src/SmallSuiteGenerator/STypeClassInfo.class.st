@@ -95,10 +95,13 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 
 { #category : #adding }
 STypeClassInfo >> addScalars: aDictionary [
-	aDictionary associationsDo: [ :assoc | 
-		| set  |
-		set := scalars at: assoc key ifAbsentPut: [ Set new ].
-		set addAll: assoc value ]
+	aDictionary associations
+		do: [ :assoc | 
+			scalars
+				at: assoc key
+				ifPresent:
+					[ :values | scalars at: assoc key put: (values union: assoc value) asArray ]
+				ifAbsentPut: [ assoc value asArray ] ]
 ]
 
 { #category : #'accessing - read only' }
@@ -121,10 +124,10 @@ STypeClassInfo >> asClassInfo: aSpyClass [
 	aTypeClass
 		addMethods:
 			(instanceMethods
-				collect: [ :instMeth | " #asTypeInfo" STypeMethodInfo methodAsInfo: instMeth ]);
+				collect: [ :instMeth | " #asTypeInfo" STypeMethodInfo asMethodInfo: instMeth ]);
 		addClassMethods:
 			(classMethods
-				collect: [ :instMeth | "#asTypeInfo" STypeMethodInfo methodAsInfo: instMeth ]).
+				collect: [ :instMeth | "#asTypeInfo" STypeMethodInfo asMethodInfo: instMeth ]).
 	^ aTypeClass
 ]
 

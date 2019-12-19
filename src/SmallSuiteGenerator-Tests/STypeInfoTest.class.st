@@ -305,13 +305,13 @@ STypeInfoTest >> testAsTypeInfoScalars [
 	self
 		assertCollection: (typeInfo scalars values flatCollect: [ :val | val ])
 		hasSameElements: #(95 0 100).
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ SFoo new
 				returnCollection;
 				returnFloat;
 				returnNum;
 				returnString ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
@@ -397,15 +397,15 @@ STypeInfoTest >> testFactoryMessages [
 		profile: [ SStudent name: 'Mary' ]
 		forClassNamed: classNameStudent).
 	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ SStudent name: 'Mary' ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SStudent) collect: #selector)
 		hasSameElements: #(#name:).
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ SConference price: 95 ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SConference) collect: #selector)
 		hasSameElements: #(#price:)

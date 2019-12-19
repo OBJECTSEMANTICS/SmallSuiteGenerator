@@ -26,8 +26,8 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-STypeMethodInfo class >> methodAsInfo: aSpyMethod [
-	^ self new methodAsInfo: aSpyMethod 
+STypeMethodInfo class >> asMethodInfo: aSpyMethod [
+	^ self new asMethodInfo: aSpyMethod 
 ]
 
 { #category : #accessing }
@@ -81,6 +81,18 @@ STypeMethodInfo >> argTypes [
 { #category : #accessing }
 STypeMethodInfo >> argTypes: anObject [
 	argTypes := anObject
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> asMethodInfo: typeCollMethod [
+	^ self class new
+		selector: typeCollMethod selector;
+		receiver: (self transform: typeCollMethod receiverType);
+		returnType: (self transform: typeCollMethod returnType);
+		argTypes: (self transformArgs: typeCollMethod argTypes);
+		isQuick: typeCollMethod isQuick;
+		scalars: typeCollMethod dictLiterals;
+		isDeprecated: typeCollMethod isDeprecated
 ]
 
 { #category : #copying }
@@ -373,18 +385,6 @@ STypeMethodInfo >> joinWith: otherTypeMethod [
 	returnType joinWith: otherTypeMethod returnType
 ]
 
-{ #category : #'as yet unclassified' }
-STypeMethodInfo >> methodAsInfo: typeCollMethod [
-	^ self class new
-		selector: typeCollMethod selector;
-		receiver: (self transformReceiver: typeCollMethod receiverType);
-		returnType: (self transform: typeCollMethod returnType);
-		argTypes: (self transformArgs: typeCollMethod argTypes);
-		isQuick: typeCollMethod isQuick;
-		scalars: typeCollMethod dictLiterals;
-		isDeprecated: typeCollMethod isDeprecated
-]
-
 { #category : #accessing }
 STypeMethodInfo >> receiver [
 	^ receiver
@@ -442,19 +442,7 @@ STypeMethodInfo >> transform: aSet [
 
 { #category : #'as yet unclassified' }
 STypeMethodInfo >> transformArgs: allArgs [
-	^ allArgs collect: [ :args | 
-		| multiType |
-		multiType := SMultiTypeInfo new.
-		args do: [ :anObject | multiType type: anObject class name ].
-		multiType ]
-]
-
-{ #category : #accessing }
-STypeMethodInfo >> transformReceiver: aSet [
-	| multiType |
-	multiType := SMultiTypeInfo new.
-	aSet do: [ :anObject | 
-		multiType type: anObject
-	].
-	^ multiType
+	^ allArgs
+		collect: [ :args | 
+			self transform: args ]
 ]
