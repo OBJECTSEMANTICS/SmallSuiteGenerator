@@ -74,6 +74,18 @@ SGAEngine >> clean [
 	fitness ifNotNil: [ fitness tearDown ]
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> collectFitnessByName [
+	| dictFit |
+	dictFit := Dictionary new.
+	((population collect: #fitness) flatCollect: #associations) do: [ 
+		:assoc | 
+		| aValue |
+		aValue := dictFit at: assoc key ifAbsentPut: [ OrderedCollection new].
+		aValue add: assoc value].
+	^ dictFit
+]
+
 { #category : #actions }
 SGAEngine >> computeFitness [
 	fitness compute: population.
@@ -106,9 +118,7 @@ SGAEngine >> createNewPopulation [
 				with: P1
 				with: P2)
 				asSortedCollection: [ :a :b | 
-					(self fitnessFor: a) = (self fitnessFor: b)
-						ifTrue: [ a length < b length ]
-						ifFalse: [ (self fitnessFor: a) > (self fitnessFor: b) ] ].
+					self is: a betterThan: b ].
 			newPopulation addAll: (options first: 2) ].
 	population := newPopulation
 ]
@@ -174,6 +184,16 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator randomGenerator: randomGenerator
 ]
 
+{ #category : #testing }
+SGAEngine >> is: testCase1 betterThan: testCase2 [
+	|fitness1 fitness2|
+	fitness1 := self fitnessFor: testCase1.
+	fitness2 := self fitnessFor: testCase2.
+		^ 			fitness1 = fitness2
+						ifTrue: [ testCase1 length < testCase2 length ]
+						ifFalse: [ fitness1 > fitness2 ]
+]
+
 { #category : #accessing }
 SGAEngine >> logs [
 	^ logs copy
@@ -208,16 +228,35 @@ SGAEngine >> numberOfStatements: anInteger [
 ]
 
 { #category : #actions }
+SGAEngine >> pickAverageFitTest: aDictionary [
+	^ (aDictionary keys collect: [ :key | 
+		   key -> (aDictionary at: key) average ]) asDictionary
+]
+
+{ #category : #actions }
 SGAEngine >> pickBestTest [
 	|best|
 	best := population first.
-	population do:[:test|
-		|valA valB|
-		valA := self fitnessFor: best.
-		valB := self fitnessFor: test.
-		(valB > valA) ifTrue:[ best := test.].
-		].
-	^ best.
+	population do: [ :test | 
+		(self is: test betterThan: best) ifTrue: [ best := test ]
+	].
+	^ best
+]
+
+{ #category : #actions }
+SGAEngine >> pickMinFitTest: aDictionary [
+	^ (aDictionary keys collect: [ :key | 
+		   key -> (aDictionary at: key) min ]) asDictionary
+	"| dictFit |
+	dictFit := population first fitness.
+	((population collect: #fitness) flatCollect: #associations) do: [ 
+		:assoc | 
+		| aValue |
+		aValue := dictFit at: assoc key ifAbsent: [ assoc key ].
+		dictFit
+			at: assoc key
+			put: (Array with: assoc value with: aValue) min ].
+	^ dictFit"
 ]
 
 { #category : #accessing }
@@ -241,15 +280,20 @@ SGAEngine >> run [
 	self computeFitness.
 	(1 to: numberOfGenerations)
 		do: [ :iteration | 
-			logs
-				add:
-					(SGALog new
-						generationNumber: iteration;
-						fittestTestCase: self pickBestTest;
-						timeToProduceGeneration: Time now asSeconds;
-						yourself).
+			| t log aDictionary |
+			t := Time now asSeconds.
+			log := SGALog new
+				       generationNumber: iteration;
+				       fittestTestCase: self pickBestTest;
+				       timeToProduceGeneration: Time now asSeconds - t.
+			aDictionary := self collectFitnessByName.
+			log
+				lowestFit: (self pickMinFitTest:  aDictionary);
+				averageFit: (self pickAverageFitTest: aDictionary).
+			logs add: log.
 			self createNewPopulation ]
-		displayingProgress: [ :iteration | 'Evolving - Iteration' , iteration printString ]
+		displayingProgress: [ :iteration | 
+		'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }

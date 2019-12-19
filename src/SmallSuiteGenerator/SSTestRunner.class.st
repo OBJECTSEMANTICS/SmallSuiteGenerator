@@ -48,10 +48,12 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 |
-_var0 := RTView new.
-_var1 := RTForceLayoutStepping new.
-_var2 := _var0 addAnimation: _var1.
+	| _var0 _var1 _var2 _var3 _var4 |
+_var0 := '1'.
+_var1 := 0.
+_var2 := SSTeacher name: _var0 with: _var1.
+_var3 := SConference price: _var1.
+_var4 := _var2 canRegister: _var3.
 ^ self analyze: thisContext
 ]
 

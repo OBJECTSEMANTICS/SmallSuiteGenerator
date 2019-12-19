@@ -107,17 +107,36 @@ STestCaseFactory >> fitness: aFitness [
 
 { #category : #visualization }
 STestCaseFactory >> fitnessValues [
-	| nameFunctions |
+	| functionNames fitValues |
 	self
 		assert: (engine isNil not and: [ engine logs isNotEmpty ])
 		description: 'Run the generation before'.
-	nameFunctions := (Array with: engine fitness functionName).
-	^ nameFunctions asSet
-		collect: [ :nameFunction | 
-			nameFunction
-				->
-					(engine logs
-						withIndexCollect: [ :log :index | log fittestTestCase fitness at: nameFunction ]) ]
+	functionNames := (Array with: engine fitness functionName) asSet.
+	fitValues := Dictionary new.
+		engine logs do: [ :log | 
+			functionNames do: [ :functionName | 
+			| val |
+			val := fitValues
+				       at: functionName , '_fittest'
+				       ifAbsentPut: [ OrderedCollection new ].
+			val add: (log fittestTestCase fitness at: functionName).
+			val := fitValues
+				       at: functionName , '_average'
+				       ifAbsentPut: [ OrderedCollection new ].
+			val add: (log averageFit at: functionName).
+			val := fitValues
+				       at: functionName , '_lowest'
+				       ifAbsentPut: [ OrderedCollection new ].
+			val add: (log lowestFit at: functionName) ] ].
+	^ fitValues
+]
+
+{ #category : #ui }
+STestCaseFactory >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal2
+		title: 'View';
+		initializeView: [ self visualize ]
 ]
 
 { #category : #initialization }
@@ -234,15 +253,14 @@ STestCaseFactory >> visualize [
 	| p g d |
 	p := RTPalette c3.
 	g := RTGrapher new.
-	self fitnessValues
-		doWithIndex: [ :assocation :index | 
-			d := RTData new.
-			d connectColor: (p at: index).
-			d noDot.
-			d points: assocation value.
-			d label: assocation key printString.
-			d y: #yourself.
-			g add: d ].
+	self fitnessValues associations doWithIndex: [ :association :index | 
+		d := RTData new.
+		d
+			connectColor: (p at: index);
+			noDot;
+			points: association value;
+			label: association key.
+		g add: d ].
 	g legend addText: 'Fitness evolution'.
-	g open
+	^ g
 ]
