@@ -11,7 +11,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		for: #common
 		do: [ spec
 				baseline: 'SpyLite'
-				with: [ spec repository: 'github://Lin777/SpyLite:SpyLite-Coverage/src' ].
+				with: [ spec repository: 'github://Lin777/SpyLite:master/src' ].
 			spec
 				baseline: 'MuTalk'
 				with: [ spec repository: 'github://pavel-krivanek/mutalk/src' ].
@@ -30,5 +30,5 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ] ]
-					""
+					
 ]
