@@ -25,6 +25,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #'as yet unclassified' }
+STypeMethodInfo class >> asMethodInfo: aSpyMethod [
+	^ self new asMethodInfo: aSpyMethod 
+]
+
 { #category : #accessing }
 STypeMethodInfo class >> selectorsFilter [
 	^ (self selectors
@@ -76,6 +81,18 @@ STypeMethodInfo >> argTypes [
 { #category : #accessing }
 STypeMethodInfo >> argTypes: anObject [
 	argTypes := anObject
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> asMethodInfo: typeCollMethod [
+	^ self class new
+		selector: typeCollMethod selector;
+		receiver: (self transform: typeCollMethod receiverType);
+		returnType: (self transform: typeCollMethod returnType);
+		argTypes: (self transformArgs: typeCollMethod argTypes);
+		isQuick: typeCollMethod isQuick;
+		scalars: typeCollMethod dictLiterals;
+		isDeprecated: typeCollMethod isDeprecated
 ]
 
 { #category : #copying }
@@ -413,4 +430,19 @@ STypeMethodInfo >> selector [
 { #category : #accessing }
 STypeMethodInfo >> selector: anObject [
 	selector := anObject
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> transform: aSet [
+	| multiType |
+	multiType := SMultiTypeInfo new.
+	aSet do: [ :anObject | multiType type: anObject ].
+	^ multiType
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> transformArgs: allArgs [
+	^ allArgs
+		collect: [ :args | 
+			self transform: args ]
 ]

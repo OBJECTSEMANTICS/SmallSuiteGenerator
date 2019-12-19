@@ -293,8 +293,8 @@ SGAEngineExample >> runOnClass: aClass withBlock: aBlock andFitness: aClassFitne
 		targetClassName: aClass name.
 	engine
 		typeInfo:
-			(SSTypeCollector profile: engine blockToExecute onClass: aClass)
-				asTypeInfo;
+			(STypeInfo
+				asTypeInfo: (SSTypeCollector profile: engine blockToExecute forClassNamed: aClass name));
 		fitness: aClassFitness;
 		targetClassName: aClass name;
 		numberOfGenerations: 15;
@@ -312,9 +312,9 @@ SGAEngineExample >> runOnPackagesMatching: regex withBlock: aBlock andFitness: a
 		blockToExecute: aBlock.
 	engine
 		typeInfo:
-			(SSTypeCollector
+			(STypeInfo asTypeInfo: (SSTypeCollector
 				profile: engine blockToExecute
-				onPackagesMatching: regex) asTypeInfo;
+				onPackagesMatching: regex));
 		fitness: aClassFitness;
 		numberOfGenerations: 15;
 		run.

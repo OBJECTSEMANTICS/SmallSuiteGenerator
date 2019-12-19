@@ -8,16 +8,14 @@ Class {
 }
 
 { #category : #actions }
-STestCaseFactoryPharo >> cleanInstrumentation [
-	profiler cleanInstrumentation
-]
-
-{ #category : #actions }
 STestCaseFactoryPharo >> initializeProfiler [
-	profiler := SBProfiler new.
-	(S2CInstrumentator onPackagesMatching: self targetPackageRegex)
-		applyOn: profiler.
+	profiler := SLProfilerCoverage profilerForPackagesMatching: self targetPackageRegex.
 	(profiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
 		displayingProgress: 'Instrumenting ' , self targetPackageRegex.
+]
+
+{ #category : #actions }
+STestCaseFactoryPharo >> uninstall [
+	profiler uninstall
 ]

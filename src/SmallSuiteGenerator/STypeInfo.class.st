@@ -21,6 +21,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #converting }
+STypeInfo class >> asTypeInfo: aTypeCollector [
+	^ self new asTypeInfo: aTypeCollector 
+]
+
 { #category : #comparing }
 STypeInfo >> = other [
 	^ self class = other class
@@ -42,13 +47,23 @@ STypeInfo >> accessMessagesFrom: aClassName [
 
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
-	"aTypeClassInfo typeInfo: self."
-
 	types
 		at: aTypeClassInfo typeName
 		ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
-		ifAbsentPut:[ aTypeClassInfo].
+		ifAbsentPut: [ aTypeClassInfo ].
 	self joinScalars: aTypeClassInfo scalars
+]
+
+{ #category : #converting }
+STypeInfo >> asTypeInfo: aTypeCollector [
+	| typeInfo |
+	typeInfo := self class new.
+	aTypeCollector allClasses
+		do: [ :aSpyClass | 
+			aSpyClass className = 'BlockClosure'
+				ifFalse: [ typeInfo addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
+	typeInfo joinScalars: aTypeCollector scalars copy.
+	^ typeInfo
 ]
 
 { #category : #accessing }
@@ -88,7 +103,7 @@ STypeInfo >> classes [
 { #category : #copying }
 STypeInfo >> copy [
 	| copy |
-	copy := STypeInfo new.
+	copy := self class new.
 	types
 		do: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
 	copy scalars: scalars copy.

@@ -11,25 +11,21 @@ Class {
 
 { #category : #'as yet unclassified' }
 SGAEngineTest >> profilerOf: string [
-	(S2CInstrumentator onPackagesMatching: string) applyOn: profiler.
-	(profiler allMethods select: #isNotMethodExtension)
-		do: #installGhosts
+	profiler := SLProfilerCoverage profilerForPackagesMatching: string.
+	profiler beforeProfiling
 ]
 
 { #category : #running }
 SGAEngineTest >> setUp [
 	super setUp.
 	engine := SGAEngine new.
-	profiler := SBProfiler new.
+	profiler := SLProfilerCoverage new.
 	utility := SUtilityTypeInfo new
 ]
 
 { #category : #running }
 SGAEngineTest >> tearDown [
-	[profiler cleanInstrumentation] on: Error do: [].
-	S2Lock value: false.
-	S2Context value: nil.
-	S2Profiler remove.
+	[profiler uninstall] on: Error do: [].
 	super tearDown
 ]
 
@@ -64,6 +60,7 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 		typeInfo: utility typeInfoSFooOnPackage1; 	" STON fromString: utility typeInfoStringSFoo3."
 		fitness: functionFitness;
 		targetClassName: #SFoo;
+		populationSize: 5;
 		numberOfGenerations: 5;
 		populationSize: 10;
 		run.

@@ -21,6 +21,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
+{ #category : #converting }
+STypeClassInfo class >> asClassInfo: aSpyClass [
+	^ self new asClassInfo: aSpyClass 
+]
+
 { #category : #'instance creation' }
 STypeClassInfo class >> newFrom: aClassName [
 	^ self new
@@ -90,15 +95,40 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 
 { #category : #adding }
 STypeClassInfo >> addScalars: aDictionary [
-	aDictionary associationsDo: [ :assoc | 
-		| set  |
-		set := scalars at: assoc key ifAbsentPut: [ Set new ].
-		set addAll: assoc value ]
+	aDictionary associations
+		do: [ :assoc | 
+			scalars
+				at: assoc key
+				ifPresent:
+					[ :values | scalars at: assoc key put: (values union: assoc value) asArray ]
+				ifAbsentPut: [ assoc value asArray ] ]
 ]
 
 { #category : #'accessing - read only' }
 STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
+]
+
+{ #category : #'as yet unclassified' }
+STypeClassInfo >> asClassInfo: aSpyClass [
+	| aTypeClass instanceMethods classMethods |
+	aTypeClass := self class newFrom: aSpyClass typeName.
+	instanceMethods := OrderedCollection new.
+	classMethods := OrderedCollection new.
+	(aSpyClass typeName includesAll: ' class')
+		ifFalse: [ instanceMethods := (aSpyClass methods reject: #isTest)
+				select: #wasExecuted ]
+		ifTrue: [ classMethods := (aSpyClass methods reject: #isTest)
+				select:
+					[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ] ].
+	aTypeClass
+		addMethods:
+			(instanceMethods
+				collect: [ :instMeth | " #asTypeInfo" STypeMethodInfo asMethodInfo: instMeth ]);
+		addClassMethods:
+			(classMethods
+				collect: [ :instMeth | "#asTypeInfo" STypeMethodInfo asMethodInfo: instMeth ]).
+	^ aTypeClass
 ]
 
 { #category : #'accessing - read only' }

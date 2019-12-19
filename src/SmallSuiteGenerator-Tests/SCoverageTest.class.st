@@ -22,18 +22,17 @@ SCoverageTest >> fitnessOf: aTestCase [
 { #category : #running }
 SCoverageTest >> installOn: aPackageName [
 	fitness tagetPackagesRegex: aPackageName.
-	(S2CInstrumentator onPackagesMatching: aPackageName )
-		applyOn: profiler.
+	profiler := SLProfilerCoverage profilerForPackagesMatching: aPackageName.
 	fitness profiler: profiler.
-	profiler injectCodeToMethods
+	profiler uninstall.
+	profiler beforeProfiling 
 ]
 
 { #category : #running }
 SCoverageTest >> setUp [
 	utility := SUtilityTypeInfo new.
 	fitness := self fitnessClass new.
-	profiler := SBProfiler new.
-	"fitness tagetPackagesRegex: 'SmallSuiteGenerator-Scenario'"
+	profiler := SLProfilerCoverage new
 ]
 
 { #category : #running }
@@ -51,6 +50,5 @@ SCoverageTest >> testCase: typeInfo withNumStatements: aNumber andTargetClassNam
 
 { #category : #running }
 SCoverageTest >> uninstall [
-	profiler cleanInstrumentation.
-	S2Profiler clean
+	profiler uninstall
 ]
