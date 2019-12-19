@@ -35,7 +35,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ].
 			spec 
-				group: 'Stable' with: #('SmallSuiteGenerator-Tests');
-				group: 'Visualize' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization') ]
+				group: 'default' with: #('SmallSuiteGenerator-Tests');
+				group: 'All' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization') ]
 					""
 ]
