@@ -24,12 +24,13 @@ The first step is to define the code block that will be instrumented to get the 
 
 ``` Smalltalk
 | typeinfo |
-typeInfo := SSTypeCollector profile:[ 
-		(SSTeacher name: 'Ann' with: 50)
-		nickname;
-		canRegister: ((SConference price: 50) offerPrice: 50);
-		idTeacher;
-		yearsWorkExperience ] onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+typeInfo := STypeInfo asTypeInfo: (
+		SSTypeCollector profile:[ 
+			(SSTeacher name: 'Ann' with: 50)
+			nickname;
+			canRegister: ((SConference price: 50) offerPrice: 50);
+			idTeacher;
+			yearsWorkExperience ] onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 ```
 
 The second step is to configure the class `STestCaseFactory`.
@@ -44,7 +45,6 @@ STestCaseFactoryPharo new
     numberOfGenerations: 20;
     numberOfStatements: 3;
     createTestCases;
-    visualize;
     yourself.
 ```
 				
