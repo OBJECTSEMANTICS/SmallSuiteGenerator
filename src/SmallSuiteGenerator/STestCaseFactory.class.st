@@ -131,14 +131,6 @@ STestCaseFactory >> fitnessValues [
 	^ fitValues
 ]
 
-{ #category : #ui }
-STestCaseFactory >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -10>
-	composite roassal2
-		title: 'View';
-		initializeView: [ self visualize ]
-]
-
 { #category : #initialization }
 STestCaseFactory >> initialize [
 	super initialize.
