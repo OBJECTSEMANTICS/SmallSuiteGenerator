@@ -12,6 +12,9 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		do: [ spec
 				baseline: 'SpyLite'
 				with: [ spec repository: 'github://Lin777/SpyLite:master/src' ].
+				spec
+				baseline: 'Roassal2'
+				with: [ spec repository: 'github://ObjectProfile/Roassal2/src' ].
 			spec
 				baseline: 'MuTalk'
 				with: [ spec repository: 'github://pavel-krivanek/mutalk/src' ].
@@ -26,9 +29,13 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 					with: [ spec requires: #('SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
+				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal2') ];
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:
-							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ] ]
+							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ].
+			spec 
+				group: 'default' with: #('SmallSuiteGenerator-Tests');
+				group: 'All' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization') ]
 					
 ]
