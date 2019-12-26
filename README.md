@@ -67,4 +67,4 @@ populationSize: 30.
 
 ## Install SpyLite
 
-See documentation in [Parcels8.3/INSTALL_SPYLITE.md](Install SpyLite)
+See documentation in [Install SpyLite](Parcels8.3/INSTALL_SPYLITE.md)
