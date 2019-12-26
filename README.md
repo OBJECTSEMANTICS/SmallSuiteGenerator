@@ -64,3 +64,7 @@ Additionally to the described configurations, you can configure some parameters 
 ```Smalltalk 
 populationSize: 30.
 ```
+
+## Install SpyLite
+
+See documentation in [Install SpyLite](Parcels8.3/INSTALL_SPYLITE.md)

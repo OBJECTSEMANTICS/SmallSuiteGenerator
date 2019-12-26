@@ -11,7 +11,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		for: #common
 		do: [ spec
 				baseline: 'SpyLite'
-				with: [ spec repository: 'github://Lin777/SpyLite:SpyLite-Coverage/src' ].
+				with: [ spec repository: 'github://Lin777/SpyLite:master/src' ].
 				spec
 				baseline: 'Roassal2'
 				with: [ spec repository: 'github://ObjectProfile/Roassal2/src' ].
@@ -37,5 +37,5 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 			spec 
 				group: 'default' with: #('SmallSuiteGenerator-Tests');
 				group: 'All' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization') ]
-					""
+					
 ]
