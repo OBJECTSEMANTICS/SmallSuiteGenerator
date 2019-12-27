@@ -319,7 +319,7 @@ STypeInfoTest >> testAsTypeInfoScalars [
 				with: #SmallInteger -> #(0 4)
 				with: #OrderedCollection -> (Array with: OrderedCollection new)
 				with: #ByteString -> #('Hello')
-				with: #SmallFloat64 -> #(2.3))
+				with: (2.3 class name) -> #(2.3))
 ]
 
 { #category : #tests }
