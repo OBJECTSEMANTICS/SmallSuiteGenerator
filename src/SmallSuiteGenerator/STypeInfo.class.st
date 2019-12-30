@@ -60,7 +60,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 	typeInfo := self class new.
 	aTypeCollector allClasses
 		do: [ :aSpyClass | 
-			aSpyClass className = 'BlockClosure'
+			(aSpyClass className endsWith: 'BlockClosure')
 				ifFalse: [ typeInfo addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
 	typeInfo joinScalars: aTypeCollector scalars copy.
 	^ typeInfo

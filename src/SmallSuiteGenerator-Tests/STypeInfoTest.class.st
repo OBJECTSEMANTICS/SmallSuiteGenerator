@@ -201,10 +201,10 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	methodInfo := typeInfo methodType: #return: from: classNameSFoo.
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: #('OrderedCollection class').
+		hasSameElements: (Array with: (self nameOf: OrderedCollection class)).
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: #('OrderedCollection class').
+		hasSameElements: (Array with: (self nameOf: OrderedCollection class)).
 	self
 		assertCollection: ((typeInfo messagesFrom: classNameSFoo) collect: #selector)
 		hasSameElements: #(#initialize #return:)
@@ -316,10 +316,10 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
 			(Array
-				with: #SmallInteger -> #(0 4)
-				with: #OrderedCollection -> (Array with: OrderedCollection new)
-				with: #ByteString -> #('Hello')
-				with: (2.3 class name) -> #(2.3))
+				with: (self nameOf: SmallInteger) -> #(0 4)
+				with: (self nameOf: OrderedCollection) -> (Array with: OrderedCollection new)
+				with: (self nameOf: ByteString) -> #('Hello')
+				with: (self nameOf: 2.3 class) -> #(2.3))
 ]
 
 { #category : #tests }

@@ -115,19 +115,20 @@ STypeClassInfo >> asClassInfo: aSpyClass [
 	aTypeClass := self class newFrom: aSpyClass typeName.
 	instanceMethods := OrderedCollection new.
 	classMethods := OrderedCollection new.
-	(aSpyClass typeName includesAll: ' class')
-		ifFalse: [ instanceMethods := (aSpyClass methods reject: #isTest)
-				select: #wasExecuted ]
-		ifTrue: [ classMethods := (aSpyClass methods reject: #isTest)
-				select:
-					[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ] ].
+	(aSpyClass typeName endsWith: ' class') ifFalse: [ 
+		instanceMethods := (aSpyClass methods reject: #isTest)
+				select: #wasExecuted
+	].
+	(aSpyClass metaclassSpy typeName endsWith: ' class') ifTrue: [ 
+		classMethods := (aSpyClass metaclassSpy methods reject: #isTest) select:
+					[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ] 	].
 	aTypeClass
 		addMethods:
 			(instanceMethods
-				collect: [ :instMeth | " #asTypeInfo" STypeMethodInfo asMethodInfo: instMeth ]);
+				collect: [ :instMeth | STypeMethodInfo asMethodInfo: instMeth ]);
 		addClassMethods:
 			(classMethods
-				collect: [ :instMeth | "#asTypeInfo" STypeMethodInfo asMethodInfo: instMeth ]).
+				collect: [ :instMeth | STypeMethodInfo asMethodInfo: instMeth ]).
 	^ aTypeClass
 ]
 
