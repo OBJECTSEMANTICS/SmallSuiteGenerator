@@ -237,7 +237,6 @@ STestCaseFactory >> typeInfo: aTypeInfo [
 
 { #category : #actions }
 STestCaseFactory >> uninstall [
-	self subclassResponsibility
 ]
 
 { #category : #visualization }
