@@ -9,13 +9,22 @@ MIT Licensed.
 SmallSuiteGenerator can be used to discover bugs in the code, because it generates automatically test cases
 
 ## Installation 
-You can load SmallSuiteGenerator into Pharo image executing the following code in the playground:
+
+To install the latest stable version of SmallSuiteGenerator in a Pharo image, execute the following code:
 
 ```Smalltalk
 Metacello new
  baseline:'SmallSuiteGenerator';
  repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
  load.
+```
+To install the version that presents graphic results of the coverage's evolution, execute the following code:
+
+```Smalltalk
+Metacello new
+ baseline:'SmallSuiteGenerator';
+ repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
+ load: #('All').
 ```
 
 ## Configuration
