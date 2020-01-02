@@ -23,7 +23,7 @@ Metacello new
 The first step is to define the code block that will be instrumented to get the typeInfo. Define package's regular expression pattern also.
 
 ``` Smalltalk
-| typeinfo |
+| typeInfo |
 typeInfo := STypeInfo asTypeInfo: (
 		SSTypeCollector profile:[ 
 			(SSTeacher name: 'Ann' with: 50)
