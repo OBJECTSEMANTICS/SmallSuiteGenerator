@@ -18,7 +18,8 @@ Class {
 		'fittestTestCase',
 		'mutationResult',
 		'lowestFit',
-		'averageFit'
+		'averageFit',
+		'population'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -94,6 +95,16 @@ SGALog >> mutationResult: mutationTestingResult [
 		at: 'mutationScore' put: mutationTestingResult mutationScore ]
 		on: Exception
 		do: [ nil ]
+]
+
+{ #category : #accessing }
+SGALog >> population [
+	^ population
+]
+
+{ #category : #accessing }
+SGALog >> population: anObject [
+	population := anObject
 ]
 
 { #category : #printing }

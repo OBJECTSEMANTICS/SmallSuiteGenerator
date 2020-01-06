@@ -285,7 +285,8 @@ SGAEngine >> run [
 			log := SGALog new
 				       generationNumber: iteration;
 				       fittestTestCase: self pickBestTest;
-				       timeToProduceGeneration: Time now asSeconds - t.
+				       timeToProduceGeneration: Time now asSeconds - t;
+						 population: population.
 			aDictionary := self collectFitnessByName.
 			log
 				lowestFit: (self pickMinFitTest:  aDictionary);

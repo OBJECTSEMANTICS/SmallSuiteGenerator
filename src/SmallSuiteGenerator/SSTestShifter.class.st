@@ -28,7 +28,9 @@ Class {
 		'maxNumberOfStatements',
 		'validatedTargetClassName',
 		'randomGenerator',
-		'fitnessByClass'
+		'fitnessByClass',
+		'parentA',
+		'parentB'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -725,6 +727,26 @@ SSTestShifter >> objectVariables [
 			|res|
 			res := self typeInfo classAt: stm returnType ifNone:[nil].
 			res isNil not] thenCollect:[:stm| stm variable].
+]
+
+{ #category : #accessing }
+SSTestShifter >> parentA [
+	^ parentA
+]
+
+{ #category : #accessing }
+SSTestShifter >> parentA: anObject [
+	parentA := anObject
+]
+
+{ #category : #accessing }
+SSTestShifter >> parentB [
+	^ parentB
+]
+
+{ #category : #accessing }
+SSTestShifter >> parentB: anObject [
+	parentB := anObject
 ]
 
 { #category : #parsing }
