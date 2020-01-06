@@ -29,8 +29,7 @@ Class {
 		'validatedTargetClassName',
 		'randomGenerator',
 		'fitnessByClass',
-		'parentA',
-		'parentB'
+		'parents'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -167,6 +166,11 @@ SSTestShifter >> addMessage: aSelector from: aClassName [
 { #category : #inserting }
 SSTestShifter >> addMessage: method withReceiver: receiver [
 	^ self addAssignment: (self messageUsing: method and: receiver before: nil)
+]
+
+{ #category : #accessing }
+SSTestShifter >> addParent: anObject [
+	parents add: anObject
 ]
 
 { #category : #inserting }
@@ -462,7 +466,8 @@ SSTestShifter >> initialize [
 	maxNumberOfStatements := 10.
 	targetClassesNames := Set new.
 	validatedTargetClassName := false.
-	randomGenerator := SConfiguration newRandomGenerator
+	randomGenerator := SConfiguration newRandomGenerator.
+	parents := OrderedCollection new
 ]
 
 { #category : #inserting }
@@ -730,23 +735,8 @@ SSTestShifter >> objectVariables [
 ]
 
 { #category : #accessing }
-SSTestShifter >> parentA [
-	^ parentA
-]
-
-{ #category : #accessing }
-SSTestShifter >> parentA: anObject [
-	parentA := anObject
-]
-
-{ #category : #accessing }
-SSTestShifter >> parentB [
-	^ parentB
-]
-
-{ #category : #accessing }
-SSTestShifter >> parentB: anObject [
-	parentB := anObject
+SSTestShifter >> parents [
+	^ parents
 ]
 
 { #category : #parsing }

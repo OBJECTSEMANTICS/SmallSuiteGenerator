@@ -64,8 +64,8 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
 	sizeB := parentB numberStatements.
 	offSpring := SSTestCase with: parentA typeInfo copy.
 	offSpring typeInfo joinWith: parentB typeInfo.
-	offSpring parentA: parentA;
-	parentB: parentB.
+	offSpring addParent: parentA;
+	addParent: parentB.
 	offSpring addTargetClassNames: parentA targetClassesNames;
 	addTargetClassNames: parentB targetClassesNames.
 	limit := (sizeA * alpha) asInteger.

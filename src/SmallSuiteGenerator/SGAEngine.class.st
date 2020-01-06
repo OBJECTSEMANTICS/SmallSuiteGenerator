@@ -321,3 +321,18 @@ SGAEngine >> typeInfo [
 SGAEngine >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo
 ]
+
+{ #category : #visualization }
+SGAEngine >> visualize [
+  | b |
+  b := RTMondrian new.
+  b shape rectangle
+     withBorder;
+     width: [:cls |  cls numberStatements * 5 ];
+     height: [:cls |  cls fitnessByClass values first at: targetClassName ].
+  b nodes: (logs flatCollect: #population).
+  b edges connectToAll: [:testCase |  testCase parents ].
+  b layout graph.
+  
+  "b normalizer normalizeColorAsGray: [ :cls | cls numberOf ]"^b
+]
