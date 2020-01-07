@@ -49,7 +49,7 @@ SAssignment >> copy [
 
 { #category : #comparing }
 SAssignment >> hash [
-	^ super hash xor: (variable hash xor: (value hash))
+	^ super hash bitXor: (variable hash bitXor: value hash)
 ]
 
 { #category : #accessing }

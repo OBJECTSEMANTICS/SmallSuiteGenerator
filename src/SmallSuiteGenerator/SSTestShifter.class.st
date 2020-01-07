@@ -29,7 +29,8 @@ Class {
 		'validatedTargetClassName',
 		'randomGenerator',
 		'fitnessByClass',
-		'parents'
+		'parents',
+		'childs'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -60,6 +61,11 @@ SSTestShifter >> addAssignment: anExpression [
 	assignment := self newAssignment: anExpression.
 	self addStatement: assignment.
 	^ assignment
+]
+
+{ #category : #accessing }
+SSTestShifter >> addChild: anObject [
+  childs add: anObject
 ]
 
 { #category : #inserting }
@@ -170,7 +176,8 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 
 { #category : #accessing }
 SSTestShifter >> addParent: anObject [
-	parents add: anObject
+  anObject ifNotNil: [ parents add: anObject.
+        anObject addChild: self ]
 ]
 
 { #category : #inserting }
@@ -380,6 +387,11 @@ SSTestShifter >> changeStatementOfVarName: varName [
 ]
 
 { #category : #accessing }
+SSTestShifter >> childs [ 
+	^ childs
+]
+
+{ #category : #accessing }
 SSTestShifter >> defaultNumberStatements [
 	^ 54
 ]
@@ -457,17 +469,18 @@ SSTestShifter >> generateStatements: anInteger [
 
 { #category : #initalize }
 SSTestShifter >> initialize [
-	super initialize.
-	statements := OrderedCollection new.
-	assertions := OrderedCollection new.
-	fitness := Dictionary new.
-	fitnessByClass := Dictionary new.
-	nextId := 0.
-	maxNumberOfStatements := 10.
-	targetClassesNames := Set new.
-	validatedTargetClassName := false.
-	randomGenerator := SConfiguration newRandomGenerator.
-	parents := OrderedCollection new
+  super initialize.
+  statements := OrderedCollection new.
+  assertions := OrderedCollection new.
+  fitness := Dictionary new.
+  fitnessByClass := Dictionary new.
+  nextId := 0.
+  maxNumberOfStatements := 10.
+  targetClassesNames := Set new.
+  validatedTargetClassName := false.
+  randomGenerator := SConfiguration newRandomGenerator.
+  parents := Set new.
+  childs := Set new
 ]
 
 { #category : #inserting }

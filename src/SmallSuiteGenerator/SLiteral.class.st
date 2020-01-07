@@ -46,7 +46,7 @@ SLiteral >> copy [
 
 { #category : #comparing }
 SLiteral >> hash [
-	^ super hash xor: value hash
+	^ super hash bitXor: value hash
 ]
 
 { #category : #mutation }

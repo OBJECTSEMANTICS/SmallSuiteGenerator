@@ -87,8 +87,8 @@ SAbstractMessage >> copy [
 ]
 
 { #category : #comparing }
-SAbstractMessage >> hash [ 	
-	^ super hash xor: (receiver hash xor: (selector hash xor: args hash))
+SAbstractMessage >> hash [
+  ^super hash bitXor: (receiver hash bitXor: (selector hash bitXor: args hash))
 ]
 
 { #category : #accessing }

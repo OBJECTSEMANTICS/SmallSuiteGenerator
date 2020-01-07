@@ -328,11 +328,21 @@ SGAEngine >> visualize [
   b := RTMondrian new.
   b shape rectangle
      withBorder;
-     width: [:cls |  cls numberStatements * 5 ];
-     height: [:cls |  cls fitnessByClass values first at: targetClassName ].
+     width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 2 ];
+     height: [:cls |  cls numberStatements ].
   b nodes: (logs flatCollect: #population).
-  b edges connectToAll: [:testCase |  testCase parents ].
-  b layout graph.
+  b edges moveBehind.
   
+  "b edges connectFrom: [:testCase |  testCase parents ].
+  b shape
+     bezierLineFollowing: [:testCase |  testCase parents ];
+     color: Color blue trans.
+  b edges
+     notUseInLayout;
+     connectTo: [:testCase |  testCase childs ]."b edges connectToAll: [:testCase |  testCase childs ].
+  b layout tree .
+  b normalizer normalizeColorAsGray: [:testCase |  testCase numberStatements ].
+  
+  "cluster"
   "b normalizer normalizeColorAsGray: [ :cls | cls numberOf ]"^b
 ]
