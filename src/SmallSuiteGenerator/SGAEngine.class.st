@@ -276,25 +276,26 @@ SGAEngine >> populationSize: aInteger [
 
 { #category : #actions }
 SGAEngine >> run [
-	population := self createRandomPopulation.
-	self computeFitness.
-	(1 to: numberOfGenerations)
-		do: [ :iteration | 
-			| t log aDictionary |
-			t := Time now asSeconds.
-			log := SGALog new
-				       generationNumber: iteration;
-				       fittestTestCase: self pickBestTest;
-				       timeToProduceGeneration: Time now asSeconds - t;
-						 population: population.
-			aDictionary := self collectFitnessByName.
-			log
-				lowestFit: (self pickMinFitTest:  aDictionary);
-				averageFit: (self pickAverageFitTest: aDictionary).
-			logs add: log.
-			self createNewPopulation ]
-		displayingProgress: [ :iteration | 
-		'Evolving - Iteration' , iteration printString ]
+  population := self createRandomPopulation.
+  self computeFitness.
+	logs add: (SGALog new
+           generationNumber: 0;
+           fittestTestCase: self pickBestTest;
+           population: population).
+  (1 to: numberOfGenerations) do: [:iteration |  | t log aDictionary |
+        t := Time now asSeconds.
+        self createNewPopulation.
+        log := SGALog new
+           generationNumber: iteration;
+           fittestTestCase: self pickBestTest;
+           timeToProduceGeneration: Time now asSeconds - t;
+           population: population.
+        aDictionary := self collectFitnessByName.
+        log
+           lowestFit: (self pickMinFitTest: aDictionary);
+           averageFit: (self pickAverageFitTest: aDictionary).
+        logs add: log
+        "self createNewPopulation" ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }
@@ -340,9 +341,26 @@ SGAEngine >> visualize [
   b edges
      notUseInLayout;
      connectTo: [:testCase |  testCase childs ]."b edges connectToAll: [:testCase |  testCase childs ].
-  b layout tree .
+  b layout dominanceTree.
   b normalizer normalizeColorAsGray: [:testCase |  testCase numberStatements ].
   
   "cluster"
   "b normalizer normalizeColorAsGray: [ :cls | cls numberOf ]"^b
+]
+
+{ #category : #visualization }
+SGAEngine >> visualizeGraph [
+  | view |
+  view := RTView new.
+  view addAll: (RTBox elementsOn: (logs flatCollect: #population)) @ RTDraggable.
+  
+  "collect: #childs"RTEdgeBuilder new
+     view: view;
+     objects: (logs flatCollect: #population);
+     connectFromAll: #parents to: #yourself.
+  
+  "collect: #childs"RTTreeLayout on: view elements edges: view edges.
+  view @ RTDraggableView.
+  view edges do: [:e |  e trachelShape pushBack ].
+  ^view
 ]
