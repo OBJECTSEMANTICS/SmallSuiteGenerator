@@ -17,7 +17,7 @@ SSTestCase class >> with: aTypeInfo [
 
 { #category : #comparing }
 SSTestCase >> = other [
-	^ self class = other class and: [ statements = other statements ]
+  ^self class = other class and: [ statements = other statements and: [ fitness = other fitness and: [ parents size = other parents size and: [ childs size = other childs size ] ] ] ]
 ]
 
 { #category : #actions }
