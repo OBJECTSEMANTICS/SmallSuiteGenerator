@@ -17,21 +17,21 @@ Class {
 
 { #category : #'as yet unclassified' }
 SGATournamentSelection >> createNewPopulation [
-	| newPopulation TB  |
-  TB := self pickBestTest.
+	| newPopulation  |
+  "TB := engine pickBestTest."
   newPopulation := OrderedCollection new.
-  [ newPopulation size < tournamentSize and: [ self population size >= 2 ] ] whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child options |
+  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1 P2 O1 O2 "fp fo lp lo" child options |
         P1 := self pickOne.
         P2 := self pickOne.
-        self shouldCrossOver ifTrue: [ child := self crossover: P1 with: P2.
+        self shouldCrossOver ifTrue: [ child := engine crossoverOperator crossover: P1 with: P2.
               O1 := child first.
               O2 := child second.
 				  O1 addParent: P1; addParent: P2.
 				  O2 addParent: P1; addParent: P2.
 		 ] ifFalse: [ O1 := P1.
               O2 := P2 ].
-        self mutate: O1.
-        self mutate: O2.
+        engine mutate: O1.
+        engine mutate: O2.
         fitness compute: (Array with: O1 with: O2).
         options := (Array with: O1 with: O2 with: P1 with: P2) asSortedCollection: [:a :b |  engine is: a betterThan: b ].
         newPopulation addAll: (options first: 2) ].
@@ -43,11 +43,16 @@ SGATournamentSelection >> doSelection [
 	tournamentSize := initialPopulation size.
 	fittest := initialPopulation first.
 	initialPopulation do: [ :testCase | 
-		testCase computeFitness: fitness.
+		"testCase computeFitness: fitness."
 		(engine is: testCase betterThan: fittest) ifTrue: [ fittest := testCase ].	
 	].
 	self createNewPopulation.
 	initialPopulation := population
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> engine: anEngine [
+	engine := anEngine
 ]
 
 { #category : #accessing }
@@ -92,16 +97,21 @@ SGATournamentSelection >> pickOne [
 	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
 
 	| sample selected |
-	sample := (randomGenerator collectAtRandom: population)
-		first: (tournamentSize min: population size).
+	sample := (randomGenerator collectAtRandom: initialPopulation)
+		first: (tournamentSize min: initialPopulation size).
 	sample := sample
 		asSortedCollection: [ :a :b | (self fitnessFor: a) < (self fitnessFor: b) ].
 	selected := sample last.
-	population remove: selected.
+	"population remove: selected."
 	^ selected
 ]
 
 { #category : #accessing }
 SGATournamentSelection >> population [
 	^ population 
+]
+
+{ #category : #asserting }
+SGATournamentSelection >> shouldCrossOver [
+	^ SConfiguration randomGenerator next < (3 / 4)
 ]

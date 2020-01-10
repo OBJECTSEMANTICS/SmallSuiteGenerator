@@ -176,8 +176,8 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 
 { #category : #accessing }
 SSTestShifter >> addParent: anObject [
-  "anObject ifNotNil: [ "parents add: anObject.
-        anObject addChild: self "]"
+  anObject ifNotNil: [ parents add: anObject.
+        anObject addChild: self ] ifNil: [ self halt ]
 ]
 
 { #category : #inserting }

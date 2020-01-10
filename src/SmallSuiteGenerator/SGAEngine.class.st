@@ -131,6 +131,11 @@ SGAEngine >> createRandomPopulation [
 		  test ]
 ]
 
+{ #category : #initialization }
+SGAEngine >> crossoverOperator [
+	^ crossoverOperator
+]
+
 { #category : #accessing }
 SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator := aCrossoverOperator.
@@ -155,13 +160,14 @@ SGAEngine >> fitnessFor: aTestCase [
 { #category : #initialization }
 SGAEngine >> initialize [
 	super initialize.
-	self initializeMutationOperator.
-	self initializeCrossoverOperator.
+	"self initializeMutationOperator.
+	self initializeCrossoverOperator."
 	logs := OrderedCollection new.
 	randomGenerator := SConfiguration newRandomGenerator.
 	populationSize := 100.
 	numberOfGenerations := 100.
 	selectionStrategy := SGATournamentSelection new.
+	selectionStrategy engine: self.
 	self initializeMutationOperator.
 	self initializeCrossoverOperator
 ]
@@ -273,7 +279,8 @@ SGAEngine >> populationSize: aInteger [
 SGAEngine >> run [
 	population := self createRandomPopulation.
 	self computeFitness.
-	selectionStrategy initialPopulation: population.
+	selectionStrategy initialPopulation: population;
+	fitness: fitness.
    "logs add: (SGALog new
            generationNumber: 0;
            fittestTestCase: self pickBestTest;
