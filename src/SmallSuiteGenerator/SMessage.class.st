@@ -50,3 +50,8 @@ SMessage >> insertMethodMessage: aExpression using: aTestCase [
 SMessage >> insertOn: aTestCase [
 	^ aTestCase addMessage: self selector from: self receiver returnType
 ]
+
+{ #category : #'as yet unclassified' }
+SMessage >> shapeOf [
+	^ RTBox new color: Color green; size: 20
+]

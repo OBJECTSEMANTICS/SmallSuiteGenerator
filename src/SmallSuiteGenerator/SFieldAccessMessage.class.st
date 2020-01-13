@@ -39,3 +39,8 @@ SFieldAccessMessage >> insertOn: aTestCase [
 { #category : #actions }
 SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
 ]
+
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> shapeOf [
+	^ RTBox new color: Color pink; size: 20
+]

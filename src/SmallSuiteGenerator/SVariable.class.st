@@ -113,6 +113,11 @@ SVariable >> replaceExpression: anExpression by: newExpression [
 		returnType: reference returnType
 ]
 
+{ #category : #'as yet unclassified' }
+SVariable >> shapeOf [
+	^ RTBox new color: Color red; size: 10
+]
+
 { #category : #accessing }
 SVariable >> varName [
 	^ varName

@@ -80,6 +80,11 @@ SLiteral >> replaceBy: otherExpression [
 	self value: otherExpression value
 ]
 
+{ #category : #'as yet unclassified' }
+SLiteral >> shapeOf [
+	^ RTBox new color: Color yellow; size: 20
+]
+
 { #category : #evaluating }
 SLiteral >> value [ 	
 	^ value

@@ -150,6 +150,10 @@ SExpression >> returnType: anObject [
 	returnType := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+SExpression >> shapeOf [
+]
+
 { #category : #mutation }
 SExpression >> variablesWithId [
 	^ #()

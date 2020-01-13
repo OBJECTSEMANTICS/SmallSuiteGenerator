@@ -121,6 +121,15 @@ SAssignment >> replaceExpression: expression by: newExpression [
 	value replaceExpression: expression by: newExpression
 ]
 
+{ #category : #'as yet unclassified' }
+SAssignment >> shapeOf [
+	^ RTCompositeShape new 
+	add: variable shapeOf;
+	add: value shapeOf;
+	horizontal;
+	yourself
+]
+
 { #category : #evaluating }
 SAssignment >> value [ 
 	^ value
