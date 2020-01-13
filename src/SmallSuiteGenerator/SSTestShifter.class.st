@@ -29,8 +29,7 @@ Class {
 		'validatedTargetClassName',
 		'randomGenerator',
 		'fitnessByClass',
-		'parents',
-		'childs'
+		'parents'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -61,11 +60,6 @@ SSTestShifter >> addAssignment: anExpression [
 	assignment := self newAssignment: anExpression.
 	self addStatement: assignment.
 	^ assignment
-]
-
-{ #category : #accessing }
-SSTestShifter >> addChild: anObject [
-  childs add: anObject
 ]
 
 { #category : #inserting }
@@ -177,7 +171,7 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 { #category : #accessing }
 SSTestShifter >> addParent: anObject [
   anObject ifNotNil: [ parents add: anObject.
-        anObject addChild: self ] ifNil: [ self halt ]
+       ] ifNil: [ self halt ]
 ]
 
 { #category : #inserting }
@@ -387,11 +381,6 @@ SSTestShifter >> changeStatementOfVarName: varName [
 ]
 
 { #category : #accessing }
-SSTestShifter >> childs [ 
-	^ childs
-]
-
-{ #category : #accessing }
 SSTestShifter >> defaultNumberStatements [
 	^ 54
 ]
@@ -480,7 +469,7 @@ SSTestShifter >> initialize [
   validatedTargetClassName := false.
   randomGenerator := SConfiguration newRandomGenerator.
   parents := Set new.
-  childs := Set new
+  "childs := Set new"
 ]
 
 { #category : #inserting }

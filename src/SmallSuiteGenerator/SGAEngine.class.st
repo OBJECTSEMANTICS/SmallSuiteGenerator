@@ -167,6 +167,7 @@ SGAEngine >> initialize [
 	populationSize := 100.
 	numberOfGenerations := 100.
 	selectionStrategy := SGATournamentSelection new.
+	SSTestCase resetNumberTestCase.
 	selectionStrategy engine: self.
 	self initializeMutationOperator.
 	self initializeCrossoverOperator
@@ -292,7 +293,7 @@ SGAEngine >> run [
            generationNumber: iteration;
            fittestTestCase: self pickBestTest;
            timeToProduceGeneration: Time now asSeconds - t;
-           population: population.
+           population: selectionStrategy population.
         aDictionary := self collectFitnessByName.
         log
            lowestFit: (self pickMinFitTest: aDictionary);
@@ -342,8 +343,9 @@ SGAEngine >> visualize [
      color: Color blue trans.
   b edges
      notUseInLayout;
-     connectTo: [:testCase |  testCase childs ]."b edges connectToAll: [:testCase |  testCase childs ].
+     connectTo: [:testCase |  testCase childs ]."b edges connectFromAll: [:testCase |  testCase parents ].
   b layout tree.
+	b build.
   b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ].
   
   "cluster"

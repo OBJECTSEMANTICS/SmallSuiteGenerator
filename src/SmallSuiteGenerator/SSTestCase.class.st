@@ -4,20 +4,39 @@ SSTestCase is a subclass that defines or initializes some instance variables whi
 Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
+	#instVars : [
+		'number'
+	],
+	#classInstVars : [
+		'numberTestCase'
+	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #accessing }
+SSTestCase class >> numberTestCase [
+	numberTestCase ifNil: [ numberTestCase := 0 ].
+	numberTestCase := numberTestCase + 1.
+	^ numberTestCase 
+]
+
+{ #category : #initialization }
+SSTestCase class >> resetNumberTestCase [
+	numberTestCase := nil
+]
 
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
 	|testCase|
 	testCase := self new.
-	testCase typeInfo: aTypeInfo.
+	testCase typeInfo: aTypeInfo;
+	number: self numberTestCase.
 	^ testCase.
 ]
 
 { #category : #comparing }
-SSTestCase >> = other [
-  ^self class = other class and: [ statements = other statements and: [ fitness = other fitness and: [ parents size = other parents size and: [ childs size = other childs size ] ] ] ]
+SSTestCase >> = another [
+  ^self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ number = another number ] "and: [ childs size = other childs size ]" ] ] ]
 ]
 
 { #category : #actions }
@@ -54,6 +73,16 @@ SSTestCase >> initialize [
 { #category : #actions }
 SSTestCase >> length [
 	^ self numberStatements.
+]
+
+{ #category : #accessing }
+SSTestCase >> number [ 	
+	^ number
+]
+
+{ #category : #accessing }
+SSTestCase >> number: anInteger [
+	number := anInteger 
 ]
 
 { #category : #actions }

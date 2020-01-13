@@ -10,10 +10,16 @@ Class {
 		'tournamentSize',
 		'fitness',
 		'initialPopulation',
-		'engine'
+		'engine',
+		'allPopulation'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
+
+{ #category : #accessing }
+SGATournamentSelection >> allPopulation [
+	^ allPopulation 
+]
 
 { #category : #'as yet unclassified' }
 SGATournamentSelection >> createNewPopulation [
@@ -24,16 +30,15 @@ SGATournamentSelection >> createNewPopulation [
         P1 := self pickOne.
         P2 := self pickOne.
         self shouldCrossOver ifTrue: [ child := engine crossoverOperator crossover: P1 with: P2.
-              O1 := child first.
-              O2 := child second.
-				  O1 addParent: P1; addParent: P2.
-				  O2 addParent: P1; addParent: P2.
+            O1 := child first.
+    	       O2 := child second.
 		 ] ifFalse: [ O1 := P1.
               O2 := P2 ].
         engine mutate: O1.
         engine mutate: O2.
         fitness compute: (Array with: O1 with: O2).
         options := (Array with: O1 with: O2 with: P1 with: P2) asSortedCollection: [:a :b |  engine is: a betterThan: b ].
+			 "allPopulation addAll: options."
         newPopulation addAll: (options first: 2) ].
   population := newPopulation
 ]
@@ -84,7 +89,8 @@ SGATournamentSelection >> initialPopulation: anObject [
 SGATournamentSelection >> initialize [
 	population := OrderedCollection new.
 	tournamentSize := 5.
-	randomGenerator := SConfiguration newRandomGenerator 
+	randomGenerator := SConfiguration newRandomGenerator.
+	allPopulation := OrderedCollection new
 ]
 
 { #category : #accessing }

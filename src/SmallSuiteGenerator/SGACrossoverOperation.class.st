@@ -63,9 +63,9 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   sizeB := parentB numberStatements.
   offSpring := SSTestCase with: parentA typeInfo copy.
   offSpring typeInfo joinWith: parentB typeInfo.
-  "offSpring
+  offSpring
      addParent: parentA;
-     addParent: parentB."
+     addParent: parentB.
   offSpring
      addTargetClassNames: parentA targetClassesNames;
      addTargetClassNames: parentB targetClassesNames.
