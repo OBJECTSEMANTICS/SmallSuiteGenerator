@@ -293,7 +293,7 @@ SGAEngine >> run [
            generationNumber: iteration;
            fittestTestCase: self pickBestTest;
            timeToProduceGeneration: Time now asSeconds - t;
-           population: selectionStrategy population.
+           population: population.
         aDictionary := self collectFitnessByName.
         log
            lowestFit: (self pickMinFitTest: aDictionary);
