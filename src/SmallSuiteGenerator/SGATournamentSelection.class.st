@@ -33,16 +33,16 @@ SGATournamentSelection >> createNewPopulation [
         self shouldCrossOver ifTrue: [ children := engine crossoverOperator crossover: P1 with: P2.
             O1 := children first.
     	       O2 := children second.
-		 ] ifFalse: [ O1 := P1.
-              O2 := P2 ].
+		 ] ifFalse: [ O1 := P1 copy.
+              O2 := P2 copy].
         engine mutate: O1.
         engine mutate: O2.
         fitness compute: (Array with: O1 with: O2).
-			 options := Set newFrom: (Array with: O1 with: O2 with: P1 with: P2).
+			 options := (Set newFrom: (Array with: O1 with: O2 with: P1 with: P2)) asArray.
 			 options size >= 2 ifTrue: [ 
-			 options := options asArray asSortedCollection: [:a :b |  engine is: a betterThan: b ].
+			 options := (options asSortedCollection: [:a :b |  engine is: a betterThan: b ]) first: 2.
 			 ].
-        newPopulation addAll: (options first: 2) ].
+        newPopulation addAll: options "(options first: 2)" ].
   population := newPopulation
 ]
 
