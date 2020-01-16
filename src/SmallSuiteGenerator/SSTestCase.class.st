@@ -59,6 +59,18 @@ SSTestCase >> copy [
 	^ copy
 ]
 
+{ #category : #copying }
+SSTestCase >> deepCopy [
+	| copy |
+	copy := self class with: typeInfo copy.
+	copy addTargetClassNames: targetClassesNames.
+	statements do: [ :stm | copy addStatement: stm copy ].
+	copy updateNextId.
+	copy setFitness: self fitness.
+	copy setFitnessByClass: self fitnessByClass.
+	^ copy
+]
+
 { #category : #comparing }
 SSTestCase >> hash [
 	^ self statements hash
@@ -95,6 +107,16 @@ SSTestCase >> run [
 SSTestCase >> runWithoutAssertions [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
 	^ SSTestRunner new runWithoutAssertions: self.
+]
+
+{ #category : #initialization }
+SSTestCase >> setFitness: aDictionary [ 
+	fitness := aDictionary copy
+]
+
+{ #category : #initialization }
+SSTestCase >> setFitnessByClass: aDictionary [ 
+	fitnessByClass := aDictionary copy
 ]
 
 { #category : #actions }

@@ -23,7 +23,7 @@ Class {
 
 { #category : #parsing }
 SLiteral class >> value: aValue [
-	^ SLiteral new value: aValue; yourself.
+	^ self new value: aValue; yourself.
 ]
 
 { #category : #comparing }

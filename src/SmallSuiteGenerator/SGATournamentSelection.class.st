@@ -25,25 +25,30 @@ SGATournamentSelection >> allPopulation [
 SGATournamentSelection >> createNewPopulation [
 	| newPopulation  |
   "TB := engine pickBestTest."
-  newPopulation := OrderedCollection new.
-	initialPopulation := initialPopulation copy.
+  newPopulation := Set new.
+	initialPopulation := initialPopulation collect: [:testCase | testCase deepCopy addParent: testCase ].
   [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1 P2 O1 O2 "fp fo lp lo" children options |
         P1 := self pickOne.
         P2 := self pickOne.
         self shouldCrossOver ifTrue: [ children := engine crossoverOperator crossover: P1 with: P2.
             O1 := children first.
     	       O2 := children second.
-		 ] ifFalse: [ O1 := P1 copy.
-              O2 := P2 copy].
+		 ] ifFalse: [ O1 := P1.
+						O1 addParent: P1.
+              O2 := P2. 
+						O2 addParent: P2 
+			].
         engine mutate: O1.
         engine mutate: O2.
         fitness compute: (Array with: O1 with: O2).
 			 options := (Set newFrom: (Array with: O1 with: O2 with: P1 with: P2)) asArray.
 			 options size >= 2 ifTrue: [ 
-			 options := (options asSortedCollection: [:a :b |  engine is: a betterThan: b ]) first: 2.
-			 ].
+			 options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
+			 allPopulation addAll: options.
+			 options := options first: 2.
+			 ] ifFalse: [ allPopulation addAll: options ].
         newPopulation addAll: options "(options first: 2)" ].
-  population := newPopulation
+  population := newPopulation asOrderedCollection 
 ]
 
 { #category : #'as yet unclassified' }

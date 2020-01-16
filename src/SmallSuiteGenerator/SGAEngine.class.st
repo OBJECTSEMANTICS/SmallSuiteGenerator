@@ -196,6 +196,20 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 						ifFalse: [ fitness1 > fitness2 ]
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> logOfGeneration: anInteger inTime: t [
+	| log dictFitness |
+	log := SGALog new 
+		generationNumber: anInteger;
+		fittestTestCase: self pickBestTest;
+		timeToProduceGeneration: Time new asSeconds - t;
+		population: population.
+	dictFitness := self collectFitnessByName.
+	log lowestFit: (self pickMinFitTest: dictFitness);
+	averageFit: (self pickAverageFitTest: dictFitness).
+	^ log
+]
+
 { #category : #accessing }
 SGAEngine >> logs [
 	^ logs copy
@@ -278,18 +292,22 @@ SGAEngine >> populationSize: aInteger [
 
 { #category : #actions }
 SGAEngine >> run [
+	| t |
+	t := Time now asSeconds.
 	population := self createRandomPopulation.
 	self computeFitness.
 	selectionStrategy initialPopulation: population;
 	fitness: fitness.
+	logs add: (self logOfGeneration: 0 inTime: t).
    "logs add: (SGALog new
            generationNumber: 0;
            fittestTestCase: self pickBestTest;
            population: population)."
-  	(1 to: numberOfGenerations) do: [:iteration |  | t log aDictionary |
+  	(1 to: numberOfGenerations) do: [:iteration |
         t := Time now asSeconds.
         self createNewPopulation.
-        log := SGALog new
+			 logs add: (self logOfGeneration: iteration inTime: t).
+       " log := SGALog new
            generationNumber: iteration;
            fittestTestCase: self pickBestTest;
            timeToProduceGeneration: Time now asSeconds - t;
@@ -298,7 +316,7 @@ SGAEngine >> run [
         log
            lowestFit: (self pickMinFitTest: aDictionary);
            averageFit: (self pickAverageFitTest: aDictionary).
-        logs add: log ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+        logs add: log "] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }
