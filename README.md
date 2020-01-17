@@ -10,6 +10,8 @@ SmallSuiteGenerator can be used to discover bugs in the code, because it generat
 
 ## Installation 
 
+### Pharo
+
 To install the latest stable version of SmallSuiteGenerator in a Pharo image, execute the following code:
 
 ```Smalltalk
@@ -26,6 +28,13 @@ Metacello new
  repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
  load: #('All').
 ```
+
+### VisualWorks
+
+You can load SmallSuiteGenerator into VW image with the next steps:
+
+- Clone or download Parcels8.3/SmallSuiteWithSpyLite directory of this project
+- Load parcel SmallSuiteGenerator-Extensions.pcl
 
 ## Configuration
 
