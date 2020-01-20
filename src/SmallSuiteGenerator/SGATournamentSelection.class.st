@@ -51,8 +51,10 @@ SGATournamentSelection >> createNewPopulation [
 			self halt.
 			newPopulation addAll: (selectedOptions collect: [:option | 
 				(allPopulation includes: option) ifTrue: [ 
-					self halt.
-					option deepCopy addParent: option; yourself 
+					| copy |
+					copy := option deepCopy addParent: option; yourself.
+					allPopulation add: copy.
+					copy
 				] ifFalse: [ option] ]).
 			 "] ifFalse: [ allPopulation addAll: options ]."
 			 allPopulation addAll: options.

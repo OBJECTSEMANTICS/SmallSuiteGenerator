@@ -36,7 +36,7 @@ SSTestCase class >> with: aTypeInfo [
 
 { #category : #comparing }
 SSTestCase >> = another [
-  ^self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ number = another number ] "and: [ childs size = other childs size ]" ] ] ]
+  ^ self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ number = another number ] "and: [ childs size = other childs size ]" ] ] ]
 ]
 
 { #category : #actions }
@@ -73,7 +73,7 @@ SSTestCase >> deepCopy [
 
 { #category : #comparing }
 SSTestCase >> hash [
-	^ self statements hash
+	^ super hash bitXor: (self number hash bitXor: self statements hash)
 ]
 
 { #category : #initialization }
