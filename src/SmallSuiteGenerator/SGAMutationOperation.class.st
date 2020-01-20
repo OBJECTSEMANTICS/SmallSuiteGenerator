@@ -34,7 +34,7 @@ SGAMutationOperation >> initialize [
 { #category : #actions }
 SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
-	newTestCase := aTestCase copy.
+	newTestCase := aTestCase "copy".
 	self doMutate: newTestCase.
 	^ newTestCase
 ]

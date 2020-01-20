@@ -8,7 +8,7 @@ SGAEngine >> visualize [
      withBorder;
      width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 2 ];
      height: [:cls |  cls numberStatements * 2 ].
-  b nodes: selectionStrategy allPopulation"(logs flatCollect: #population)".
+  b nodes: "selectionStrategy allPopulation"(logs flatCollect: #population).
  	b shape verticalBezierLine.
   b edges moveBehind.
  

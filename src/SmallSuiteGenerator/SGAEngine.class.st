@@ -192,7 +192,7 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 	fitness1 := self fitnessFor: testCase1.
 	fitness2 := self fitnessFor: testCase2.
 		^ 			fitness1 = fitness2
-						ifTrue: [ testCase1 length < testCase2 length ]
+						ifTrue: [ testCase1 length <= testCase2 length ]
 						ifFalse: [ fitness1 > fitness2 ]
 ]
 
@@ -212,7 +212,7 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 
 { #category : #accessing }
 SGAEngine >> logs [
-	^ logs copy
+	^ logs
 ]
 
 { #category : #actions }

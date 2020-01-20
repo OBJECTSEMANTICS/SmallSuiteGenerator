@@ -26,8 +26,9 @@ SGATournamentSelection >> createNewPopulation [
 	| newPopulation  |
   "TB := engine pickBestTest."
   newPopulation := OrderedCollection new.
-	initialPopulation := initialPopulation collect: [:testCase | testCase deepCopy addParent: testCase ].
-  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1 P2 O1 O2 "fp fo lp lo" children options |
+	"initialPopulation := initialPopulation collect: [:testCase | testCase deepCopy addParent: testCase ].
+	allPopulation addAll: initialPopulation."
+  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1 P2 O1 O2 "fp fo lp lo" selectedOptions children options |
         P1 := self pickOne.
         P2 := self pickOne.
         self shouldCrossOver ifTrue: [ children := engine crossoverOperator crossover: P1 with: P2.
@@ -44,12 +45,18 @@ SGATournamentSelection >> createNewPopulation [
 			 options := Array with: O1 with: O2 with: P1 with: P2.
 			 "options size >= 2 ifTrue: [ "
 			 options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
-			 allPopulation addAll: options.
-			 options := options first: 2.
-			options do: [ :option | newPopulation add: (
-				(newPopulation includes: option) ifTrue: [ option deepCopy addParent: option; yourself ] ifFalse: [ option]). ].
+			 selectedOptions := options first: 2.
+			"selectedOptions do: [ :option | newPopulation add: (
+				(allPopulation includes: option) ifTrue: [ option deepCopy addParent: option; yourself ] ifFalse: [ option]). ]."
+			self halt.
+			newPopulation addAll: (selectedOptions collect: [:option | 
+				(allPopulation includes: option) ifTrue: [ 
+					self halt.
+					option deepCopy addParent: option; yourself 
+				] ifFalse: [ option] ]).
 			 "] ifFalse: [ allPopulation addAll: options ]."
-        newPopulation addAll: options "(options first: 2)" ].
+			 allPopulation addAll: options.
+        "newPopulation addAll: selectedOptions" "(options first: 2)" ].
   population := newPopulation 
 ]
 
@@ -91,9 +98,12 @@ SGATournamentSelection >> initialPopulation [
 ]
 
 { #category : #accessing }
-SGATournamentSelection >> initialPopulation: anObject [
-	initialPopulation := anObject.
-	allPopulation addAll: anObject
+SGATournamentSelection >> initialPopulation: testCases [
+	"initialPopulation := anObject."
+	allPopulation addAll: testCases.
+	initialPopulation := testCases.
+	"initialPopulation := testCases collect: [:testCase | testCase deepCopy addParent: testCase ].
+	allPopulation addAll: initialPopulation."
 ]
 
 { #category : #initialization }
