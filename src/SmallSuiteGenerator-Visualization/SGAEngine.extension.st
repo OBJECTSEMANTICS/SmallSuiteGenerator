@@ -2,13 +2,19 @@ Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualize [
-  | b |
+  | b nodes|
   b := RTMondrian new.
   b shape rectangle
      withBorder;
      width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 2 ];
      height: [:cls |  cls numberStatements * 2 ].
-  b nodes: "selectionStrategy allPopulation"(logs flatCollect: #population).
+	
+  b nodes: logs forEach:[:each|
+			nodes :=  nodes.
+	
+	].
+
+
  	b shape verticalBezierLine.
   b edges moveBehind.
  
@@ -20,10 +26,16 @@ SGAEngine >> visualize [
   b edges
      notUseInLayout;
      connectTo: [:testCase |  testCase childs ]."b edges connectFromAll: [:testCase |  testCase parents ].
-  b layout tree.
-	b build.
+  "b layout tree."
+"b build."
+  nodes do:[:n |
+			n translateTo: (n model number * 100 @ (n model ni * 100+100)).
+	].
   b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ].
-  
+	b inspect.
+	nodes do:[:n |
+			n translateTo: (n model number * 10 @ (n model ni * 10+20)).
+	].
   "cluster"
   "b normalizer normalizeColorAsGray: [ :cls | cls numberOf ]"^b
 ]

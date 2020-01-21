@@ -5,7 +5,8 @@ Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
 	#instVars : [
-		'number'
+		'number',
+		'ni'
 	],
 	#classInstVars : [
 		'numberTestCase'
@@ -79,12 +80,22 @@ SSTestCase >> hash [
 { #category : #initialization }
 SSTestCase >> initialize [
 	super initialize.
-	
+	ni := 1.
 ]
 
 { #category : #actions }
 SSTestCase >> length [
 	^ self numberStatements.
+]
+
+{ #category : #accessing }
+SSTestCase >> ni [
+	^ ni
+]
+
+{ #category : #accessing }
+SSTestCase >> ni: anObject [
+	ni := anObject
 ]
 
 { #category : #accessing }
