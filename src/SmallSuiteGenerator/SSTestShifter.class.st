@@ -282,13 +282,6 @@ SSTestShifter >> alternativeOfVariable: aVariable before: aExpression [
 	^ (self addStatementOfType: returnType before: aExpression) reference
 ]
 
-{ #category : #actions }
-SSTestShifter >> analyze [
-	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-
-	^ SSTestRunner new evaluate: self
-]
-
 { #category : #accessing }
 SSTestShifter >> assertions [
 	^ assertions

@@ -4,6 +4,9 @@ SSTestCase is a subclass that defines or initializes some instance variables whi
 Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
+	#instVars : [
+		'previousOpenWindows'
+	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
@@ -18,6 +21,16 @@ SSTestCase class >> with: aTypeInfo [
 { #category : #comparing }
 SSTestCase >> = other [
 	^ self class = other class and: [ statements = other statements ]
+]
+
+{ #category : #actions }
+SSTestCase >> analyze [
+	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
+	|result|
+	self setUp.
+	result := SSTestRunner new evaluate: self.
+	self tearDown.
+	^ result.
 ]
 
 { #category : #actions }
@@ -59,19 +72,31 @@ SSTestCase >> length [
 { #category : #actions }
 SSTestCase >> run [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	^ SSTestRunner new run: self.
+	|result|
+	self setUp.
+	result := SSTestRunner new run: self.
+	self tearDown.
+	^ result.
 ]
 
 { #category : #actions }
 SSTestCase >> runWithoutAssertions [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	^ SSTestRunner new runWithoutAssertions: self.
+	|result|
+	self setUp.
+	result := SSTestRunner new runWithoutAssertions: self.
+	self tearDown.
+	^ result.
 ]
 
 { #category : #actions }
 SSTestCase >> setUp [
+	previousOpenWindows := SystemWindow allInstances.
 ]
 
 { #category : #actions }
 SSTestCase >> tearDown [ 
+	|windowsToDelete|
+	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
+	windowsToDelete do:[:w| w close].
 ]
