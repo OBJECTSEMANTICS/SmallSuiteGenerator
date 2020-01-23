@@ -69,9 +69,10 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   limit := (sizeA * alpha) asInteger.
   offSpring addStatements: (parentA statements copyFrom: 1 to: limit) copy.
   (parentB statements copyFrom: (alpha * sizeB) asInteger + 1 to: sizeB) do: [:aStm |  [ aStm insertOn: offSpring ] on: SError do: [  ] ].
-	^ (parentA = parentB and: [ offSpring = parentA ]) 
-		ifTrue: [ parentA copy ] 
-		ifFalse: [ offSpring addParent: parentA;
-     addParent: parentB.
-		offSpring ].
+	offSpring addParent: parentA; addParent: parentB.
+  "^(parentA = parentB and: [ offSpring = parentA ]) ifTrue: [ parentA copy ] ifFalse: [ offSpring
+           addParent: parentA;
+           addParent: parentB.
+        offSpring ]"
+	^ offSpring 
 ]

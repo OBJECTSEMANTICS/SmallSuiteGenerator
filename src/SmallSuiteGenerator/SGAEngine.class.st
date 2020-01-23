@@ -92,43 +92,16 @@ SGAEngine >> computeFitness [
 ]
 
 { #category : #actions }
-SGAEngine >> createNewPopulation [
-	selectionStrategy doSelection.
-	population := selectionStrategy population
-  "| newPopulation TB |
-  TB := self pickBestTest.
-  newPopulation := OrderedCollection new.
-  selectionStrategy load: population copy.
-  selectionStrategy fitness: fitness.
-  [ newPopulation size < self populationSize and: [ selectionStrategy population size >= 2 ] ] whileTrue: [ | P1 P2 O1 O2 fp fo lp lo child options |
-        P1 := selectionStrategy pickOne.
-        P2 := selectionStrategy pickOne.
-        self shouldCrossOver ifTrue: [ child := crossoverOperator crossover: P1 with: P2.
-              O1 := child first.
-              O2 := child second.
-				  O1 addParent: P1; addParent: P2.
-				  O2 addParent: P1; addParent: P2.
-		 ] ifFalse: [ O1 := P1.
-              O2 := P2 ].
-        mutationOperator mutate: O1.
-        mutationOperator mutate: O2.
-        fitness compute: (Array with: O1 with: O2).
-        options := (Array with: O1 with: O2 with: P1 with: P2) asSortedCollection: [:a :b |  self is: a betterThan: b ].
-        newPopulation addAll: (options first: 2) ].
-  population := newPopulation"
-]
-
-{ #category : #actions }
 SGAEngine >> createRandomPopulation [
-	^ (1 to: populationSize) collect: [ :val | 
-		  | value test |
-		  value := SConfiguration randomGenerator next * populationSize + 1.
-		  test := SSTestCase with: typeInfo.
-		  test
-			  addTargetClassName: self targetClassName;
-			  addFactoryMessage: self targetClassName;
-			  generateStatements: value.
-		  test ]
+  ^(1 to: populationSize) collect: [:val |  | value test |
+        value := SConfiguration randomGenerator next * populationSize + 1.
+        test := SSTestCase with: typeInfo.
+        test
+           addTargetClassName: self targetClassName;
+           addFactoryMessage: self targetClassName;
+           generateStatements: value;
+           idPopulation: val.
+        test ]
 ]
 
 { #category : #initialization }
@@ -159,18 +132,17 @@ SGAEngine >> fitnessFor: aTestCase [
 
 { #category : #initialization }
 SGAEngine >> initialize [
-	super initialize.
-	"self initializeMutationOperator.
-	self initializeCrossoverOperator."
-	logs := OrderedCollection new.
-	randomGenerator := SConfiguration newRandomGenerator.
-	populationSize := 100.
-	numberOfGenerations := 100.
-	selectionStrategy := SGATournamentSelection new.
-	SSTestCase resetNumberTestCase.
-	selectionStrategy engine: self.
-	self initializeMutationOperator.
-	self initializeCrossoverOperator
+  super initialize.
+  
+  logs := OrderedCollection new.
+  randomGenerator := SConfiguration newRandomGenerator.
+  populationSize := 100.
+  numberOfGenerations := 100.
+  selectionStrategy := SGATournamentSelection new.
+  
+  selectionStrategy engine: self.
+  self initializeMutationOperator.
+  self initializeCrossoverOperator
 ]
 
 { #category : #initialization }
@@ -261,18 +233,7 @@ SGAEngine >> pickBestTest [
 
 { #category : #actions }
 SGAEngine >> pickMinFitTest: aDictionary [
-	^ (aDictionary keys collect: [ :key | 
-		   key -> (aDictionary at: key) min ]) asDictionary
-	"| dictFit |
-	dictFit := population first fitness.
-	((population collect: #fitness) flatCollect: #associations) do: [ 
-		:assoc | 
-		| aValue |
-		aValue := dictFit at: assoc key ifAbsent: [ assoc key ].
-		dictFit
-			at: assoc key
-			put: (Array with: assoc value with: aValue) min ].
-	^ dictFit"
+  ^ (aDictionary keys collect: [:key |  key -> (aDictionary at: key) min ]) asDictionary
 ]
 
 { #category : #accessing }
@@ -292,31 +253,18 @@ SGAEngine >> populationSize: aInteger [
 
 { #category : #actions }
 SGAEngine >> run [
-	| t |
-	t := Time now asSeconds.
-	population := self createRandomPopulation.
-	self computeFitness.
-	selectionStrategy initialPopulation: population;
-	fitness: fitness.
-	logs add: (self logOfGeneration: 0 inTime: t).
-   "logs add: (SGALog new
-           generationNumber: 0;
-           fittestTestCase: self pickBestTest;
-           population: population)."
-  	(1 to: numberOfGenerations) do: [:iteration |
-        t := Time now asSeconds.
-        self createNewPopulation.
-			 logs add: (self logOfGeneration: iteration inTime: t).
-       " log := SGALog new
-           generationNumber: iteration;
-           fittestTestCase: self pickBestTest;
-           timeToProduceGeneration: Time now asSeconds - t;
-           population: population.
-        aDictionary := self collectFitnessByName.
-        log
-           lowestFit: (self pickMinFitTest: aDictionary);
-           averageFit: (self pickAverageFitTest: aDictionary).
-        logs add: log "] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+  | t |
+  t := Time now asSeconds.
+  population := self createRandomPopulation.
+  self computeFitness.
+  selectionStrategy
+     initialPopulation: population;
+     fitness: fitness.
+  logs add: (self logOfGeneration: 0 inTime: t).
+  (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
+        selectionStrategy doSelection.
+  		population := selectionStrategy population.
+        logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }

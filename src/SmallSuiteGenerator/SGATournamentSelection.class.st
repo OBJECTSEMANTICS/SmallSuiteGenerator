@@ -23,51 +23,33 @@ SGATournamentSelection >> allPopulation [
 
 { #category : #'as yet unclassified' }
 SGATournamentSelection >> createNewPopulation [
-	| newPopulation  |
-  "TB := engine pickBestTest."
+  | newPopulation |
   newPopulation := OrderedCollection new.
-	"initialPopulation := initialPopulation collect: [:testCase | testCase deepCopy addParent: testCase ].
-	allPopulation addAll: initialPopulation."
-  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1copy P2copy P1 P2 O1 O2 "fp fo lp lo" selectedOptions children options |
+  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1copy P2copy P1 P2 O1 O2 selectedOptions children options |
         P1 := self pickOne.
-        P2 := self pickOne.
-		  P1copy := P1 deepCopy.
-		  P2copy := P2 deepCopy.
-		  P1copy ni: (P1 ni+1).
-		  P2copy ni: (P2 ni+1).
-        self shouldCrossOver ifTrue: [ 
-			 	children := engine crossoverOperator crossover: P1 with: P2.
-            O1 := children first.
-    	      O2 := children second.
-				O1 ni: (P1 ni+1).
-		  		O2 ni: (P2 ni+1).
-		 ] ifFalse: [ 
-			   O1 := P1copy.
-				O2 := P2copy.
-			].
-			O1 addParent: P1.
-			O2 addParent: P2.
-			
-        	engine mutate: O1.
-        	engine mutate: O2.
-        	fitness compute: (Array with: O1 with: O2).
-		 	options := Array with: O1 with: O2 with: P1copy with: P2copy.
-			 "options size >= 2 ifTrue: [ "
-			options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
-			selectedOptions := options first: 2.
-			"selectedOptions do: [ :option | newPopulation add: (
-				(allPopulation includes: option) ifTrue: [ option deepCopy addParent: option; yourself ] ifFalse: [ option]). ]."
-			"newPopulation addAll: (selectedOptions collect: [:option | 
-				(allPopulation includes: option) ifTrue: [ 
-					| copy |
-					copy := option deepCopy addParent: option; yourself.
-					allPopulation add: copy.
-					copy
-				] ifFalse: [ option] ])."
-			 "] ifFalse: [ allPopulation addAll: options ]."
-			 "allPopulation addAll: options."
-        newPopulation addAll: selectedOptions. "(options first: 2)" ].
-  population := newPopulation 
+        P2 := self pickAnother: P1.
+        P1copy := P1 deepCopy.
+        P1copy addParent: P1.
+        P2copy := P2 deepCopy.
+        P2copy addParent: P2.
+        P1copy ni: P1 ni + 1.
+        P2copy ni: P2 ni + 1.
+        self shouldCrossOver ifTrue: [ children := engine crossoverOperator crossover: P1 with: P2.
+              O1 := children first.
+              O2 := children second.
+              O1 ni: P1 ni + 1.
+              O2 ni: P2 ni + 1 ] ifFalse: [ O1 := P1copy deepCopy.
+              O1 addParent: P1.
+              O2 := P2copy deepCopy.
+              O2 addParent: P2 ].
+        O1 := engine mutate: O1.
+        O2 := engine mutate: O2.
+        fitness compute: (Array with: O1 with: O2).
+        options := Array with: O1 with: O2 with: P1copy with: P2copy.
+        options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
+        selectedOptions := options first: 2.
+        selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ] ].
+  population := newPopulation
 ]
 
 { #category : #'as yet unclassified' }
@@ -127,6 +109,15 @@ SGATournamentSelection >> initialize [
 { #category : #accessing }
 SGATournamentSelection >> load: aTestCaseCollection [
 	population := aTestCaseCollection	asOrderedCollection "copy"
+]
+
+{ #category : #actions }
+SGATournamentSelection >> pickAnother: selected [
+  "Return the best testCase from tournamentSize testCase randomly chosen from the population"
+  | sample |
+  sample := (randomGenerator collectAtRandom: initialPopulation) first: (tournamentSize min: initialPopulation size).
+  sample := sample asSortedCollection: [:a :b |  (self fitnessFor: a) < (self fitnessFor: b) ].
+  ^(sample reject: [:test |  test = selected ]) last
 ]
 
 { #category : #actions }

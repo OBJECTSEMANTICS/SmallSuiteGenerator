@@ -5,7 +5,7 @@ Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
 	#instVars : [
-		'number',
+		'idPopulation',
 		'ni'
 	],
 	#classInstVars : [
@@ -14,30 +14,21 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #accessing }
-SSTestCase class >> numberTestCase [
-	numberTestCase ifNil: [ numberTestCase := 0 ].
-	numberTestCase := numberTestCase + 1.
-	^ numberTestCase 
-]
-
-{ #category : #initialization }
-SSTestCase class >> resetNumberTestCase [
-	numberTestCase := nil
-]
-
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
-	|testCase|
-	testCase := self new.
-	testCase typeInfo: aTypeInfo;
-	number: self numberTestCase.
-	^ testCase.
+  | testCase |
+  testCase := self new.
+  testCase typeInfo: aTypeInfo.
+  
+  "number: self numberTestCase."
+
+^testCase
 ]
 
 { #category : #comparing }
 SSTestCase >> = another [
-  ^ self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ number = another number ] "and: [ childs size = other childs size ]" ] ] ]
+  ^self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ]
+                    "and: [ number = another number ]" ] ] ]
 ]
 
 { #category : #actions }
@@ -62,25 +53,34 @@ SSTestCase >> copy [
 
 { #category : #copying }
 SSTestCase >> deepCopy [
-	| copy |
-	copy := self class with: typeInfo copy.
-	copy addTargetClassNames: targetClassesNames.
-	statements do: [ :stm | copy addStatement: stm copy ].
-	copy updateNextId.
-	copy setFitness: self fitness.
-	copy setFitnessByClass: self fitnessByClass.
-	^ copy
+  | copy |
+  copy := self copy.
+  copy setFitness: self fitness.
+  copy setFitnessByClass: self fitnessByClass.
+	copy ni: self ni.
+  ^copy
 ]
 
 { #category : #comparing }
 SSTestCase >> hash [
-	^ super hash bitXor: (self number hash bitXor: self statements hash)
+  ^ super hash bitXor: "(self number hash bitXor:" self statements hash")"
+]
+
+{ #category : #accessing }
+SSTestCase >> idPopulation [
+	^ idPopulation
+]
+
+{ #category : #accessing }
+SSTestCase >> idPopulation: anObject [
+	idPopulation := anObject
 ]
 
 { #category : #initialization }
 SSTestCase >> initialize [
-	super initialize.
-	ni := 1.
+  super initialize.
+  ni := 1.
+  idPopulation := 1.
 ]
 
 { #category : #actions }
@@ -96,16 +96,6 @@ SSTestCase >> ni [
 { #category : #accessing }
 SSTestCase >> ni: anObject [
 	ni := anObject
-]
-
-{ #category : #accessing }
-SSTestCase >> number [ 	
-	^ number
-]
-
-{ #category : #accessing }
-SSTestCase >> number: anInteger [
-	number := anInteger 
 ]
 
 { #category : #actions }
