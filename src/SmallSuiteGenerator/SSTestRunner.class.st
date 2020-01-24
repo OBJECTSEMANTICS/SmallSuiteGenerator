@@ -48,9 +48,13 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 |
-_var0 := RTGrapher new.
-_var1 := _var0 homogenizeMinAndMax.
+	| _var0 _var1 _var2 _var3 _var4 _var5 |
+_var0 := SFoo new.
+_var1 := _var0 returnCollection.
+_var2 := _var0 return: _var1.
+_var3 := _var0 return: _var2.
+_var4 := _var0 initialize.
+_var5 := _var0 return: _var2.
 ^self analyze: thisContext
 ]
 

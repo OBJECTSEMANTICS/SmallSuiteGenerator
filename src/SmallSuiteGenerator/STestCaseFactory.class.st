@@ -12,7 +12,8 @@ Class {
 		'outputPackageName',
 		'fitness',
 		'numberOfIterations',
-		'profiler'
+		'profiler',
+		'targetTestClassName'
 	],
 	#classInstVars : [
 		'instance'
@@ -65,7 +66,7 @@ STestCaseFactory >> engineDefault [
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
 	| aClassName class |
-	aClassName := ('GA' , self targetClassName , 'Test') asSymbol.
+	aClassName := targetTestClassName ifNil: [('GA' , self targetClassName , 'Test') asSymbol].
 	class := SConfiguration lookUpClass: aClassName.
 	class
 		ifNil: [ class := SConfiguration
@@ -217,6 +218,11 @@ STestCaseFactory >> targetPackageRegex [
 { #category : #accessing }
 STestCaseFactory >> targetPackageRegex: anObject [
 	targetPackageRegex := anObject
+]
+
+{ #category : #actions }
+STestCaseFactory >> targetTestClassName: aString [
+	targetTestClassName := aString asSymbol 
 ]
 
 { #category : #actions }
