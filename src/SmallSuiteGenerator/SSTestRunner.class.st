@@ -48,9 +48,9 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 |
-_var0 := RTGrapher new.
-_var1 := _var0 homogenizeMinAndMax.
+	| _aSFoo0 _anOrderedCollection1 |
+_aSFoo0 := SFoo new.
+_anOrderedCollection1 := _aSFoo0 returnCollection.
 ^self analyze: thisContext
 ]
 
