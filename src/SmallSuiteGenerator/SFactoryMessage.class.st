@@ -95,7 +95,7 @@ SFactoryMessage >> isFactoryMessage [
 
 { #category : #printing }
 SFactoryMessage >> printOn: aStream [
-	receiver returnType asClass printOn: aStream.
+	(receiver returnType ifNil: [ receiver ] ifNotNil: [receiver returnType asClass]) printOn: aStream.
 	aStream	nextPut: Character space.
 	self printSelectors: aStream
 ]

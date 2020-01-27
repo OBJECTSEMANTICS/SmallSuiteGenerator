@@ -23,10 +23,10 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := SFoo new.'
-				with: '_var1 := ' , SStudent new storeString , '.'
-				with: '_var2 := _var0 return: _var1.'
-				with: '_var3 := ' , SStudent new storeString , '.').
+				with: '_aSFoo0 := SFoo new.'
+				with: '_aSStudent1 := ' , SStudent new storeString , '.'
+				with: '_aSStudent2 := _aSFoo0 return: _aSStudent1.'
+				with: '_aSStudent3 := ' , SStudent new storeString , '.').
 	self
 		should: [ testCase
 				perform: #insertAsParameter:using:
@@ -40,11 +40,11 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := SFoo new.'
-				with: '_var1 := ' , SStudent new storeString , '.'
-				with: '_var2 := _var0 return: _var1.'
-				with: '_var3 := ' , SStudent new storeString , '.'
-				with: '_var4 := _var0 return: _var3.')
+				with: '_aSFoo0 := SFoo new.'
+				with: '_aSStudent1 := ' , SStudent new storeString , '.'
+				with: '_aSStudent2 := _aSFoo0 return: _aSStudent1.'
+				with: '_aSStudent3 := ' , SStudent new storeString , '.'
+				with: '_aSStudent4 := _aSFoo0 return: _aSStudent3.')
 ]
 
 { #category : #'mutation-insert' }
@@ -61,23 +61,23 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 	self
 		assertCollection: (testCase statements collect: #printString) allButLast
 		hasSameElements:
-			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.').
+			#('_aSmallInteger0 := 1.' '_aSStudent1 := SStudent new.' '_aSStudent2 := _aSStudent1 scoreStudent: _aSmallInteger0.' '_aSStudent3 := SStudent new.').
 	self
 		assert:
-			(#('_var4 := _var1 idStudent.' '_var4 := _var2 idStudent.' '_var4 := _var3 idStudent.')
-				includes: (testCase statementOfVarName: '_var4') printString).
-	fieldAccess := testCase statementOfVarName: '_var4'.
-	message := (testCase statementOfVarName: '_var2') value.
+			(#('_aSmallInteger4 := _aSStudent1 idStudent.' '_aSmallInteger4 := _aSStudent2 idStudent.' '_aSmallInteger4 := _var3 idStudent.')
+				includes: (testCase statementOfVarName: '_aSmallInteger4') printString).
+	fieldAccess := testCase statementOfVarName: '_aSmallInteger4'.
+	message := (testCase statementOfVarName: '_aSStudent2') value.
 	message := testCase insertExpression: message copy after: fieldAccess.
 	self
 		assert: message printString
-		equals: '_var5 := _var1 scoreStudent: _var0.'.
+		equals: '_aSStudent5 := _aSStudent1 scoreStudent: _aSmallInteger0.'.
 	message := testCase
 		perform: #insertAsParameter:using:
 		inStatement: fieldAccess.
 	self
 		assert: message printString
-		equals: '_var5 := _var1 scoreStudent: _var4.'
+		equals: '_aSStudent5 := _aSStudent1 scoreStudent: _aSmallInteger4.'
 ]
 
 { #category : #'mutation-insert' }
@@ -89,16 +89,16 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 	testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SFoo new.' '_var1 := SFoo new.').
+		hasSameElements: #('_aSFoo0 := SFoo new.' '_aSFoo1 := SFoo new.').
 	auxExpr := testCase addMessage.
 	auxExpr value
-		receiver: (testCase statementOfVarName: '_var1') variable.
+		receiver: (testCase statementOfVarName: '_aSFoo1') variable.
 	auxExpr := testCase
 		perform: #insertAsParameter:using:
 		inStatement: expression.
 	self
 		assert: auxExpr printString
-		equals: '_var2 := _var1 return: _var0.'
+		equals: '_aSFoo2 := _aSFoo1 return: _aSFoo0.'
 ]
 
 { #category : #'mutation-insert' }
@@ -113,7 +113,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := SStack newStack.' '_var1 := _var0 lastLinkStack.' '_var2 := 5.').
+			#('_aSStack0 := SStack newStack.' '_aSmallInteger1 := _aSStack0 lastLinkStack.' '_aSmallInteger2 := 5.').
 	testCase addMessage: #push: from: #SStack.
 	testCase
 		perform: #insertAsParameter:using:
@@ -121,7 +121,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := SStack newStack.' '_var1 := _var0 lastLinkStack.' '_var2 := 5.' '_var3 := _var0 push: _var1.')
+			#('_aSStack0 := SStack newStack.' '_aSmallInteger1 := _aSStack0 lastLinkStack.' '_aSmallInteger2 := 5.' '_aSmallInteger3 := _aSStack0 push: _aSmallInteger1.')
 ]
 
 { #category : #'mutation-insert' }
@@ -134,7 +134,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := #(1 4 5 ).' '_var1 := SStack newStackWith: _var0.' '_var2 := _var1 pop.' '_var3 := 5.').
+			#('_anArray0 := #(1 4 5 ).' '_aSStack1 := SStack newStackWith: _anArray0.' '_aSmallInteger2 := _aSStack1 pop.' '_aSmallInteger3 := 5.').
 	testCase addMessage: #push: from: #SStack.
 	testCase
 		perform: #insertAsParameter:using:
@@ -142,7 +142,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := #(1 4 5 ).' '_var1 := SStack newStackWith: _var0.' '_var2 := _var1 pop.' '_var3 := 5.' '_var4 := _var1 push: _var2.')
+			#('_anArray0 := #(1 4 5 ).' '_aSStack1 := SStack newStackWith: _anArray0.' '_aSmallInteger2 := _aSStack1 pop.' '_aSmallInteger3 := 5.' '_aSmallInteger4 := _aSStack1 push: _aSmallInteger2.')
 ]
 
 { #category : #'mutation-insert' }
@@ -153,7 +153,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.').
 	self
 		should: [ testCase insertStatementOfSelector: #insertMethodMessage:using: ]
 		raise: SError
@@ -168,7 +168,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo1 score.').
 	self
 		should: [ testCase
 				perform: #insertMethodMessage:using:
@@ -183,7 +183,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
 	testCase addLiteral: #SmallInteger.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 5.').
+		hasSameElements: #('_aSmallInteger0 := 5.').
 	self
 		should: [ testCase insertStatementOfSelector: #insertMethodMessage:using: ]
 		raise: SError
@@ -198,14 +198,14 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnNum.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallInteger2 := _aSFoo1 returnNum.').
 	testCase
 		perform: #insertMethodMessage:using:
 		inStatement: message copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnNum.' '_var3 := _var1 returnNum.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallInteger2 := _aSFoo1 returnNum.' '_aSmallInteger3 := _aSFoo1 returnNum.')
 ]
 
 { #category : #'mutation-insert' }
@@ -216,12 +216,12 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.').
 	testCase insertStatementOfSelector: #insertRandomMessage:using:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := SFoo score: _var0.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSFoo2 := SFoo score: _aSmallFloat640.')
 ]
 
 { #category : #'mutation-insert' }
@@ -233,14 +233,14 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo1 score.').
 	testCase
 		perform: #insertRandomMessage:using:
 		inStatement: fieldMessage copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.' '_var3 := _var1 score.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo1 score.' '_aSmallFloat643 := _aSFoo1 score.')
 ]
 
 { #category : #'mutation-insert' }
@@ -250,7 +250,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
 	testCase addLiteral: #SmallFloat64.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.').
+		hasSameElements: #('_aSmallFloat640 := 7.3.').
 	self
 		should: [ testCase insertStatementOfSelector: #insertRandomMessage:using: ]
 		raise: SError
@@ -265,12 +265,12 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
 	testCase
 		perform: #insertRandomMessage:using:
 		inStatement: message copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.' '_var4 := _var1 return: _var2.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.' '_aByteString4 := _aSFoo1 return: _aByteString2.')
 ]

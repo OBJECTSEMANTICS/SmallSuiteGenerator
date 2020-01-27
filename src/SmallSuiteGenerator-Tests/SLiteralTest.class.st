@@ -37,14 +37,14 @@ SLiteralTest >> testInsertAsParameterUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := ''hello''.' '_var1 := ''hello''.' '_var2 := 7.3.' '_var3 := SFoo score: _var2.').
+			#('_aByteString0 := ''hello''.' '_aByteString1 := ''hello''.' '_aSmallFloat642 := 7.3.' '_aSFoo3 := SFoo score: _aSmallFloat642.').
 	testCase addMessage: #return: from: #SFoo.
 	insertedExpression := expression
 		insertAsParameter: expression
 		using: testCase.
 	self
 		assert: insertedExpression printString
-		equals: '_var4 := _var3 return: _var1.'
+		equals: '_aByteString4 := _aSFoo3 return: _aByteString1.'
 ]
 
 { #category : #tests }
@@ -56,9 +56,9 @@ SLiteralTest >> testInsertParameterOn [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := ' , SStudent new storeString , '.'
-				with: '_var1 := SFoo new.'
-				with: '_var2 := _var1 return: _var0.').
+				with: '_aSStudent0 := ' , SStudent new storeString , '.'
+				with: '_aSFoo1 := SFoo new.'
+				with: '_aSStudent2 := _aSFoo1 return: _aSStudent0.').
 	expression := testCase addLiteral: #SStudent.
 	self
 		should: [ insertedExpression := expression
@@ -73,7 +73,7 @@ SLiteralTest >> testInsertParameterOn [
 		raise: SError.
 	self
 		assert: insertedExpression printString
-		equals: '_var4 := _var1 return: _var3.'
+		equals: '_aSStudent4 := _aSFoo1 return: _aSStudent3.'
 ]
 
 { #category : #tests }
