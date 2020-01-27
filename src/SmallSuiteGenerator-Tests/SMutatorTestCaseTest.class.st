@@ -21,9 +21,9 @@ SMutatorTestCaseTest >> testRemoveArgsMethod [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
 	numExprsBefore := testCase numberStatements.
-	expression := testCase statementOfVarName: '_var2'.
+	expression := testCase statementOfVarName: '_aByteString2'.
 	testCase removeExpression: expression.
 	numExprsAfter := testCase numberStatements.
 	self assert: numExprsAfter equals: numExprsBefore
@@ -46,12 +46,12 @@ SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
-	expression := testCase statementOfVarName: '_var2'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
+	expression := testCase statementOfVarName: '_aByteString2'.
 	testCase removeExpressionWithoutRepairing: expression.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.')
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.')
 ]
 
 { #category : #tests }
@@ -69,18 +69,18 @@ SMutatorTestCaseTest >> testRepair [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
-	expression := testCase statementOfVarName: '_var2'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
+	expression := testCase statementOfVarName: '_aByteString2'.
 	self should: [ testCase repair: expression ] raise: SError.
 	testCase removeFromStatements: expression.
 	self assert: (testCase repair: expression) isEmpty.
-	expression := testCase statementOfVarName: '_var3'.
+	expression := testCase statementOfVarName: '_aByteString3'.
 	self
 		assertCollection: (expression value args collect: #printString)
-		hasSameElements: #('_var4').
+		hasSameElements: #('_aByteString4').
 	self
 		assert:
 			(((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-				includesAny: #('_var4 := ''hello''.' '_var4 := _var1 returnString.'))
+				includesAny: #('_aByteString4 := ''hello''.' '_aByteString4 := _aSFoo1 returnString.'))
 ]

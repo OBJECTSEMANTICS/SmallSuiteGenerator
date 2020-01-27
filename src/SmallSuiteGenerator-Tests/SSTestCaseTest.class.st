@@ -54,11 +54,11 @@ SSTestCaseTest >> testCopy [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnNum.' '_var3 := _var1 score.' '_var4 := 5.' '_var5 := ''hello''.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallInteger2 := _aSFoo1 returnNum.' '_aSmallInteger3 := _aSFoo1 score.' '_aSmallInteger4 := 5.' '_aByteString5 := ''hello''.').
 	self
 		assertCollection: (otherTestCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnNum.' '_var3 := _var1 score.' '_var4 := 5.' '_var5 := _var1 returnFloat.' '_var6 := ''hello''.' '_var7 := _var1 return: _var6.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallInteger2 := _aSFoo1 returnNum.' '_aSmallInteger3 := _aSFoo1 score.' '_aSmallInteger4 := 5.' '_aSmallFloat645 := _aSFoo1 returnFloat.' '_aByteString6 := ''hello''.' '_aByteString7 := _aSFoo1 return: _aByteString6.')
 ]
 
 { #category : #tests }
@@ -83,7 +83,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 	self assert: testCase statements size equals: 3.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 5.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.')
+		hasSameElements: #('_aSmallInteger0 := 5.' '_aSFoo1 := SFoo score: _aSmallInteger0.' '_aSmallInteger2 := _aSFoo1 score.')
 ]
 
 { #category : #tests }

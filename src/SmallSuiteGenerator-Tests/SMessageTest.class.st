@@ -17,16 +17,16 @@ SMessageTest >> testCopy [
 						id: 2;
 						returnType: #ByteString));
 		returnType: #ByteString.
-	self assert: message printString equals: '_var1 return: _var2'.
+	self assert: message printString equals: '_aSFoo1 return: _aByteString2'.
 	copy := message copy.
 	copy value args first id: 5.
-	self assert: copy printString equals: '_var1 return: _var5'.
+	self assert: copy printString equals: '_aSFoo1 return: _aByteString5'.
 	copy value receiver varName: '_sfoo'.
 	copy value receiver id: 4.
-	self assert: copy printString equals: '_sfoo4 return: _var5'.
+	self assert: copy printString equals: '_sfoo4 return: _aByteString5'.
 	copy value selector: #returnValue:.
-	self assert: copy printString equals: '_sfoo4 returnValue: _var5'.
-	self assert: message printString equals: '_var1 return: _var2'
+	self assert: copy printString equals: '_sfoo4 returnValue: _aByteString5'.
+	self assert: message printString equals: '_aSFoo1 return: _aByteString2'
 ]
 
 { #category : #tests }
@@ -38,14 +38,14 @@ SMessageTest >> testInsertAsParameterUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 returnString.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 returnString.').
 	testCase addMessage: #return: from: #SFoo.
 	insertedExpression := aExpression
 		insertAsParameter: aExpression
 		using: testCase.
 	self
 		assert:
-			(#('_var4 := _var1 return: _var3.')
+			(#('_aByteString4 := _aSFoo1 return: _aByteString3.')
 				includes: insertedExpression printString)
 ]
 
@@ -58,10 +58,10 @@ SMessageTest >> testInsertMethodMessageUsing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
 	message insertMethodMessage: message using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.' '_var4 := _var1 return: _var2.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.' '_aByteString4 := _aSFoo1 return: _aByteString2.')
 ]

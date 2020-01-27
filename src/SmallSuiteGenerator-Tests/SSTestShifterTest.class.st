@@ -39,7 +39,7 @@ SSTestShifterTest >> testAddFactoryMessage [
 	self assert: testCase statements size equals: 2.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 4.' '_var1 := SFoo score: _var0.').
+		hasSameElements: #('_aSmallInteger0 := 4.' '_aSFoo1 := SFoo score: _aSmallInteger0.').
 	self should: [ testCase addFactoryMessage: #SStack ] raise: SError.
 	aTypeInfo
 		type:
@@ -55,7 +55,7 @@ SSTestShifterTest >> testAddFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 4.' '_var1 := SFoo score: _var0.' '_var2 := #(1 3 2 ).' '_var3 := SStack newStack: _var2.')
+			#('_aSmallInteger0 := 4.' '_aSFoo1 := SFoo score: _aSmallInteger0.' '_anArray2 := #(1 3 2 ).' '_aSStack3 := SStack newStack: _anArray2.')
 ]
 
 { #category : #tests }
@@ -67,7 +67,7 @@ SSTestShifterTest >> testAddFactoryMessageOfInexistentSelector [
 		addFactoryMessage: #SFoo ofSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SFoo new.')
+		hasSameElements: #('_aSFoo0 := SFoo new.')
 ]
 
 { #category : #tests }
@@ -79,7 +79,7 @@ SSTestShifterTest >> testAddFactoryMessageOfSelector [
 		addFactoryMessage: #SFoo ofSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 4.' '_var1 := SFoo score: _var0.')
+		hasSameElements: #('_aSmallInteger0 := 4.' '_aSFoo1 := SFoo score: _aSmallInteger0.')
 ]
 
 { #category : #tests }
@@ -91,14 +91,14 @@ SSTestShifterTest >> testAddFactoryMessageOnPackage [
 	expression := testCase addFactoryMessage: #SSTeacher.
 	self
 		assert:
-			(#('_var2 := SSTeacher name: _var0 with: _var1.' '_var2 := SSTeacher name: _var1 with: _var0.')
+			(#('_aSSTeacher2 := SSTeacher name: _aByteString0 with: _aSmallInteger1.' '_aSSTeacher2 := SSTeacher name: _aByteString1 with: _aSmallInteger0.')
 				includes: expression printString).
 	self
 		shouldnt: [ expression := testCase addFactoryMessage: #SConference ]
 		raise: SError.
 	self
 		assert: expression printString
-		equals: '_var3 := SConference new.'
+		equals: '_aSConference3 := SConference new.'
 ]
 
 { #category : #tests }
@@ -122,7 +122,7 @@ SSTestShifterTest >> testAddFieldAccessMessage [
 	testCase addTargetClassName: #SSTeacher.
 	self
 		assert: testCase addFieldAccessMessage printString
-		equals: '_var1 := _var0 idTeacher.'.
+		equals: '_aSmallInteger1 := _aSSTeacher0 idTeacher.'.
 ]
 
 { #category : #tests }
@@ -135,7 +135,7 @@ SSTestShifterTest >> testAddFieldAccessMessageFrom [
 	testCase addTargetClassName: #SFoo.
 	self
 		assert: (testCase addFieldAccessMessage: #score from: #SFoo) printString
-		equals: '_var2 := _var1 score.'
+		equals: '_aSmallInteger2 := _aSFoo1 score.'
 ]
 
 { #category : #tests }
@@ -184,7 +184,7 @@ SSTestShifterTest >> testAddFieldAccessMessageWithReceiver [
 			(testCase
 				addFieldAccessMessage: (typeInfo accessMessagesFrom: #SFoo) first
 				withReceiver: receiver) printString
-		equals: '_var2 := _var1 score.'
+		equals: '_aSmallFloat642 := _aSFoo1 score.'
 ]
 
 { #category : #tests }
@@ -219,16 +219,16 @@ SSTestShifterTest >> testAddLiteral [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := ''World''.'
+				with: '_aByteString0 := ''World''.'
 				with:
-					'_var1 := '
+					'_anOrderedCollection1 := '
 						,
 							(OrderedCollection new
 								add: 1;
 								add: 4;
 								yourself) storeString , '.'
-				with: '_var2 := 2.'
-				with: '_var3 := ' , SStudent new storeString , '.')
+				with: '_aSmallInteger2 := 2.'
+				with: '_aSStudent3 := ' , SStudent new storeString , '.')
 ]
 
 { #category : #tests }
@@ -259,9 +259,9 @@ SSTestShifterTest >> testAddMessage [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := SFoo new.'
-				with: '_var1 := ' , (OrderedCollection newFrom: #(1 4 5)) storeString , '.'
-				with: '_var2 := _var0 return: _var1.')
+				with: '_aSFoo0 := SFoo new.'
+				with: '_anOrderedCollection1 := ' , (OrderedCollection newFrom: #(1 4 5)) storeString , '.'
+				with: '_anOrderedCollection2 := _aSFoo0 return: _anOrderedCollection1.')
 ]
 
 { #category : #tests }
@@ -276,15 +276,15 @@ SSTestShifterTest >> testAddMessageFrom [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := 4.'
-				with: '_var1 := SFoo score: _var0.'
-				with: '_var2 := _var1 returnFloat.').
+				with: '_aSmallInteger0 := 4.'
+				with: '_aSFoo1 := SFoo score: _aSmallInteger0.'
+				with: '_aSmallFloat642 := _aSFoo1 returnFloat.').
 	self
 		assert: (testCase addMessage: #returnNum from: #SFoo) printString
-		equals: '_var3 := _var1 returnNum.'.
+		equals: '_aSmallInteger3 := _aSFoo1 returnNum.'.
 	self
 		assert:
-			(#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.')
+			(#('_aSFoo4 := _aSFoo1 score: _aSmallInteger0.' '_aSFoo4 := _aSFoo1 score: _aSmallInteger3.')
 				includes: (testCase addMessage: #score: from: #SFoo) printString)
 ]
 
@@ -303,9 +303,9 @@ SSTestShifterTest >> testAddMessageFromDifferentReceiver [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := SConference new.'
-				with: '_var1 := ' , (SStudent new name: 'Mary') storeString , '.'
-				with: '_var2 := _var0 canRegister: _var1.')
+				with: '_aSConference0 := SConference new.'
+				with: '_aSStudent1 := ' , (SStudent new name: 'Mary') storeString , '.'
+				with: '_aFalse2 := _aSConference0 canRegister: _aSStudent1.')
 ]
 
 { #category : #tests }
@@ -327,7 +327,7 @@ SSTestShifterTest >> testAddMessageWithReceiver [
 			(testCase
 				addMessage: (typeInfo messagesFrom: #SFoo) first
 				withReceiver: receiver) printString
-		equals: '_var1 := _var0 return: _var0.'
+		equals: '_aSFoo1 := _aSFoo0 return: _aSFoo0.'
 ]
 
 { #category : #tests }
@@ -343,17 +343,17 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(OrderedCollection new
-				add: '_var0 := SFoo new.';
-				add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
-				add: '_var2 := SStack new.';
-				add: '_var3 := _var2 push: _var1.';
-				add: '_var4 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
-				add: '_var5 := _var2 push: _var4.';
-				add: '_var6 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
-				add: '_var7 := ((OrderedCollection new) add: _var6; yourself).';
+				add: '_aSFoo0 := SFoo new.';
+				add: '_aSStudent1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
+				add: '_aSStack2 := SStack new.';
+				add: '_aSStudent3 := _aSStack2 push: _aSStudent1.';
+				add: '_aSStudent4 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
+				add: '_aSStudent5 := _aSStack2 push: _aSStudent4.';
+				add: '_aSStudent6 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
+				add: '_anOrderedCollection7 := ((OrderedCollection new) add: _aSStudent6; yourself).';
 				add:
-					'_var8 := ((Dictionary new) add: (1->_var5); add: (2->_var7); yourself).';
-				add: '_var9 := _var0 return: _var8.';
+					'_aDictionary8 := ((Dictionary new) add: (1->_aSStudent5); add: (2->_anOrderedCollection7); yourself).';
+				add: '_aDictionary9 := _aSFoo0 return: _aDictionary8.';
 				yourself)
 ]
 
@@ -373,18 +373,18 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 					(Array
 						with:
 							(OrderedCollection new
-								add: '_var0 := SStack new.';
-								add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
-								add: '_var2 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
-								add: '_var3 := ((OrderedCollection new) add: _var1; add: _var2; yourself).';
-								add: '_var4 := _var0 push: _var3.';
+								add: '_aSStack0 := SStack new.';
+								add: '_aSStudent1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
+								add: '_aSStudent2 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
+								add: '_anOrderedCollection3 := ((OrderedCollection new) add: _aSStudent1; add: _aSStudent2; yourself).';
+								add: '_anOrderedCollection4 := _aSStack0 push: _anOrderedCollection3.';
 								yourself)
 						with:
 							(OrderedCollection new
-								add: '_var0 := SStack new.';
-								add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
-								add: '_var2 := ((OrderedCollection new) add: _var1; yourself).';
-								add: '_var3 := _var0 push: _var2.';
+								add: '_aSStack0 := SStack new.';
+								add: '_aSStudent1 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
+								add: '_anOrderedCollection2 := ((OrderedCollection new) add: _aSStudent1; yourself).';
+								add: '_anOrderedCollection3 := _aSStack0 push: _anOrderedCollection2.';
 								yourself)))
 ]
 
@@ -480,14 +480,14 @@ SSTestShifterTest >> testAddStatetementOfTypeBefore [
 	expression := testCase addStatementOfType: #SEvent before: nil.
 	self
 		assert: expression printString
-		equals: '_var1 := SEvent price: _var0.'.
+		equals: '_aSEvent1 := SEvent price: _aSmallInteger0.'.
 	expression := testCase
 		addStatementOfType: #SmallInteger
 		before: expression.
-	self assert: expression printString equals: '_var2 := 8.'.	"change the form to select randomly"
+	self assert: expression printString equals: '_aSmallInteger2 := 8.'.	"change the form to select randomly"
 	self
 		assert:
-			(#(#('_var0 := 8.' '_var2 := 8.' '_var1 := SEvent price: _var0.') #('_var2 := 8.' '_var0 := 8.' '_var1 := SEvent price: _var0.'))
+			(#(#('_aSmallInteger0 := 8.' '_aSmallInteger2 := 8.' '_aSEvent1 := SEvent price: _aSmallInteger0.') #('_aSmallInteger2 := 8.' '_aSmallInteger0 := 8.' '_aSEvent1 := SEvent price: _aSmallInteger0.'))
 				includes: (testCase statements collect: #printString) asArray)
 ]
 
@@ -501,7 +501,7 @@ SSTestShifterTest >> testAddStatetementOfTypeBeforeFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 8.' '_var2 := SEvent price: _var0.' '_var1 := SEvent price: _var0.')
+			#('_aSmallInteger0 := 8.' '_aSEvent2 := SEvent price: _aSmallInteger0.' '_aSEvent1 := SEvent price: _aSmallInteger0.')
 ]
 
 { #category : #tests }
@@ -513,7 +513,7 @@ SSTestShifterTest >> testAddTargetClassName [
 	expression := testCase addFactoryMessage: #SSTeacher.
 	self
 		assert:
-			(#('_var2 := SSTeacher name: _var0 with: _var1.' '_var2 := SSTeacher name: _var1 with: _var0.')
+			(#('_aSSTeacher2 := SSTeacher name: _aByteString0 with: _aSmallInteger1.' '_aSSTeacher2 := SSTeacher name: _aByteString1 with: _aSmallInteger0.')
 				includes: expression printString).
 ]
 
@@ -527,7 +527,7 @@ SSTestShifterTest >> testBuildArgsBefore [
 	testCase buildArgs: ((typeInfo factoryMessagesFrom: #SEvent) first argTypes)  before: expression.
 	self
 		assertCollection: (testCase printStatements )
-		hasSameElements: #('_var1 := 8.' '_var0 := 8.')
+		hasSameElements: #('_aSmallInteger1 := 8.' '_aSmallInteger0 := 8.')
 ]
 
 { #category : #tests }
@@ -538,7 +538,7 @@ SSTestShifterTest >> testNewFactoryMessageBefore [
 	expression := testCase addLiteral.
 	self
 		assert: (testCase newFactoryMessage: #SEvent before: expression) printString
-		equals: 'SEvent price: _var1'.
+		equals: 'SEvent price: _aSmallInteger1'.
 	"default factoryMessage"
 	testCase := SSTestCase with: utility typeInfoSFoo5.
 	testCase addTargetClassName: #SFoo.
@@ -555,8 +555,8 @@ SSTestShifterTest >> testNewFactoryMessageUsingAnd [
 	expression := testCase addLiteral.
 	self
 		assert: (testCase newFactoryMessageUsing: #SEvent and: expression) printString
-		equals: 'SEvent price: _var1'.
-	self assertCollection: testCase printStatements  hasSameElements: #('_var1 := 8.' '_var0 := 8.')
+		equals: 'SEvent price: _aSmallInteger1'.
+	self assertCollection: testCase printStatements  hasSameElements: #('_aSmallInteger1 := 8.' '_aSmallInteger0 := 8.')
 ]
 
 { #category : #tests }
@@ -577,10 +577,10 @@ SSTestShifterTest >> testNewFieldAccessMessageOfTypeBefore [
 		assert:
 			(testCase newFieldAccessMessageOfType: #SmallFloat64 before: expression)
 				printString
-		equals: '_var2 score'.
+		equals: '_aSFoo2 score'.
 	self
 		assertCollection: testCase printStatements
-		hasSameElements: #('_var1 := 7.3.' '_var2 := SFoo score: _var1.' '_var0 := 5.')
+		hasSameElements: #('_aSmallFloat641 := 7.3.' '_aSFoo2 := SFoo score: _aSmallFloat641.' '_aSmallInteger0 := 5.')
 ]
 
 { #category : #tests }
@@ -601,10 +601,10 @@ SSTestShifterTest >> testNewMessageOfTypeBefore [
 		assert:
 			(testCase newMessageOfType: #SmallInteger before: expression)
 				printString
-		equals: '_var2 returnNum'.
+		equals: '_aSFoo2 returnNum'.
 	self
 		assertCollection: testCase printStatements
-		hasSameElements: #('_var1 := 7.3.' '_var2 := SFoo score: _var1.' '_var0 := 5.')
+		hasSameElements: #('_aSmallFloat641 := 7.3.' '_aSFoo2 := SFoo score: _aSmallFloat641.' '_aSmallInteger0 := 5.')
 ]
 
 { #category : #tests }
@@ -617,16 +617,16 @@ SSTestShifterTest >> testNewStatementOfTypeBefore [
 	testCase addStatement: expression before: nil.
 	self
 		assertCollection: testCase printStatements
-		hasSameElements: #('_var0 := 8.').
+		hasSameElements: #('_aSmallInteger0 := 8.').
 	expression := testCase newStatementOfType: #SEvent before: expression.
-	self assert: expression printString equals: 'SEvent price: _var1'.
+	self assert: expression printString equals: 'SEvent price: _aSmallInteger1'.
 	expression := testCase newAssignment: expression.
 	testCase
 		addStatement: expression
-		before: (testCase statementOfVarName: '_var0').
+		before: (testCase statementOfVarName: '_aSmallInteger0').
 	self
 		assertCollection: testCase printStatements
-		hasSameElements: #('_var1 := 8.' '_var2 := SEvent price: _var1.' '_var0 := 8.')
+		hasSameElements: #('_aSmallInteger1 := 8.' '_aSEvent2 := SEvent price: _aSmallInteger1.' '_aSmallInteger0 := 8.')
 ]
 
 { #category : #tests }
@@ -639,7 +639,7 @@ SSTestShifterTest >> testObjectVariables [
 		addFactoryMessage.
 	self
 		assertCollection: (testCase objectVariables collect: #printString)
-		hasSameElements: #('_var0')
+		hasSameElements: #('_aSSTeacher0')
 ]
 
 { #category : #tests }
@@ -670,7 +670,7 @@ SSTestShifterTest >> testPickAnObjectVariable [
 	testCase := SSTestCase with: utility typeInfoSSTeacher3.
 	self should: [testCase  pickAnObjectVariable ] raise: SError.
 	testCase addTargetClassName: #SSTeacher.
-	self assert: testCase pickAnObjectVariable printString equals: '_var0'
+	self assert: testCase pickAnObjectVariable printString equals: '_aSSTeacher0'
 ]
 
 { #category : #tests }
@@ -684,7 +684,7 @@ SSTestShifterTest >> testPickFactoryMessagesFrom [
 	testCase addFactoryMessage: #SConference ofSelector: #price:.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 95.' '_var1 := SConference price: _var0.')
+		hasSameElements: #('_aSmallInteger0 := 95.' '_aSConference1 := SConference price: _aSmallInteger0.')
 ]
 
 { #category : #tests }
@@ -720,8 +720,8 @@ SSTestShifterTest >> testPickOrCreateObjectVariableOf [
 	self assert: testCase statements isEmpty.
 	self
 		assert: (testCase pickOrCreateObjectVariableOf: #SFoo) printString
-		equals: '_var0'.
-	self assertCollection: (testCase statements collect: #printString) hasSameElements: #('_var0 := SFoo new.').
+		equals: '_aSFoo0'.
+	self assertCollection: (testCase statements collect: #printString) hasSameElements: #('_aSFoo0 := SFoo new.').
 	testCase pickOrCreateObjectVariableOf: #SFoo.
 	self assert: testCase statements size equals: 1
 ]
@@ -775,19 +775,19 @@ SSTestShifterTest >> testSubStatementsFromToPrevIndexOf [
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.').
+		hasSameElements: #('_aSmallInteger0 := 8.').
 	expression := testCase addMessage: #discount: from: #SEvent.
 	self
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.').
+		hasSameElements: #('_aSmallInteger0 := 8.' '_aSEvent1 := SEvent price: _aSmallInteger0.').
 	expression := testCase addFieldAccessMessage: #price from: #SEvent.
 	self
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := _var1 discount: _var0.').
+		hasSameElements: #('_aSmallInteger0 := 8.' '_aSEvent1 := SEvent price: _aSmallInteger0.' '_aSEvent2 := _aSEvent1 discount: _aSmallInteger0.').
 ]
 
 { #category : #tests }

@@ -13,11 +13,11 @@ SRemoveTest >> testRemoveArgsFactoryMessage [
 		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
-	testCase removeStatementOfVarName: '_var0'.
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.').
+	testCase removeStatementOfVarName: '_aSmallFloat640'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var2 := 7.3.' '_var1 := SFoo score: _var2.').
+		hasSameElements: #('_aSmallFloat642 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat642.').
 	self assert: testCase validReferences
 ]
 
@@ -30,15 +30,15 @@ SRemoveTest >> testRemoveArgsMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
-	testCase removeStatementOfVarName: '_var2'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
+	testCase removeStatementOfVarName: '_aByteString2'.
 	self
 		assert:
-			(#('_var4 := ''hello''.' '_var4 := _var1 returnString.')
-				includes: (testCase statementOfVarName: '_var4') printString).
+			(#('_aByteString4 := ''hello''.' '_aByteString4 := _aSFoo1 returnString.')
+				includes: (testCase statementOfVarName: '_aByteString4') printString).
 	self
-		assert: (testCase statementOfVarName: '_var3') printString
-		equals: '_var3 := _var1 return: _var4.'.
+		assert: (testCase statementOfVarName: '_aByteString3') printString
+		equals: '_aByteString3 := _aSFoo1 return: _aByteString4.'.
 	self assert: testCase validReferences
 ]
 
@@ -50,11 +50,11 @@ SRemoveTest >> testRemoveFactoryMessage [
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
-	testCase removeStatementOfVarName: '_var1'.
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.').
+	testCase removeStatementOfVarName: '_aSFoo1'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.')
+		hasSameElements: #('_aSmallFloat640 := 7.3.')
 ]
 
 { #category : #'mutation-remove' }
@@ -66,11 +66,11 @@ SRemoveTest >> testRemoveFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.').
-	testCase removeStatementOfVarName: '_var2'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo1 score.').
+	testCase removeStatementOfVarName: '_aSmallFloat642'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.')
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.')
 ]
 
 { #category : #'mutation-remove' }
@@ -82,11 +82,11 @@ SRemoveTest >> testRemoveMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
-	testCase removeStatementOfVarName: '_var3'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
+	testCase removeStatementOfVarName: '_aByteString3'.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.')
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.')
 ]
 
 { #category : #'mutation-remove' }
@@ -98,12 +98,12 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.').
-	testCase removeStatementOfVarName: '_var1'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo1 score.').
+	testCase removeStatementOfVarName: '_aSFoo1'.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var3 := SFoo score: _var0.' '_var2 := _var3 score.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo3 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo3 score.')
 ]
 
 { #category : #'mutation-remove' }
@@ -115,12 +115,12 @@ SRemoveTest >> testRemoveReceiverMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
-	testCase removeStatementOfVarName: '_var1'.
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo1 return: _aByteString2.').
+	testCase removeStatementOfVarName: '_aSFoo1'.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var4 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var4 return: _var2.')
+			#('_aSmallFloat640 := 7.3.' '_aSFoo4 := SFoo score: _aSmallFloat640.' '_aByteString2 := ''hello''.' '_aByteString3 := _aSFoo4 return: _aByteString2.')
 ]
 
 { #category : #'mutation-remove' }
@@ -131,11 +131,11 @@ SRemoveTest >> testRemoveStatementNoRepairing [
 	statement := testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.').
 	testCase removeStatementNoRepairing: statement.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.').
+		hasSameElements: #('_aSmallFloat640 := 7.3.').
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase addTargetClassName: #SFoo.
 	statement := testCase addFactoryMessage.
@@ -143,9 +143,9 @@ SRemoveTest >> testRemoveStatementNoRepairing [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 returnFloat.').
+			#('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.' '_aSmallFloat642 := _aSFoo1 returnFloat.').
 	testCase removeStatementNoRepairing: statement.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.')
+		hasSameElements: #('_aSmallFloat640 := 7.3.')
 ]

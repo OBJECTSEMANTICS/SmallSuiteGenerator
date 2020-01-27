@@ -16,12 +16,12 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := ArrayedCollection new.' '_var1 := ''hello''.' '_var2 := ArrayedCollection new.').
+			#('_anArrayedCollection0 := ArrayedCollection new.' '_aByteString1 := ''hello''.' '_anArrayedCollection2 := ArrayedCollection new.').
 	changed := testCase changeStatementOfClassName: #ArrayedCollection.
 	self assert: changed equals: false.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var1 := ''hello''.')
+		hasSameElements: #('_aByteString1 := ''hello''.')
 ]
 
 { #category : #'mutation-change' }
@@ -34,15 +34,15 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	expression := testCase addFactoryMessage: #SFoo ofSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		includesAll: #('_var0 := 7.3.' '_var1 := 7.3.').
+		includesAll: #('_aSmallFloat640 := 7.3.' '_aSmallFloat641 := 7.3.').
 	self
 		assert:
-			(#('_var2 := SFoo score: _var0.' '_var2 := SFoo score: _var1.')
+			(#('_aSFoo2 := SFoo score: _aSmallFloat640.' '_aSFoo2 := SFoo score: _aSmallFloat641.')
 				includes: expression printString).
-	expressionChanged := testCase changeStatementOfVarName: '_var2'.
+	expressionChanged := testCase changeStatementOfVarName: '_aSFoo2'.
 	self
 		assert:
-			(#('_var2 := SFoo score: _var0.' '_var2 := SFoo score: _var1.' '_var2 := SFoo new.')
+			(#('_aSFoo2 := SFoo score: _aSmallFloat640.' '_aSFoo2 := SFoo score: _aSmallFloat641.' '_aSFoo2 := SFoo new.')
 				includes: expressionChanged printString).
 	self assert: testCase validReferences
 ]
@@ -55,11 +55,11 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
-	expressionChanged := testCase changeStatementOfVarName: '_var1'.
+		hasSameElements: #('_aSmallFloat640 := 7.3.' '_aSFoo1 := SFoo score: _aSmallFloat640.').
+	expressionChanged := testCase changeStatementOfVarName: '_aSFoo1'.
 	self
 		assert:
-			(#('_var1 := SFoo new.' '_var1 := SFoo score: _var2.')
+			(#('_aSFoo1 := SFoo new.' '_aSFoo1 := SFoo score: _aSmallFloat642.')
 				includes: expressionChanged printString).
 	self assert: testCase validReferences
 ]
@@ -75,11 +75,11 @@ SChangeTest >> testChangeStatementOfFieldAccessMessage [
 		from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SStack newStack.' '_var1 := _var0 firstLinkStack.').
+		hasSameElements: #('_aSStack0 := SStack newStack.' '_aSmallInteger1 := _aSStack0 firstLinkStack.').
 	exprFieldChanged := testCase changeStatement: exprField.
 	self
 		assert:
-			(#('_var1 := _var0 lastLinkStack.' '_var1 := _var3 firstLinkStack.' '_var1 := _var2 firstLinkStack.')
+			(#('_aSmallInteger1 := _aSStack0 lastLinkStack.' '_aSmallInteger1 := _aSStack3 firstLinkStack.' '_aSmallInteger1 := _aSStack2 firstLinkStack.')
 				includes: exprFieldChanged printString).
 	self assert: testCase validReferences
 ]
@@ -91,8 +91,8 @@ SChangeTest >> testChangeStatementOfLiteral [
 	exprLiteral := (testCase addLiteral: #SmallInteger) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 5.').
-	exprLiteralChanged := testCase changeStatementOfVarName: '_var0'.
+		hasSameElements: #('_aSmallInteger0 := 5.').
+	exprLiteralChanged := testCase changeStatementOfVarName: '_aSmallInteger0'.
 	self deny: exprLiteral equals: exprLiteralChanged.
 	self assert: testCase validReferences
 ]
@@ -106,11 +106,11 @@ SChangeTest >> testChangeStatementOfMessage [
 	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SStack newStack.' '_var1 := _var0 pop.').
+		hasSameElements: #('_aSStack0 := SStack newStack.' '_aSmallInteger1 := _aSStack0 pop.').
 	exprLiteralChanged := testCase changeStatement: exprMessage.
 	self
 		assert:
-			(#('_var1 := _var0 top.' '_var1 := _var0 push: _var2.' '_var1 := _var3 pop.' '_var1 := _var2 pop.')
+			(#('_aSmallInteger1 := _aSStack0 top.' '_aSmallInteger1 := _aSStack0 push: _aSmallInteger2.' '_aSmallInteger1 := _aSStack3 pop.' '_aSmallInteger1 := _aSStack2 pop.')
 				includes: exprLiteralChanged printString).
 	self assert: testCase validReferences
 ]
