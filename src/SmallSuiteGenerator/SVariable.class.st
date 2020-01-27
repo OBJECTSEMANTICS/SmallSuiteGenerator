@@ -114,6 +114,12 @@ SVariable >> replaceExpression: anExpression by: newExpression [
 ]
 
 { #category : #accessing }
+SVariable >> returnType: anObject [
+	varName := anObject first isVowel ifTrue: ['_an', anObject ] ifFalse: ['_a', anObject ].
+	returnType := anObject.
+]
+
+{ #category : #accessing }
 SVariable >> varName [
 	^ varName
 ]

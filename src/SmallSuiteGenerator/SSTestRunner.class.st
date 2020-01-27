@@ -48,13 +48,10 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 _var5 |
-_var0 := SFoo new.
-_var1 := _var0 returnCollection.
-_var2 := _var0 return: _var1.
-_var3 := _var0 return: _var2.
-_var4 := _var0 initialize.
-_var5 := _var0 return: _var2.
+	| _aSFoo0 _anOrderedCollection1 _aDictionary2 |
+_aSFoo0 := SFoo new.
+_anOrderedCollection1 := _aSFoo0 returnCollection.
+_aDictionary2 := _aSFoo0 return: _anOrderedCollection1.
 ^self analyze: thisContext
 ]
 
