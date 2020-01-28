@@ -259,11 +259,12 @@ SGAEngine >> run [
   self computeFitness.
   selectionStrategy
      initialPopulation: population;
-     fitness: fitness.
+     fitness: fitness;
+	  tournamentSize: self populationSize.
   logs add: (self logOfGeneration: 0 inTime: t).
   (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
         selectionStrategy doSelection.
-  		population := selectionStrategy population.
+        population := selectionStrategy population.
         logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 

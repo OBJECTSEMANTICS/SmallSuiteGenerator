@@ -77,6 +77,11 @@ SAssignment >> insertRandomMessage: aExpression using: aTestCase [
 	^ value insertRandomMessage:aExpression using: aTestCase
 ]
 
+{ #category : #'as yet unclassified' }
+SAssignment >> mutantColor [
+	^ self value mutantColor
+]
+
 { #category : #mutation }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
@@ -128,6 +133,11 @@ SAssignment >> shapeOf [
 	add: value shapeOf;
 	horizontal;
 	yourself
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> stmColor [
+  ^self value stmColor
 ]
 
 { #category : #evaluating }

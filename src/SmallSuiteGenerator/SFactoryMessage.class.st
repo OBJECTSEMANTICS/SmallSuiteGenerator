@@ -102,3 +102,8 @@ SFactoryMessage >> referenceTo: aClassName [
 SFactoryMessage >> shapeOf [
 	^ RTBox new color: Color cyan; size: 20
 ]
+
+{ #category : #'as yet unclassified' }
+SFactoryMessage >> stmColor [
+  ^Color blue
+]

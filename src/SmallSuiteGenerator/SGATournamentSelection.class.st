@@ -25,7 +25,7 @@ SGATournamentSelection >> allPopulation [
 SGATournamentSelection >> createNewPopulation [
   | newPopulation |
   newPopulation := OrderedCollection new.
-  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1copy P2copy P1 P2 O1 O2 selectedOptions children options |
+  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
         P1 := self pickOne.
         P2 := self pickAnother: P1.
         P1copy := P1 deepCopy.
@@ -39,11 +39,13 @@ SGATournamentSelection >> createNewPopulation [
               O2 := children second.
               O1 ni: P1 ni + 1.
               O2 ni: P2 ni + 1 ] ifFalse: [ O1 := P1copy deepCopy.
-              O1 addParent: P1.
+				  O1 addParent: P1.
               O2 := P2copy deepCopy.
               O2 addParent: P2 ].
-        O1 := engine mutate: O1.
-        O2 := engine mutate: O2.
+        OM1 := engine mutate: O1.
+        self update: OM1 with: O1.
+        OM2 := engine mutate: O2.
+        self update: OM2 with: O2.
         fitness compute: (Array with: O1 with: O2).
         options := Array with: O1 with: O2 with: P1copy with: P2copy.
         options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
@@ -142,4 +144,15 @@ SGATournamentSelection >> population [
 { #category : #asserting }
 SGATournamentSelection >> shouldCrossOver [
 	^ SConfiguration randomGenerator next < (3 / 4)
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> tournamentSize: anInteger [
+	tournamentSize := anInteger 
+]
+
+{ #category : #updating }
+SGATournamentSelection >> update: aTestCase with: anotherTestCase [
+	aTestCase ni: anotherTestCase ni.
+	anotherTestCase parents do: [ :parent | aTestCase addParent:  parent ]
 ]

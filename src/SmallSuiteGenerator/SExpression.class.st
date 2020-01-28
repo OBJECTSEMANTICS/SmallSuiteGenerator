@@ -14,7 +14,8 @@ Class {
 	#instVars : [
 		'returnType',
 		'id',
-		'randomGenerator'
+		'randomGenerator',
+		'mutated'
 	],
 	#category : #'SmallSuiteGenerator-AST'
 }
@@ -65,7 +66,8 @@ SExpression >> id: anObject [
 
 { #category : #initialization }
 SExpression >> initialize [
-	randomGenerator := SConfiguration randomGenerator
+  randomGenerator := SConfiguration randomGenerator.
+	mutated := false
 ]
 
 { #category : #mutation }
@@ -98,6 +100,11 @@ SExpression >> isFactoryMessage [
 SExpression >> isPrimitive: anObject [
 	^ (anObject isKindOf: Number) or: [ (anObject isKindOf: Boolean)
 		or: [ anObject isKindOf: String ]]
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> mutantColor [
+  ^mutated ifTrue: [ Color gray ] ifFalse: [ Color purple ]
 ]
 
 { #category : #mutation }
@@ -152,6 +159,11 @@ SExpression >> returnType: anObject [
 
 { #category : #'as yet unclassified' }
 SExpression >> shapeOf [
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> stmColor [
+  
 ]
 
 { #category : #mutation }

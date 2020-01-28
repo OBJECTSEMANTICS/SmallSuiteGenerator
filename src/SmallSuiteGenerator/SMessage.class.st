@@ -55,3 +55,8 @@ SMessage >> insertOn: aTestCase [
 SMessage >> shapeOf [
 	^ RTBox new color: Color green; size: 20
 ]
+
+{ #category : #'as yet unclassified' }
+SMessage >> stmColor [
+  ^Color yellow
+]

@@ -44,3 +44,8 @@ SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
 SFieldAccessMessage >> shapeOf [
 	^ RTBox new color: Color pink; size: 20
 ]
+
+{ #category : #'as yet unclassified' }
+SFieldAccessMessage >> stmColor [
+  ^Color magenta 
+]

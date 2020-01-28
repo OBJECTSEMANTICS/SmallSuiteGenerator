@@ -85,6 +85,11 @@ SLiteral >> shapeOf [
 	^ RTBox new color: Color yellow; size: 20
 ]
 
+{ #category : #'as yet unclassified' }
+SLiteral >> stmColor [
+  ^Color green
+]
+
 { #category : #evaluating }
 SLiteral >> value [ 	
 	^ value
