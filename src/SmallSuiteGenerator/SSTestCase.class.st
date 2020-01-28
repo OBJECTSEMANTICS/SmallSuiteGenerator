@@ -8,9 +8,6 @@ Class {
 		'idPopulation',
 		'ni'
 	],
-	#classInstVars : [
-		'numberTestCase'
-	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
@@ -19,10 +16,7 @@ SSTestCase class >> with: aTypeInfo [
   | testCase |
   testCase := self new.
   testCase typeInfo: aTypeInfo.
-  
-  "number: self numberTestCase."
-
-^testCase
+  ^testCase
 ]
 
 { #category : #comparing }
