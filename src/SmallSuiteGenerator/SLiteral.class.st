@@ -87,7 +87,9 @@ SLiteral >> shapeOf [
 
 { #category : #'as yet unclassified' }
 SLiteral >> stmColor [
-  ^Color green
+  ^ Color r: 0.2072336265884653 g: 0.8504398826979472 b: 0.1573802541544477
+"Color r: 0.2072336265884653 g: 0.5503421309872922 b: 0.19745845552297164"
+"Color r: 0.5953079178885631 g: 0.7644183773216031 b: 0.1466275659824047"
 ]
 
 { #category : #evaluating }

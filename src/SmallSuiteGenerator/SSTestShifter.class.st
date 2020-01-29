@@ -170,8 +170,7 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 
 { #category : #accessing }
 SSTestShifter >> addParent: anObject [
-  anObject ifNotNil: [ parents add: anObject.
-       ] ifNil: [ self halt ]
+  parents add: anObject
 ]
 
 { #category : #inserting }
@@ -444,9 +443,13 @@ SSTestShifter >> generateStatements [
 		assert: typeInfo types isNotEmpty
 		description: 'TypeInfo does not contain info at all.'.
 	[ self numberStatements < self maxNumberOfStatements ]
-		whileTrue: [ "self addMessage" [ self addMessage ]
+		whileTrue: [ 
+			| array |
+			array := randomGenerator collectAtRandom: (Array with: #addFieldAccessMessage with: #addMessage).
+			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifNone: [ self error: 'Not able to generate statements' ].
+		"	[ self addMessage ]
 				on: SError
-				do: [  ] ]
+				do: [  ]" ]
 ]
 
 { #category : #actions }

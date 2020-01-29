@@ -58,5 +58,6 @@ SMessage >> shapeOf [
 
 { #category : #'as yet unclassified' }
 SMessage >> stmColor [
-  ^Color yellow
+  ^ Color r: 0.8885630498533724 g: 0.8611925708699902 b: 0.41642228739002934
+"Color r: 0.9139784946236559 g: 0.8172043010752689 b: 0.4858260019550342"
 ]

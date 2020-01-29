@@ -47,5 +47,6 @@ SFieldAccessMessage >> shapeOf [
 
 { #category : #'as yet unclassified' }
 SFieldAccessMessage >> stmColor [
-  ^Color magenta 
+  ^ Color r: 0.7595307917888563 g: 0.17497556207233628 b: 0.7380254154447703
+"Color r: 0.40762463343108507 g: 0.0039100684261974585 b: 0.20234604105571846"
 ]
