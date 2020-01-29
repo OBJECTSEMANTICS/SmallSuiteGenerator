@@ -6,10 +6,8 @@ Class {
 	#superclass : #SSTestShifter,
 	#instVars : [
 		'idPopulation',
-		'ni'
-	],
-	#classInstVars : [
-		'numberTestCase'
+		'ni',
+		'previousOpenWindows'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -19,16 +17,23 @@ SSTestCase class >> with: aTypeInfo [
   | testCase |
   testCase := self new.
   testCase typeInfo: aTypeInfo.
-  
-  "number: self numberTestCase."
-
-^testCase
+  ^testCase
 ]
 
 { #category : #comparing }
 SSTestCase >> = another [
   ^self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ]
                     "and: [ number = another number ]" ] ] ]
+]
+
+{ #category : #actions }
+SSTestCase >> analyze [
+	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
+	|result|
+	self setUp.
+	result := SSTestRunner new evaluate: self.
+	self tearDown.
+	^ result.
 ]
 
 { #category : #actions }
@@ -101,13 +106,21 @@ SSTestCase >> ni: anObject [
 { #category : #actions }
 SSTestCase >> run [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	^ SSTestRunner new run: self.
+	|result|
+	self setUp.
+	result := SSTestRunner new run: self.
+	self tearDown.
+	^ result.
 ]
 
 { #category : #actions }
 SSTestCase >> runWithoutAssertions [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	^ SSTestRunner new runWithoutAssertions: self.
+	|result|
+	self setUp.
+	result := SSTestRunner new runWithoutAssertions: self.
+	self tearDown.
+	^ result.
 ]
 
 { #category : #initialization }
@@ -122,8 +135,12 @@ SSTestCase >> setFitnessByClass: aDictionary [
 
 { #category : #actions }
 SSTestCase >> setUp [
+	previousOpenWindows := SystemWindow allInstances.
 ]
 
 { #category : #actions }
 SSTestCase >> tearDown [ 
+	|windowsToDelete|
+	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
+	windowsToDelete do:[:w| w close].
 ]
