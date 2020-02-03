@@ -200,8 +200,10 @@ SSTestShifter >> addStatement: newExpression before: aStatement [
 { #category : #inserting }
 SSTestShifter >> addStatementOfType: aType before: expression [
 	| newExpression |
+	newExpression := self newStatementOfType: aType before: expression.
+	newExpression mutated: true.
 	newExpression := self
-		newAssignment: (self newStatementOfType: aType before: expression).
+		newAssignment: newExpression.
 	self addStatement: newExpression before: expression.
 	^ newExpression
 ]
@@ -1003,22 +1005,6 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 	(self statementAt: expression)
 		replaceExpression: exprToReplace 
 		by: otherExpression 
-]
-
-{ #category : #repairing }
-SSTestShifter >> satisfyTypes: types before: aStatement [
-	| scalarsKeys scalarTypes nonScalarTypes |
-	scalarsKeys := typeInfo scalars keys asOrderedCollection .
-	scalarTypes := OrderedCollection new.
-	nonScalarTypes := OrderedCollection new.
-	types
-		do: [ :aType | 
-			(scalarsKeys includes: aType)
-				ifTrue: [ scalarTypes add: aType ]
-				ifFalse: [ nonScalarTypes add: aType ] ].
-	nonScalarTypes
-		do: [ :aType | self addStatementOfType: aType before: aStatement ].
-	^ scalarTypes
 ]
 
 { #category : #accessing }

@@ -82,6 +82,11 @@ SAssignment >> mutantColor [
 	^ self value mutantColor
 ]
 
+{ #category : #accessing }
+SAssignment >> mutated [ 
+	^ value mutated
+]
+
 { #category : #mutation }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression

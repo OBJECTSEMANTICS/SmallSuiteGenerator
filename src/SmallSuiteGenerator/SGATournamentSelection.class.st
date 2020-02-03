@@ -46,8 +46,8 @@ SGATournamentSelection >> createNewPopulation [
         self update: OM1 with: O1.
         OM2 := engine mutate: O2.
         self update: OM2 with: O2.
-        fitness compute: (Array with: O1 with: O2).
-        options := Array with: O1 with: O2 with: P1copy with: P2copy.
+        fitness compute: (Array with: OM1 with: OM2).
+        options := Array with: OM1 with: OM2 with: P1copy with: P2copy.
         options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
         selectedOptions := options first: 2.
         selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ] ].

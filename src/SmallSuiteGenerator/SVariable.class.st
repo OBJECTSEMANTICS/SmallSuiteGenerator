@@ -110,7 +110,8 @@ SVariable >> replaceExpression: anExpression by: newExpression [
 	self
 		id: reference id;
 		varName: reference varName;
-		returnType: reference returnType
+		returnType: reference returnType;
+		mutated: true
 ]
 
 { #category : #'as yet unclassified' }

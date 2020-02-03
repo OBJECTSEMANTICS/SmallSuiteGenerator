@@ -6,11 +6,11 @@ Class {
 
 { #category : #public }
 SmallSuiteBox >> elementOn: aModel [
-  self color: aModel stmColor.
-  ^RTElement new
-     model: aModel;
-     addShape: self;
-     yourself
+	self color: aModel stmColor.
+	^	RTElement new
+     	model: aModel;
+     	addShape: self;
+     	yourself
 ]
 
 { #category : #initialization }

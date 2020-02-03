@@ -57,6 +57,16 @@ SSTestCase >> copy [
 ]
 
 { #category : #copying }
+SSTestCase >> copyForMutation [
+	| copy |
+	copy := self class with: typeInfo copy.
+	copy addTargetClassNames: targetClassesNames.
+	statements do: [ :stm | copy addStatement: stm copyForMutation ].
+	copy updateNextId.
+	^ copy
+]
+
+{ #category : #copying }
 SSTestCase >> deepCopy [
   | copy |
   copy := self copy.

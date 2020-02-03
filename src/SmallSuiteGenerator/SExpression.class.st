@@ -42,6 +42,13 @@ SExpression >> copy [
 	^ self class new
 		id: self id;
 		returnType: self returnType
+		"mutated: self mutated"
+]
+
+{ #category : #copying }
+SExpression >> copyForMutation [
+	^ self copy
+		mutated: self mutated
 ]
 
 { #category : #'error handling' }
@@ -104,7 +111,17 @@ SExpression >> isPrimitive: anObject [
 
 { #category : #'as yet unclassified' }
 SExpression >> mutantColor [
-  ^mutated ifTrue: [ Color gray ] ifFalse: [ Color purple ]
+  ^ self mutated ifTrue: [ Color r: 0.7038123167155426 g: 0.3841642228739003 b: 0.4310850439882698 "Color r: 0.40762463343108507 g: 0.0039100684261974585 b: 0.20234604105571846" ] ifFalse: [ Color gray ]
+]
+
+{ #category : #accessing }
+SExpression >> mutated [ 
+	^ mutated
+]
+
+{ #category : #accessing }
+SExpression >> mutated: aBoolean [
+	mutated := aBoolean
 ]
 
 { #category : #mutation }

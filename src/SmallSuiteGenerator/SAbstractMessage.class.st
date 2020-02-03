@@ -104,7 +104,15 @@ SAbstractMessage >> initialize [
 
 { #category : #mutation }
 SAbstractMessage >> insertRandomMessage: expression using: aTestCase [
-	^ aTestCase insertExpression: self copy after: expression
+	| anotherExpression |
+	anotherExpression := self copy.
+	anotherExpression mutated: true.
+	^ aTestCase insertExpression: anotherExpression after: expression
+]
+
+{ #category : #accessing }
+SAbstractMessage >> mutated [ 
+	^ receiver mutated or: [ args detect: #mutated ifFound: [ true ] ifNone: [ false ] ]
 ]
 
 { #category : #mutation }
@@ -175,13 +183,14 @@ SAbstractMessage >> replaceArgBy: expression [
 
 { #category : #accessing }
 SAbstractMessage >> replaceBy: otherExpression [
+	mutated := ((receiver ~= otherExpression receiver) or: [ selector ~= otherExpression selector ]) or: [ args ~= otherExpression args ].
 	receiver replaceBy: otherExpression receiver.
 	self selector: otherExpression selector.
 	self args size = otherExpression args size
 		ifTrue: [ self args
 				with: otherExpression args
 				do: [ :arg :newArg | arg replaceBy: newArg ] ]
-		ifFalse: [ self args: otherExpression args deepCopy ]
+		ifFalse: [ self args: otherExpression args deepCopy ].
 ]
 
 { #category : #actions }
