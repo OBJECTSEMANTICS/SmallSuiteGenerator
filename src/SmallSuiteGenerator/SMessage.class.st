@@ -37,8 +37,9 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	otherMessage := aTestCase
 		alternativeMessage: self
 		before: aExpression.
+	mutated := otherMessage selector ~= self selector.
 	self selector: otherMessage selector.
-			self args: otherMessage args
+	self args: otherMessage args
 ]
 
 { #category : #mutation }

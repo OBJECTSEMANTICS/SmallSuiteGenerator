@@ -227,6 +227,12 @@ SSTestShifter >> addTargetClassNames: symbols [
 	symbols do: [ :symbol | self addTargetClassName: symbol ]
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestShifter >> allParents [
+	^ (Set newFrom: parents)
+	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
+]
+
 { #category : #accessing }
 SSTestShifter >> allVarNames [
 	^ statements collect: [ :stm | stm reference printString ]

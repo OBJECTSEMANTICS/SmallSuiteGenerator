@@ -75,11 +75,12 @@ SVariable >> referenceTo: aClassName [
 ]
 
 { #category : #mutation }
-SVariable >> repairOn: aTestCase changing: aExpression [
+SVariable >> repairOn: aTestCase changing: anExpression [
 	| otherVariable |
 	otherVariable := aTestCase
 		alternativeOfVariable: self
-		before: aExpression.
+		before: anExpression.
+	mutated := otherVariable ~= self.
 	self varName: otherVariable varName.
 	self id: otherVariable id.
 ]
