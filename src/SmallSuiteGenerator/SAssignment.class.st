@@ -35,7 +35,10 @@ SAssignment class >> name: aVariable value: anExpression [
 
 { #category : #comparing }
 SAssignment >> = other [
-	^ (super = other) and: [ (variable = other variable) and: [ value = other value ] ]
+	^ (super = other) 
+		and: [ (variable = other variable) 
+			and: [ (value = other value) 
+				"and: [ identifier = other identifier  ]" ] ]
 ]
 
 { #category : #copying }
@@ -55,6 +58,11 @@ SAssignment >> hash [
 { #category : #accessing }
 SAssignment >> id [ 		
 	^ variable id
+]
+
+{ #category : #initialization }
+SAssignment >> initialize [ 	
+	super initialize.
 ]
 
 { #category : #mutation }
@@ -142,7 +150,7 @@ SAssignment >> shapeOf [
 
 { #category : #'as yet unclassified' }
 SAssignment >> stmColor [
-  ^self value stmColor
+  ^ self value stmColor
 ]
 
 { #category : #evaluating }

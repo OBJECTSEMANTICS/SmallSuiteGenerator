@@ -184,7 +184,7 @@ SSTestShifter >> addStatement: newExpression after: aStatement [
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
 		ifTrue: [ self addStatement: newExpression ]
-		ifFalse: [ anIndex := randomGenerator selectAtRandom: (anIndex to: self numberStatements).
+		ifFalse: [ anIndex := randomGenerator selectAtRandom: (anIndex to: self length).
 			statements add: newExpression afterIndex: anIndex ].
 	^ newExpression
 ]
@@ -443,7 +443,7 @@ SSTestShifter >> generateStatements [
 	self
 		assert: typeInfo types isNotEmpty
 		description: 'TypeInfo does not contain info at all.'.
-	[ self numberStatements < self maxNumberOfStatements ]
+	[ self length < self maxNumberOfStatements ]
 		whileTrue: [ 
 			| array |
 			array := randomGenerator collectAtRandom: (Array with: #addFieldAccessMessage with: #addMessage).
@@ -480,7 +480,7 @@ SSTestShifter >> initialize [
 SSTestShifter >> insertAsParameter: expression after: aStatement [
 	(randomGenerator collectAtRandom: (statements
 		copyFrom: (statements indexOf: aStatement) + 1
-		to: self numberStatements))
+		to: self length))
 		do: [ :stm | 
 			[ ^ stm replaceArgBy: expression ]
 				on: SError
@@ -510,7 +510,7 @@ SSTestShifter >> insertStatement [
 	| l stop alpha count random |
 	l := 1.
 	count := 0.
-	stop := self numberStatements.
+	stop := self length.
 	alpha := 0.5.
 	random := SConfiguration randomGenerator.
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
@@ -726,11 +726,6 @@ SSTestShifter >> numMaxStatements: anObject [
 	maxNumberOfStatements := anObject
 ]
 
-{ #category : #accessing }
-SSTestShifter >> numberStatements [
-	^ statements size
-]
-
 { #category : #querying }
 SSTestShifter >> objectVariables [
 	
@@ -890,7 +885,7 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 	| refIndexes anIndex |
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
-		ifTrue: [ ^ self numberStatements ].
+		ifTrue: [ ^ self length ].
 	refIndexes := self referencesIndexes: aExpression.
 	anIndex := anIndex - 1.
 	refIndexes
@@ -952,7 +947,7 @@ SSTestShifter >> removeStatement [
 	self
 		removeStatement:
 			(statements
-				at: (randomGenerator selectAtRandom: (1 to: self numberStatements) asArray))
+				at: (randomGenerator selectAtRandom: (1 to: self length) asArray))
 ]
 
 { #category : #removing }

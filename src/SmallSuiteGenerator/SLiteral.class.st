@@ -29,11 +29,12 @@ SLiteral class >> value: aValue [
 { #category : #comparing }
 SLiteral >> = other [
 	^ super = other
-		and: [ value isLiteral ifTrue: [ value = other value ] 
+		and: [ (value isLiteral ifTrue: [ value = other value ] 
 			ifFalse: [ 
 			value isClass
 				ifTrue: [ value name = other value name ]
-				ifFalse: [ value className = other value className ]] ]
+				ifFalse: [ value className = other value className ]])
+			and: [ identifier = other identifier ] ]
 ]
 
 { #category : #copying }

@@ -16,7 +16,11 @@ Class {
 		'id',
 		'randomGenerator',
 		'mutated',
-		'parent'
+		'parent',
+		'identifier'
+	],
+	#classInstVars : [
+		'nextId'
 	],
 	#category : #'SmallSuiteGenerator-AST'
 }
@@ -32,9 +36,23 @@ SExpression class >> isPrimitive: anObject [
 	^ self new isPrimitive: anObject.
 ]
 
+{ #category : #'as yet unclassified' }
+SExpression class >> nextIdentifier [
+	nextId ifNil: [ nextId := 0 ].
+	^ nextId := nextId + 1
+]
+
+{ #category : #initialization }
+SExpression class >> resetId [
+	nextId := nil
+]
+
 { #category : #comparing }
-SExpression >> = other [
-	^ (self class = other class) and: [ (self id = other id) and: [ returnType = other returnType ] ]
+SExpression >> = another [
+	^ (self class = another class) 
+		and: [ (self id = another id) 
+			and: [ returnType = another returnType 
+				"and: [ identifier = another identifier ]" ] ]
 	
 ]
 
@@ -51,7 +69,8 @@ SExpression >> copy [
 	^ self class new
 		id: self id;
 		returnType: self returnType;
-		mutated: self mutated         
+		mutated: self mutated;
+		parent: self         
 ]
 
 { #category : #'error handling' }
@@ -74,10 +93,16 @@ SExpression >> id: anObject [
 	id := anObject
 ]
 
+{ #category : #accessing }
+SExpression >> identifier [
+	^ identifier
+]
+
 { #category : #initialization }
 SExpression >> initialize [
-  randomGenerator := SConfiguration randomGenerator.
-	mutated := false
+   randomGenerator := SConfiguration randomGenerator.
+	mutated := false.
+	identifier := self class nextIdentifier 
 ]
 
 { #category : #mutation }

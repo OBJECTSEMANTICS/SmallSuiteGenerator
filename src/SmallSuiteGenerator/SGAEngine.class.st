@@ -93,7 +93,7 @@ SGAEngine >> computeFitness [
 
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
-  ^(1 to: populationSize) collect: [:val |  | value test |
+  ^ (1 to: populationSize) collect: [:val |  | value test |
         value := SConfiguration randomGenerator next * populationSize + 1.
         test := SSTestCase with: typeInfo.
         test
@@ -256,6 +256,7 @@ SGAEngine >> run [
   | t |
   t := Time now asSeconds.
   population := self createRandomPopulation.
+  SExpression resetId.
   self computeFitness.
   selectionStrategy
      initialPopulation: population;

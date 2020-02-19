@@ -22,10 +22,10 @@ SMutatorTestCaseTest >> testRemoveArgsMethod [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
-	numExprsBefore := testCase numberStatements.
+	numExprsBefore := testCase length.
 	expression := testCase statementOfVarName: '_var2'.
 	testCase removeExpression: expression.
-	numExprsAfter := testCase numberStatements.
+	numExprsAfter := testCase length.
 	self assert: numExprsAfter equals: numExprsBefore
 ]
 

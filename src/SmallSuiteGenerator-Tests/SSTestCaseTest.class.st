@@ -43,7 +43,7 @@ SSTestCaseTest >> testCopy [
 		addFieldAccessMessage: #score from: #SFoo;
 		addLiteral: #SmallInteger.
 	otherTestCase := testCase copy.
-	self assert: testCase numberStatements equals: 5.
+	self assert: testCase length equals: 5.
 	self assert: testCase equals: otherTestCase.
 	self
 		assertCollection: testCase targetClassesNames

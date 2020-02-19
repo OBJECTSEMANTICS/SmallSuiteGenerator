@@ -45,7 +45,11 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 
 { #category : #comparing }
 SAbstractMessage >> = other [
-	^ super = other and: [ args = other args and: [ receiver = other receiver and: [ selector = other selector ] ] ]
+	^ super = other 
+		and: [ args = other args 
+			and: [ receiver = other receiver 
+				and: [ (selector = other selector) 
+					and: [ identifier = other identifier  ] ] ] ]
 ]
 
 { #category : #accessing }
@@ -83,8 +87,6 @@ SAbstractMessage >> copy [
 		args: args deepCopy;
 		receiver: receiver copy;
 		selector: selector copy.
-	self halt.
-	copy parent: parent.
 	^ copy
 ]
 

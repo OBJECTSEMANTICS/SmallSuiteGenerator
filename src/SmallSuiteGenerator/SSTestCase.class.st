@@ -22,8 +22,11 @@ SSTestCase class >> with: aTypeInfo [
 
 { #category : #comparing }
 SSTestCase >> = another [
-  ^self class = another class and: [ statements = another statements and: [ fitness = another fitness and: [ parents = another parents and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ]
-                    "and: [ number = another number ]" ] ] ]
+  ^ self class = another class 
+	and: [ statements = another statements 
+		and: [ fitness = another fitness 
+			and: [ parents = another parents 
+				and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ] ] ] ]
 ]
 
 { #category : #actions }
@@ -62,8 +65,8 @@ SSTestCase >> deepCopy [
   copy := self copy.
   copy setFitness: self fitness.
   copy setFitnessByClass: self fitnessByClass.
-	copy ni: self ni.
-  ^copy
+  copy ni: self ni.
+  ^ copy
 ]
 
 { #category : #comparing }
@@ -90,7 +93,7 @@ SSTestCase >> initialize [
 
 { #category : #actions }
 SSTestCase >> length [
-	^ self numberStatements.
+	^ statements size
 ]
 
 { #category : #accessing }
