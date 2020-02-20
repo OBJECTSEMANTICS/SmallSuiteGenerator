@@ -142,6 +142,8 @@ SGAEngine >> visualizeRadial3 [
 	objects := logs collect: #population.
   limit := populationSize + (populationSize \\ 2 ).
 	b objects: objects.
+	b shapes: ((RTColorPalette qualitative 
+		colors: (numberOfGenerations + 1) scheme: 'Paired') do: [:c |  c alpha: 0.3 ]).
 	1 to: limit do: [:i | 
 		b addMetric: [ :o | 
 		(o at: i) ni ]].

@@ -20,19 +20,35 @@ SKiviatBuilder >> executeHighlightLowColor: lowColor highColor: highColor [
 		].
 	
 	((kiviatNodes flatCollect: [ :kn | kn nodeKiviatElements]) asGroup)  when: TRMouseEnter do: [  :evt | 
-		
+		|els edges |
+		els := OrderedCollection new.
+		edges := OrderedCollection new.
 		(kiviatNodes select: [ :kn | kn named = evt element model kiviatNode named ]) do: [ :kn |
+			kn nodeKiviatElements do: [ :e | 
+				self recordElement: e.
+				(e model value = evt element model value) ifTrue: [ e trachelShape color: (e trachelShape color alpha: highColor) ] ifFalse: [ e trachelShape color: (e trachelShape color alpha: lowColor) ]  ].
 			
-			kn nodeKiviatElements detect: [ :e | e model value = evt element model value ] 
-			ifFound: [:e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: highColor) ].
-			kn edgeKiviatElements do: [ :e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: highColor)].
-			
-			"kn nodeKiviatElements do: [ :e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: highColor)].
-			kn edgeKiviatElements do: [ :e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: highColor)]."
+			kn edgeKiviatElements do: [ :e | 
+				| selected |
+				self recordElement: e. 
+				selected := e from model value = evt element model value.
+				e trachelShape color: (e trachelShape color alpha: (selected ifTrue: [highColor] ifFalse: [lowColor])).
+				selected ifTrue: [ 
+					els add: e to.
+					e to trachelShape color: (e to trachelShape color alpha: highColor).
+					els addAll: (self highlightParents: e to with: highColor).
+					edges addAll: (self highlightEdges: e from with: highColor).
+				]
 			].
+		].
 		(kiviatNodes select: [ :kn | kn named ~= evt element model kiviatNode named ]) do: [ :kn |
-			kn nodeKiviatElements do: [ :e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: lowColor)].
-			kn edgeKiviatElements do: [ :e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: lowColor)]
+			"kn nodeKiviatElements do: [ :e | self recordElement: e. e trachelShape color: (e trachelShape color alpha: lowColor)]."
+			kn nodeKiviatElements do: [:e | self recordElement: e. 
+				(els includes: e) ifFalse: [ 
+				e trachelShape color: (e trachelShape color alpha: lowColor)]].
+			kn edgeKiviatElements do: [ :e | self recordElement: e. 
+				(edges includes: e) ifFalse: [ 
+				e trachelShape color: (e trachelShape color alpha: lowColor)]]
 			].
 		( axisTitle = #activated ) ifTrue: [ titles do: [ :t | t trachelShape color: (t trachelShape color alpha: 0)]].
 		view signalUpdate.
@@ -48,11 +64,45 @@ SKiviatBuilder >> executeHighlightLowColor: lowColor highColor: highColor [
 		]. 
 ]
 
+{ #category : #'as yet unclassified' }
+SKiviatBuilder >> highlightEdges: element with: highColor [
+	| parents edges |
+	edges := OrderedCollection new.
+	parents := element model value parents.
+	parents ifNotEmpty: [ 
+		kiviatNodes do: [ :kn | 
+			kn edgeKiviatElements select: [ :e | parents includes: e from model value ]
+			thenDo: [ :e | 
+				edges add: e.
+				e trachelShape color: (e trachelShape color alpha: highColor).
+				edges addAll: (self highlightEdges: e from with: highColor) ] 
+		]
+	].
+	^ edges
+]
+
+{ #category : #'as yet unclassified' }
+SKiviatBuilder >> highlightParents: element with: highColor [
+	| parents  els |
+	els := OrderedCollection new.
+	parents := element model value parents.
+	parents ifNotEmpty: [ 
+		kiviatNodes do: [ :kn | 
+			kn nodeKiviatElements select: [ :e | parents includes: e model value ]
+			thenDo: [ :e | 
+				els add: e.
+				e trachelShape color: (e trachelShape color alpha: highColor).
+				els addAll: (self highlightParents: e with: highColor) ] 
+		]
+	].
+	^ els
+]
+
 { #category : #accessing }
 SKiviatBuilder >> node: anRTKiviatNode [
 "a chart node is represented by a set of elements according to the metrics values and connected by edges.
  Finish the creation of a chart node, creating elements in the view and edges."
-| nodeElems edgeElems shapeNode shapeEdge prevElements pts |
+| nodeElems edgeElems shapeNode shapeEdge prevElements  |
 
 	kiviatNodes add: anRTKiviatNode.
 	nodeElems := OrderedCollection new.
@@ -65,11 +115,10 @@ SKiviatBuilder >> node: anRTKiviatNode [
 		nodeElems add: ((shapeNode) elementOn: ( RTKiviatElement new metric:(m block); position: (m modelBlock value: (self getNormalizedValue: (anRTKiviatNode arrayValues at: (kiviatMetrics indexOf: m)) min: 0  max: (m maxSize)  minValue: 0  maxValue:(m maxValue))); kiviatNode: anRTKiviatNode; value: (anRTKiviatNode named at: (kiviatMetrics indexOf: m) "anRTKiviatNode named"))).
 		].
 	prevElements := kiviatNodes flatCollect: #nodeKiviatElements.
-	pts := nodeElems flatCollect: [ :elm | elm model value allParents ].
 	anRTKiviatNode addNodeElements: nodeElems "(prevElements select: [ :elm | pts includes: elm model value ])".
 	nodeElems do: [ :elm | 
 		| parents |
-		parents := elm model value allParents.
+		parents := elm model value parents.
 		prevElements select: [ :prevElm | parents includes: prevElm model value ]	
 			thenDo: [ :prevElm | edgeElems add: ((RTEdge from: elm to: (prevElm)) + (shapeEdge color: (elm trachelShape color))) ].
 	].
