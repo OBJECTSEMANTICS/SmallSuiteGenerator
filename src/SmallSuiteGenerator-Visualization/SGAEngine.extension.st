@@ -47,10 +47,43 @@ SGAEngine >> visualizeM [
   b shape verticalBezierLine.
   b edges moveBehind.
   b edges connectFromAll: [:testCase |  testCase parents ].
-  "b normalizer normalizeColor: [:testCase |  [testCase fitness values first] on: Error do: [ 0 ] ] using: (Array with: Color black with: Color white)."
+  b normalizer normalizeColor: [:testCase |  [testCase fitness values first] on: Error do: [ :e | self halt. 0 ] ] using: (Array with: Color white with: Color black).
   b layout smallSuite.
   
   "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."
+  ^ b
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeMatrix [
+  | b es |
+  	b := RTMondrian new.
+  	b interaction highlight.
+  	"b shape rectangle
+	  noBorder;
+     width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 1.5 ];
+     height: [:cls |  cls length * 1.5 ]."
+  	es := b nodes: (logs flatCollect: #population) forEach: [:testCase |  
+		| shape stmts |
+		shape := RTCompositeShape new.
+   		b shape: shape.
+   		b shape add: (RTBox new color: #mutantColor; width: 1; height: 1);
+		add: (RTBox new color: #stmColor; width: 6; height: 1);
+		horizontal.
+   		stmts := b nodes: testCase statements.
+   		stmts @ (RTHighlightable highlight: [:stm | stm allParents]).
+      b layout verticalLine gapSize: 0 
+	].
+
+   es @ (RTHighlightable highlight: [:testCase | testCase allParents ]).
+  	es do: [:el | el width: 10; height: (el model length * 2)"; color: Color white"].
+  	b shape verticalBezierLine.
+  	b edges moveBehind.
+  	b edges connectFromAll: [:testCase |  testCase parents ].
+	b normalizer elements: es.
+  	b normalizer normalizeColor: [:testCase | testCase fitness values first ] 
+	using: (Array with: Color black with: Color white).
+  	b layout smallSuite.
   ^ b
 ]
 
@@ -142,11 +175,12 @@ SGAEngine >> visualizeRadial3 [
 	objects := logs collect: #population.
   limit := populationSize + (populationSize \\ 2 ).
 	b objects: objects.
+	b shape size: [ :e | e model value fitness values first ].
 	b shapes: ((RTColorPalette qualitative 
 		colors: (numberOfGenerations + 1) scheme: 'Paired') do: [:c |  c alpha: 0.3 ]).
 	1 to: limit do: [:i | 
 		b addMetric: [ :o | 
-		(o at: i) ni ]].
+		(o at: i) ni ] ].
    "b desactivateHighlight."
 	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
 b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
