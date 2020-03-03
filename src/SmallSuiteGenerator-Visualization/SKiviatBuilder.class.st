@@ -103,7 +103,6 @@ SKiviatBuilder >> node: anRTKiviatNode [
 "a chart node is represented by a set of elements according to the metrics values and connected by edges.
  Finish the creation of a chart node, creating elements in the view and edges."
 | nodeElems edgeElems shapeNode shapeEdge prevElements  |
-
 	kiviatNodes add: anRTKiviatNode.
 	nodeElems := OrderedCollection new.
 	edgeElems := OrderedCollection new.
@@ -115,9 +114,11 @@ SKiviatBuilder >> node: anRTKiviatNode [
 		nodeElems add: ((shapeNode) elementOn: ( RTKiviatElement new metric:(m block); position: (m modelBlock value: (self getNormalizedValue: (anRTKiviatNode arrayValues at: (kiviatMetrics indexOf: m)) min: 0  max: (m maxSize)  minValue: 0  maxValue:(m maxValue))); kiviatNode: anRTKiviatNode; value: (anRTKiviatNode named at: (kiviatMetrics indexOf: m) "anRTKiviatNode named"))).
 		].
 	prevElements := kiviatNodes flatCollect: #nodeKiviatElements.
+	"nodeElems do: [ :el | el shape size: ((el model value fitness values first) log * 10) abs ]."
 	anRTKiviatNode addNodeElements: nodeElems "(prevElements select: [ :elm | pts includes: elm model value ])".
 	nodeElems do: [ :elm | 
 		| parents |
+		elm shape size: ((elm model value fitness values first) log * 30) abs.
 		parents := elm model value parents.
 		prevElements select: [ :prevElm | parents includes: prevElm model value ]	
 			thenDo: [ :prevElm | edgeElems add: ((RTEdge from: elm to: (prevElm)) + (shapeEdge color: (elm trachelShape color))) ].

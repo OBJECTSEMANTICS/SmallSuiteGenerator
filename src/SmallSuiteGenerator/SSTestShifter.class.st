@@ -29,7 +29,8 @@ Class {
 		'validatedTargetClassName',
 		'randomGenerator',
 		'fitnessByClass',
-		'parents'
+		'parents',
+		'children'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -60,6 +61,11 @@ SSTestShifter >> addAssignment: anExpression [
 	assignment := self newAssignment: anExpression.
 	self addStatement: assignment.
 	^ assignment
+]
+
+{ #category : #adding }
+SSTestShifter >> addChild: aTestCase [
+	children add: aTestCase
 ]
 
 { #category : #inserting }
@@ -169,8 +175,9 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 ]
 
 { #category : #accessing }
-SSTestShifter >> addParent: anObject [
-  parents add: anObject
+SSTestShifter >> addParent: aTestCase [
+   parents add: aTestCase.
+	aTestCase addChild: self.
 ]
 
 { #category : #inserting }
@@ -225,6 +232,12 @@ SSTestShifter >> addTargetClassName: aSymbol [
 { #category : #adding }
 SSTestShifter >> addTargetClassNames: symbols [
 	symbols do: [ :symbol | self addTargetClassName: symbol ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> allChildren [
+	^ (Set newFrom: children)
+	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
 ]
 
 { #category : #'as yet unclassified' }
@@ -473,6 +486,7 @@ SSTestShifter >> initialize [
   validatedTargetClassName := false.
   randomGenerator := SConfiguration newRandomGenerator.
   parents := Set new.
+  children := Set new.
   "childs := Set new"
 ]
 
@@ -541,6 +555,11 @@ SSTestShifter >> invariant [
 SSTestShifter >> involvedClasses [
 	
 	^ (self objectVariables collect:[:var| var returnType]) asSet.
+]
+
+{ #category : #accessing }
+SSTestShifter >> length [
+  ^ statements size
 ]
 
 { #category : #repairing }

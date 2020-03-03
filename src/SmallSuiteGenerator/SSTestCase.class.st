@@ -91,11 +91,6 @@ SSTestCase >> initialize [
   idPopulation := 1.
 ]
 
-{ #category : #actions }
-SSTestCase >> length [
-	^ statements size
-]
-
 { #category : #accessing }
 SSTestCase >> ni [
 	^ ni
