@@ -20,6 +20,8 @@ SMethodCoverage >> run: testCaseCollection [
 		do: [ :testCase | 
 			profiler cleanBlocksOfMethods.
 			testCase runWithoutAssertions.
+			testCase summaryExecutedCode: profiler summaryExecutedCode.
+			"self abstractDataOn: testCase."
 			testCase fitness at:string put: profiler methodCoverage.
 			testCase fitnessByClass at: string put: profiler methodCoverage1 ]
 ]

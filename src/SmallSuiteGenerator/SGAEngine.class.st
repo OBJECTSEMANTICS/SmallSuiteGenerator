@@ -91,6 +91,20 @@ SGAEngine >> computeFitness [
 	fitness compute: population.
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> contentVisualization: container [ 
+	| shape generations |
+	generations := numberOfGenerations + 1.
+	shape := RTBox new.
+	shape elementsOn: ((logs flatCollect: #population) 
+	select: [:tC | (tC ni = generations or: 
+		[ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ]
+		])
+	]).
+	
+	
+]
+
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |

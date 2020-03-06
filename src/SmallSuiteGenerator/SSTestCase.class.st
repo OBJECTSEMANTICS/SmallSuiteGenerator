@@ -7,7 +7,8 @@ Class {
 	#instVars : [
 		'idPopulation',
 		'ni',
-		'previousOpenWindows'
+		'previousOpenWindows',
+		'summaryExecutedCode'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -134,6 +135,16 @@ SSTestCase >> setFitnessByClass: aDictionary [
 { #category : #actions }
 SSTestCase >> setUp [
 	previousOpenWindows := SystemWindow allInstances.
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryExecutedCode [
+	^ summaryExecutedCode
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryExecutedCode: dictionary [ 
+	summaryExecutedCode := dictionary
 ]
 
 { #category : #actions }

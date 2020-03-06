@@ -1,6 +1,37 @@
 Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> articleVisualization [
+  | c b1 b2 b3 |
+c := RTComposer new.
+c gap: 35.
+
+"-------"b1 := RTBox new.
+b1 view: c view.
+self sparkVisualization: b1.
+b1 build.
+c group: #abstract.
+
+"-------"b2 := RTComposer new.
+b2 view: c view.
+self contentVisualization: b2.
+b2 build.
+c group: #content.
+
+"-------"b3 := RTGrapher new.
+b3 view: c view.
+b3 evolutionVisualization: b3.
+b3 build.
+c group: #evolution.
+
+"-------"c move: #content between: #abstract and: #evolution.
+c nameGroup: #abstract as: 'Preview'.
+c nameGroup: #content as: '#Graphic'.
+c nameGroup: #evolution as: 'Evolution Fitness'.
+^c view
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualize [
   | b |
   b := RTMondrian new.
@@ -119,7 +150,7 @@ SGAEngine >> visualizeMatrixP [
   b edges moveBehind.
   b edges connectFromAll: [:testCase |  testCase parents ].
   b normalizer elements: es.
-  b normalizer normalizeColor: [:testCase |  testCase fitness values first ] using: (Array with: Color black with: Color white).
+  b normalizer normalizeColor: [:testCase |  testCase fitness values first] using: (Array with: Color black with: Color white)."(Array with: Color red with: Color blue) min:0 max: 100."
   b layout smallSuite.
   ^b
 ]
@@ -308,4 +339,35 @@ SGAEngine >> visualizeWithRandomColor [
   b layout smallSuite.
   
   "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."^b
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeWithSparkCircle [
+  | b es generations shape |
+  generations := numberOfGenerations + 1.
+  b := RTMondrian new.
+  b interaction highlight.
+  shape := RTSparkCircle new.
+  		shape := RTSparkCircle new.
+		shape size: 5.
+  		shape names: [ :model | Array with: fitness functionName with: (fitness functionName, 'ByProject') ].
+      shape percent: [ :model :metric | 
+		metric = fitness functionName ifTrue: [ (((model fitnessByClass at: metric) at: targetClassName)/100) asFloat ] ifFalse: [ model fitness values first ] ].
+		shape oldMetric: [ :model :metric | 
+		metric = fitness functionName ifTrue: [ (((model fitnessByClass at: metric) at: targetClassName)/100) asFloat ] ifFalse: [ model fitness values first ] ].
+		shape colorBlock: [ :model :metric | metric = fitness functionName ifTrue: [ Color white ] ifFalse: [ Color blue ] ].
+  b shape: shape.
+  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC ni = generations or: [ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ]])]).
+  es @ (RTHighlightable highlight: [:testCase |  testCase allParents ]).
+  "es do: [:el |  el
+           width: 10; 
+			  height: el model length * 2
+  ]."
+  b shape verticalBezierLine.
+  b edges moveBehind.
+  b edges connectFromAll: [:testCase |  testCase parents ].
+  b normalizer elements: es.
+  b normalizer normalizeColor: [:testCase |  testCase fitness values first] using: (Array with: Color black with: Color white)."(Array with: Color red with: Color blue) min:0 max: 100."
+  b layout smallSuite.
+  ^b 
 ]
