@@ -348,7 +348,6 @@ SGAEngine >> visualizeWithSparkCircle [
   b := RTMondrian new.
   b interaction highlight.
   shape := RTSparkCircle new.
-  		shape := RTSparkCircle new.
 		shape size: 5.
   		shape names: [ :model | Array with: fitness functionName with: (fitness functionName, 'ByProject') ].
       shape percent: [ :model :metric | 
