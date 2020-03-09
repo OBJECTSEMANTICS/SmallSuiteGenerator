@@ -93,14 +93,31 @@ SGAEngine >> computeFitness [
 
 { #category : #'as yet unclassified' }
 SGAEngine >> contentVisualization: container [ 
-	| shape generations |
+	| shape generations els aBlock |
 	generations := numberOfGenerations + 1.
-	shape := RTBox new.
-	shape elementsOn: ((logs flatCollect: #population) 
+	shape := RTCompositeShape new.
+	els :=  shape elementsOn: ((logs flatCollect: #population) 
 	select: [:tC | (tC ni = generations or: 
 		[ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ]
 		])
 	]).
+	aBlock := [ :testCase | | builder |
+		builder := RTShapeBuilder new.
+		builder rectangle 
+			size: testCase fitness values first;
+			fillColor: (Color blue alpha: 0.3);
+			withText.
+		container view addAll: (builder elementsOn: (testCase summaryExecutedCode collect: [:assoc | 
+				assoc key -> assoc value first first. "body of method"
+			])  ).
+	].
+	container view addAll: els.
+	"els do: [ :element | 
+		
+	]."
+	RTCellLayout on: container view elements.
+	container view build.
+	^ container view.
 	
 	
 ]
