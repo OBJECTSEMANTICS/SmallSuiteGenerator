@@ -26,7 +26,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
 			spec 
 				baseline: 'SparkCircleCopy'
-				with: [ spec repository: 'github.com/andreina-covi/SparkCircleCopy/src' ].
+				with: [ spec repository: 'github.com/andreina-covi/SparkCircleCopy:master/src' ].
 			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
