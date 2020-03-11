@@ -443,6 +443,12 @@ SSTestShifter >> generateStatements: anInteger [
 	
 ]
 
+{ #category : #parsing }
+SSTestShifter >> getStringOf: stm [
+	stm isString ifTrue: [ ^ stm ].
+	^ stm printString 
+]
+
 { #category : #initalize }
 SSTestShifter >> initialize [
 	super initialize.
@@ -749,7 +755,7 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	statementCollection
 		do: [ :stm | 
 			| aNode |
-			[ aNode := rbParserClass parseExpression: stm printString.
+			[ aNode := rbParserClass parseExpression: (self getStringOf: stm).
 			node body addNode: aNode ]
 				on: Error
 				do: [  ] ].
