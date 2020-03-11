@@ -28,7 +28,8 @@ Class {
 		'maxNumberOfStatements',
 		'validatedTargetClassName',
 		'randomGenerator',
-		'fitnessByClass'
+		'fitnessByClass',
+		'lastMessage'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -523,6 +524,16 @@ SSTestShifter >> involvedClasses [
 	^ (self objectVariables collect:[:var| var returnType]) asSet.
 ]
 
+{ #category : #accessing }
+SSTestShifter >> lastMessage [
+	^ lastMessage 
+]
+
+{ #category : #accessing }
+SSTestShifter >> lastMessage: anObject [ 	
+	lastMessage := anObject 
+]
+
 { #category : #repairing }
 SSTestShifter >> literal: aClassName [
 	^  self newLiteral: aClassName.
@@ -723,7 +734,7 @@ SSTestShifter >> objectVariables [
 { #category : #parsing }
 SSTestShifter >> parseTree [
 	
-	^ self parseTreeWith: self statements.
+	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
 ]
 
 { #category : #parsing }
@@ -732,8 +743,8 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
 	rbParserClass := SConfiguration rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
-	temporaries := self allVarNames
-		collect: [ :varName | rbParserClass parseExpression: varName ].
+	temporaries := (self allVarNames
+		collect: [ :varName | rbParserClass parseExpression: varName ]) select: [:e | e isKindOf: RBVariableNode ].
 	node body temporaries: temporaries.
 	statementCollection
 		do: [ :stm | 
@@ -748,7 +759,7 @@ SSTestShifter >> parseTreeWith: statementCollection [
 { #category : #parsing }
 SSTestShifter >> parseTreeWithAssertions [
 	
-	^ self parseTreeWith: self statements, self assertions.
+	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
 ]
 
 { #category : #repairing }

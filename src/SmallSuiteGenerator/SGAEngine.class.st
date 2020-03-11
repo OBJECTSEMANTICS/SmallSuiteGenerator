@@ -38,7 +38,8 @@ Class {
 		'fitness',
 		'selectionStrategy',
 		'targetClassName',
-		'numberOfGenerations'
+		'numberOfGenerations',
+		'lastMessage'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -132,7 +133,8 @@ SGAEngine >> createRandomPopulation [
 		  test
 			  addTargetClassName: self targetClassName;
 			  addFactoryMessage: self targetClassName;
-			  generateStatements: value.
+			  generateStatements: value;
+			  lastMessage: lastMessage.
 		  test ]
 ]
 
@@ -192,6 +194,11 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 		^ 			fitness1 = fitness2
 						ifTrue: [ testCase1 length < testCase2 length ]
 						ifFalse: [ fitness1 > fitness2 ]
+]
+
+{ #category : #accessing }
+SGAEngine >> lastMessage: anObject [
+	lastMessage := anObject
 ]
 
 { #category : #accessing }

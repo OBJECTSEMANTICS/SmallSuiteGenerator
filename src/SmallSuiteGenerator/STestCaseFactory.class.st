@@ -148,6 +148,11 @@ STestCaseFactory >> initializeProfiler [
 	
 ]
 
+{ #category : #configuration }
+STestCaseFactory >> lastMessage: aMessage [
+	engine lastMessage: aMessage
+]
+
 { #category : #'as yet unclassified' }
 STestCaseFactory >> moveClass: aClass [ 
 ]
