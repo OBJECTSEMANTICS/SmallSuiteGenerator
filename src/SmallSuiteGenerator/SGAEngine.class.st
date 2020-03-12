@@ -324,3 +324,21 @@ SGAEngine >> typeInfo [
 SGAEngine >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo
 ]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> visualizationMethods: aView [
+	| builder |
+	builder := RTShapeBuilder new.
+	builder rectangle 
+				height: [:str | str lineCount * 30 ]; 
+				width: [ :str | (str lines collect: #size) max * 10 ];
+				fillColor: (Color black alpha: 0.3);
+				withText.
+	aView addAll: (builder elementsOn: (self population collect: [:testCase | 
+		|assoc |
+		assoc := testCase summaryExecutedCode associations first.
+		assoc key asString, String cr, assoc value first second ])).
+	RTCellLayout on: aView elements.
+	aView build.
+	^ aView 
+]
