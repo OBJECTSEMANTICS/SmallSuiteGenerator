@@ -12,7 +12,9 @@ Class {
 		'outputPackageName',
 		'fitness',
 		'numberOfIterations',
-		'profiler'
+		'profiler',
+		'setUpMethod',
+		'tearDownMethod'
 	],
 	#classInstVars : [
 		'instance'
@@ -33,6 +35,14 @@ STestCaseFactory >> classesForRegex: regexExpressions [
 			RPackage organizer packages
 				select: [ :p | regex match: p name printString ] ]) asSet
 		flatCollect: #definedClasses
+]
+
+{ #category : #actions }
+STestCaseFactory >> createConfigurationMethods [
+	| class |
+	class := self getClassOf: ('GA' , self targetClassName , 'Test').
+	setUpMethod ifNotNil: [ class compile: setUpMethod  ].
+	tearDownMethod ifNotNil: [ class compile: tearDownMethod ]
 ]
 
 { #category : #actions }
@@ -64,13 +74,8 @@ STestCaseFactory >> engineDefault [
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
-	| aClassName class |
-	aClassName := ('GA' , self targetClassName , 'Test') asSymbol.
-	class := SConfiguration lookUpClass: aClassName.
-	class
-		ifNil: [ class := SConfiguration
-				createTestCaseClass: aClassName
-				inPackage: self outputPackageName].
+	| class |
+	class := self getClassOf: ('GA' , self targetClassName , 'Test').
 	self moveClass: class.
 	[ aTestCase generateAssertions.
 	class
@@ -97,7 +102,8 @@ STestCaseFactory >> exportTests [
 	engine population
 		do: [ :test | 
 			self export: test with: 'test' , index printString.
-			index := index + 1 ]
+			index := index + 1 ].
+	self createConfigurationMethods
 ]
 
 { #category : #configuration }
@@ -129,6 +135,19 @@ STestCaseFactory >> fitnessValues [
 				       ifAbsentPut: [ OrderedCollection new ].
 			val add: (log lowestFit at: functionName) ] ].
 	^ fitValues
+]
+
+{ #category : #actions }
+STestCaseFactory >> getClassOf: aString [
+	| aClassName class |
+	aClassName := aString asSymbol.
+	class := SConfiguration lookUpClass: aClassName.
+	class
+		ifNil: [ class := SConfiguration
+				createTestCaseClass: aClassName
+				inPackage: self outputPackageName].
+	^ class
+
 ]
 
 { #category : #initialization }
@@ -203,6 +222,12 @@ STestCaseFactory >> setUp [
 	engine targetClassName: self targetClassName
 ]
 
+{ #category : #actions }
+STestCaseFactory >> setUpMethod: anObject [
+	setUpMethod := anObject 
+	
+]
+
 { #category : #accessing }
 STestCaseFactory >> targetClassName [
 	^ targetClassName 
@@ -228,6 +253,12 @@ STestCaseFactory >> targetPackageRegex: anObject [
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests
+]
+
+{ #category : #actions }
+STestCaseFactory >> tearDownMethod: anObject [
+	tearDownMethod := anObject 
+	
 ]
 
 { #category : #accessing }
