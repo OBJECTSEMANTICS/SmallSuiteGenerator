@@ -156,6 +156,46 @@ SGAEngine >> visualizeMatrixP [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeMethod: assoc with: list in: aView [
+	| bodyMethod execCode indExecCode group max element nLine |
+	bodyMethod := list first second.
+	execCode := list allButFirst select: [ :data | data first ] 
+		thenCollect: [ :data | data second ].
+	group := RTGroup new.
+	indExecCode := 1.
+	nLine := 1.
+	max := execCode size.
+	bodyMethod linesDo: [ :line | 
+		| groupLabel found subString index lastStr |
+		groupLabel := RTGroup new.
+		found := false.
+		indExecCode <= max ifTrue: [ 
+		subString := execCode at: indExecCode.
+		nLine <= subString lines size ifFalse: [ nLine := 1 ].
+		subString := subString lines at: nLine.
+		index := line indexOfSubCollection: subString.
+		found := index > 0.
+		found ifTrue: [ 
+			groupLabel add: (RTLabel new textElement: (line copyFrom: 1 to: index - 1); color: Color white) element;
+			add: (RTLabel new textElement: subString; color: Color pink) element.
+			lastStr := line copyFrom: index + subString size to: line size.
+			lastStr ifNotEmpty: [ RTGroup new add: (RTLabel new textElement: lastStr; color: Color white) element ].
+		].
+		found ifFalse: [ groupLabel add: (RTLabel new textElement: line; color: Color white) element ]
+		].
+		indExecCode := indExecCode + 1.
+		RTHorizontalLineLayout on: groupLabel.
+		group add: groupLabel
+	].
+	element := (RTBox new width: (bodyMethod lines collect: #size) max * 10; height: bodyMethod lines size * 10; color: Color black) element.
+	RTNest new layout: RTVerticalLineLayout new;
+	on: element nest: group.
+	"aView add: element; add: group."
+	^ group
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizeRadial [
   | b es firstPopulation root |
   b := RTMondrian new.

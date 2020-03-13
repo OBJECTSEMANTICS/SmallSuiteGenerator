@@ -326,6 +326,26 @@ SGAEngine >> typeInfo: aTypeInfo [
 ]
 
 { #category : #'as yet unclassified' }
+SGAEngine >> visualizateMethods: aView [
+	|  populationGroup el |
+	populationGroup := RTGroup new.
+	self population collect: [:testCase | testCase summaryExecutedCode associations ] thenDo: [:assocs |
+		assocs do: [ :assoc | 
+		| group | 
+		group := RTGroup new.
+		group add: (self visualizeMethod: assoc key with: assoc value in: aView).
+		RTGridLayout on: group.
+		populationGroup add: group	
+		].
+	].
+	el := (RTBox new width: self population size * 20; height: 50) element.
+	RTNest new layout: RTHorizontalLineLayout new; on: el nest: populationGroup.
+	aView add: el;
+	add: populationGroup.
+	^ aView
+]
+
+{ #category : #'as yet unclassified' }
 SGAEngine >> visualizationMethods: aView [
 	| builder |
 	builder := RTShapeBuilder new.
