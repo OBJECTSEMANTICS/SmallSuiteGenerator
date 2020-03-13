@@ -75,11 +75,12 @@ SVariable >> referenceTo: aClassName [
 ]
 
 { #category : #mutation }
-SVariable >> repairOn: aTestCase changing: aExpression [
+SVariable >> repairOn: aTestCase changing: anExpression [
 	| otherVariable |
 	otherVariable := aTestCase
 		alternativeOfVariable: self
-		before: aExpression.
+		before: anExpression.
+	mutated := otherVariable ~= self.
 	self varName: otherVariable varName.
 	self id: otherVariable id.
 ]
@@ -110,7 +111,13 @@ SVariable >> replaceExpression: anExpression by: newExpression [
 	self
 		id: reference id;
 		varName: reference varName;
-		returnType: reference returnType
+		returnType: reference returnType;
+		mutated: true
+]
+
+{ #category : #'as yet unclassified' }
+SVariable >> shapeOf [
+	^ RTBox new color: Color red; size: 10
 ]
 
 { #category : #accessing }

@@ -5,22 +5,29 @@ Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
 	#instVars : [
-		'previousOpenWindows'
+		'idPopulation',
+		'ni',
+		'previousOpenWindows',
+		'summaryExecutedCode'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
-	|testCase|
-	testCase := self new.
-	testCase typeInfo: aTypeInfo.
-	^ testCase.
+  | testCase |
+  testCase := self new.
+  testCase typeInfo: aTypeInfo.
+  ^testCase
 ]
 
 { #category : #comparing }
-SSTestCase >> = other [
-	^ self class = other class and: [ statements = other statements ]
+SSTestCase >> = another [
+  ^ self class = another class 
+	and: [ statements = another statements 
+		and: [ fitness = another fitness 
+			and: [ parents = another parents 
+				and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ] ] ] ]
 ]
 
 { #category : #actions }
@@ -46,27 +53,54 @@ SSTestCase >> computeFitness: fitnessClass [
 { #category : #copying }
 SSTestCase >> copy [
 	| copy |
-	copy := SSTestCase with: typeInfo copy.
+	copy := self class with: typeInfo copy.
 	copy addTargetClassNames: targetClassesNames.
 	statements do: [ :stm | copy addStatement: stm copy ].
 	copy updateNextId.
 	^ copy
 ]
 
+{ #category : #copying }
+SSTestCase >> deepCopy [
+  | copy |
+  copy := self copy.
+  copy setFitness: self fitness.
+  copy setFitnessByClass: self fitnessByClass.
+  copy ni: self ni.
+  copy summaryExecutedCode: self summaryExecutedCode.
+  ^ copy
+]
+
 { #category : #comparing }
 SSTestCase >> hash [
-	^ self statements hash
+  ^ super hash bitXor: "(self number hash bitXor:" self statements hash")"
+]
+
+{ #category : #accessing }
+SSTestCase >> idPopulation [
+	^ idPopulation
+]
+
+{ #category : #accessing }
+SSTestCase >> idPopulation: anObject [
+	idPopulation := anObject
 ]
 
 { #category : #initialization }
 SSTestCase >> initialize [
-	super initialize.
-	
+  super initialize.
+  ni := 1.
+  idPopulation := 1.
 ]
 
-{ #category : #actions }
-SSTestCase >> length [
-	^ self numberStatements.
+{ #category : #accessing }
+SSTestCase >> ni [
+	^ ni
+]
+
+{ #category : #accessing }
+SSTestCase >> ni: anObject [
+	ni := anObject
 ]
 
 { #category : #actions }
@@ -89,9 +123,29 @@ SSTestCase >> runWithoutAssertions [
 	^ result.
 ]
 
+{ #category : #initialization }
+SSTestCase >> setFitness: aDictionary [ 
+	fitness := aDictionary copy
+]
+
+{ #category : #initialization }
+SSTestCase >> setFitnessByClass: aDictionary [ 
+	fitnessByClass := aDictionary copy
+]
+
 { #category : #actions }
 SSTestCase >> setUp [
 	previousOpenWindows := SystemWindow allInstances.
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryExecutedCode [
+	^ summaryExecutedCode
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryExecutedCode: dictionary [ 
+	summaryExecutedCode := dictionary
 ]
 
 { #category : #actions }

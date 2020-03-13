@@ -37,8 +37,9 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	otherMessage := aTestCase
 		alternativeMessage: self
 		before: aExpression.
+	mutated := otherMessage selector ~= self selector.
 	self selector: otherMessage selector.
-			self args: otherMessage args
+	self args: otherMessage args
 ]
 
 { #category : #mutation }
@@ -49,4 +50,16 @@ SMessage >> insertMethodMessage: aExpression using: aTestCase [
 { #category : #mutation }
 SMessage >> insertOn: aTestCase [
 	^ aTestCase addMessage: self selector from: self receiver returnType
+]
+
+{ #category : #'as yet unclassified' }
+SMessage >> shapeOf [
+	^ RTBox new color: Color green; size: 20
+]
+
+{ #category : #'as yet unclassified' }
+SMessage >> stmColor [
+  ^ Color r: 0.7996089931573802 g: 1.0 b: 0.0
+"Color r: 0.8885630498533724 g: 0.8611925708699902 b: 0.41642228739002934"
+"Color r: 0.9139784946236559 g: 0.8172043010752689 b: 0.4858260019550342"
 ]

@@ -35,7 +35,10 @@ SAssignment class >> name: aVariable value: anExpression [
 
 { #category : #comparing }
 SAssignment >> = other [
-	^ (super = other) and: [ (variable = other variable) and: [ value = other value ] ]
+	^ (super = other) 
+		and: [ (variable = other variable) 
+			and: [ (value = other value) 
+				"and: [ identifier = other identifier  ]" ] ]
 ]
 
 { #category : #copying }
@@ -49,12 +52,17 @@ SAssignment >> copy [
 
 { #category : #comparing }
 SAssignment >> hash [
-	^ super hash xor: (variable hash xor: (value hash))
+	^ super hash bitXor: (variable hash bitXor: value hash)
 ]
 
 { #category : #accessing }
 SAssignment >> id [ 		
 	^ variable id
+]
+
+{ #category : #initialization }
+SAssignment >> initialize [ 	
+	super initialize.
 ]
 
 { #category : #mutation }
@@ -75,6 +83,16 @@ SAssignment >> insertOn: aTestCase [
 { #category : #mutation }
 SAssignment >> insertRandomMessage: aExpression using: aTestCase [
 	^ value insertRandomMessage:aExpression using: aTestCase
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> mutantColor [
+	^ self value mutantColor
+]
+
+{ #category : #accessing }
+SAssignment >> mutated [ 
+	^ value mutated
 ]
 
 { #category : #mutation }
@@ -119,6 +137,20 @@ SAssignment >> replaceBy: aExpression [
 { #category : #actions }
 SAssignment >> replaceExpression: expression by: newExpression [
 	value replaceExpression: expression by: newExpression
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> shapeOf [
+	^ RTCompositeShape new 
+	add: variable shapeOf;
+	add: value shapeOf;
+	horizontal;
+	yourself
+]
+
+{ #category : #'as yet unclassified' }
+SAssignment >> stmColor [
+  ^ self value stmColor
 ]
 
 { #category : #evaluating }

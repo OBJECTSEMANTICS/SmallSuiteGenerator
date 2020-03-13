@@ -11,7 +11,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		for: #common
 		do: [ spec
 				baseline: 'SpyLite'
-				with: [ spec repository: 'github://Lin777/SpyLite:BlackList/src' ].
+				with: [ spec repository: 'github://andreina-covi/SpyLite:master/src' ].
 				spec
 				baseline: 'Roassal2'
 				with: [ spec repository: 'github://ObjectProfile/Roassal2/src' ].
@@ -22,14 +22,17 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'NeoCSV'
 				with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
 			spec
-	baseline: 'TinyLogger'
-	with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
+				baseline: 'TinyLogger'
+				with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
+			spec 
+				baseline: 'SparkCircleCopy'
+				with: [ spec repository: 'github://andreina-covi/SparkCircleCopy:master/src' ].
 			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
-				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal2') ];
+				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal2' 'SparkCircleCopy') ];
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:

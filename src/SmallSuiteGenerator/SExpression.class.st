@@ -14,7 +14,13 @@ Class {
 	#instVars : [
 		'returnType',
 		'id',
-		'randomGenerator'
+		'randomGenerator',
+		'mutated',
+		'parent',
+		'identifier'
+	],
+	#classInstVars : [
+		'nextId'
 	],
 	#category : #'SmallSuiteGenerator-AST'
 }
@@ -30,17 +36,41 @@ SExpression class >> isPrimitive: anObject [
 	^ self new isPrimitive: anObject.
 ]
 
+{ #category : #'as yet unclassified' }
+SExpression class >> nextIdentifier [
+	nextId ifNil: [ nextId := 0 ].
+	^ nextId := nextId + 1
+]
+
+{ #category : #initialization }
+SExpression class >> resetId [
+	nextId := nil
+]
+
 { #category : #comparing }
-SExpression >> = other [
-	^ (self class = other class) and: [ (self id = other id) and: [ returnType = other returnType ] ]
+SExpression >> = another [
+	^ (self class = another class) 
+		and: [ (self id = another id) 
+			and: [ returnType = another returnType 
+				"and: [ identifier = another identifier ]" ] ]
 	
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> allParents [
+	^ parent ifNil: #() ifNotNil: [ 
+		Set new add: parent;
+	 	addAll: parent allParents; 
+		yourself ]
 ]
 
 { #category : #copying }
 SExpression >> copy [
 	^ self class new
 		id: self id;
-		returnType: self returnType
+		returnType: self returnType;
+		mutated: self mutated;
+		parent: self         
 ]
 
 { #category : #'error handling' }
@@ -63,9 +93,16 @@ SExpression >> id: anObject [
 	id := anObject
 ]
 
+{ #category : #accessing }
+SExpression >> identifier [
+	^ identifier
+]
+
 { #category : #initialization }
 SExpression >> initialize [
-	randomGenerator := SConfiguration randomGenerator
+   randomGenerator := SConfiguration randomGenerator.
+	mutated := false.
+	identifier := self class nextIdentifier 
 ]
 
 { #category : #mutation }
@@ -98,6 +135,32 @@ SExpression >> isFactoryMessage [
 SExpression >> isPrimitive: anObject [
 	^ (anObject isKindOf: Number) or: [ (anObject isKindOf: Boolean)
 		or: [ anObject isKindOf: String ]]
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> mutantColor [
+  ^ self mutated ifTrue: [ Color r: 0.9726295210166178 g: 0.0 b: 0.0
+	"Color r: 0.7038123167155426 g: 0.3841642228739003 b: 0.4310850439882698" "Color r: 0.40762463343108507 g: 0.0039100684261974585 b: 0.20234604105571846" ] ifFalse: [ Color gray ]
+]
+
+{ #category : #accessing }
+SExpression >> mutated [ 
+	^ mutated
+]
+
+{ #category : #accessing }
+SExpression >> mutated: aBoolean [
+	mutated := aBoolean
+]
+
+{ #category : #accessing }
+SExpression >> parent [
+	^ parent
+]
+
+{ #category : #accessing }
+SExpression >> parent: anObject [
+	parent := anObject
 ]
 
 { #category : #mutation }
@@ -148,6 +211,15 @@ SExpression >> returnType [
 { #category : #accessing }
 SExpression >> returnType: anObject [
 	returnType := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> shapeOf [
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> stmColor [
+  
 ]
 
 { #category : #mutation }

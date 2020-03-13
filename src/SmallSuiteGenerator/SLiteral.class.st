@@ -23,17 +23,18 @@ Class {
 
 { #category : #parsing }
 SLiteral class >> value: aValue [
-	^ SLiteral new value: aValue; yourself.
+	^ self new value: aValue; yourself.
 ]
 
 { #category : #comparing }
 SLiteral >> = other [
 	^ super = other
-		and: [ value isLiteral ifTrue: [ value = other value ] 
+		and: [ (value isLiteral ifTrue: [ value = other value ] 
 			ifFalse: [ 
 			value isClass
 				ifTrue: [ value name = other value name ]
-				ifFalse: [ value className = other value className ]] ]
+				ifFalse: [ value className = other value className ]])
+			and: [ identifier = other identifier ] ]
 ]
 
 { #category : #copying }
@@ -46,7 +47,7 @@ SLiteral >> copy [
 
 { #category : #comparing }
 SLiteral >> hash [
-	^ super hash xor: value hash
+	^ super hash bitXor: value hash
 ]
 
 { #category : #mutation }
@@ -78,6 +79,18 @@ SLiteral >> repairOn: aTestCase changing: aExpression [
 { #category : #accessing }
 SLiteral >> replaceBy: otherExpression [
 	self value: otherExpression value
+]
+
+{ #category : #'as yet unclassified' }
+SLiteral >> shapeOf [
+	^ RTBox new color: Color yellow; size: 20
+]
+
+{ #category : #'as yet unclassified' }
+SLiteral >> stmColor [
+  ^ Color r: 0.2072336265884653 g: 0.8504398826979472 b: 0.1573802541544477
+"Color r: 0.2072336265884653 g: 0.5503421309872922 b: 0.19745845552297164"
+"Color r: 0.5953079178885631 g: 0.7644183773216031 b: 0.1466275659824047"
 ]
 
 { #category : #evaluating }

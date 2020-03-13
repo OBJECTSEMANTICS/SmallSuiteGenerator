@@ -29,6 +29,8 @@ Class {
 		'validatedTargetClassName',
 		'randomGenerator',
 		'fitnessByClass',
+		'parents',
+		'children',
 		'lastMessage'
 	],
 	#category : #'SmallSuiteGenerator-Core'
@@ -46,7 +48,8 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 								addStatement: (self newAssignment: (self newLiteral: missType))
 								before: aStatement ]
 						ifFalse: [ self
-								addAssignment: (self newFactoryMessage: missType before: aStatement) ].
+								addAssignment: (self newStatementOfType: missType before: aStatement)
+								"(self newFactoryMessage: missType before: aStatement)" ].
 					true ]
 						on: SError
 						do: [ false ] ]
@@ -60,6 +63,11 @@ SSTestShifter >> addAssignment: anExpression [
 	assignment := self newAssignment: anExpression.
 	self addStatement: assignment.
 	^ assignment
+]
+
+{ #category : #adding }
+SSTestShifter >> addChild: aTestCase [
+	children add: aTestCase
 ]
 
 { #category : #inserting }
@@ -168,6 +176,12 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 	^ self addAssignment: (self messageUsing: method and: receiver before: nil)
 ]
 
+{ #category : #accessing }
+SSTestShifter >> addParent: aTestCase [
+   parents add: aTestCase.
+	aTestCase addChild: self.
+]
+
 { #category : #inserting }
 SSTestShifter >> addStatement: anExpression [
 	statements add: anExpression.
@@ -179,7 +193,7 @@ SSTestShifter >> addStatement: newExpression after: aStatement [
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
 		ifTrue: [ self addStatement: newExpression ]
-		ifFalse: [ anIndex := randomGenerator selectAtRandom: (anIndex to: self numberStatements).
+		ifFalse: [ anIndex := randomGenerator selectAtRandom: (anIndex to: self length).
 			statements add: newExpression afterIndex: anIndex ].
 	^ newExpression
 ]
@@ -195,8 +209,10 @@ SSTestShifter >> addStatement: newExpression before: aStatement [
 { #category : #inserting }
 SSTestShifter >> addStatementOfType: aType before: expression [
 	| newExpression |
+	newExpression := self newStatementOfType: aType before: expression.
+	newExpression mutated: true.
 	newExpression := self
-		newAssignment: (self newStatementOfType: aType before: expression).
+		newAssignment: newExpression.
 	self addStatement: newExpression before: expression.
 	^ newExpression
 ]
@@ -218,6 +234,18 @@ SSTestShifter >> addTargetClassName: aSymbol [
 { #category : #adding }
 SSTestShifter >> addTargetClassNames: symbols [
 	symbols do: [ :symbol | self addTargetClassName: symbol ]
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> allChildren [
+	^ (Set newFrom: children)
+	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> allParents [
+	^ (Set newFrom: parents)
+	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
 ]
 
 { #category : #accessing }
@@ -430,10 +458,14 @@ SSTestShifter >> generateStatements [
 	self
 		assert: typeInfo types isNotEmpty
 		description: 'TypeInfo does not contain info at all.'.
-	[ self numberStatements < self maxNumberOfStatements ]
-		whileTrue: [ "self addMessage" [ self addMessage ]
+	[ self length < self maxNumberOfStatements ]
+		whileTrue: [ 
+			| array |
+			array := randomGenerator collectAtRandom: (Array with: #addFieldAccessMessage with: #addMessage).
+			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifNone: [ self error: 'Not able to generate statements' ].
+		"	[ self addMessage ]
 				on: SError
-				do: [  ] ]
+				do: [  ]" ]
 ]
 
 { #category : #actions }
@@ -451,23 +483,26 @@ SSTestShifter >> getStringOf: stm [
 
 { #category : #initalize }
 SSTestShifter >> initialize [
-	super initialize.
-	statements := OrderedCollection new.
-	assertions := OrderedCollection new.
-	fitness := Dictionary new.
-	fitnessByClass := Dictionary new.
-	nextId := 0.
-	maxNumberOfStatements := 10.
-	targetClassesNames := Set new.
-	validatedTargetClassName := false.
-	randomGenerator := SConfiguration newRandomGenerator
+  super initialize.
+  statements := OrderedCollection new.
+  assertions := OrderedCollection new.
+  fitness := Dictionary new.
+  fitnessByClass := Dictionary new.
+  nextId := 0.
+  maxNumberOfStatements := 10.
+  targetClassesNames := Set new.
+  validatedTargetClassName := false.
+  randomGenerator := SConfiguration newRandomGenerator.
+  parents := Set new.
+  children := Set new.
+  "childs := Set new"
 ]
 
 { #category : #inserting }
 SSTestShifter >> insertAsParameter: expression after: aStatement [
 	(randomGenerator collectAtRandom: (statements
 		copyFrom: (statements indexOf: aStatement) + 1
-		to: self numberStatements))
+		to: self length))
 		do: [ :stm | 
 			[ ^ stm replaceArgBy: expression ]
 				on: SError
@@ -497,7 +532,7 @@ SSTestShifter >> insertStatement [
 	| l stop alpha count random |
 	l := 1.
 	count := 0.
-	stop := self numberStatements.
+	stop := self length.
 	alpha := 0.5.
 	random := SConfiguration randomGenerator.
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
@@ -529,6 +564,10 @@ SSTestShifter >> involvedClasses [
 	
 	^ (self objectVariables collect:[:var| var returnType]) asSet.
 ]
+
+{ #category : #accessing }
+SSTestShifter >> length [
+  ^ statements size
 
 { #category : #accessing }
 SSTestShifter >> lastMessage [
@@ -723,11 +762,6 @@ SSTestShifter >> numMaxStatements: anObject [
 	maxNumberOfStatements := anObject
 ]
 
-{ #category : #accessing }
-SSTestShifter >> numberStatements [
-	^ statements size
-]
-
 { #category : #querying }
 SSTestShifter >> objectVariables [
 	
@@ -735,6 +769,11 @@ SSTestShifter >> objectVariables [
 			|res|
 			res := self typeInfo classAt: stm returnType ifNone:[nil].
 			res isNil not] thenCollect:[:stm| stm variable].
+]
+
+{ #category : #accessing }
+SSTestShifter >> parents [
+	^ parents
 ]
 
 { #category : #parsing }
@@ -882,7 +921,7 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 	| refIndexes anIndex |
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
-		ifTrue: [ ^ self numberStatements ].
+		ifTrue: [ ^ self length ].
 	refIndexes := self referencesIndexes: aExpression.
 	anIndex := anIndex - 1.
 	refIndexes
@@ -944,7 +983,7 @@ SSTestShifter >> removeStatement [
 	self
 		removeStatement:
 			(statements
-				at: (randomGenerator selectAtRandom: (1 to: self numberStatements) asArray))
+				at: (randomGenerator selectAtRandom: (1 to: self length) asArray))
 ]
 
 { #category : #removing }
@@ -1003,22 +1042,6 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 	(self statementAt: expression)
 		replaceExpression: exprToReplace 
 		by: otherExpression 
-]
-
-{ #category : #repairing }
-SSTestShifter >> satisfyTypes: types before: aStatement [
-	| scalarsKeys scalarTypes nonScalarTypes |
-	scalarsKeys := typeInfo scalars keys asOrderedCollection .
-	scalarTypes := OrderedCollection new.
-	nonScalarTypes := OrderedCollection new.
-	types
-		do: [ :aType | 
-			(scalarsKeys includes: aType)
-				ifTrue: [ scalarTypes add: aType ]
-				ifFalse: [ nonScalarTypes add: aType ] ].
-	nonScalarTypes
-		do: [ :aType | self addStatementOfType: aType before: aStatement ].
-	^ scalarTypes
 ]
 
 { #category : #accessing }
