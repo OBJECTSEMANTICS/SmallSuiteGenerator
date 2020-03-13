@@ -38,7 +38,8 @@ Class {
 		'fitness',
 		'selectionStrategy',
 		'targetClassName',
-		'numberOfGenerations'
+		'numberOfGenerations',
+		'lastMessage'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -131,6 +132,7 @@ SGAEngine >> createRandomPopulation [
            addTargetClassName: self targetClassName;
            addFactoryMessage: self targetClassName;
            generateStatements: value;
+           lastMessage: lastMessage.
            idPopulation: val.
         test ]
 ]
@@ -211,6 +213,11 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 	log lowestFit: (self pickMinFitTest: dictFitness);
 	averageFit: (self pickAverageFitTest: dictFitness).
 	^ log
+]
+
+{ #category : #accessing }
+SGAEngine >> lastMessage: anObject [
+	lastMessage := anObject
 ]
 
 { #category : #accessing }

@@ -48,9 +48,12 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 |
-_var0 := RTGrapher new.
-_var1 := _var0 homogenizeMinAndMax.
+	| _var0 _var1 _var2 _var3 |
+_var0 := '1'.
+_var1 := 0.
+_var2 := SSTeacher name: _var0 with: _var1.
+_var3 := _var2 nickname.
+(Delay forMilliseconds: 5) wait.
 ^self analyze: thisContext
 ]
 

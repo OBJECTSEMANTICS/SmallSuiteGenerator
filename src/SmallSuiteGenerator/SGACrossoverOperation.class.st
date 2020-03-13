@@ -49,9 +49,11 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	alpha := self alpha.
 	"first alpha(P1) and last (1-alpha)(P2)"
 	offSpring1 := self offSpringOf: testCaseA and: testCaseB using: alpha.
+	offSpring1 lastMessage: testCaseA lastMessage .
 	self checkReferencesOf: offSpring1 withDescription: 'offspring'.
 	"first alpha(P2) and last (1-alpha)(P1)"
 	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: alpha.
+	offSpring2 lastMessage: testCaseA lastMessage .
 	self checkReferencesOf: offSpring2 withDescription: 'offspring'.
 	^ Array with: offSpring1 with: offSpring2
 ]

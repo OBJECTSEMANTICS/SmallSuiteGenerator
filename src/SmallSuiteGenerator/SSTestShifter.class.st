@@ -30,7 +30,8 @@ Class {
 		'randomGenerator',
 		'fitnessByClass',
 		'parents',
-		'children'
+		'children',
+		'lastMessage'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -474,6 +475,12 @@ SSTestShifter >> generateStatements: anInteger [
 	
 ]
 
+{ #category : #parsing }
+SSTestShifter >> getStringOf: stm [
+	stm isString ifTrue: [ ^ stm ].
+	^ stm printString 
+]
+
 { #category : #initalize }
 SSTestShifter >> initialize [
   super initialize.
@@ -561,6 +568,15 @@ SSTestShifter >> involvedClasses [
 { #category : #accessing }
 SSTestShifter >> length [
   ^ statements size
+
+{ #category : #accessing }
+SSTestShifter >> lastMessage [
+	^ lastMessage 
+]
+
+{ #category : #accessing }
+SSTestShifter >> lastMessage: anObject [ 	
+	lastMessage := anObject 
 ]
 
 { #category : #repairing }
@@ -763,7 +779,7 @@ SSTestShifter >> parents [
 { #category : #parsing }
 SSTestShifter >> parseTree [
 	
-	^ self parseTreeWith: self statements.
+	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
 ]
 
 { #category : #parsing }
@@ -772,13 +788,13 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
 	rbParserClass := SConfiguration rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
-	temporaries := self allVarNames
-		collect: [ :varName | rbParserClass parseExpression: varName ].
+	temporaries := (self allVarNames
+		collect: [ :varName | rbParserClass parseExpression: varName ]) select: [:e | e isKindOf: RBVariableNode ].
 	node body temporaries: temporaries.
 	statementCollection
 		do: [ :stm | 
 			| aNode |
-			[ aNode := rbParserClass parseExpression: stm printString.
+			[ aNode := rbParserClass parseExpression: (self getStringOf: stm).
 			node body addNode: aNode ]
 				on: Error
 				do: [  ] ].
@@ -788,7 +804,7 @@ SSTestShifter >> parseTreeWith: statementCollection [
 { #category : #parsing }
 SSTestShifter >> parseTreeWithAssertions [
 	
-	^ self parseTreeWith: self statements, self assertions.
+	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
 ]
 
 { #category : #repairing }
