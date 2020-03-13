@@ -158,7 +158,7 @@ SGAEngine >> visualizeMatrixP [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizeMethod: assoc with: list in: aView [
 	| bodyMethod execCode indExecCode group max element nLine |
-	bodyMethod := list first second.
+	bodyMethod := assoc key asString, String cr, list first second.
 	execCode := list allButFirst select: [ :data | data first ] 
 		thenCollect: [ :data | data second ].
 	group := RTGroup new.
@@ -170,28 +170,30 @@ SGAEngine >> visualizeMethod: assoc with: list in: aView [
 		groupLabel := RTGroup new.
 		found := false.
 		indExecCode <= max ifTrue: [ 
-		subString := execCode at: indExecCode.
-		nLine <= subString lines size ifFalse: [ nLine := 1 ].
-		subString := subString lines at: nLine.
+		nLine <= (execCode at: indExecCode) lines size 
+			ifFalse: [ nLine := 1. 
+			indExecCode := indExecCode + 1 ].
+		subString := (execCode at: indExecCode) lines at: nLine.
 		index := line indexOfSubCollection: subString.
 		found := index > 0.
+		].
 		found ifTrue: [ 
-			groupLabel add: (RTLabel new textElement: (line copyFrom: 1 to: index - 1); color: Color white) element;
-			add: (RTLabel new textElement: subString; color: Color pink) element.
+			groupLabel add: ((RTLabel new color: Color white) elementOn: ((line copyFrom: 1 to: index - 1) trimLeft: [:char | char = Character tab]));
+			add: ((RTLabel new color: Color pink) elementOn: (subString trimLeft: [:char | char = Character tab])).
 			lastStr := line copyFrom: index + subString size to: line size.
-			lastStr ifNotEmpty: [ RTGroup new add: (RTLabel new textElement: lastStr; color: Color white) element ].
+			lastStr ifNotEmpty: [ groupLabel add: ((RTLabel new color: Color white) elementOn: lastStr) ].
 		].
-		found ifFalse: [ groupLabel add: (RTLabel new textElement: line; color: Color white) element ]
-		].
-		indExecCode := indExecCode + 1.
+		found ifFalse: [ groupLabel add: ((RTLabel new color: Color white) elementOn: (line trimLeft: [:char | char = Character tab])) ].
 		RTHorizontalLineLayout on: groupLabel.
 		group add: groupLabel
 	].
-	element := (RTBox new width: (bodyMethod lines collect: #size) max * 10; height: bodyMethod lines size * 10; color: Color black) element.
+	RTVerticalLineLayout on: group.
+	"element := (RTBox new width: (bodyMethod lines collect: #size) max * 10; height: bodyMethod lines size * 10; color: Color black) elementOn: bodyMethod.
+	element @ RTDraggable.
 	RTNest new layout: RTVerticalLineLayout new;
 	on: element nest: group.
-	"aView add: element; add: group."
-	^ group
+	"
+	^ aView
 	
 ]
 
