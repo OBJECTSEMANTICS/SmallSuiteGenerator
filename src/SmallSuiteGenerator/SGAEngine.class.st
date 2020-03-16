@@ -132,7 +132,7 @@ SGAEngine >> createRandomPopulation [
            addTargetClassName: self targetClassName;
            addFactoryMessage: self targetClassName;
            generateStatements: value;
-           lastMessage: lastMessage.
+           lastMessage: lastMessage;
            idPopulation: val.
         test ]
 ]
