@@ -568,6 +568,7 @@ SSTestShifter >> involvedClasses [
 { #category : #accessing }
 SSTestShifter >> length [
   ^ statements size
+]
 
 { #category : #accessing }
 SSTestShifter >> lastMessage [
