@@ -51,8 +51,7 @@ SExpression class >> resetId [
 SExpression >> = another [
 	^ (self class = another class) 
 		and: [ (self id = another id) 
-			and: [ returnType = another returnType 
-				"and: [ identifier = another identifier ]" ] ]
+			and: [ returnType = another returnType ] ]
 	
 ]
 
@@ -211,15 +210,6 @@ SExpression >> returnType [
 { #category : #accessing }
 SExpression >> returnType: anObject [
 	returnType := anObject
-]
-
-{ #category : #'as yet unclassified' }
-SExpression >> shapeOf [
-]
-
-{ #category : #'as yet unclassified' }
-SExpression >> stmColor [
-  
 ]
 
 { #category : #mutation }

@@ -48,8 +48,8 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 								addStatement: (self newAssignment: (self newLiteral: missType))
 								before: aStatement ]
 						ifFalse: [ self
-								addAssignment: (self newStatementOfType: missType before: aStatement)
-								"(self newFactoryMessage: missType before: aStatement)" ].
+								addAssignment: "(self newStatementOfType: missType before: aStatement)"
+								(self newFactoryMessage: missType before: aStatement) ].
 					true ]
 						on: SError
 						do: [ false ] ]
@@ -566,11 +566,6 @@ SSTestShifter >> involvedClasses [
 ]
 
 { #category : #accessing }
-SSTestShifter >> length [
-  ^ statements size
-]
-
-{ #category : #accessing }
 SSTestShifter >> lastMessage [
 	^ lastMessage 
 ]
@@ -578,6 +573,11 @@ SSTestShifter >> lastMessage [
 { #category : #accessing }
 SSTestShifter >> lastMessage: anObject [ 	
 	lastMessage := anObject 
+]
+
+{ #category : #accessing }
+SSTestShifter >> length [
+  ^ statements size
 ]
 
 { #category : #repairing }

@@ -37,8 +37,7 @@ SAssignment class >> name: aVariable value: anExpression [
 SAssignment >> = other [
 	^ (super = other) 
 		and: [ (variable = other variable) 
-			and: [ (value = other value) 
-				"and: [ identifier = other identifier  ]" ] ]
+			and: [ (value = other value) ] ]
 ]
 
 { #category : #copying }
@@ -137,20 +136,6 @@ SAssignment >> replaceBy: aExpression [
 { #category : #actions }
 SAssignment >> replaceExpression: expression by: newExpression [
 	value replaceExpression: expression by: newExpression
-]
-
-{ #category : #'as yet unclassified' }
-SAssignment >> shapeOf [
-	^ RTCompositeShape new 
-	add: variable shapeOf;
-	add: value shapeOf;
-	horizontal;
-	yourself
-]
-
-{ #category : #'as yet unclassified' }
-SAssignment >> stmColor [
-  ^ self value stmColor
 ]
 
 { #category : #evaluating }
