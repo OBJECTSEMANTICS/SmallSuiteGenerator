@@ -455,14 +455,17 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 { #category : #actions }
 SSTestShifter >> generateStatements [
+	| flag |
+	flag := true.
 	self
 		assert: typeInfo types isNotEmpty
 		description: 'TypeInfo does not contain info at all.'.
-	[ self length < self maxNumberOfStatements ]
+	[ flag and: [ self length < self maxNumberOfStatements ] ]
 		whileTrue: [ 
 			| array |
 			array := randomGenerator collectAtRandom: (Array with: #addFieldAccessMessage with: #addMessage).
-			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifNone: [ self error: 'Not able to generate statements' ].
+			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifNone: [ flag := false.
+				self error: 'Not able to generate statements' ].
 		"	[ self addMessage ]
 				on: SError
 				do: [  ]" ]
