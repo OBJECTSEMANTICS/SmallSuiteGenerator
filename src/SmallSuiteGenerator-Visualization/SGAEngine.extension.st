@@ -32,6 +32,142 @@ c nameGroup: #evolution as: 'Evolution Fitness'.
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> contentVisualization: container [ 
+	| shape generations els aBlock |
+	generations := numberOfGenerations + 1.
+	shape := RTCompositeShape new.
+	els :=  shape elementsOn: ((logs flatCollect: #population) 
+	select: [:tC | (tC ni = generations or: 
+		[ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ]
+		])
+	]).
+	aBlock := [ :testCase | | builder |
+		builder := RTShapeBuilder new.
+		builder rectangle 
+			size: testCase fitness values first;
+			fillColor: (Color blue alpha: 0.3);
+			withText.
+		container view addAll: (builder elementsOn: (testCase summaryExecutionMethods collect: [:assoc | 
+				assoc key -> assoc value first first. "body of method"
+			])  ).
+	].
+	container view addAll: els.
+	"els do: [ :element | 
+		
+	]."
+	RTCellLayout on: container view elements.
+	container view build.
+	^ container view.
+	
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizateMethods: aView [
+	|  populationGroup el |
+	populationGroup := RTGroup new.
+	self population collect: [:testCase | testCase summaryExecutionMethods associations ] thenDo: [:assocs |
+		| group |
+		group := RTGroup new.
+		assocs do: [ :assoc | 
+			group add: (self visualizeMethod: assoc key with: assoc value in: aView).
+		].
+		RTGridLayout on: group.
+		"aView add: group."
+		populationGroup add: group	
+	].
+	el := (RTBox new width: self population size * 20; height: 50) element"On: populationGroup".
+	el @ RTDraggable.
+	"el elementOn: populationGroup."
+	"RTHorizontalLineLayout on: populationGroup."
+	RTNest new layout: RTHorizontalLineLayout new; on: el nest: populationGroup.
+	aView add: el;
+	add: populationGroup.
+	^ aView
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationCoverageMethods: testCase [ 
+	| group |
+	group := RSGroup new.
+	group add: (self visualizationMethodsOf: testCase);
+	add: (self visualizationCoverageOf: testCase).
+	RSVerticalLineLayout on: group.
+	^ RSComposite new 
+		shapes: (group flatCollect: #yourself);
+		paint: Color gray;
+		model: testCase;
+		padding: 10;
+		draggable 
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationCoverageOf: testCase [ 
+	| group groupData1 groupData2 textPr textCl |
+	group := RSGroup new.
+	groupData1 := RSGroup new.
+	textPr := testCase fitness values first.
+	groupData1 
+		add: (RSLabel new text: 'Project Coverage:'; color: Color white; fontSize: 8);
+		add: (RSBox new height: 10; color: Color red; width: textPr);
+		add: (RSLabel new text: textPr asString, '%'; color: Color white; fontSize: 8).
+	RSHorizontalLineLayout on: groupData1.
+	group add: (RSComposite new shapes: groupData1 ).
+	groupData2 := RSGroup new.
+	textCl := testCase fitnessByClass values first at: targetClassName.
+	groupData2 
+		add: (RSLabel new text: 'Class Coverage'; color: Color white; fontSize: 8);
+		add: (RSBox new height: 10; color: Color blue; width: textCl);
+		add: (RSLabel new text: textCl asString, '%'; color: Color white; fontSize: 8).
+	RSHorizontalLineLayout on: groupData2.
+	group add: (RSComposite new shapes: groupData2).
+	RSVerticalLineLayout on: group.
+	^ group
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationMethods: aView [
+	| builder |
+	builder := RTShapeBuilder new.
+	builder rectangle 
+				height: [:str | str lineCount * 30 ]; 
+				width: [ :str | (str lines collect: #size) max * 10 ];
+				fillColor: (Color black alpha: 0.3);
+				withText.
+	aView addAll: (builder elementsOn: (self population collect: [:testCase | 
+		|assoc |
+		assoc := testCase summaryExecutionMethods associations first.
+		assoc key asString, String cr, assoc value first second ])).
+	RTCellLayout on: aView elements.
+	aView build.
+	^ aView 
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationMethodsOf: testCase [ 
+	| group |
+	group := RSGroup new.
+	group addAll: (testCase summaryExecutionMethods collect: [:summary | 
+		self visualizationSummary: summary
+	]).
+	RSGridLayout on: group.
+	^ group
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationSummary: summaryExecMethod [
+	| percent |
+	percent := summaryExecMethod summaryStatements ifEmpty: [ 100 ] ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ].
+	^ RSComposite new size: percent; 
+		color: Color black; 
+		addShape: (RSLabel new color: Color white; 
+						text: (summaryExecMethod executorClass, '->', summaryExecMethod selector);
+						fontSize: 8);
+		model: summaryExecMethod 
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualize [
   | b |
   b := RTMondrian new.
@@ -48,6 +184,20 @@ SGAEngine >> visualize [
   b layout smallSuite.
   
   "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."^b
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeCoverageR3 [
+	| canvas testCaseGroup |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	testCaseGroup := RSGroup new.
+	self population collect: [:testCase | 
+		self visualizationCoverageMethods: testCase ]
+	thenDo: [ :element | 
+		canvas add: element.
+		testCaseGroup add: element ].
+	RSHorizontalLineLayout new gapSize: 20; on: testCaseGroup.
+	^ canvas
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -153,6 +303,52 @@ SGAEngine >> visualizeMatrixP [
   b normalizer normalizeColor: [:testCase |  testCase fitness values first] using: (Array with: Color black with: Color white)."(Array with: Color red with: Color blue) min:0 max: 100."
   b layout smallSuite.
   ^b
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeMethod: assoc [ 
+	|string substrings max indSubstring nLine group|
+	string := assoc key asString, String cr, assoc value first second.
+	substrings := assoc value allButFirst select: [ :data | data first ] 
+		thenCollect: [ :data | data second trimLeft: [ :char | char = Character tab] ].
+	max := substrings size.
+	indSubstring := 1.
+	nLine := 1.
+	group := RSGroup new.
+	string linesDo: [ :line | 
+		| groupLabel found subString index lastStr |
+		groupLabel := RSGroup new.
+		found := false.
+		indSubstring  <= max ifTrue: [ 
+		nLine <= (substrings at: indSubstring) lines size 
+			ifFalse: [ nLine := 1. 
+			indSubstring := indSubstring + 1 ].
+		subString := (substrings at: indSubstring) lines at: nLine.
+		index := line indexOfSubCollection: subString.
+		found := index > 0.
+		].
+		found ifTrue: [ 
+			groupLabel 
+				add: (RSLabel new color: Color white; text: (line copyFrom: 1 to: index - 1));
+				add: (RSLabel new color: Color pink; text: subString).
+			lastStr := line copyFrom: index + subString size to: line size.
+			lastStr ifNotEmpty: [ groupLabel 
+				add: (RSLabel new color: Color white; text: lastStr) ].
+		].
+		found ifFalse: [ groupLabel add: (RSLabel new color: Color white; text: line ) ].
+		RSHorizontalLineLayout on: groupLabel.
+		group add: groupLabel
+	].
+	RSVerticalLineLayout new gapSize: 0; on: group.
+	^ RSComposite new 
+		shapes: (group flatCollect: #yourself);
+		paint: Color black;
+		model: 'sadsdfg';
+		padding: 10;
+		draggable.
+	
+	
+	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -381,6 +577,28 @@ SGAEngine >> visualizeWithRandomColor [
   b layout smallSuite.
   
   "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."^b
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeWithRoassal3 [
+	| canvas assocGroup |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	assocGroup := RSGroup new.
+	self population collect: [:testCase | testCase summaryExecutionMethods associations ] 
+	thenDo: [:assocs | 
+		| group |
+		group := RSGroup new.
+		assocs do: [ :assoc |
+			| element |
+			element := self visualizeMethod: assoc.
+			canvas add: element.
+			group add: element
+		].
+		RSGridLayout on: group.
+		assocGroup add: group.
+	].
+	RSGridLayout new gapSize: 20; on: assocGroup.
+	^ canvas
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }

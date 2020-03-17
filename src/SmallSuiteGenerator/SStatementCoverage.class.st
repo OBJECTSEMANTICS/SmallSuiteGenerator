@@ -27,7 +27,7 @@ SStatementCoverage >> run: testCaseCollection [
 		do: [ :testCase | 
 			profiler cleanBlocksOfMethods.
 			testCase runWithoutAssertions.
-			testCase summaryExecutedCode: profiler summaryExecutedCode.
+			testCase summaryExecutionMethods: profiler summaryExecutionMethods.
 			"self abstractDataOn: testCase."
 			testCase fitness at: string put: profiler statementCoverage.
 			testCase fitnessByClass at: string put: profiler statementCoverage1 ]

@@ -8,7 +8,7 @@ Class {
 		'idPopulation',
 		'ni',
 		'previousOpenWindows',
-		'summaryExecutedCode'
+		'summaryExecutionMethods'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -67,7 +67,7 @@ SSTestCase >> deepCopy [
   copy setFitness: self fitness.
   copy setFitnessByClass: self fitnessByClass.
   copy ni: self ni.
-  copy summaryExecutedCode: self summaryExecutedCode.
+  copy summaryExecutionMethods: self summaryExecutionMethods.
   ^ copy
 ]
 
@@ -139,13 +139,13 @@ SSTestCase >> setUp [
 ]
 
 { #category : #accessing }
-SSTestCase >> summaryExecutedCode [
-	^ summaryExecutedCode
+SSTestCase >> summaryExecutionMethods [
+	^ summaryExecutionMethods
 ]
 
 { #category : #accessing }
-SSTestCase >> summaryExecutedCode: dictionary [ 
-	summaryExecutedCode := dictionary
+SSTestCase >> summaryExecutionMethods: summaryExecutionMethod [ 
+	summaryExecutionMethods := summaryExecutionMethod 
 ]
 
 { #category : #actions }
