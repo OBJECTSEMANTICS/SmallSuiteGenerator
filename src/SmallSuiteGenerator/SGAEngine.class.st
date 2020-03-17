@@ -201,6 +201,11 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 						ifFalse: [ fitness1 > fitness2 ]
 ]
 
+{ #category : #accessing }
+SGAEngine >> lastMessage: anObject [
+	lastMessage := anObject
+]
+
 { #category : #'as yet unclassified' }
 SGAEngine >> logOfGeneration: anInteger inTime: t [
 	| log dictFitness |
@@ -213,11 +218,6 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 	log lowestFit: (self pickMinFitTest: dictFitness);
 	averageFit: (self pickAverageFitTest: dictFitness).
 	^ log
-]
-
-{ #category : #accessing }
-SGAEngine >> lastMessage: anObject [
-	lastMessage := anObject
 ]
 
 { #category : #accessing }

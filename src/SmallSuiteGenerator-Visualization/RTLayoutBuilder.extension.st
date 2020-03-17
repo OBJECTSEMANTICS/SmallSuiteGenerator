@@ -1,8 +1,7 @@
 Extension { #name : #RTLayoutBuilder }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-RTLayoutBuilder >> radialSmallSuite [
-
-	"layout := SRadialTreeLayout new."
+RTLayoutBuilder >> smallSuite [
+	layout := SmallSuiteLayout new.
 	^ layout
 ]

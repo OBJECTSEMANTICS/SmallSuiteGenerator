@@ -566,11 +566,6 @@ SSTestShifter >> involvedClasses [
 ]
 
 { #category : #accessing }
-SSTestShifter >> length [
-  ^ statements size
-]
-
-{ #category : #accessing }
 SSTestShifter >> lastMessage [
 	^ lastMessage 
 ]
@@ -578,6 +573,11 @@ SSTestShifter >> lastMessage [
 { #category : #accessing }
 SSTestShifter >> lastMessage: anObject [ 	
 	lastMessage := anObject 
+]
+
+{ #category : #accessing }
+SSTestShifter >> length [
+  ^ statements size
 ]
 
 { #category : #repairing }

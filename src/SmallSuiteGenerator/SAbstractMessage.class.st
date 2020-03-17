@@ -48,8 +48,7 @@ SAbstractMessage >> = other [
 	^ super = other 
 		and: [ args = other args 
 			and: [ receiver = other receiver 
-				and: [ (selector = other selector) 
-					and: [ identifier = other identifier  ] ] ] ]
+				and: [ (selector = other selector) ] ] ]
 ]
 
 { #category : #accessing }

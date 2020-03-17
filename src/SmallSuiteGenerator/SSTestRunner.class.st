@@ -48,12 +48,12 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 |
-_var0 := '1'.
-_var1 := 0.
-_var2 := SSTeacher name: _var0 with: _var1.
-_var3 := _var2 nickname.
-(Delay forMilliseconds: 5) wait.
+	| _var0 _var1 _var2 _var3 _var4 |
+_var0 := 0.
+_var1 := SConference price: _var0.
+_var2 := _var1 price: _var0.
+_var3 := _var1 price.
+_var4 := _var1 offerPrice.
 ^self analyze: thisContext
 ]
 
