@@ -14,7 +14,8 @@ Class {
 		'numberOfIterations',
 		'profiler',
 		'setUpMethod',
-		'tearDownMethod'
+		'tearDownMethod',
+		'lastMessage'
 	],
 	#classInstVars : [
 		'instance'
@@ -101,6 +102,7 @@ STestCaseFactory >> exportTests [
 	index := 1.
 	engine population
 		do: [ :test | 
+			test lastMessage: lastMessage.
 			self export: test with: 'test' , index printString.
 			index := index + 1 ].
 	self createConfigurationMethods
@@ -169,7 +171,7 @@ STestCaseFactory >> initializeProfiler [
 
 { #category : #configuration }
 STestCaseFactory >> lastMessage: aMessage [
-	engine lastMessage: aMessage
+	lastMessage := aMessage
 ]
 
 { #category : #'as yet unclassified' }
