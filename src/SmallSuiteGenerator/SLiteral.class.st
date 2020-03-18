@@ -58,7 +58,7 @@ SLiteral >> insertOn: aTestCase [
 SLiteral >> printOn: aStream [
 	aStream
 		nextPutAll:
-			(value isNumber
+			((value isNumber or: [ value isBlock ])
 				ifTrue: [ value printString ]
 				ifFalse: [ value storeString ])
 ]

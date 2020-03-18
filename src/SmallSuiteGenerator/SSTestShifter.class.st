@@ -463,7 +463,7 @@ SSTestShifter >> generateStatements [
 	[ flag and: [ self length < self maxNumberOfStatements ] ]
 		whileTrue: [ 
 			| array |
-			array := randomGenerator collectAtRandom: (Array with: #addFieldAccessMessage with: #addMessage).
+			array := randomGenerator collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
 			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifNone: [ flag := false.
 				self error: 'Not able to generate statements' ].
 		"	[ self addMessage ]
@@ -709,7 +709,6 @@ SSTestShifter >> newLiteral: aClassName [
 		ifPresent: [ :values | 
 			values
 				ifEmpty: [ self error: 'Scalar of type: ' , aClassName , ' is empty.' ].
-			(aClassName includesAll: 'BlockClosure') ifTrue: [ self error: 'Can not create a literal of BlockClosure' ].
 			^ SLiteral new
 				returnType: aClassName;
 				value: (randomGenerator selectAtRandom: values asOrderedCollection) ].
