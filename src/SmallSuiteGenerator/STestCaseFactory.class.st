@@ -171,7 +171,8 @@ STestCaseFactory >> initializeProfiler [
 
 { #category : #configuration }
 STestCaseFactory >> lastMessage: aMessage [
-	lastMessage := aMessage
+	lastMessage := aMessage.
+	engine lastMessage: aMessage 
 ]
 
 { #category : #'as yet unclassified' }
