@@ -126,6 +126,66 @@ SGAEngine >> visualizationCoverageOf: testCase [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationExecutionMethod: summaryExecMethod [
+	| max indSubstring nLine group string substrings |
+	group := RSGroup new.
+	string := summaryExecMethod code.
+	substrings := summaryExecMethod summaryStatements select: #executed thenCollect: #code.
+	max := substrings size.
+	indSubstring := 1.
+	nLine := 1.
+	string lines doWithIndex: [ :line :indLine | 
+		| groupLabel found subString index lastStr |
+		groupLabel := RSGroup new.
+		found := false.
+		indSubstring  <= max ifTrue: [ 
+			nLine <= (substrings at: indSubstring) lines size 
+				ifFalse: [ nLine := 1. 
+					indSubstring := indSubstring + 1 ]].
+		indSubstring <= max ifTrue: [ 
+			subString := ((substrings at: indSubstring) lines at: nLine) trimLeft: [:char | char = Character tab].
+			index := line indexOfSubCollection: subString.
+			found := index > 0.
+		].
+		found ifTrue: [ 
+			groupLabel 
+				add: (RSLabel new color: Color white; text: ((line copyFrom: 1 to: index - 1) trimLeft: [:char | char = Character tab]));
+				add: (RSLabel new color: Color pink; text: subString).
+			lastStr := line copyFrom: index + subString size to: line size.
+			lastStr ifNotEmpty: [ groupLabel add: (RSLabel new color: Color white; text: lastStr) ].
+			nLine := nLine + 1
+		].
+		found ifFalse: [ groupLabel add: (RSLabel new color: ((max = 0 and: [ indLine ~= 1 ]) ifTrue: [ Color pink ] ifFalse: [ Color white ]); text: (line trimLeft: [:char | char = Character tab ]) ) ].
+		RSHorizontalLineLayout on: groupLabel.
+		group add: groupLabel
+	].
+	RSVerticalLineLayout new gapSize: 0; on: group.
+	^ RSComposite new 
+		shapes: (group flatCollect: #yourself);
+		paint: Color black;
+		model: 'sadsdfg';
+		padding: 10;
+		draggable.
+	
+	
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationExecutionMethods: array [
+	| group |
+	group := RSGroup new.
+	group addAll: (array collect: [:summaryMethod | self visualizationExecutionMethod: summaryMethod ]).
+	RSGridLayout on: group.
+	^ RSComposite new 
+		shapes: (group collect: #yourself);
+		paint: Color gray;
+		model: 'sadsdfg';
+		padding: 10;
+		draggable.
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationMethods: aView [
 	| builder |
 	builder := RTShapeBuilder new.
@@ -191,12 +251,69 @@ SGAEngine >> visualizeCoverageR3 [
 	| canvas testCaseGroup |
 	canvas := RSCanvas new addInteraction: RSCanvasController.
 	testCaseGroup := RSGroup new.
-	self population collect: [:testCase | 
+	self logs collect: #population thenDo: [ :testCases | 
+		| group |
+		group := RSGroup new.
+		group addAll: (testCases collect: [ :testCase | 
+			self visualizationCoverageMethods: testCase	
+		]).
+		RSHorizontalLineLayout new gapSize: 20; on: group.
+		testCaseGroup add: group.
+	].
+	RSVerticalLineLayout new on: testCaseGroup; gapSize: 30.
+	canvas add: (RSComposite new shapes: (testCaseGroup flatCollect: #yourself)).
+	"self population collect: [:testCase | 
 		self visualizationCoverageMethods: testCase ]
 	thenDo: [ :element | 
 		canvas add: element.
 		testCaseGroup add: element ].
-	RSHorizontalLineLayout new gapSize: 20; on: testCaseGroup.
+	RSHorizontalLineLayout new gapSize: 20; on: testCaseGroup."
+	^ canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeExecutionMethods [
+	| canvas populationGroup |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	populationGroup := RSGroup new.
+	self logs collect: #population thenDo: [ :testCases | 
+		| group |
+		group := RSGroup new.
+		testCases collect: [ :testCase | 
+			self visualizationExecutionMethods: testCase summaryExecutionMethods
+		] thenDo: [:element | 
+			canvas add: element.
+			group add: element.
+		].
+		RSHorizontalLineLayout new gapSize: 20; on: group.
+		populationGroup add: group.
+	].
+	RSVerticalLineLayout new gapSize: 20; on: populationGroup.
+	^ canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeFitnessEvolution [
+	| canvas startPoint endPoint gap |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ 100.
+	gap := 50.
+	(self logs collect: #fittestTestCase) doWithIndex: [ :testCase :index | 
+		| valueFitness |
+		valueFitness := testCase fitness values first.
+		startPoint := startPoint + ((valueFitness "+ (gap * (index - 1))" - startPoint x) @ 0).
+		endPoint := endPoint + ((valueFitness "+ (gap * (index - 1))" - endPoint x) @ 0).
+		canvas addShape: (RSLine new 
+			startPoint: startPoint;
+			endPoint: endPoint;
+			width: 30;
+			capButt;
+			color: Color random;
+			yourself).
+		startPoint := endPoint "+ ((gap * index) @ 0)".
+		endPoint := endPoint + ("(gap * index)" 0 @ 100).
+	].
 	^ canvas
 ]
 

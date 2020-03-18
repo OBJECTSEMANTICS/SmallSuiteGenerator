@@ -153,8 +153,6 @@ STestCaseFactory >> getClassOf: aString [
 { #category : #initialization }
 STestCaseFactory >> initialize [
 	super initialize.
-	targetClassName := nil.
-	targetPackageRegex := nil.
 	fitness := SMethodCoverage new.
 	engine := self engineDefault.
 	numberOfIterations :=20.
