@@ -127,43 +127,42 @@ SGAEngine >> visualizationCoverageOf: testCase [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationExecutionMethod: summaryExecMethod [
-	| max indSubstring nLine group string substrings |
+	| max indStatement nLine group string |
 	group := RSGroup new.
 	string := summaryExecMethod code.
-	substrings := summaryExecMethod summaryStatements select: #executed thenCollect: #code.
-	max := substrings size.
-	indSubstring := 1.
+	max := summaryExecMethod summaryStatements size.
+	indStatement := 1.
 	nLine := 1.
 	string lines doWithIndex: [ :line :indLine | 
 		| groupLabel found subString index lastStr |
 		groupLabel := RSGroup new.
 		found := false.
-		indSubstring  <= max ifTrue: [ 
-			nLine <= (substrings at: indSubstring) lines size 
+		indStatement  <= max ifTrue: [ 
+			nLine <= (summaryExecMethod summaryStatements at: indStatement) code lines size 
 				ifFalse: [ nLine := 1. 
-					indSubstring := indSubstring + 1 ]].
-		indSubstring <= max ifTrue: [ 
-			subString := ((substrings at: indSubstring) lines at: nLine) trimLeft: [:char | char = Character tab].
+					indStatement := indStatement + 1 ]].
+		indStatement <= max ifTrue: [ 
+			subString := ((summaryExecMethod summaryStatements at: indStatement) code lines at: nLine) trimLeft: [:char | char = Character tab].
 			index := line indexOfSubCollection: subString.
 			found := index > 0.
 		].
 		found ifTrue: [ 
 			groupLabel 
-				add: (RSLabel new color: Color white; text: ((line copyFrom: 1 to: index - 1) trimLeft: [:char | char = Character tab]));
-				add: (RSLabel new color: Color pink; text: subString).
+				add: (RSLabel new color: Color pink; text: ((line copyFrom: 1 to: index - 1) trimLeft: [:char | char = Character tab]));
+				add: (RSLabel new color: ((summaryExecMethod summaryStatements at: indStatement) executed ifTrue: [ Color pink ] ifFalse: [ Color white ]); text: subString).
 			lastStr := line copyFrom: index + subString size to: line size.
-			lastStr ifNotEmpty: [ groupLabel add: (RSLabel new color: Color white; text: lastStr) ].
+			lastStr ifNotEmpty: [ groupLabel add: (RSLabel new color: Color pink; text: lastStr) ].
 			nLine := nLine + 1
 		].
-		found ifFalse: [ groupLabel add: (RSLabel new color: ((max = 0 and: [ indLine ~= 1 ]) ifTrue: [ Color pink ] ifFalse: [ Color white ]); text: (line trimLeft: [:char | char = Character tab ]) ) ].
-		RSHorizontalLineLayout on: groupLabel.
+		found ifFalse: [ groupLabel add: (RSLabel new color: (indLine ~= 1 ifTrue: [ Color pink ] ifFalse: [ Color white ]) "((max = 0 and: [ indLine ~= 1 ]) ifTrue: [ Color pink ] ifFalse: [ Color white ])"; text: (line trimLeft: [:char | char = Character tab ]) ) ].
+		RSHorizontalLineLayout new on: groupLabel; gapSize: 0.
 		group add: groupLabel
 	].
 	RSVerticalLineLayout new gapSize: 0; on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
 		paint: Color black;
-		model: 'sadsdfg';
+		model: summaryExecMethod;
 		padding: 10;
 		draggable.
 	
@@ -180,7 +179,7 @@ SGAEngine >> visualizationExecutionMethods: array [
 	^ RSComposite new 
 		shapes: (group collect: #yourself);
 		paint: Color gray;
-		model: 'sadsdfg';
+		model: array;
 		padding: 10;
 		draggable.
 ]
@@ -217,7 +216,7 @@ SGAEngine >> visualizationMethodsOf: testCase [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationSummary: summaryExecMethod [
 	| percent |
-	percent := summaryExecMethod summaryStatements ifEmpty: [ 100 ] ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ].
+	percent := (summaryExecMethod summaryStatements ifEmpty: [ 100 ] ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ]) + 20.
 	^ RSComposite new size: percent; 
 		color: Color black; 
 		addShape: (RSLabel new color: Color white; 
@@ -299,20 +298,21 @@ SGAEngine >> visualizeFitnessEvolution [
 	startPoint := 0 @ 0.
 	endPoint := 0 @ 100.
 	gap := 50.
-	(self logs collect: #fittestTestCase) doWithIndex: [ :testCase :index | 
-		| valueFitness |
-		valueFitness := testCase fitness values first.
-		startPoint := startPoint + ((valueFitness "+ (gap * (index - 1))" - startPoint x) @ 0).
-		endPoint := endPoint + ((valueFitness "+ (gap * (index - 1))" - endPoint x) @ 0).
+	(self logs collect: #averageFit) doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		x := ((valueFitness = startPoint x) ifTrue: [ 0 ] ifFalse: [ valueFitness - startPoint x + 1 ]) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
 		canvas addShape: (RSLine new 
 			startPoint: startPoint;
 			endPoint: endPoint;
-			width: 30;
+			width: 1;
 			capButt;
 			color: Color random;
 			yourself).
 		startPoint := endPoint "+ ((gap * index) @ 0)".
-		endPoint := endPoint + ("(gap * index)" 0 @ 100).
+		endPoint := (endPoint x) @ ("(gap * index)" endPoint y + 100).
 	].
 	^ canvas
 ]
