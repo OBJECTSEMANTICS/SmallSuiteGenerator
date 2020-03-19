@@ -123,6 +123,16 @@ SGATournamentSelection >> pickAnother: selected [
 ]
 
 { #category : #actions }
+SGATournamentSelection >> pickElementOf: aColl withPriorities: aCollPriorities [
+	| newColl |
+	newColl := OrderedCollection new.
+	aColl with: aCollPriorities do: [ :val :priority | 
+		1 to: priority do: [ :e |
+			newColl add: val ] ].
+	^ randomGenerator selectAtRandom: newColl shuffle
+]
+
+{ #category : #actions }
 SGATournamentSelection >> pickOne [
 	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
 

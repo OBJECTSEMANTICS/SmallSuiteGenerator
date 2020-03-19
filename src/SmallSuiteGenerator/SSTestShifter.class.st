@@ -31,20 +31,21 @@ Class {
 		'fitnessByClass',
 		'parents',
 		'children',
-		'lastMessage'
+		'lastMessage',
+		'selectionStrategy'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #adding }
 SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and: scalarNames [
-	| res |
+	| res addArgBlock |
 	res := arg types anySatisfy: [ :type | prevTypes includes: type ].
-	res
-		ifFalse: [ (randomGenerator collectAtRandom: arg types)
+	addArgBlock := [ (randomGenerator collectAtRandom: arg types)
 				detect: [ :missType | 
 					[ (scalarNames includes: missType)
-						ifTrue: [ self
+						ifTrue: [
+							self
 								addStatement: (self newAssignment: (self newLiteral: missType))
 								before: aStatement ]
 						ifFalse: [ self
@@ -54,7 +55,8 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 						on: SError
 						do: [ false ] ]
 				ifNone: [ self
-						error: 'It is not possible to meet the arguments of this method call' ] ]
+						error: 'It is not possible to meet the arguments of this method call' ] ].
+	(res not or: [ randomGenerator next > 0.5 ]) ifTrue: addArgBlock 
 ]
 
 { #category : #inserting }
@@ -107,7 +109,7 @@ SSTestShifter >> addFieldAccessMessage [
 	methods := self pickAccessorsOf: receiver returnType.
 	methods
 		ifNotEmpty: [ ^ self
-				addFieldAccessMessage: (randomGenerator selectAtRandom: methods)
+				addFieldAccessMessage: (self selectMethod: methods)
 				withReceiver: receiver ].
 	self error: 'Cannot create a field access message.'
 ]
@@ -152,7 +154,7 @@ SSTestShifter >> addMessage [
 	methods
 		ifEmpty: [ self
 				error: 'There are no method typeInfos for: ' , receiver returnType , '.' ]
-		ifNotEmpty: [ ^ self addMessage: (randomGenerator selectAtRandom: methods) withReceiver: receiver ]
+		ifNotEmpty: [ ^ self addMessage: (self selectMethod: methods) withReceiver: receiver ]
 ]
 
 { #category : #inserting }
@@ -1045,6 +1047,18 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 	(self statementAt: expression)
 		replaceExpression: exprToReplace 
 		by: otherExpression 
+]
+
+{ #category : #inserting }
+SSTestShifter >> selectMethod: aCollection [ 
+	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: (self probabilityListOf: aCollection) ]
+	ifNotNil: [ ^ selectionStrategy pickElementOf: aCollection withPriorities: (aCollection collect: #executions) ]
+	
+]
+
+{ #category : #inserting }
+SSTestShifter >> selectionStrategy: aStrategy [
+	selectionStrategy := aStrategy
 ]
 
 { #category : #accessing }

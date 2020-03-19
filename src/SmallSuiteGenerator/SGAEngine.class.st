@@ -98,6 +98,7 @@ SGAEngine >> createRandomPopulation [
         value := SConfiguration randomGenerator next * populationSize + 1.
         test := SSTestCase with: typeInfo.
         test
+			  selectionStrategy: selectionStrategy;
            addTargetClassName: self targetClassName;
            addFactoryMessage: self targetClassName;
            generateStatements: value;
