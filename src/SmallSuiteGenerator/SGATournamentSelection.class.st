@@ -3,7 +3,7 @@ SGATournamentSelection is responsible for select the fittest testCase based in t
 "
 Class {
 	#name : #SGATournamentSelection,
-	#superclass : #SGAObject,
+	#superclass : #SGASelection,
 	#instVars : [
 		'population',
 		'fittest',
@@ -102,9 +102,9 @@ SGATournamentSelection >> initialPopulation: testCases [
 
 { #category : #initialization }
 SGATournamentSelection >> initialize [
+	super initialize .
 	population := OrderedCollection new.
 	tournamentSize := 5.
-	randomGenerator := SConfiguration newRandomGenerator.
 	allPopulation := Set new
 ]
 
@@ -149,6 +149,22 @@ SGATournamentSelection >> pickOne [
 { #category : #accessing }
 SGATournamentSelection >> population [
 	^ population 
+]
+
+{ #category : #'as yet unclassified' }
+SGATournamentSelection >> selectIndexOf: aCollection with: aBlock [ 
+	| value1 value2 |
+	value1 := randomGenerator selectIndexAtRandom: aCollection.
+	value2 := randomGenerator selectIndexAtRandom: aCollection.
+	^ ((Array with: value1 with: value2) sort: aBlock) first
+]
+
+{ #category : #'as yet unclassified' }
+SGATournamentSelection >> selectOf: aCollection with: aBlock [ 
+	| value1 value2 |
+	value1 := randomGenerator selectAtRandom: aCollection.
+	value2 := randomGenerator selectAtRandom: aCollection.
+	^ ((Array with: value1 with: value2) sort: aBlock) first
 ]
 
 { #category : #asserting }
