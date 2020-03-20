@@ -1051,7 +1051,7 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
-	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: (self probabilityListOf: aCollection) ]
+	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: aCollection ]
 	ifNotNil: [ ^ selectionStrategy pickElementOf: aCollection withPriorities: (aCollection collect: #executions) ]
 	
 ]
