@@ -10,7 +10,7 @@ Class {
 { #category : #running }
 SSTestShifterTest >> setUp [
 	utility := SUtilityTypeInfo new.
-	SConfiguration fileLogger: 'STestShifterTestLogger.log'
+	SPlatform fileLogger: 'STestShifterTestLogger.log'
 ]
 
 { #category : #tests }

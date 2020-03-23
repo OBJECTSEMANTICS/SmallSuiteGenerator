@@ -17,7 +17,7 @@ S2Profiler remove.
 STestCaseFactoryExample >> exampleEmptyBlockOnPackages [
 	|facade|
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	^ facade new
 		typeInfo:
 			(SSTypeCollector
@@ -36,7 +36,7 @@ STestCaseFactoryExample >> exampleEmptyBlockOnPackages [
 STestCaseFactoryExample >> exampleSSTeacherOnClass [
 	| typeInfo facade|
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
@@ -60,7 +60,7 @@ STestCaseFactoryExample >> exampleSSTeacherOnClass [
 STestCaseFactoryExample >> exampleSSTeacherOnPackages [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
@@ -87,7 +87,7 @@ STestCaseFactoryExample >> exampleSSTeacherOnPackages [
 STestCaseFactoryExample >> exampleSStackOnClass [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SStack newStackWith: #(1 5 3 2))
 				pop;
@@ -112,7 +112,7 @@ STestCaseFactoryExample >> exampleSStackOnClass [
 STestCaseFactoryExample >> exampleSStackOnPackages [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SStack newStackWith: #(1 5 3 2))
 				pop;
@@ -134,7 +134,7 @@ STestCaseFactoryExample >> exampleSStackOnPackages [
 STestCaseFactoryExample >> exampleSStudentOnClass [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
@@ -157,7 +157,7 @@ STestCaseFactoryExample >> exampleSStudentOnClass [
 STestCaseFactoryExample >> exampleWithSubclassToRun [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
@@ -183,7 +183,7 @@ STestCaseFactoryExample >> exampleWithSubclassToRun [
 STestCaseFactoryExample >> exampleWithWrongClassToRun [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
@@ -206,7 +206,7 @@ STestCaseFactoryExample >> exampleWithWrongClassToRun [
 STestCaseFactoryExample >> exampleWithWrongRegexToRun [
 	| typeInfo facade |
 	self clean.
-	facade := SConfiguration classTestCaseFactory.
+	facade := SPlatform classTestCaseFactory.
 	typeInfo := SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;

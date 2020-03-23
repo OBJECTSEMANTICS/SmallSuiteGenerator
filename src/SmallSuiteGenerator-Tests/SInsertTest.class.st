@@ -7,7 +7,7 @@ Class {
 { #category : #tests }
 SInsertTest >> setUp [ 
 	super setUp.
-	SConfiguration fileLogger: 'SInsertTestLogger.log'
+	SPlatform fileLogger: 'SInsertTestLogger.log'
 ]
 
 { #category : #'mutation-insert' }

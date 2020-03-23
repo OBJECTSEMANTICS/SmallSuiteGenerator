@@ -40,8 +40,7 @@ SVariable >> = other [
 SVariable >> copy [
 	| copy |
 	copy := super copy.
-	copy
-		varName: varName copy.
+	copy varName: varName copy.
 	^ copy
 ]
 
@@ -96,14 +95,17 @@ SVariable >> replaceArgBy: expression [
 ]
 
 { #category : #accessing }
-SVariable >> replaceBy: otherVariable [
-	self varName: otherVariable varName.
-	self id: otherVariable id.
-	self returnType: otherVariable returnType
+SVariable >> replaceBy: aVariable [
+	" I replace my attributes values with the ones in the otherExpression.
+	  the argument is an object from my same class"
+	self varName: aVariable varName.
+	self id: aVariable id.
+	self returnType: aVariable returnType
 ]
 
 { #category : #actions }
 SVariable >> replaceExpression: anExpression by: newExpression [
+	"If I am referencing to anExprension. I will now reference to the newExpresion"
 	| reference |
 	self = anExpression
 		ifFalse: [ ^ self ].

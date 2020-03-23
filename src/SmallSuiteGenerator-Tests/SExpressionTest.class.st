@@ -10,7 +10,7 @@ Class {
 { #category : #parsing }
 SExpressionTest >> parse: anExpresion [
 	| sequence |
-	sequence := SConfiguration rbParserClass parseExpression: anExpresion.
+	sequence := SPlatform rbParserClass parseExpression: anExpresion.
 	^ sequence statements
 		collect: [ :assig | 
 			SAssignment new

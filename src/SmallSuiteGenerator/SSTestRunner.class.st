@@ -36,7 +36,7 @@ SSTestRunner >> evaluate: aSTestCase [
 	| node |
 	node := aSTestCase parseTree.
 	node body
-		addNode: (SConfiguration rbParserClass parseExpression: '^ self analyze: thisContext').
+		addNode: (SPlatform rbParserClass parseExpression: '^ self analyze: thisContext').
 	self compile: node.
 	^ self performTest
 ]
@@ -49,25 +49,25 @@ SSTestRunner >> initialize [
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
 	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var15 _var16 _var17 _var18 |
-_var0 := 15.
-_var1 := SFoo score: _var0.
-_var2 := _var1 score.
-_var3 := _var1 score.
-_var4 := _var1 score.
-_var5 := _var1 returnFloat.
-_var6 := _var1 score.
-_var7 := _var1 score.
-_var8 := _var1 score: _var7.
-_var9 := _var1 initialize.
-_var10 := _var1 returnCollection.
-_var11 := _var9 score: _var2.
-_var12 := _var8 score.
-_var13 := _var9 score: _var12.
-_var14 := _var8 returnCollection.
-_var15 := _var8 returnFloat.
-_var16 := _var8 score: _var12.
-_var17 := _var13 score.
-_var18 := _var16 score: _var17
+_var0 := SStudent new.
+_var1 := _var0 scoreStudent.
+_var2 := _var0 scoreStudent: _var1.
+_var3 := _var0 scoreStudent: _var2.
+_var4 := _var0 scoreStudent.
+_var5 := _var0 idStudent.
+_var6 := _var0 scoreStudent: _var5.
+_var7 := _var0 scoreStudent.
+_var8 := _var0 initialize.
+_var9 := _var8 initialize.
+_var10 := _var8 idStudent.
+_var11 := _var0 idStudent.
+_var12 := _var8 scoreStudent: _var5.
+_var13 := _var8 idStudent.
+_var14 := _var9 initialize.
+_var15 := _var8 idStudent.
+_var16 := _var0 idStudent.
+_var17 := _var9 scoreStudent.
+_var18 := _var14 initialize
 ]
 
 { #category : #running }

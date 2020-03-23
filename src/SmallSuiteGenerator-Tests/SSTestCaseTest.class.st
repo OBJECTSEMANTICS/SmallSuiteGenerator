@@ -10,7 +10,7 @@ Class {
 { #category : #tests }
 SSTestCaseTest >> setUp [
 	utility := SUtilityTypeInfo new.
-	SConfiguration fileLogger: 'STestCaseTestLogger.log'
+	SPlatform fileLogger: 'STestCaseTestLogger.log'
 ]
 
 { #category : #running }

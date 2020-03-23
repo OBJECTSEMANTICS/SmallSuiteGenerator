@@ -2,50 +2,50 @@
 SConfigurationPharo is a subclass called when the project environment is running in Pharo. Furthermore, it defines parameters used in Pharo.
 "
 Class {
-	#name : #SConfigurationPharo,
-	#superclass : #SConfiguration,
+	#name : #SPharoPlatform,
+	#superclass : #SPlatform,
 	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #accessing }
-SConfigurationPharo class >> classConfigurationName [
+SPharoPlatform class >> classConfigurationName [
 	^ superclass name , self implementationType
 ]
 
 { #category : #accessing }
-SConfigurationPharo class >> classLogger [
+SPharoPlatform class >> classLogger [
 	^ TinyLogger
 ]
 
 { #category : #accessing }
-SConfigurationPharo class >> classTestCaseFactory [
+SPharoPlatform class >> classTestCaseFactory [
 	^ STestCaseFactoryPharo 
 ]
 
 { #category : #logging }
-SConfigurationPharo class >> cleanAllLogs [
+SPharoPlatform class >> cleanAllLogs [
 	self instanceLogger removeAllLoggers
 ]
 
 { #category : #actions }
-SConfigurationPharo class >> clearFileLog: string [
+SPharoPlatform class >> clearFileLog: string [
 	self instanceLogger fileLoggers
 		detect: [ :fileLogger | fileLogger fileName = string ]
 		ifFound: [ :fileLogger | fileLogger clearLog ]
 ]
 
 { #category : #logging }
-SConfigurationPharo class >> clearLog [
+SPharoPlatform class >> clearLog [
 	self instanceLogger clearLog
 ]
 
 { #category : #actions }
-SConfigurationPharo class >> createFileLogger [
+SPharoPlatform class >> createFileLogger [
 	self instanceLogger ensureFileLoggerNamed: self logName
 ]
 
 { #category : #tests }
-SConfigurationPharo class >> createTestCaseClass: aClassName inPackage: aPackageName [
+SPharoPlatform class >> createTestCaseClass: aClassName inPackage: aPackageName [
 	^ self testCaseClass
 		subclass: aClassName
 		instanceVariableNames: ''
@@ -54,7 +54,7 @@ SConfigurationPharo class >> createTestCaseClass: aClassName inPackage: aPackage
 ]
 
 { #category : #actions }
-SConfigurationPharo class >> defaultFileLogger [
+SPharoPlatform class >> defaultFileLogger [
 	self classLogger
 		ifNotNil: [ self instanceLogger fileLoggers ifEmpty: [ self createFileLogger ].
 			^ self instanceLogger fileLoggers
@@ -62,7 +62,7 @@ SConfigurationPharo class >> defaultFileLogger [
 ]
 
 { #category : #'instance creation' }
-SConfigurationPharo class >> fileLogger: fileName [
+SPharoPlatform class >> fileLogger: fileName [
 	self logName: fileName.
 	^ self classLogger
 		ifNotNil: [ self instanceLogger fileLoggers ifEmpty: [ self createFileLogger ].
@@ -74,26 +74,26 @@ SConfigurationPharo class >> fileLogger: fileName [
 ]
 
 { #category : #accessing }
-SConfigurationPharo class >> implementationType [ 
+SPharoPlatform class >> implementationType [ 
 	^ SystemVersion current type
 ]
 
 { #category : #accessing }
-SConfigurationPharo class >> instanceLogger [
+SPharoPlatform class >> instanceLogger [
 	^ self classLogger default
 ]
 
 { #category : #'as yet unclassified' }
-SConfigurationPharo class >> rbParserClass [
+SPharoPlatform class >> rbParserClass [
 	^ RBParser
 ]
 
 { #category : #logging }
-SConfigurationPharo class >> saveOnLog: string [ 
+SPharoPlatform class >> saveOnLog: string [ 
 	self defaultFileLogger record: string
 ]
 
 { #category : #tests }
-SConfigurationPharo class >> testCaseClass [
+SPharoPlatform class >> testCaseClass [
 	^ TestCase
 ]
