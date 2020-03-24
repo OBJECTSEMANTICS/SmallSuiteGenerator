@@ -11,7 +11,8 @@ Class {
 		'initialPopulation',
 		'engine',
 		'targetPackageRegex',
-		'profiler'
+		'profiler',
+		'rankSelection'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -20,10 +21,11 @@ Class {
 SGATournamentSelection >> createNewPopulation [
   | newPopulation |
   newPopulation := OrderedCollection new.
-  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
-		  selectedList := self selectOf: initialPopulation.
-        P1 := "self pickOne."selectedList first .
-        P2 := "self pickAnother: P1"selectedList second.
+  [ newPopulation size < initialPopulation size and: [ tournamentSize >= 2 ] ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
+		  "selectedList := self selectOf: initialPopulation."
+		  selectedList := rankSelection selectOf: initialPopulation.
+        P1 := selectedList first .
+        P2 := selectedList second.
         P1copy := P1 deepCopy.
         P1copy addParent: P1.
         P2copy := P2 deepCopy.
@@ -39,11 +41,13 @@ SGATournamentSelection >> createNewPopulation [
               O2 := P2copy deepCopy.
               O2 addParent: P2 ].
         OM1 := engine mutate: O1.
+		  OM1 clean.
         self update: OM1 with: O1.
         OM2 := engine mutate: O2.
+		  OM2 clean.
         self update: OM2 with: O2.
         fitness compute: (Array with: OM1 with: OM2).
-        options := Array with: OM1 with: OM2 with: P1copy with: P2copy.
+        options := (Array with: OM1 with: OM2 with: P1copy with: P2copy) difference: newPopulation.
         options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
         selectedOptions := options first: 2.
         selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]
@@ -99,6 +103,7 @@ SGATournamentSelection >> initialize [
 	super initialize .
 	population := OrderedCollection new.
 	tournamentSize := 5.
+	rankSelection := SGARankSelection new
 ]
 
 { #category : #'as yet unclassified' }

@@ -397,6 +397,16 @@ SSTestShifter >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
+{ #category : #repairing }
+SSTestShifter >> clean [
+	|literals unused|
+	literals := self statements select: [ :e | e value isKindOf: SLiteral ].
+	unused := literals difference: (literals select: 
+		[ :e | (self statements collect: 
+			[:stm | stm pickUpReferences: e]) anySatisfy: [ :x | x isNotEmpty  ]]).
+	unused do: [ :stm | self removeStatement: stm ]
+]
+
 { #category : #accessing }
 SSTestShifter >> defaultNumberStatements [
 	^ 54
@@ -497,7 +507,7 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  randomGenerator := SConfiguration newRandomGenerator.
+  randomGenerator := SConfiguration randomGenerator.
   parents := Set new.
   children := Set new.
   selectionStrategy := SGARouletteSelection new.

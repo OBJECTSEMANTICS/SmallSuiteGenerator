@@ -107,7 +107,7 @@ SConfiguration class >> newRandomGenerator [
 
 { #category : #accessing }
 SConfiguration class >> randomGenerator [
-	randomGenerator ifNil: [ randomGenerator := SRandom seed: self seed ].
+	randomGenerator ifNil: [ randomGenerator := self newRandomGenerator ].
 	^ randomGenerator 
 ]
 
