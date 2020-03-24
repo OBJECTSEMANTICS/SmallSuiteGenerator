@@ -123,15 +123,6 @@ SGATournamentSelection >> mergeTypeInfo: otherTypeInfo [
 ]
 
 { #category : #actions }
-SGATournamentSelection >> pickAnother: selected [
-  "Return the best testCase from tournamentSize testCase randomly chosen from the population"
-  | sample |
-  sample := (randomGenerator collectAtRandom: initialPopulation) first: (tournamentSize min: initialPopulation size).
-  sample := sample asSortedCollection: [:a :b |  (self fitnessFor: a) < (self fitnessFor: b) ].
-  ^(sample reject: [:test |  test = selected ]) last
-]
-
-{ #category : #actions }
 SGATournamentSelection >> pickElementOf: aColl withPriorities: aCollPriorities [
 	| newColl |
 	newColl := OrderedCollection new.
@@ -139,20 +130,6 @@ SGATournamentSelection >> pickElementOf: aColl withPriorities: aCollPriorities [
 		1 to: priority do: [ :e |
 			newColl add: val ] ].
 	^ randomGenerator selectAtRandom: newColl shuffle
-]
-
-{ #category : #actions }
-SGATournamentSelection >> pickOne [
-	"Return the best testCase from tournamentSize testCase randomly chosen from the population"
-
-	| sample selected |
-	sample := (randomGenerator collectAtRandom: initialPopulation)
-		first: (tournamentSize min: initialPopulation size).
-	sample := sample
-		asSortedCollection: [ :a :b | (self fitnessFor: a) < (self fitnessFor: b) ].
-	selected := sample last.
-	"population remove: selected."
-	^ selected
 ]
 
 { #category : #accessing }

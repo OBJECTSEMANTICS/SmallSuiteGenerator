@@ -238,13 +238,13 @@ SSTestShifter >> addTargetClassNames: symbols [
 	symbols do: [ :symbol | self addTargetClassName: symbol ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #hierarchy }
 SSTestShifter >> allChildren [
 	^ (Set newFrom: children)
 	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #hierarchy }
 SSTestShifter >> allParents [
 	^ (Set newFrom: parents)
 	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
@@ -500,7 +500,7 @@ SSTestShifter >> initialize [
   randomGenerator := SConfiguration newRandomGenerator.
   parents := Set new.
   children := Set new.
-  "childs := Set new"
+  selectionStrategy := SGARouletteSelection new.
 ]
 
 { #category : #inserting }
@@ -1052,13 +1052,8 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
 	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: aCollection ]
-	ifNotNil: [ ^ selectionStrategy pickElementOf: aCollection withPriorities: (aCollection collect: #executions) ]
+	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
 	
-]
-
-{ #category : #inserting }
-SSTestShifter >> selectionStrategy: aStrategy [
-	selectionStrategy := aStrategy
 ]
 
 { #category : #accessing }
