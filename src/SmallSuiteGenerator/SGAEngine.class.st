@@ -39,7 +39,9 @@ Class {
 		'selectionStrategy',
 		'targetClassName',
 		'numberOfGenerations',
-		'lastMessage'
+		'lastMessage',
+		'profiler',
+		'packageRegex'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -167,7 +169,7 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 	fitness1 := self fitnessFor: testCase1.
 	fitness2 := self fitnessFor: testCase2.
 		^ 			fitness1 = fitness2
-						ifTrue: [ testCase1 length <= testCase2 length ]
+						ifTrue: [ (testCase1 idPopulation > testCase2 idPopulation) or: [ testCase1 length <= testCase2 length] ]
 						ifFalse: [ fitness1 > fitness2 ]
 ]
 
@@ -224,6 +226,11 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
+{ #category : #accessing }
+SGAEngine >> packageRegex: aString [
+	packageRegex := aString
+]
+
 { #category : #actions }
 SGAEngine >> pickAverageFitTest: aDictionary [
 	^ (aDictionary keys collect: [ :key | 
@@ -269,13 +276,18 @@ SGAEngine >> run [
   self computeFitness.
   selectionStrategy
      initialPopulation: population;
-     fitness: fitness;
-	  tournamentSize: self populationSize.
+     fitness: fitness.
   logs add: (self logOfGeneration: 0 inTime: t).
-  (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
+  (1 to: numberOfGenerations) do: [:iteration | 
+		  t := Time now asSeconds.
         selectionStrategy doSelection.
         population := selectionStrategy population.
         logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+]
+
+{ #category : #accessing }
+SGAEngine >> selectionStrategy [ 
+	^ selectionStrategy
 ]
 
 { #category : #actions }

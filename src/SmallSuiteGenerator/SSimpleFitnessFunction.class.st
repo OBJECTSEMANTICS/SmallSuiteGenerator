@@ -31,6 +31,11 @@ SSimpleFitnessFunction >> functionName [
 ]
 
 { #category : #accesing }
+SSimpleFitnessFunction >> profiler [
+	^ profiler 
+]
+
+{ #category : #accesing }
 SSimpleFitnessFunction >> profiler: aProfiler [
 	profiler := aProfiler.
 ]
