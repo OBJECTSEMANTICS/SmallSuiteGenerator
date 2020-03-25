@@ -154,3 +154,10 @@ SSTestCase >> tearDown [
 	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
 	windowsToDelete do:[:w| w close].
 ]
+
+{ #category : #repairing }
+SSTestCase >> updateWith: anotherTestCase [
+	self ni: anotherTestCase ni.
+	self idPopulation: anotherTestCase idPopulation + 1 .
+	anotherTestCase parents do: [ :parent | self addParent:  parent ]
+]

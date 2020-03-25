@@ -223,7 +223,7 @@ STestCaseFactory >> setUp [
 	engine numberOfGenerations: numberOfIterations.
 	engine typeInfo: self typeInfo.
 	engine targetClassName: self targetClassName.
-	engine selectionStrategy targetPackageRegex: targetPackageRegex 
+	engine targetPackageRegex: targetPackageRegex 
 ]
 
 { #category : #actions }

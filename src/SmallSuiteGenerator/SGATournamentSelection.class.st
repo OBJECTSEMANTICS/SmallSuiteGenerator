@@ -5,156 +5,26 @@ Class {
 	#name : #SGATournamentSelection,
 	#superclass : #SGASelection,
 	#instVars : [
-		'population',
 		'tournamentSize',
-		'fitness',
-		'initialPopulation',
-		'engine',
-		'targetPackageRegex',
-		'profiler',
-		'rankSelection'
+		'fitness'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> createNewPopulation [
-  | newPopulation |
-  newPopulation := OrderedCollection new.
-  [ newPopulation size < initialPopulation size and: [ tournamentSize >= 2 ] ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
-		  "selectedList := self selectOf: initialPopulation."
-		  selectedList := rankSelection selectOf: initialPopulation.
-        P1 := selectedList first .
-        P2 := selectedList second.
-        P1copy := P1 deepCopy.
-        P1copy addParent: P1.
-        P2copy := P2 deepCopy.
-        P2copy addParent: P2.
-        P1copy ni: P1 ni + 1.
-        P2copy ni: P2 ni + 1.
-        self shouldCrossOver ifTrue: [ children := engine crossoverOperator crossover: P1 with: P2.
-              O1 := children first.
-              O2 := children second.
-              O1 ni: P1 ni + 1.
-              O2 ni: P2 ni + 1 ] ifFalse: [ O1 := P1copy deepCopy.
-				  O1 addParent: P1.
-              O2 := P2copy deepCopy.
-              O2 addParent: P2 ].
-        OM1 := engine mutate: O1.
-		  OM1 clean.
-        self update: OM1 with: O1.
-        OM2 := engine mutate: O2.
-		  OM2 clean.
-        self update: OM2 with: O2.
-        fitness compute: (Array with: OM1 with: OM2).
-        options := (Array with: OM1 with: OM2 with: P1copy with: P2copy) difference: newPopulation.
-        options := options asSortedCollection: [:a :b |  engine is: a betterThan: b ].
-        selectedOptions := options first: 2.
-        selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]
-		   ].
-  population := newPopulation.
-  fitness profiler uninstall.
-  self profilerForPackagesMatching .
-  population do: [ :testCase | testCase runWithoutAssertions ].
-  self uninstall .
-  self mergeTypeInfo: (STypeInfo asTypeInfo: profiler).
-  fitness profiler: self initializeProfiler 
-		  
-]
-
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> doSelection [
-	self createNewPopulation.
-	initialPopulation := population.
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> engine: anEngine [
-	engine := anEngine
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> fitness [ 	
-	^ fitness 
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> fitness: aFitness [
-	fitness := aFitness
+{ #category : #actions }
+SGATournamentSelection >> fitness: anObject [ 
+	fitness := anObject 
 ]
 
 { #category : #actions }
 SGATournamentSelection >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> initialPopulation [
-	^ initialPopulation
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> initialPopulation: testCases [
-	initialPopulation := testCases.
+	^ aTestCase fitness at: fitness functionName.
 ]
 
 { #category : #initialization }
 SGATournamentSelection >> initialize [
 	super initialize .
-	population := OrderedCollection new.
 	tournamentSize := 5.
-	rankSelection := SGARankSelection new
-]
-
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> initializeProfiler [
-	| profiler |
-	profiler := SLProfilerCoverage profilerForPackagesMatching: targetPackageRegex.
-	(profiler allMethods select: #isNotMethodExtension)
-		do: #installGhosts
-		displayingProgress: 'Instrumenting ' , targetPackageRegex.
-	^ profiler
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> load: aTestCaseCollection [
-	population := aTestCaseCollection	asOrderedCollection "copy"
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> mergeTypeInfo: otherTypeInfo [
-	initialPopulation do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
-	population do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
-]
-
-{ #category : #actions }
-SGATournamentSelection >> pickElementOf: aColl withPriorities: aCollPriorities [
-	| newColl |
-	newColl := OrderedCollection new.
-	aColl with: aCollPriorities do: [ :val :priority | 
-		1 to: priority do: [ :e |
-			newColl add: val ] ].
-	^ randomGenerator selectAtRandom: newColl shuffle
-]
-
-{ #category : #accessing }
-SGATournamentSelection >> population [
-	^ population 
-]
-
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> profilerForPackagesMatching [
-	Transcript show: 'profiling...'; cr.
-	profiler := SSTypeCollector profilerForPackagesMatching: targetPackageRegex.
-	profiler beforeProfiling.
-]
-
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> selectIndexOf: aCollection with: aBlock [ 
-	| value1 value2 |
-	value1 := randomGenerator selectIndexAtRandom: aCollection.
-	value2 := randomGenerator selectIndexAtRandom: aCollection.
-	^ ((Array with: value1 with: value2) sort: aBlock) first
 ]
 
 { #category : #actions }
@@ -169,31 +39,7 @@ SGATournamentSelection >> selectOf: aCollection [
 	^ sample
 ]
 
-{ #category : #asserting }
-SGATournamentSelection >> shouldCrossOver [
-	^ SConfiguration randomGenerator next < (3 / 4)
-]
-
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> targetPackageRegex: aString [
-	targetPackageRegex := aString
-]
-
 { #category : #accessing }
 SGATournamentSelection >> tournamentSize: anInteger [
 	tournamentSize := anInteger 
-]
-
-{ #category : #'as yet unclassified' }
-SGATournamentSelection >> uninstall [
-	profiler afterProfiling;
-		uninstall.
-	Transcript show: 'ended...'; cr.
-]
-
-{ #category : #updating }
-SGATournamentSelection >> update: aTestCase with: anotherTestCase [
-	aTestCase ni: anotherTestCase ni.
-	aTestCase idPopulation: anotherTestCase idPopulation + 1 .
-	anotherTestCase parents do: [ :parent | aTestCase addParent:  parent ]
 ]
