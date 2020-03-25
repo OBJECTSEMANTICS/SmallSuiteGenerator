@@ -103,7 +103,7 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 7.3.' '_var2 := _var3 score.' '_var3 := _var5 return: _var2.' '_var4 := 7.3.' '_var5 := SFoo score: _var4.')
+			#('_var0 := 7.3.' '_var2 := _var4 score.' '_var3 := 7.3.' '_var4 := SFoo score: _var0.')
 ]
 
 { #category : #'mutation-remove' }

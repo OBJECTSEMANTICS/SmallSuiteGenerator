@@ -63,17 +63,17 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 	self
 		assertCollection: (testCase statements collect: #printString) allButLast
 		hasSameElements:
-			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := _var1 scoreStudent: _var0.' '_var3 := SStudent new.').
+			#('_var0 := 1.' '_var1 := SStudent new.' '_var2 := 1.' '_var3 := _var1 scoreStudent: _var2.' '_var4 := SStudent new.').
 	self
 		assert:
-			(#('_var4 := _var1 idStudent.' '_var4 := _var2 idStudent.' '_var4 := _var3 idStudent.')
-				includes: (testCase statementOfVarName: '_var4') printString).
-	fieldAccess := testCase statementOfVarName: '_var4'.
+			(#('_var5 := _var4 idStudent.')
+				includes: (testCase statementOfVarName: '_var5') printString).
+	fieldAccess := testCase statementOfVarName: '_var5'.
 	message := (testCase statementOfVarName: '_var2') value.
 	message := testCase insertExpression: message copy after: fieldAccess.
 	self
 		assert: message printString
-		equals: '_var5 := _var1 scoreStudent: _var0.'.
+		equals: '_var6 := 1.'.
 	message := testCase
 		perform: #insertAsParameter:using:
 		inStatement: fieldAccess.
@@ -123,7 +123,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := SStack newStack.' '_var1 := _var0 lastLinkStack.' '_var2 := 5.' '_var3 := _var0 push: _var1.')
+			#('_var0 := SStack newStack.' '_var1 := _var0 lastLinkStack.' '_var2 := 5.' '_var3 := 5.' '_var4 := _var0 push: _var1.')
 ]
 
 { #category : #'mutation-insert' }

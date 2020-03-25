@@ -10,12 +10,15 @@ Class {
 { #category : #tests }
 SSTestCaseTest >> setUp [
 	utility := SUtilityTypeInfo new.
+	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
 	SConfiguration fileLogger: 'STestCaseTestLogger.log'
 ]
 
 { #category : #running }
 SSTestCaseTest >> tearDown [
 	"SConfiguration clearFileLog: 'STestCaseTestLogger.log'"
+	
+	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
 ]
 
 { #category : #tests }
