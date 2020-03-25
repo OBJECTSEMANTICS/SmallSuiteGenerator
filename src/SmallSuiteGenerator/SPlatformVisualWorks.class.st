@@ -2,30 +2,30 @@
 SConfigurationVisualWorks is a subclass called when the project environment is running in VisualWorks.
 "
 Class {
-	#name : #SVisualWorksPlatform,
+	#name : #SPlatformVisualWorks,
 	#superclass : #SPlatform,
 	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #accessing }
-SVisualWorksPlatform class >> classTestCaseFactory [
+SPlatformVisualWorks class >> classTestCaseFactory [
 	^ STestCaseFactoryVisualWorks 
 ]
 
 { #category : #logging }
-SVisualWorksPlatform class >> cleanAllLogs [ 
+SPlatformVisualWorks class >> cleanAllLogs [ 
 	
 ]
 
 { #category : #logging }
-SVisualWorksPlatform class >> clearLog [ 
+SPlatformVisualWorks class >> clearLog [ 
 	
 ]
 
 { #category : #'instance creation' }
-SVisualWorksPlatform class >> fileLogger: fileName [
+SPlatformVisualWorks class >> fileLogger: fileName [
 ]
 
 { #category : #logging }
-SVisualWorksPlatform class >> saveOnLog: string [
+SPlatformVisualWorks class >> saveOnLog: string [
 ]
