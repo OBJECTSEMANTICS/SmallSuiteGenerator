@@ -1,3 +1,6 @@
+"
+SGARankSelection is responsible for select testCases randomly regardless of fitness
+"
 Class {
 	#name : #SGARankSelection,
 	#superclass : #SGASelection,

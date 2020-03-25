@@ -43,6 +43,7 @@ STypeClassInfo class >> type: aAssoc [
 		do: [ :data | inst typeMethod: data ].
 	dataClassMethods
 		do: [ :data | inst typeClassMethod: data ].
+	inst methodTypes do: [ :meth | meth executions: 1 ].
 	^ inst
 ]
 

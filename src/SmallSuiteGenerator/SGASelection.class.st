@@ -1,3 +1,6 @@
+"
+Abstract class for strategy selection
+"
 Class {
 	#name : #SGASelection,
 	#superclass : #SGAObject,

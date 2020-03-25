@@ -1,3 +1,6 @@
+"
+SGARoulleteSelection is responsible for select testCases, gives more probaility of be selected when a testCase has more fitness
+"
 Class {
 	#name : #SGARouletteSelection,
 	#superclass : #SGASelection,

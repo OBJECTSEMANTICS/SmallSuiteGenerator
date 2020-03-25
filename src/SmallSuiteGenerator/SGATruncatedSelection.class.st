@@ -1,3 +1,6 @@
+"
+SGATrouncateSelection is responsible for select testCases, this type of selection descart the worst N testCases (less fitness) and then select randomly testCases
+"
 Class {
 	#name : #SGATruncatedSelection,
 	#superclass : #SGASelection,
