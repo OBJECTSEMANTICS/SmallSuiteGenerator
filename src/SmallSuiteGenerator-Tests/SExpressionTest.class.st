@@ -40,6 +40,12 @@ SExpressionTest >> parseVariableOrValue: aRBVariableOrLiteral [
 
 { #category : #running }
 SExpressionTest >> setUp [
-super setUp.
-	utility := SUtilityTypeInfo new
+	super setUp.
+	utility := SUtilityTypeInfo new.
+	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
+]
+
+{ #category : #running }
+SExpressionTest >> tearDown [
+	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
 ]

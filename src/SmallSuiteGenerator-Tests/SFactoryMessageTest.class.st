@@ -33,13 +33,13 @@ SFactoryMessageTest >> testInsertAsParameterUsing [
 	testCase addMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SFoo new.' '_var1 := _var0 return: _var0.').
+		hasSameElements: #('_var0 := SFoo new.' '_var1 := SFoo new.' '_var2 := _var0 return: _var0.').
 	insertedExpression := expression
 		insertAsParameter: expression
 		using: testCase.
 	self
 		assert:
-			(#('_var1 := _var0 return: _var0.')
+			(#('_var2 := _var0 return: _var0.')
 				includes: insertedExpression printString)
 ]
 

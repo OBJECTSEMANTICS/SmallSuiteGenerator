@@ -350,8 +350,16 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 		hasSameElements:
 			(OrderedCollection new
 				add: '_var0 := SFoo new.';
-				add: '_var1 := ((Dictionary new) add: (1->((SStack new) add: (SStudent basicNew yourself); add: (SStudent basicNew yourself); yourself)); add: (2->((OrderedCollection new) add: (SStudent basicNew yourself); yourself)); yourself).';
-				add: '_var2 := _var0 return: _var1.';
+				add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
+				add: '_var2 := SStack new.';
+				add: '_var3 := _var2 push: _var1.';
+				add: '_var4 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
+				add: '_var5 := _var2 push: _var4.';
+				add: '_var6 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
+				add: '_var7 := ((OrderedCollection new) add: _var6; yourself).';
+				add:
+					'_var8 := ((Dictionary new) add: (1->_var5); add: (2->_var7); yourself).';
+				add: '_var9 := _var0 return: _var8.';
 				yourself)
 ]
 
@@ -366,20 +374,24 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 	self assert: testCase statements size equals: 3.
 	self
 		assert:
-			(
+			((testCase statements collect: #printString)
+				includesAny:
 					(Array
 						with:
 							(OrderedCollection new
 								add: '_var0 := SStack new.';
-								add: '_var1 := ((OrderedCollection new) add: (SStudent basicNew yourself); add: (SStudent basicNew yourself); yourself).';
-								add: '_var2 := _var0 push: _var1.';
+								add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
+								add: '_var2 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
+								add: '_var3 := ((OrderedCollection new) add: _var1; add: _var2; yourself).';
+								add: '_var4 := _var0 push: _var3.';
 								yourself)
 						with:
 							(OrderedCollection new
 								add: '_var0 := SStack new.';
-								add: '_var1 := ((OrderedCollection new) add: (SStudent basicNew yourself); yourself).';
-								add: '_var2 := _var0 push: _var1.';
-								yourself)) includes: (testCase statements collect: #printString))
+								add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
+								add: '_var2 := ((OrderedCollection new) add: _var1; yourself).';
+								add: '_var3 := _var0 push: _var2.';
+								yourself)))
 ]
 
 { #category : #tests }
@@ -495,7 +507,7 @@ SSTestShifterTest >> testAddStatetementOfTypeBeforeFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			#('_var0 := 8.' '_var2 := 8.' '_var3 := SEvent price: _var2.' '_var1 := SEvent price: _var0.')
+			#('_var0 := 8.' '_var2 := SEvent price: _var0.' '_var1 := SEvent price: _var0.')
 ]
 
 { #category : #tests }
@@ -769,19 +781,19 @@ SSTestShifterTest >> testSubStatementsFromToPrevIndexOf [
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.').
+		hasSameElements: #('_var0 := 8.' '_var1 := 8.').
 	expression := testCase addMessage: #discount: from: #SEvent.
 	self
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := 8.').
+		hasSameElements: #('_var0 := 8.' '_var1 := 8.' '_var2 := SEvent price: _var0.' '_var3 := 8.').
 	expression := testCase addFieldAccessMessage: #price from: #SEvent.
 	self
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := 8.' '_var3 := _var1 discount: _var0.').
+		hasSameElements: #('_var0 := 8.' '_var1 := 8.' '_var2 := SEvent price: _var0.' '_var3 := 8.' '_var4 := _var2 discount: _var1.').
 ]
 
 { #category : #tests }

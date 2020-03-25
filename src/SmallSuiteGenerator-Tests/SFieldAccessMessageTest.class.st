@@ -42,7 +42,7 @@ SFieldAccessMessageTest >> testInsertAsParameterUsing [
 		using: testCase.
 	self
 		assert: insertedExpression printString
-		equals: '_var4 := _var1 push: _var2.'
+		equals: '_var5 := _var1 push: _var2.'
 ]
 
 { #category : #tests }
