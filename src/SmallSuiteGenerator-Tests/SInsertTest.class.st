@@ -74,12 +74,12 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 	self
 		assert: message printString
 		equals: '_var6 := 1.'.
-	message := testCase
+	"message := testCase
 		perform: #insertAsParameter:using:
 		inStatement: fieldAccess.
 	self
 		assert: message printString
-		equals: '_var5 := _var1 scoreStudent: _var4.'
+		equals: '_var5 := _var1 scoreStudent: _var4.'"
 ]
 
 { #category : #'mutation-insert' }

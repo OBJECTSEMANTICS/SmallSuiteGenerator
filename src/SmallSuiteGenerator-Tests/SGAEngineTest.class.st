@@ -57,6 +57,7 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	engine
+		targetPackageRegex: targetPackageRegex;
 		typeInfo: utility typeInfoSFooOnPackage1; 	" STON fromString: utility typeInfoStringSFoo3."
 		fitness: functionFitness;
 		targetClassName: #SFoo;
@@ -80,6 +81,7 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	engine
+		targetPackageRegex: targetPackageRegex;
 		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
@@ -102,6 +104,7 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
 	functionFitness := SStatementCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	engine
+		targetPackageRegex: targetPackageRegex;
 		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
