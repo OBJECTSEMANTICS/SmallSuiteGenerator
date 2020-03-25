@@ -25,8 +25,9 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 			(Array
 				with: '_var0 := SFoo new.'
 				with: '_var1 := ' , SStudent new storeString , '.'
-				with: '_var2 := _var0 return: _var1.'
-				with: '_var3 := ' , SStudent new storeString , '.').
+				with: '_var2 := ' , SStudent new storeString , '.'
+				with: '_var3 := _var0 return: _var2.'
+				with: '_var4 := ' , SStudent new storeString , '.').
 	self
 		should: [ testCase
 				perform: #insertAsParameter:using:
@@ -42,9 +43,10 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 			(Array
 				with: '_var0 := SFoo new.'
 				with: '_var1 := ' , SStudent new storeString , '.'
-				with: '_var2 := _var0 return: _var1.'
-				with: '_var3 := ' , SStudent new storeString , '.'
-				with: '_var4 := _var0 return: _var3.')
+				with: '_var2 := ' , SStudent new storeString , '.'
+				with: '_var3 := _var0 return: _var2.'
+				with: '_var4 := ' , SStudent new storeString , '.'
+				with: '_var5 := _var0 return: _var4.')
 ]
 
 { #category : #'mutation-insert' }
@@ -98,7 +100,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 		inStatement: expression.
 	self
 		assert: auxExpr printString
-		equals: '_var2 := _var1 return: _var0.'
+		equals: '_var3 := _var1 return: _var0.'
 ]
 
 { #category : #'mutation-insert' }
