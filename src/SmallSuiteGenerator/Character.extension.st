@@ -3,7 +3,7 @@ Extension { #name : #Character }
 { #category : #'*SmallSuiteGenerator' }
 Character >> mutateToChange [
 	| newValue interval randomGenerator |
-	randomGenerator := SConfiguration randomGenerator.
+	randomGenerator := SPlatform randomGenerator.
 	interval := (33 to: 127) asArray.
 	newValue := randomGenerator selectAtRandom: interval.
 	[ newValue == self asInteger ]

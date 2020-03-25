@@ -10,13 +10,13 @@ Class {
 { #category : #running }
 SSTestShifterTest >> setUp [
 	utility := SUtilityTypeInfo new.
-	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
-	SConfiguration fileLogger: 'STestShifterTestLogger.log'
+	SPlatform randomGenerator: SPlatform newRandomGenerator .
+	SPlatform fileLogger: 'STestShifterTestLogger.log'
 ]
 
 { #category : #running }
 SSTestShifterTest >> tearDown [ 
-	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
+	SPlatform randomGenerator: SPlatform newRandomGenerator .
 ]
 
 { #category : #tests }

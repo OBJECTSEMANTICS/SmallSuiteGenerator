@@ -63,7 +63,7 @@ SLiteral >> printOn: aStream [
 				ifFalse: [ value storeString ])
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SLiteral >> referenceTo: aClassName [
 	^( value isClass
 		ifTrue: [ value name ]
@@ -75,8 +75,10 @@ SLiteral >> repairOn: aTestCase changing: aExpression [
 	self value: value mutateToChange
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SLiteral >> replaceBy: otherExpression [
+	" I replace my attributes values with the ones in the otherExpression.
+	  the argument is an object from my same class"
 	self value: otherExpression value
 ]
 

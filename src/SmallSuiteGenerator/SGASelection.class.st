@@ -9,5 +9,5 @@ Class {
 
 { #category : #initialization }
 SGASelection >> initialize [
-	randomGenerator := SConfiguration randomGenerator.
+	randomGenerator := SPlatform randomGenerator.
 ]

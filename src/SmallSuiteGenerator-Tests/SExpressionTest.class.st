@@ -10,7 +10,7 @@ Class {
 { #category : #parsing }
 SExpressionTest >> parse: anExpresion [
 	| sequence |
-	sequence := SConfiguration rbParserClass parseExpression: anExpresion.
+	sequence := SPlatform rbParserClass parseExpression: anExpresion.
 	^ sequence statements
 		collect: [ :assig | 
 			SAssignment new
@@ -42,10 +42,10 @@ SExpressionTest >> parseVariableOrValue: aRBVariableOrLiteral [
 SExpressionTest >> setUp [
 	super setUp.
 	utility := SUtilityTypeInfo new.
-	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
+	SPlatform randomGenerator: SPlatform newRandomGenerator .
 ]
 
 { #category : #running }
 SExpressionTest >> tearDown [
-	SConfiguration randomGenerator: SConfiguration newRandomGenerator .
+	SPlatform randomGenerator: SPlatform newRandomGenerator .
 ]

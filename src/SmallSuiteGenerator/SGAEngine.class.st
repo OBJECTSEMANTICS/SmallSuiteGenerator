@@ -109,13 +109,13 @@ SGAEngine >> createNewPopulation [
         P1copy addParent: P1.
         P2copy := P2 deepCopy.
         P2copy addParent: P2.
-        P1copy ni: P1 ni + 1.
-        P2copy ni: P2 ni + 1.
+        P1copy generationNumber: P1 generationNumber + 1.
+        P2copy generationNumber: P2 generationNumber + 1.
         self shouldCrossOver ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
               O1 := children first.
               O2 := children second.
-              O1 ni: P1 ni + 1.
-              O2 ni: P2 ni + 1 ] ifFalse: [ O1 := P1copy deepCopy.
+              O1 generationNumber: P1 generationNumber + 1.
+              O2 generationNumber: P2 generationNumber + 1 ] ifFalse: [ O1 := P1copy deepCopy.
 				  O1 addParent: P1.
               O2 := P2copy deepCopy.
               O2 addParent: P2 ].
@@ -140,7 +140,7 @@ SGAEngine >> createNewPopulation [
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |
-        value := SConfiguration randomGenerator next * populationSize + 1.
+        value := SPlatform randomGenerator next * populationSize + 1.
         test := SSTestCase with: typeInfo.
         test
            addTargetClassName: self targetClassName;
@@ -188,7 +188,7 @@ SGAEngine >> initialize [
   super initialize.
   
   logs := OrderedCollection new.
-  randomGenerator := SConfiguration newRandomGenerator.
+  randomGenerator := SPlatform newRandomGenerator.
   populationSize := 100.
   numberOfGenerations := 100.
   selectionStrategy := SGARankSelection new.
@@ -360,7 +360,7 @@ SGAEngine >> selectionStrategy [
 
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
-	^ SConfiguration randomGenerator next < (3 / 4)
+	^ SPlatform randomGenerator next < (3 / 4)
 ]
 
 { #category : #accessing }
