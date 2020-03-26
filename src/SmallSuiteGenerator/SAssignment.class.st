@@ -125,11 +125,14 @@ SAssignment >> replaceArgBy: expression [
 
 { #category : #accessing }
 SAssignment >> replaceBy: aExpression [
+	" If I am the expresion to be replace it.
+	I replace my attributes values with the ones in the otherExpression."
 	self reference = aExpression reference ifTrue: [ value replaceBy: aExpression value ]
 ]
 
 { #category : #actions }
 SAssignment >> replaceExpression: expression by: newExpression [
+	"It replace the references to this expresion to the newExpresion"
 	value replaceExpression: expression by: newExpression
 ]
 

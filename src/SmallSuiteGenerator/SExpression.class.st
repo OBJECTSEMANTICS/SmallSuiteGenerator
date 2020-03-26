@@ -42,14 +42,16 @@ SExpression class >> resetId [
 
 { #category : #comparing }
 SExpression >> = another [
+	"I return true if all my attributes are equals than the another"
 	^ (self class = another class) 
 		and: [ (self id = another id) 
 			and: [ returnType = another returnType ] ]
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 SExpression >> allParents [
+	"I return my self with all my parents"
 	^ parent ifNil: #() ifNotNil: [ 
 		Set new add: parent;
 	 	addAll: parent allParents; 
@@ -67,6 +69,7 @@ SExpression >> copy [
 
 { #category : #'error handling' }
 SExpression >> error: aString [
+	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
 	^ SError signal: aString
 ]
 
@@ -87,7 +90,8 @@ SExpression >> id: anObject [
 
 { #category : #initialization }
 SExpression >> initialize [
-   randomGenerator := SConfiguration randomGenerator.
+	super initialize .
+   randomGenerator := SPlatform randomGenerator.
 	mutated := false.
 ]
 
@@ -173,14 +177,14 @@ SExpression >> replaceArgBy: expression [
 	self error: 'cannot be inserted: ', expression printString, ' as parameter'
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SExpression >> replaceBy: otherExpression [
 	self subclassResponsibility 
 ]
 
 { #category : #actions }
 SExpression >> replaceExpression: expression by: newExpression [
-	
+	"It replace the references to this expresion to the newExpresion"
 ]
 
 { #category : #accessing }

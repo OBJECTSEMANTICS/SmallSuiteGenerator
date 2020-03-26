@@ -44,7 +44,7 @@ SLiteralTest >> testInsertAsParameterUsing [
 		using: testCase.
 	self
 		assert: insertedExpression printString
-		equals: '_var4 := _var3 return: _var1.'
+		equals: '_var5 := _var3 return: _var1.'
 ]
 
 { #category : #tests }
@@ -73,7 +73,7 @@ SLiteralTest >> testInsertParameterOn [
 		raise: SError.
 	self
 		assert: insertedExpression printString
-		equals: '_var4 := _var1 return: _var3.'
+		equals: '_var5 := _var1 return: _var3.'
 ]
 
 { #category : #tests }

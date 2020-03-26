@@ -6,9 +6,9 @@ Class {
 	#superclass : #SSTestShifter,
 	#instVars : [
 		'idPopulation',
-		'ni',
 		'previousOpenWindows',
-		'summaryExecutionMethods'
+		'summaryExecutionMethods',
+		'generationNumber'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -27,7 +27,7 @@ SSTestCase >> = another [
 	and: [ statements = another statements 
 		and: [ fitness = another fitness 
 			and: [ parents = another parents 
-				and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ] ] ] ]
+				and: [ generationNumber = another generationNumber and: [ idPopulation = another idPopulation  ] ] ] ] ]
 ]
 
 { #category : #actions }
@@ -66,9 +66,19 @@ SSTestCase >> deepCopy [
   copy := self copy.
   copy setFitness: self fitness.
   copy setFitnessByClass: self fitnessByClass.
-  copy ni: self ni.
-  copy summaryExecutionMethods: self summaryExecutionMethods.
+  copy generationNumber: self generationNumber.
+  copy summaryExecutedCode: self summaryExecutionMethods.
   ^ copy
+]
+
+{ #category : #accessing }
+SSTestCase >> generationNumber [
+	^ generationNumber
+]
+
+{ #category : #accessing }
+SSTestCase >> generationNumber: anObject [
+	generationNumber := anObject
 ]
 
 { #category : #comparing }
@@ -89,18 +99,8 @@ SSTestCase >> idPopulation: anObject [
 { #category : #initialization }
 SSTestCase >> initialize [
   super initialize.
-  ni := 1.
+  generationNumber := 1.
   idPopulation := 1.
-]
-
-{ #category : #accessing }
-SSTestCase >> ni [
-	^ ni
-]
-
-{ #category : #accessing }
-SSTestCase >> ni: anObject [
-	ni := anObject
 ]
 
 { #category : #actions }
@@ -153,4 +153,11 @@ SSTestCase >> tearDown [
 	|windowsToDelete|
 	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
 	windowsToDelete do:[:w| w close].
+]
+
+{ #category : #repairing }
+SSTestCase >> updateWith: anotherTestCase [
+	self generationNumber: anotherTestCase generationNumber.
+	self idPopulation: anotherTestCase idPopulation + 1 .
+	anotherTestCase parents do: [ :parent | self addParent:  parent ]
 ]

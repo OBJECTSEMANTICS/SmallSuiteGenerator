@@ -19,3 +19,7 @@ SObject class >> new [
 
 	^super new initialize
 ]
+
+{ #category : #initialization }
+SObject >> initialize [
+]

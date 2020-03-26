@@ -35,7 +35,7 @@ SSTestRunner >> evaluate: aSTestCase [
 	| node |
 	node := aSTestCase parseTree.
 	node body
-		addNode: (SConfiguration rbParserClass parseExpression: '^ self analyze: thisContext').
+		addNode: (SPlatform rbParserClass parseExpression: '^ self analyze: thisContext').
 	self compile: node.
 	^ self performTest
 ]
@@ -47,13 +47,19 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 |
-_var0 := 0.
-_var1 := SConference price: _var0.
-_var2 := _var1 price: _var0.
-_var3 := _var1 price.
-_var4 := _var1 offerPrice.
-^self analyze: thisContext
+	| _var0 _var2 _var3 _var10 _var4 _var5 _var6 _var7 _var11 _var8 _var1 _var9 |
+_var0 := 'Ann'.
+_var2 := 0.
+_var3 := SSTeacher name: _var0 with: _var2.
+_var10 := _var3 id: _var2.
+_var4 := _var3 idTeacher.
+_var5 := _var10 id.
+_var6 := _var3 yearsWorkExperience: _var2.
+_var7 := _var6 nickname.
+_var11 := _var3 yearsWorkExperience: _var2.
+_var8 := _var6 name.
+_var1 := _var3 name.
+_var9 := _var3 initialize
 ]
 
 { #category : #running }

@@ -39,7 +39,12 @@ Class {
 		'selectionStrategy',
 		'targetClassName',
 		'numberOfGenerations',
-		'lastMessage'
+		'lastMessage',
+		'profiler',
+		'packageRegex',
+		'initialPopulation',
+		'typeInfoProfiler',
+		'targetPackageRegex'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -75,7 +80,7 @@ SGAEngine >> clean [
 	fitness ifNotNil: [ fitness tearDown ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'groups collecting' }
 SGAEngine >> collectFitnessByName [
 	| dictFit |
 	dictFit := Dictionary new.
@@ -93,9 +98,49 @@ SGAEngine >> computeFitness [
 ]
 
 { #category : #actions }
+SGAEngine >> createNewPopulation [
+  | newPopulation |
+  newPopulation := OrderedCollection new.
+  [ newPopulation size < initialPopulation size ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
+		  selectedList := selectionStrategy selectOf: initialPopulation.
+        P1 := selectedList first .
+        P2 := selectedList second.
+        P1copy := P1 deepCopy.
+        P1copy addParent: P1.
+        P2copy := P2 deepCopy.
+        P2copy addParent: P2.
+        P1copy generationNumber: P1 generationNumber + 1.
+        P2copy generationNumber: P2 generationNumber + 1.
+        self shouldCrossOver ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
+              O1 := children first.
+              O2 := children second.
+              O1 generationNumber: P1 generationNumber + 1.
+              O2 generationNumber: P2 generationNumber + 1 ] ifFalse: [ O1 := P1copy deepCopy.
+				  O1 addParent: P1.
+              O2 := P2copy deepCopy.
+              O2 addParent: P2 ].
+        OM1 := self mutate: O1.
+		  OM1 clean.
+        OM1 updateWith: O1.
+        OM2 := self mutate: O2.
+		  OM2 clean.
+        OM2 updateWith: O2.
+        fitness compute: (Array with: OM1 with: OM2).
+        options := (Array with: OM1 with: OM2 with: P1copy with: P2copy) difference: newPopulation.
+        options := options asSortedCollection: 
+			  [:a :b |  self is: a betterThan: b ].
+        selectedOptions := options first: 2.
+        selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]
+		   ].
+  population := newPopulation.
+  self updateTypeInfoOfPopulation
+		  
+]
+
+{ #category : #actions }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |
-        value := SConfiguration randomGenerator next * populationSize + 1.
+        value := SPlatform randomGenerator next * populationSize + 1.
         test := SSTestCase with: typeInfo.
         test
            addTargetClassName: self targetClassName;
@@ -127,6 +172,12 @@ SGAEngine >> elitismRate: aNumber [
 	selectionStrategy elitismRate: aNumber.
 ]
 
+{ #category : #actions }
+SGAEngine >> doSelection [
+	self createNewPopulation.
+	initialPopulation := population.
+]
+
 { #category : #accessing }
 SGAEngine >> fitness [
 	^ fitness
@@ -147,12 +198,11 @@ SGAEngine >> initialize [
   super initialize.
   
   logs := OrderedCollection new.
-  randomGenerator := SConfiguration newRandomGenerator.
+  randomGenerator := SPlatform newRandomGenerator.
   populationSize := 100.
   numberOfGenerations := 100.
-  selectionStrategy := SGATournamentSelection new.
+  selectionStrategy := SGARankSelection new.
   
-  selectionStrategy engine: self.
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -170,22 +220,34 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator randomGenerator: randomGenerator
 ]
 
+{ #category : #initialization }
+SGAEngine >> initializeProfiler [
+	| aProfiler |
+	aProfiler := SLProfilerCoverage profilerForPackagesMatching: targetPackageRegex.
+	(aProfiler allMethods select: #isNotMethodExtension)
+		do: #installGhosts
+		displayingProgress: 'Instrumenting ' , targetPackageRegex.
+	^ aProfiler
+]
+
 { #category : #testing }
 SGAEngine >> is: testCase1 betterThan: testCase2 [
 	|fitness1 fitness2|
 	fitness1 := self fitnessFor: testCase1.
 	fitness2 := self fitnessFor: testCase2.
 		^ 			fitness1 = fitness2
-						ifTrue: [ testCase1 length <= testCase2 length ]
+						ifTrue: [ (testCase1 idPopulation > testCase2 idPopulation) or: [ testCase1 length <= testCase2 length] ]
 						ifFalse: [ fitness1 > fitness2 ]
 ]
 
-{ #category : #accessing }
+
+{ #category : #actions }
 SGAEngine >> lastMessage: anObject [
-	lastMessage := anObject
+	lastMessage := anObject 
+	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #log }
 SGAEngine >> logOfGeneration: anInteger inTime: t [
 	| log dictFitness |
 	log := SGALog new 
@@ -202,6 +264,12 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 { #category : #accessing }
 SGAEngine >> logs [
 	^ logs
+]
+
+{ #category : #updating }
+SGAEngine >> mergeTypeInfo: otherTypeInfo [
+	initialPopulation do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
+	population do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
 ]
 
 { #category : #actions }
@@ -232,9 +300,9 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
-{ #category : #'as yet unclassified' }
-SGAEngine >> parentReplacementCheck: aNumber [
-	selectionStrategy parentReplacementCheck: aNumber
+{ #category : #accessing }
+SGAEngine >> packageRegex: aString [
+	packageRegex := aString
 ]
 
 { #category : #actions }
@@ -273,6 +341,14 @@ SGAEngine >> populationSize: aInteger [
 	populationSize := aInteger
 ]
 
+{ #category : #updating }
+SGAEngine >> profilerForPackagesMatching [
+	Transcript show: 'profiling...'; cr.
+	typeInfoProfiler := SSTypeCollector 
+		profilerForPackagesMatching: targetPackageRegex.
+	typeInfoProfiler beforeProfiling.
+]
+
 { #category : #actions }
 SGAEngine >> run [
   | t |
@@ -280,14 +356,22 @@ SGAEngine >> run [
   population := self createRandomPopulation.
   SExpression resetId.
   self computeFitness.
-  selectionStrategy
-     initialPopulation: population;
-     fitness: fitness.
+	initialPopulation := population.
   logs add: (self logOfGeneration: 0 inTime: t).
-  (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
-        selectionStrategy doSelection.
-        population := selectionStrategy population.
+  (1 to: numberOfGenerations) do: [:iteration | 
+		  t := Time now asSeconds.
+        self doSelection.
         logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+]
+
+{ #category : #accessing }
+SGAEngine >> selectionStrategy [ 
+	^ selectionStrategy
+]
+
+{ #category : #actions }
+SGAEngine >> shouldCrossOver [
+	^ SPlatform randomGenerator next < (3 / 4)
 ]
 
 { #category : #accessing }
@@ -306,6 +390,16 @@ SGAEngine >> tournamentSize: aNumber [
 ]
 
 { #category : #accessing }
+SGAEngine >> targetPackageRegex [
+	^ targetPackageRegex 
+]
+
+{ #category : #accessing }
+SGAEngine >> targetPackageRegex: aString [
+	targetPackageRegex := aString
+]
+
+{ #category : #accessing }
 SGAEngine >> typeInfo [
 	^ typeInfo
 ]
@@ -313,4 +407,22 @@ SGAEngine >> typeInfo [
 { #category : #accessing }
 SGAEngine >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo
+]
+
+{ #category : #updating }
+SGAEngine >> uninstall [
+	typeInfoProfiler afterProfiling;
+		uninstall.
+	Transcript show: 'ended...'; cr.
+]
+
+{ #category : #updating }
+SGAEngine >> updateTypeInfoOfPopulation [
+	fitness profiler uninstall.
+   self profilerForPackagesMatching .
+   population do:
+		[ :testCase | testCase runWithoutAssertions ].
+   self uninstall .
+   self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
+   fitness profiler: self initializeProfiler 		  
 ]

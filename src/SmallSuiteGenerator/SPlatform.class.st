@@ -4,7 +4,7 @@ SConfiguration is responsible for defining or instantiating some classes or valu
 Furthermore, some configuration parameters are defined depending the environment, it means Pharo or VisualWorks
 "
 Class {
-	#name : #SConfiguration,
+	#name : #SPlatform,
 	#superclass : #SObject,
 	#classInstVars : [
 		'level',
@@ -17,27 +17,27 @@ Class {
 }
 
 { #category : #accessing }
-SConfiguration class >> classConfigurationName [
+SPlatform class >> classConfigurationName [
 	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
-SConfiguration class >> classTestCaseFactory [
+SPlatform class >> classTestCaseFactory [
 	^ self configurationClass classTestCaseFactory 
 ]
 
 { #category : #logging }
-SConfiguration class >> cleanAllLogs [
+SPlatform class >> cleanAllLogs [
 	self configurationClass cleanAllLogs 
 ]
 
 { #category : #logging }
-SConfiguration class >> clearLog [
+SPlatform class >> clearLog [
 	self configurationClass clearLog
 ]
 
 { #category : #accessing }
-SConfiguration class >> configurationClass [
+SPlatform class >> configurationClass [
 	configurationClass ifNil: [  
 	configurationClass := self subclasses
 		detect: [ :aClass | 
@@ -51,105 +51,105 @@ SConfiguration class >> configurationClass [
 ]
 
 { #category : #tests }
-SConfiguration class >> createTestCaseClass: aClassName inPackage: aPackageName [
+SPlatform class >> createTestCaseClass: aClassName inPackage: aPackageName [
 	^ self configurationClass createTestCaseClass: aClassName inPackage: aPackageName 
 ]
 
 { #category : #accessing }
-SConfiguration class >> defaultLogName [
+SPlatform class >> defaultLogName [
 	^ 'SmallSuiteLogger.log'
 ]
 
 { #category : #accessing }
-SConfiguration class >> defaultSeed [
+SPlatform class >> defaultSeed [
 	^ 100
 ]
 
 { #category : #'instance creation' }
-SConfiguration class >> fileLogger: fileName [
+SPlatform class >> fileLogger: fileName [
 	self configurationClass fileLogger: fileName
 ]
 
 { #category : #accessing }
-SConfiguration class >> implementationType [
+SPlatform class >> implementationType [
 	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
-SConfiguration class >> initLevelToPrint [ 	
+SPlatform class >> initLevelToPrint [ 	
 	level := 10
 ]
 
 { #category : #accessing }
-SConfiguration class >> levelToPrint [
+SPlatform class >> levelToPrint [
 	^ level
 ]
 
 { #category : #accessing }
-SConfiguration class >> logName [ 
+SPlatform class >> logName [ 
 	^ logName ifNil: [ self defaultLogName  ]
 ]
 
 { #category : #accessing }
-SConfiguration class >> logName: string [
+SPlatform class >> logName: string [
 	logName := string
 ]
 
 { #category : #'as yet unclassified' }
-SConfiguration class >> lookUpClass: aClassName [
+SPlatform class >> lookUpClass: aClassName [
 	^ Smalltalk at: aClassName ifAbsent: [ nil ]
 ]
 
 { #category : #'instance creation' }
-SConfiguration class >> newRandomGenerator [
+SPlatform class >> newRandomGenerator [
 	^ SRandom seed: self seed
 ]
 
 { #category : #accessing }
-SConfiguration class >> randomGenerator [
-	randomGenerator ifNil: [ randomGenerator := SRandom seed: self seed ].
+SPlatform class >> randomGenerator [
+	randomGenerator ifNil: [ randomGenerator := self newRandomGenerator ].
 	^ randomGenerator 
 ]
 
 { #category : #accessing }
-SConfiguration class >> randomGenerator: sRandom [
+SPlatform class >> randomGenerator: sRandom [
 	randomGenerator := sRandom
 ]
 
 { #category : #'as yet unclassified' }
-SConfiguration class >> rbParserClass [
+SPlatform class >> rbParserClass [
 	^ self configurationClass rbParserClass
 ]
 
 { #category : #actions }
-SConfiguration class >> reduceLevel [
+SPlatform class >> reduceLevel [
 	level ifNil: [ self initLevelToPrint  ].
 	level := level - 1
 ]
 
 { #category : #initialization }
-SConfiguration class >> resetConfigurationClass [
+SPlatform class >> resetConfigurationClass [
 	configurationClass := nil
 ]
 
 { #category : #logging }
-SConfiguration class >> saveOnLog: message [
+SPlatform class >> saveOnLog: message [
 	self configurationClass saveOnLog: message
 ]
 
 { #category : #accessing }
-SConfiguration class >> seed [ 	
+SPlatform class >> seed [ 	
 	seed ifNil: [ seed := self defaultSeed.
 		 ].
 	^ seed
 ]
 
 { #category : #'instance creation' }
-SConfiguration class >> seed: aNumber [
+SPlatform class >> seed: aNumber [
 	seed := aNumber
 ]
 
 { #category : #tests }
-SConfiguration class >> testCaseClass [
+SPlatform class >> testCaseClass [
 	^ self configurationClass testCaseClass
 ]

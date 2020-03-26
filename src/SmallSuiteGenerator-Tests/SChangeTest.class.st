@@ -37,12 +37,12 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 		includesAll: #('_var0 := 7.3.' '_var1 := 7.3.').
 	self
 		assert:
-			(#('_var2 := SFoo score: _var0.' '_var2 := SFoo score: _var1.')
+			(#('_var3 := SFoo score: _var2.')
 				includes: expression printString).
 	expressionChanged := testCase changeStatementOfVarName: '_var2'.
 	self
 		assert:
-			(#('_var2 := SFoo score: _var0.' '_var2 := SFoo score: _var1.' '_var2 := SFoo new.')
+			(#('_var2 := 679.9.')
 				includes: expressionChanged printString).
 	self assert: testCase validReferences
 ]

@@ -8,14 +8,14 @@ Object >> mutateToChange [
 { #category : #'*SmallSuiteGenerator' }
 Object >> smallStoreString [
 	| string |
-	SConfiguration initLevelToPrint.
+	SPlatform initLevelToPrint.
 	string := String
 		streamContents: [ :s | 
 			self storeOn: s.
-			SConfiguration levelToPrint < 0
+			SPlatform levelToPrint < 0
 				ifTrue:
 					[ "^ s nextPutAll: '(' , self class name , ' new ) '" SError signal: 'error in storeString' ].
-			SConfiguration initLevelToPrint ].
+			SPlatform initLevelToPrint ].
 	^ string
 ]
 
@@ -24,7 +24,7 @@ Object >> storeOn: aStream [
 	"Append to the argument aStream a sequence of characters that is an 
 	expression whose evaluation creates an object similar to the receiver."
 
-	SConfiguration reduceLevel.
+	SPlatform reduceLevel.
 	aStream nextPut: $(.
 	self class isVariable
 		ifTrue: [ aStream
@@ -32,7 +32,7 @@ Object >> storeOn: aStream [
 				store: self basicSize;
 				nextPutAll: ') ' ]
 		ifFalse: [ aStream nextPutAll: self class name , ' basicNew' ].
-	SConfiguration levelToPrint < 0
+	SPlatform levelToPrint < 0
 		ifFalse: [ 1 to: self class instSize do: [ :i | 
 				aStream
 					nextPutAll: ' instVarAt: ';

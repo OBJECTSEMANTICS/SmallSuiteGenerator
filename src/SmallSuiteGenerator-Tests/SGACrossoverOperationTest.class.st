@@ -43,9 +43,9 @@ SGACrossoverOperationTest >> crossOverWithMutation: listTestCase [
 { #category : #running }
 SGACrossoverOperationTest >> setUp [
 	super setUp.
-	operation := SGACrossoverOperation new randomGenerator: SConfiguration newRandomGenerator.
+	operation := SGACrossoverOperation new randomGenerator: SPlatform newRandomGenerator.
 	mutationOperation := SGAMutationOperation new
-		randomGenerator: SConfiguration newRandomGenerator.
+		randomGenerator: SPlatform newRandomGenerator.
 	utility := SUtilityTypeInfo new
 ]
 

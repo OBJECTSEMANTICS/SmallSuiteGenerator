@@ -10,7 +10,13 @@ Class {
 { #category : #running }
 SSTestShifterTest >> setUp [
 	utility := SUtilityTypeInfo new.
-	SConfiguration fileLogger: 'STestShifterTestLogger.log'
+	SPlatform randomGenerator: SPlatform newRandomGenerator .
+	SPlatform fileLogger: 'STestShifterTestLogger.log'
+]
+
+{ #category : #running }
+SSTestShifterTest >> tearDown [ 
+	SPlatform randomGenerator: SPlatform newRandomGenerator .
 ]
 
 { #category : #tests }
@@ -284,7 +290,7 @@ SSTestShifterTest >> testAddMessageFrom [
 		equals: '_var3 := _var1 returnNum.'.
 	self
 		assert:
-			(#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.')
+			(#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.' '_var5 := _var1 score: _var3.' '_var5 := _var1 score: _var4.')
 				includes: (testCase addMessage: #score: from: #SFoo) printString)
 ]
 
@@ -775,19 +781,19 @@ SSTestShifterTest >> testSubStatementsFromToPrevIndexOf [
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.').
+		hasSameElements: #('_var0 := 8.' '_var1 := 8.').
 	expression := testCase addMessage: #discount: from: #SEvent.
 	self
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.').
+		hasSameElements: #('_var0 := 8.' '_var1 := 8.' '_var2 := SEvent price: _var0.' '_var3 := 8.').
 	expression := testCase addFieldAccessMessage: #price from: #SEvent.
 	self
 		assertCollection:
 			((testCase subStatementsFrom: 1 toPrevIndexOf: expression)
 				collect: #printString)
-		hasSameElements: #('_var0 := 8.' '_var1 := SEvent price: _var0.' '_var2 := _var1 discount: _var0.').
+		hasSameElements: #('_var0 := 8.' '_var1 := 8.' '_var2 := SEvent price: _var0.' '_var3 := 8.' '_var4 := _var2 discount: _var1.').
 ]
 
 { #category : #tests }
