@@ -117,6 +117,16 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator randomGenerator: randomGenerator 
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> crossoverRate: aNumber [
+	selectionStrategy crossoverRate: aNumber
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> elitismRate: aNumber [
+	selectionStrategy elitismRate: aNumber.
+]
+
 { #category : #accessing }
 SGAEngine >> fitness [
 	^ fitness
@@ -222,6 +232,11 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> parentReplacementCheck: aNumber [
+	selectionStrategy parentReplacementCheck: aNumber
+]
+
 { #category : #actions }
 SGAEngine >> pickAverageFitTest: aDictionary [
 	^ (aDictionary keys collect: [ :key | 
@@ -267,18 +282,12 @@ SGAEngine >> run [
   self computeFitness.
   selectionStrategy
      initialPopulation: population;
-     fitness: fitness;
-	  tournamentSize: self populationSize.
+     fitness: fitness.
   logs add: (self logOfGeneration: 0 inTime: t).
   (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
         selectionStrategy doSelection.
         population := selectionStrategy population.
         logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
-]
-
-{ #category : #actions }
-SGAEngine >> shouldCrossOver [
-	^ SConfiguration randomGenerator next < (3 / 4)
 ]
 
 { #category : #accessing }
@@ -289,6 +298,11 @@ SGAEngine >> targetClassName [
 { #category : #accessing }
 SGAEngine >> targetClassName: anObject [
 	targetClassName := anObject
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> tournamentSize: aNumber [
+	selectionStrategy tournamentSize: aNumber
 ]
 
 { #category : #accessing }

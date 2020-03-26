@@ -11,7 +11,10 @@ Class {
 		'fitness',
 		'initialPopulation',
 		'engine',
-		'allPopulation'
+		'allPopulation',
+		'crossoverRate',
+		'elitismRate',
+		'parentReplacementCheck'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -23,9 +26,11 @@ SGATournamentSelection >> allPopulation [
 
 { #category : #'as yet unclassified' }
 SGATournamentSelection >> createNewPopulation [
-  | newPopulation |
-  newPopulation := OrderedCollection new.
-  [ newPopulation size < tournamentSize and: [ tournamentSize >= 2 ] ] whileTrue: [ | P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
+  | newPopulation currentPopulation |
+	currentPopulation := initialPopulation size.
+	1 to: tournamentSize do: [ :i | 
+  newPopulation := self eliteOfCurrentPopulation.
+  [ newPopulation size < currentPopulation ] whileTrue: [ | P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
         P1 := self pickOne.
         P2 := self pickAnother: P1.
         P1copy := P1 deepCopy.
@@ -53,10 +58,20 @@ SGATournamentSelection >> createNewPopulation [
         selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ] ].
   population := newPopulation
 ]
+]
+
+{ #category : #asserting }
+SGATournamentSelection >> crossoverRate [
+	^ crossoverRate 
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> crossoverRate: anObject [
+	crossoverRate := anObject
+]
 
 { #category : #'as yet unclassified' }
 SGATournamentSelection >> doSelection [
-	tournamentSize := initialPopulation size.
 	fittest := initialPopulation first.
 	initialPopulation do: [ :testCase | 
 		"testCase computeFitness: fitness."
@@ -64,6 +79,19 @@ SGATournamentSelection >> doSelection [
 	].
 	self createNewPopulation.
 	initialPopulation := population
+]
+
+{ #category : #'as yet unclassified' }
+SGATournamentSelection >> eliteOfCurrentPopulation [
+	| endIndex |
+	endIndex := (population size * elitismRate * 0.01) asInteger.
+	endIndex >= 1 ifTrue: [ ^ population copyFrom: 1 to: endIndex ].
+	^ OrderedCollection new
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> elitismRate: anObject [
+	elitismRate := anObject
 ]
 
 { #category : #accessing }
@@ -103,14 +131,22 @@ SGATournamentSelection >> initialPopulation: testCases [
 { #category : #initialization }
 SGATournamentSelection >> initialize [
 	population := OrderedCollection new.
-	tournamentSize := 5.
+	tournamentSize := 2.
 	randomGenerator := SConfiguration newRandomGenerator.
-	allPopulation := Set new
+	allPopulation := Set new.
+	crossoverRate := 0.8.
+	elitismRate := 10.
+	parentReplacementCheck := false.
 ]
 
 { #category : #accessing }
 SGATournamentSelection >> load: aTestCaseCollection [
 	population := aTestCaseCollection	asOrderedCollection "copy"
+]
+
+{ #category : #accessing }
+SGATournamentSelection >> parentReplacementCheck: anObject [
+	parentReplacementCheck := anObject
 ]
 
 { #category : #actions }
@@ -143,7 +179,7 @@ SGATournamentSelection >> population [
 
 { #category : #asserting }
 SGATournamentSelection >> shouldCrossOver [
-	^ SConfiguration randomGenerator next < (3 / 4)
+	^ SConfiguration randomGenerator next < self crossoverRate
 ]
 
 { #category : #accessing }

@@ -54,6 +54,16 @@ STestCaseFactory >> createTestCases [
 ]
 
 { #category : #accessing }
+STestCaseFactory >> crossoverRate: aNumber [
+	engine crossoverRate: aNumber
+]
+
+{ #category : #accessing }
+STestCaseFactory >> elitismRate: aNumber [
+	engine elitismRate: aNumber
+]
+
+{ #category : #accessing }
 STestCaseFactory >> engine [
 	^ SGAEngine new
 		populationSize: 30;
@@ -65,10 +75,9 @@ STestCaseFactory >> engine [
 { #category : #accessing }
 STestCaseFactory >> engineDefault [
 	^ SGAEngine new
-		populationSize: 30;
 		fitness: fitness;
 		numberOfStatements: 30;
-		numberOfGenerations: 20;
+		numberOfGenerations: numberOfIterations;
 		yourself.
 ]
 
@@ -154,8 +163,8 @@ STestCaseFactory >> getClassOf: aString [
 STestCaseFactory >> initialize [
 	super initialize.
 	fitness := SMethodCoverage new.
+	numberOfIterations := 20.
 	engine := self engineDefault.
-	numberOfIterations :=20.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
 ]
 

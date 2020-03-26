@@ -261,12 +261,6 @@ SGAEngine >> visualizeCoverageR3 [
 	].
 	RSVerticalLineLayout new on: testCaseGroup; gapSize: 30.
 	canvas add: (RSComposite new shapes: (testCaseGroup flatCollect: #yourself)).
-	"self population collect: [:testCase | 
-		self visualizationCoverageMethods: testCase ]
-	thenDo: [ :element | 
-		canvas add: element.
-		testCaseGroup add: element ].
-	RSHorizontalLineLayout new gapSize: 20; on: testCaseGroup."
 	^ canvas
 ]
 
