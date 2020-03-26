@@ -97,6 +97,8 @@ SVariable >> replaceArgBy: expression [
 
 { #category : #accessing }
 SVariable >> replaceBy: otherVariable [
+	" I replace my attributes values with the ones in the otherExpression.
+	  the argument is an object from my same class"
 	self varName: otherVariable varName.
 	self id: otherVariable id.
 	self returnType: otherVariable returnType
@@ -104,6 +106,7 @@ SVariable >> replaceBy: otherVariable [
 
 { #category : #actions }
 SVariable >> replaceExpression: anExpression by: newExpression [
+	"If I am referencing to anExprension. I will now reference to the newExpresion"	
 	| reference |
 	self = anExpression
 		ifFalse: [ ^ self ].

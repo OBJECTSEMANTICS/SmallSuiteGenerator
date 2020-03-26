@@ -29,6 +29,11 @@ SRandom >> selectAtRandom: collection [
 ]
 
 { #category : #enumerating }
+SRandom >> selectIndexAtRandom: collection [
+	^ self nextInt: collection size
+]
+
+{ #category : #enumerating }
 SRandom >> shuffleCollection: stop [
 	|numbers|
 	numbers := (1 to: stop) asArray.

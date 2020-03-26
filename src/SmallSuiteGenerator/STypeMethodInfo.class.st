@@ -20,7 +20,8 @@ Class {
 		'isQuick',
 		'isDeprecated',
 		'receiver',
-		'scalars'
+		'scalars',
+		'executions'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -92,7 +93,8 @@ STypeMethodInfo >> asMethodInfo: typeCollMethod [
 		argTypes: (self transformArgs: typeCollMethod argTypes);
 		isQuick: typeCollMethod isQuick;
 		scalars: typeCollMethod dictLiterals;
-		isDeprecated: typeCollMethod isDeprecated
+		isDeprecated: typeCollMethod isDeprecated;
+		executions: typeCollMethod numberOfExecutions 
 ]
 
 { #category : #copying }
@@ -122,6 +124,16 @@ STypeMethodInfo >> dataCSV [
 		add: (argTypes ifNil: [''] ifNotNil: [argTypes collect: [:argType | argType commonSuperclass]]);
 		add: returnType types asArray;
 		add: returnType commonSuperclass; yourself)
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> executions [
+	^ executions  
+]
+
+{ #category : #'as yet unclassified' }
+STypeMethodInfo >> executions: anObject [
+	executions := anObject 
 ]
 
 { #category : #comparing }

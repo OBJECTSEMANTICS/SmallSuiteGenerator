@@ -31,20 +31,21 @@ Class {
 		'fitnessByClass',
 		'parents',
 		'children',
-		'lastMessage'
+		'lastMessage',
+		'selectionStrategy'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #adding }
 SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and: scalarNames [
-	| res |
+	| res addArgBlock |
 	res := arg types anySatisfy: [ :type | prevTypes includes: type ].
-	res
-		ifFalse: [ (randomGenerator collectAtRandom: arg types)
+	addArgBlock := [ (randomGenerator collectAtRandom: arg types)
 				detect: [ :missType | 
 					[ (scalarNames includes: missType)
-						ifTrue: [ self
+						ifTrue: [
+							self
 								addStatement: (self newAssignment: (self newLiteral: missType))
 								before: aStatement ]
 						ifFalse: [ self
@@ -54,7 +55,8 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 						on: SError
 						do: [ false ] ]
 				ifNone: [ self
-						error: 'It is not possible to meet the arguments of this method call' ] ]
+						error: 'It is not possible to meet the arguments of this method call' ] ].
+	(res not or: [ randomGenerator next > 0.5 ]) ifTrue: addArgBlock 
 ]
 
 { #category : #inserting }
@@ -107,7 +109,7 @@ SSTestShifter >> addFieldAccessMessage [
 	methods := self pickAccessorsOf: receiver returnType.
 	methods
 		ifNotEmpty: [ ^ self
-				addFieldAccessMessage: (randomGenerator selectAtRandom: methods)
+				addFieldAccessMessage: (self selectMethod: methods)
 				withReceiver: receiver ].
 	self error: 'Cannot create a field access message.'
 ]
@@ -152,7 +154,7 @@ SSTestShifter >> addMessage [
 	methods
 		ifEmpty: [ self
 				error: 'There are no method typeInfos for: ' , receiver returnType , '.' ]
-		ifNotEmpty: [ ^ self addMessage: (randomGenerator selectAtRandom: methods) withReceiver: receiver ]
+		ifNotEmpty: [ ^ self addMessage: (self selectMethod: methods) withReceiver: receiver ]
 ]
 
 { #category : #inserting }
@@ -236,13 +238,13 @@ SSTestShifter >> addTargetClassNames: symbols [
 	symbols do: [ :symbol | self addTargetClassName: symbol ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #hierarchy }
 SSTestShifter >> allChildren [
 	^ (Set newFrom: children)
 	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #hierarchy }
 SSTestShifter >> allParents [
 	^ (Set newFrom: parents)
 	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
@@ -395,6 +397,16 @@ SSTestShifter >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
+{ #category : #repairing }
+SSTestShifter >> clean [
+	|literals unused|
+	literals := self statements select: [ :e | e value isKindOf: SLiteral ].
+	unused := literals difference: (literals select: 
+		[ :e | (self statements collect: 
+			[:stm | stm pickUpReferences: e]) anySatisfy: [ :x | x isNotEmpty  ]]).
+	unused do: [ :stm | self removeStatement: stm ]
+]
+
 { #category : #accessing }
 SSTestShifter >> defaultNumberStatements [
 	^ 54
@@ -495,10 +507,10 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  randomGenerator := SConfiguration newRandomGenerator.
+  randomGenerator := SPlatform randomGenerator.
   parents := Set new.
   children := Set new.
-  "childs := Set new"
+  selectionStrategy := SGARouletteSelection new.
 ]
 
 { #category : #inserting }
@@ -537,7 +549,7 @@ SSTestShifter >> insertStatement [
 	count := 0.
 	stop := self length.
 	alpha := 0.5.
-	random := SConfiguration randomGenerator.
+	random := SPlatform randomGenerator.
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
 		whileTrue: [ self insertExpressionRandomly.
 			l := l + 1.
@@ -789,7 +801,7 @@ SSTestShifter >> parseTree [
 SSTestShifter >> parseTreeWith: statementCollection [
 	| node temporaries rbParserClass |
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
-	rbParserClass := SConfiguration rbParserClass.
+	rbParserClass := SPlatform rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
 	temporaries := (self allVarNames
 		collect: [ :varName | rbParserClass parseExpression: varName ]) select: [:e | e isKindOf: RBVariableNode ].
@@ -1045,6 +1057,13 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 	(self statementAt: expression)
 		replaceExpression: exprToReplace 
 		by: otherExpression 
+]
+
+{ #category : #inserting }
+SSTestShifter >> selectMethod: aCollection [ 
+	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: aCollection ]
+	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
+	
 ]
 
 { #category : #accessing }

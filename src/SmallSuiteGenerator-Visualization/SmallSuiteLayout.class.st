@@ -8,5 +8,5 @@ Class {
 SmallSuiteLayout >> doExecute: elements [
   "Performs the layout"
   "elements do: [:e |  e translateTo: (e model idPopulation * 10) @ (e model ni * 20) ]"
-  elements do: [:e |  e translateTo: (e model idPopulation * 20) @ (e model ni * 30) ]
+  elements do: [:e |  e translateTo: (e model idPopulation * 20) @ (e model generationNumber * 30) ]
 ]

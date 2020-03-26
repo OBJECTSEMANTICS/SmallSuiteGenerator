@@ -81,7 +81,7 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 	[ aTestCase generateAssertions.
 	class
 		compile:
-			(SConfiguration rbParserClass
+			(SPlatform rbParserClass
 				parseMethod:
 					aSelector , aTestCase printDescriptiveComment
 						, aTestCase parseTreeWithAssertions body formattedCode)
@@ -143,9 +143,9 @@ STestCaseFactory >> fitnessValues [
 STestCaseFactory >> getClassOf: aString [
 	| aClassName class |
 	aClassName := aString asSymbol.
-	class := SConfiguration lookUpClass: aClassName.
+	class := SPlatform lookUpClass: aClassName.
 	class
-		ifNil: [ class := SConfiguration
+		ifNil: [ class := SPlatform
 				createTestCaseClass: aClassName
 				inPackage: self outputPackageName].
 	^ class
@@ -212,7 +212,7 @@ STestCaseFactory >> run [
 
 { #category : #'instance creation' }
 STestCaseFactory >> seed: aNumber [ 	
-	SConfiguration seed: aNumber
+	SPlatform seed: aNumber
 ]
 
 { #category : #actions }
@@ -222,7 +222,8 @@ STestCaseFactory >> setUp [
 	engine fitness: fitness.
 	engine numberOfGenerations: numberOfIterations.
 	engine typeInfo: self typeInfo.
-	engine targetClassName: self targetClassName
+	engine targetClassName: self targetClassName.
+	engine targetPackageRegex: targetPackageRegex 
 ]
 
 { #category : #actions }
@@ -249,7 +250,8 @@ STestCaseFactory >> targetPackageRegex [
 
 { #category : #accessing }
 STestCaseFactory >> targetPackageRegex: anObject [
-	targetPackageRegex := anObject
+	targetPackageRegex := anObject.
+	engine packageRegex: anObject 
 ]
 
 { #category : #actions }

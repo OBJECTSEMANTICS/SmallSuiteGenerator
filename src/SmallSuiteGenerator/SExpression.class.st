@@ -49,14 +49,16 @@ SExpression class >> resetId [
 
 { #category : #comparing }
 SExpression >> = another [
+	"I return true if all my attributes are equals than the another"
 	^ (self class = another class) 
 		and: [ (self id = another id) 
 			and: [ returnType = another returnType ] ]
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 SExpression >> allParents [
+	"I return my self with all my parents"
 	^ parent ifNil: #() ifNotNil: [ 
 		Set new add: parent;
 	 	addAll: parent allParents; 
@@ -74,6 +76,7 @@ SExpression >> copy [
 
 { #category : #'error handling' }
 SExpression >> error: aString [
+	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
 	^ SError signal: aString
 ]
 
@@ -99,7 +102,8 @@ SExpression >> identifier [
 
 { #category : #initialization }
 SExpression >> initialize [
-   randomGenerator := SConfiguration randomGenerator.
+	super initialize .
+   randomGenerator := SPlatform randomGenerator.
 	mutated := false.
 	identifier := self class nextIdentifier 
 ]
@@ -136,7 +140,7 @@ SExpression >> isPrimitive: anObject [
 		or: [ anObject isKindOf: String ]]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accesing }
 SExpression >> mutantColor [
   ^ self mutated ifTrue: [ Color r: 0.9726295210166178 g: 0.0 b: 0.0
 	"Color r: 0.7038123167155426 g: 0.3841642228739003 b: 0.4310850439882698" "Color r: 0.40762463343108507 g: 0.0039100684261974585 b: 0.20234604105571846" ] ifFalse: [ Color gray ]
@@ -192,14 +196,14 @@ SExpression >> replaceArgBy: expression [
 	self error: 'cannot be inserted: ', expression printString, ' as parameter'
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SExpression >> replaceBy: otherExpression [
 	self subclassResponsibility 
 ]
 
 { #category : #actions }
 SExpression >> replaceExpression: expression by: newExpression [
-	
+	"It replace the references to this expresion to the newExpresion"
 ]
 
 { #category : #accessing }
