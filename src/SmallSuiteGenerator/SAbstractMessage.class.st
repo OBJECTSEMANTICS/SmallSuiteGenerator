@@ -25,7 +25,7 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	| dict randomGenerator |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
-	randomGenerator := SPlatform randomGenerator.
+	randomGenerator := SConfiguration randomGenerator.
 	dict := Dictionary new.
 	(randomGenerator collectAtRandom: statements)
 		do: [ :stm | dict at: stm returnType put: stm variable copy ].
@@ -175,29 +175,32 @@ SAbstractMessage >> repairOn: aTestCase changing: expression [
 
 { #category : #mutation }
 SAbstractMessage >> replaceArgBy: expression [
-  args ifEmpty: [ self error: self printString , ' does not have args to replace.' ].
-  args do: [:arg |  [ ^arg replaceArgBy: expression ] on: SError do: [  ] ].
-  self error: 'Cannot replace any argument by: ' , expression printString
+	args ifEmpty: [ self error: self printString, ' does not have args to replace.' ].
+	args
+		do: [ :arg | 
+			[ ^ arg replaceArgBy: expression ]
+				on: SError
+				do: [  ] ].
+	self error: 'Cannot replace any argument by: ', expression printString
 ]
 
-{ #category : #actions }
-SAbstractMessage >> replaceBy: anAbstractMessage [
-	" I replace my attributes values with the ones in the otherExpression."
-	mutated := (receiver ~= anAbstractMessage receiver) or: (( selector ~= anAbstractMessage selector) or: [ args ~= anAbstractMessage args ]).
-	receiver replaceBy: anAbstractMessage receiver.
-	self selector: anAbstractMessage selector.
-	self args size = anAbstractMessage args size
+{ #category : #accessing }
+SAbstractMessage >> replaceBy: otherExpression [
+	mutated := (receiver ~= otherExpression receiver) or: (( selector ~= otherExpression selector) or: [ args ~= otherExpression args ]).
+	receiver replaceBy: otherExpression receiver.
+	self selector: otherExpression selector.
+	self args size = otherExpression args size
 		ifTrue: [ self args
-				with: anAbstractMessage args
+				with: otherExpression args
 				do: [ :arg :newArg | arg replaceBy: newArg ] ]
-		ifFalse: [ self args: anAbstractMessage args deepCopy ].
+		ifFalse: [ self args: otherExpression args deepCopy ].
 ]
 
 { #category : #actions }
 SAbstractMessage >> replaceExpression: anExpression by: newExpression [
-	"It replace the references to this expresion to the newExpresion"
 	receiver replaceExpression: anExpression by: newExpression.
-	args do: [ :arg | arg replaceExpression: anExpression by: newExpression ]
+	args
+		do: [ :arg | arg replaceExpression: anExpression by: newExpression ]
 ]
 
 { #category : #accessing }

@@ -27,12 +27,12 @@ SMultiTypeInfo >> = other [
 SMultiTypeInfo >> commonSuperclass [
 	| commonSuperclass |
 	types ifEmpty: [ ^ '' ].
-	commonSuperclass := SPlatform lookUpClass: types anyOne.
+	commonSuperclass := SConfiguration lookUpClass: types anyOne.
 	commonSuperclass ifNil: [ ^ '' ].
 	types
 		do: [ :aType | 
 			| otherClass |
-			otherClass := SPlatform lookUpClass: aType.
+			otherClass := SConfiguration lookUpClass: aType.
 			otherClass ifNil: [ ^ '' ].
 			(commonSuperclass isClass and: [ commonSuperclass name = #Object ])
 				ifTrue: [ ^ #Object ].
@@ -108,7 +108,7 @@ SMultiTypeInfo >> stonOn: stonWriter [
 
 { #category : #accessing }
 SMultiTypeInfo >> type [
-	^ types ifEmpty: [ nil ] ifNotEmpty: [ SPlatform newRandomGenerator selectAtRandom: self types  ]
+	^ types ifEmpty: [ nil ] ifNotEmpty: [ SConfiguration newRandomGenerator selectAtRandom: self types  ]
 ]
 
 { #category : #'accessing structure variables' }

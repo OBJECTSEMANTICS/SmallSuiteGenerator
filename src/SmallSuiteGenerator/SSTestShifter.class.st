@@ -495,7 +495,7 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  randomGenerator := SPlatform newRandomGenerator.
+  randomGenerator := SConfiguration newRandomGenerator.
   parents := Set new.
   children := Set new.
   "childs := Set new"
@@ -537,7 +537,7 @@ SSTestShifter >> insertStatement [
 	count := 0.
 	stop := self length.
 	alpha := 0.5.
-	random := SPlatform randomGenerator.
+	random := SConfiguration randomGenerator.
 	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
 		whileTrue: [ self insertExpressionRandomly.
 			l := l + 1.
@@ -789,7 +789,7 @@ SSTestShifter >> parseTree [
 SSTestShifter >> parseTreeWith: statementCollection [
 	| node temporaries rbParserClass |
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
-	rbParserClass := SPlatform rbParserClass.
+	rbParserClass := SConfiguration rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
 	temporaries := (self allVarNames
 		collect: [ :varName | rbParserClass parseExpression: varName ]) select: [:e | e isKindOf: RBVariableNode ].

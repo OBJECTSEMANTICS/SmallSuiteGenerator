@@ -32,13 +32,13 @@ SGATournamentSelection >> createNewPopulation [
         P1copy addParent: P1.
         P2copy := P2 deepCopy.
         P2copy addParent: P2.
-        P1copy generationNumber: P1 generationNumber + 1.
-        P2copy generationNumber: P2 generationNumber + 1.
+        P1copy ni: P1 ni + 1.
+        P2copy ni: P2 ni + 1.
         self shouldCrossOver ifTrue: [ children := engine crossoverOperator crossover: P1 with: P2.
               O1 := children first.
               O2 := children second.
-              O1 generationNumber: P1 generationNumber + 1.
-              O2 generationNumber: P2 generationNumber + 1 ] ifFalse: [ O1 := P1copy deepCopy.
+              O1 ni: P1 ni + 1.
+              O2 ni: P2 ni + 1 ] ifFalse: [ O1 := P1copy deepCopy.
 				  O1 addParent: P1.
               O2 := P2copy deepCopy.
               O2 addParent: P2 ].
@@ -104,7 +104,7 @@ SGATournamentSelection >> initialPopulation: testCases [
 SGATournamentSelection >> initialize [
 	population := OrderedCollection new.
 	tournamentSize := 5.
-	randomGenerator := SPlatform newRandomGenerator.
+	randomGenerator := SConfiguration newRandomGenerator.
 	allPopulation := Set new
 ]
 
@@ -143,7 +143,7 @@ SGATournamentSelection >> population [
 
 { #category : #asserting }
 SGATournamentSelection >> shouldCrossOver [
-	^ SPlatform randomGenerator next < (3 / 4)
+	^ SConfiguration randomGenerator next < (3 / 4)
 ]
 
 { #category : #accessing }
@@ -153,6 +153,6 @@ SGATournamentSelection >> tournamentSize: anInteger [
 
 { #category : #updating }
 SGATournamentSelection >> update: aTestCase with: anotherTestCase [
-	aTestCase generationNumber: anotherTestCase generationNumber.
+	aTestCase ni: anotherTestCase ni.
 	anotherTestCase parents do: [ :parent | aTestCase addParent:  parent ]
 ]

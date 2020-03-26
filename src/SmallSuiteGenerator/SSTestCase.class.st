@@ -6,9 +6,9 @@ Class {
 	#superclass : #SSTestShifter,
 	#instVars : [
 		'idPopulation',
+		'ni',
 		'previousOpenWindows',
-		'summaryExecutedCode',
-		'generationNumber'
+		'summaryExecutedCode'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -27,7 +27,7 @@ SSTestCase >> = another [
 	and: [ statements = another statements 
 		and: [ fitness = another fitness 
 			and: [ parents = another parents 
-				and: [ generationNumber = another generationNumber and: [ idPopulation = another idPopulation  ] ] ] ] ]
+				and: [ ni = another ni and: [ idPopulation = another idPopulation  ] ] ] ] ]
 ]
 
 { #category : #actions }
@@ -66,19 +66,9 @@ SSTestCase >> deepCopy [
   copy := self copy.
   copy setFitness: self fitness.
   copy setFitnessByClass: self fitnessByClass.
-  copy generationNumber: self generationNumber.
+  copy ni: self ni.
   copy summaryExecutedCode: self summaryExecutedCode.
   ^ copy
-]
-
-{ #category : #accessing }
-SSTestCase >> generationNumber [
-	^ generationNumber
-]
-
-{ #category : #accessing }
-SSTestCase >> generationNumber: anObject [
-	generationNumber := anObject
 ]
 
 { #category : #comparing }
@@ -99,8 +89,18 @@ SSTestCase >> idPopulation: anObject [
 { #category : #initialization }
 SSTestCase >> initialize [
   super initialize.
-  generationNumber := 1.
+  ni := 1.
   idPopulation := 1.
+]
+
+{ #category : #accessing }
+SSTestCase >> ni [
+	^ ni
+]
+
+{ #category : #accessing }
+SSTestCase >> ni: anObject [
+	ni := anObject
 ]
 
 { #category : #actions }

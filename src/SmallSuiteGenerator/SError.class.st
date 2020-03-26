@@ -16,6 +16,6 @@ SError class >> signal: anObject [
 
 { #category : #signaling }
 SError >> signal: message [
-	SPlatform saveOnLog: message.
+	SConfiguration saveOnLog: message.
 	super signal: message
 ]

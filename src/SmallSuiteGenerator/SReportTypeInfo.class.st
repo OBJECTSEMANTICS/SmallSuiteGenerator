@@ -117,7 +117,7 @@ SReportTypeInfo class >> fileReference: aString [
 { #category : #export }
 SReportTypeInfo class >> profilerProject: projectName [
 	^ SSTypeCollector
-		profile: [ (SPlatform testCaseClass withAllSubclasses
+		profile: [ (SConfiguration testCaseClass withAllSubclasses
 				select: [ :t | t category beginsWith: projectName ])
 				do: [ :tc | 
 					[ tc buildSuite run ]

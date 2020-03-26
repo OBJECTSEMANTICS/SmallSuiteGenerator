@@ -81,7 +81,7 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 	[ aTestCase generateAssertions.
 	class
 		compile:
-			(SPlatform rbParserClass
+			(SConfiguration rbParserClass
 				parseMethod:
 					aSelector , aTestCase printDescriptiveComment
 						, aTestCase parseTreeWithAssertions body formattedCode)
@@ -143,9 +143,9 @@ STestCaseFactory >> fitnessValues [
 STestCaseFactory >> getClassOf: aString [
 	| aClassName class |
 	aClassName := aString asSymbol.
-	class := SPlatform lookUpClass: aClassName.
+	class := SConfiguration lookUpClass: aClassName.
 	class
-		ifNil: [ class := SPlatform
+		ifNil: [ class := SConfiguration
 				createTestCaseClass: aClassName
 				inPackage: self outputPackageName].
 	^ class
@@ -212,7 +212,7 @@ STestCaseFactory >> run [
 
 { #category : #'instance creation' }
 STestCaseFactory >> seed: aNumber [ 	
-	SPlatform seed: aNumber
+	SConfiguration seed: aNumber
 ]
 
 { #category : #actions }

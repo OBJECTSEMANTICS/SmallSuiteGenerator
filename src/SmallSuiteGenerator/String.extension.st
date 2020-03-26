@@ -4,7 +4,7 @@ Extension { #name : #String }
 String >> mutateToChange [
 	| interval stringCopy randomGenerator |
 	"correct bug to some characters form the string correctly, e.g: $-> problem in a string"
-	randomGenerator := SPlatform newRandomGenerator.
+	randomGenerator := SConfiguration newRandomGenerator.
 	interval := (41 to: 127) asArray.
 	stringCopy := self
 		ifEmpty: [ '' ]

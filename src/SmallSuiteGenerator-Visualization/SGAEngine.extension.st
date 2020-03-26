@@ -124,7 +124,7 @@ SGAEngine >> visualizeMatrixP [
   generations := numberOfGenerations + 1.
   b := RTMondrian new.
   b interaction highlight.
-  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])])
+  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC ni = generations or: [ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ]])])
 "((logs flatCollect: #population) select: [:tC |  tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ] ])" forEach: [:testCase |  | shape stmts |
         shape := RTCompositeShape new.
         b shape: shape.
@@ -269,7 +269,7 @@ SGAEngine >> visualizeRadial2 [
 		o collect: #idPopulation  ]."
 	(1 to: limit ) do: [:e| 
 		b addMetric: [:v | 
-			v  generationNumber ]].
+			v  ni ]].
 	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
 b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
 (1 to: 25) doWithIndex: [:ei :i |  b addMetric: [:e |  e idPopulation ] ]."
@@ -290,7 +290,7 @@ SGAEngine >> visualizeRadial3 [
 		colors: (numberOfGenerations + 1) scheme: 'Paired') do: [:c |  c alpha: 0.3 ]).
 	1 to: limit do: [:i | 
 		b addMetric: [ :o | 
-		(o at: i) generationNumber ] ].
+		(o at: i) ni ] ].
    "b desactivateHighlight."
 	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
 b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
@@ -306,12 +306,12 @@ SGAEngine >> visualizeRadial3P [
   | b objects limit generations |
   b := SKiviatBuilder new.
   generations := numberOfGenerations + 1.
-  objects := (logs flatCollect: #population) select: [:tC |  tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ] ] ].
+  objects := (logs flatCollect: #population) select: [:tC |  tC ni = generations or: [ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ] ] ].
   limit := populationSize + (populationSize \\ 2).
   b objects: objects.
   b shape size: [:e |  e model value fitness values first ].
   b shapes: ((RTColorPalette qualitative colors: numberOfGenerations + 1 scheme: 'Paired') do: [:c |  c alpha: 0.3 ]).
-  1 to: limit do: [:i |  b addMetric: [:o |  (o at: i) generationNumber ] ].
+  1 to: limit do: [:i |  b addMetric: [:o |  (o at: i) ni ] ].
   b build.
   b view elements select: [:el |  el shape isKindOf: RTLabel ] thenDo: #remove.
   ^b
@@ -326,7 +326,7 @@ SGAEngine >> visualizeRadial4 [
 	b objects: objects.
 	1 to: limit do: [:i | 
 		b addMetric: [ :o | 
-		"(o at: i)"o generationNumber ]].
+		"(o at: i)"o ni ]].
    "b desactivateHighlight."
 	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
 b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
@@ -398,7 +398,7 @@ SGAEngine >> visualizeWithSparkCircle [
 		metric = fitness functionName ifTrue: [ (((model fitnessByClass at: metric) at: targetClassName)/100) asFloat ] ifFalse: [ model fitness values first ] ].
 		shape colorBlock: [ :model :metric | metric = fitness functionName ifTrue: [ Color white ] ifFalse: [ Color blue ] ].
   b shape: shape.
-  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
+  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC ni = generations or: [ tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ]])]).
   es @ (RTHighlightable highlight: [:testCase |  testCase allParents ]).
   "es do: [:el |  el
            width: 10; 

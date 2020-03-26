@@ -95,7 +95,7 @@ SGAEngine >> computeFitness [
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |
-        value := SPlatform randomGenerator next * populationSize + 1.
+        value := SConfiguration randomGenerator next * populationSize + 1.
         test := SSTestCase with: typeInfo.
         test
            addTargetClassName: self targetClassName;
@@ -137,7 +137,7 @@ SGAEngine >> initialize [
   super initialize.
   
   logs := OrderedCollection new.
-  randomGenerator := SPlatform newRandomGenerator.
+  randomGenerator := SConfiguration newRandomGenerator.
   populationSize := 100.
   numberOfGenerations := 100.
   selectionStrategy := SGATournamentSelection new.
@@ -279,7 +279,7 @@ SGAEngine >> run [
 
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
-	^ SPlatform randomGenerator next < (3 / 4)
+	^ SConfiguration randomGenerator next < (3 / 4)
 ]
 
 { #category : #accessing }

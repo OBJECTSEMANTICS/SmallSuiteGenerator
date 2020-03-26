@@ -6,13 +6,13 @@ Class {
 
 { #category : #running }
 SConfigurationTest >> tearDown [
-	SPlatform clearLog.
-	SPlatform cleanAllLogs
+	SConfiguration clearLog.
+	SConfiguration cleanAllLogs
 ]
 
 { #category : #'as yet unclassified' }
 SConfigurationTest >> testFileLogger [
 	self
-		shouldnt: (SPlatform fileLogger: 'STestLog.log')
+		shouldnt: (SConfiguration fileLogger: 'STestLog.log')
 		raise: Error
 ]
