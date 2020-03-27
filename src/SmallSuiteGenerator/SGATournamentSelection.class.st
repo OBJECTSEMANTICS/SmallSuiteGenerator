@@ -27,11 +27,6 @@ SGATournamentSelection >> initialize [
 	tournamentSize := 5.
 ]
 
-{ #category : #accessing }
-SGATournamentSelection >> parentReplacementCheck: anObject [
-	parentReplacementCheck := anObject
-]
-
 { #category : #actions }
 SGATournamentSelection >> selectOf: aCollection [
 	"Return the best testCases from tournamentSize testCase randomly chosen from the population"
@@ -40,7 +35,13 @@ SGATournamentSelection >> selectOf: aCollection [
 	sample := (randomGenerator collectAtRandom: aCollection )
 		first: (tournamentSize min: aCollection size).
 	sample := sample
-		asSortedCollection: [ :a :b | (self fitnessFor: a) > (self fitnessFor: b) ].
+		asSortedCollection: [ :a :b | 
+			|fitness1 fitness2|
+	fitness1 := self fitnessFor: a.
+	fitness2 := self fitnessFor: b.
+		^ 			fitness1 = fitness2
+						ifTrue: [ a length <= b length ]
+						ifFalse: [ fitness1 > fitness2 ]. ].
 	^ sample
 ]
 

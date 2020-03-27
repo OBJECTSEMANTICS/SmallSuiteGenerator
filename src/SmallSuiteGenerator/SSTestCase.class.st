@@ -67,7 +67,7 @@ SSTestCase >> deepCopy [
   copy setFitness: self fitness.
   copy setFitnessByClass: self fitnessByClass.
   copy generationNumber: self generationNumber.
-  copy summaryExecutedCode: self summaryExecutionMethods.
+  copy summaryExecutionMethods: self summaryExecutionMethods.
   ^ copy
 ]
 

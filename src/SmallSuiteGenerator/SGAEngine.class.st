@@ -44,7 +44,9 @@ Class {
 		'packageRegex',
 		'initialPopulation',
 		'typeInfoProfiler',
-		'targetPackageRegex'
+		'targetPackageRegex',
+		'elitismRate',
+		'crossoverRate'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -99,9 +101,10 @@ SGAEngine >> computeFitness [
 
 { #category : #actions }
 SGAEngine >> createNewPopulation [
-  | newPopulation |
-  newPopulation := OrderedCollection new.
-  [ newPopulation size < initialPopulation size ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
+  | newPopulation currentPopulationSize |
+	currentPopulationSize := initialPopulation size.
+  newPopulation := self eliteOfCurrentPopulation.
+  [ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
         P1 := selectedList first .
         P2 := selectedList second.
@@ -162,20 +165,38 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator randomGenerator: randomGenerator 
 ]
 
-{ #category : #'as yet unclassified' }
-SGAEngine >> crossoverRate: aNumber [
-	selectionStrategy crossoverRate: aNumber
+{ #category : #accessing }
+SGAEngine >> crossoverRate [
+	^ crossoverRate
 ]
 
 { #category : #'as yet unclassified' }
-SGAEngine >> elitismRate: aNumber [
-	selectionStrategy elitismRate: aNumber.
+SGAEngine >> crossoverRate: aNumber [
+	selectionStrategy crossoverRate: aNumber
 ]
 
 { #category : #actions }
 SGAEngine >> doSelection [
 	self createNewPopulation.
 	initialPopulation := population.
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> eliteOfCurrentPopulation [
+	| endIndex |
+	endIndex := (population size * elitismRate * 0.01) asInteger.
+	endIndex >= 1 ifTrue: [ ^ (population copyFrom: 1 to: endIndex) asOrderedCollection ].
+	^ OrderedCollection new
+]
+
+{ #category : #accessing }
+SGAEngine >> elitismRate [
+	^ elitismRate
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> elitismRate: aNumber [
+	selectionStrategy elitismRate: aNumber.
 ]
 
 { #category : #accessing }
@@ -202,6 +223,8 @@ SGAEngine >> initialize [
   populationSize := 100.
   numberOfGenerations := 100.
   selectionStrategy := SGARankSelection new.
+	crossoverRate := 0.8.
+	elitismRate := 10.
   
   self initializeMutationOperator.
   self initializeCrossoverOperator
@@ -239,7 +262,6 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 						ifTrue: [ (testCase1 idPopulation > testCase2 idPopulation) or: [ testCase1 length <= testCase2 length] ]
 						ifFalse: [ fitness1 > fitness2 ]
 ]
-
 
 { #category : #actions }
 SGAEngine >> lastMessage: anObject [
@@ -369,9 +391,14 @@ SGAEngine >> selectionStrategy [
 	^ selectionStrategy
 ]
 
+{ #category : #accessing }
+SGAEngine >> selectionStrategy: selectStrategy [
+	selectionStrategy := selectStrategy 
+]
+
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
-	^ SPlatform randomGenerator next < (3 / 4)
+	^ SPlatform randomGenerator next < self crossoverRate
 ]
 
 { #category : #accessing }
@@ -384,11 +411,6 @@ SGAEngine >> targetClassName: anObject [
 	targetClassName := anObject
 ]
 
-{ #category : #'as yet unclassified' }
-SGAEngine >> tournamentSize: aNumber [
-	selectionStrategy tournamentSize: aNumber
-]
-
 { #category : #accessing }
 SGAEngine >> targetPackageRegex [
 	^ targetPackageRegex 
@@ -397,6 +419,11 @@ SGAEngine >> targetPackageRegex [
 { #category : #accessing }
 SGAEngine >> targetPackageRegex: aString [
 	targetPackageRegex := aString
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> tournamentSize: aNumber [
+	selectionStrategy tournamentSize: aNumber
 ]
 
 { #category : #accessing }

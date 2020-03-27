@@ -1067,6 +1067,11 @@ SSTestShifter >> selectMethod: aCollection [
 ]
 
 { #category : #accessing }
+SSTestShifter >> selectionStrategy: selectStrategy [
+	selectionStrategy := selectStrategy 
+]
+
+{ #category : #accessing }
 SSTestShifter >> statementAt: statement [
 	statements
 		detect: [ :stm | stm = statement ]
