@@ -65,8 +65,14 @@ SVariable >> pickUpReferences: anExpression [
 
 { #category : #printing }
 SVariable >> printOn: aStream [
-	aStream nextPutAll: varName.
-	id ifNotNil: [ aStream nextPutAll: id printString ]
+	SPlatform asDict 
+		ifFalse: [
+			aStream nextPutAll: varName.
+			id ifNotNil: [ aStream nextPutAll: id printString ]]
+		ifTrue: [
+			aStream nextPutAll: '( var at: '.
+			aStream nextPutAll: id printString .
+			aStream nextPutAll: ' )']
 ]
 
 { #category : #accessing }

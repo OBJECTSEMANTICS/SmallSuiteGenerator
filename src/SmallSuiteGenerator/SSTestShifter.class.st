@@ -798,6 +798,25 @@ SSTestShifter >> parseTree [
 ]
 
 { #category : #parsing }
+SSTestShifter >> parseTreeAsDictWith: statementCollection [
+	| node temporaries rbParserClass |
+	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
+	rbParserClass := SPlatform rbParserClass.
+	node := rbParserClass parseExpression: '[]'.
+	temporaries := Array with: (RBVariableNode named: 'var').
+	node body temporaries: temporaries.
+	node body addNode: (rbParserClass parseExpression: 'var := Dictionary new.').
+	statementCollection
+		do: [ :stm | 
+			| aNode |
+			[ aNode := rbParserClass parseExpression: (self getStringOf: stm).
+			node body addNode: aNode ]
+				on: Error
+				do: [  ] ].
+	^ node
+]
+
+{ #category : #parsing }
 SSTestShifter >> parseTreeWith: statementCollection [
 	| node temporaries rbParserClass |
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
