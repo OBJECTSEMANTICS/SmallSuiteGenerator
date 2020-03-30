@@ -9,7 +9,8 @@ Class {
 	#name : #SFitnessFunction,
 	#superclass : #SObject,
 	#instVars : [
-		'tagetPackagesRegex'
+		'tagetPackagesRegex',
+		'targetClass'
 	],
 	#classInstVars : [
 		'operator'
@@ -30,4 +31,9 @@ SFitnessFunction >> tagetPackagesRegex [
 { #category : #accessing }
 SFitnessFunction >> tagetPackagesRegex: anObject [
 	tagetPackagesRegex := anObject
+]
+
+{ #category : #accessing }
+SFitnessFunction >> targetClass: anObject [
+	targetClass := anObject
 ]
