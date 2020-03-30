@@ -793,8 +793,11 @@ SSTestShifter >> parents [
 
 { #category : #parsing }
 SSTestShifter >> parseTree [
-	
-	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
+	| stmList |
+	stmList := self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
+	SPlatform asDict 
+		ifTrue: [ ^ self parseTreeAsDictWith: stmList ]
+		ifFalse: [ ^ self parseTreeWith: stmList]
 ]
 
 { #category : #parsing }
@@ -837,8 +840,11 @@ SSTestShifter >> parseTreeWith: statementCollection [
 
 { #category : #parsing }
 SSTestShifter >> parseTreeWithAssertions [
-	
-	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
+	| stmList |
+	stmList := self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
+	SPlatform asDict 
+		ifTrue: [ ^ self parseTreeAsDictWith: stmList ]
+		ifFalse: [ ^ self parseTreeWith: stmList]
 ]
 
 { #category : #repairing }

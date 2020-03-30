@@ -264,7 +264,8 @@ STestCaseFactory >> targetPackageRegex: anObject [
 { #category : #actions }
 STestCaseFactory >> tearDown [
 	self uninstall.
-	self exportTests
+	self exportTests.
+	SPlatform asDict: false.
 ]
 
 { #category : #actions }

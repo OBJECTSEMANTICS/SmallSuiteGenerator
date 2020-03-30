@@ -71,7 +71,8 @@ SVariable >> printOn: aStream [
 			id ifNotNil: [ aStream nextPutAll: id printString ]]
 		ifTrue: [
 			aStream nextPutAll: '( var at: '.
-			aStream nextPutAll: id printString .
+			id ifNil: [ aStream nextPutAll: varName. ]
+			ifNotNil: [ aStream nextPutAll: (id+1) printString . ].
 			aStream nextPutAll: ' )']
 ]
 

@@ -109,7 +109,7 @@ SAssignment >> printOn: aStream [
 			aStream nextPut:$.]
 		ifTrue: [
 			aStream nextPutAll: 'var at: '.
-			aStream nextPutAll: variable id printString.
+			aStream nextPutAll: (variable id + 1) printString.
 			aStream nextPutAll: ' put: ('.
 			value printOn: aStream.
 			aStream nextPutAll:' ).']
