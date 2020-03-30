@@ -18,6 +18,7 @@ SStatementCoverageTest >> testCoverageClassSEvent [
 		addFactoryMessage: #SEvent;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SEvent.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -33,6 +34,7 @@ SStatementCoverageTest >> testCoverageClassSFoo [
 		addFactoryMessage: #SFoo;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SFoo.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -47,6 +49,7 @@ SStatementCoverageTest >> testCoverageOnClassSSTeacher [
 		withNumStatements: 20
 		andTargetClassName: #SFoo.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SFoo.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -61,6 +64,7 @@ SStatementCoverageTest >> testCoverageOnClassSStack [
 		withNumStatements: 20
 		andTargetClassName: #SStack.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SStack.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -75,6 +79,7 @@ SStatementCoverageTest >> testCoverageOnClassSStudent [
 		withNumStatements: 20
 		andTargetClassName: #SStudent.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
+	fitness targetClass: #SStudent.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -91,6 +96,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSEvent [
 		addFactoryMessage: #SEvent;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SEvent.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -107,6 +113,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSFoo [
 		addFactoryMessage: #SFoo;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SFoo.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -123,6 +130,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSSTeacher [
 		addFactoryMessage: #SSTeacher;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SSTeacher.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	self assert: (self fitnessOf: testCase) <= 75.0
@@ -139,6 +147,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSStack [
 		generateStatements: 19.
 	testCase inspect.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
+	fitness targetClass: #SStack.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
@@ -155,6 +164,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSStudent [
 		addFactoryMessage: #SStudent;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
+	fitness targetClass: #SStudent.
 	fitness compute: (Array with: testCase).
 	self uninstall.
 	valueFitness := self fitnessOf: testCase.
