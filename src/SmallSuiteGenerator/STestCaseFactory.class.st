@@ -219,6 +219,7 @@ STestCaseFactory >> seed: aNumber [
 STestCaseFactory >> setUp [
 	self initializeProfiler.
 	fitness profiler: profiler.
+	fitness targetClass: self targetClassName.
 	engine fitness: fitness.
 	engine numberOfGenerations: numberOfIterations.
 	engine typeInfo: self typeInfo.
