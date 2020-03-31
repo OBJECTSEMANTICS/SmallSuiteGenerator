@@ -41,8 +41,8 @@ SComparisonAssertion class >> comparisonAssertion: anExecutionContext with: arra
 										selector: selector;
 										args:
 											(Array
-												with: (SVariable name: varName1)
-												with: (SVariable name: varName2));
+												with: (SVariable nameOrId: varName1)
+												with: (SVariable nameOrId: varName2));
 										yourself ]
 							 ].
 						^ nil

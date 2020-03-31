@@ -461,6 +461,7 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 	| executionContext |
 	executionContext := self analyze.
+	SPlatform asDict ifTrue: [ executionContext := executionContext at: #var ].
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ]
 ]

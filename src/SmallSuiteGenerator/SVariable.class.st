@@ -31,6 +31,16 @@ SVariable class >> name: aString [
 	^ variable
 ]
 
+{ #category : #accessing }
+SVariable class >> nameOrId: anObject [
+	| variable |
+	variable := self new.
+	anObject isString 
+		ifTrue: [ variable varName: anObject ]
+		ifFalse: [ variable id: (anObject - 1) ].
+	^ variable
+]
+
 { #category : #comparing }
 SVariable >> = other [
 	^ super = other and: [ varName = other varName ]
@@ -70,10 +80,12 @@ SVariable >> printOn: aStream [
 			aStream nextPutAll: varName.
 			id ifNotNil: [ aStream nextPutAll: id printString ]]
 		ifTrue: [
-			aStream nextPutAll: '( var at: '.
 			id ifNil: [ aStream nextPutAll: varName. ]
-			ifNotNil: [ aStream nextPutAll: (id+1) printString . ].
-			aStream nextPutAll: ' )']
+			ifNotNil: [ 
+				aStream nextPutAll: '( var at: '.
+				aStream nextPutAll: (id+1) printString.
+				aStream nextPutAll: ' )' ].
+			]
 ]
 
 { #category : #accessing }

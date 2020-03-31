@@ -42,7 +42,7 @@ SStringAssertion class >> stringAssertionsOf: assoc [
 					(Array
 						with:
 							(SMessage new
-								receiver: (SVariable name: assoc key);
+								receiver: (SVariable nameOrId: assoc key);
 								selector: #printString;
 								yourself)
 						with: (SLiteral new value: fieldValue));

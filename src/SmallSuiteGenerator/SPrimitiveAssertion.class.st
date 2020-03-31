@@ -26,7 +26,7 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 				selector: #assert:equals:;
 				args:
 					(Array
-						with: (SVariable name: assoc key)
+						with: (SVariable nameOrId: assoc key)
 						with: (SLiteral new value: assoc value));
 				yourself ]
 ]
