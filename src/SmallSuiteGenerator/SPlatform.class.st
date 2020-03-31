@@ -11,10 +11,22 @@ Class {
 		'randomGenerator',
 		'seed',
 		'configurationClass',
-		'logName'
+		'logName',
+		'asDict'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #accessing }
+SPlatform class >> asDict [
+	asDict ifNil: [ asDict := false ].
+	^ asDict 
+]
+
+{ #category : #accessing }
+SPlatform class >> asDict: aBoolean [
+	asDict := aBoolean
+]
 
 { #category : #accessing }
 SPlatform class >> classConfigurationName [

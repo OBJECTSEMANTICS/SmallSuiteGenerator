@@ -15,13 +15,19 @@ Class {
 		'profiler',
 		'setUpMethod',
 		'tearDownMethod',
-		'lastMessage'
+		'lastMessage',
+		'asDict'
 	],
 	#classInstVars : [
 		'instance'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #actions }
+STestCaseFactory >> asDict: aBoolean [
+	SPlatform asDict: aBoolean
+]
 
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
@@ -258,7 +264,8 @@ STestCaseFactory >> targetPackageRegex: anObject [
 { #category : #actions }
 STestCaseFactory >> tearDown [
 	self uninstall.
-	self exportTests
+	self exportTests.
+	SPlatform asDict: false.
 ]
 
 { #category : #actions }
