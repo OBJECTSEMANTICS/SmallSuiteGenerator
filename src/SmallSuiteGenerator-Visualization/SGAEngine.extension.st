@@ -63,6 +63,320 @@ SGAEngine >> contentVisualization: container [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> evolutionContainer [
+	| composite startPoint endPoint scale extent points values axis polyLine stepY nice niceY generations numbers |
+	composite := RSComposite new 
+		color: Color black;
+		"height: 1000;
+		width: 700;"
+		draggable.
+	stepY := 30.
+	generations := numberOfGenerations + 1.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ stepY.
+	points := OrderedCollection new.
+	values := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		values add: valueFitness.
+		x := (valueFitness - startPoint x) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		points add: startPoint;
+		add: endPoint.
+		startPoint := endPoint.
+		endPoint := (endPoint x) @ (endPoint y + stepY).
+	].
+	extent := 700@1000.
+	scale := TSScale linear 
+		domain: {(values min)@0. (values max)@(generations * stepY)};
+		range: {0@0. extent x@ extent y negated}.
+	axis := RSPolyline new 
+		color: Color white;
+		controlPoints: ({(values min - (values min * 0.01))@((generations *stepY) + 5). (values min - (values min * 0.01))@0. (values max+ (values max * 0.01))@0} collect: [:p | scale scale: p]);
+		markerEnd: (RSShapeFactory arrow
+			extent: 5@7;
+			color: Color white);
+		yourself.
+	polyLine := RSPolyline new 
+		controlPoints: (points collect: [:p | scale scale: p]); 
+		color: Color red;
+		yourself.
+	composite addShape: axis; addShape: polyLine.
+	nice := RSLabelGenerator new searchMin: values min max: values max desired: 5. 
+	(nice min to: nice max by: nice step) do: [ :i |
+		| aTick lbl |
+		aTick := RSLine new startPoint: (scale scale: (i@0));
+			color: Color white;
+			endPoint: (scale scale: (i@(-2)));
+			yourself.
+		composite addShape: aTick.
+		lbl := RSLabel new 
+		fontSize: 20;
+		color: Color white;
+		text: (i asFloat).
+		RSLocation new below move: lbl on: aTick.
+		composite addShape: lbl.
+		].
+	numbers := 1 to: generations.
+	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
+	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
+		| tick lbl |
+		tick := RSLine new startPoint: (scale scale: (values min - (values min * 0.01)@i));
+			color: Color white;
+			endPoint: (scale scale: ((values min - (values min * 0.015))@i));
+			yourself.
+		composite addShape: tick.
+		lbl := RSLabel new 	
+			fontSize: 20;
+			color: Color white;
+			text: (numbers at: index).
+		RSLocation new outer left move: lbl on: tick.
+		composite addShape: lbl.
+	].
+	composite adjustToChildren"; 
+	padding: 2".
+	^ composite
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> evolutionContainer: height [
+	| composite startPoint endPoint scale extent points values axis polyLine stepY nice niceY generations numbers |
+	composite := RSComposite new 
+		color: Color black;
+		draggable.
+	stepY := 30.
+	generations := numberOfGenerations + 1.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ stepY.
+	points := OrderedCollection new.
+	values := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		values add: valueFitness.
+		x := (valueFitness - startPoint x) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		points add: startPoint;
+		add: endPoint.
+		startPoint := endPoint.
+		endPoint := (endPoint x) @ (endPoint y + stepY).
+	].
+	extent := (height * 0.6)@height.
+	scale := TSScale linear 
+		domain: {(values min)@0. (values max)@(generations * stepY)};
+		range: {0@0. extent x@ extent y negated}.
+	axis := RSPolyline new 
+		color: Color white;
+		width: 10;
+		controlPoints: ({(values min - (values min * 0.01))@(generations *stepY). (values min - (values min * 0.01))@0. (values max+ (values max * 0.01))@0} collect: [:p | scale scale: p]);
+		markerEnd: (RSShapeFactory arrow
+			extent: 10@10;
+			color: Color white);
+		yourself.
+	polyLine := RSPolyline new 
+		controlPoints: (points collect: [:p | scale scale: p]); 
+		color: Color red;
+		width: 10;
+		yourself.
+	composite addShape: axis; addShape: polyLine.
+	nice := RSLabelGenerator new searchMin: values min max: values max desired: 5. 
+	(nice min to: nice max by: nice step) do: [ :i |
+		| aTick lbl |
+		aTick := RSLine new startPoint: (scale scale: (i@0));
+			color: Color white;
+			width: 10;
+			endPoint: (scale scale: (i@(-3)));
+			yourself.
+		composite addShape: aTick.
+		lbl := RSLabel new 
+		fontSize: (height*0.02);
+		color: Color white;
+		text: (i asFloat).
+		RSLocation new below move: lbl on: aTick.
+		composite addShape: lbl.
+		].
+	"numbers := 1 to: generations.
+	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
+	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
+		| tick lbl |
+		tick := RSLine new startPoint: (scale scale: (values min - (values min * 0.01)@i));
+			color: Color white;
+			width: 10;
+			endPoint: (scale scale: ((values min - (values min * 0.02))@i));
+			yourself.
+		composite addShape: tick.
+		lbl := RSLabel new 	
+			fontSize: (height*0.02);
+			color: Color white;
+			text: (numbers at: index).
+		RSLocation new outer left move: lbl on: tick.
+		composite addShape: lbl.
+	]."
+	composite adjustToChildren.
+	^ composite
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> evolutionContainerOfHeight: height andStartX: aNumber [
+	| composite startPoint endPoint scale extent points values axis polyLine stepY nice niceY generations numbers |
+	composite := RSComposite new 
+		color: Color black;
+		draggable.
+	stepY := 30.
+	generations := numberOfGenerations + 1.
+	startPoint := aNumber @ 0.
+	endPoint := aNumber @ stepY.
+	points := OrderedCollection new.
+	values := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		values add: valueFitness.
+		x := (valueFitness + aNumber - startPoint x) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		points add: startPoint;
+		add: endPoint.
+		startPoint := endPoint.
+		endPoint := (endPoint x) @ (endPoint y + stepY).
+	].
+	extent := (height * 0.6)@height.
+	scale := TSScale linear 
+		domain: {(values min )@0. (values max )@(generations * stepY)};
+		range: {0@0. (extent x + aNumber)@ extent y negated}.
+	axis := RSPolyline new 
+		color: Color white;
+		width: 10;
+		controlPoints: ({(aNumber)@(generations *stepY). (aNumber)@0. (values max+ (values max * 0.01) + aNumber)@0} collect: [:p | scale scale: p]);
+		markerEnd: (RSShapeFactory arrow
+			extent: 5@7;
+			color: Color white);
+		yourself.
+	polyLine := RSPolyline new 
+		controlPoints: (points collect: [:p | scale scale: p]); 
+		color: Color red;
+		width: 10;
+		yourself.
+	composite addShape: axis; addShape: polyLine.
+	nice := RSLabelGenerator new searchMin: values min max: values max desired: 5. 
+	(nice min to: nice max by: nice step) do: [ :i |
+		| aTick lbl |
+		aTick := RSLine new startPoint: (scale scale: (i@0));
+			color: Color white;
+			width: 10;
+			endPoint: (scale scale: (i@(-3)));
+			yourself.
+		composite addShape: aTick.
+		lbl := RSLabel new 
+		fontSize: (height*0.03);
+		color: Color white;
+		text: (i asFloat).
+		RSLocation new below move: lbl on: aTick.
+		composite addShape: lbl.
+		].
+	"numbers := 1 to: generations.
+	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
+	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
+		| tick lbl |
+		tick := RSLine new startPoint: (scale scale: (values min - (values min * 0.01)@i));
+			color: Color white;
+			width: 10;
+			endPoint: (scale scale: ((values min - (values min * 0.02))@i));
+			yourself.
+		composite addShape: tick.
+		lbl := RSLabel new 	
+			fontSize: (height*0.03);
+			color: Color white;
+			text: (numbers at: index).
+		RSLocation new outer left move: lbl on: tick.
+		composite addShape: lbl.
+	]."
+	composite adjustToChildren.
+	^ composite
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> infoCoverageContainer [
+	| testCaseGroup list generations |
+	testCaseGroup := RSGroup new.
+	generations := numberOfGenerations + 1.
+	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]) asSet.
+	(list groupedBy: [:tC | tC generationNumber]) do: [ :testCases | 
+		| group |
+		group := RSGroup new.
+		group addAll: (testCases collect: [ :testCase | 
+			self visualizationCoverageMethods: testCase	
+		]).
+		RSHorizontalLineLayout new gapSize: 20; on: group.
+		testCaseGroup add: group.
+	].
+	RSVerticalLineLayout new on: testCaseGroup; gapSize: 30.
+	testCaseGroup edges connectFromAll: [ :testCase | testCase parents ].
+	^ RSComposite new shapes: (testCaseGroup flatCollect: #yourself)
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> infoCoverageContainer: canvas [
+	| generationGroup list generations |
+	generationGroup := RSGroup new.
+	generations := numberOfGenerations + 1.
+	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]) asSet asSortedCollection: [:t :tC | (t generationNumber < tC generationNumber) or: [t generationNumber = tC generationNumber and: [t idPopulation < tC idPopulation]]].
+	(list groupedBy: [:tC | tC generationNumber]) do: [ :testCases | 
+		| group |
+		group := RSGroup new.
+		group addAll: (testCases collect: [ :testCase | 
+			self visualizationCoverageMethods: testCase	
+		]).
+		RSHorizontalLineLayout new gapSize: 20; on: group.
+		generationGroup add: group.
+	].
+	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
+	"testCaseGroup edges connectFromAll: [ :testCase | testCase parents ]."
+	RSEdgeBuilder line 
+		shapes: (generationGroup flatCollect: #yourself);
+		canvas: canvas;
+		width: 5;
+		color: Color white;
+		connectFromAll: [ :testCase | testCase parents ].
+		"connectFrom: [ :value | value //2 ] to: #yourself."
+	^ generationGroup flatCollect: #yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> summaryContainer [
+  	| es shape block blockMetric dict |
+	dict := Dictionary new.
+	block := [ :log | (log population flatCollect: [ :t | 
+			(t summaryExecutionMethods collect: [:summary | 
+				(summary executorClass -> summary selector)]) asSet ]) asSet ].
+	dict at: #nClasses put: (
+		Array with: 
+			[:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
+		with: Color blue);
+	at: #nMethods put: (
+		Array with: 
+			[:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ] with: Color white);
+	at: #fitnessByClass put: (
+		Array with: 
+			[:model | (model fittestTestCase fitness values first "fitnessByClass values first at: targetClassName") /100  ]
+		with: Color yellow).
+	blockMetric := [ :model :metric | 
+		(dict at: metric) first value: model].
+  shape := RTSparkCircle new.
+		shape size: 20;
+		names: [ :model | #(#nClasses #nMethods #fitnessByClass) ];
+		percent: blockMetric; 
+		oldMetric: blockMetric;
+		colorBlock: [ :model :metric | (dict at: metric) second].
+  es := shape elementsOn: logs.
+	RTVerticalLineLayout new gapSize: 5; on: es.
+  ^ es
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizateMethods: aView [
 	|  populationGroup el |
 	populationGroup := RTGroup new.
@@ -95,7 +409,7 @@ SGAEngine >> visualizationCoverageMethods: testCase [
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
-		paint: Color gray;
+		paint: (Color r: 0.5 g: 0.57 b: 0.6);
 		model: testCase;
 		padding: 10;
 		draggable 
@@ -214,6 +528,26 @@ SGAEngine >> visualizationMethodsOf: testCase [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationPaper [
+	| canvas coverageContainer |
+	canvas := RSCanvas new 
+		color: Color black;
+		addInteraction: RSCanvasController.
+	coverageContainer := self infoCoverageContainer: canvas.
+	canvas 
+		addAll: coverageContainer;
+		add: (self evolutionContainer: coverageContainer height).
+	"RSHorizontalLineLayout new gapSize: 10; on: group."
+	"containers := RSComposite new 
+		shapes: containers;
+		paint: Color black;
+		padding: 10;
+		draggable."
+	^ canvas
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationSummary: summaryExecMethod [
 	| percent |
 	percent := (summaryExecMethod summaryStatements ifEmpty: [ 100 ] ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ]) + 20.
@@ -246,11 +580,182 @@ SGAEngine >> visualize [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeChartEvolution [
+	| canvas startPoint endPoint xs ys |
+	canvas := RSChart new.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ 100.
+	xs := OrderedCollection new.
+	ys := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		x := (valueFitness - startPoint x) @ 0.
+		"x := valueFitness @ 0."
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		xs add: startPoint x;
+		add: endPoint x.
+		ys add: startPoint y;
+		add: endPoint y.
+		"xs add: valueFitness.
+		ys add: endPoint y."
+		"canvas addShape: (RSLine new 
+			startPoint: startPoint;
+			endPoint: endPoint;
+			width: 1;
+			capButt;
+			color: Color random;
+			yourself)."
+		startPoint := endPoint "+ ((gap * index) @ 0)".
+		endPoint := (endPoint x) @ ("(gap * index)" endPoint y + 100).
+	].
+	canvas addPlot: (RSLinePlot new x: xs y: ys).
+	canvas addDecoration: RSHorizontalTick new integer;
+	addDecoration: RSVerticalTick new;
+	show
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeChartEvolutionR3 [
+	| startPoint endPoint xs ys chart |
+	chart := RSChart new.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ 1.
+	xs := OrderedCollection new.
+	ys := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first asFloat round: 1.
+		x := (valueFitness - startPoint x) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		xs add: (startPoint x asFloat round: 1);
+		add: (endPoint x asFloat round: 1).
+		ys add: startPoint y;
+		add: endPoint y.
+		startPoint := endPoint .
+		endPoint := (endPoint x) @ (endPoint y + 1).
+	].
+	chart addPlot: (RSLinePlot new x: xs y: ys).
+	chart addDecoration: (RSHorizontalTick new numberOfTicks: 10 );
+	addDecoration: RSVerticalTick new.
+	chart build.
+	^ chart canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeCoverageEvolution [
+	| canvas startPoint endPoint scale extent points axis polyLine values |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ 10.
+	points := OrderedCollection new.
+	values := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		values add: valueFitness.
+		x := (valueFitness - startPoint x) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		points add: startPoint;
+		add: endPoint.
+		startPoint := endPoint.
+		endPoint := (endPoint x) @ (endPoint y + 10).
+	].
+	"extent := maxValue@(self logs size * 10)."
+	extent := 1000@500.
+	scale := TSScale linear 
+		domain: {0@0. 100@100};
+		range: {0@extent y. extent x@ 0}.
+	axis := RSPolyline new 
+		controlPoints: ({(values min - 1)@ ((self logs size * 10) + 5). (values min - 1)@0. (values max+ (values max * 0.2))@0} collect: [:p | scale scale: p]);
+		markerStartEnd: (RSShapeFactory arrow
+			extent: 5@7;
+			color: Color black);
+		yourself.
+	polyLine := RSPolyline new 
+		controlPoints: (points collect: [:p | scale scale: p]); 
+		color: Color red;
+		yourself.
+	canvas add: axis; add: polyLine.
+	^ canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeCoverageEvolutionM [
+	| canvas startPoint endPoint scale extent points values axis polyLine nice niceY |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ 10.
+	points := OrderedCollection new.
+	values := OrderedCollection new.
+	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
+		| valueFitness x |
+		valueFitness := dict values first.
+		values add: valueFitness.
+		x := (valueFitness - startPoint x) @ 0.
+		startPoint := startPoint + x.
+		endPoint := endPoint + x.
+		points add: startPoint;
+		add: endPoint.
+		startPoint := endPoint.
+		endPoint := (endPoint x) @ (endPoint y + 10).
+	].
+	extent := 200@200.
+	scale := TSScale linear 
+		domain: {(values min)@0. (values max)@(self logs size * 10)};
+		range: {0@0. extent x@ extent y negated}.
+	axis := RSPolyline new 
+		controlPoints: ({(values min - (values min * 0.01))@((self logs size * 10) + 5). (values min - (values min * 0.01))@0. (values max+ (values max * 0.01))@0} collect: [:p | scale scale: p]);
+		markerEnd: (RSShapeFactory arrow
+			extent: 5@7;
+			color: Color black);
+		yourself.
+	polyLine := RSPolyline new 
+		controlPoints: (points collect: [:p | scale scale: p]); 
+		color: Color red;
+		yourself.
+	canvas add: axis; add: polyLine.
+	nice := RSLabelGenerator new searchMin: values min max: values max desired: 5. 
+	(nice min to: nice max by: nice step) do: [ :i |
+		| aTick lbl |
+		aTick := RSLine new startPoint: (scale scale: (i@0));
+			endPoint: (scale scale: (i@(-2)));
+			yourself.
+		canvas addShape: aTick.
+		lbl := RSLabel new 
+		fontSize: 8;
+		text: (i asFloat).
+		RSLocation new below move: lbl on: aTick.
+			canvas addShape: lbl.
+		].
+	niceY := RSLabelGenerator new searchMin: 10 max: (self logs size * 10) desired: self logs size.
+	(niceY max to: nice min by: (niceY step) * -1) do: [ :i | 
+		| tick lbl |
+		tick := RSLine new startPoint: (scale scale: (values min - (values min * 0.01)@i));
+			endPoint: (scale scale: ((values min - (values min * 0.015))@i));
+			yourself.
+		canvas addShape: tick.
+		lbl := RSLabel new 	
+			fontSize: 8;
+			text: (niceY max/i) asInteger + ((niceY max \\ i)/10) asInteger.
+		RSLocation new outer left move: lbl on: tick.
+		canvas addShape: lbl.
+	].
+	^ canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizeCoverageR3 [
-	| canvas testCaseGroup |
+	| canvas testCaseGroup list generations |
 	canvas := RSCanvas new addInteraction: RSCanvasController.
 	testCaseGroup := RSGroup new.
-	self logs collect: #population thenDo: [ :testCases | 
+	generations := numberOfGenerations + 1.
+	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]) asSet.
+	"self logs collect: #population thenDo: [ :testCases | "
+	(list groupedBy: [:tC | tC generationNumber]) do: [ :testCases | 
 		| group |
 		group := RSGroup new.
 		group addAll: (testCases collect: [ :testCase | 
@@ -259,9 +764,50 @@ SGAEngine >> visualizeCoverageR3 [
 		RSHorizontalLineLayout new gapSize: 20; on: group.
 		testCaseGroup add: group.
 	].
-	RSVerticalLineLayout new on: testCaseGroup; gapSize: 30.
+	RSVerticalLineLayout new on: testCaseGroup; gapSize: 50.
 	canvas add: (RSComposite new shapes: (testCaseGroup flatCollect: #yourself)).
+	RSEdgeBuilder line 
+		shapes: (testCaseGroup flatCollect: #yourself);
+		canvas: canvas;
+		width: 5;
+		color: Color black;
+		moveBehind;
+		noRepetition;
+		connectFromAll: [ :testCase | testCase parents ].
 	^ canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeCoverageSparkCircle [
+  	| view es shape block blockMetric dict |
+  	view := RTView new.
+	dict := Dictionary new.
+	block := [ :log | (log population flatCollect: [ :t | 
+			(t summaryExecutionMethods collect: [:summary | 
+				(summary executorClass -> summary selector)]) asSet ]) asSet ].
+	dict at: #nClasses put: (
+		Array with: 
+			[:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
+		with: Color blue);
+	at: #nMethods put: (
+		Array with: 
+			[:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ] with: Color white);
+	at: #fitnessByClass put: (
+		Array with: 
+			[:model | (model fittestTestCase "fitness values first" fitnessByClass values first at: targetClassName) /100  ]
+		with: Color yellow).
+	blockMetric := [ :model :metric | 
+		(dict at: metric) first value: model].
+  shape := RTSparkCircle new.
+		shape size: 20;
+		names: [ :model | #(#nClasses #nMethods #fitnessByClass) ];
+		percent: blockMetric; 
+		oldMetric: blockMetric;
+		colorBlock: [ :model :metric | (dict at: metric) second].
+  es := shape elementsOn: logs.
+	view addAll: es.
+	RTVerticalLineLayout new gapSize: 5; on: es.
+  ^ view
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
