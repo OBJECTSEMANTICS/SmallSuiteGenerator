@@ -89,7 +89,7 @@ SGAEngine >> evolutionContainer [
 		endPoint := (endPoint x) @ (endPoint y + stepY).
 	].
 	extent := 700@1000.
-	scale := TSScale linear 
+	scale := NSScale linear 
 		domain: {(values min)@0. (values max)@(generations * stepY)};
 		range: {0@0. extent x@ extent y negated}.
 	axis := RSPolyline new 
@@ -165,7 +165,7 @@ SGAEngine >> evolutionContainer: height [
 		endPoint := (endPoint x) @ (endPoint y + stepY).
 	].
 	extent := (height * 0.6)@height.
-	scale := TSScale linear 
+	scale := NSScale linear 
 		domain: {(values min)@0. (values max)@(generations * stepY)};
 		range: {0@0. extent x@ extent y negated}.
 	axis := RSPolyline new 
@@ -194,10 +194,15 @@ SGAEngine >> evolutionContainer: height [
 		lbl := RSLabel new 
 		fontSize: (height*0.02);
 		color: Color white;
-		text: (i asFloat).
+		text: (i asFloat) asString, '%'.
 		RSLocation new below move: lbl on: aTick.
 		composite addShape: lbl.
-		].
+	].
+	composite addShape: (RSLabel new 
+			fontSize: (height*0.02);
+			color: Color white;
+			text: 'Evolution coverage %';
+			position: (scale scale: (values min + ((values max-values min)/2))@ -15)).
 	"numbers := 1 to: generations.
 	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
 	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
@@ -244,7 +249,7 @@ SGAEngine >> evolutionContainerOfHeight: height andStartX: aNumber [
 		endPoint := (endPoint x) @ (endPoint y + stepY).
 	].
 	extent := (height * 0.6)@height.
-	scale := TSScale linear 
+	scale := NSScale linear 
 		domain: {(values min )@0. (values max )@(generations * stepY)};
 		range: {0@0. (extent x + aNumber)@ extent y negated}.
 	axis := RSPolyline new 
@@ -666,7 +671,7 @@ SGAEngine >> visualizeCoverageEvolution [
 	].
 	"extent := maxValue@(self logs size * 10)."
 	extent := 1000@500.
-	scale := TSScale linear 
+	scale := NSScale linear 
 		domain: {0@0. 100@100};
 		range: {0@extent y. extent x@ 0}.
 	axis := RSPolyline new 
@@ -704,7 +709,7 @@ SGAEngine >> visualizeCoverageEvolutionM [
 		endPoint := (endPoint x) @ (endPoint y + 10).
 	].
 	extent := 200@200.
-	scale := TSScale linear 
+	scale := NSScale linear 
 		domain: {(values min)@0. (values max)@(self logs size * 10)};
 		range: {0@0. extent x@ extent y negated}.
 	axis := RSPolyline new 
