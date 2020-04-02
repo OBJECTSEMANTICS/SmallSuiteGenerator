@@ -29,7 +29,7 @@ SStatementCoverage >> run: testCaseCollection [
 			testCase runWithoutAssertions.
 			testCase summaryExecutionMethods: profiler summaryExecutionMethods.
 			"self abstractDataOn: testCase."
-			testCase fitness at: string put: profiler statementCoverage.
+			testCase fitness at: string put: (profiler statementCoverageFor: targetClass ).
 			testCase fitnessByClass at: string put: profiler statementCoverage1 ]
 ]
 

@@ -15,13 +15,19 @@ Class {
 		'profiler',
 		'setUpMethod',
 		'tearDownMethod',
-		'lastMessage'
+		'lastMessage',
+		'asDict'
 	],
 	#classInstVars : [
 		'instance'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #actions }
+STestCaseFactory >> asDict: aBoolean [
+	SPlatform asDict: aBoolean
+]
 
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
@@ -226,6 +232,7 @@ STestCaseFactory >> seed: aNumber [
 STestCaseFactory >> setUp [
 	self initializeProfiler.
 	fitness profiler: profiler.
+	fitness targetClass: self targetClassName.
 	engine fitness: fitness.
 	engine numberOfGenerations: numberOfIterations.
 	engine typeInfo: self typeInfo.
@@ -264,7 +271,8 @@ STestCaseFactory >> targetPackageRegex: anObject [
 { #category : #actions }
 STestCaseFactory >> tearDown [
 	self uninstall.
-	self exportTests
+	self exportTests.
+	SPlatform asDict: false.
 ]
 
 { #category : #actions }

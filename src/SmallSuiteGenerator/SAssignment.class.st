@@ -96,10 +96,18 @@ SAssignment >> pickUpReferences: aExpression [
 
 { #category : #printing }
 SAssignment >> printOn: aStream [
-	variable printOn: aStream.
-	aStream nextPutAll: ' := '.
-	value printOn: aStream.
-	aStream nextPut:$.
+	SPlatform asDict 
+		ifFalse: [
+			variable printOn: aStream.
+			aStream nextPutAll: ' := '.
+			value printOn: aStream.
+			aStream nextPut:$.]
+		ifTrue: [
+			aStream nextPutAll: 'var at: '.
+			aStream nextPutAll: (variable id + 1) printString.
+			aStream nextPutAll: ' put: ('.
+			value printOn: aStream.
+			aStream nextPutAll:' ).']
 ]
 
 { #category : #accessing }

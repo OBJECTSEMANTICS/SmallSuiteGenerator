@@ -246,10 +246,10 @@ SGAEngine >> initializeMutationOperator [
 { #category : #initialization }
 SGAEngine >> initializeProfiler [
 	| aProfiler |
-	aProfiler := SLProfilerCoverage profilerForPackagesMatching: targetPackageRegex.
+	aProfiler := SLProfilerCoverage profilerForClass: targetClassName.
 	(aProfiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
-		displayingProgress: 'Instrumenting ' , targetPackageRegex.
+		displayingProgress: 'Instrumenting ' , targetClassName.
 	^ aProfiler
 ]
 
@@ -371,6 +371,21 @@ SGAEngine >> profilerForPackagesMatching [
 	typeInfoProfiler beforeProfiling.
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> profilerForTargetClass [
+	| packageSpy cls classSpy |
+	cls := Smalltalk at: targetClassName .
+	Transcript show: 'profiling...'; cr.
+	typeInfoProfiler := SSTypeCollector new.
+	SSTypeCollector installOnClass: cls.
+	typeInfoProfiler beforeProfiling .
+	classSpy := typeInfoProfiler spyForClass: cls.
+	packageSpy := typeInfoProfiler class spyClassForPackage new.
+	packageSpy classAt: targetClassName put: classSpy.
+	typeInfoProfiler addPackage: packageSpy.
+	classSpy packageSpy: packageSpy.
+]
+
 { #category : #actions }
 SGAEngine >> run [
   | t |
@@ -445,11 +460,13 @@ SGAEngine >> uninstall [
 
 { #category : #updating }
 SGAEngine >> updateTypeInfoOfPopulation [
-	fitness profiler uninstall.
-   self profilerForPackagesMatching .
+	fitness profiler uninstallClass: targetClassName.
+   self profilerForTargetClass .
    population do:
 		[ :testCase | testCase runWithoutAssertions ].
-   self uninstall .
    self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
-   fitness profiler: self initializeProfiler 		  
+   self uninstall .
+   fitness profiler updateClass: ((self initializeProfiler packages at:1) classes at: targetClassName).
+	fitness profiler deleteCache.
+	
 ]

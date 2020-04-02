@@ -44,7 +44,7 @@ SInspectorAssertion class >> inspectorAssertionOf: assoc and: compiledMethod [
 					(Array
 						with:
 							(SMessage new
-								receiver: (SVariable name: assoc key);
+								receiver: (SVariable nameOrId: assoc key);
 								selector: compiledMethod selector;
 								yourself)
 						with: (SLiteral new value: result));

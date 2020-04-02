@@ -47,19 +47,21 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var2 _var3 _var10 _var4 _var5 _var6 _var7 _var11 _var8 _var1 _var9 |
-_var0 := 'Ann'.
-_var2 := 0.
-_var3 := SSTeacher name: _var0 with: _var2.
-_var10 := _var3 id: _var2.
-_var4 := _var3 idTeacher.
-_var5 := _var10 id.
-_var6 := _var3 yearsWorkExperience: _var2.
-_var7 := _var6 nickname.
-_var11 := _var3 yearsWorkExperience: _var2.
-_var8 := _var6 name.
-_var1 := _var3 name.
-_var9 := _var3 initialize
+	| _var0 _var1 _var2 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 |
+_var0 := 'teacher_Ann'.
+_var1 := SSTeacher new.
+_var2 := _var1 idTeacher.
+_var5 := SSTeacher name: _var0 with: _var2.
+_var6 := _var1 yearsWorkExperience.
+_var7 := _var5 nickname.
+_var8 := SSTeacher new.
+_var9 := _var1 nickname.
+_var10 := _var5 nickname.
+_var11 := _var8 yearsWorkExperience.
+_var12 := _var8 idTeacher.
+_var13 := _var1 nickname.
+_var14 := _var8 yearsWorkExperience.
+^self analyze: thisContext
 ]
 
 { #category : #running }

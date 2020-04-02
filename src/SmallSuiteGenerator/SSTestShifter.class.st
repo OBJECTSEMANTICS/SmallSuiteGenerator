@@ -461,6 +461,7 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 	| executionContext |
 	executionContext := self analyze.
+	SPlatform asDict ifTrue: [ executionContext := executionContext at: #var ].
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ]
 ]
@@ -793,8 +794,30 @@ SSTestShifter >> parents [
 
 { #category : #parsing }
 SSTestShifter >> parseTree [
-	
-	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
+	| stmList |
+	stmList := self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
+	SPlatform asDict 
+		ifTrue: [ ^ self parseTreeAsDictWith: stmList ]
+		ifFalse: [ ^ self parseTreeWith: stmList]
+]
+
+{ #category : #parsing }
+SSTestShifter >> parseTreeAsDictWith: statementCollection [
+	| node temporaries rbParserClass |
+	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
+	rbParserClass := SPlatform rbParserClass.
+	node := rbParserClass parseExpression: '[]'.
+	temporaries := Array with: (RBVariableNode named: 'var').
+	node body temporaries: temporaries.
+	node body addNode: (rbParserClass parseExpression: 'var := Dictionary new.').
+	statementCollection
+		do: [ :stm | 
+			| aNode |
+			[ aNode := rbParserClass parseExpression: (self getStringOf: stm).
+			node body addNode: aNode ]
+				on: Error
+				do: [  ] ].
+	^ node
 ]
 
 { #category : #parsing }
@@ -818,8 +841,11 @@ SSTestShifter >> parseTreeWith: statementCollection [
 
 { #category : #parsing }
 SSTestShifter >> parseTreeWithAssertions [
-	
-	^ self parseTreeWith: self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
+	| stmList |
+	stmList := self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
+	SPlatform asDict 
+		ifTrue: [ ^ self parseTreeAsDictWith: stmList ]
+		ifFalse: [ ^ self parseTreeWith: stmList]
 ]
 
 { #category : #repairing }
