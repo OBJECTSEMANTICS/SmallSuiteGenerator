@@ -187,9 +187,10 @@ SGAEngine >> fitnessFor: aTestCase [
 { #category : #actions }
 SGAEngine >> fixPopulation [
 	population do: [ :each |
-		each statements do: [ :stm | stm returnType = #SUndefinedObject ifTrue: [ 
+		each statements do: [ :stm | 
+			((stm returnType = #SUndefinedObject) and: [ stm value receiver returnType = self targetClassName ] ) ifTrue: [ 
 			((each typeInfo messagesFrom: (stm value receiver returnType)) select: [ :method |
-				(method selector = stm value selector) and: [ (method returnType includes: #SUndefinedObject) not ] ]) do: [ :method | | returnType |
+				(method selector = stm value selector) and: [ (method returnType includes: #SUndefinedObject) not and: [ method returnType types notEmpty ] ] ]) do: [ :method | | returnType |
 				returnType := randomGenerator selectAtRandom: method returnType types asArray.
 				stm returnType: returnType.
 				stm variable returnType: returnType.
