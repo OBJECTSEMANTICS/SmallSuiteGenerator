@@ -26,7 +26,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Info'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeMethodInfo class >> asMethodInfo: aSpyMethod [
 	^ self new asMethodInfo: aSpyMethod 
 ]
@@ -397,7 +397,7 @@ STypeMethodInfo >> isWithReturnType: aClassName [
 STypeMethodInfo >> joinWith: otherTypeMethod [
 	argTypes ifNotNil: [argTypes
 		with: otherTypeMethod argTypes
-		do: [ :argType :otherArgType | argType joinWith: otherArgType ].  ].
+		do: [ :argType :otherArgType | argType joinWith: otherArgType ] ].
 	
 	returnType joinWith: otherTypeMethod returnType
 ]

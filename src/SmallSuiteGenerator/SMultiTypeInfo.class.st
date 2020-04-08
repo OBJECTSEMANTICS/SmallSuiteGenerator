@@ -96,6 +96,7 @@ SMultiTypeInfo >> isBlockSymbol [
 
 { #category : #actions }
 SMultiTypeInfo >> joinWith: otherTypeReturn [
+	(types includes: #SUndefinedObject) ifTrue: [ self initialize ].
 	otherTypeReturn types do: [ :aType | self type: aType ]
 ]
 

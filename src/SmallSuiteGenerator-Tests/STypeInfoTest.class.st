@@ -100,7 +100,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		assertCollection: typeInfo scalars keys
 		hasSameElements:
 			(Array
-				with: (self nameOf: nil class)
+				with: (self nameOf: (SUndefinedObject basicNew) class)
 				with: classNameSStudent
 				with: classNameSmallInteger
 				with: (self nameOf: False)
@@ -317,7 +317,7 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
 			(Array
-				with: (self nameOf: nil class) -> #(nil)
+				with: (self nameOf: (SUndefinedObject basicNew) class) -> #(nil)
 				with: (self nameOf: SmallInteger) -> #(0 4)
 				with: (self nameOf: OrderedCollection) -> (Array with: OrderedCollection new)
 				with: (self nameOf: ByteString) -> #('Hello')

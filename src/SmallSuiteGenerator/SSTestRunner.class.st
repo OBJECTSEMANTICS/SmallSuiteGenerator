@@ -48,9 +48,23 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 |
-_var0 := RTView new.
-_var1 := _var0 canvas
+	| _var0 _var1 _var3 _var2 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var12 _var13 _var14 _var15 |
+_var0 := 'teacher_'.
+_var1 := 0.
+_var3 := SSTeacher name: _var0 with: _var1.
+_var2 := _var3 idTeacher.
+_var4 := _var3 initialize.
+_var5 := _var3 yearsWorkExperience.
+_var6 := _var3 resetYearsWorkExperience.
+_var7 := _var4 yearsWorkExperience.
+_var8 := _var3 resetIdTeacher.
+_var9 := _var3 idTeacher.
+_var10 := _var4 yearsWorkExperience.
+_var12 := _var4 id: _var1.
+_var13 := _var4 resetIdTeacher.
+_var14 := _var12 idTeacher.
+_var15 := _var4 nickname.
+^self analyze: thisContext
 ]
 
 { #category : #running }

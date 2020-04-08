@@ -204,7 +204,7 @@ STypeClassInfo >> instanceMethodsFor: aSpyClass [
 				select: [ :each | each wasExecuted or: [ each isUnary ]].
 		instanceMethods do: [ :each | each numberOfExecutions = 0 ifTrue: [
 			each numberOfExecutions: 0.5.
-			each returnValue: nil.
+			each returnValue: SUndefinedObject basicNew.
 			each saveReceiver: (each originalMethod origin)
 		]]
 	].
