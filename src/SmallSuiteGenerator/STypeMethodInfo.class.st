@@ -383,6 +383,11 @@ STypeMethodInfo >> isSimpleTyped9 [
 		allSatisfy: #yourself
 ]
 
+{ #category : #accessing }
+STypeMethodInfo >> isUnary [
+	^ selector isUnary 
+]
+
 { #category : #testing }
 STypeMethodInfo >> isWithReturnType: aClassName [
 	^ returnType types includes: aClassName
