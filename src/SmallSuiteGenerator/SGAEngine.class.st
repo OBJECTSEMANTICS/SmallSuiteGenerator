@@ -133,7 +133,8 @@ SGAEngine >> createNewPopulation [
         selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]
 		   ].
   population := newPopulation.
-  self updateTypeInfoOfPopulation
+  self updateTypeInfoOfPopulation.
+  self fixPopulation
 		  
 ]
 
@@ -181,6 +182,19 @@ SGAEngine >> fitness: aFitness [
 { #category : #actions }
 SGAEngine >> fitnessFor: aTestCase [
 	^ aTestCase fitness at: fitness functionName.
+]
+
+{ #category : #actions }
+SGAEngine >> fixPopulation [
+	population do: [ :each |
+		each statements do: [ :stm | stm returnType = #SUndefinedObject ifTrue: [ 
+			((each typeInfo messagesFrom: (stm value receiver returnType)) select: [ :method |
+				(method selector = stm value selector) and: [ (method returnType includes: #SUndefinedObject) not ] ]) do: [ :method | | returnType |
+				returnType := randomGenerator selectAtRandom: method returnType types asArray.
+				stm returnType: returnType.
+				stm variable returnType: returnType.
+				stm value returnType: returnType]
+	   ] ] ]
 ]
 
 { #category : #initialization }
@@ -338,7 +352,7 @@ SGAEngine >> profilerForPackagesMatching [
 	typeInfoProfiler beforeProfiling.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #updating }
 SGAEngine >> profilerForTargetClass [
 	| packageSpy cls classSpy |
 	cls := Smalltalk at: targetClassName .

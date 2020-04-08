@@ -48,22 +48,23 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var3 _var2 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var12 _var13 _var14 _var15 |
-_var0 := 'teacher_'.
-_var1 := 0.
-_var3 := SSTeacher name: _var0 with: _var1.
-_var2 := _var3 idTeacher.
-_var4 := _var3 initialize.
-_var5 := _var3 yearsWorkExperience.
-_var6 := _var3 resetYearsWorkExperience.
-_var7 := _var4 yearsWorkExperience.
-_var8 := _var3 resetIdTeacher.
-_var9 := _var3 idTeacher.
-_var10 := _var4 yearsWorkExperience.
-_var12 := _var4 id: _var1.
-_var13 := _var4 resetIdTeacher.
-_var14 := _var12 idTeacher.
-_var15 := _var4 nickname.
+	| _var18 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var16 _var0 _var8 _var9 _var10 _var11 _var13 _var14 |
+_var18 := 400.
+_var1 := 'teacher_teacher_teacher_Ann'.
+_var2 := SSTeacher name: _var1 with: _var18.
+_var3 := _var2 resetIdTeacher.
+_var4 := _var2 idTeacher.
+_var5 := _var2 id: _var4.
+_var6 := _var5 resetYearsWorkExperience.
+_var7 := _var2 yearsWorkExperience.
+_var16 := _var2 resetIdTeacher.
+_var0 := _var5 yearsWorkExperience.
+_var8 := _var2 yearsWorkExperience.
+_var9 := _var2 nickname.
+_var10 := _var6 idTeacher.
+_var11 := _var6 yearsWorkExperience.
+_var13 := SConference price: _var7.
+_var14 := _var13 price: _var0.
 ^self analyze: thisContext
 ]
 
