@@ -783,6 +783,38 @@ SGAEngine >> visualizeCoverageR3 [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeCoverageRSPie [
+  	| canvas block  colors |
+  	canvas := RSCanvas new.
+	block := [ :log | (log population flatCollect: [ :t | 
+			(t summaryExecutionMethods collect: [:summary | 
+				(summary executorClass -> summary selector)]) asSet ]) asSet ].
+	colors := Array  
+		with: (Color r: 0.05 g: 0.75 b: 0.91)
+		with: (Color r:0.88 g:0.26 b:0.5)
+		with: (Color r: 0 g: 1 b: 0.67).
+	canvas addAll: (logs collect: [ :log | 
+		| spark group |
+		group := RSGroup new.
+		spark := RSSparkCircleB new
+			objects: log;
+			container: group;
+			slices: (Array 
+				with: [:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
+				with: [:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ]
+				with: [:model | (model fittestTestCase fitnessByClass values first at: targetClassName) /100  ]);
+		sliceColor: [ :shape | colors at: shape index].
+		spark defaultSliceShape innerRadius: 3.
+		spark build.
+		RSComposite new
+			shapes: group;
+			yourself. ]).
+	RSVerticalLineLayout on: canvas nodes.
+	canvas @ RSCanvasController.
+  ^ canvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizeCoverageSparkCircle [
   	| view es shape block blockMetric dict |
   	view := RTView new.
@@ -793,14 +825,14 @@ SGAEngine >> visualizeCoverageSparkCircle [
 	dict at: #nClasses put: (
 		Array with: 
 			[:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
-		with: Color blue);
+		with: (Color r: 0.05 g: 0.75 b: 0.91));
 	at: #nMethods put: (
 		Array with: 
-			[:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ] with: Color white);
+			[:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ] with: (Color r:0.88 g:0.26 b:0.5));
 	at: #fitnessByClass put: (
 		Array with: 
 			[:model | (model fittestTestCase "fitness values first" fitnessByClass values first at: targetClassName) /100  ]
-		with: Color yellow).
+		with: (Color r: 0 g: 1 b: 0.67)).
 	blockMetric := [ :model :metric | 
 		(dict at: metric) first value: model].
   shape := RTSparkCircle new.
@@ -811,8 +843,49 @@ SGAEngine >> visualizeCoverageSparkCircle [
 		colorBlock: [ :model :metric | (dict at: metric) second].
   es := shape elementsOn: logs.
 	view addAll: es.
+	view @ RTDraggableView.
 	RTVerticalLineLayout new gapSize: 5; on: es.
   ^ view
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeCoverageSparkCircleR3 [
+  	| canvas es shape block blockMetric dict group |
+  	canvas := RSCanvas new addInteraction: RSCanvasController.
+	group := RSGroup new.
+	dict := Dictionary new.
+	block := [ :log | (log population flatCollect: [ :t | 
+			(t summaryExecutionMethods collect: [:summary | 
+				(summary executorClass -> summary selector)]) asSet ]) asSet ].
+	dict at: #nClasses put: (
+		Array with: 
+			[:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
+		with: (Color r: 0.05 g: 0.75 b: 0.91));
+	at: #nMethods put: (
+		Array with: 
+			[:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ] with: (Color r:0.88 g:0.26 b:0.5));
+	at: #fitnessByClass put: (
+		Array with: 
+			[:model | (model fittestTestCase "fitness values first" fitnessByClass values first at: targetClassName) /100  ]
+		with: (Color r: 0 g: 1 b: 0.67)).
+	blockMetric := [ :model :metric | 
+		(dict at: metric) first value: model].
+  shape := RSSparkCircle new.
+		shape size: 20;
+		names: [ :model | #(#nClasses #nMethods #fitnessByClass) ];
+		percent: blockMetric; 
+		oldMetric: blockMetric;
+		colorBlock: [ :model :metric | (dict at: metric) second].
+	group addAll: [ :log | RSSparkCircle new.
+		shape size: 20;
+		model: log;
+		names: [ :model | #(#nClasses #nMethods #fitnessByClass) ];
+		percent: blockMetric; 
+		oldMetric: blockMetric;
+		colorBlock: [ :model :metric | (dict at: metric) second]  ].
+	RTVerticalLineLayout new gapSize: 5; on: group.
+	canvas add: group.
+  ^ canvas
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
