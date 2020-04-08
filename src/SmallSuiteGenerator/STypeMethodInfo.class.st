@@ -84,7 +84,7 @@ STypeMethodInfo >> argTypes: anObject [
 	argTypes := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeMethodInfo >> asMethodInfo: typeCollMethod [
 	^ self class new
 		selector: typeCollMethod selector;
@@ -126,12 +126,12 @@ STypeMethodInfo >> dataCSV [
 		add: returnType commonSuperclass; yourself)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #acccessing }
 STypeMethodInfo >> executions [
 	^ executions  
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #acccessing }
 STypeMethodInfo >> executions: anObject [
 	executions := anObject 
 ]
@@ -452,7 +452,7 @@ STypeMethodInfo >> transform: aSet [
 	^ multiType
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeMethodInfo >> transformArgs: allArgs [
 	^ allArgs
 		collect: [ :args | 
