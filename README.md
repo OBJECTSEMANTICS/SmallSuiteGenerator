@@ -41,14 +41,15 @@ You can load SmallSuiteGenerator into VW image with the next steps:
 The first step is to define the code block that will be instrumented to get the typeInfo. Define package's regular expression pattern also.
 
 ``` Smalltalk
-| typeInfo |
-typeInfo := STypeInfo asTypeInfo: (
-		SSTypeCollector profile:[ 
+| typeInfo aBlock |
+aBlock := [ 
 			(SSTeacher name: 'Ann' with: 50)
 			nickname;
 			canRegister: ((SConference price: 50) offerPrice: 50);
 			idTeacher;
-			yearsWorkExperience ] onPackagesMatching: 'SmallSuiteGenerator-Scenario').
+			yearsWorkExperience ].
+typeInfo := STypeInfo asTypeInfo: (
+		SSTypeCollector profile: aBlock onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 ```
 
 The second step is to configure the class `STestCaseFactory`.
@@ -62,6 +63,7 @@ STestCaseFactoryPharo new
     outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
     numberOfGenerations: 20;
     numberOfStatements: 3;
+    seedBlock: aBlock;
     createTestCases;
     yourself.
 ```
@@ -77,10 +79,20 @@ To watch the evolution of fitness function call `visualize` method.
 
 After to execute this script the testCases will be generated with the higher fitness of the population. In the output package name specified you can find the generated testCases. Usually the last enumerated testCases have the highests fitness.
 
-Additionally to the described configurations, you can configure some parameters before to generate test cases, e.g:
+### Advanced settings
+
+All this settings should be done before generate test cases
+
+- Change population size.
 
 ```Smalltalk 
 populationSize: 30.
+```
+
+- Sometimes the number variables is limited, to fix this problem you can change the default generations testing with variables by using a dictionary.
+
+```Smalltalk 
+asDict: true.
 ```
 
 ## Install SpyLite
