@@ -325,15 +325,16 @@ SGAEngine >> infoCoverageContainer [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> infoCoverageContainer: canvas [
-	| generationGroup list generations |
+	| generationGroup list generations memo |
 	generationGroup := RSGroup new.
 	generations := numberOfGenerations + 1.
-	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]) asSet asSortedCollection: [:t :tC | (t generationNumber < tC generationNumber) or: [t generationNumber = tC generationNumber and: [t idPopulation < tC idPopulation]]].
+	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
+	memo := SMemo new.
 	(list groupedBy: [:tC | tC generationNumber]) do: [ :testCases | 
 		| group |
 		group := RSGroup new.
 		group addAll: (testCases collect: [ :testCase | 
-			self visualizationCoverageMethods: testCase	
+			self visualizationCoverageMethods: testCase	 using: memo.
 		]).
 		RSHorizontalLineLayout new gapSize: 20; on: group.
 		generationGroup add: group.
@@ -348,6 +349,26 @@ SGAEngine >> infoCoverageContainer: canvas [
 		connectFromAll: [ :testCase | testCase parents ].
 		"connectFrom: [ :value | value //2 ] to: #yourself."
 	^ generationGroup flatCollect: #yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: previous using: memo [
+	| prevSummaries currentCoverage |
+	prevSummaries := previous select: [:summary | summary selector = summaryMethod selector].
+	prevSummaries ifEmpty: [ ^ true ].
+	currentCoverage := self percentCoverage: summaryMethod.
+	^ prevSummaries 
+		anySatisfy: [ :summary | 
+			memo at: summary of: testCase 
+			ifPresent: [ :value | value < currentCoverage ]
+			ifAbsent: [ false ] ]
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> percentCoverage: summaryExecMethod [
+	^ summaryExecMethod summaryStatements 
+		ifEmpty: [ 100 ] 
+		ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -410,6 +431,21 @@ SGAEngine >> visualizationCoverageMethods: testCase [
 	| group |
 	group := RSGroup new.
 	group add: (self visualizationMethodsOf: testCase);
+	add: (self visualizationCoverageOf: testCase).
+	RSVerticalLineLayout on: group.
+	^ RSComposite new 
+		shapes: (group flatCollect: #yourself);
+		paint: (Color r: 0.5 g: 0.57 b: 0.6);
+		model: testCase;
+		padding: 10;
+		draggable 
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationCoverageMethods: testCase using: memo [
+	| group |
+	group := RSGroup new.
+	group add: (self visualizationMethodsOf: testCase using: memo);
 	add: (self visualizationCoverageOf: testCase).
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
@@ -525,9 +561,38 @@ SGAEngine >> visualizationMethods: aView [
 SGAEngine >> visualizationMethodsOf: testCase [ 
 	| group |
 	group := RSGroup new.
-	group addAll: (testCase summaryExecutionMethods collect: [:summary | 
-		self visualizationSummary: summary
+	group addAll: (testCase summaryExecutionMethods 
+		select: [:summary | summary executorClass = self targetClassName 
+			or: [ (summary executorClass splitOn: ' ') first = self targetClassName ] ] 
+		thenCollect: [:summary | 
+			self visualizationSummary: summary
 	]).
+	RSGridLayout on: group.
+	^ group
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationMethodsOf: testCase using: memo [
+	| group conditionBlock prevSummaryMethods |
+	group := RSGroup new.
+	conditionBlock := [:summary | (summary executorClass = self targetClassName) 
+			or: [ (summary executorClass splitOn: ' ') first = self targetClassName ] ].
+	prevSummaryMethods := (testCase parents
+		flatCollect: [:tC | tC summaryExecutionMethods select: [ :summary | conditionBlock value: summary ]
+			]) asSet.
+	group addAll: (testCase summaryExecutionMethods 
+		select: [:summary | (conditionBlock value: summary) and: [ 
+				self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo
+				"testCase generationNumber = 1 or: [ 
+				dictionary at: summary selector 
+					ifPresent: [ :value | 
+						value < (summary summaryStatements 
+							ifEmpty: [100] 
+							ifNotEmpty: [((summary summaryStatements select: #executed) size / summary summaryStatements size) asFloat * 100 ])] 
+					ifAbsent: [ true ] ]" ] ]
+		thenCollect: [:summary | 
+			self visualizationSummary: summary of: testCase using: memo
+		]).
 	RSGridLayout on: group.
 	^ group
 ]
@@ -536,10 +601,10 @@ SGAEngine >> visualizationMethodsOf: testCase [
 SGAEngine >> visualizationPaper [
 	| canvas coverageContainer |
 	canvas := RSCanvas new 
-		color: Color black;
-		addInteraction: RSCanvasController.
+		color: Color black.
 	coverageContainer := self infoCoverageContainer: canvas.
 	canvas 
+		"addAll: (self summaryContainer: canvas);"
 		addAll: coverageContainer;
 		add: (self evolutionContainer: coverageContainer height).
 	"RSHorizontalLineLayout new gapSize: 10; on: group."
@@ -548,6 +613,7 @@ SGAEngine >> visualizationPaper [
 		paint: Color black;
 		padding: 10;
 		draggable."
+	canvas @ RSCanvasController.
 	^ canvas
 	
 ]
@@ -562,6 +628,21 @@ SGAEngine >> visualizationSummary: summaryExecMethod [
 						text: (summaryExecMethod executorClass, '->', summaryExecMethod selector);
 						fontSize: 8);
 		model: summaryExecMethod 
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationSummary: summaryExecMethod of: testCase using: memo [
+	| percent |
+	percent := self percentCoverage: summaryExecMethod.
+	memo at: summaryExecMethod of: testCase put: percent.
+	^ RSComposite new size: percent + 20; 
+				color: Color black; 
+				addShape: (RSLabel new color: Color white; 
+						text: (summaryExecMethod executorClass, '->', summaryExecMethod selector);
+						fontSize: 8);
+				model: summaryExecMethod
+	
 	
 ]
 

@@ -101,27 +101,26 @@ SGAEngine >> computeFitness [
 
 { #category : #actions }
 SGAEngine >> createNewPopulation [
-  | newPopulation currentPopulationSize |
+  | newPopulation currentPopulationSize newNumber |
 	currentPopulationSize := initialPopulation size.
   newPopulation := self eliteOfCurrentPopulation.
   [ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
         P1 := selectedList first .
         P2 := selectedList second.
-        P1copy := P1 deepCopy.
-        P1copy addParent: P1.
-        P2copy := P2 deepCopy.
-        P2copy addParent: P2.
-        P1copy generationNumber: P1 generationNumber + 1.
-        P2copy generationNumber: P2 generationNumber + 1.
-        self shouldCrossOver ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
+		  P1copy := self similarChild: P1.
+		  P2copy := self similarChild: P2.
+        self shouldCrossOver 
+				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
               O1 := children first.
               O2 := children second.
               O1 generationNumber: P1 generationNumber + 1.
-              O2 generationNumber: P2 generationNumber + 1 ] ifFalse: [ O1 := P1copy deepCopy.
-				  O1 addParent: P1.
-              O2 := P2copy deepCopy.
-              O2 addParent: P2 ].
+              O2 generationNumber: P2 generationNumber + 1 ] 
+				ifFalse: [ 
+					O1 := P1copy deepCopy.
+				  	O1 addParent: P1.
+              	O2 := P2copy deepCopy.
+              	O2 addParent: P2 ].
         OM1 := self mutate: O1.
 		  OM1 clean.
         OM1 updateWith: O1.
@@ -133,7 +132,11 @@ SGAEngine >> createNewPopulation [
         options := options asSortedCollection: 
 			  [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.
-        selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]
+		  newNumber := newPopulation size.
+		  newPopulation addAll: (selectedOptions collect: [:option | 
+				newNumber:= newNumber + 1.
+			option idPopulation: newNumber ])
+        "selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]"
 		   ].
   population := newPopulation.
   self updateTypeInfoOfPopulation
@@ -183,9 +186,13 @@ SGAEngine >> doSelection [
 
 { #category : #'as yet unclassified' }
 SGAEngine >> eliteOfCurrentPopulation [
-	| endIndex |
+	| endIndex index |
 	endIndex := (population size * elitismRate * 0.01) asInteger.
-	endIndex >= 1 ifTrue: [ ^ (population copyFrom: 1 to: endIndex) asOrderedCollection ].
+	index := 0.
+	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
+			index := index + 1.
+			(self similarChild: testCase) idPopulation: index; yourself.
+			])) asOrderedCollection ].
 	^ OrderedCollection new
 ]
 
@@ -414,6 +421,14 @@ SGAEngine >> selectionStrategy: selectStrategy [
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
 	^ SPlatform randomGenerator next < self crossoverRate
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> similarChild: testCase [ 
+	^ testCase deepCopy 
+		addParent: testCase; 
+		generationNumber: testCase generationNumber + 1;
+		yourself
 ]
 
 { #category : #accessing }
