@@ -176,7 +176,8 @@ SGAEngine >> fitness [
 
 { #category : #accessing }
 SGAEngine >> fitness: aFitness [
-	fitness := aFitness
+	fitness := aFitness.
+	selectionStrategy fitness: aFitness
 ]
 
 { #category : #actions }
@@ -206,7 +207,9 @@ SGAEngine >> initialize [
   randomGenerator := SPlatform newRandomGenerator.
   populationSize := 100.
   numberOfGenerations := 100.
-  selectionStrategy := SGARankSelection new.
+  "selectionStrategy := SGARankSelection new."
+  "selectionStrategy := SGATournamentSelection new."
+  selectionStrategy := SGATruncatedSelection new.
   
   self initializeMutationOperator.
   self initializeCrossoverOperator

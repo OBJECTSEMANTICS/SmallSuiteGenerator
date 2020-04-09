@@ -48,23 +48,28 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var18 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var16 _var0 _var8 _var9 _var10 _var11 _var13 _var14 |
-_var18 := 400.
-_var1 := 'teacher_teacher_teacher_Ann'.
-_var2 := SSTeacher name: _var1 with: _var18.
-_var3 := _var2 resetIdTeacher.
-_var4 := _var2 idTeacher.
-_var5 := _var2 id: _var4.
-_var6 := _var5 resetYearsWorkExperience.
-_var7 := _var2 yearsWorkExperience.
-_var16 := _var2 resetIdTeacher.
-_var0 := _var5 yearsWorkExperience.
-_var8 := _var2 yearsWorkExperience.
-_var9 := _var2 nickname.
-_var10 := _var6 idTeacher.
-_var11 := _var6 yearsWorkExperience.
-_var13 := SConference price: _var7.
-_var14 := _var13 price: _var0.
+	| _var0 _var1 _var27 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var10 _var11 _var12 _var13 _var14 _var9 _var15 _var16 _var17 _var18 _var21 |
+_var0 := RTGrapher new.
+_var1 := _var0 maxY.
+_var27 := RTGrapher new.
+_var2 := _var0 renderLegend.
+_var3 := RTData new.
+_var4 := RTData basicNew yourself.
+_var5 := _var0 add: _var3.
+_var6 := _var4 defaultMinValue.
+_var7 := _var27 resetShape.
+_var8 := _var0 initialize.
+_var10 := false.
+_var11 := _var7 shouldUseNiceLabelsForX: _var10.
+_var12 := _var7 homogenizeMinAndMax.
+_var13 := RTEllipse new.
+_var14 := RTBox new.
+_var9 := _var8 maxX.
+_var15 := _var4 defaultMinValue.
+_var16 := _var2 maxX.
+_var17 := _var27 maxX.
+_var18 := _var8 initialize.
+_var21 := _var8 initialize.
 ^self analyze: thisContext
 ]
 
