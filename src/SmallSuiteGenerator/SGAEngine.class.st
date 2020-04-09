@@ -187,11 +187,16 @@ SGAEngine >> fitnessFor: aTestCase [
 
 { #category : #actions }
 SGAEngine >> fixPopulation [
+	| targetClassMessages |
+	
+	targetClassMessages := (typeInfo messagesFrom: self targetClassName) removeAllSuchThat: [:method |
+		(method returnType includes: #SUndefinedObject) and: [ method returnType types notEmpty ] ].
+	
 	population do: [ :each |
 		each statements do: [ :stm | 
 			((stm returnType = #SUndefinedObject) and: [ stm value receiver returnType = self targetClassName ] ) ifTrue: [ 
-			((each typeInfo messagesFrom: (stm value receiver returnType)) select: [ :method |
-				(method selector = stm value selector) and: [ (method returnType includes: #SUndefinedObject) not and: [ method returnType types notEmpty ] ] ]) do: [ :method | | returnType |
+			(targetClassMessages select: [ :method | method selector = stm value selector ]) 
+			do: [ :method | | returnType |
 				returnType := randomGenerator selectAtRandom: method returnType types asArray.
 				stm returnType: returnType.
 				stm variable returnType: returnType.
@@ -207,9 +212,7 @@ SGAEngine >> initialize [
   randomGenerator := SPlatform newRandomGenerator.
   populationSize := 100.
   numberOfGenerations := 100.
-  "selectionStrategy := SGARankSelection new."
-  "selectionStrategy := SGATournamentSelection new."
-  selectionStrategy := SGATruncatedSelection new.
+  selectionStrategy := SGARankSelection new.
   
   self initializeMutationOperator.
   self initializeCrossoverOperator
@@ -387,8 +390,8 @@ SGAEngine >> run [
 ]
 
 { #category : #accessing }
-SGAEngine >> selectionStrategy [ 
-	^ selectionStrategy
+SGAEngine >> selectionStrategy: aSelectionStrategy [
+	selectionStrategy := aSelectionStrategy 
 ]
 
 { #category : #actions }
