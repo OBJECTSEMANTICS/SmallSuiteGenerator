@@ -294,20 +294,3 @@ STestCaseFactory >> typeInfo: aTypeInfo [
 { #category : #actions }
 STestCaseFactory >> uninstall [
 ]
-
-{ #category : #visualization }
-STestCaseFactory >> visualize [
-	| p g d |
-	p := RTPalette c3.
-	g := RTGrapher new.
-	self fitnessValues associations doWithIndex: [ :association :index | 
-		d := RTData new.
-		d
-			connectColor: (p at: index);
-			noDot;
-			points: association value;
-			label: association key.
-		g add: d ].
-	g legend addText: 'Fitness evolution'.
-	^ g
-]
