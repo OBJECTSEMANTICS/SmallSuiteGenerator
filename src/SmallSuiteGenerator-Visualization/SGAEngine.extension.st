@@ -325,16 +325,21 @@ SGAEngine >> infoCoverageContainer [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> infoCoverageContainer: canvas [
-	| generationGroup list generations memo |
+	| generationGroup list generations memo minFitness scaleColor |
 	generationGroup := RSGroup new.
 	generations := numberOfGenerations + 1.
 	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
+	minFitness := (logs collect: [ :log | log lowestFit values first ]) min.
 	memo := SMemo new.
+	scaleColor := NSScale linear.
+	scaleColor 
+		range: { Color black. (Color r: 0 g: 1 b: 0.67)};
+		domain: { 0. 100 }.
 	(list groupedBy: [:tC | tC generationNumber]) do: [ :testCases | 
 		| group |
 		group := RSGroup new.
 		group addAll: (testCases collect: [ :testCase | 
-			self visualizationCoverageMethods: testCase	 using: memo.
+			self visualizationCoverageMethods: testCase	 with: memo minValue: minFitness and: scaleColor.
 		]).
 		RSHorizontalLineLayout new gapSize: 20; on: group.
 		generationGroup add: group.
@@ -356,12 +361,14 @@ SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: prev
 	| prevSummaries currentCoverage |
 	prevSummaries := previous select: [:summary | summary selector = summaryMethod selector].
 	prevSummaries ifEmpty: [ ^ true ].
-	currentCoverage := self percentCoverage: summaryMethod.
-	^ prevSummaries 
+	^ ((Array with: summaryMethod) difference: prevSummaries) isNotEmpty or: [ 
+		currentCoverage := self percentCoverage: summaryMethod.
+		prevSummaries 
 		anySatisfy: [ :summary | 
 			memo at: summary of: testCase 
 			ifPresent: [ :value | value < currentCoverage ]
 			ifAbsent: [ false ] ]
+		]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -442,11 +449,11 @@ SGAEngine >> visualizationCoverageMethods: testCase [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizationCoverageMethods: testCase using: memo [
+SGAEngine >> visualizationCoverageMethods: testCase with: memo minValue: minFitnessValue and: scaleColor [ 
 	| group |
 	group := RSGroup new.
-	group add: (self visualizationMethodsOf: testCase using: memo);
-	add: (self visualizationCoverageOf: testCase).
+	group add: (self visualizationMethodsOf: testCase using: memo and: scaleColor);
+	add: (self visualizationCoverageOf: testCase using: minFitnessValue).
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
@@ -458,16 +465,16 @@ SGAEngine >> visualizationCoverageMethods: testCase using: memo [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationCoverageOf: testCase [ 
-	| group groupData1 groupData2 textPr textCl |
+	| group groupData2 textCl |
 	group := RSGroup new.
-	groupData1 := RSGroup new.
+	"groupData1 := RSGroup new.
 	textPr := testCase fitness values first.
 	groupData1 
 		add: (RSLabel new text: 'Project Coverage:'; color: Color white; fontSize: 8);
 		add: (RSBox new height: 10; color: Color red; width: textPr);
 		add: (RSLabel new text: textPr asString, '%'; color: Color white; fontSize: 8).
 	RSHorizontalLineLayout on: groupData1.
-	group add: (RSComposite new shapes: groupData1 ).
+	group add: (RSComposite new shapes: groupData1 )."
 	groupData2 := RSGroup new.
 	textCl := testCase fitnessByClass values first at: targetClassName.
 	groupData2 
@@ -476,7 +483,24 @@ SGAEngine >> visualizationCoverageOf: testCase [
 		add: (RSLabel new text: textCl asString, '%'; color: Color white; fontSize: 8).
 	RSHorizontalLineLayout on: groupData2.
 	group add: (RSComposite new shapes: groupData2).
-	RSVerticalLineLayout on: group.
+	"RSVerticalLineLayout on: group."
+	^ group
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationCoverageOf: testCase using: minFitnessValue [
+	| group groupData2 textCl |
+	group := RSGroup new.
+	groupData2 := RSGroup new.
+	textCl := testCase fitnessByClass values first at: targetClassName.
+	groupData2 
+		"add: (RSLabel new text: 'Class Coverage'; color: Color white; fontSize: 8);"
+		add: (RSBox new height: 10; color: Color white; width: minFitnessValue);
+		add: (RSBox new height: 10; color: (Color r: 0 g: 1 b: 0.67); width: textCl - minFitnessValue);
+		add: (RSLabel new text: textCl asString, '%'; color: Color white; fontSize: 8).
+	RSHorizontalLineLayout on: groupData2.
+	group add: (RSComposite new shapes: groupData2).
+	"RSVerticalLineLayout on: group."
 	^ group
 ]
 
@@ -572,7 +596,7 @@ SGAEngine >> visualizationMethodsOf: testCase [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizationMethodsOf: testCase using: memo [
+SGAEngine >> visualizationMethodsOf: testCase using: memo and: scaleColor [
 	| group conditionBlock prevSummaryMethods |
 	group := RSGroup new.
 	conditionBlock := [:summary | (summary executorClass = self targetClassName) 
@@ -582,16 +606,9 @@ SGAEngine >> visualizationMethodsOf: testCase using: memo [
 			]) asSet.
 	group addAll: (testCase summaryExecutionMethods 
 		select: [:summary | (conditionBlock value: summary) and: [ 
-				self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo
-				"testCase generationNumber = 1 or: [ 
-				dictionary at: summary selector 
-					ifPresent: [ :value | 
-						value < (summary summaryStatements 
-							ifEmpty: [100] 
-							ifNotEmpty: [((summary summaryStatements select: #executed) size / summary summaryStatements size) asFloat * 100 ])] 
-					ifAbsent: [ true ] ]" ] ]
+				self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo ] ]
 		thenCollect: [:summary | 
-			self visualizationSummary: summary of: testCase using: memo
+			self visualizationSummary: summary of: testCase using: memo and: scaleColor
 		]).
 	RSGridLayout on: group.
 	^ group
@@ -632,13 +649,15 @@ SGAEngine >> visualizationSummary: summaryExecMethod [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizationSummary: summaryExecMethod of: testCase using: memo [
-	| percent |
+SGAEngine >> visualizationSummary: summaryExecMethod of: testCase using: memo and: scaleColor [
+	| percent gradient |
 	percent := self percentCoverage: summaryExecMethod.
 	memo at: summaryExecMethod of: testCase put: percent.
-	^ RSComposite new size: percent + 20; 
-				color: Color black; 
-				addShape: (RSLabel new color: Color white; 
+	gradient := LinearGradientPaint fromArray: { 0->(scaleColor scale: percent). 1->(Color r: 0 g: 1 b: 0.67)}.
+	gradient start: -50@0; stop: 50@0.
+	^ RSComposite new size: 100; 
+				color: gradient; 
+				addShape: (RSLabel new color: Color black;
 						text: (summaryExecMethod executorClass, '->', summaryExecMethod selector);
 						fontSize: 8);
 				model: summaryExecMethod

@@ -16,7 +16,9 @@ Class {
 		'setUpMethod',
 		'tearDownMethod',
 		'lastMessage',
-		'asDict'
+		'asDict',
+		'scale',
+		'valuesLegend'
 	],
 	#classInstVars : [
 		'instance'
@@ -136,21 +138,21 @@ STestCaseFactory >> fitnessValues [
 		description: 'Run the generation before'.
 	functionNames := (Array with: engine fitness functionName) asSet.
 	fitValues := Dictionary new.
-		engine logs do: [ :log | 
+	engine logs doWithIndex: [ :log :index | 
 			functionNames do: [ :functionName | 
 			| val |
 			val := fitValues
 				       at: functionName , '_fittest'
 				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (log fittestTestCase fitness at: functionName).
+			val add: (index @ (log fittestTestCase fitness at: functionName)).
 			val := fitValues
 				       at: functionName , '_average'
 				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (log averageFit at: functionName).
+			val add: (index @ (log averageFit at: functionName)).
 			val := fitValues
 				       at: functionName , '_lowest'
 				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (log lowestFit at: functionName) ] ].
+			val add: (index @ (log lowestFit at: functionName)) ] ].
 	^ fitValues
 ]
 
