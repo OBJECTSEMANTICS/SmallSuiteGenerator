@@ -110,6 +110,7 @@ STypeMethodInfo >> copy [
 		returnType: returnType copy;
 		argTypes: argTypes copy;
 		scalars: scalars copy;
+		executions: executions;
 		receiver: receiver copy.
 	^ copy
 ]
@@ -119,7 +120,7 @@ STypeMethodInfo >> copyValuesOf: otherTypeMethod [
 	returnType := otherTypeMethod returnType.
 	argTypes := otherTypeMethod argTypes.
 	receiver := otherTypeMethod receiver.
-	hasProfiler := true.
+	hasProfiler := otherTypeMethod hasProfiler.
 	executions := otherTypeMethod executions
 ]
 
@@ -417,7 +418,7 @@ STypeMethodInfo >> isWithReturnType: aClassName [
 
 { #category : #actions }
 STypeMethodInfo >> joinWith: otherTypeMethod [
-	hasProfiler ifFalse: [ self copyValuesOf: otherTypeMethod ]
+	hasProfiler ifFalse: [ otherTypeMethod hasProfiler ifTrue: [self copyValuesOf: otherTypeMethod ]]
 	ifTrue: [ 
 		argTypes ifNotNil: [argTypes
 			with: otherTypeMethod argTypes

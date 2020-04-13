@@ -214,8 +214,7 @@ STypeClassInfo >> instanceMethodsFor: aSpyClass [
 { #category : #actions }
 STypeClassInfo >> joinWith: otherTypeClass [
 	otherTypeClass methodTypes do: [ :aMethod | 
-		self addMethod: aMethod
-		 ].
+		self addMethod: aMethod ].
 	otherTypeClass classMethodTypes do: [ :aMethod | self addClassMethod: aMethod ]
 ]
 

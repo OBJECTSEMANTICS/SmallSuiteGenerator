@@ -92,7 +92,7 @@ SGAEngine >> collectFitnessByName [
 	^ dictFit
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #updating }
 SGAEngine >> completeTypeInfo [
 	typeInfo types keysDo: [:aClass | |classInfo realClassInfo|
 	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
@@ -145,12 +145,10 @@ SGAEngine >> createNewPopulation [
         options := options asSortedCollection: 
 			  [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.
-        selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]
-		   ].
+        selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ] ].
   population := newPopulation.
-  self updateTypeInfoOfPopulation.
-  self fixPopulation
-		  
+  self updateTypeInfoWith: newPopulation.
+  self fixPopulation.
 ]
 
 { #category : #actions }
@@ -203,19 +201,17 @@ SGAEngine >> fitnessFor: aTestCase [
 { #category : #actions }
 SGAEngine >> fixPopulation [
 	| targetClassMessages |
-	
-	targetClassMessages := (typeInfo messagesFrom: self targetClassName) removeAllSuchThat: [:method |
-		(method returnType includes: #SUndefinedObject) and: [ method returnType types notEmpty ] ].
-	
-	population do: [ :each |
-		each statements do: [ :stm | 
-			((stm returnType = #SUndefinedObject) and: [ stm value receiver returnType = self targetClassName ] ) ifTrue: [ 
-			(targetClassMessages select: [ :method | method selector = stm value selector ]) 
-			do: [ :method | | returnType |
-				returnType := randomGenerator selectAtRandom: method returnType types asArray.
-				stm returnType: returnType.
-				stm variable returnType: returnType.
-				stm value returnType: returnType]
+	targetClassMessages := (typeInfo types at: #SSTeacher )methodTypes values asOrderedCollection 
+		removeAllSuchThat: [:method | method hasProfiler not ].
+	 
+	population do: [ :testCase |
+		testCase statements select: #needsBeFixed thenDo: [ :stm | 
+			(stm value receiver returnType = self targetClassName) ifTrue: [ 
+			targetClassMessages select: [ :method | method selector = stm value selector ]
+			thenDo: [ :method |
+				stm value fixWith: method in: testCase.
+				stm returnType: stm value returnType.
+				stm variable returnType: stm value returnType.]
 	   ] ] ]
 ]
 
@@ -293,8 +289,7 @@ SGAEngine >> logs [
 
 { #category : #updating }
 SGAEngine >> mergeTypeInfo: otherTypeInfo [
-	initialPopulation do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
-	population do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
+	typeInfo joinWith: otherTypeInfo.
 ]
 
 { #category : #actions }
@@ -453,10 +448,10 @@ SGAEngine >> uninstall [
 ]
 
 { #category : #updating }
-SGAEngine >> updateTypeInfoOfPopulation [
+SGAEngine >> updateTypeInfoWith: aPopulation [
 	fitness profiler uninstallClass: targetClassName.
    self profilerForTargetClass.
-   population do:
+   aPopulation do:
 		[ :testCase | testCase runWithoutAssertions ].
    self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
    self uninstall .

@@ -72,6 +72,7 @@ SExpression >> copy [
 		id: self id;
 		returnType: self returnType;
 		mutated: self mutated;
+		needsBeFixed: self needsBeFixed;
 		parent: self         
 ]
 
@@ -79,6 +80,10 @@ SExpression >> copy [
 SExpression >> error: aString [
 	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
 	^ SError signal: aString
+]
+
+{ #category : #fixing }
+SExpression >> fixWith: anObject in: aTestCase [
 ]
 
 { #category : #comparing }

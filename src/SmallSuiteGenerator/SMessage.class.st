@@ -43,6 +43,16 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	self args: otherMessage args
 ]
 
+{ #category : #fixing }
+SMessage >> fixWith: anObject in: aTestCase [
+	(anObject receiver types includes: receiver returnType) ifFalse: [ self halt ].
+	returnType := randomGenerator selectAtRandom: anObject returnType types.
+	anObject argTypes with: args do: [ :arg1 :arg2 | 
+		(arg1 types includes: arg2 returnType) ifFalse: [ self halt. ]
+		 ].
+	needsBeFixed := true.
+]
+
 { #category : #mutation }
 SMessage >> insertMethodMessage: aExpression using: aTestCase [
 	^ self insertRandomMessage: aExpression using: aTestCase
