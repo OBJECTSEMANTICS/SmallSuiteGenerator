@@ -13,8 +13,8 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'SpyLite'
 				with: [ spec repository: 'github://andreina-covi/SpyLite:master/src' ].
 				spec
-				baseline: 'RoelTyper'
-				with: [ spec repository: 'github://RMODINRIA/RoelTyper:master/src' ].
+    			baseline: 'RoelTyper'
+    			with: [ spec repository: 'github://RMODINRIA/RoelTyper:v1.x.x/src' ].
 				spec
 				baseline: 'Roassal2'
 				with: [ spec repository: 'github://ObjectProfile/Roassal2/src' ].
@@ -32,7 +32,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				with: [ spec repository: 'github://andreina-covi/SparkCircleCopy:master/src' ].
 			spec
 				package: 'SmallSuiteGenerator'
-					with: [ spec requires: #('SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
+					with: [ spec requires: #('RoelTyper' 'SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
 				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal2' 'SparkCircleCopy') ];
