@@ -92,6 +92,21 @@ SGAEngine >> collectFitnessByName [
 	^ dictFit
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> completeTypeInfo [
+	typeInfo types keysDo: [:aClass | |classInfo realClassInfo|
+	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
+	realClassInfo := typeInfo types at: aClass.
+	classInfo methodTypes keysAndValuesDo: [ :key :value | 
+		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) ifTrue:[
+		realClassInfo methodTypes at: key
+		ifPresent: [  ]
+		ifAbsentPut: [ value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
+			value receiver type: aClass.
+			value hasProfiler: false.
+			value executions: 0.5 ] ] ] ].
+]
+
 { #category : #actions }
 SGAEngine >> computeFitness [
 	fitness compute: population.
@@ -426,7 +441,8 @@ SGAEngine >> typeInfo [
 
 { #category : #accessing }
 SGAEngine >> typeInfo: aTypeInfo [
-	typeInfo := aTypeInfo
+	typeInfo := aTypeInfo.
+	self completeTypeInfo
 ]
 
 { #category : #updating }
@@ -439,7 +455,7 @@ SGAEngine >> uninstall [
 { #category : #updating }
 SGAEngine >> updateTypeInfoOfPopulation [
 	fitness profiler uninstallClass: targetClassName.
-   self profilerForTargetClass .
+   self profilerForTargetClass.
    population do:
 		[ :testCase | testCase runWithoutAssertions ].
    self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).

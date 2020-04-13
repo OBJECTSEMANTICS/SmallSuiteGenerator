@@ -21,7 +21,8 @@ Class {
 		'isDeprecated',
 		'receiver',
 		'scalars',
-		'executions'
+		'executions',
+		'hasProfiler'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -94,7 +95,8 @@ STypeMethodInfo >> asMethodInfo: typeCollMethod [
 		isQuick: typeCollMethod isQuick;
 		scalars: typeCollMethod dictLiterals;
 		isDeprecated: typeCollMethod isDeprecated;
-		executions: typeCollMethod numberOfExecutions 
+		executions: typeCollMethod numberOfExecutions;
+		hasProfiler: typeCollMethod wasExecuted 
 ]
 
 { #category : #copying }
@@ -110,6 +112,15 @@ STypeMethodInfo >> copy [
 		scalars: scalars copy;
 		receiver: receiver copy.
 	^ copy
+]
+
+{ #category : #actions }
+STypeMethodInfo >> copyValuesOf: otherTypeMethod [
+	returnType := otherTypeMethod returnType.
+	argTypes := otherTypeMethod argTypes.
+	receiver := otherTypeMethod receiver.
+	hasProfiler := true.
+	executions := otherTypeMethod executions
 ]
 
 { #category : #accessing }
@@ -136,6 +147,16 @@ STypeMethodInfo >> executions: anObject [
 	executions := anObject 
 ]
 
+{ #category : #accessing }
+STypeMethodInfo >> hasProfiler [
+	^ hasProfiler
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> hasProfiler: aBoolean [
+	hasProfiler := aBoolean 
+]
+
 { #category : #comparing }
 STypeMethodInfo >> hash [
 	^ selector hash
@@ -149,7 +170,8 @@ STypeMethodInfo >> initialize [
 	returnType := SMultiTypeInfo new.
 	receiver := SMultiTypeInfo new.
 	isDeprecated := false.
-	scalars := Dictionary new
+	scalars := Dictionary new.
+	hasProfiler := true
 ]
 
 { #category : #accessing }
@@ -395,11 +417,13 @@ STypeMethodInfo >> isWithReturnType: aClassName [
 
 { #category : #actions }
 STypeMethodInfo >> joinWith: otherTypeMethod [
-	argTypes ifNotNil: [argTypes
-		with: otherTypeMethod argTypes
-		do: [ :argType :otherArgType | argType joinWith: otherArgType ] ].
-	
-	returnType joinWith: otherTypeMethod returnType
+	hasProfiler ifFalse: [ self copyValuesOf: otherTypeMethod ]
+	ifTrue: [ 
+		argTypes ifNotNil: [argTypes
+			with: otherTypeMethod argTypes
+			do: [ :argType :otherArgType | argType joinWith: otherArgType ] ].
+		returnType joinWith: otherTypeMethod returnType
+	]
 ]
 
 { #category : #accessing }

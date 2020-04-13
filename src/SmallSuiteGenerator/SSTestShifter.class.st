@@ -782,9 +782,9 @@ SSTestShifter >> numMaxStatements: anObject [
 SSTestShifter >> objectVariables [
 	
 	^ statements select:[:stm| 
-			|res|
-			res := self typeInfo classAt: stm returnType ifNone:[nil].
-			res isNil not] thenCollect:[:stm| stm variable].
+			stm needsBeFixed not and: 
+				[ (self typeInfo classAt: stm returnType ifNone:[nil]) isNil not]] 
+		thenCollect:[:stm| stm variable].
 ]
 
 { #category : #accessing }

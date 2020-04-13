@@ -202,7 +202,7 @@ STypeClassInfo >> instanceMethodsFor: aSpyClass [
 	(aSpyClass typeName endsWith: ' class') ifFalse: [ 
 		instanceMethods := (aSpyClass methods reject: #isTest)
 				select: [ :each | each wasExecuted or: [ each isUnary ]].
-		instanceMethods do: [ :each | each numberOfExecutions = 0 ifTrue: [
+		instanceMethods do: [ :each | each wasExecuted ifFalse: [
 			each numberOfExecutions: 0.5.
 			each returnValue: SUndefinedObject basicNew.
 			each saveReceiver: (each originalMethod origin)

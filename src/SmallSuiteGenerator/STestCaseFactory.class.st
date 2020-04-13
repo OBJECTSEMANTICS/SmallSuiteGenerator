@@ -222,6 +222,11 @@ STestCaseFactory >> seedBlock: aBlock [
 ]
 
 { #category : #actions }
+STestCaseFactory >> selectionStrategy: aSelectionStrategy [
+	engine selectionStrategy: aSelectionStrategy 
+]
+
+{ #category : #actions }
 STestCaseFactory >> setUp [
 	self initializeProfiler.
 	fitness profiler: profiler.

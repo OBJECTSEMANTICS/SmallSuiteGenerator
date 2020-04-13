@@ -20,7 +20,8 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		returnType: aMethod returnType type;
 		selector: aMethod selector;
 		receiver: aReceiver;
-		yourself
+		needsBeFixed: aMethod hasProfiler not;
+		yourself 
 ]
 
 { #category : #override }

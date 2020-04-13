@@ -13,6 +13,9 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'SpyLite'
 				with: [ spec repository: 'github://andreina-covi/SpyLite:master/src' ].
 				spec
+				baseline: 'RoelTyper'
+				with: [ spec repository: 'github://RMODINRIA/RoelTyper:master/src' ].
+				spec
 				baseline: 'Roassal2'
 				with: [ spec repository: 'github://ObjectProfile/Roassal2/src' ].
 			spec

@@ -17,7 +17,8 @@ Class {
 		'randomGenerator',
 		'mutated',
 		'parent',
-		'identifier'
+		'identifier',
+		'needsBeFixed'
 	],
 	#classInstVars : [
 		'nextId'
@@ -105,7 +106,8 @@ SExpression >> initialize [
 	super initialize .
    randomGenerator := SPlatform randomGenerator.
 	mutated := false.
-	identifier := self class nextIdentifier 
+	identifier := self class nextIdentifier.
+	needsBeFixed := false
 ]
 
 { #category : #mutation }
@@ -154,6 +156,16 @@ SExpression >> mutated [
 { #category : #accessing }
 SExpression >> mutated: aBoolean [
 	mutated := aBoolean
+]
+
+{ #category : #accessing }
+SExpression >> needsBeFixed [
+	^ needsBeFixed
+]
+
+{ #category : #accessing }
+SExpression >> needsBeFixed: aBoolean [
+	needsBeFixed := aBoolean 
 ]
 
 { #category : #accessing }

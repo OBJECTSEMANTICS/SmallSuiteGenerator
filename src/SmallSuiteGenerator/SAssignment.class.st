@@ -30,6 +30,7 @@ SAssignment class >> name: aVariable value: anExpression [
 		variable:  aVariable;
 		value: anExpression;
 		returnType: anExpression returnType;
+		needsBeFixed: anExpression needsBeFixed;
 		yourself
 ]
 

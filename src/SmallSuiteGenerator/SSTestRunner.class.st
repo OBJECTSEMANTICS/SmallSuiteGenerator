@@ -48,24 +48,33 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var24 _var25 _var2 _var3 _var1 _var0 _var4 _var5 _var6 _var7 _var8 _var9 _var11 _var12 _var10 _var13 |
-_var24 := 'Ann'.
-_var25 := 50.
-_var2 := SSTeacher name: _var24 with: _var25.
-_var3 := _var2 resetYearsWorkExperience.
-_var1 := _var2 idTeacher.
-_var0 := _var2 resetIdTeacher.
-_var4 := _var2 yearsWorkExperience.
-_var5 := _var3 yearsWorkExperience.
-_var6 := _var3 yearsWorkExperience.
-_var7 := _var2 resetIdTeacher.
-_var8 := _var2 idTeacher.
-_var9 := _var3 nickname.
-_var11 := _var3 id: _var1.
-_var12 := _var2 idTeacher.
-_var10 := _var3 initialize.
-_var13 := _var10 yearsWorkExperience.
-^self analyze: thisContext
+	| var |
+var := Dictionary new.
+var at: 1 put: PDFDocument new.
+var at: 29 put: PDFDocument new.
+var at: 2 put: (var at: 1) styleSheet.
+var at: 28 put: (var at: 1) format.
+var at: 5 put: (var at: 1) styleSheet.
+var at: 6 put: (var at: 29) orientation.
+var at: 7 put: (var at: 28) size.
+var at: 9 put: (var at: 1) metaData.
+var at: 10 put: (var at: 9) producer.
+var at: 8 put: 'Artefact'.
+var at: 11 put: ((var at: 9) creator: (var at: 8)).
+var at: 12 put: (var at: 1) zoom.
+var at: 3 put: (var at: 1) real.
+var at: 4 put: (var at: 28) size.
+var at: 14 put: ''.
+var at: 15 put: ((var at: 9) producer: (var at: 8)).
+var at: 16 put: (var at: 15) subject.
+var at: 17 put: (var at: 11) producer.
+var at: 18 put: (var at: 3) generate.
+var at: 19 put: (var at: 1) real.
+var at: 21 put: ((var at: 9) producer: (var at: 14)).
+var at: 22 put: PDFPage basicNew yourself.
+var at: 23 put: ((var at: 19) add: (var at: 22)).
+var at: 25 put: ((var at: 21) producer: (var at: 14)).
+var at: 26 put: (var at: 1) real
 ]
 
 { #category : #running }
