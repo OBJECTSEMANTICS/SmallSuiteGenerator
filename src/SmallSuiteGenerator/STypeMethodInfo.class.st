@@ -122,7 +122,6 @@ STypeMethodInfo >> copyValuesOf: otherTypeMethod [
 	argTypes := otherTypeMethod argTypes.
 	receiver := otherTypeMethod receiver.
 	hasProfiler := otherTypeMethod hasProfiler.
-	executions := otherTypeMethod executions
 ]
 
 { #category : #accessing }

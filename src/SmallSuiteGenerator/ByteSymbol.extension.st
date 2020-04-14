@@ -1,17 +1,17 @@
-Extension { #name : #String }
+Extension { #name : #ByteSymbol }
 
 { #category : #'*SmallSuiteGenerator' }
-String >> mutateToChange [
+ByteSymbol >> mutateToChange [
 	| interval stringCopy randomGenerator |
 	"correct bug to some characters form the string correctly, e.g: $-> problem in a string"
 	randomGenerator := SPlatform newRandomGenerator.
-	interval := (41 to: 127) asArray.
+	interval := Character alphabet , $_ asString.
 	stringCopy := self
 		ifEmpty: [ '' ]
 		ifNotEmpty: [ self copyFrom: 1 to: self size - 1 ].
-	^ ((Character value: (randomGenerator selectAtRandom: interval))
+	^ ((randomGenerator selectAtRandom: interval)
 		asString , stringCopy
 		,
-			(Character value: (randomGenerator selectAtRandom: interval)) asString)
-		asString
+			(randomGenerator selectAtRandom: interval) asString)
+		asSymbol
 ]

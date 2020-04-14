@@ -72,8 +72,7 @@ SmallTypeCollector >> methodInfoIn: aCompiledMethod from: tempTypes [
 		types do:[ :argClass | returnType type: argClass name asSymbol. ].
 	]. "if not it is empty"
 	methodTypeInfo returnType: returnType.
-	methodTypeInfo argTypes: argTypes."
-	methodTypeInfo receiver: nil." "this may cause a bug somewhere"
+	methodTypeInfo argTypes: argTypes.
 	^ methodTypeInfo.
 ]
 
@@ -82,12 +81,12 @@ SmallTypeCollector >> typeFor: argName [
 	|index lastPart|
 	(argName = 'arg') ifTrue:[^#nil.].
 	"Case 1:"
-	(classDict at: argName asLowercase ifPresent:[ :value | ^ value name asString]).
+	(classDict at: argName asLowercase ifPresent:[ :value | ^ value name ]).
 	"Case 2:"
 	index := 1.	
 	[(index <= argName size) and:[ (argName at: index) isLowercase]] whileTrue:[ index := index + 1.].
 	lastPart := argName copyFrom: index to: argName size.
-	(classDict at: lastPart asLowercase ifPresent:[ :value | ^ value name asString]).
+	(classDict at: lastPart asLowercase ifPresent:[ :value | ^ value name ]).
 	"Case 3:"
 	(argName asLowercase = 'spec') ifTrue:[^ #MetacelloAbstractVersionConstructor].
 	"Case 4:"
