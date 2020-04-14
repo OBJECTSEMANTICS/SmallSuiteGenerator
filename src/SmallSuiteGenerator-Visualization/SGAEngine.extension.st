@@ -1,6 +1,24 @@
 Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> addLegendAt: canvas with: dictionary [
+	| legend |
+	legend := RSLegend new 
+		container: canvas;
+		defaultLabel: (RSLabel new color: Color white; yourself);
+		yourself.
+		dictionary valuesDo: [ :assoc | legend text: assoc key withBoxColor: assoc value ].
+		legend leyendDo: [ :l |
+				l
+					draggable;
+					padding: 10;
+					scaleBy: 1 ].
+		legend layout horizontal gapSize: 2.
+		legend location below offset: 10.
+		legend build.
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> articleVisualization [
   | c b1 b2 b3 |
 c := RTComposer new.
@@ -142,9 +160,11 @@ SGAEngine >> evolutionContainer [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> evolutionContainer: height [
-	| composite startPoint endPoint scale extent points values axis polyLine stepY nice niceY generations numbers |
+	| composite startPoint endPoint scale extent points values axis polyLine stepY nice niceY generations numbers colors |
+	colors := self colors.
 	composite := RSComposite new 
-		color: Color black;
+		color: (colors at: 'background');
+		border: (RSBorder new color: Color white; width: 2; yourself);
 		draggable.
 	stepY := 30.
 	generations := numberOfGenerations + 1.
@@ -152,18 +172,19 @@ SGAEngine >> evolutionContainer: height [
 	endPoint := 0 @ stepY.
 	points := OrderedCollection new.
 	values := OrderedCollection new.
-	(self logs collect: #averageFit) reverse doWithIndex: [ :dict :index | 
-		| valueFitness x |
-		valueFitness := dict values first.
-		values add: valueFitness.
-		x := (valueFitness - startPoint x) @ 0.
-		startPoint := startPoint + x.
-		endPoint := endPoint + x.
-		points add: startPoint;
-		add: endPoint.
-		startPoint := endPoint.
-		endPoint := (endPoint x) @ (endPoint y + stepY).
-	].
+	(self logs collect: [:log | 
+		log fittestTestCase fitnessByClass values first at: targetClassName]) reverse 
+		doWithIndex: [ :value :index | 
+			| x |
+			values add: value.
+			x := (value - startPoint x) @ 0.
+			startPoint := startPoint + x.
+			endPoint := endPoint + x.
+			points add: startPoint;
+			add: endPoint.
+			startPoint := endPoint.
+			endPoint := (endPoint x) @ (endPoint y + stepY).
+		].
 	extent := (height * 0.6)@height.
 	scale := NSScale linear 
 		domain: {(values min)@0. (values max)@(generations * stepY)};
@@ -178,7 +199,7 @@ SGAEngine >> evolutionContainer: height [
 		yourself.
 	polyLine := RSPolyline new 
 		controlPoints: (points collect: [:p | scale scale: p]); 
-		color: Color red;
+		color: (colors at: 'scaleLighter');
 		width: 10;
 		yourself.
 	composite addShape: axis; addShape: polyLine.
@@ -192,18 +213,18 @@ SGAEngine >> evolutionContainer: height [
 			yourself.
 		composite addShape: aTick.
 		lbl := RSLabel new 
-		fontSize: (height*0.02);
+		fontSize: (height*0.015);
 		color: Color white;
 		text: (i asFloat) asString, '%'.
 		RSLocation new below move: lbl on: aTick.
 		composite addShape: lbl.
 	].
-	composite addShape: (RSLabel new 
+	"composite addShape: (RSLabel new 
 			fontSize: (height*0.02);
 			color: Color white;
 			text: 'Evolution coverage %';
-			position: (scale scale: (values min + ((values max-values min)/2))@ -15)).
-	"numbers := 1 to: generations.
+			position: (scale scale: (values min + ((values max-values min)/2))@ -15))."
+	numbers := 1 to: generations.
 	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
 	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
 		| tick lbl |
@@ -219,7 +240,7 @@ SGAEngine >> evolutionContainer: height [
 			text: (numbers at: index).
 		RSLocation new outer left move: lbl on: tick.
 		composite addShape: lbl.
-	]."
+	].
 	composite adjustToChildren.
 	^ composite
 ]
@@ -325,15 +346,16 @@ SGAEngine >> infoCoverageContainer [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> infoCoverageContainer: canvas [
-	| generationGroup list generations memo minFitness scaleColor |
+	| generationGroup list generations memo minFitness scaleColor colorPallete |
 	generationGroup := RSGroup new.
 	generations := numberOfGenerations + 1.
 	list := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
 	minFitness := (logs collect: [ :log | log lowestFit values first ]) min.
 	memo := SMemo new.
 	scaleColor := NSScale linear.
+	colorPallete := self colors.
 	scaleColor 
-		range: { Color black. (Color r: 0 g: 1 b: 0.67)};
+		range: { (colorPallete at: 'scaleDarker'). (colorPallete at: 'scaleLighter')};
 		domain: { 0. 100 }.
 	(list groupedBy: [:tC | tC generationNumber]) do: [ :testCases | 
 		| group |
@@ -346,11 +368,11 @@ SGAEngine >> infoCoverageContainer: canvas [
 	].
 	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
 	"testCaseGroup edges connectFromAll: [ :testCase | testCase parents ]."
-	RSEdgeBuilder line 
+	RSEdgeBuilder verticalBezier  
 		shapes: (generationGroup flatCollect: #yourself);
 		canvas: canvas;
 		width: 5;
-		color: Color white;
+		color: (colorPallete at: 'backgroundLighter');
 		connectFromAll: [ :testCase | testCase parents ].
 		"connectFrom: [ :value | value //2 ] to: #yourself."
 	^ generationGroup flatCollect: #yourself
@@ -379,34 +401,107 @@ SGAEngine >> percentCoverage: summaryExecMethod [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> summaryContainer [
-  	| es shape block blockMetric dict |
-	dict := Dictionary new.
+SGAEngine >> summaryContainer: canvas [
+  	| block  colors |
 	block := [ :log | (log population flatCollect: [ :t | 
 			(t summaryExecutionMethods collect: [:summary | 
 				(summary executorClass -> summary selector)]) asSet ]) asSet ].
-	dict at: #nClasses put: (
-		Array with: 
-			[:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
-		with: Color blue);
-	at: #nMethods put: (
-		Array with: 
-			[:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ] with: Color white);
-	at: #fitnessByClass put: (
-		Array with: 
-			[:model | (model fittestTestCase fitness values first "fitnessByClass values first at: targetClassName") /100  ]
-		with: Color yellow).
-	blockMetric := [ :model :metric | 
-		(dict at: metric) first value: model].
-  shape := RTSparkCircle new.
-		shape size: 20;
-		names: [ :model | #(#nClasses #nMethods #fitnessByClass) ];
-		percent: blockMetric; 
-		oldMetric: blockMetric;
-		colorBlock: [ :model :metric | (dict at: metric) second].
-  es := shape elementsOn: logs.
-	RTVerticalLineLayout new gapSize: 5; on: es.
-  ^ es
+	colors := self colors.
+		"Array  
+		with: (Color r: 0.05 g: 0.75 b: 0.91)
+		with: (Color r:0.88 g:0.26 b:0.5)
+		with: (Color r: 0 g: 1 b: 0.67)"
+	canvas addAll: (logs collect: [ :log | 
+		| spark group |
+		group := RSGroup new.
+		spark := RSSparkCircleB new
+			objects: log;
+			container: group;
+			slices: (Array 
+				with: [:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) size / self typeInfo classes size] 
+				with: [:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ]
+				with: [:model | (model fittestTestCase fitnessByClass values first at: targetClassName) /100  ]);
+		sliceColor: [ :shape | shape index = 1 ifTrue: [ colors at: 'numberClasses' ] ifFalse: [ shape index = 2 ifTrue: [ colors at: 'numberMethods' ] ifFalse: [ colors at: 'scaleLighter' ] ] 
+			"colors at: shape index"].
+		spark defaultSliceShape innerRadius: 3.
+		spark build.
+		RSComposite new
+			shapes: group;
+			yourself ]).
+	RSVerticalLineLayout on: canvas nodes.
+	legend := RSLegend new 
+		container: canvas;
+		defaultLabel: (RSLabel new color: Color white; yourself);
+		yourself.
+		legend 
+			text: 'Coverage' withBoxColor: (colors at: 'scaleLighter');
+			text: '#Classes' withBoxColor: (colors at: 'numberMethods');
+			text: '#Methods' withBoxColor: (colors at: 'numberClasses');
+			leyendDo: [ :l |
+				l
+					draggable;
+					withBorder;
+					padding: 20;
+					scaleBy: 2 ].
+		legend layout horizontal gapSize: 2.
+		legend location left below offset: 10.
+		legend build.
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> summaryContainer: canvas withHeight: height [
+  	| block colorInfo groupSpark element scaleItem |
+	block := [ :log | (log population flatCollect: [ :t | 
+			(t summaryExecutionMethods collect: [:summary | 
+				(summary executorClass -> summary selector)]) asSet ]) asSet ].
+	colorInfo := self colors.
+	colorInfo := Dictionary new 
+		at: 1 put: ('#Classes' -> (colorInfo at: 'numberClasses'));
+		at: 2 put: ('#Methods' -> (colorInfo at: 'numberMethods'));
+		at: 3 put: ('Coverage' -> (colorInfo at: 'scaleLighter'));
+		yourself.
+	scaleItem := height / (numberOfGenerations + 1).
+	groupSpark := RSGroup new.
+		"Array  
+		with: (Color r: 0.05 g: 0.75 b: 0.91)
+		with: (Color r:0.88 g:0.26 b:0.5)
+		with: (Color r: 0 g: 1 b: 0.67)"
+	groupSpark addAll: (logs collect: [ :log | 
+		| spark group |
+		group := RSGroup new.
+		spark := RSSparkCircleB new
+			objects: log;
+			container: group;
+			slices: (Array 
+				with: [:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) asSet size / self typeInfo classes size] 
+				with: [:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ]
+				with: [:model | (model fittestTestCase fitnessByClass values first at: targetClassName) /100  ]);
+		sliceColor: [ :shape | (colorInfo at: shape index) value ].
+		spark defaultSliceShape innerRadius: 3.
+		spark scaleBy: scaleItem.
+		spark build.
+		RSComposite new
+			shapes: group;
+			yourself ]).
+	RSVerticalLineLayout new gapSize: 10; on: groupSpark.
+	"shape := RSBox new height: height;
+	height: (groupSpark collect: #width) max;
+	yourself."
+	"self addLegendAt: groupSpark with: colorInfo."
+	"RSVerticalLineLayout on: canvas nodes."
+	element := RSComposite new 
+		shapes: groupSpark;
+		padding: (Margin
+				left: 40
+				right: 40
+				top: 20
+				bottom: 70);
+		border: (RSBorder new width: 2; color: Color white; yourself);
+		yourself.
+	self addLegendAt: element with: colorInfo.
+	RSLocation new top left offset: ((element width negated - 100)@110 negated); move: element on: canvas shapes.
+	canvas addShape: element.
+	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -457,7 +552,7 @@ SGAEngine >> visualizationCoverageMethods: testCase with: memo minValue: minFitn
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
-		paint: (Color r: 0.5 g: 0.57 b: 0.6);
+		paint: (self colors at: 'backgroundBoxMethod');
 		model: testCase;
 		padding: 10;
 		draggable 
@@ -489,15 +584,16 @@ SGAEngine >> visualizationCoverageOf: testCase [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationCoverageOf: testCase using: minFitnessValue [
-	| group groupData2 textCl |
+	| group groupData2 textCl colors |
 	group := RSGroup new.
 	groupData2 := RSGroup new.
 	textCl := testCase fitnessByClass values first at: targetClassName.
+	colors := self colors.
 	groupData2 
 		"add: (RSLabel new text: 'Class Coverage'; color: Color white; fontSize: 8);"
-		add: (RSBox new height: 10; color: Color white; width: minFitnessValue);
-		add: (RSBox new height: 10; color: (Color r: 0 g: 1 b: 0.67); width: textCl - minFitnessValue);
-		add: (RSLabel new text: textCl asString, '%'; color: Color white; fontSize: 8).
+		add: (RSBox new height: 10; color: (colors at: 'backgroundLighter'); width: minFitnessValue);
+		add: (RSBox new height: 10; color: (colors at: 'scaleLighter'); width: textCl - minFitnessValue);
+		add: (RSLabel new text: textCl asString, '%'; color: (colors at: 'backgroundLighter'); fontSize: 8).
 	RSHorizontalLineLayout on: groupData2.
 	group add: (RSComposite new shapes: groupData2).
 	"RSVerticalLineLayout on: group."
@@ -616,20 +712,22 @@ SGAEngine >> visualizationMethodsOf: testCase using: memo and: scaleColor [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationPaper [
-	| canvas coverageContainer |
+	| canvas coverageContainer evolutionElement |
 	canvas := RSCanvas new 
-		color: Color black.
+		color: (self colors at: 'background').
 	coverageContainer := self infoCoverageContainer: canvas.
-	canvas 
-		"addAll: (self summaryContainer: canvas);"
-		addAll: coverageContainer;
-		add: (self evolutionContainer: coverageContainer height).
-	"RSHorizontalLineLayout new gapSize: 10; on: group."
-	"containers := RSComposite new 
-		shapes: containers;
-		paint: Color black;
-		padding: 10;
-		draggable."
+	self summaryContainer: canvas withHeight: coverageContainer height.
+	canvas addAll: coverageContainer.
+	evolutionElement := self evolutionContainer: coverageContainer height.
+	RSLocation new top right offset: ((evolutionElement width + 40)@0); move: evolutionElement on: canvas shapes.
+	canvas addShape: evolutionElement.
+	canvas addShape: (RSBox new 
+		color: Color transparent;
+		border: (RSBorder new width: 2; color: Color white; yourself);
+		width: coverageContainer width + 40;
+		height: coverageContainer height + 85;
+		position: ((coverageContainer width)/2)@((coverageContainer height)/2 - 5);
+		yourself).
 	canvas @ RSCanvasController.
 	^ canvas
 	
@@ -650,17 +748,26 @@ SGAEngine >> visualizationSummary: summaryExecMethod [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationSummary: summaryExecMethod of: testCase using: memo and: scaleColor [
-	| percent gradient |
+	| percent gradient group |
 	percent := self percentCoverage: summaryExecMethod.
 	memo at: summaryExecMethod of: testCase put: percent.
-	gradient := LinearGradientPaint fromArray: { 0->(scaleColor scale: percent). 1->(Color r: 0 g: 1 b: 0.67)}.
+	gradient := LinearGradientPaint fromArray: { 0->(scaleColor scale: percent). 1->(self colors at: 'scaleLighter')}.
 	gradient start: -50@0; stop: 50@0.
-	^ RSComposite new size: 100; 
-				color: gradient; 
-				addShape: (RSLabel new color: Color black;
-						text: (summaryExecMethod executorClass, '->', summaryExecMethod selector);
+	group := RSGroup new.
+	group add: (RSLabel new
+						text: summaryExecMethod executorClass;
 						fontSize: 8);
-				model: summaryExecMethod
+			add: (RSLabel new
+						text: summaryExecMethod selector;
+						fontSize: 8).
+	RSVerticalLineLayout new on: group; gapSize: 0.
+	^ RSComposite new size: 100;
+				color: gradient; 
+				model: summaryExecMethod;
+				shapes: (group collect: #yourself);
+				draggable;
+				yourself.
+				
 	
 	
 ]

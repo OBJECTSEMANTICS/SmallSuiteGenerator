@@ -7,7 +7,8 @@ Class {
 		'sumValues',
 		'totalSum',
 		'sliceColor',
-		'sliceShape'
+		'sliceShape',
+		'scale'
 	],
 	#category : #'SmallSuiteGenerator-Visualization'
 }
@@ -31,6 +32,7 @@ RSSparkCircleB >> defaultSliceShape [
 { #category : #initialization }
 RSSparkCircleB >> initialize [
 	super initialize.
+	scale := 100.
 	self sliceColor: [ :slice | 
 		slice index even 
 			ifTrue: [ Color lightGray ]
@@ -52,6 +54,14 @@ RSSparkCircleB >> objects: anObject [
 	objects := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+RSSparkCircleB >> scaleBy: aNumber [
+	scale := aNumber.
+	sliceShape 
+		innerRadius: scale/ 8;
+		externalRadius: scale * 2
+]
+
 { #category : #hooks }
 RSSparkCircleB >> shapeFor: anObject index: index [
 	| slice value border |
@@ -63,9 +73,12 @@ RSSparkCircleB >> shapeFor: anObject index: index [
 		color: (self sliceColor rsValue: slice);
 		alphaAngle: (self alphaAngleFor: slice);
 		betaAngle: (self betaAngleFor: slice);
-		externalRadius: slice innerRadius + (slice externalRadius / 5 * value) + 3.
-	border := (values min * 10).
-	slice border: (RSBorder new width: border ; color: (value > 0 ifTrue: [ slice color muchDarker ] ifFalse: [ slice color muchLighter]));
+		externalRadius: slice innerRadius + (slice externalRadius / 5 * value) + (scale / 15).
+	border := values min * slice innerRadius.
+	slice border: (RSBorder new width: border ; 
+			color: (value > 0 
+				ifTrue: [ slice color muchDarker ] 
+				ifFalse: [ slice color muchLighter]));
 		popup.
 	^ slice
 ]

@@ -94,6 +94,20 @@ SGAEngine >> collectFitnessByName [
 	^ dictFit
 ]
 
+{ #category : #'as yet unclassified' }
+SGAEngine >> colors [
+	^ Dictionary new 
+		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
+		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
+		at: 'backgroundLighter' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
+		at: 'numberClasses' put: (Color r: 0.5098039215686274 g: 0.7803921568627451 b: 0.9607843137254902);
+		at: 'numberMethods' put: (Color r: 0.9607843137254902 g: 0.5098039215686274 b: 0.7215686274509804);
+		at: 'border' put: Color white;
+		yourself.
+]
+
 { #category : #actions }
 SGAEngine >> computeFitness [
 	fitness compute: population.
