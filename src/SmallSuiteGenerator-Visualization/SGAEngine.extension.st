@@ -172,14 +172,14 @@ SGAEngine >> evolutionShape: height ofColor: dictColor [
 		RSLocation new below move: lbl on: aTick.
 		composite addShape: lbl.
 	].
-	numbers := 1 to: generations.
+	numbers := 0 to: generations.
 	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
 	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
 		| tick lbl |
 		tick := RSLine new startPoint: (scale scale: (values min - (values min * 0.01)@i));
 			color: (dictColor at: 'font');
 			width: 10;
-			endPoint: (scale scale: ((values min - (values min * 0.02))@i));
+			endPoint: (scale scale: ((values min - (values min * 0.015))@i));
 			yourself.
 		composite addShape: tick.
 		lbl := RSLabel new 	
