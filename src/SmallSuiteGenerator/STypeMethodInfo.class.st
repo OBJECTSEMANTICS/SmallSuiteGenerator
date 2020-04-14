@@ -117,6 +117,7 @@ STypeMethodInfo >> copy [
 
 { #category : #actions }
 STypeMethodInfo >> copyValuesOf: otherTypeMethod [
+	(otherTypeMethod hasProfiler and: [ otherTypeMethod returnType types isNotEmpty ]) ifFalse: [^ self].
 	returnType := otherTypeMethod returnType.
 	argTypes := otherTypeMethod argTypes.
 	receiver := otherTypeMethod receiver.
@@ -418,7 +419,7 @@ STypeMethodInfo >> isWithReturnType: aClassName [
 
 { #category : #actions }
 STypeMethodInfo >> joinWith: otherTypeMethod [
-	hasProfiler ifFalse: [ otherTypeMethod hasProfiler ifTrue: [self copyValuesOf: otherTypeMethod ]]
+	hasProfiler ifFalse: [ self copyValuesOf: otherTypeMethod ]
 	ifTrue: [ 
 		argTypes ifNotNil: [argTypes
 			with: otherTypeMethod argTypes

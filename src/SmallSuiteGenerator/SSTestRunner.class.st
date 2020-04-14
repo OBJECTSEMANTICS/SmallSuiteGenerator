@@ -48,26 +48,23 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var1 _var2 _var3 _var4 _var0 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var15 _var16 _var18 _var19 |
-_var1 := SSTeacher new.
-_var2 := _var1 yearsWorkExperience.
-_var3 := _var1 initialize.
-_var4 := _var1 initialize.
-_var0 := 'Ann'.
-_var5 := _var1 name: _var0.
-_var6 := _var1 initialize.
-_var7 := 50.
-_var8 := _var3 yearsWorkExperience: _var7.
-_var9 := 0.
-_var10 := _var8 id: _var9.
-_var11 := _var4 idTeacher.
-_var12 := _var10 initialize.
-_var13 := 50.
-_var14 := _var8 id: _var13.
-_var15 := _var10 nickname.
-_var16 := _var12 id: _var9.
-_var18 := _var12 id: _var7.
-_var19 := _var5 idTeacher.
+	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var12 _var14 _var15 _var16 _var17 |
+_var0 := RTGrapher new.
+_var1 := _var0 createLegendBuilder.
+_var2 := RTData new.
+_var3 := _var0 add: _var2.
+_var4 := _var3 maxX.
+_var5 := _var0 datasets.
+_var6 := _var3 resetLegend.
+_var7 := _var3 numberOfDecorators.
+_var8 := _var0 renderLegend.
+_var9 := _var3 maxYFromDataSets.
+_var10 := _var6 createInteractionBuilder.
+_var12 := _var6 add: _var2.
+_var14 := false.
+_var15 := _var0 shouldUseNiceLabelsForX: _var14.
+_var16 := _var0 maxY.
+_var17 := _var12 defaultWindowName.
 ^self analyze: thisContext
 ]
 

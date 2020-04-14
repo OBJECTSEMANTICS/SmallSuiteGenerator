@@ -201,7 +201,7 @@ SGAEngine >> fitnessFor: aTestCase [
 { #category : #actions }
 SGAEngine >> fixPopulation [
 	| targetClassMessages |
-	targetClassMessages := (typeInfo types at: #SSTeacher )methodTypes values asOrderedCollection 
+	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
 		removeAllSuchThat: [:method | method hasProfiler not ].
 	 
 	population do: [ :testCase |
