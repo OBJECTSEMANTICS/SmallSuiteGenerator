@@ -24,7 +24,7 @@ RSSparkCircleB >> betaAngleFor: aShape [
 	^ ( aShape index - (self defaultSliceShape border width / 360)) * 360 / totalSum.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 RSSparkCircleB >> defaultSliceShape [
 	^ sliceShape
 ]
@@ -54,7 +54,7 @@ RSSparkCircleB >> objects: anObject [
 	objects := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 RSSparkCircleB >> scaleBy: aNumber [
 	scale := aNumber.
 	sliceShape 
