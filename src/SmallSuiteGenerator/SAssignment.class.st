@@ -50,6 +50,14 @@ SAssignment >> copy [
 	^ copy
 ]
 
+{ #category : #fixing }
+SAssignment >> fixWith: anObject in: aTestCase [
+	value fixWith: anObject in: aTestCase.
+	returnType := value returnType.
+	variable returnType: value returnType.
+	needsBeFixed := value needsBeFixed 
+]
+
 { #category : #comparing }
 SAssignment >> hash [
 	^ super hash bitXor: (variable hash bitXor: value hash)

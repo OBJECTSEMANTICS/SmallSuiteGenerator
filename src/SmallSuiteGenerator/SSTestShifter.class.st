@@ -1166,7 +1166,7 @@ SSTestShifter >> validReferences [
 			variables := stm variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
-				ifFalse: [ true ]
+				ifFalse: [self halt. true ]
 				ifTrue: [ references addAll: variables.
 					false ] ]
 		ifFound: [ false ]

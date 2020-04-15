@@ -101,7 +101,9 @@ SGAEngine >> completeTypeInfo [
 		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) ifTrue:[
 		realClassInfo methodTypes at: key
 		ifPresent: [  ]
-		ifAbsentPut: [ value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
+		ifAbsentPut: [ 
+			self updateArgsOf: value.
+			value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
 			value receiver type: aClass.
 			value hasProfiler: false.
 			value executions: 0.5 ] ] ] ].
@@ -146,9 +148,9 @@ SGAEngine >> createNewPopulation [
 			  [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.
         selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ] ].
-  population := newPopulation.
   self updateTypeInfoWith: newPopulation.
-  self fixPopulation.
+  self fixPopulation: newPopulation.
+  population := newPopulation.
 ]
 
 { #category : #actions }
@@ -199,19 +201,17 @@ SGAEngine >> fitnessFor: aTestCase [
 ]
 
 { #category : #actions }
-SGAEngine >> fixPopulation [
+SGAEngine >> fixPopulation: aCollection [ 
 	| targetClassMessages |
 	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
 		removeAllSuchThat: [:method | method hasProfiler not ].
 	 
-	population do: [ :testCase |
+	aCollection do: [ :testCase |
 		testCase statements select: #needsBeFixed thenDo: [ :stm | 
 			(stm value receiver returnType = self targetClassName) ifTrue: [ 
 			targetClassMessages select: [ :method | method selector = stm value selector ]
 			thenDo: [ :method |
-				stm value fixWith: method in: testCase.
-				stm returnType: stm value returnType.
-				stm variable returnType: stm value returnType.]
+				stm fixWith: method in: testCase ]
 	   ] ] ]
 ]
 
@@ -445,6 +445,18 @@ SGAEngine >> uninstall [
 	typeInfoProfiler afterProfiling;
 		uninstall.
 	Transcript show: 'ended...'; cr.
+]
+
+{ #category : #updating }
+SGAEngine >> updateArgsOf: aMethod [ 
+	aMethod argTypes do: [ :argType |
+	|res|
+	res := argType types anySatisfy: [ :type | typeInfo scalars keys includes: type ].
+	res ifFalse: [ argType types do: [ :type | | scalars |
+		scalars := typeInfo scalars keys select: [ :scalar | 
+			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
+			argType type: scalar ] ] ]
+	"self scalars keys select: [:e | (String allSubclasses collect: #name) includes: e]."]
 ]
 
 { #category : #updating }

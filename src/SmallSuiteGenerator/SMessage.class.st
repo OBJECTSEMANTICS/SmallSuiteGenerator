@@ -50,7 +50,7 @@ SMessage >> fixWith: anObject in: aTestCase [
 	anObject argTypes with: args do: [ :arg1 :arg2 | 
 		(arg1 types includes: arg2 returnType) ifFalse: [ self halt. ]
 		 ].
-	needsBeFixed := true.
+	needsBeFixed := false.
 ]
 
 { #category : #mutation }

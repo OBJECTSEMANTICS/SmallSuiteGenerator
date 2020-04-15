@@ -37,7 +37,7 @@ SFieldAccessMessage >> changeSelectorFrom: expression in: aTestCase [
 SFieldAccessMessage >> fixWith: anObject in: aTestCase [
 	(anObject receiver types includes: receiver returnType) ifFalse: [ self halt ].
 	returnType := randomGenerator selectAtRandom: anObject returnType types.
-	needsBeFixed := true.
+	needsBeFixed := false.
 ]
 
 { #category : #mutation }
