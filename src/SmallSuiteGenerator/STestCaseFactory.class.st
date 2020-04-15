@@ -16,7 +16,8 @@ Class {
 		'setUpMethod',
 		'tearDownMethod',
 		'lastMessage',
-		'asDict'
+		'asDict',
+		'fitnessSeed'
 	],
 	#classInstVars : [
 		'instance'
@@ -83,7 +84,6 @@ STestCaseFactory >> engineDefault [
 STestCaseFactory >> export: aTestCase with: aSelector [
 	| class |
 	class := self getClassOf: ('GA' , self targetClassName , 'Test').
-	self moveClass: class.
 	[ aTestCase generateAssertions.
 	class
 		compile:
@@ -161,11 +161,10 @@ STestCaseFactory >> getClassOf: aString [
 { #category : #initialization }
 STestCaseFactory >> initialize [
 	super initialize.
-	targetClassName := nil.
-	targetPackageRegex := nil.
 	fitness := SMethodCoverage new.
 	engine := self engineDefault.
 	numberOfIterations :=20.
+	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
 ]
 
@@ -179,10 +178,6 @@ STestCaseFactory >> initializeProfiler [
 STestCaseFactory >> lastMessage: aMessage [
 	lastMessage := aMessage.
 	engine lastMessage: aMessage 
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseFactory >> moveClass: aClass [ 
 ]
 
 { #category : #initialization }
@@ -219,6 +214,16 @@ STestCaseFactory >> run [
 { #category : #'instance creation' }
 STestCaseFactory >> seed: aNumber [ 	
 	SPlatform seed: aNumber
+]
+
+{ #category : #configuration }
+STestCaseFactory >> seedBlock: aBlock [ 	
+	fitnessSeed := (SLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
+]
+
+{ #category : #actions }
+STestCaseFactory >> selectionStrategy: aSelectionStrategy [
+	engine selectionStrategy: aSelectionStrategy 
 ]
 
 { #category : #actions }
@@ -291,7 +296,7 @@ STestCaseFactory >> uninstall [
 { #category : #visualization }
 STestCaseFactory >> visualize [
 	| p g d |
-	p := RTPalette c3.
+	p := RTPalette c4.
 	g := RTGrapher new.
 	self fitnessValues associations doWithIndex: [ :association :index | 
 		d := RTData new.
@@ -301,6 +306,11 @@ STestCaseFactory >> visualize [
 			points: association value;
 			label: association key.
 		g add: d ].
+	d := RTData new connectColor: (p at: 4);
+			noDot;
+			points: ((OrderedCollection ofSize: numberOfIterations + 1) atAllPut: fitnessSeed; yourself);
+			label: 'Seed fitness'.
+	g add: d.
 	g legend addText: 'Fitness evolution'.
 	^ g
 ]

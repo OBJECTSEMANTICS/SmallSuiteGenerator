@@ -62,6 +62,7 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector [
 	| typeInfo |
+	self cleanBlockClosuresOf: aTypeCollector .
 	typeInfo := self class new.
 	aTypeCollector allClasses
 		do: [ :aSpyClass | 
@@ -74,6 +75,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector methodsBlacklist: aList [
 	| typeInfo |
+	self cleanBlockClosuresOf: aTypeCollector.
 	typeInfo := self class new.
 	aTypeCollector allClasses
 		do: [ :aSpyClass | 
@@ -116,6 +118,15 @@ STypeInfo >> classes [
 				at: aClassName
 				ifAbsentPut: (SPlatform lookUpClass: aClassName) ].
 	^ classes
+]
+
+{ #category : #converting }
+STypeInfo >> cleanBlockClosuresOf: aTypeCollector [ 
+	[ |cleanBlocks|
+		cleanBlocks := (aTypeCollector scalars at: #BlockClosure) select: [ :e | e isClean ].
+		aTypeCollector scalars at: #BlockClosure put: cleanBlocks ]
+	on: Error
+	do: [].
 ]
 
 { #category : #copying }

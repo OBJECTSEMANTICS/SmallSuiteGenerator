@@ -110,19 +110,12 @@ STypeClassInfo >> allMethods [
 	^ methodTypes values , classMethodTypes values
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeClassInfo >> asClassInfo: aSpyClass [
 	| aTypeClass instanceMethods classMethods |
 	aTypeClass := self class newFrom: aSpyClass typeName.
-	instanceMethods := OrderedCollection new.
-	classMethods := OrderedCollection new.
-	(aSpyClass typeName endsWith: ' class') ifFalse: [ 
-		instanceMethods := (aSpyClass methods reject: #isTest)
-				select: #wasExecuted
-	].
-	(aSpyClass metaclassSpy typeName endsWith: ' class') ifTrue: [ 
-		classMethods := (aSpyClass metaclassSpy methods reject: #isTest) select:
-					[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ] 	].
+	instanceMethods := self instanceMethodsFor: aSpyClass.
+	classMethods := self classMethodsFor: aSpyClass .
 	aTypeClass
 		addMethods:
 			(instanceMethods
@@ -141,6 +134,16 @@ STypeClassInfo >> classMethodOf: aSelector [
 { #category : #accessing }
 STypeClassInfo >> classMethodTypes [
 	^ classMethodTypes
+]
+
+{ #category : #acccessing }
+STypeClassInfo >> classMethodsFor: aSpyClass [
+	| classMethods |
+	classMethods := OrderedCollection new.
+	(aSpyClass metaclassSpy typeName endsWith: ' class') ifTrue: [ 
+		classMethods := (aSpyClass metaclassSpy methods reject: #isTest) select:
+					[ :clsMethod | clsMethod wasExecuted and: [ clsMethod isValidReturnTypeWithReceiver ] ] 	].
+	^ classMethods 
 ]
 
 { #category : #copying }
@@ -192,11 +195,26 @@ STypeClassInfo >> initialize [
 	scalars := Dictionary new
 ]
 
+{ #category : #accesing }
+STypeClassInfo >> instanceMethodsFor: aSpyClass [
+	| instanceMethods |
+	instanceMethods := OrderedCollection new.
+	(aSpyClass typeName endsWith: ' class') ifFalse: [ 
+		instanceMethods := (aSpyClass methods reject: #isTest)
+				select: [ :each | each wasExecuted or: [ each isUnary ]].
+		instanceMethods do: [ :each | each wasExecuted ifFalse: [
+			each numberOfExecutions: 0.5.
+			each returnValue: SUndefinedObject basicNew.
+			each saveReceiver: (each originalMethod origin)
+		]]
+	].
+	^ instanceMethods
+]
+
 { #category : #actions }
 STypeClassInfo >> joinWith: otherTypeClass [
 	otherTypeClass methodTypes do: [ :aMethod | 
-		self addMethod: aMethod
-		 ].
+		self addMethod: aMethod ].
 	otherTypeClass classMethodTypes do: [ :aMethod | self addClassMethod: aMethod ]
 ]
 

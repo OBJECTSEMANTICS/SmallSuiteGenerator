@@ -28,6 +28,7 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		selector: aMethod selector;
 		receiver: aReceiver;
 		args: (self args: aMethod with: statements);
+		needsBeFixed: aMethod hasProfiler not;
 		yourself
 ]
 
@@ -40,6 +41,16 @@ SMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	mutated := otherMessage selector ~= self selector.
 	self selector: otherMessage selector.
 	self args: otherMessage args
+]
+
+{ #category : #fixing }
+SMessage >> fixWith: anObject in: aTestCase [
+	(anObject receiver types includes: receiver returnType) ifFalse: [ self halt ].
+	returnType := randomGenerator selectAtRandom: anObject returnType types.
+	anObject argTypes with: args do: [ :arg1 :arg2 | 
+		(arg1 types includes: arg2 returnType) ifFalse: [ self halt. ]
+		 ].
+	needsBeFixed := false.
 ]
 
 { #category : #mutation }

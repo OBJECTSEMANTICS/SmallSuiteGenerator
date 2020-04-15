@@ -30,6 +30,7 @@ SAssignment class >> name: aVariable value: anExpression [
 		variable:  aVariable;
 		value: anExpression;
 		returnType: anExpression returnType;
+		needsBeFixed: anExpression needsBeFixed;
 		yourself
 ]
 
@@ -47,6 +48,14 @@ SAssignment >> copy [
 	copy variable: variable copy;
 	value: value copy.
 	^ copy
+]
+
+{ #category : #fixing }
+SAssignment >> fixWith: anObject in: aTestCase [
+	value fixWith: anObject in: aTestCase.
+	returnType := value returnType.
+	variable returnType: value returnType.
+	needsBeFixed := value needsBeFixed 
 ]
 
 { #category : #comparing }

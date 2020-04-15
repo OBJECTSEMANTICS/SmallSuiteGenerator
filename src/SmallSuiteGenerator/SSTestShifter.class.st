@@ -152,7 +152,7 @@ SSTestShifter >> addMessage [
 	receiver := self pickAnObjectVariable.
 	methods := self pickMessagesOf: receiver returnType.
 	methods
-		ifEmpty: [ self
+		ifEmpty: [self
 				error: 'There are no method typeInfos for: ' , receiver returnType , '.' ]
 		ifNotEmpty: [ ^ self addMessage: (self selectMethod: methods) withReceiver: receiver ]
 ]
@@ -468,8 +468,9 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 { #category : #actions }
 SSTestShifter >> generateStatements [
-	| flag |
+	| flag counter |
 	flag := true.
+	counter := 0.
 	self
 		assert: typeInfo types isNotEmpty
 		description: 'TypeInfo does not contain info at all.'.
@@ -477,8 +478,10 @@ SSTestShifter >> generateStatements [
 		whileTrue: [ 
 			| array |
 			array := randomGenerator collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
-			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifNone: [ flag := false.
-				self error: 'Not able to generate statements' ].
+			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] 				ifNone: [ counter := counter + 1.
+					counter > self maxNumberOfStatements ifTrue: 
+						[ flag := false.
+						  self error: 'Not able to generate statements' ] ].
 		"	[ self addMessage ]
 				on: SError
 				do: [  ]" ]
@@ -782,9 +785,9 @@ SSTestShifter >> numMaxStatements: anObject [
 SSTestShifter >> objectVariables [
 	
 	^ statements select:[:stm| 
-			|res|
-			res := self typeInfo classAt: stm returnType ifNone:[nil].
-			res isNil not] thenCollect:[:stm| stm variable].
+			stm needsBeFixed not and: 
+				[ (self typeInfo classAt: stm returnType ifNone:[nil]) isNil not]] 
+		thenCollect:[:stm| stm variable].
 ]
 
 { #category : #accessing }
@@ -1163,7 +1166,7 @@ SSTestShifter >> validReferences [
 			variables := stm variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
-				ifFalse: [ true ]
+				ifFalse: [self halt. true ]
 				ifTrue: [ references addAll: variables.
 					false ] ]
 		ifFound: [ false ]
