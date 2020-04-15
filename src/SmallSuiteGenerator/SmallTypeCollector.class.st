@@ -62,7 +62,7 @@ SmallTypeCollector >> methodInfoIn: aCompiledMethod from: tempTypes [
 			((types size = 1) and:[types first = Object]) ifTrue:[ "name type"
 					argType type: (self typeFor:argName).
 				] ifFalse:[
-					types do:[ :argClass | argType type: argClass name asSymbol. ].				
+					types do:[ :argClass | argClass isMeta ifFalse: [ argType type: argClass name asSymbol ] ].				
 				].
 			argTypes add: argType.
 		].

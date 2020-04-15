@@ -106,7 +106,7 @@ SGAEngine >> completeTypeInfo [
 			value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
 			value receiver type: aClass.
 			value hasProfiler: false.
-			value executions: 0.5 ] ] ] ].
+			value executions: 0.5 ] ] ] ]
 ]
 
 { #category : #actions }
@@ -455,8 +455,7 @@ SGAEngine >> updateArgsOf: aMethod [
 	res ifFalse: [ argType types do: [ :type | | scalars |
 		scalars := typeInfo scalars keys select: [ :scalar | 
 			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
-			argType type: scalar ] ] ]
-	"self scalars keys select: [:e | (String allSubclasses collect: #name) includes: e]."]
+			argType type: scalar ] ] ] ]
 ]
 
 { #category : #updating }

@@ -48,23 +48,20 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 _var10 _var12 _var14 _var15 _var16 _var17 |
+	| _var0 _var14 _var1 _var2 _var3 _var4 _var5 _var7 _var8 _var6 _var9 _var10 _var11 |
 _var0 := RTGrapher new.
-_var1 := _var0 createLegendBuilder.
-_var2 := RTData new.
-_var3 := _var0 add: _var2.
-_var4 := _var3 maxX.
-_var5 := _var0 datasets.
-_var6 := _var3 resetLegend.
-_var7 := _var3 numberOfDecorators.
-_var8 := _var0 renderLegend.
-_var9 := _var3 maxYFromDataSets.
-_var10 := _var6 createInteractionBuilder.
-_var12 := _var6 add: _var2.
-_var14 := false.
-_var15 := _var0 shouldUseNiceLabelsForX: _var14.
-_var16 := _var0 maxY.
-_var17 := _var12 defaultWindowName.
+_var14 := RTGrapher new.
+_var1 := _var0 resetShape.
+_var2 := _var0 initialize.
+_var3 := _var0 resetLegend.
+_var4 := _var1 resetLegend.
+_var5 := RTData new.
+_var7 := _var14 add: _var5.
+_var8 := _var2 configureForBarCharts.
+_var6 := _var14 configureForBarCharts.
+_var9 := _var0 configureForBarCharts.
+_var10 := _var7 resetInteraction.
+_var11 := _var0 defaultWindowName.
 ^self analyze: thisContext
 ]
 
