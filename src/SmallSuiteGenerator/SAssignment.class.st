@@ -93,11 +93,6 @@ SAssignment >> insertRandomMessage: aExpression using: aTestCase [
 	^ value insertRandomMessage:aExpression using: aTestCase
 ]
 
-{ #category : #acccessing }
-SAssignment >> mutantColor [
-	^ self value mutantColor
-]
-
 { #category : #accessing }
 SAssignment >> mutated [ 
 	^ value mutated

@@ -15,9 +15,8 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				spec
     			baseline: 'RoelTyper'
     			with: [ spec repository: 'github://RMODINRIA/RoelTyper:v1.x.x/src' ].
-				spec
-				baseline: 'Roassal2'
-				with: [ spec repository: 'github://ObjectProfile/Roassal2/src' ].
+        spec baseline: 'Roassal3'
+				with: [ spec repository: 'github://ObjectProfile/Roassal3' ].
 			spec
 				baseline: 'MuTalk'
 				with: [ spec repository: 'github://pavel-krivanek/mutalk/src' ].
@@ -27,15 +26,12 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 			spec
 				baseline: 'TinyLogger'
 				with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
-			spec 
-				baseline: 'SparkCircleCopy'
-				with: [ spec repository: 'github://andreina-covi/SparkCircleCopy:master/src' ].
 			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('RoelTyper' 'SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
-				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal2' 'SparkCircleCopy') ];
+				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal3') ];
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:

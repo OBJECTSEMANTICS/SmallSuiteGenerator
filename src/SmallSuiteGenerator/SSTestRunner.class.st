@@ -21,8 +21,7 @@ SSTestRunner >> analyze: aSmalltalkContext [
 
 { #category : #compiling }
 SSTestRunner >> compile: aBlock [
-	self class compile: ('performTest
-	',aBlock body formattedCode)
+	self class compile: ('performTest',aBlock body formattedCode)
 ]
 
 { #category : #compiling }

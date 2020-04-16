@@ -20,7 +20,7 @@ SGARouletteSelection >> createRouletteWith: probability [
 
 { #category : #'as yet unclassified' }
 SGARouletteSelection >> selectOf: aCollection [ 
-	^ self selectOf: aCollection with: (aCollection select: #fitness)
+	^ self selectOf: aCollection with: (aCollection collect: #fitness)
 ]
 
 { #category : #'as yet unclassified' }

@@ -550,7 +550,7 @@ SSTestShifter >> insertExpressionRandomly [
 SSTestShifter >> insertStatement [
 	| l stop alpha count random |
 	l := 1.
-	count := 0.
+	count := 1.
 	stop := self length.
 	alpha := 0.5.
 	random := SPlatform randomGenerator.
@@ -1093,6 +1093,11 @@ SSTestShifter >> selectMethod: aCollection [
 	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: aCollection ]
 	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
 	
+]
+
+{ #category : #accessing }
+SSTestShifter >> selectionStrategy: selectStrategy [
+	selectionStrategy := selectStrategy 
 ]
 
 { #category : #accessing }

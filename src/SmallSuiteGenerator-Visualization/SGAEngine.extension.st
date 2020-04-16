@@ -1,414 +1,448 @@
 Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> articleVisualization [
-  | c b1 b2 b3 |
-c := RTComposer new.
-c gap: 35.
-
-"-------"b1 := RTBox new.
-b1 view: c view.
-self sparkVisualization: b1.
-b1 build.
-c group: #abstract.
-
-"-------"b2 := RTComposer new.
-b2 view: c view.
-self contentVisualization: b2.
-b2 build.
-c group: #content.
-
-"-------"b3 := RTGrapher new.
-b3 view: c view.
-b3 evolutionVisualization: b3.
-b3 build.
-c group: #evolution.
-
-"-------"c move: #content between: #abstract and: #evolution.
-c nameGroup: #abstract as: 'Preview'.
-c nameGroup: #content as: '#Graphic'.
-c nameGroup: #evolution as: 'Evolution Fitness'.
-^c view
+SGAEngine >> addBorderShape: aShape on: canvas ofColor: color andHeightOf: summaryShape [
+	| box |
+	box := RSBox new 
+		color: Color transparent;
+		border: (RSBorder new width: 2; color: color; yourself);
+		width: aShape width + 40;
+		height: summaryShape height;
+		yourself.
+	RSLocation new top middle offset: ((summaryShape width - (summaryShape width * 0.45))@0); 
+		move: box on: canvas shapes.
+	canvas addShape: box
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualize [
-  | b |
-  b := RTMondrian new.
-  b shape rectangle
-     withBorder;
-     width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 1.5 ];
-     height: [:cls |  cls length * 1.5 ].
-  b nodes: (logs flatCollect: #population) forEach: [:testCase |  b shape smallSuiteBox.
-  b nodes: testCase statements.
-        b layout verticalLine gapSize: 0 ].
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b layout smallSuite.
-  
-  "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."^b
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeM [
-  | b es |
-  b := RTMondrian new.
-  b interaction highlight.
-  "b shape rectangle
-	  noBorder;
-     width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 1.5 ];
-     height: [:cls |  cls length * 1.5 ]."
-  es := b nodes: (logs flatCollect: #population) forEach: [:testCase |  
-	| shape stmts |
-	shape := RTCompositeShape new.
-   b shape: shape.
-   b shape add: (RTBox new color: #mutantColor; width: 1; height: 1);
-	add: (RTBox new color: #stmColor; width: 6; height: 1);
-	horizontal.
-	"b shape width: [ :cls | 5 ];
-   height: [ :cls | 6 ]."
-   stmts := b nodes: testCase statements.
-   stmts @ (RTHighlightable highlight: [:stm | stm allParents]).
-        b layout verticalLine gapSize: 0 ].
-   es @ (RTHighlightable highlight: [:testCase | 
-	testCase allParents
-	]).
-  es do: [:el | el width: 10; height: (el model length * 2)"; color: Color white"].
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b normalizer normalizeColor: [:testCase |  [testCase fitness values first] on: Error do: [ :e | self halt. 0 ] ] using: (Array with: Color white with: Color black).
-  b layout smallSuite.
-  
-  "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."
-  ^ b
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeMatrix [
-  | b es |
-  	b := RTMondrian new.
-  	b interaction highlight.
-  	"b shape rectangle
-	  noBorder;
-     width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 1.5 ];
-     height: [:cls |  cls length * 1.5 ]."
-  	es := b nodes: (logs flatCollect: #population) forEach: [:testCase |  
-		| shape stmts |
-		shape := RTCompositeShape new.
-   		b shape: shape.
-   		b shape add: (RTBox new color: #mutantColor; width: 1; height: 1);
-		add: (RTBox new color: #stmColor; width: 6; height: 1);
-		horizontal.
-   		stmts := b nodes: testCase statements.
-   		stmts @ (RTHighlightable highlight: [:stm | stm allParents]).
-      b layout verticalLine gapSize: 0 
+SGAEngine >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
+	| blockText text dictionary |
+	blockText := [:string | RSLabel new 
+		text: string;
+		color: color;
+		fontSize: 30;
+		yourself ].
+	text := blockText value: 'TargetClass: ', self targetClassName, ' in package: ', self targetPackageRegex.
+	RSLocation new top left offset: -60; move: text on: canvas shapes.
+	canvas addShape: text.
+	dictionary := Dictionary new 
+		at: 'Summary of Evolution' put: (RSLocation new bottom left offset: (0@50); yourself);
+		at: 'Evolution of Genetic Algorithm' put: (RSLocation new bottom center offset: (offsets first negated@0); yourself);
+		at: 'Evolution Coverage %' put: (RSLocation new bottom right offset: (offsets second negated@0); yourself);
+		yourself.
+	dictionary associationsDo: [ :assoc |
+		| label |
+		label := blockText value: assoc key. 
+		assoc value move: label on: canvas shapes.
+		canvas addShape: label
 	].
-
-   es @ (RTHighlightable highlight: [:testCase | testCase allParents ]).
-  	es do: [:el | el width: 10; height: (el model length * 2)"; color: Color white"].
-  	b shape verticalBezierLine.
-  	b edges moveBehind.
-  	b edges connectFromAll: [:testCase |  testCase parents ].
-	b normalizer elements: es.
-  	b normalizer normalizeColor: [:testCase | testCase fitness values first ] 
-	using: (Array with: Color black with: Color white).
-  	b layout smallSuite.
-  ^ b
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeMatrixP [
-  | b es generations |
-  generations := numberOfGenerations + 1.
-  b := RTMondrian new.
-  b interaction highlight.
-  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])])
-"((logs flatCollect: #population) select: [:tC |  tC allChildren detect: [:tCe |  tCe ni = generations ] ifFound: [ true ] ifNone: [ false ] ])" forEach: [:testCase |  | shape stmts |
-        shape := RTCompositeShape new.
-        b shape: shape.
-        b shape
-           add: (RTBox new
-                 color: #mutantColor;
-                 width: 1;
-                 height: 1);
-           add: (RTBox new
-                 color: #stmColor;
-                 width: 6;
-                 height: 1);
-           horizontal.
-        stmts := b nodes: testCase statements.
-        stmts @ (RTHighlightable highlight: [:stm |  stm allParents ]).
-        b layout verticalLine gapSize: 0 ].
-  es @ (RTHighlightable highlight: [:testCase |  testCase allParents ]).
-  es do: [:el |  el
-           width: 10;
-           height: el model length * 2
-        "; color: Color white" ].
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b normalizer elements: es.
-  b normalizer normalizeColor: [:testCase |  testCase fitness values first] using: (Array with: Color black with: Color white)."(Array with: Color red with: Color blue) min:0 max: 100."
-  b layout smallSuite.
-  ^b
+SGAEngine >> addLegend: canvas with: dictionary and: dictColor [
+	| legend |
+	legend := RSLegend new 
+		container: canvas;
+		defaultLabel: (RSLabel new color: (dictColor at: 'font'); yourself);
+		yourself.
+		dictionary valuesDo: [ :assoc | legend text: assoc key withBoxColor: assoc value ].
+		legend leyendDo: [ :l |
+				l
+					draggable;
+					scaleBy: 1 ].
+		legend layout horizontal.
+		legend location below offset: 10.
+		legend build
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeMethod: assoc with: list in: aView [
-	| bodyMethod execCode indExecCode group max element nLine |
-	bodyMethod := assoc key asString, String cr, list first second.
-	execCode := list allButFirst select: [ :data | data first ] 
-		thenCollect: [ :data | data second ].
-	group := RTGroup new.
-	indExecCode := 1.
-	nLine := 1.
-	max := execCode size.
-	bodyMethod linesDo: [ :line | 
-		| groupLabel found subString index lastStr |
-		groupLabel := RTGroup new.
-		found := false.
-		indExecCode <= max ifTrue: [ 
-		nLine <= (execCode at: indExecCode) lines size 
-			ifFalse: [ nLine := 1. 
-			indExecCode := indExecCode + 1 ].
-		subString := (execCode at: indExecCode) lines at: nLine.
-		index := line indexOfSubCollection: subString.
-		found := index > 0.
-		].
-		found ifTrue: [ 
-			groupLabel add: ((RTLabel new color: Color white) elementOn: ((line copyFrom: 1 to: index - 1) trimLeft: [:char | char = Character tab]));
-			add: ((RTLabel new color: Color pink) elementOn: (subString trimLeft: [:char | char = Character tab])).
-			lastStr := line copyFrom: index + subString size to: line size.
-			lastStr ifNotEmpty: [ groupLabel add: ((RTLabel new color: Color white) elementOn: lastStr) ].
-		].
-		found ifFalse: [ groupLabel add: ((RTLabel new color: Color white) elementOn: (line trimLeft: [:char | char = Character tab])) ].
-		RTHorizontalLineLayout on: groupLabel.
-		group add: groupLabel
-	].
-	RTVerticalLineLayout on: group.
-	"element := (RTBox new width: (bodyMethod lines collect: #size) max * 10; height: bodyMethod lines size * 10; color: Color black) elementOn: bodyMethod.
-	element @ RTDraggable.
-	RTNest new layout: RTVerticalLineLayout new;
-	on: element nest: group.
-	"
-	^ aView
+SGAEngine >> addSummaryShapeTo: canvas ofHeight: height andColor: dictColor [
+  	| block colorInfo groupSpark element scaleItem |
+	block := [ :log | (log population flatCollect: [ :t | 
+			(t summaryExecutionMethods collect: [:summary | 
+				(summary executorClass -> summary selector)]) asSet ]) asSet ].
+	colorInfo := Dictionary new 
+		at: 1 put: ('#Classes' -> (dictColor at: 'numberClasses'));
+		at: 2 put: ('#Methods' -> (dictColor at: 'numberMethods'));
+		at: 3 put: ('Coverage' -> (dictColor at: 'scaleLighter'));
+		yourself.
+	scaleItem := height / (numberOfGenerations + 1).
+	groupSpark := RSGroup new.
+	groupSpark addAll: (logs collect: [ :log | 
+		| spark group |
+		group := RSGroup new.
+		spark := RSSparkCircleB new
+			objects: log;
+			container: group;
+			slices: (Array 
+				with: [:model | ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) asSet size / self typeInfo classes size] 
+				with: [:model | (block value: model) size / (self typeInfo types flatCollect: #allMethods) size ]
+				with: [:model | (model fittestTestCase fitnessByClass values first at: targetClassName) /100  ]);
+		sliceColor: [ :shape | (colorInfo at: shape index) value ].
+		spark defaultSliceShape innerRadius: 3.
+		spark scaleTo: scaleItem.
+		spark build.
+		RSComposite new
+			shapes: group;
+			yourself ]).
+	RSVerticalLineLayout new gapSize: 30; on: groupSpark.
+	element := RSComposite new 
+		shapes: groupSpark;
+		padding: (Margin
+				left: 70
+				right: 70
+				top: 20
+				bottom: 70);
+		border: (RSBorder new width: 2; color: (dictColor at: 'border'); yourself);
+		yourself.
+	self addLegend: element with: colorInfo and: dictColor.
+	RSLocation new top left offset: ((element width negated * 1.35)@110 negated); move: element on: canvas shapes.
+	canvas addShape: element.
+	^ element
 	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadial [
-  | b es firstPopulation root |
-  b := RTMondrian new.
-  b interaction highlight.
-  root := SSTestCase with: typeInfo.
-  root addTargetClassName: targetClassName; generateStatements.
-  firstPopulation := logs first population.
-  firstPopulation do: [ :testCase | testCase addParent: root ].
-  es := b nodes: ((Array with: root), (logs flatCollect: #population)) forEach: [:testCase |  
-	| shape stmts |
-	shape := RTCompositeShape new.
-   b shape: shape.
-   b shape add: (RTBox new color: #mutantColor; width: 1; height: 1);
-	add: (RTBox new color: #stmColor; width: 6; height: 1);
-	horizontal.
-   stmts := b nodes: testCase statements.
-   stmts @ (RTHighlightable highlight: [:stm | stm allParents]).
-        b layout verticalLine gapSize: 0 ].
-   es @ (RTHighlightable highlight: [:testCase | 
-	testCase allParents
+SGAEngine >> darkColors [
+	^ Dictionary new 
+		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
+		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
+		at: 'backgroundLighter' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
+		at: 'numberClasses' put: (Color r: 0.5098039215686274 g: 0.7803921568627451 b: 0.9607843137254902);
+		at: 'numberMethods' put: (Color r: 0.9607843137254902 g: 0.5098039215686274 b: 0.7215686274509804);
+		at: 'fontMethodBox' put: Color white;
+		at: 'border' put: Color white;
+		at: 'font' put: Color white;
+		yourself.
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> evolutionShape: height ofColor: dictColor [
+	| composite startPoint endPoint scale extent points values axis polyLine stepY nice niceY generations numbers |
+	composite := RSComposite new 
+		color: (dictColor at: 'background');
+		border: (RSBorder new color: (dictColor at: 'border'); width: 2; yourself);
+		draggable.
+	stepY := 30.
+	generations := numberOfGenerations + 1.
+	startPoint := 0 @ 0.
+	endPoint := 0 @ stepY.
+	points := OrderedCollection new.
+	values := OrderedCollection new.
+	(self logs collect: [:log | 
+		log fittestTestCase fitnessByClass values first at: targetClassName]) reverse 
+		doWithIndex: [ :value :index | 
+			| x |
+			values add: value.
+			x := (value - startPoint x) @ 0.
+			startPoint := startPoint + x.
+			endPoint := endPoint + x.
+			points add: startPoint;
+			add: endPoint.
+			startPoint := endPoint.
+			endPoint := (endPoint x) @ (endPoint y + stepY).
+		].
+	extent := (height * 0.6)@height.
+	scale := NSScale linear 
+		domain: (Array with: (values min)@0 with: (values max)@(generations * stepY));
+		range: (Array with: 0@0 with: extent x@ extent y negated).
+	axis := RSPolyline new 
+		color: (dictColor at: 'border');
+		width: 10;
+		controlPoints: ({(values min - (values min * 0.01))@(generations *stepY). (values min - (values min * 0.01))@0. (values max+ (values max * 0.01))@0} collect: [:p | scale scale: p]);
+		yourself.
+	polyLine := RSPolyline new 
+		controlPoints: (points collect: [:p | scale scale: p]); 
+		color: (dictColor at: 'scaleLighter');
+		width: 10;
+		yourself.
+	composite addShape: axis; addShape: polyLine.
+	nice := RSLabelGenerator new searchMin: values min max: values max desired: 5. 
+	(nice min to: nice max by: nice step) do: [ :i |
+		| aTick lbl |
+		aTick := RSLine new startPoint: (scale scale: (i@0));
+			color: (dictColor at: 'font');
+			width: 10;
+			endPoint: (scale scale: (i@(-3)));
+			yourself.
+		composite addShape: aTick.
+		lbl := RSLabel new 
+		fontSize: (height*0.015);
+		color: (dictColor at: 'font');
+		text: (i asFloat) asString, '%'.
+		RSLocation new below move: lbl on: aTick.
+		composite addShape: lbl.
+	].
+	numbers := 0 to: generations.
+	niceY := RSLabelGenerator new searchMin: stepY max: (generations * stepY) desired: generations.
+	(niceY max to: niceY min by: (niceY step) * -1) doWithIndex: [ :i :index | 
+		| tick lbl |
+		tick := RSLine new startPoint: (scale scale: (values min - (values min * 0.01)@i));
+			color: (dictColor at: 'font');
+			width: 10;
+			endPoint: (scale scale: ((values min - (values min * 0.015))@i));
+			yourself.
+		composite addShape: tick.
+		lbl := RSLabel new 	
+			fontSize: (height*0.02);
+			color: (dictColor at: 'font');
+			text: (numbers at: index).
+		RSLocation new outer left move: lbl on: tick.
+		composite addShape: lbl.
+	].
+	composite adjustToChildren.
+	^ composite
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> fitnessOf: summaryExecMethod [
+	^ summaryExecMethod summaryStatements 
+		ifEmpty: [ 100 ] 
+		ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ]
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> infoMethodShapes: canvas ofColor: dictColor [
+	| generationGroup filteredList generations memo minValue |
+	generationGroup := RSGroup new.
+	generations := numberOfGenerations + 1.
+	filteredList := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
+	minValue := (filteredList collect: [ :tC | tC fitnessByClass values first at: self targetClassName ]) min.
+	memo := SMemo new.
+	generationGroup addAll: (
+		(filteredList groupedBy: [:tC | tC generationNumber]) collect: [ :testCases | 
+			| group |
+			group := RSGroup new.
+			group addAll: (testCases collect: [ :testCase | 
+				self methodShape: testCase ofColor: dictColor using: memo and: minValue.
+			]).
+			RSHorizontalLineLayout new gapSize: 20; on: group.
+			group
 	]).
-  es do: [:el | el width: 10; height: (el model length * 2)"; color: Color white"].
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b layout radial.
-  ^ b
+	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
+	RSEdgeBuilder verticalBezier  
+		shapes: (generationGroup flatCollect: #yourself);
+		canvas: canvas;
+		width: 5;
+		color: (dictColor at: 'backgroundLighter');
+		connectFromAll: [ :testCase | testCase parents ].
+	^ generationGroup flatCollect: #yourself
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadial1 [
-  | es view shape |
-  "b := RTMondrian new.
-  b interaction highlight."
-  view := RTView new.
-  shape :=  RTEllipse new.
-   "es := b nodes: (logs flatCollect: #population)."
-  es := shape elementsOn: (logs flatCollect: #population).
-   "es := b nodes:  (logs flatCollect: #population) forEach: [:testCase |  
-	| shape stmts |
-	shape := RTCompositeShape new.
-   b shape: shape.
-   b shape add: (RTBox new color: #mutantColor; width: 1; height: 1);
-	add: (RTBox new color: #stmColor; width: 6; height: 1);
-	horizontal.
-   stmts := b nodes: testCase statements.
-   stmts @ (RTHighlightable highlight: [:stm | stm allParents]).
-        b layout verticalLine gapSize: 0 ]."
-   es @ (RTHighlightable highlight: [:testCase | 
-	testCase allParents
-	]).
-  es do: [:el | el width: 10; height: (el model length * 2)"; color: Color white"].
-  view addAll: es.
-  RTEdgeBuilder new 
-     view: view; elements: es; connectFrom: [ :testCase | [randomGenerator selectAtRandom: testCase parents] on: Error do: [ testCase parents ]  ]; moveBehind.
-  SRadialTreeLayout new on: es.
-  "view edges do: #remove."
-  ^ view
+SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: previous using: memo [
+	| prevSummaries currentCoverage |
+	prevSummaries := previous select: [:summary | summary selector = summaryMethod selector].
+	prevSummaries ifEmpty: [ ^ true ].
+	^ ((Array with: summaryMethod) difference: prevSummaries) isNotEmpty or: [ 
+		currentCoverage := self fitnessOf: summaryMethod.
+		prevSummaries 
+		anySatisfy: [ :summary | 
+			memo at: summary of: testCase 
+			ifPresent: [ :value | value < currentCoverage ]
+			ifAbsent: [ false ] ]
+		]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadial2 [
-  	| b objects limit |
-	b := RTKiviatBuilder new.
-	objects := logs flatCollect: #population.
-  limit := populationSize + (populationSize \\ 2 ).
-	b objects: objects.
-	"b addMetric: [ :o | 
-		o collect: #idPopulation  ]."
-	(1 to: limit ) do: [:e| 
-		b addMetric: [:v | 
-			v  generationNumber ]].
-	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
-b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
-(1 to: 25) doWithIndex: [:ei :i |  b addMetric: [:e |  e idPopulation ] ]."
-   b build.
-   "b view edges do: #remove."
-   ^ b view
+SGAEngine >> lightColors [
+	^ Dictionary new 
+		at: 'background' put: Color white"(Color r: 0.9215686274509803 g: 0.9568627450980393 b: 0.9333333333333333 )";
+		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
+		at: 'backgroundLighter' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569) "(Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647)";
+		at: 'numberClasses' put: (Color r: 0.05 g: 0.75 b: 0.91);
+		at: 'numberMethods' put: (Color r:0.88 g:0.26 b:0.5);
+		at: 'fontMethodBox' put: Color white;
+		at: 'border' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'font' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		yourself.
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadial3 [
-  	| b objects limit |
-	b := SKiviatBuilder new.
-	objects := logs collect: #population.
-  limit := populationSize + (populationSize \\ 2 ).
-	b objects: objects.
-	b shape size: [ :e | e model value fitness values first ].
-	b shapes: ((RTColorPalette qualitative 
-		colors: (numberOfGenerations + 1) scheme: 'Paired') do: [:c |  c alpha: 0.3 ]).
-	1 to: limit do: [:i | 
-		b addMetric: [ :o | 
-		(o at: i) generationNumber ] ].
-   "b desactivateHighlight."
-	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
-b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
-(1 to: 25) doWithIndex: [:ei :i |  b addMetric: [:e |  e idPopulation ] ]."
-   b build.
-	b view elements select: [:el | el shape isKindOf: RTLabel ] thenDo: #remove.
-   "b view edges do: #remove."
-   ^ b
+SGAEngine >> methodShape: testCase ofColor: dictColor using: memo and: minValue [ 
+	| group scaleColor |
+	group := RSGroup new.
+	scaleColor := NSScale linear.
+	scaleColor 
+		range: (Array with: (dictColor at: 'scaleDarker') with: (dictColor at: 'scaleLighter'));
+		domain: #(0 100).
+	group 
+		add: (self methodShapes: testCase ofColor: scaleColor and: memo);
+		add: (self progressBarFrom: minValue to: (testCase fitnessByClass values first at: targetClassName) ofColor: dictColor).
+	RSVerticalLineLayout on: group.
+	^ RSComposite new 
+		shapes: (group flatCollect: #yourself);
+		paint: (dictColor at: 'backgroundBoxMethod');
+		model: testCase;
+		padding: 10;
+		draggable 
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadial3P [
-  | b objects limit generations |
-  b := SKiviatBuilder new.
-  generations := numberOfGenerations + 1.
-  objects := (logs flatCollect: #population) select: [:tC |  tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ] ] ].
-  limit := populationSize + (populationSize \\ 2).
-  b objects: objects.
-  b shape size: [:e |  e model value fitness values first ].
-  b shapes: ((RTColorPalette qualitative colors: numberOfGenerations + 1 scheme: 'Paired') do: [:c |  c alpha: 0.3 ]).
-  1 to: limit do: [:i |  b addMetric: [:o |  (o at: i) generationNumber ] ].
-  b build.
-  b view elements select: [:el |  el shape isKindOf: RTLabel ] thenDo: #remove.
-  ^b
+SGAEngine >> methodShape: summaryExecMethod withGradientFrom: darkColor to: lightColor [
+	| gradient group |
+	gradient := LinearGradientPaint fromArray: (Array with: 0->darkColor with: 1->lightColor).
+	gradient start: -50@0; stop: 50@0.
+	group := RSGroup new.
+	group add: (RSLabel new
+						text: summaryExecMethod executorClass;
+						fontSize: 8);
+			add: (RSLabel new
+						text: summaryExecMethod selector;
+						fontSize: 8).
+	RSVerticalLineLayout new on: group; gapSize: 0.
+	^ RSComposite new size: 100;
+				color: gradient; 
+				model: summaryExecMethod;
+				shapes: (group collect: #yourself);
+				draggable;
+				yourself.
+				
+	
+	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadial4 [
-  	| b objects limit |
-	b := SKiviatBuilder new.
-	objects := logs flatCollect: #population.
-  limit := populationSize + (populationSize \\ 2 ).
-	b objects: objects.
-	1 to: limit do: [:i | 
-		b addMetric: [ :o | 
-		"(o at: i)"o generationNumber ]].
-   "b desactivateHighlight."
-	"b objects: (Array with: 'object1' -> ((1 to: 25) collect: [:i |  i atRandom ]) with: 'object2' -> ((1 to: 25) collect: [:i |  i atRandom ])).
-b shapes: ((Array with: Color blue with: Color red) do: [:c |  c alpha: 0.3 ]).
-(1 to: 25) doWithIndex: [:ei :i |  b addMetric: [:e |  e idPopulation ] ]."
-   b build.
-   "b view edges do: #remove."
-   ^ b view
+SGAEngine >> methodShapes: testCase ofColor: scaleColor and: memo [
+	| group conditionBlock prevSummaryMethods |
+	group := RSGroup new.
+	conditionBlock := [:summary | (summary executorClass = self targetClassName) 
+			or: [ (summary executorClass splitOn: ' ') first = self targetClassName ] ].
+	prevSummaryMethods := (testCase parents
+		flatCollect: [:tC | tC summaryExecutionMethods select: [ :summary | conditionBlock value: summary ]
+			]) asSet.
+	group addAll: (testCase summaryExecutionMethods 
+		select: [:summary | (conditionBlock value: summary) and: [ 
+				self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo ] ]
+		thenCollect: [:summary | 
+			| valueFitness |
+			valueFitness := self fitnessOf: summary.
+			memo at: summary of: testCase put: valueFitness.
+			self methodShape: summary withGradientFrom: (scaleColor scale: valueFitness) to: (scaleColor scale: 100).
+		]).
+	RSGridLayout on: group.
+	^ group
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeRadialModified [
-  | b es |
-  b := RTMondrian new.
-  b interaction highlight.
-  es := b nodes: (logs flatCollect: #population) forEach: [:testCase |  
-	| shape stmts |
-	shape := RTCompositeShape new.
-   b shape: shape.
-   b shape add: (RTBox new color: #mutantColor; width: 1; height: 1);
-	add: (RTBox new color: #stmColor; width: 6; height: 1);
-	horizontal.
-   stmts := b nodes: testCase statements.
-   stmts @ (RTHighlightable highlight: [:stm | stm allParents]).
-        b layout verticalLine gapSize: 0 ].
-   es @ (RTHighlightable highlight: [:testCase | 
-	testCase allParents
-	]).
-  es do: [:el | el width: 10; height: (el model length * 2)"; color: Color white"].
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b layout radial.
-  ^ b
+SGAEngine >> progressBarFrom: minValue to: aValue ofColor: dictColor [ 
+	| group groupBox groupData bar |
+	group := RSGroup new.
+	groupBox := RSGroup new.
+	groupData := RSGroup new.
+	groupBox 
+		add: (RSBox new height: 10; color: (dictColor at: 'backgroundLighter'); width: minValue);
+		add: (RSBox new height: 10; color: (dictColor at: 'scaleLighter'); width: aValue - minValue).
+	RSHorizontalLineLayout new gapSize: 0; on: groupBox.
+	bar := RSComposite new
+		shapes: groupBox;
+		yourself.
+	groupData 
+		add: bar;
+		add: (RSLabel new text: aValue asString, '%'; bold; color: (dictColor at: 'fontMethodBox'); fontSize: 8).
+	RSHorizontalLineLayout new gapSize: 10; on: groupData.
+	group add: (RSComposite new shapes: groupData).
+	^ group
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeWithRandomColor [
-  | b |
-  b := RTMondrian new.
-  b shape rectangle
-     withBorder;
-     width: [:cls |  (cls fitnessByClass values first at: targetClassName) * 1.5 ];
-     height: [:cls |  cls length * 1.5 ].
-  b nodes: (logs flatCollect: #population) forEach: [:testCase |  b shape rectangle
-           heightElement: 1;
-           color: [:line |  Color random ].
-        b nodes: testCase statements.
-        b layout verticalLine gapSize: 0 ].
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b layout smallSuite.
-  
-  "b normalizer normalizeColorAsGray: [:testCase |  testCase fitness values first ]."^b
+SGAEngine >> visualizationExecutionMethod: summaryExecMethod [
+	| max indStatement nLine group string |
+	group := RSGroup new.
+	string := summaryExecMethod code.
+	max := summaryExecMethod summaryStatements size.
+	indStatement := 1.
+	nLine := 1.
+	string lines doWithIndex: [ :line :indLine | 
+		| groupLabel found subString index lastStr |
+		groupLabel := RSGroup new.
+		found := false.
+		indStatement  <= max ifTrue: [ 
+			nLine <= (summaryExecMethod summaryStatements at: indStatement) code lines size 
+				ifFalse: [ nLine := 1. 
+					indStatement := indStatement + 1 ]].
+		indStatement <= max ifTrue: [ 
+			subString := ((summaryExecMethod summaryStatements at: indStatement) code lines at: nLine) trimLeft: [:char | char = Character tab].
+			index := line indexOfSubCollection: subString.
+			found := index > 0.
+		].
+		found ifTrue: [ 
+			groupLabel 
+				add: (RSLabel new color: Color pink; text: ((line copyFrom: 1 to: index - 1) trimLeft: [:char | char = Character tab]));
+				add: (RSLabel new color: ((summaryExecMethod summaryStatements at: indStatement) executed ifTrue: [ Color pink ] ifFalse: [ Color white ]); text: subString).
+			lastStr := line copyFrom: index + subString size to: line size.
+			lastStr ifNotEmpty: [ groupLabel add: (RSLabel new color: Color pink; text: lastStr) ].
+			nLine := nLine + 1
+		].
+		found ifFalse: [ groupLabel add: (RSLabel new color: (indLine ~= 1 ifTrue: [ Color pink ] ifFalse: [ Color white ]) "((max = 0 and: [ indLine ~= 1 ]) ifTrue: [ Color pink ] ifFalse: [ Color white ])"; text: (line trimLeft: [:char | char = Character tab ]) ) ].
+		RSHorizontalLineLayout new on: groupLabel; gapSize: 0.
+		group add: groupLabel
+	].
+	RSVerticalLineLayout new gapSize: 0; on: group.
+	^ RSComposite new 
+		shapes: (group flatCollect: #yourself);
+		paint: Color black;
+		model: summaryExecMethod;
+		padding: 10;
+		draggable.
+	
+	
+	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> visualizeWithSparkCircle [
-  | b es generations shape |
-  generations := numberOfGenerations + 1.
-  b := RTMondrian new.
-  b interaction highlight.
-  shape := RTSparkCircle new.
-		shape size: 5.
-  		shape names: [ :model | Array with: fitness functionName with: (fitness functionName, 'ByProject') ].
-      shape percent: [ :model :metric | 
-		metric = fitness functionName ifTrue: [ (((model fitnessByClass at: metric) at: targetClassName)/100) asFloat ] ifFalse: [ model fitness values first ] ].
-		shape oldMetric: [ :model :metric | 
-		metric = fitness functionName ifTrue: [ (((model fitnessByClass at: metric) at: targetClassName)/100) asFloat ] ifFalse: [ model fitness values first ] ].
-		shape colorBlock: [ :model :metric | metric = fitness functionName ifTrue: [ Color white ] ifFalse: [ Color blue ] ].
-  b shape: shape.
-  es := b nodes: ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
-  es @ (RTHighlightable highlight: [:testCase |  testCase allParents ]).
-  "es do: [:el |  el
-           width: 10; 
-			  height: el model length * 2
-  ]."
-  b shape verticalBezierLine.
-  b edges moveBehind.
-  b edges connectFromAll: [:testCase |  testCase parents ].
-  b normalizer elements: es.
-  b normalizer normalizeColor: [:testCase |  testCase fitness values first] using: (Array with: Color black with: Color white)."(Array with: Color red with: Color blue) min:0 max: 100."
-  b layout smallSuite.
-  ^b 
+SGAEngine >> visualizationExecutionMethods: array [
+	| group |
+	group := RSGroup new.
+	group addAll: (array collect: [:summaryMethod | self visualizationExecutionMethod: summaryMethod ]).
+	RSGridLayout on: group.
+	^ RSComposite new 
+		shapes: (group collect: #yourself);
+		paint: Color gray;
+		model: array;
+		padding: 10;
+		draggable.
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizationPaperWith: dictColor [
+	| canvas summaryShape infoMethodShape evolutionShape |
+	canvas := RSCanvas new 
+		color: (dictColor at: 'background').
+	infoMethodShape := self infoMethodShapes: canvas ofColor: dictColor.
+	summaryShape := self addSummaryShapeTo: canvas ofHeight: infoMethodShape height andColor: dictColor.
+	canvas addAll: infoMethodShape.
+	self addBorderShape: infoMethodShape on: canvas ofColor: (dictColor at: 'border') andHeightOf: summaryShape.
+	evolutionShape := self evolutionShape: infoMethodShape height ofColor: dictColor.
+	RSLocation new top right offset: ((evolutionShape width + 20)@0); move: evolutionShape on: canvas shapes.
+	canvas addShape: evolutionShape.
+	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: (infoMethodShape width / 4) with: (evolutionShape width / 4)).
+	canvas @ RSCanvasController.
+	^ canvas
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> visualizeExecutionMethods [
+	| canvas populationGroup |
+	canvas := RSCanvas new addInteraction: RSCanvasController.
+	populationGroup := RSGroup new.
+	self logs collect: #population thenDo: [ :testCases | 
+		| group |
+		group := RSGroup new.
+		testCases collect: [ :testCase | 
+			self visualizationExecutionMethods: testCase summaryExecutionMethods
+		] thenDo: [:element | 
+			canvas add: element.
+			group add: element.
+		].
+		RSHorizontalLineLayout new gapSize: 20; on: group.
+		populationGroup add: group.
+	].
+	RSVerticalLineLayout new gapSize: 20; on: populationGroup.
+	^ canvas
 ]

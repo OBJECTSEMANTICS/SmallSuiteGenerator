@@ -62,6 +62,16 @@ STestCaseFactory >> createTestCases [
 ]
 
 { #category : #accessing }
+STestCaseFactory >> crossoverRate: aNumber [
+	engine crossoverRate: aNumber
+]
+
+{ #category : #accessing }
+STestCaseFactory >> elitismRate: aNumber [
+	engine elitismRate: aNumber
+]
+
+{ #category : #accessing }
 STestCaseFactory >> engine [
 	^ SGAEngine new
 		populationSize: 30;
@@ -73,10 +83,9 @@ STestCaseFactory >> engine [
 { #category : #accessing }
 STestCaseFactory >> engineDefault [
 	^ SGAEngine new
-		populationSize: 30;
 		fitness: fitness;
 		numberOfStatements: 30;
-		numberOfGenerations: 20;
+		numberOfGenerations: numberOfIterations;
 		yourself.
 ]
 
@@ -127,21 +136,21 @@ STestCaseFactory >> fitnessValues [
 		description: 'Run the generation before'.
 	functionNames := (Array with: engine fitness functionName) asSet.
 	fitValues := Dictionary new.
-		engine logs do: [ :log | 
+	engine logs doWithIndex: [ :log :index | 
 			functionNames do: [ :functionName | 
 			| val |
 			val := fitValues
 				       at: functionName , '_fittest'
 				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (log fittestTestCase fitness at: functionName).
+			val add: (index @ (log fittestTestCase fitness at: functionName)).
 			val := fitValues
 				       at: functionName , '_average'
 				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (log averageFit at: functionName).
+			val add: (index @ (log averageFit at: functionName)).
 			val := fitValues
 				       at: functionName , '_lowest'
 				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (log lowestFit at: functionName) ] ].
+			val add: (index @ (log lowestFit at: functionName)) ] ].
 	^ fitValues
 ]
 
@@ -291,26 +300,4 @@ STestCaseFactory >> typeInfo: aTypeInfo [
 
 { #category : #actions }
 STestCaseFactory >> uninstall [
-]
-
-{ #category : #visualization }
-STestCaseFactory >> visualize [
-	| p g d |
-	p := RTPalette c4.
-	g := RTGrapher new.
-	self fitnessValues associations doWithIndex: [ :association :index | 
-		d := RTData new.
-		d
-			connectColor: (p at: index);
-			noDot;
-			points: association value;
-			label: association key.
-		g add: d ].
-	d := RTData new connectColor: (p at: 4);
-			noDot;
-			points: ((OrderedCollection ofSize: numberOfIterations + 1) atAllPut: fitnessSeed; yourself);
-			label: 'Seed fitness'.
-	g add: d.
-	g legend addText: 'Fitness evolution'.
-	^ g
 ]
