@@ -159,7 +159,7 @@ SGAEngine >> evolutionShape: height ofColor: dictColor [
 		width: 10;
 		yourself.
 	composite addShape: axis; addShape: polyLine.
-	nice := RSLabelGenerator new searchMin: values min max: values max desired: 5. 
+	nice := RSLabelGenerator new searchMin: values min max: (values max + 1) desired: 5. 
 	(nice min to: nice max by: nice step) do: [ :i |
 		| aTick lbl |
 		aTick := RSLine new startPoint: (scale scale: (i@0));

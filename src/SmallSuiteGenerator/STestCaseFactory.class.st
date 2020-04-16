@@ -128,32 +128,6 @@ STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
 ]
 
-{ #category : #visualization }
-STestCaseFactory >> fitnessValues [
-	| functionNames fitValues |
-	self
-		assert: (engine isNil not and: [ engine logs isNotEmpty ])
-		description: 'Run the generation before'.
-	functionNames := (Array with: engine fitness functionName) asSet.
-	fitValues := Dictionary new.
-	engine logs doWithIndex: [ :log :index | 
-			functionNames do: [ :functionName | 
-			| val |
-			val := fitValues
-				       at: functionName , '_fittest'
-				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (index @ (log fittestTestCase fitness at: functionName)).
-			val := fitValues
-				       at: functionName , '_average'
-				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (index @ (log averageFit at: functionName)).
-			val := fitValues
-				       at: functionName , '_lowest'
-				       ifAbsentPut: [ OrderedCollection new ].
-			val add: (index @ (log lowestFit at: functionName)) ] ].
-	^ fitValues
-]
-
 { #category : #actions }
 STestCaseFactory >> getClassOf: aString [
 	| aClassName class |
