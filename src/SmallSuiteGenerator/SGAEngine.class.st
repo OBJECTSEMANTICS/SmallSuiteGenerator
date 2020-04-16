@@ -445,11 +445,6 @@ SGAEngine >> selectionStrategy: aSelectionStrategy [
 	selectionStrategy := aSelectionStrategy 
 ]
 
-{ #category : #accessing }
-SGAEngine >> selectionStrategy: selectStrategy [
-	selectionStrategy := selectStrategy 
-]
-
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
 	^ SPlatform randomGenerator next < self crossoverRate

@@ -10,7 +10,7 @@ STestCaseFactory >> gtInspectorViewIn: composite [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 STestCaseFactory >> visualizeEvolutionFitness [
-	| colors canvas legend extent |
+	| colors canvas legend extent scale |
 	colors := NSScale category20b range.
 	canvas := RSCanvas new.
 	extent := 300@200.

@@ -37,6 +37,12 @@ SExpression class >> isPrimitive: anObject [
 	^ self new isPrimitive: anObject.
 ]
 
+{ #category : #'as yet unclassified' }
+SExpression class >> nextIdentifier [
+	nextId ifNil: [ nextId := 0 ].	
+	^ nextId := nextId + 1
+]
+
 { #category : #initialization }
 SExpression class >> resetId [
 	nextId := nil
