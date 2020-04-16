@@ -55,11 +55,11 @@ RSSparkCircleB >> objects: anObject [
 ]
 
 { #category : #actions }
-RSSparkCircleB >> scaleBy: aNumber [
+RSSparkCircleB >> scaleTo: aNumber [
 	scale := aNumber.
 	sliceShape 
-		innerRadius: scale/ 8;
-		externalRadius: scale * 2
+		innerRadius: scale/ 10;
+		externalRadius: scale * 1.5
 ]
 
 { #category : #hooks }

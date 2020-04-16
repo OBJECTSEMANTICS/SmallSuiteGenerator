@@ -1,6 +1,20 @@
 Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> addBorderShape: aShape on: canvas ofColor: color andHeightOf: summaryShape [
+	| box |
+	box := RSBox new 
+		color: Color transparent;
+		border: (RSBorder new width: 2; color: color; yourself);
+		width: aShape width + 40;
+		height: summaryShape height;
+		yourself.
+	RSLocation new top middle offset: ((summaryShape width - (summaryShape width * 0.45))@0); 
+		move: box on: canvas shapes.
+	canvas addShape: box
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
 	| blockText text dictionary |
 	blockText := [:string | RSLabel new 
@@ -25,7 +39,7 @@ SGAEngine >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addLegendAt: canvas with: dictionary and: dictColor [
+SGAEngine >> addLegend: canvas with: dictionary and: dictColor [
 	| legend |
 	legend := RSLegend new 
 		container: canvas;
@@ -35,11 +49,10 @@ SGAEngine >> addLegendAt: canvas with: dictionary and: dictColor [
 		legend leyendDo: [ :l |
 				l
 					draggable;
-					padding: 10;
 					scaleBy: 1 ].
-		legend layout horizontal gapSize: 2.
+		legend layout horizontal.
 		legend location below offset: 10.
-		legend build.
+		legend build
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -67,36 +80,26 @@ SGAEngine >> addSummaryShapeTo: canvas ofHeight: height andColor: dictColor [
 				with: [:model | (model fittestTestCase fitnessByClass values first at: targetClassName) /100  ]);
 		sliceColor: [ :shape | (colorInfo at: shape index) value ].
 		spark defaultSliceShape innerRadius: 3.
-		spark scaleBy: scaleItem.
+		spark scaleTo: scaleItem.
 		spark build.
 		RSComposite new
 			shapes: group;
 			yourself ]).
-	RSVerticalLineLayout new gapSize: 10; on: groupSpark.
+	RSVerticalLineLayout new gapSize: 30; on: groupSpark.
 	element := RSComposite new 
 		shapes: groupSpark;
 		padding: (Margin
-				left: 40
-				right: 40
+				left: 70
+				right: 70
 				top: 20
 				bottom: 70);
 		border: (RSBorder new width: 2; color: (dictColor at: 'border'); yourself);
 		yourself.
-	self addLegendAt: element with: colorInfo and: dictColor.
-	RSLocation new top left offset: ((element width negated - 100)@110 negated); move: element on: canvas shapes.
+	self addLegend: element with: colorInfo and: dictColor.
+	RSLocation new top left offset: ((element width negated * 1.35)@110 negated); move: element on: canvas shapes.
 	canvas addShape: element.
+	^ element
 	
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> borderShape: aShape ofColor: color [
-	^ RSBox new 
-		color: Color transparent;
-		border: (RSBorder new width: 2; color: color; yourself);
-		width: aShape width + 40;
-		height: aShape height + 85;
-		position: ((aShape width)/2)@((aShape height)/2 - 5);
-		yourself
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -407,13 +410,13 @@ SGAEngine >> visualizationExecutionMethods: array [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> visualizationPaperWith: dictColor [
-	| canvas infoMethodShape evolutionShape |
+	| canvas summaryShape infoMethodShape evolutionShape |
 	canvas := RSCanvas new 
 		color: (dictColor at: 'background').
 	infoMethodShape := self infoMethodShapes: canvas ofColor: dictColor.
-	self addSummaryShapeTo: canvas ofHeight: infoMethodShape height andColor: dictColor.
+	summaryShape := self addSummaryShapeTo: canvas ofHeight: infoMethodShape height andColor: dictColor.
 	canvas addAll: infoMethodShape.
-	canvas addShape: (self borderShape: infoMethodShape ofColor: (dictColor at: 'border')).
+	self addBorderShape: infoMethodShape on: canvas ofColor: (dictColor at: 'border') andHeightOf: summaryShape.
 	evolutionShape := self evolutionShape: infoMethodShape height ofColor: dictColor.
 	RSLocation new top right offset: ((evolutionShape width + 20)@0); move: evolutionShape on: canvas shapes.
 	canvas addShape: evolutionShape.
