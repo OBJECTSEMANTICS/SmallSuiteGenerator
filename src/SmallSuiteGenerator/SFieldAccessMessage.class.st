@@ -20,7 +20,8 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		returnType: aMethod returnType type;
 		selector: aMethod selector;
 		receiver: aReceiver;
-		yourself
+		needsBeFixed: aMethod hasProfiler not;
+		yourself 
 ]
 
 { #category : #override }
@@ -30,6 +31,13 @@ SFieldAccessMessage >> changeSelectorFrom: expression in: aTestCase [
 		alternativeFieldAccessMessage: self.
 	mutated := otherFieldAccessMessage selector ~= self selector.
 	self selector: otherFieldAccessMessage selector
+]
+
+{ #category : #fixing }
+SFieldAccessMessage >> fixWith: anObject in: aTestCase [
+	(anObject receiver types includes: receiver returnType) ifFalse: [ self halt ].
+	returnType := randomGenerator selectAtRandom: anObject returnType types.
+	needsBeFixed := false.
 ]
 
 { #category : #mutation }

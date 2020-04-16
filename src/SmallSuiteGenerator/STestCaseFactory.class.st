@@ -17,8 +17,7 @@ Class {
 		'tearDownMethod',
 		'lastMessage',
 		'asDict',
-		'scale',
-		'valuesLegend'
+		'fitnessSeed'
 	],
 	#classInstVars : [
 		'instance'
@@ -94,7 +93,6 @@ STestCaseFactory >> engineDefault [
 STestCaseFactory >> export: aTestCase with: aSelector [
 	| class |
 	class := self getClassOf: ('GA' , self targetClassName , 'Test').
-	self moveClass: class.
 	[ aTestCase generateAssertions.
 	class
 		compile:
@@ -173,8 +171,9 @@ STestCaseFactory >> getClassOf: aString [
 STestCaseFactory >> initialize [
 	super initialize.
 	fitness := SMethodCoverage new.
-	numberOfIterations := 20.
 	engine := self engineDefault.
+	numberOfIterations :=20.
+	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
 ]
 
@@ -188,10 +187,6 @@ STestCaseFactory >> initializeProfiler [
 STestCaseFactory >> lastMessage: aMessage [
 	lastMessage := aMessage.
 	engine lastMessage: aMessage 
-]
-
-{ #category : #'as yet unclassified' }
-STestCaseFactory >> moveClass: aClass [ 
 ]
 
 { #category : #initialization }
@@ -228,6 +223,16 @@ STestCaseFactory >> run [
 { #category : #'instance creation' }
 STestCaseFactory >> seed: aNumber [ 	
 	SPlatform seed: aNumber
+]
+
+{ #category : #configuration }
+STestCaseFactory >> seedBlock: aBlock [ 	
+	fitnessSeed := (SLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
+]
+
+{ #category : #actions }
+STestCaseFactory >> selectionStrategy: aSelectionStrategy [
+	engine selectionStrategy: aSelectionStrategy 
 ]
 
 { #category : #actions }

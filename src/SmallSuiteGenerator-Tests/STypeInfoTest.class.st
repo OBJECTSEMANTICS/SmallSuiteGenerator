@@ -41,7 +41,7 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 		assert:
 			((messages flatCollect: [ :aMessage | aMessage receiver types ])
 				allSatisfy: [ :aType | aType = (self nameOf: SConference) ]).
-	self assert: (typeInfo messagesFrom: (self nameOf: SEvent)) isEmpty.
+	self assert: ((typeInfo messagesFrom: (self nameOf: SEvent)) allSatisfy: #isUnary).
 	self assert: (typeInfo messagesFrom: (self nameOf: SParty)) isEmpty.
 	messages := typeInfo factoryMessagesFrom: (self nameOf:  SConference).
 	self
@@ -66,15 +66,15 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assert: (typeInfo types at: classNameSEvent) methodTypes size
-		equals: 2.
+		equals: 4.
 	self
 		assert: (typeInfo types at: classNameSEvent) classMethodTypes isEmpty.
 	self
 		assert: (typeInfo types at: classNameSConference) methodTypes size
-		equals: 3.
+		equals: 5.
 	self
 		assert: (typeInfo types at: classNameSConference) classMethodTypes isEmpty.
-	self assert: (typeInfo types at: classNameSParty) methodTypes isEmpty.
+	self assert: ((typeInfo types at: classNameSParty) methodTypes allSatisfy: #isUnary).
 	self
 		assert: (typeInfo types at: classNameSParty) classMethodTypes isEmpty.
 	messages := typeInfo messagesFrom: classNameSConference.
@@ -100,6 +100,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		assertCollection: typeInfo scalars keys
 		hasSameElements:
 			(Array
+				with: (self nameOf: (SUndefinedObject basicNew) class)
 				with: classNameSStudent
 				with: classNameSmallInteger
 				with: (self nameOf: False)
@@ -192,7 +193,7 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	typeInfo := STypeInfo asTypeInfo: profile.
 	self
 		assert: (typeInfo types at: classNameSFoo) methodTypes size
-		equals: 2.
+		equals: 7.
 	self
 		assert: (typeInfo types at: classNameSFoo) classMethodTypes isEmpty.
 	self
@@ -207,7 +208,7 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 		hasSameElements: (Array with: (self nameOf: OrderedCollection class)).
 	self
 		assertCollection: ((typeInfo messagesFrom: classNameSFoo) collect: #selector)
-		hasSameElements: #(#initialize #return:)
+		hasSameElements: #(#returnFloat #returnCollection #initialize #returnNum #returnString #return:)
 ]
 
 { #category : #tests }
@@ -220,7 +221,7 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 	typeInfo := STypeInfo asTypeInfo: profile.
 	self
 		assert: (typeInfo types at: classNameSFoo) methodTypes size
-		equals: 2.
+		equals: 7.
 	self
 		assert: (typeInfo types at: classNameSFoo) classMethodTypes isEmpty.
 	self
@@ -235,7 +236,7 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 		hasSameElements: (Array with: (self nameOf: UndefinedObject)).
 	self
 		assertCollection: ((typeInfo messagesFrom: classNameSFoo) collect: #selector)
-		hasSameElements: #(#initialize #return:)
+		hasSameElements: #(#returnFloat #returnCollection #initialize #returnNum #returnString #return:)
 ]
 
 { #category : #tests }
@@ -304,7 +305,7 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: (typeInfo scalars values flatCollect: [ :val | val ])
-		hasSameElements: #(95 0 100).
+		hasSameElements: #(95 0 100 nil).
 	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ SFoo new
 				returnCollection;
@@ -316,6 +317,7 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
 			(Array
+				with: (self nameOf: (SUndefinedObject basicNew) class) -> #(nil)
 				with: (self nameOf: SmallInteger) -> #(0 4)
 				with: (self nameOf: OrderedCollection) -> (Array with: OrderedCollection new)
 				with: (self nameOf: ByteString) -> #('Hello')

@@ -94,6 +94,23 @@ SGAEngine >> collectFitnessByName [
 	^ dictFit
 ]
 
+{ #category : #updating }
+SGAEngine >> completeTypeInfo [
+	typeInfo types keysDo: [:aClass | |classInfo realClassInfo|
+	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
+	realClassInfo := typeInfo types at: aClass.
+	classInfo methodTypes keysAndValuesDo: [ :key :value | 
+		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) ifTrue:[
+		realClassInfo methodTypes at: key
+		ifPresent: [  ]
+		ifAbsentPut: [ 
+			self updateArgsOf: value.
+			value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
+			value receiver type: aClass.
+			value hasProfiler: false.
+			value executions: 0.5 ] ] ] ]
+]
+
 { #category : #actions }
 SGAEngine >> computeFitness [
 	fitness compute: population.
@@ -138,9 +155,9 @@ SGAEngine >> createNewPopulation [
 			option idPopulation: newNumber ])
         "selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]"
 		   ].
+  self updateTypeInfoWith: newPopulation.
+  self fixPopulation: newPopulation.
   population := newPopulation.
-  self updateTypeInfoOfPopulation
-		  
 ]
 
 { #category : #actions }
@@ -213,12 +230,28 @@ SGAEngine >> fitness [
 
 { #category : #accessing }
 SGAEngine >> fitness: aFitness [
-	fitness := aFitness
+	fitness := aFitness.
+	selectionStrategy fitness: aFitness
 ]
 
 { #category : #actions }
 SGAEngine >> fitnessFor: aTestCase [
 	^ aTestCase fitness at: fitness functionName.
+]
+
+{ #category : #actions }
+SGAEngine >> fixPopulation: aCollection [ 
+	| targetClassMessages |
+	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
+		removeAllSuchThat: [:method | method hasProfiler not ].
+	 
+	aCollection do: [ :testCase |
+		testCase statements select: #needsBeFixed thenDo: [ :stm | 
+			(stm value receiver returnType = self targetClassName) ifTrue: [ 
+			targetClassMessages select: [ :method | method selector = stm value selector ]
+			thenDo: [ :method |
+				stm fixWith: method in: testCase ]
+	   ] ] ]
 ]
 
 { #category : #initialization }
@@ -297,8 +330,7 @@ SGAEngine >> logs [
 
 { #category : #updating }
 SGAEngine >> mergeTypeInfo: otherTypeInfo [
-	initialPopulation do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
-	population do: [ :testCase | testCase typeInfo joinWith: otherTypeInfo ].
+	typeInfo joinWith: otherTypeInfo.
 ]
 
 { #category : #actions }
@@ -378,7 +410,7 @@ SGAEngine >> profilerForPackagesMatching [
 	typeInfoProfiler beforeProfiling.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #updating }
 SGAEngine >> profilerForTargetClass [
 	| packageSpy cls classSpy |
 	cls := Smalltalk at: targetClassName .
@@ -409,8 +441,8 @@ SGAEngine >> run [
 ]
 
 { #category : #accessing }
-SGAEngine >> selectionStrategy [ 
-	^ selectionStrategy
+SGAEngine >> selectionStrategy: aSelectionStrategy [
+	selectionStrategy := aSelectionStrategy 
 ]
 
 { #category : #accessing }
@@ -463,7 +495,8 @@ SGAEngine >> typeInfo [
 
 { #category : #accessing }
 SGAEngine >> typeInfo: aTypeInfo [
-	typeInfo := aTypeInfo
+	typeInfo := aTypeInfo.
+	self completeTypeInfo
 ]
 
 { #category : #updating }
@@ -474,10 +507,21 @@ SGAEngine >> uninstall [
 ]
 
 { #category : #updating }
-SGAEngine >> updateTypeInfoOfPopulation [
+SGAEngine >> updateArgsOf: aMethod [ 
+	aMethod argTypes do: [ :argType |
+	|res|
+	res := argType types anySatisfy: [ :type | typeInfo scalars keys includes: type ].
+	res ifFalse: [ argType types do: [ :type | | scalars |
+		scalars := typeInfo scalars keys select: [ :scalar | 
+			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
+			argType type: scalar ] ] ] ]
+]
+
+{ #category : #updating }
+SGAEngine >> updateTypeInfoWith: aPopulation [
 	fitness profiler uninstallClass: targetClassName.
-   self profilerForTargetClass .
-   population do:
+   self profilerForTargetClass.
+   aPopulation do:
 		[ :testCase | testCase runWithoutAssertions ].
    self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
    self uninstall .

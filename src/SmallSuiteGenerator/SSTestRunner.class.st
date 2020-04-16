@@ -47,20 +47,20 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var5 _var6 _var7 _var8 _var9 _var10 _var11 _var12 _var13 _var14 |
-_var0 := 'teacher_Ann'.
-_var1 := SSTeacher new.
-_var2 := _var1 idTeacher.
-_var5 := SSTeacher name: _var0 with: _var2.
-_var6 := _var1 yearsWorkExperience.
-_var7 := _var5 nickname.
-_var8 := SSTeacher new.
-_var9 := _var1 nickname.
-_var10 := _var5 nickname.
-_var11 := _var8 yearsWorkExperience.
-_var12 := _var8 idTeacher.
-_var13 := _var1 nickname.
-_var14 := _var8 yearsWorkExperience.
+	| _var0 _var14 _var1 _var2 _var3 _var4 _var5 _var7 _var8 _var6 _var9 _var10 _var11 |
+_var0 := RTGrapher new.
+_var14 := RTGrapher new.
+_var1 := _var0 resetShape.
+_var2 := _var0 initialize.
+_var3 := _var0 resetLegend.
+_var4 := _var1 resetLegend.
+_var5 := RTData new.
+_var7 := _var14 add: _var5.
+_var8 := _var2 configureForBarCharts.
+_var6 := _var14 configureForBarCharts.
+_var9 := _var0 configureForBarCharts.
+_var10 := _var7 resetInteraction.
+_var11 := _var0 defaultWindowName.
 ^self analyze: thisContext
 ]
 

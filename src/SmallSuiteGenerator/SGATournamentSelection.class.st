@@ -5,16 +5,10 @@ Class {
 	#name : #SGATournamentSelection,
 	#superclass : #SGASelection,
 	#instVars : [
-		'tournamentSize',
-		'fitness'
+		'tournamentSize'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
-
-{ #category : #actions }
-SGATournamentSelection >> fitness: anObject [ 
-	fitness := anObject 
-]
 
 { #category : #actions }
 SGATournamentSelection >> fitnessFor: aTestCase [
@@ -35,13 +29,7 @@ SGATournamentSelection >> selectOf: aCollection [
 	sample := (randomGenerator collectAtRandom: aCollection )
 		first: (tournamentSize min: aCollection size).
 	sample := sample
-		asSortedCollection: [ :a :b | 
-			|fitness1 fitness2|
-	fitness1 := self fitnessFor: a.
-	fitness2 := self fitnessFor: b.
-		^ 			fitness1 = fitness2
-						ifTrue: [ a length <= b length ]
-						ifFalse: [ fitness1 > fitness2 ]. ].
+		asSortedCollection: [ :a :b | (a fitness at: fitness functionName) > (b fitness  at: fitness functionName) ].
 	^ sample
 ]
 

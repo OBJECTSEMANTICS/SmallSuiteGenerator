@@ -21,12 +21,13 @@ Class {
 		'isDeprecated',
 		'receiver',
 		'scalars',
-		'executions'
+		'executions',
+		'hasProfiler'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeMethodInfo class >> asMethodInfo: aSpyMethod [
 	^ self new asMethodInfo: aSpyMethod 
 ]
@@ -84,7 +85,7 @@ STypeMethodInfo >> argTypes: anObject [
 	argTypes := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeMethodInfo >> asMethodInfo: typeCollMethod [
 	^ self class new
 		selector: typeCollMethod selector;
@@ -94,7 +95,8 @@ STypeMethodInfo >> asMethodInfo: typeCollMethod [
 		isQuick: typeCollMethod isQuick;
 		scalars: typeCollMethod dictLiterals;
 		isDeprecated: typeCollMethod isDeprecated;
-		executions: typeCollMethod numberOfExecutions 
+		executions: typeCollMethod numberOfExecutions;
+		hasProfiler: typeCollMethod wasExecuted 
 ]
 
 { #category : #copying }
@@ -108,8 +110,18 @@ STypeMethodInfo >> copy [
 		returnType: returnType copy;
 		argTypes: argTypes copy;
 		scalars: scalars copy;
+		executions: executions;
 		receiver: receiver copy.
 	^ copy
+]
+
+{ #category : #actions }
+STypeMethodInfo >> copyValuesOf: otherTypeMethod [
+	(otherTypeMethod hasProfiler and: [ otherTypeMethod returnType types isNotEmpty ]) ifFalse: [^ self].
+	returnType := otherTypeMethod returnType.
+	argTypes := otherTypeMethod argTypes.
+	receiver := otherTypeMethod receiver.
+	hasProfiler := otherTypeMethod hasProfiler.
 ]
 
 { #category : #accessing }
@@ -126,14 +138,24 @@ STypeMethodInfo >> dataCSV [
 		add: returnType commonSuperclass; yourself)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #acccessing }
 STypeMethodInfo >> executions [
 	^ executions  
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #acccessing }
 STypeMethodInfo >> executions: anObject [
 	executions := anObject 
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> hasProfiler [
+	^ hasProfiler
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> hasProfiler: aBoolean [
+	hasProfiler := aBoolean 
 ]
 
 { #category : #comparing }
@@ -149,7 +171,8 @@ STypeMethodInfo >> initialize [
 	returnType := SMultiTypeInfo new.
 	receiver := SMultiTypeInfo new.
 	isDeprecated := false.
-	scalars := Dictionary new
+	scalars := Dictionary new.
+	hasProfiler := true
 ]
 
 { #category : #accessing }
@@ -383,6 +406,11 @@ STypeMethodInfo >> isSimpleTyped9 [
 		allSatisfy: #yourself
 ]
 
+{ #category : #accessing }
+STypeMethodInfo >> isUnary [
+	^ selector isUnary 
+]
+
 { #category : #testing }
 STypeMethodInfo >> isWithReturnType: aClassName [
 	^ returnType types includes: aClassName
@@ -390,11 +418,13 @@ STypeMethodInfo >> isWithReturnType: aClassName [
 
 { #category : #actions }
 STypeMethodInfo >> joinWith: otherTypeMethod [
-	argTypes ifNotNil: [argTypes
-		with: otherTypeMethod argTypes
-		do: [ :argType :otherArgType | argType joinWith: otherArgType ].  ].
-	
-	returnType joinWith: otherTypeMethod returnType
+	hasProfiler ifFalse: [ self copyValuesOf: otherTypeMethod ]
+	ifTrue: [ 
+		argTypes ifNotNil: [argTypes
+			with: otherTypeMethod argTypes
+			do: [ :argType :otherArgType | argType joinWith: otherArgType ] ].
+		returnType joinWith: otherTypeMethod returnType
+	]
 ]
 
 { #category : #accessing }
@@ -452,7 +482,7 @@ STypeMethodInfo >> transform: aSet [
 	^ multiType
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #converting }
 STypeMethodInfo >> transformArgs: allArgs [
 	^ allArgs
 		collect: [ :args | 

@@ -96,7 +96,8 @@ SMultiTypeInfo >> isBlockSymbol [
 
 { #category : #actions }
 SMultiTypeInfo >> joinWith: otherTypeReturn [
-	otherTypeReturn types do: [ :aType | self type: aType ]
+	otherTypeReturn types do: [ :aType | self type: aType ].
+	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ] ]
 ]
 
 { #category : #'ston persistence' }
