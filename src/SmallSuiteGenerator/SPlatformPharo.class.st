@@ -83,7 +83,7 @@ SPlatformPharo class >> instanceLogger [
 	^ self classLogger default
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #settings }
 SPlatformPharo class >> rbParserClass [
 	^ RBParser
 ]

@@ -7,7 +7,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #creating }
 SGARouletteSelection >> createRouletteWith: probability [ 
 	| sum roulette |
 	sum := probability sum.
@@ -18,12 +18,12 @@ SGARouletteSelection >> createRouletteWith: probability [
 	^ roulette 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #selection }
 SGARouletteSelection >> selectOf: aCollection [ 
 	^ self selectOf: aCollection with: (aCollection collect: #fitness)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #selection }
 SGARouletteSelection >> selectOf: aCollection with: probability [
 	| roulette random |
 	roulette := self createRouletteWith: probability .

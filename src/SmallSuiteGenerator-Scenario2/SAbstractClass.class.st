@@ -12,20 +12,28 @@ Class {
 
 { #category : #accessing }
 SAbstractClass >> id [
-	^ id
+  #metaObject count: 1.
+  nil.
+  ^id
 ]
 
 { #category : #accessing }
 SAbstractClass >> id: anObject [
-	id := anObject
+  #metaObject count: 1.
+  nil.
+  id := anObject
 ]
 
 { #category : #accessing }
 SAbstractClass >> identifier [
-	^ self subclassResponsibility
+  #metaObject count: 1.
+  nil.
+  ^self subclassResponsibility
 ]
 
 { #category : #initialization }
-SAbstractClass >> initialize [ 
-	id := 1
+SAbstractClass >> initialize [
+  #metaObject count: 1.
+  nil.
+  id := 1
 ]

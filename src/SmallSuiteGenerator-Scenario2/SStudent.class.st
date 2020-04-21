@@ -13,30 +13,39 @@ Class {
 
 { #category : #accessing }
 SStudent >> idStudent [
-	^ idStudent
+  #metaObject count: 1.
+  nil.
+  ^idStudent
 ]
 
 { #category : #initialization }
 SStudent >> initialize [
-	id := 1.
-
-	scoreStudent := 1.
-	idStudent := id
+  #metaObject count: 1.
+  nil.
+  id := 1.
+  scoreStudent := 1.
+  idStudent := id
 ]
 
 { #category : #accessing }
 SStudent >> nickname [
-	^ 'student_'	, (nickname ifNil: [ '1' ])
+  #metaObject count: 1.
+  nil.
+  ^'student_' , (nickname ifNil: [ #metaObject count: 2.
+              nil.
+              '1' ])
 ]
 
 { #category : #accessing }
 SStudent >> scoreStudent [
-
-	^ scoreStudent
+  #metaObject count: 1.
+  nil.
+  ^scoreStudent
 ]
 
 { #category : #accessing }
 SStudent >> scoreStudent: aNumber [
-	
-	scoreStudent := aNumber
+  #metaObject count: 1.
+  nil.
+  scoreStudent := aNumber
 ]

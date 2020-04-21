@@ -21,7 +21,7 @@ SGATournamentSelection >> initialize [
 	tournamentSize := 5.
 ]
 
-{ #category : #actions }
+{ #category : #selection }
 SGATournamentSelection >> selectOf: aCollection [
 	"Return the best testCases from tournamentSize testCase randomly chosen from the population"
 

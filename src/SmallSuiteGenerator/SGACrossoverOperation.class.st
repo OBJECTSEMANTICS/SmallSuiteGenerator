@@ -60,7 +60,7 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 
 { #category : #actions }
 SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
-  | sizeA sizeB offSpring limit |
+  | sizeA sizeB offSpring |
   sizeA := parentA length.
   sizeB := parentB length.
   offSpring := SSTestCase with: parentA typeInfo copy.
@@ -68,14 +68,15 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   offSpring
      addTargetClassNames: parentA targetClassesNames;
      addTargetClassNames: parentB targetClassesNames.
-  limit := (sizeA * alpha) asInteger.
-  offSpring addStatements: (parentA statements copyFrom: 1 to: limit) copy.
-  (parentB statements copyFrom: (alpha * sizeB) asInteger + 1 to: sizeB) 
+  offSpring addStatements: (parentA statements copyFrom: 1 to: ((sizeA * alpha) asInteger max: 1)) copy.
+  (parentB statements copyFrom: ((alpha * sizeB) asInteger max: 1) + 1 to: sizeB)
+			do: [:aStm |  [ | lastStm |
+					aStm insertOn: offSpring.
+					lastStm := offSpring statements last.
+					lastStm needsBeFixed ifTrue: [ offSpring fixTypeReturnOf: lastStm ] ] on: SError do: [  ] ].
+			offSpring addParent: parentA; addParent: parentB.
+(parentB statements copyFrom: (alpha * sizeB) asInteger + 1 to: sizeB) 
 		do: [:aStm |  [ aStm insertOn: offSpring ] on: SError do: [  ] ].
 	offSpring addParent: parentA; addParent: parentB.
-  "^(parentA = parentB and: [ offSpring = parentA ]) ifTrue: [ parentA copy ] ifFalse: [ offSpring
-           addParent: parentA;
-           addParent: parentB.
-        offSpring ]"
 	^ offSpring 
 ]

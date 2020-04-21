@@ -46,21 +46,39 @@ SSTestRunner >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestRunner >> performTest [
-	| _var0 _var14 _var1 _var2 _var3 _var4 _var5 _var7 _var8 _var6 _var9 _var10 _var11 |
-_var0 := RTGrapher new.
-_var14 := RTGrapher new.
-_var1 := _var0 resetShape.
-_var2 := _var0 initialize.
-_var3 := _var0 resetLegend.
-_var4 := _var1 resetLegend.
-_var5 := RTData new.
-_var7 := _var14 add: _var5.
-_var8 := _var2 configureForBarCharts.
-_var6 := _var14 configureForBarCharts.
-_var9 := _var0 configureForBarCharts.
-_var10 := _var7 resetInteraction.
-_var11 := _var0 defaultWindowName.
+SSTestRunner >> performTest| var [ |
+var := Dictionary new.
+var at: 1 put: SStack newStack.
+var at: 2 put: (var at: 1) pop.
+var at: 22 put: (var at: 1) top.
+var at: 3 put: (var at: 1) top.
+var at: 20 put: (OrderedCollection new
+         add: 12;
+         add: -2;
+         add: 'hello';
+         add: #nameOf;
+         add: 0;
+         yourself).
+var at: 4 put: 'teacher_Johan'.
+var at: 21 put: (SStack newStackWith: (var at: 20)).
+var at: 5 put: ((var at: 1) push: (var at: 4)).
+var at: 6 put: (var at: 21) firstLinkStack.
+var at: 7 put: (var at: 1) lastLinkStack.
+var at: 9 put: ((var at: 1) push: (var at: 4)).
+var at: 11 put: ((var at: 1) push: (var at: 5)).
+var at: 12 put: ((var at: 1) push: (var at: 22)).
+var at: 13 put: (var at: 1) top.
+var at: 14 put: (var at: 1) top.
+var at: 16 put: ((var at: 1) push: (var at: 22)).
+var at: 8 put: (var at: 21) top.
+var at: 17 put: (SStack newStackWith: (var at: 20)).
+var at: 18 put: (var at: 21) firstLinkStack.
+var at: 19 put: (var at: 1) firstLinkStack.
+var at: 24 put: ((var at: 17) push: (var at: 8)).
+var at: 25 put: (var at: 17) top.
+var at: 27 put: (SStack newStackWith: (var at: 20)).
+var at: 28 put: (var at: 21) firstLinkStack.
+var at: 30 put: ((var at: 17) push: (var at: 5)).
 ^self analyze: thisContext
 ]
 

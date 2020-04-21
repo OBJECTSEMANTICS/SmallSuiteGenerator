@@ -110,6 +110,7 @@ SAbstractMessage >> insertRandomMessage: expression using: aTestCase [
 	| anotherExpression |
 	anotherExpression := self copy.
 	anotherExpression mutated: true.
+	anotherExpression needsBeFixed: true.
 	^ aTestCase insertExpression: anotherExpression after: expression
 ]
 

@@ -25,12 +25,14 @@ SStatementCoverage >> run: testCaseCollection [
 	string := self functionName.
 	testCaseCollection
 		do: [ :testCase | 
-			profiler cleanBlocksOfMethods.
-			testCase runWithoutAssertions.
-			testCase summaryExecutionMethods: profiler summaryExecutionMethods.
-			"self abstractDataOn: testCase."
-			testCase fitness at: string put: (profiler statementCoverageFor: targetClass ).
-			testCase fitnessByClass at: string put: profiler statementCoverage1 ]
+			testCase length > 0 ifTrue: [
+				profiler cleanBlocksOfMethods.
+				testCase runWithoutAssertions.
+				testCase summaryExecutionMethods: profiler summaryExecutionMethods.
+				"self abstractDataOn: testCase."
+				testCase fitness at: string put: (profiler statementCoverageFor: targetClass ).
+				testCase fitnessByClass at: string put: profiler statementCoverage1 ]
+			ifFalse: [ testCase fitness at: string put: 0 ] ]
 ]
 
 { #category : #actions }

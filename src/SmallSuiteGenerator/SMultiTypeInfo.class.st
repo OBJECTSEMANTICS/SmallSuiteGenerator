@@ -8,7 +8,8 @@ Class {
 	#name : #SMultiTypeInfo,
 	#superclass : #STypeObjectInfo,
 	#instVars : [
-		'types'
+		'types',
+		'mustBeFixed'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -85,7 +86,8 @@ SMultiTypeInfo >> includes: aType [
 
 { #category : #initialization }
 SMultiTypeInfo >> initialize [
-	types := Set new
+	types := Set new.
+	mustBeFixed := false
 ]
 
 { #category : #metrics }
@@ -96,8 +98,16 @@ SMultiTypeInfo >> isBlockSymbol [
 
 { #category : #actions }
 SMultiTypeInfo >> joinWith: otherTypeReturn [
+	| hasOneType |
+	hasOneType := self hasOnlyOneType.	
 	otherTypeReturn types do: [ :aType | self type: aType ].
-	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ] ]
+	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ] ].
+	mustBeFixed := hasOneType and: [ types size > 1 ]
+]
+
+{ #category : #accessing }
+SMultiTypeInfo >> mustBeFixed [ 
+	^ mustBeFixed
 ]
 
 { #category : #'ston persistence' }

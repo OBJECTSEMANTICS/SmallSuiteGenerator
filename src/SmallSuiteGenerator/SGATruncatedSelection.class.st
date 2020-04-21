@@ -20,7 +20,7 @@ SGATruncatedSelection >> initialize [
 	discarding := 5
 ]
 
-{ #category : #actions }
+{ #category : #selection }
 SGATruncatedSelection >> selectOf: aCollection [
 	| newColl |
 	newColl := (aCollection sort: [ :a :b |(a fitness at: fitness functionName)> (b fitness at: fitness functionName) ]).

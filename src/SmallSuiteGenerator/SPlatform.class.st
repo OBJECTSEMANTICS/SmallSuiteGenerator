@@ -107,7 +107,7 @@ SPlatform class >> logName: string [
 	logName := string
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SPlatform class >> lookUpClass: aClassName [
 	^ Smalltalk at: aClassName ifAbsent: [ nil ]
 ]
@@ -128,7 +128,7 @@ SPlatform class >> randomGenerator: sRandom [
 	randomGenerator := sRandom
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #settings }
 SPlatform class >> rbParserClass [
 	^ self configurationClass rbParserClass
 ]
