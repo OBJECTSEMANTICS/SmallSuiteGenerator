@@ -158,6 +158,7 @@ SGAEngine >> createNewPopulation [
   self updateTypeInfoWith: newPopulation.
   self fixPopulation: newPopulation.
   population := newPopulation.
+  self orderPopulation 
 ]
 
 { #category : #actions }
@@ -356,6 +357,11 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
+{ #category : #actions }
+SGAEngine >> orderPopulation [
+	population sort: [ :stm1 :stm2 | (stm1 fitness at: fitness functionName) > (stm2 fitness at: fitness functionName) ].
+]
+
 { #category : #accessing }
 SGAEngine >> packageRegex: aString [
 	packageRegex := aString
@@ -427,6 +433,7 @@ SGAEngine >> run [
   population := self createRandomPopulation.
   SExpression resetId.
   self computeFitness.
+  self orderPopulation.
   initialPopulation := population.
   logs add: (self logOfGeneration: 0 inTime: t).
   (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
