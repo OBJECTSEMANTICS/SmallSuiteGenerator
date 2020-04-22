@@ -186,12 +186,13 @@ SSTestShifter >> addParent: aTestCase [
 
 { #category : #inserting }
 SSTestShifter >> addStatement: anExpression [
-	statements add: anExpression.
+	self canAddStatement ifTrue: [ statements add: anExpression ]
 ]
 
 { #category : #inserting }
 SSTestShifter >> addStatement: newExpression after: aStatement [
 	| anIndex |
+	self canAddStatement ifFalse: [ ^ self ].
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
 		ifTrue: [ self addStatement: newExpression ]
@@ -203,6 +204,7 @@ SSTestShifter >> addStatement: newExpression after: aStatement [
 { #category : #inserting }
 SSTestShifter >> addStatement: newExpression before: aStatement [
 	"I add a newExpression before aStatement"
+	self canAddStatement ifFalse: [ ^ self ].
 	statements
 		add: newExpression
 		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
@@ -224,7 +226,8 @@ SSTestShifter >> addStatements: collStatements [
 	self
 		assert: statements isEmpty
 		description: 'statements must be empty'.
-	statements addAll: collStatements
+	collStatements do: [ :stm | self addStatement: stm ]"
+	statements addAll: collStatements"
 ]
 
 { #category : #adding }
@@ -350,6 +353,14 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 						and: scalarsKeys ] ]
 ]
 
+{ #category : #inserting }
+SSTestShifter >> canAddStatement [
+	SPlatform asDict 
+		ifFalse: [
+			^ ((self length + 3) < CompiledMethod fullFrameSize)
+		] ifTrue: [ ^ true ]
+]
+
 { #category : #modifying }
 SSTestShifter >> changeMessageNotUnderstood: aSelector from: aClassName [
 	^ false
@@ -402,7 +413,7 @@ SSTestShifter >> changeStatementOfVarName: varName [
 { #category : #repairing }
 SSTestShifter >> clean [
 	|literals unused|
-	literals := self statements select: [ :e | e value isKindOf: SLiteral ].
+	literals := self statements select: [ :e | (e value isKindOf: SLiteral) or: [ e value isKindOf: SFactoryMessage ] ].
 	unused := literals difference: (literals select: 
 		[ :e | (self statements collect: 
 			[:stm | stm pickUpReferences: e]) anySatisfy: [ :x | x isNotEmpty  ]]).
@@ -566,7 +577,7 @@ SSTestShifter >> insertExpressionRandomly [
 			insertedStm := self insertStatementOfSelector: selector.
 			insertedStm value mutated ifTrue: [ self fixTypeReturnOf: insertedStm ].
 			^ insertedStm ]
-				on: SError
+				on: Error
 				do: [  ] ]
 ]
 

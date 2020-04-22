@@ -145,7 +145,8 @@ SGAEngine >> createNewPopulation [
 		  OM2 clean.
         OM2 updateWith: O2.
         fitness compute: (Array with: OM1 with: OM2).
-        options := (Array with: OM1 with: OM2 with: P1copy with: P2copy) difference: newPopulation.
+        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) 
+							select: [ :each | each length > 0]) difference: newPopulation.
         options := options asSortedCollection: 
 			  [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.

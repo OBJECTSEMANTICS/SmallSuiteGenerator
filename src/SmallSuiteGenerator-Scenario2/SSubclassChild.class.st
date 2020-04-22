@@ -8,8 +8,6 @@ Class {
 }
 
 { #category : #accessing }
-SSubclassChild >> identifier [
-  #metaObject count: 1.
-  nil.
-  ^self className , '_' , self id asString
+SSubclassChild >> identifier [ 
+	^ self className, '_', self id asString
 ]
