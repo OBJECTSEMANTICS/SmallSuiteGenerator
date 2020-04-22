@@ -39,20 +39,25 @@ SGAEngine >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addHighlightEvent: highlight on: canvas [ 
+SGAEngine >> addHighlightEvent: highlight on: canvas ofColor: color [
 	| interaction |
-	interaction := RSHighlightable new highlightColor: highlight highlightColor; yourself.
+	interaction := RSHighlightable new highlightColor: color; yourself.
 	highlight 
-		when: RSHighlightEvent do: [ :evt | | testCases |
+		when: RSHighlightEvent do: [ :evt | | testCases edges |
 			testCases := evt shape model allParents.
 			testCases := canvas shapes select: [ :shape | testCases includes: shape model ].
-			interaction doHighlightShapes: testCases.
+			edges := ((Array with: evt shape),  testCases) flatCollect: [ :testCase | testCase incomingEdges collect: #yourself as: RSGroup ].
+			interaction doHighlightShapes: testCases, edges.
 			canvas attributeAt: #testCases put: testCases.
+			canvas attributeAt: #edges put: edges.
 		];
 		when: RSUnHighlightEvent do: [ :evt | 
 			(canvas attributeAt: #testCases ifAbsent: [ #() ]) do: [:shape | 
-				interaction doUnhighlight: shape
-				] ].
+				interaction restore: shape selector: #color
+				].
+			(canvas attributeAt: #edges ifAbsent: [ #() ]) do: [ :edge | 
+				interaction restore: edge selector: #color
+				 ] ].
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -498,7 +503,6 @@ SGAEngine >> visualizationPaperWith: dictColor [
 		color: (dictColor at: 'background').
 	interaction := RSHighlightable new 
 		highlightColor: (dictColor at: 'highlight');
-		withEdges;
 		yourself.
 	infoMethodShape := self infoMethodShapes: canvas ofColor: dictColor andHighlight: interaction.
 	infoHeights := infoMethodShape at: 2.
@@ -506,10 +510,7 @@ SGAEngine >> visualizationPaperWith: dictColor [
 	summaryShape := self addSummaryShapeTo: canvas ofHeight: infoMethodShape height sizeItems: infoHeights andColor: dictColor.
 	"summaryShape := self addSummaryShapeTo: canvas ofHeight: infoMethodShape height andColor: dictColor."
 	canvas addAll: infoMethodShape.
-	"canvas nodes @ interaction."
-	"update := [ interaction doHighlight: (canvas nodes) ].
-	update value."
-	self addHighlightEvent: interaction on: canvas.
+	self addHighlightEvent: interaction on: canvas ofColor: (dictColor at: 'highlight').
 	self addBorderShape: infoMethodShape on: canvas ofColor: (dictColor at: 'border') andHeightOf: summaryShape.
 	evolutionShape := self evolutionShapeUpdate: infoMethodShape height ofColor: dictColor with: infoHeights.
 	RSLocation new below right offset: ((evolutionShape width + 100)@0); move: evolutionShape on: canvas shapes.
