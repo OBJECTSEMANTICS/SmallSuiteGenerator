@@ -48,14 +48,14 @@ SGAEngine >> addHighlightEvent: highlight on: canvas ofColor: color [
 			testCases := canvas shapes select: [ :shape | testCases includes: shape model ].
 			edges := ((Array with: evt shape),  testCases) flatCollect: [ :testCase | testCase incomingEdges collect: #yourself as: RSGroup ].
 			interaction doHighlightShapes: testCases, edges.
-			canvas attributeAt: #testCases put: testCases.
-			canvas attributeAt: #edges put: edges.
+			canvas propertyAt: #testCases put: testCases.
+			canvas propertyAt: #edges put: edges.
 		];
 		when: RSUnHighlightEvent do: [ :evt | 
-			(canvas attributeAt: #testCases ifAbsent: [ #() ]) do: [:shape | 
+			(canvas propertyAt: #testCases ifAbsent: [ #() ]) do: [:shape | 
 				interaction restore: shape selector: #color
 				].
-			(canvas attributeAt: #edges ifAbsent: [ #() ]) do: [ :edge | 
+			(canvas propertyAt: #edges ifAbsent: [ #() ]) do: [ :edge | 
 				interaction restore: edge selector: #color
 				 ] ].
 ]
@@ -249,7 +249,7 @@ SGAEngine >> evolutionPoints: heights ofHeight: height [
 	endPoint := 0 @ sum.
 	reverseHeights := (heights allButLast collect: [ :h | subtraction := subtraction - (h log) ]), #(0).
 	(self logs collect: [:log | 
-		log fittestTestCase fitnessByClass values first at: targetClassName]) reverse
+		log fittestTestCase fitnessByClass values first at: targetClassName])
 		doWithIndex: [ :value  :index | 
 			| stepPoint |
 			stepPoint := (value - startPoint x) @ 0.
