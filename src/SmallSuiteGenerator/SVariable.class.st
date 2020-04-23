@@ -66,6 +66,12 @@ SVariable >> initialize [
 	varName := '_var'
 ]
 
+{ #category : #accessing }
+SVariable >> key [
+	SPlatform asDict ifTrue: [ ^ id + 1 ] ifFalse: [ ^ self printString asSymbol ]
+
+]
+
 { #category : #mutation }
 SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference

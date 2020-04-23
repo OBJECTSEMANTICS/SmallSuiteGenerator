@@ -7,7 +7,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #actions }
+{ #category : #selection }
 SGARankSelection >> selectOf: aCollection [
 	^ randomGenerator collectAtRandom: aCollection 
 ]

@@ -145,7 +145,8 @@ SGAEngine >> createNewPopulation [
 		  OM2 clean.
         OM2 updateWith: O2.
         fitness compute: (Array with: OM1 with: OM2).
-        options := (Array with: OM1 with: OM2 with: P1copy with: P2copy) difference: newPopulation.
+        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) 
+							select: [ :each | each length > 0]) difference: newPopulation.
         options := options asSortedCollection: 
 			  [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.
@@ -158,12 +159,13 @@ SGAEngine >> createNewPopulation [
   self updateTypeInfoWith: newPopulation.
   self fixPopulation: newPopulation.
   population := newPopulation.
+  self orderPopulation 
 ]
 
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |
-        value := SPlatform randomGenerator next * populationSize + 1.
+        value := SPlatform randomGenerator next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
         test
            addTargetClassName: self targetClassName;
@@ -243,29 +245,24 @@ SGAEngine >> fitnessFor: aTestCase [
 SGAEngine >> fixPopulation: aCollection [ 
 	| targetClassMessages |
 	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
-		removeAllSuchThat: [:method | method hasProfiler not ].
+		removeAllSuchThat: [:method | method returnType mustBeFixed not ].
 	 
-	aCollection do: [ :testCase |
-		testCase statements select: #needsBeFixed thenDo: [ :stm | 
-			(stm value receiver returnType = self targetClassName) ifTrue: [ 
-			targetClassMessages select: [ :method | method selector = stm value selector ]
-			thenDo: [ :method |
-				stm fixWith: method in: testCase ]
-	   ] ] ]
+	aCollection do: [ :testCase | 
+		testCase statements select: [ :stm | [(targetClassMessages collect: #selector) includes: stm value selector]
+			on: Error do: [ false ] ] thenDo: [ :stm | testCase fixTypeReturnOf: (stm needsBeFixed: true) ] ]
 ]
 
 { #category : #initialization }
 SGAEngine >> initialize [
   super initialize.
-  
   logs := OrderedCollection new.
   randomGenerator := SPlatform newRandomGenerator.
   populationSize := 100.
   numberOfGenerations := 100.
   selectionStrategy := SGARankSelection new.
-	crossoverRate := 0.8.
-	elitismRate := 10.
-  
+  crossoverRate := 0.8.
+  elitismRate := 10.
+  numberOfStatements := 10.
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -361,6 +358,11 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
+{ #category : #actions }
+SGAEngine >> orderPopulation [
+	population sort: [ :stm1 :stm2 | (stm1 fitness at: fitness functionName) > (stm2 fitness at: fitness functionName) ].
+]
+
 { #category : #accessing }
 SGAEngine >> packageRegex: aString [
 	packageRegex := aString
@@ -432,10 +434,10 @@ SGAEngine >> run [
   population := self createRandomPopulation.
   SExpression resetId.
   self computeFitness.
-	initialPopulation := population.
+  self orderPopulation.
+  initialPopulation := population.
   logs add: (self logOfGeneration: 0 inTime: t).
-  (1 to: numberOfGenerations) do: [:iteration | 
-		  t := Time now asSeconds.
+  (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
         self doSelection.
         logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]

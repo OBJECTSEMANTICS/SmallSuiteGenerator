@@ -19,7 +19,7 @@ SStack class >> newStack [
 { #category : #'instance creation' }
 SStack class >> newStackWith: aList [
 	| inst |
-	inst := self new.
+	inst := self newStack.
 	aList
 		do: [ :element | 
 			inst push: element ].

@@ -186,12 +186,13 @@ SSTestShifter >> addParent: aTestCase [
 
 { #category : #inserting }
 SSTestShifter >> addStatement: anExpression [
-	statements add: anExpression.
+	self canAddStatement ifTrue: [ statements add: anExpression ]
 ]
 
 { #category : #inserting }
 SSTestShifter >> addStatement: newExpression after: aStatement [
 	| anIndex |
+	self canAddStatement ifFalse: [ ^ self ].
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
 		ifTrue: [ self addStatement: newExpression ]
@@ -203,6 +204,7 @@ SSTestShifter >> addStatement: newExpression after: aStatement [
 { #category : #inserting }
 SSTestShifter >> addStatement: newExpression before: aStatement [
 	"I add a newExpression before aStatement"
+	self canAddStatement ifFalse: [ ^ self ].
 	statements
 		add: newExpression
 		afterIndex: (self randomIndexToAdd: newExpression before: aStatement)
@@ -224,7 +226,8 @@ SSTestShifter >> addStatements: collStatements [
 	self
 		assert: statements isEmpty
 		description: 'statements must be empty'.
-	statements addAll: collStatements
+	collStatements do: [ :stm | self addStatement: stm ]"
+	statements addAll: collStatements"
 ]
 
 { #category : #adding }
@@ -338,8 +341,8 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 	argTypes
 		ifNotNil: [ | prevTypes scalarsKeys |
 			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-				collect: #returnType
-				thenSelect: [ :aType | aType isNil not ].
+				select: [ :stm | stm needsBeFixed not and: [ stm returnType isNil not ]]
+				thenCollect: #returnType.
 			scalarsKeys := typeInfo scalars keys asOrderedCollection .
 			argTypes
 				do: [ :arg | 
@@ -348,6 +351,14 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 						before: aStatement
 						considering: prevTypes
 						and: scalarsKeys ] ]
+]
+
+{ #category : #inserting }
+SSTestShifter >> canAddStatement [
+	SPlatform asDict 
+		ifFalse: [
+			^ ((self length + 3) < CompiledMethod fullFrameSize)
+		] ifTrue: [ ^ true ]
 ]
 
 { #category : #modifying }
@@ -366,11 +377,13 @@ SSTestShifter >> changeStatement [
 
 { #category : #modifying }
 SSTestShifter >> changeStatement: aStatement [
-	| statementChanged |
+	| statementChanged newStm |
 	statementChanged := aStatement copy
 		repairOn: self
 		changing: aStatement.
-	(self statementAt: aStatement) replaceBy: statementChanged.
+	(self statementAt: aStatement ) replaceBy: statementChanged.
+	newStm := self statementAt: statementChanged .
+	self fixTypeReturnOf: (newStm needsBeFixed: true).
 	^ statementChanged
 ]
 
@@ -400,7 +413,7 @@ SSTestShifter >> changeStatementOfVarName: varName [
 { #category : #repairing }
 SSTestShifter >> clean [
 	|literals unused|
-	literals := self statements select: [ :e | e value isKindOf: SLiteral ].
+	literals := self statements select: [ :e | (e value isKindOf: SLiteral) or: [ e value isKindOf: SFactoryMessage ] ].
 	unused := literals difference: (literals select: 
 		[ :e | (self statements collect: 
 			[:stm | stm pickUpReferences: e]) anySatisfy: [ :x | x isNotEmpty  ]]).
@@ -444,6 +457,25 @@ SSTestShifter >> fitnessByClass [
 ]
 
 { #category : #actions }
+SSTestShifter >> fixTypeReturnOf: aStatement [
+	[| executionContext aReturnType |
+	executionContext := self analyze.
+	aReturnType := (executionContext at: aStatement variable key) class name.
+	aStatement returnType = aReturnType ifTrue: [ 
+		aStatement needsBeFixed: false.
+		^ self ].
+	(self subStatementsAfterIndexOf: aStatement) do: [ :stm | 
+		self repairReferenceTo: aStatement of: stm
+	].
+	aStatement variable returnType: aReturnType.
+	aStatement value returnType: aReturnType.
+	aStatement needsBeFixed: false.
+	aStatement returnType: aReturnType ]
+	on: Error 
+	do: [  ]
+]
+
+{ #category : #actions }
 SSTestShifter >> generateAssertions [
 	^ self
 		generateAssertions:
@@ -461,28 +493,24 @@ SSTestShifter >> generateAssertions: classAssertions [
 
 	| executionContext |
 	executionContext := self analyze.
-	SPlatform asDict ifTrue: [ executionContext := executionContext at: #var ].
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ]
 ]
 
 { #category : #actions }
 SSTestShifter >> generateStatements [
-	| flag counter |
-	flag := true.
-	counter := 0.
-	self
-		assert: typeInfo types isNotEmpty
-		description: 'TypeInfo does not contain info at all.'.
-	[ flag and: [ self length < self maxNumberOfStatements ] ]
-		whileTrue: [ 
-			| array |
-			array := randomGenerator collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
-			array detect: [:aMethod | [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] 				ifNone: [ counter := counter + 1.
-					counter > self maxNumberOfStatements ifTrue: 
-						[ flag := false.
-						  self error: 'Not able to generate statements' ] ].
-		"	[ self addMessage ]
+  | flag counter |
+  flag := true.
+  counter := 0.
+  self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
+  [ flag and: [ self length < self maxNumberOfStatements ] ] whileTrue: [ | array |
+        array := randomGenerator collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
+        array detect: [:aMethod |  [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifFound: [:aMethod |  | lastStm |
+              lastStm := statements last.
+              lastStm needsBeFixed ifTrue: [ self fixTypeReturnOf: lastStm ] ] ifNone: [ counter := counter + 1.
+              counter > self maxNumberOfStatements ifTrue: [ flag := false.
+                    self error: 'Not able to generate statements' ] ]
+        "	[ self addMessage ]
 				on: SError
 				do: [  ]" ]
 ]
@@ -522,8 +550,12 @@ SSTestShifter >> insertAsParameter: expression after: aStatement [
 	(randomGenerator collectAtRandom: (statements
 		copyFrom: (statements indexOf: aStatement) + 1
 		to: self length))
-		do: [ :stm | 
-			[ ^ stm replaceArgBy: expression ]
+		do: [ :stm | [ | mutatedStm |
+			mutatedStm := stm replaceArgBy: expression.
+			(mutatedStm pickUpReferences: expression) ifNotEmpty: 
+				[ mutatedStm value mutated: true.
+				mutatedStm needsBeFixed: true ].
+			 ^ mutatedStm ]
 				on: SError
 				do: [  ] ].
 	self
@@ -541,8 +573,11 @@ SSTestShifter >> insertExpression: expression after: aStatement [
 SSTestShifter >> insertExpressionRandomly [
 	(randomGenerator collectAtRandom: #(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:))
 		do: [ :selector | 
-			[ ^ self insertStatementOfSelector: selector ]
-				on: SError
+			[ | insertedStm |
+			insertedStm := self insertStatementOfSelector: selector.
+			insertedStm value mutated ifTrue: [ self fixTypeReturnOf: insertedStm ].
+			^ insertedStm ]
+				on: Error
 				do: [  ] ]
 ]
 
@@ -699,7 +734,7 @@ SSTestShifter >> newFactoryMessageUsing: aClassName and: aStatement [
 { #category : #'instance creation' }
 SSTestShifter >> newFieldAccessMessageOfType: aType andReceiver: receiver [
 	(self pickAccessorsOf: receiver returnType)
-		detect: [ :aMethod | aMethod returnType includes: aType ]
+		detect: [ :aMethod | aMethod returnType hasOnlyOneType and: [ aMethod returnType includes: aType ]]
 		ifFound: [ :aMethod | 
 			^ SFieldAccessMessage
 				newFromReceiver: receiver copy
@@ -748,7 +783,7 @@ SSTestShifter >> newMessageOfType: aType before: aStatement [
 { #category : #'instance creation' }
 SSTestShifter >> newMessageOfType: aType using: receiver before: aStatement [
 	(self pickMessagesOf: receiver returnType)
-		detect: [ :aMethod | aMethod returnType includes: aType ]
+		detect: [ :aMethod | aMethod returnType hasOnlyOneType and: [ aMethod returnType includes: aType ] ]
 		ifFound: [ :aMethod | 
 			[ ^ self messageUsing: aMethod and: receiver before: aStatement ]
 				on: SError
@@ -1128,6 +1163,15 @@ SSTestShifter >> statementsOfType: aType before: expression [
 		ifFalse: [ self error: 'Statement: ', expression printString , 'is not found in testCase.' ].
 	^ (self subStatementsFrom: 1 toPrevIndexOf: expression)
 		select: [ :stm | stm returnType = aType ]
+]
+
+{ #category : #repairing }
+SSTestShifter >> subStatementsAfterIndexOf: aStatement [
+	| start |
+	start := statements indexOf: aStatement.
+	start < self length
+		ifFalse: [ ^ Array new ].
+	^ statements copyFrom: start + 1 to: self length
 ]
 
 { #category : #repairing }

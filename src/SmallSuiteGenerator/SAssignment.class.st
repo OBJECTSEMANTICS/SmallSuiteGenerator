@@ -98,6 +98,12 @@ SAssignment >> mutated [
 	^ value mutated
 ]
 
+{ #category : #accessing }
+SAssignment >> needsBeFixed: aBoolean [
+	super needsBeFixed: aBoolean.
+	value ifNotNil: [ value needsBeFixed: aBoolean ]
+]
+
 { #category : #mutation }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
