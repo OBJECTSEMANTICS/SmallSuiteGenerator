@@ -148,13 +148,14 @@ SGAEngine >> addSummaryShapeTo: canvas ofHeight: height sizeItems: sizes andColo
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addTickY: composite ofColor: dictColor withScale: scale and: heights [
-	| scaleTick reverseHeights sum |
-	scaleTick := NSScale linear
-		domain: (Array with: 0@0 with: 0@heights allButLast log sum);
-		range: (Array with: 0@0 with: 0@scale range second y).
+	| scaleTick reverseHeights sum subtraction |
 	sum := heights allButLast log sum.
-	reverseHeights := heights collect: [ :height | sum := sum - (height log) ].
-	"(numberOfGenerations to: 0 by: -1) "({heights allButLast log sum}, reverseHeights allButLast, #(0)) doWithIndex: [ :i :index | 
+	subtraction := sum.
+	scaleTick := NSScale linear
+		domain: (Array with: 0@0 with: 100@sum);
+		range: (Array with: 0@0 with: 800@scale range second y).
+	reverseHeights := heights collect: [ :height | subtraction := subtraction - (height log) ].
+	({sum}, reverseHeights allButLast", #(0)") doWithIndex: [ :i :index | 
 		| tick lbl |
 		tick := RSLine new 
 			startPoint: (scaleTick scale: 0@i);
@@ -236,14 +237,42 @@ SGAEngine >> evolutionPoints [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> evolutionPoints: heights ofHeight: height [
+	| startPoint endPoint points scaleTick reverseHeights sum subtraction |
+	points := OrderedCollection new.
+	sum := heights allButLast log sum.
+	subtraction := sum.
+	scaleTick := NSScale linear
+		domain: (Array with: 0@0 with: 100@sum);
+		range: (Array with: 0@0 with: 800@height).
+	startPoint := 0 @ sum.
+	endPoint := 0 @ sum.
+	reverseHeights := (heights allButLast collect: [ :h | subtraction := subtraction - (h log) ]), #(0).
+	(self logs collect: [:log | 
+		log fittestTestCase fitnessByClass values first at: targetClassName]) reverse
+		doWithIndex: [ :value  :index | 
+			| stepPoint |
+			stepPoint := (value - startPoint x) @ 0.
+			startPoint := startPoint + stepPoint.
+			endPoint := endPoint + stepPoint.
+			points add: (scaleTick scale: startPoint);
+			add: (scaleTick scale: endPoint).
+			startPoint := endPoint.
+			endPoint := (endPoint x) @ (reverseHeights at: index).
+		].
+	^ points
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> evolutionShapeUpdate: heightShape ofColor: dictColor with: heights [
-	| composite size scale extent points axis polyLine spaceStick |
+	| composite size width scale extent points axis polyLine spaceStick |
 	composite := RSComposite new 
 		color: (dictColor at: 'background');
 		draggable.
-	points := self evolutionPoints.
+	width := 800.
 	size := heightShape - (heightShape * 0.015).
-	extent := 800@size.
+	extent := width@size.
+	points := self evolutionPoints: heights ofHeight: size negated.
 	spaceStick := 0.1 negated.
 	scale := NSScale linear 
 		domain: (Array with: 0@0 with: 100@numberOfGenerations);
@@ -254,7 +283,7 @@ SGAEngine >> evolutionShapeUpdate: heightShape ofColor: dictColor with: heights 
 		controlPoints: ({0@numberOfGenerations. 0@spaceStick. 100@spaceStick} collect: [:p | scale scale: p]);
 		yourself.
 	polyLine := RSPolyline new 
-		controlPoints: (points collect: [:p | scale scale: (p - (0@1))]); 
+		controlPoints: points"(points collect: [:p | scale scale: (p - (0@1))])"; 
 		color: (dictColor at: 'scaleLighter');
 		width: 10;
 		yourself.
@@ -270,7 +299,7 @@ SGAEngine >> evolutionShapeUpdate: heightShape ofColor: dictColor with: heights 
 			yourself.
 		composite addShape: aTick.
 		lbl := RSLabel new 
-		fontSize: (size*0.015);
+		fontSize: width * 0.015;
 		color: (dictColor at: 'font');
 		text: (i asFloat) asString, '%'.
 		RSLocation new below move: lbl on: aTick.
@@ -314,7 +343,6 @@ SGAEngine >> infoMethodShapes: canvas ofColor: dictColor andHighlight: highlight
 		width: 5;
 		color: (dictColor at: 'backgroundLighter');
 		connectFromAll: [ :testCase | testCase parents ].
-	"canvas edges @ (RSHighlightable new highlightColor: (dictColor at: 'highlight'); yourself)."
 	^ Array with: (generationGroup flatCollect: #yourself) with: maxHeights
 ]
 
@@ -511,12 +539,12 @@ SGAEngine >> visualizationPaperWith: dictColor [
 	"summaryShape := self addSummaryShapeTo: canvas ofHeight: infoMethodShape height andColor: dictColor."
 	canvas addAll: infoMethodShape.
 	self addHighlightEvent: interaction on: canvas ofColor: (dictColor at: 'highlight').
-	self addBorderShape: infoMethodShape on: canvas ofColor: (dictColor at: 'border') andHeightOf: summaryShape.
+	"self addBorderShape: infoMethodShape on: canvas ofColor: (dictColor at: 'border') andHeightOf: summaryShape."
 	evolutionShape := self evolutionShapeUpdate: infoMethodShape height ofColor: dictColor with: infoHeights.
 	RSLocation new below right offset: ((evolutionShape width + 100)@0); move: evolutionShape on: canvas shapes.
 	canvas addShape: evolutionShape.
 	"self addBorderShape: evolutionShape on: canvas ofColor: (dictColor at: 'border') andHeightOf: summaryShape."
-	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: (infoMethodShape width / 4) with: (evolutionShape width / 4)).
+	"self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: (infoMethodShape width / 4) with: (evolutionShape width / 4))."
 	canvas @ RSCanvasController.
 	^ canvas
 	
