@@ -20,7 +20,7 @@ Metacello new
  repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
  load.
 ```
-To install the version that presents graphic results of the coverage's evolution, execute the following code:
+To install the version that presents graphic results of evolution coverage, execute the following code:
 
 ```Smalltalk
 Metacello new
@@ -64,6 +64,7 @@ STestCaseFactoryPharo new
     numberOfGenerations: 20;
     numberOfStatements: 3;
     seedBlock: aBlock;
+    populationSize: 10;
     createTestCases;
     yourself.
 ```
@@ -75,13 +76,14 @@ Some other options to configure are:
 * `targetPackagesRegex`: Regular expression of the package where the class is found.
 * `outputPackageName`: Package name where the tests cases will be created.
 
-To watch the evolution of fitness function call `visualize` method.
-
 After to execute this script the testCases will be generated with the higher fitness of the population. In the output package name specified you can find the generated testCases. Usually the last enumerated testCases have the highests fitness.
+
+To watch the evolution of fitness function call `visualize` method and to see more details about generation evolution call `generationEvolutionCanvas` method. On the other hand, you can see these graphics automatically doing a click on Evolution and GenerationEvolution tab, respectively.
+Hint: The methods to visualize only are available if you install the version with graphics, specified before.
 
 ### Advanced settings
 
-All this settings should be done before generate test cases
+All these settings should be done before generate test cases
 
 - Change population size.
 
