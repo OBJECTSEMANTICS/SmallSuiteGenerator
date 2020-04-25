@@ -79,7 +79,8 @@ Some other options to configure are:
 After to execute this script the testCases will be generated with the higher fitness of the population. In the output package name specified you can find the generated testCases. Usually the last enumerated testCases have the highests fitness.
 
 To watch the evolution of fitness function call `visualize` method and to see more details about generation evolution call `generationEvolutionCanvas` method. On the other hand, you can see these graphics automatically doing a click on Evolution and GenerationEvolution tab, respectively.
-Hint: The methods to visualize only are available if you install the version with graphics, specified before.
+
+**Hint:** The methods to visualize only are available if you install the version with graphics, specified before.
 
 ### Advanced settings
 
