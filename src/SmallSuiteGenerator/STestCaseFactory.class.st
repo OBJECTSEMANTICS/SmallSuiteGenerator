@@ -212,6 +212,7 @@ STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 
 { #category : #actions }
 STestCaseFactory >> setUp [
+	SPlatform resetRandomGenerator.
 	self initializeProfiler.
 	fitness profiler: profiler.
 	fitness targetClass: self targetClassName.
@@ -255,6 +256,7 @@ STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
 	SPlatform asDict: false.
+	SPlatform resetRandomGenerator 
 ]
 
 { #category : #actions }

@@ -119,48 +119,40 @@ SGAEngine >> computeFitness [
 
 { #category : #actions }
 SGAEngine >> createNewPopulation [
-  | newPopulation currentPopulationSize newNumber |
+	| newPopulation currentPopulationSize newNumber |
 	currentPopulationSize := initialPopulation size.
-  newPopulation := self eliteOfCurrentPopulation.
-  [ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
+   newPopulation := self eliteOfCurrentPopulation.
+  	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
         P1 := selectedList first .
         P2 := selectedList second.
 		  P1copy := self similarChild: P1.
 		  P2copy := self similarChild: P2.
         self shouldCrossOver 
-				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
+				ifTrue: [ children := self crossOver: P1 with: P2.
               O1 := children first.
-              O2 := children second.
-              O1 generationNumber: P1 generationNumber + 1.
-              O2 generationNumber: P2 generationNumber + 1 ] 
+              O2 := children second] 
 				ifFalse: [ 
 					O1 := P1copy deepCopy.
 				  	O1 addParent: P1.
               	O2 := P2copy deepCopy.
               	O2 addParent: P2 ].
-        OM1 := self mutate: O1.
-		  OM1 clean.
-        OM1 updateWith: O1.
-        OM2 := self mutate: O2.
-		  OM2 clean.
-        OM2 updateWith: O2.
+        OM1 := self mutateAndClean: O1.
+        OM2 := self mutateAndClean: O2.
         fitness compute: (Array with: OM1 with: OM2).
-        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) 
-							select: [ :each | each length > 0]) difference: newPopulation.
-        options := options asSortedCollection: 
-			  [:a :b |  self is: a betterThan: b ].
+        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) select: #notEmpty) difference: newPopulation.
+        options := options sort: [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.
 		  newNumber := newPopulation size.
 		  newPopulation addAll: (selectedOptions collect: [:option | 
 				newNumber:= newNumber + 1.
 			option idPopulation: newNumber ])
-        "selectedOptions do: [:option |  newPopulation add: (option idPopulation: newPopulation size + 1) ]"
 		   ].
-  self updateTypeInfoWith: newPopulation.
-  self fixPopulation: newPopulation.
-  population := newPopulation.
-  self orderPopulation 
+	self halt.
+   self updateTypeInfoWith: newPopulation.
+   self fixPopulation: newPopulation.
+   population := newPopulation.
+   self orderPopulation 
 ]
 
 { #category : #actions }
@@ -177,6 +169,15 @@ SGAEngine >> createRandomPopulation [
         test ]
 ]
 
+{ #category : #actions }
+SGAEngine >> crossOver: P1 with: P2 [
+	| children O1 O2|
+	children := self crossoverOperator crossover: P1 with: P2.
+   O1 := (children first) generationNumber: P1 generationNumber + 1.
+   O2 := (children second) generationNumber: P2 generationNumber + 1.
+	^ Array with: O1 with: O2
+]
+
 { #category : #initialization }
 SGAEngine >> crossoverOperator [
 	^ crossoverOperator
@@ -184,7 +185,7 @@ SGAEngine >> crossoverOperator [
 
 { #category : #accessing }
 SGAEngine >> crossoverOperator: aCrossoverOperator [
-	crossoverOperator := aCrossoverOperator.
+	crossoverOperator := aCrossoverOperator
 ]
 
 { #category : #accessing }
@@ -192,7 +193,7 @@ SGAEngine >> crossoverRate [
 	^ crossoverRate
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #rating }
 SGAEngine >> crossoverRate: aNumber [
 	selectionStrategy crossoverRate: aNumber
 ]
@@ -220,7 +221,7 @@ SGAEngine >> elitismRate [
 	^ elitismRate
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #rating }
 SGAEngine >> elitismRate: aNumber [
 	selectionStrategy elitismRate: aNumber.
 ]
@@ -278,6 +279,18 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator mutationRate: (1 / 3) asFloat.
 ]
 
+{ #category : #actions }
+SGAEngine >> initializePopulation [
+	| t | 
+	t := Time now asSeconds.
+   population := self createRandomPopulation.
+   SExpression resetId.
+   self computeFitness.
+   self orderPopulation.
+   initialPopulation := population.
+   logs add: (self logOfGeneration: 0 inTime: t).
+]
+
 { #category : #initialization }
 SGAEngine >> initializeProfiler [
 	| aProfiler |
@@ -293,9 +306,9 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
 	|fitness1 fitness2|
 	fitness1 := self fitnessFor: testCase1.
 	fitness2 := self fitnessFor: testCase2.
-		^ 			fitness1 = fitness2
-						ifTrue: [ (testCase1 idPopulation > testCase2 idPopulation) or: [ testCase1 length <= testCase2 length] ]
-						ifFalse: [ fitness1 > fitness2 ]
+	^ fitness1 = fitness2
+		ifTrue: [ (testCase1 idPopulation > testCase2 idPopulation) or: [ testCase1 length <= testCase2 length] ]
+		ifFalse: [ fitness1 > fitness2 ]
 ]
 
 { #category : #actions }
@@ -333,6 +346,15 @@ SGAEngine >> mutate: testCase [
 	^ mutationOperator mutate: testCase
 ]
 
+{ #category : #actions }
+SGAEngine >> mutateAndClean: aStatement [
+	| newStm |
+	newStm := self mutate: aStatement.
+	newStm clean.
+   newStm updateWith: aStatement.
+	^ newStm 
+]
+
 { #category : #accessing }
 SGAEngine >> mutationRate: aFloat [
 	mutationOperator mutationRate: aFloat
@@ -356,9 +378,9 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
-{ #category : #actions }
+{ #category : #testing }
 SGAEngine >> orderPopulation [
-	population sort: [ :stm1 :stm2 | (stm1 fitness at: fitness functionName) > (stm2 fitness at: fitness functionName) ].
+	population sort: [ :stm1 :stm2 | self is: stm1 betterThan: stm2 ].
 ]
 
 { #category : #accessing }
@@ -427,28 +449,20 @@ SGAEngine >> profilerForTargetClass [
 
 { #category : #actions }
 SGAEngine >> run [
-  | t counter bestFitness stopFlag |
-  t := Time now asSeconds.
+  | counter bestFitness stopFlag |
+  
   counter := 0.
   stopFlag := false.
-  population := self createRandomPopulation.
-  SExpression resetId.
-  self computeFitness.
-  self orderPopulation.
-  initialPopulation := population.
-  logs add: (self logOfGeneration: 0 inTime: t).
-  bestFitness := self fitnessFor: logs last fittestTestCase. 
-  (1 to: numberOfGenerations) do: [:iteration | | lastBestFitness | stopFlag ifFalse: [
-	     t := Time now asSeconds.
-        self doSelection.
-        logs add: (self logOfGeneration: iteration inTime: t).
-        lastBestFitness := self fitnessFor: logs last fittestTestCase.
-        lastBestFitness <=  bestFitness
-			ifTrue: [ 
-				counter := counter + 1. 
-				counter > stopIterations ifTrue: [ stopFlag := true ] ]
-			ifFalse: [ counter := 0. bestFitness := lastBestFitness ]]
-		   ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+  self initializePopulation.
+  bestFitness := self fitnessFor: logs last fittestTestCase.
+  (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
+        stopFlag ifFalse: [ t := Time now asSeconds.
+              self doSelection.
+              logs add: (self logOfGeneration: iteration inTime: t).
+              lastBestFitness := self fitnessFor: logs last fittestTestCase.
+              lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
+                    counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
+                    bestFitness := lastBestFitness ] ] ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #accessing }
@@ -489,7 +503,7 @@ SGAEngine >> targetPackageRegex: aString [
 	targetPackageRegex := aString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SGAEngine >> tournamentSize: aNumber [
 	selectionStrategy tournamentSize: aNumber
 ]

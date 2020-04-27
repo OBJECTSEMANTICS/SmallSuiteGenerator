@@ -74,7 +74,7 @@ SPlatform class >> defaultLogName [
 
 { #category : #accessing }
 SPlatform class >> defaultSeed [
-	^ "100"123
+	^ 100
 ]
 
 { #category : #'instance creation' }

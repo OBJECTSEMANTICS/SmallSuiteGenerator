@@ -45,6 +45,18 @@ SSTestRunner >> initialize [
 	invariants := OrderedCollection new
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestRunner >> performTest| var [ |
+var := Dictionary new.
+var at: 1 put: 'David'.
+var at: 2 put: (Institute name: (var at: 1)).
+var at: 3 put: (var at: 2) students.
+var at: 4 put: (var at: 2) address.
+var at: 5 put: (var at: 2) name.
+var at: 7 put: (Student name: (var at: 5) lastName: (var at: 5)).
+var at: 9 put: ((var at: 2) inscribe: (var at: 7))
+]
+
 { #category : #running }
 SSTestRunner >> run: aSTestCase [
 	self compile: aSTestCase parseTreeWithAssertions.

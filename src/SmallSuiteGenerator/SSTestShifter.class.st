@@ -804,6 +804,11 @@ SSTestShifter >> newStatementOfType: aType before: aStatement [
 ]
 
 { #category : #accessing }
+SSTestShifter >> notEmpty [
+  ^ self length > 0
+]
+
+{ #category : #accessing }
 SSTestShifter >> numMaxStatements [
 	^ maxNumberOfStatements
 ]
