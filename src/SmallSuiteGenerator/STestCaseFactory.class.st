@@ -212,13 +212,14 @@ STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	self initializeProfiler.
-	fitness profiler: profiler.
-	fitness targetClass: self targetClassName.
-	engine fitness: fitness.
-	engine numberOfGenerations: numberOfIterations.
-	engine typeInfo: self typeInfo.
-	engine targetClassName: self targetClassName.
-	engine targetPackageRegex: targetPackageRegex 
+	fitness profiler: profiler;
+		typeInfo: typeInfo;
+		targetClass: self targetClassName.
+	engine fitness: fitness;
+		numberOfGenerations: numberOfIterations;
+		typeInfo: self typeInfo;
+		targetClassName: self targetClassName;
+		targetPackageRegex: targetPackageRegex 
 ]
 
 { #category : #actions }

@@ -15,8 +15,8 @@ SReportTypeInfo exports data about coverage and patterns frequency of projects i
 "
 Class {
 	#name : #SReportTypeInfo,
-	#superclass : #SObject,
-	#category : #'SmallSuiteGenerator-Info'
+	#superclass : #SReport,
+	#category : #'SmallSuiteGenerator-Utility'
 }
 
 { #category : #export }
@@ -43,18 +43,6 @@ SReportTypeInfo class >> dataFrequency: typeInfo from: projectName [
 { #category : #'export as CSV' }
 SReportTypeInfo class >> exportData: aTypeInfo onCSV: aString [
 	self exportData: aTypeInfo onCSV: aString usingFilter: #all
-]
-
-{ #category : #'export as CSV' }
-SReportTypeInfo class >> exportData: aTypeInfo onCSV: aString usingFilter: aSymbol [
-	(self fileReference: aString)
-		writeStreamDo: [ :stream | 
-			| neoCSVWriter |
-			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut:
-					#('ClassName' 'MethodName' 'Receivers' 'CommSupcls' 'ArgTypes' 'CommSupcls' 'ReturnTypes' 'CommSupcls').
-			aTypeInfo exportDataCSV: neoCSVWriter withFilter: aSymbol.
-			neoCSVWriter flush ]
 ]
 
 { #category : #'export as CSV' }
@@ -128,6 +116,11 @@ SReportTypeInfo class >> profilerProject: projectName [
 								cr ] ]
 				displayingProgress: 'working' ]
 		onPackagesMatching: projectName , '*'
+]
+
+{ #category : #'export as CSV' }
+SReportTypeInfo class >> titles [
+	^ #('ClassName' 'MethodName' 'Receivers' 'CommSupcls' 'ArgTypes' 'CommSupcls' 'ReturnTypes' 'CommSupcls')
 ]
 
 { #category : #writing }
