@@ -46,7 +46,8 @@ Class {
 		'typeInfoProfiler',
 		'targetPackageRegex',
 		'elitismRate',
-		'crossoverRate'
+		'crossoverRate',
+		'stopIterations'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -165,7 +166,7 @@ SGAEngine >> createNewPopulation [
 { #category : #actions }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |
-        value := SPlatform randomGenerator next * numberOfStatements + 1.
+        value := self next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
         test
            addTargetClassName: self targetClassName;
@@ -184,7 +185,6 @@ SGAEngine >> crossoverOperator [
 { #category : #accessing }
 SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator := aCrossoverOperator.
-	crossoverOperator randomGenerator: randomGenerator 
 ]
 
 { #category : #accessing }
@@ -256,13 +256,13 @@ SGAEngine >> fixPopulation: aCollection [
 SGAEngine >> initialize [
   super initialize.
   logs := OrderedCollection new.
-  randomGenerator := SPlatform newRandomGenerator.
-  populationSize := 100.
+  populationSize := 30.
   numberOfGenerations := 100.
   selectionStrategy := SGARankSelection new.
   crossoverRate := 0.8.
   elitismRate := 10.
   numberOfStatements := 10.
+  stopIterations := 30.
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -270,14 +270,12 @@ SGAEngine >> initialize [
 { #category : #initialization }
 SGAEngine >> initializeCrossoverOperator [
 	crossoverOperator := SGACrossoverOperation new.
-	crossoverOperator randomGenerator: randomGenerator
 ]
 
 { #category : #initialization }
 SGAEngine >> initializeMutationOperator [
 	mutationOperator := SGAMutationOperation new.
 	mutationOperator mutationRate: (1 / 3) asFloat.
-	mutationOperator randomGenerator: randomGenerator
 ]
 
 { #category : #initialization }
@@ -429,17 +427,28 @@ SGAEngine >> profilerForTargetClass [
 
 { #category : #actions }
 SGAEngine >> run [
-  | t |
+  | t counter bestFitness stopFlag |
   t := Time now asSeconds.
+  counter := 0.
+  stopFlag := false.
   population := self createRandomPopulation.
   SExpression resetId.
   self computeFitness.
   self orderPopulation.
   initialPopulation := population.
   logs add: (self logOfGeneration: 0 inTime: t).
-  (1 to: numberOfGenerations) do: [:iteration |  t := Time now asSeconds.
+  bestFitness := self fitnessFor: logs last fittestTestCase. 
+  (1 to: numberOfGenerations) do: [:iteration | | lastBestFitness | stopFlag ifFalse: [
+	     t := Time now asSeconds.
         self doSelection.
-        logs add: (self logOfGeneration: iteration inTime: t) ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+        logs add: (self logOfGeneration: iteration inTime: t).
+        lastBestFitness := self fitnessFor: logs last fittestTestCase.
+        lastBestFitness <=  bestFitness
+			ifTrue: [ 
+				counter := counter + 1. 
+				counter > stopIterations ifTrue: [ stopFlag := true ] ]
+			ifFalse: [ counter := 0. bestFitness := lastBestFitness ]]
+		   ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #accessing }
@@ -449,7 +458,7 @@ SGAEngine >> selectionStrategy: aSelectionStrategy [
 
 { #category : #actions }
 SGAEngine >> shouldCrossOver [
-	^ SPlatform randomGenerator next < self crossoverRate
+	^ self next < self crossoverRate
 ]
 
 { #category : #actions }

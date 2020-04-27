@@ -17,11 +17,11 @@ Class {
 
 { #category : #actions }
 SGAMutationOperation >> doMutate: aTestCase [
-	randomGenerator next <= mutationRate
+	self next <= mutationRate
 		ifTrue: [ aTestCase removeStatement ].
-	randomGenerator next <= mutationRate
+	self next <= mutationRate
 		ifTrue: [ aTestCase changeStatement ].
-	randomGenerator next <= mutationRate
+	self next <= mutationRate
 		ifTrue: [ aTestCase insertStatement ]
 ]
 

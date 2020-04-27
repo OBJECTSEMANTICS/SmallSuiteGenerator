@@ -42,10 +42,10 @@ SExpressionTest >> parseVariableOrValue: aRBVariableOrLiteral [
 SExpressionTest >> setUp [
 	super setUp.
 	utility := SUtilityTypeInfo new.
-	SPlatform randomGenerator: SPlatform newRandomGenerator .
+	SPlatform resetRandomGenerator
 ]
 
 { #category : #running }
 SExpressionTest >> tearDown [
-	SPlatform randomGenerator: SPlatform newRandomGenerator .
+	SPlatform resetRandomGenerator
 ]

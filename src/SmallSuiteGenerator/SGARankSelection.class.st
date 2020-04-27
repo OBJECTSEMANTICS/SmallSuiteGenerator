@@ -9,5 +9,5 @@ Class {
 
 { #category : #selection }
 SGARankSelection >> selectOf: aCollection [
-	^ randomGenerator collectAtRandom: aCollection 
+	^ self random collectAtRandom: aCollection 
 ]

@@ -74,7 +74,7 @@ SPlatform class >> defaultLogName [
 
 { #category : #accessing }
 SPlatform class >> defaultSeed [
-	^ 100
+	^ "100"123
 ]
 
 { #category : #'instance creation' }
@@ -142,6 +142,11 @@ SPlatform class >> reduceLevel [
 { #category : #initialization }
 SPlatform class >> resetConfigurationClass [
 	configurationClass := nil
+]
+
+{ #category : #accessing }
+SPlatform class >> resetRandomGenerator [
+	self randomGenerator: self newRandomGenerator 
 ]
 
 { #category : #logging }

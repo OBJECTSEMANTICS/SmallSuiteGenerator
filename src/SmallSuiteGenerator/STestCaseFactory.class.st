@@ -143,6 +143,7 @@ STestCaseFactory >> getClassOf: aString [
 
 { #category : #initialization }
 STestCaseFactory >> initialize [
+	SPlatform resetRandomGenerator.
 	super initialize.
 	fitness := SMethodCoverage new.
 	engine := self engineDefault.

@@ -2,16 +2,15 @@ Extension { #name : #String }
 
 { #category : #'*SmallSuiteGenerator' }
 String >> mutateToChange [
-	| interval stringCopy randomGenerator |
+	| interval stringCopy |
 	"correct bug to some characters form the string correctly, e.g: $-> problem in a string"
-	randomGenerator := SPlatform newRandomGenerator.
 	interval := (41 to: 127) asArray.
 	stringCopy := self
 		ifEmpty: [ '' ]
 		ifNotEmpty: [ self copyFrom: 1 to: self size - 1 ].
-	^ ((Character value: (randomGenerator selectAtRandom: interval))
+	^ ((Character value: (SPlatform randomGenerator selectAtRandom: interval))
 		asString , stringCopy
 		,
-			(Character value: (randomGenerator selectAtRandom: interval)) asString)
+			(Character value: (SPlatform randomGenerator selectAtRandom: interval)) asString)
 		asString
 ]

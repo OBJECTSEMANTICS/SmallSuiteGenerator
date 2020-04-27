@@ -29,7 +29,7 @@ Class {
 
 { #category : #accessing }
 SGACrossoverOperation >> alpha [
-	^ (randomGenerator selectAtRandom: (0.1 to: 0.9 by: 0.1)) round: 1
+	^ (self random selectAtRandom: (0.1 to: 0.9 by: 0.1)) round: 1
 ]
 
 { #category : #validation }

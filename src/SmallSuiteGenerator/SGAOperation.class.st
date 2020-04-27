@@ -11,6 +11,5 @@ Class {
 }
 
 { #category : #initialization }
-SGAOperation >> initialize [ 
-	randomGenerator := SPlatform newRandomGenerator 
+SGAOperation >> initialize [
 ]

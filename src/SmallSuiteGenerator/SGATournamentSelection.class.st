@@ -26,7 +26,7 @@ SGATournamentSelection >> selectOf: aCollection [
 	"Return the best testCases from tournamentSize testCase randomly chosen from the population"
 
 	| sample |
-	sample := (randomGenerator collectAtRandom: aCollection )
+	sample := (self random collectAtRandom: aCollection )
 		first: (tournamentSize min: aCollection size).
 	sample := sample
 		asSortedCollection: [ :a :b | (a fitness at: fitness functionName) > (b fitness  at: fitness functionName) ].
