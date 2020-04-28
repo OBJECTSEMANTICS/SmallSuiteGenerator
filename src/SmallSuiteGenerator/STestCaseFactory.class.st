@@ -25,6 +25,50 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #'as yet unclassified' }
+STestCaseFactory class >> darkColors [
+	^ Dictionary new 
+		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
+		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
+		at: 'baseBar' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
+		at: 'forwardBar' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
+		at: 'backwardBar' put: (Color r: 1 g: 0 b: 0.25098039215686274);
+		at: 'edge' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
+		at: 'classCoverage' put: (Color r: 0.5098039215686274 g: 0.7803921568627451 b: 0.9607843137254902);
+		at: 'methodCoverage' put: (Color r: 0.9607843137254902 g: 0.5098039215686274 b: 0.7215686274509804);
+		at: 'statementCoverage' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
+		at: 'highlight' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432);
+		at: 'fontMethodBox' put: Color white;
+		at: 'border' put: Color white;
+		at: 'axis' put: Color white;
+		at: 'font' put: Color white;
+		yourself.
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseFactory class >> lightColors [
+	^ Dictionary new 
+		at: 'background' put: Color white;
+		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
+		at: 'baseBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
+		at: 'forwardBar' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'backwardBar' put: (Color r: 1 g: 0 b: 64/255);
+		at: 'edge' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
+		at: 'classCoverage' put: (Color r: 0.05 g: 0.75 b: 0.91);
+		at: 'methodCoverage' put: (Color r:0.88 g:0.26 b:0.5);
+		at: 'statementCoverage' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'highlight' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
+		at: 'fontMethodBox' put: Color white;
+		at: 'border' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'axis' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'font' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		yourself.
+]
+
 { #category : #actions }
 STestCaseFactory >> asDict: aBoolean [
 	SPlatform asDict: aBoolean
@@ -73,11 +117,7 @@ STestCaseFactory >> elitismRate: aNumber [
 
 { #category : #accessing }
 STestCaseFactory >> engine [
-	^ SGAEngine new
-		populationSize: 30;
-		numberOfStatements: 30;
-		numberOfGenerations: 15;
-		yourself
+	^ engine
 ]
 
 { #category : #accessing }
@@ -126,6 +166,23 @@ STestCaseFactory >> exportTests [
 { #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOfAllMethods [
+	self generateReportUsingFilter: #all
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOfUnexecutedMethods [
+	self generateReportUsingFilter: #notAllBlocksExecuted
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportUsingFilter: aSymbol [ 
+	| log |
+	log := self engine logs last.
+	SReportSGALog exportData: log onCSV: ('Report', aSymbol asString capitalized,targetClassName asString) usingFilter: aSymbol
 ]
 
 { #category : #actions }
@@ -214,13 +271,14 @@ STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 STestCaseFactory >> setUp [
 	SPlatform resetRandomGenerator.
 	self initializeProfiler.
-	fitness profiler: profiler.
-	fitness targetClass: self targetClassName.
-	engine fitness: fitness.
-	engine numberOfGenerations: numberOfIterations.
-	engine typeInfo: self typeInfo.
-	engine targetClassName: self targetClassName.
-	engine targetPackageRegex: targetPackageRegex 
+	fitness profiler: profiler;
+		typeInfo: typeInfo;
+		targetClass: self targetClassName.
+	engine fitness: fitness;
+		numberOfGenerations: numberOfIterations;
+		typeInfo: self typeInfo;
+		targetClassName: self targetClassName;
+		targetPackageRegex: targetPackageRegex 
 ]
 
 { #category : #actions }

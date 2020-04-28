@@ -331,7 +331,8 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 		population: population.
 	dictFitness := self collectFitnessByName.
 	log lowestFit: (self pickMinFitTest: dictFitness);
-	averageFit: (self pickAverageFitTest: dictFitness).
+	averageFit: (self pickAverageFitTest: dictFitness). 
+	log summaryTargetClass: (fitness runPopulation: population).
 	^ log
 ]
 

@@ -36,6 +36,17 @@ SStatementCoverage >> run: testCaseCollection [
 ]
 
 { #category : #actions }
+SStatementCoverage >> runPopulation: testCaseCollection [
+	| string |
+	string := self functionName.
+	profiler cleanBlocksOfMethods.
+	testCaseCollection
+		do: [ :testCase | 
+			testCase length > 0 ifTrue: [ testCase runWithoutAssertions ] ].
+	^ profiler summaryMethodsOf: targetClass  
+]
+
+{ #category : #actions }
 SStatementCoverage >> setUp [
 	
 ]
@@ -43,4 +54,9 @@ SStatementCoverage >> setUp [
 { #category : #actions }
 SStatementCoverage >> tearDown [
 	
+]
+
+{ #category : #accessing }
+SStatementCoverage >> typeInfo: anObject [ 
+	profiler typeInfo: anObject
 ]

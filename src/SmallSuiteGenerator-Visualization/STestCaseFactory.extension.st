@@ -27,6 +27,19 @@ STestCaseFactory >> fitnessResultAsDictionary [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+STestCaseFactory >> generationEvolutionCanvas [
+	^ engine generationVisualization: fitnessSeed ofColor: self class lightColors 
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+STestCaseFactory >> gtInspectorCanvasIn: composite [
+	<gtInspectorPresentationOrder: -5>
+	composite roassal3
+		title: 'GenerationEvoution';
+		initializeCanvas: [ self generationEvolutionCanvas ]
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 STestCaseFactory >> gtInspectorViewIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3

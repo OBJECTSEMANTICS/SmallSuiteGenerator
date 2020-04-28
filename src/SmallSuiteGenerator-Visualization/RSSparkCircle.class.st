@@ -1,5 +1,5 @@
 Class {
-	#name : #RSSparkCircleB,
+	#name : #RSSparkCircle,
 	#superclass : #RSAbstractShapesBuilder,
 	#instVars : [
 		'objects',
@@ -14,23 +14,23 @@ Class {
 }
 
 { #category : #'accessing - computed' }
-RSSparkCircleB >> alphaAngleFor: aShape [
+RSSparkCircle >> alphaAngleFor: aShape [
 	values ifNil: [ self slices: #yourself ].
 	^ ((sumValues at: aShape index) + (self defaultSliceShape border width/360)) * 360 / totalSum
 ]
 
 { #category : #'accessing - computed' }
-RSSparkCircleB >> betaAngleFor: aShape [
+RSSparkCircle >> betaAngleFor: aShape [
 	^ ( aShape index - (self defaultSliceShape border width / 360)) * 360 / totalSum.
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> defaultSliceShape [
+RSSparkCircle >> defaultSliceShape [
 	^ sliceShape
 ]
 
 { #category : #initialization }
-RSSparkCircleB >> initialize [
+RSSparkCircle >> initialize [
 	super initialize.
 	scale := 100.
 	self sliceColor: [ :slice | 
@@ -45,17 +45,17 @@ RSSparkCircleB >> initialize [
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> objects [
+RSSparkCircle >> objects [
 	^ objects
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> objects: anObject [
+RSSparkCircle >> objects: anObject [
 	objects := anObject
 ]
 
 { #category : #actions }
-RSSparkCircleB >> scaleTo: aNumber [
+RSSparkCircle >> scaleTo: aNumber [
 	scale := aNumber.
 	sliceShape 
 		innerRadius: scale/ 10;
@@ -63,17 +63,18 @@ RSSparkCircleB >> scaleTo: aNumber [
 ]
 
 { #category : #hooks }
-RSSparkCircleB >> shapeFor: anObject index: index [
-	| slice value border |
+RSSparkCircle >> shapeFor: anObject index: index [
+	| slice value border externalRadius |
 	slice := self defaultSliceShape copy.
 	value := values at: index.
+	externalRadius := (Array with: 1 with: (value < 1 ifTrue: [ value * 100 ] ifFalse: [ value ])) max.
 	slice
 		model: value;
 		index: index;
 		color: (self sliceColor rsValue: slice);
 		alphaAngle: (self alphaAngleFor: slice);
 		betaAngle: (self betaAngleFor: slice);
-		externalRadius: slice innerRadius + (slice externalRadius / 5 * value) + (scale / 15).
+		externalRadius: slice innerRadius + (slice externalRadius/10 * (externalRadius log)) + 1.
 	border := values min * slice innerRadius.
 	slice border: (RSBorder new width: border ; 
 			color: (value > 0 
@@ -84,7 +85,7 @@ RSSparkCircleB >> shapeFor: anObject index: index [
 ]
 
 { #category : #hooks }
-RSSparkCircleB >> shapesFor: anObject [
+RSSparkCircle >> shapesFor: anObject [
 	| k |
 	k := 0.
 	^ values collect: [ :m |
@@ -94,35 +95,30 @@ RSSparkCircleB >> shapesFor: anObject [
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> sliceColor [
+RSSparkCircle >> sliceColor [
 	^ sliceColor
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> sliceColor: anObject [
+RSSparkCircle >> sliceColor: anObject [
 	sliceColor := anObject
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> slices: blocksOrSymbols [
-	| tempSum  |
+RSSparkCircle >> slices: blocksOrSymbols [
 	values := blocksOrSymbols collect: [:blOrSymbol | 
 		blOrSymbol value: objects ] as: Array.
 	sumValues := Array new: blocksOrSymbols size.
-	tempSum := 0.
-	values doWithIndex: [ :v :i |
-		sumValues at: i put: tempSum.
-		tempSum := i
-		 ].
-	totalSum := blocksOrSymbols size "+ ((blocksOrSymbols size * self defaultSliceShape segmentSpacing) / 360)"
+	1 to: values size do: [ :index | sumValues at: index put: index - 1 ]. 
+	totalSum := blocksOrSymbols size
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> totalSum [
+RSSparkCircle >> totalSum [
 	^ totalSum
 ]
 
 { #category : #accessing }
-RSSparkCircleB >> values [
+RSSparkCircle >> values [
 	^ values
 ]

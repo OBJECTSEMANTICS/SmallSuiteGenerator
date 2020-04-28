@@ -19,7 +19,8 @@ Class {
 		'mutationResult',
 		'lowestFit',
 		'averageFit',
-		'population'
+		'population',
+		'summaryTargetClass'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -32,6 +33,19 @@ SGALog >> averageFit [
 { #category : #accessing }
 SGALog >> averageFit: aNumber [
 	averageFit := aNumber
+]
+
+{ #category : #initialization }
+SGALog >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
+	(self filteredMethodsBy: aSymbol) doWithIndex: [ :each :i |
+		each writeDataCSV: neoCSVWriter withIndex: i ]  
+]
+
+{ #category : #initialization }
+SGALog >> filteredMethodsBy: aSymbol [
+	^ (self selectorsFilter includes: aSymbol)
+		ifTrue: [ self summaryTargetClass select: aSymbol ]
+		ifFalse: [ self summaryTargetClass ]
 ]
 
 { #category : #accessing }
@@ -114,6 +128,21 @@ SGALog >> printOn: str [
 		nextPut: $<;
 		nextPutAll: fittestTestCase statements printString;
 		nextPut: $>
+]
+
+{ #category : #initialization }
+SGALog >> selectorsFilter [
+	^ #( #executed #unexecuted #notAllBlocksExecuted #allBlocksExecuted)
+]
+
+{ #category : #accessing }
+SGALog >> summaryTargetClass [
+	^ summaryTargetClass
+]
+
+{ #category : #accessing }
+SGALog >> summaryTargetClass: anObject [
+	summaryTargetClass := anObject
 ]
 
 { #category : #accessing }
