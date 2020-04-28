@@ -49,13 +49,12 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 	alpha := self alpha.
 	"first alpha(P1) and last (1-alpha)(P2)"
 	offSpring1 := self offSpringOf: testCaseA and: testCaseB using: alpha.
-	offSpring1 lastMessage: testCaseA lastMessage .
 	self checkReferencesOf: offSpring1 withDescription: 'offspring'.
 	"first alpha(P2) and last (1-alpha)(P1)"
-	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: alpha.
-	offSpring2 lastMessage: testCaseA lastMessage .
+	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: (alpha).
 	self checkReferencesOf: offSpring2 withDescription: 'offspring'.
-	^ Array with: offSpring1 with: offSpring2
+	^ (Array with: offSpring1 with: offSpring2) do: 
+			[ :e | e lastMessage: testCaseA lastMessage]
 ]
 
 { #category : #actions }
@@ -64,19 +63,18 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   sizeA := parentA length.
   sizeB := parentB length.
   offSpring := SSTestCase with: parentA typeInfo copy.
-  offSpring typeInfo joinWith: parentB typeInfo.
   offSpring
      addTargetClassNames: parentA targetClassesNames;
      addTargetClassNames: parentB targetClassesNames.
   offSpring addStatements: (parentA statements copyFrom: 1 to: ((sizeA * alpha) asInteger max: 1)) copy.
-  (parentB statements copyFrom: ((alpha * sizeB) asInteger max: 1) + 1 to: sizeB)
-			do: [:aStm |  [ | lastStm |
-					aStm insertOn: offSpring.
-					lastStm := offSpring statements last.
-					lastStm needsBeFixed ifTrue: [ offSpring fixTypeReturnOf: lastStm ] ] on: SError do: [  ] ].
-			offSpring addParent: parentA; addParent: parentB.
-(parentB statements copyFrom: (alpha * sizeB) asInteger + 1 to: sizeB) 
-		do: [:aStm |  [ aStm insertOn: offSpring ] on: SError do: [  ] ].
-	offSpring addParent: parentA; addParent: parentB.
-	^ offSpring 
+  (parentB statements copyFrom: ((alpha * sizeB) asInteger max: 1) + 1 to: sizeB) do: [:aStm |  [ | lastStm |
+        aStm insertOn: offSpring.
+        lastStm := offSpring statements last.
+        lastStm needsBeFixed ifTrue: [ offSpring fixTypeReturnOf: lastStm ] ] on: SError do: [  ] ].
+  offSpring
+     addParent: parentA;
+     addParent: parentB;
+	  clean; 
+	  generationNumber: parentA generationNumber + 1.
+  ^ offSpring
 ]

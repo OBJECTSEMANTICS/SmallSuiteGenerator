@@ -129,7 +129,7 @@ SGAEngine >> createNewPopulation [
 		  P1copy := (self similarChild: P1) idPopulation: 1.
 		  P2copy := (self similarChild: P2) idPopulation: 2.
         self shouldCrossOver 
-				ifTrue: [ children := self crossOver: P1 with: P2.
+				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
               O1 := children first.
               O2 := children second] 
 				ifFalse: [ 
@@ -137,8 +137,8 @@ SGAEngine >> createNewPopulation [
 				  	O1 addParent: P1.
               	O2 := P2copy deepCopy.
               	O2 addParent: P2 ].
-        OM1 := (self mutateAndClean: O1) idPopulation: 3.
-        OM2 := (self mutateAndClean: O2) idPopulation: 4.
+        OM1 := (self mutateAndUpdate: O1) idPopulation: 3.
+        OM2 := (self mutateAndUpdate: O2) idPopulation: 4.
         fitness compute: (Array with: OM1 with: OM2).
         options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | newPopulation includes: e ].
         options := options sort: [:a :b |  self is: a betterThan: b ].
@@ -164,17 +164,9 @@ SGAEngine >> createRandomPopulation [
            addFactoryMessage: self targetClassName;
            generateStatements: value;
            lastMessage: lastMessage;
-           idPopulation: val.
+           idPopulation: val;
+			  clean.
         test ]
-]
-
-{ #category : #actions }
-SGAEngine >> crossOver: P1 with: P2 [
-	| children O1 O2|
-	children := self crossoverOperator crossover: P1 with: P2.
-   O1 := (children first) generationNumber: P1 generationNumber + 1.
-   O2 := (children second) generationNumber: P2 generationNumber + 1.
-	^ Array with: O1 with: O2
 ]
 
 { #category : #initialization }
@@ -352,10 +344,9 @@ SGAEngine >> mutate: testCase [
 ]
 
 { #category : #actions }
-SGAEngine >> mutateAndClean: aStatement [
+SGAEngine >> mutateAndUpdate: aStatement [
 	| newStm |
 	newStm := self mutate: aStatement.
-	newStm clean.
    newStm updateWith: aStatement.
 	^ newStm 
 ]
