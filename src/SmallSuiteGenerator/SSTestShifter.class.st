@@ -27,7 +27,6 @@ Class {
 		'targetClassesNames',
 		'maxNumberOfStatements',
 		'validatedTargetClassName',
-		'randomGenerator',
 		'fitnessByClass',
 		'parents',
 		'children',
@@ -41,7 +40,7 @@ Class {
 SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and: scalarNames [
 	| res addArgBlock |
 	res := arg types anySatisfy: [ :type | prevTypes includes: type ].
-	addArgBlock := [ (randomGenerator collectAtRandom: arg types)
+	addArgBlock := [ (self random collectAtRandom: arg types)
 				detect: [ :missType | 
 					[ (scalarNames includes: missType)
 						ifTrue: [
@@ -56,7 +55,7 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 						do: [ false ] ]
 				ifNone: [ self
 						error: 'It is not possible to meet the arguments of this method call' ] ].
-	(res not or: [ randomGenerator next > 0.5 ]) ifTrue: addArgBlock 
+	(res not or: [ self next > 0.5 ]) ifTrue: addArgBlock 
 ]
 
 { #category : #inserting }
@@ -77,13 +76,13 @@ SSTestShifter >> addFactoryMessage [
 	| variables |
 	variables := self objectVariables.
 	variables
-		ifEmpty: [ (randomGenerator collectAtRandom: typeInfo noneAbstractClasses)
+		ifEmpty: [ (self random collectAtRandom: typeInfo noneAbstractClasses)
 				do: [ :aClass | 
 					[ ^ self addFactoryMessage: aClass name ]
 						on: SError
 						do: [  ] ].
 			self error: 'Cannot create a factoryMessage.' ]
-		ifNotEmpty: [ ^ self addFactoryMessage: (randomGenerator selectAtRandom: variables) returnType ]
+		ifNotEmpty: [ ^ self addFactoryMessage: (self random selectAtRandom: variables) returnType ]
 ]
 
 { #category : #inserting }
@@ -196,7 +195,7 @@ SSTestShifter >> addStatement: newExpression after: aStatement [
 	anIndex := statements indexOf: aStatement.
 	anIndex = 0
 		ifTrue: [ self addStatement: newExpression ]
-		ifFalse: [ anIndex := randomGenerator selectAtRandom: (anIndex to: self length).
+		ifFalse: [ anIndex := self random selectAtRandom: (anIndex to: self length).
 			statements add: newExpression afterIndex: anIndex ].
 	^ newExpression
 ]
@@ -368,7 +367,7 @@ SSTestShifter >> changeMessageNotUnderstood: aSelector from: aClassName [
 
 { #category : #modifying }
 SSTestShifter >> changeStatement [
-	(randomGenerator collectAtRandom: statements)
+	(self random collectAtRandom: statements)
 		do: [ :stm | 
 			[ ^ self changeStatement: stm ]
 				on: SError
@@ -504,7 +503,7 @@ SSTestShifter >> generateStatements [
   counter := 0.
   self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
   [ flag and: [ self length < self maxNumberOfStatements ] ] whileTrue: [ | array |
-        array := randomGenerator collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
+        array := self random collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
         array detect: [:aMethod |  [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifFound: [:aMethod |  | lastStm |
               lastStm := statements last.
               lastStm needsBeFixed ifTrue: [ self fixTypeReturnOf: lastStm ] ] ifNone: [ counter := counter + 1.
@@ -539,7 +538,6 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  randomGenerator := SPlatform randomGenerator.
   parents := Set new.
   children := Set new.
   selectionStrategy := SGARouletteSelection new.
@@ -547,7 +545,7 @@ SSTestShifter >> initialize [
 
 { #category : #inserting }
 SSTestShifter >> insertAsParameter: expression after: aStatement [
-	(randomGenerator collectAtRandom: (statements
+	(self random collectAtRandom: (statements
 		copyFrom: (statements indexOf: aStatement) + 1
 		to: self length))
 		do: [ :stm | [ | mutatedStm |
@@ -571,7 +569,7 @@ SSTestShifter >> insertExpression: expression after: aStatement [
 
 { #category : #inserting }
 SSTestShifter >> insertExpressionRandomly [
-	(randomGenerator collectAtRandom: #(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:))
+	(self random collectAtRandom: #(#insertRandomMessage:using: #insertMethodMessage:using: #insertAsParameter:using:))
 		do: [ :selector | 
 			[ | insertedStm |
 			insertedStm := self insertStatementOfSelector: selector.
@@ -583,13 +581,12 @@ SSTestShifter >> insertExpressionRandomly [
 
 { #category : #inserting }
 SSTestShifter >> insertStatement [
-	| l stop alpha count random |
+	| l stop alpha count |
 	l := 1.
 	count := 1.
 	stop := self length.
 	alpha := 0.5.
-	random := SPlatform randomGenerator.
-	[ l < stop and: [ random next <= (alpha raisedTo: count) ] ]
+	[ l < stop and: [ self next <= (alpha raisedTo: count) ] ]
 		whileTrue: [ self insertExpressionRandomly.
 			l := l + 1.
 			count := count + 1 ]
@@ -597,7 +594,7 @@ SSTestShifter >> insertStatement [
 
 { #category : #inserting }
 SSTestShifter >> insertStatementOfSelector: selector [
-	(randomGenerator collectAtRandom: statements copy)
+	(self random collectAtRandom: statements copy)
 		do: [ :stm | 
 			[ ^ self perform: selector inStatement: stm ]
 				on: SError
@@ -719,7 +716,7 @@ SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
 SSTestShifter >> newFactoryMessageUsing: aClassName and: aStatement [
 	| methods |
 	methods := typeInfo factoryMessagesFrom: aClassName.
-	(randomGenerator collectAtRandom: methods)
+	(self random collectAtRandom: methods)
 		do: [ :method | 
 			[ self buildArgs: method argTypes before: aStatement.
 			^ SFactoryMessage
@@ -762,7 +759,7 @@ SSTestShifter >> newLiteral: aClassName [
 				ifEmpty: [ self error: 'Scalar of type: ' , aClassName , ' is empty.' ].
 			^ SLiteral new
 				returnType: aClassName;
-				value: (randomGenerator selectAtRandom: values asOrderedCollection) ].
+				value: (self random selectAtRandom: values asOrderedCollection) ].
 	self error: 'Scalars dont include: ' , aClassName
 ]
 
@@ -796,7 +793,7 @@ SSTestShifter >> newMessageOfType: aType using: receiver before: aStatement [
 
 { #category : #repairing }
 SSTestShifter >> newStatementOfType: aType before: aStatement [
-	(randomGenerator collectAtRandom: #(#newFactoryMessage:before: #newLiteral: #newFieldAccessMessageOfType:before: #newMessageOfType:before:))
+	(self random collectAtRandom: #(#newFactoryMessage:before: #newLiteral: #newFieldAccessMessageOfType:before: #newMessageOfType:before:))
 		do: [ :message | 
 			[ ^ self
 				perform: message
@@ -804,6 +801,11 @@ SSTestShifter >> newStatementOfType: aType before: aStatement [
 				on: SError
 				do: [ "try with the next one" ] ].
 	self error: 'Cannot create expression of returnType: ' , aType
+]
+
+{ #category : #accessing }
+SSTestShifter >> notEmpty [
+  ^ self length > 0
 ]
 
 { #category : #accessing }
@@ -907,7 +909,7 @@ SSTestShifter >> pickAnObjectVariable [
 	variables
 		ifEmpty: [ self addFactoryMessage.
 			variables := self objectVariables ].
-	^ randomGenerator selectAtRandom: variables
+	^ self random selectAtRandom: variables
 ]
 
 { #category : #querying }
@@ -917,7 +919,7 @@ SSTestShifter >> pickMessagesOf: aType [
 
 { #category : #querying }
 SSTestShifter >> pickObjectVariableOf: aClassName [
-	(randomGenerator collectAtRandom: (self subStatementsFrom: 1 toPrevIndexOf: nil))
+	(self random collectAtRandom: (self subStatementsFrom: 1 toPrevIndexOf: nil))
 		detect: [ :stm | stm returnType = aClassName ]
 		ifFound: [ :stm | ^ stm reference ]
 		ifNone: [  ].
@@ -990,11 +992,6 @@ SSTestShifter >> printSummaryFitnessByClass [
 				nextPutAll: (String with: Character cr) ]
 ]
 
-{ #category : #accessing }
-SSTestShifter >> randomGenerator: anObject [
-	randomGenerator := anObject
-]
-
 { #category : #repairing }
 SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 	| refIndexes anIndex |
@@ -1008,15 +1005,15 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 			maxIndex := refIndexes max.
 			ini := anIndex min: maxIndex.
 			end := anIndex max: maxIndex.
-			^ randomGenerator selectAtRandom: (ini to: end) ].
+			^ self random selectAtRandom: (ini to: end) ].
 	anIndex = 0
 		ifTrue: [ ^ anIndex ].
-	^ randomGenerator selectAtRandom: (1 to: anIndex)
+	^ self random selectAtRandom: (1 to: anIndex)
 ]
 
 { #category : #inserting }
 SSTestShifter >> randomLiteralClassName [
-	^ [ randomGenerator selectAtRandom: typeInfo scalars keys asOrderedCollection  ]
+	^ [ self random selectAtRandom: typeInfo scalars keys asOrderedCollection  ]
 		on: Error
 		do: [ self
 				error: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ]
@@ -1062,7 +1059,7 @@ SSTestShifter >> removeStatement [
 	self
 		removeStatement:
 			(statements
-				at: (randomGenerator selectAtRandom: (1 to: self length) asArray))
+				at: (self random selectAtRandom: (1 to: self length) asArray))
 ]
 
 { #category : #removing }
@@ -1096,7 +1093,7 @@ SSTestShifter >> repair: expression [
 SSTestShifter >> repair: exprToReplace of: expression [
 	| aType replacement |
 	aType := exprToReplace returnType.
-	replacement := (randomGenerator collectAtRandom:(self subStatementsFrom: 1 toPrevIndexOf: expression))
+	replacement := (self random collectAtRandom:(self subStatementsFrom: 1 toPrevIndexOf: expression))
 		detect:
 			[ :stm | stm reference ~= exprToReplace and: [ stm returnType = aType ] ]
 		ifNone: [ self addStatementOfType: aType before: expression ].
@@ -1125,7 +1122,7 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
-	selectionStrategy ifNil: [ ^ randomGenerator selectAtRandom: aCollection ]
+	selectionStrategy ifNil: [ ^ self random selectAtRandom: aCollection ]
 	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
 	
 ]

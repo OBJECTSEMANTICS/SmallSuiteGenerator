@@ -144,6 +144,11 @@ SPlatform class >> resetConfigurationClass [
 	configurationClass := nil
 ]
 
+{ #category : #accessing }
+SPlatform class >> resetRandomGenerator [
+	self randomGenerator: self newRandomGenerator 
+]
+
 { #category : #logging }
 SPlatform class >> saveOnLog: message [
 	self configurationClass saveOnLog: message

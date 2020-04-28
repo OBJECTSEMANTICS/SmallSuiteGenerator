@@ -119,7 +119,7 @@ SMultiTypeInfo >> stonOn: stonWriter [
 
 { #category : #accessing }
 SMultiTypeInfo >> type [
-	^ types ifEmpty: [ nil ] ifNotEmpty: [ SPlatform randomGenerator selectAtRandom: self types  ]
+	^ types ifEmpty: [ nil ] ifNotEmpty: [ self random selectAtRandom: self types  ]
 ]
 
 { #category : #'accessing structure variables' }

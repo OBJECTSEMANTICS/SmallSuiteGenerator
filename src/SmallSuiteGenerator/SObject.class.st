@@ -23,3 +23,13 @@ SObject class >> new [
 { #category : #initialization }
 SObject >> initialize [
 ]
+
+{ #category : #'as yet unclassified' }
+SObject >> next [
+  ^ self random next
+]
+
+{ #category : #'as yet unclassified' }
+SObject >> random [
+  ^ SPlatform randomGenerator
+]

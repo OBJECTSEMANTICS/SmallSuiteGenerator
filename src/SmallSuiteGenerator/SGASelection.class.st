@@ -17,5 +17,4 @@ SGASelection >> fitness: anObject [
 
 { #category : #initialization }
 SGASelection >> initialize [
-	randomGenerator := SPlatform randomGenerator.
 ]

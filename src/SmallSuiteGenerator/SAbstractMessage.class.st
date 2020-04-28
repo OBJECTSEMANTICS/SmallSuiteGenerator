@@ -22,17 +22,16 @@ Class {
 
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
-	| dict randomGenerator |
+	| dict |
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
-	randomGenerator := SPlatform randomGenerator.
 	dict := Dictionary new.
-	(randomGenerator collectAtRandom: statements)
+	(SPlatform randomGenerator collectAtRandom: statements)
 		do: [ :stm | dict at: stm returnType put: stm variable copy ].
 	^ aMethodTypeInfo argTypes
 		collect: [ :aTypeReturn | 
 			| ft |
-			ft := (randomGenerator collectAtRandom: aTypeReturn types) "lack to update types of MultiTypeInfo"
+			ft := (SPlatform randomGenerator collectAtRandom: aTypeReturn types) "lack to update types of MultiTypeInfo"
 				detect: [ :type | dict at: type ifPresent: [ true ] ifAbsent: [ false ] ]
 				ifNone: [ nil ].
 			ft
@@ -164,7 +163,7 @@ SAbstractMessage >> receiver: anObject [
 
 { #category : #mutation }
 SAbstractMessage >> repairOn: aTestCase changing: expression [
-	(randomGenerator collectAtRandom: #(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:))
+	(self random collectAtRandom: #(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:))
 		do: [ :aSelector | 
 			[ ^ self
 				perform: aSelector

@@ -200,6 +200,7 @@ STestCaseFactory >> getClassOf: aString [
 
 { #category : #initialization }
 STestCaseFactory >> initialize [
+	SPlatform resetRandomGenerator.
 	super initialize.
 	fitness := SMethodCoverage new.
 	engine := self engineDefault.
@@ -268,6 +269,7 @@ STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 
 { #category : #actions }
 STestCaseFactory >> setUp [
+	SPlatform resetRandomGenerator.
 	self initializeProfiler.
 	fitness profiler: profiler;
 		typeInfo: typeInfo;
@@ -312,6 +314,7 @@ STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
 	SPlatform asDict: false.
+	SPlatform resetRandomGenerator 
 ]
 
 { #category : #actions }

@@ -99,9 +99,9 @@ SSTestCase >> idPopulation: anObject [
 
 { #category : #initialization }
 SSTestCase >> initialize [
-  super initialize.
-  generationNumber := 1.
-  idPopulation := 1.
+   super initialize.
+   generationNumber := 1.
+   idPopulation := 1.
 ]
 
 { #category : #actions }

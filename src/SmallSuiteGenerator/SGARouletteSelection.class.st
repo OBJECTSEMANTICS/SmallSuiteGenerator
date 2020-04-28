@@ -27,7 +27,7 @@ SGARouletteSelection >> selectOf: aCollection [
 SGARouletteSelection >> selectOf: aCollection with: probability [
 	| roulette random |
 	roulette := self createRouletteWith: probability .
-	random := randomGenerator next.
+	random := self next.
 	1 to: (aCollection size) do: [ :index |
 		(random < (roulette at: index)) ifTrue: [ 
 			^ aCollection at: index ] ].

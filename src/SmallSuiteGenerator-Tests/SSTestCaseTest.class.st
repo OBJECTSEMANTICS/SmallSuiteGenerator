@@ -10,7 +10,7 @@ Class {
 { #category : #tests }
 SSTestCaseTest >> setUp [
 	utility := SUtilityTypeInfo new.
-	SPlatform randomGenerator: SPlatform newRandomGenerator .
+	SPlatform resetRandomGenerator.
 	SPlatform fileLogger: 'STestCaseTestLogger.log'
 ]
 
@@ -18,7 +18,7 @@ SSTestCaseTest >> setUp [
 SSTestCaseTest >> tearDown [
 	"SConfiguration clearFileLog: 'STestCaseTestLogger.log'"
 	
-	SPlatform randomGenerator: SPlatform newRandomGenerator .
+	SPlatform resetRandomGenerator
 ]
 
 { #category : #tests }

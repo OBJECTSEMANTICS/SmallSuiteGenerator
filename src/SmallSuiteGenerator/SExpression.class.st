@@ -14,7 +14,6 @@ Class {
 	#instVars : [
 		'returnType',
 		'id',
-		'randomGenerator',
 		'mutated',
 		'parent',
 		'identifier',
@@ -104,7 +103,6 @@ SExpression >> id: anObject [
 { #category : #initialization }
 SExpression >> initialize [
 	super initialize .
-   randomGenerator := SPlatform randomGenerator.
 	mutated := false.
 	identifier := self class nextIdentifier.
 	needsBeFixed := false
@@ -175,11 +173,6 @@ SExpression >> parent: anObject [
 { #category : #mutation }
 SExpression >> pickUpReferences: aExpression [
 	^ #()
-]
-
-{ #category : #accessing }
-SExpression >> randomGenerator: anObject [
-	randomGenerator := anObject
 ]
 
 { #category : #accessing }
