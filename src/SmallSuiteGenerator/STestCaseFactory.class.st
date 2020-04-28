@@ -117,11 +117,7 @@ STestCaseFactory >> elitismRate: aNumber [
 
 { #category : #accessing }
 STestCaseFactory >> engine [
-	^ SGAEngine new
-		populationSize: 30;
-		numberOfStatements: 30;
-		numberOfGenerations: 15;
-		yourself
+	^ engine
 ]
 
 { #category : #accessing }
@@ -170,6 +166,23 @@ STestCaseFactory >> exportTests [
 { #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOfAllMethods [
+	self generateReportUsingFilter: #all
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOfUnexecutedMethods [
+	self generateReportUsingFilter: #notAllBlocksExecuted
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportUsingFilter: aSymbol [ 
+	| log |
+	log := self engine logs last.
+	SReportSGALog exportData: log onCSV: ('Report', aSymbol asString capitalized,targetClassName asString) usingFilter: aSymbol
 ]
 
 { #category : #actions }
@@ -256,13 +269,14 @@ STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 { #category : #actions }
 STestCaseFactory >> setUp [
 	self initializeProfiler.
-	fitness profiler: profiler.
-	fitness targetClass: self targetClassName.
-	engine fitness: fitness.
-	engine numberOfGenerations: numberOfIterations.
-	engine typeInfo: self typeInfo.
-	engine targetClassName: self targetClassName.
-	engine targetPackageRegex: targetPackageRegex 
+	fitness profiler: profiler;
+		typeInfo: typeInfo;
+		targetClass: self targetClassName.
+	engine fitness: fitness;
+		numberOfGenerations: numberOfIterations;
+		typeInfo: self typeInfo;
+		targetClassName: self targetClassName;
+		targetPackageRegex: targetPackageRegex 
 ]
 
 { #category : #actions }
