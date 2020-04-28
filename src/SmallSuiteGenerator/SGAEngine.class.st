@@ -140,7 +140,7 @@ SGAEngine >> createNewPopulation [
         OM1 := (self mutateAndClean: O1) idPopulation: 3.
         OM2 := (self mutateAndClean: O2) idPopulation: 4.
         fitness compute: (Array with: OM1 with: OM2).
-        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) select: #notEmpty) difference: newPopulation.
+        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | newPopulation includes: e ].
         options := options sort: [:a :b |  self is: a betterThan: b ].
         selectedOptions := options first: 2.
 		  newNumber := newPopulation size.
@@ -356,7 +356,6 @@ SGAEngine >> mutateAndClean: aStatement [
 	newStm := self mutate: aStatement.
 	newStm clean.
    newStm updateWith: aStatement.
-   newStm isMutated: true.
 	^ newStm 
 ]
 
@@ -485,7 +484,6 @@ SGAEngine >> similarChild: testCase [
 	^ testCase deepCopy 
 		addParent: testCase; 
 		generationNumber: testCase generationNumber + 1;
-		isMutated: false;
 		yourself
 ]
 

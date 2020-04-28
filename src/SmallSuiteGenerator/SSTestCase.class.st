@@ -8,8 +8,7 @@ Class {
 		'idPopulation',
 		'previousOpenWindows',
 		'summaryExecutionMethods',
-		'generationNumber',
-		'isMutated'
+		'generationNumber'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -103,17 +102,6 @@ SSTestCase >> initialize [
    super initialize.
    generationNumber := 1.
    idPopulation := 1.
-   isMutated := false
-]
-
-{ #category : #accessing }
-SSTestCase >> isMutated [
-	^ isMutated
-]
-
-{ #category : #accessing }
-SSTestCase >> isMutated: anObject [
-	isMutated := anObject
 ]
 
 { #category : #actions }
