@@ -73,11 +73,7 @@ STestCaseFactory >> elitismRate: aNumber [
 
 { #category : #accessing }
 STestCaseFactory >> engine [
-	^ SGAEngine new
-		populationSize: 30;
-		numberOfStatements: 30;
-		numberOfGenerations: 15;
-		yourself
+	^ engine
 ]
 
 { #category : #accessing }
@@ -126,6 +122,23 @@ STestCaseFactory >> exportTests [
 { #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOfAllMethods [
+	self generateReportUsingFilter: #all
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOfUnexecutedMethods [
+	self generateReportUsingFilter: #notAllBlocksExecuted
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportUsingFilter: aSymbol [ 
+	| log |
+	log := self engine logs last.
+	SReportSGALog exportData: log onCSV: ('Report', aSymbol asString capitalized,targetClassName asString) usingFilter: aSymbol
 ]
 
 { #category : #actions }
