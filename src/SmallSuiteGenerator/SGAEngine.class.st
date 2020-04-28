@@ -124,10 +124,10 @@ SGAEngine >> createNewPopulation [
    newPopulation := self eliteOfCurrentPopulation.
   	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
-        P1 := selectedList first .
+        P1 := selectedList first.
         P2 := selectedList second.
-		  P1copy := self similarChild: P1.
-		  P2copy := self similarChild: P2.
+		  P1copy := (self similarChild: P1) idPopulation: 1.
+		  P2copy := (self similarChild: P2) idPopulation: 2.
         self shouldCrossOver 
 				ifTrue: [ children := self crossOver: P1 with: P2.
               O1 := children first.
@@ -137,8 +137,8 @@ SGAEngine >> createNewPopulation [
 				  	O1 addParent: P1.
               	O2 := P2copy deepCopy.
               	O2 addParent: P2 ].
-        OM1 := self mutateAndClean: O1.
-        OM2 := self mutateAndClean: O2.
+        OM1 := (self mutateAndClean: O1) idPopulation: 3.
+        OM2 := (self mutateAndClean: O2) idPopulation: 4.
         fitness compute: (Array with: OM1 with: OM2).
         options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) select: #notEmpty) difference: newPopulation.
         options := options sort: [:a :b |  self is: a betterThan: b ].
@@ -148,7 +148,6 @@ SGAEngine >> createNewPopulation [
 				newNumber:= newNumber + 1.
 			option idPopulation: newNumber ])
 		   ].
-	self halt.
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
@@ -303,12 +302,17 @@ SGAEngine >> initializeProfiler [
 
 { #category : #testing }
 SGAEngine >> is: testCase1 betterThan: testCase2 [
-	|fitness1 fitness2|
-	fitness1 := self fitnessFor: testCase1.
-	fitness2 := self fitnessFor: testCase2.
-	^ fitness1 = fitness2
-		ifTrue: [ (testCase1 idPopulation > testCase2 idPopulation) or: [ testCase1 length <= testCase2 length] ]
-		ifFalse: [ fitness1 > fitness2 ]
+    |fitness1 fitness2|
+    fitness1 := self fitnessFor: testCase1.
+    fitness2 := self fitnessFor: testCase2.
+    (fitness1 > fitness2) ifTrue:[ ^ true ].
+    ((fitness1 = fitness2) and:
+        [testCase1 length < testCase2 length]) 
+                ifTrue:[^ true]. 
+    (fitness1 = fitness2 and:
+        [testCase1 length = testCase2 length and:[ testCase1 idPopulation > testCase2 idPopulation]])
+                ifTrue:[^ true]. 
+    ^ false.
 ]
 
 { #category : #actions }
@@ -352,6 +356,7 @@ SGAEngine >> mutateAndClean: aStatement [
 	newStm := self mutate: aStatement.
 	newStm clean.
    newStm updateWith: aStatement.
+   newStm isMutated: true.
 	^ newStm 
 ]
 
@@ -480,6 +485,7 @@ SGAEngine >> similarChild: testCase [
 	^ testCase deepCopy 
 		addParent: testCase; 
 		generationNumber: testCase generationNumber + 1;
+		isMutated: false;
 		yourself
 ]
 
