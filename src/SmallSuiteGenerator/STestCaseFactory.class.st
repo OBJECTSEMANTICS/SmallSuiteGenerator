@@ -164,6 +164,11 @@ STestCaseFactory >> exportTests [
 ]
 
 { #category : #configuration }
+STestCaseFactory >> fitness [
+	^ fitness
+]
+
+{ #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
 ]
@@ -204,7 +209,7 @@ STestCaseFactory >> initialize [
 	super initialize.
 	fitness := SMethodCoverage new.
 	engine := self engineDefault.
-	numberOfIterations :=20.
+	numberOfIterations := 20.
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
 ]
