@@ -1057,7 +1057,7 @@ SSTestShifter >> removeStatement [
 	self
 		removeStatement:
 			(statements
-				at: (self random selectAtRandom: (1 to: self length) asArray))
+				at: (self random selectAtRandom: (1 to: self length) asArray)).
 ]
 
 { #category : #removing }

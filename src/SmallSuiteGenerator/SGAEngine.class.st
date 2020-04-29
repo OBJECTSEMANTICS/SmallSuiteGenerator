@@ -122,7 +122,7 @@ SGAEngine >> createNewPopulation [
 	| newPopulation currentPopulationSize newNumber |
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
-  	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children options |
+  	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
         P1 := selectedList first.
         P2 := selectedList second.
@@ -140,9 +140,7 @@ SGAEngine >> createNewPopulation [
         OM1 := (self mutateAndUpdate: O1) idPopulation: 3.
         OM2 := (self mutateAndUpdate: O2) idPopulation: 4.
         fitness compute: (Array with: OM1 with: OM2).
-        options := ((Array with: OM1 with: OM2 with: P1copy with: P2copy) asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | newPopulation includes: e ].
-        options := options sort: [:a :b |  self is: a betterThan: b ].
-        selectedOptions := options first: 2.
+        selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
 		  newNumber := newPopulation size.
 		  newPopulation addAll: (selectedOptions collect: [:option | 
 				newNumber:= newNumber + 1.
@@ -151,7 +149,7 @@ SGAEngine >> createNewPopulation [
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
-   self orderPopulation 
+   self order: population
 ]
 
 { #category : #actions }
@@ -277,7 +275,7 @@ SGAEngine >> initializePopulation [
    population := self createRandomPopulation.
    SExpression resetId.
    self computeFitness.
-   self orderPopulation.
+   self order: population.
    initialPopulation := population.
    logs add: (self logOfGeneration: 0 inTime: t).
 ]
@@ -344,10 +342,10 @@ SGAEngine >> mutate: testCase [
 ]
 
 { #category : #actions }
-SGAEngine >> mutateAndUpdate: aStatement [
+SGAEngine >> mutateAndUpdate: aTestCase [
 	| newStm |
-	newStm := self mutate: aStatement.
-   newStm updateWith: aStatement.
+	newStm := self mutate: aTestCase.
+   newStm updateWith: aTestCase.
 	^ newStm 
 ]
 
@@ -375,8 +373,9 @@ SGAEngine >> numberOfStatements: anInteger [
 ]
 
 { #category : #testing }
-SGAEngine >> orderPopulation [
-	population sort: [ :stm1 :stm2 | self is: stm1 betterThan: stm2 ].
+SGAEngine >> order: aCollection [
+	aCollection sort: [ :stm1 :stm2 | self is: stm1 betterThan: stm2 ].
+	^ aCollection
 ]
 
 { #category : #accessing }
@@ -459,6 +458,14 @@ SGAEngine >> run [
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
                     bestFitness := lastBestFitness ] ] ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+]
+
+{ #category : #actions }
+SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
+	| options |
+	options := (aCollection asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | excludingColl includes: e ].
+   options := self order: options.
+   ^ options first: 2.
 ]
 
 { #category : #accessing }
