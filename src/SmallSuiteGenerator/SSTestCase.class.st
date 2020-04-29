@@ -8,7 +8,8 @@ Class {
 		'idPopulation',
 		'previousOpenWindows',
 		'summaryExecutionMethods',
-		'generationNumber'
+		'generationNumber',
+		'hasErrors'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -69,6 +70,7 @@ SSTestCase >> deepCopy [
   copy setFitnessByClass: self fitnessByClass.
   copy generationNumber: self generationNumber.
   copy summaryExecutionMethods: self summaryExecutionMethods.
+  copy hasErrors: self hasErrors.
   ^ copy
 ]
 
@@ -80,6 +82,16 @@ SSTestCase >> generationNumber [
 { #category : #accessing }
 SSTestCase >> generationNumber: anObject [
 	generationNumber := anObject
+]
+
+{ #category : #actions }
+SSTestCase >> hasErrors [
+	^ hasErrors
+]
+
+{ #category : #actions }
+SSTestCase >> hasErrors: aBoolean [
+	hasErrors := aBoolean 
 ]
 
 { #category : #comparing }
@@ -102,6 +114,7 @@ SSTestCase >> initialize [
    super initialize.
    generationNumber := 1.
    idPopulation := 1.
+	hasErrors := false
 ]
 
 { #category : #actions }

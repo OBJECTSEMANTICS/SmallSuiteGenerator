@@ -133,10 +133,8 @@ SGAEngine >> createNewPopulation [
               O1 := children first.
               O2 := children second] 
 				ifFalse: [ 
-					O1 := P1copy deepCopy.
-				  	O1 addParent: P1.
-              	O2 := P2copy deepCopy.
-              	O2 addParent: P2 ].
+					O1 := (P1copy deepCopy) addParent: P1.
+              	O2 := (P2copy deepCopy) addParent: P2 ].
         OM1 := (self mutateAndUpdate: O1) idPopulation: 3.
         OM2 := (self mutateAndUpdate: O2) idPopulation: 4.
         fitness compute: (Array with: OM1 with: OM2).
@@ -296,6 +294,7 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
     fitness1 := self fitnessFor: testCase1.
     fitness2 := self fitnessFor: testCase2.
     (fitness1 > fitness2) ifTrue:[ ^ true ].
+	 (testCase1 hasErrors and: [ testCase2 hasErrors not and: [ self next < 0.5 ]]) ifTrue: [^ false].
     ((fitness1 = fitness2) and:
         [testCase1 length < testCase2 length]) 
                 ifTrue:[^ true]. 
@@ -316,11 +315,11 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 	| log dictFitness |
 	log := SGALog new 
 		generationNumber: anInteger;
-		fittestTestCase: self pickBestTest;
+		fittestTestCase: population first;
 		timeToProduceGeneration: Time new asSeconds - t;
 		population: population.
 	dictFitness := self collectFitnessByName.
-	log lowestFit: (self pickMinFitTest: dictFitness);
+	log lowestFit: population last fitness;
 	averageFit: (self pickAverageFitTest: dictFitness). 
 	log summaryTargetClass: (fitness runPopulation: population).
 	^ log
@@ -337,14 +336,9 @@ SGAEngine >> mergeTypeInfo: otherTypeInfo [
 ]
 
 { #category : #actions }
-SGAEngine >> mutate: testCase [
-	^ mutationOperator mutate: testCase
-]
-
-{ #category : #actions }
 SGAEngine >> mutateAndUpdate: aTestCase [
 	| newStm |
-	newStm := self mutate: aTestCase.
+	newStm := mutationOperator mutate: aTestCase.
    newStm updateWith: aTestCase.
 	^ newStm 
 ]
@@ -387,21 +381,6 @@ SGAEngine >> packageRegex: aString [
 SGAEngine >> pickAverageFitTest: aDictionary [
 	^ (aDictionary keys collect: [ :key | 
 		   key -> (aDictionary at: key) average ]) asDictionary
-]
-
-{ #category : #actions }
-SGAEngine >> pickBestTest [
-	|best|
-	best := population first.
-	population do: [ :test | 
-		(self is: test betterThan: best) ifTrue: [ best := test ]
-	].
-	^ best
-]
-
-{ #category : #actions }
-SGAEngine >> pickMinFitTest: aDictionary [
-  ^ (aDictionary keys collect: [:key |  key -> (aDictionary at: key) min ]) asDictionary
 ]
 
 { #category : #accessing }
@@ -534,8 +513,7 @@ SGAEngine >> updateArgsOf: aMethod [
 	aMethod argTypes do: [ :argType |
 	|res|
 	res := argType types anySatisfy: [ :type | typeInfo scalars keys includes: type ].
-	res ifFalse: [ argType types do: [ :type | | scalars |
-		scalars := typeInfo scalars keys select: [ :scalar | 
+	res ifFalse: [ argType types do: [ :type | typeInfo scalars keys select: [ :scalar | 
 			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
 			argType type: scalar ] ] ] ]
 ]

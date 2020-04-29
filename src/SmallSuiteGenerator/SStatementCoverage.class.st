@@ -37,8 +37,6 @@ SStatementCoverage >> run: testCaseCollection [
 
 { #category : #actions }
 SStatementCoverage >> runPopulation: testCaseCollection [
-	| string |
-	string := self functionName.
 	profiler cleanBlocksOfMethods.
 	testCaseCollection
 		do: [ :testCase | 
