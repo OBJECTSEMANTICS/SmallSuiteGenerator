@@ -272,6 +272,7 @@ SGAEngine >> initializePopulation [
 	t := Time now asSeconds.
    population := self createRandomPopulation.
    SExpression resetId.
+	self updateTypeInfoWith: population.
    self computeFitness.
    self order: population.
    initialPopulation := population.
