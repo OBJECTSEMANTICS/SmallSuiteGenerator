@@ -84,9 +84,9 @@ SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
 
 { #category : #mutation }
 SFactoryMessage >> insertOn: aTestCase [
-	^ aTestCase
+	[^ aTestCase
 		addFactoryMessage: self returnType
-		ofSelector: self selector
+		ofSelector: self selector] on: SError do: [  ]
 ]
 
 { #category : #testing }

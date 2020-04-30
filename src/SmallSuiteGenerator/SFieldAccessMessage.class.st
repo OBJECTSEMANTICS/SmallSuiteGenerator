@@ -42,7 +42,7 @@ SFieldAccessMessage >> fixWith: anObject in: aTestCase [
 
 { #category : #mutation }
 SFieldAccessMessage >> insertOn: aTestCase [
-	^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType
+	[^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType] on: SError do: [  ]
 ]
 
 { #category : #actions }
