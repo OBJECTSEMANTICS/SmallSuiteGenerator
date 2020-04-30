@@ -1026,8 +1026,8 @@ SSTestShifter >> referencesIndexes: expression [
 
 { #category : #removing }
 SSTestShifter >> removeExpression: expression [
-	statements copy do: [ :stm | (stm pickUpReferences: expression) ifNotEmpty: [ self repairReferenceTo: expression of: stm ] ].
 	self removeFromStatements: expression.
+	statements copy do: [ :stm | (stm pickUpReferences: expression) ifNotEmpty: [ self repairReferenceTo: expression of: stm ] ].
 ]
 
 { #category : #removing }
