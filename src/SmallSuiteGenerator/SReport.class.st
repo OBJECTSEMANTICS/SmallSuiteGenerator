@@ -23,7 +23,7 @@ SReport class >> fileReference: aString [
 	^ filename asFileReference
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SReport class >> titles [
 	self subclassResponsibility 
 ]

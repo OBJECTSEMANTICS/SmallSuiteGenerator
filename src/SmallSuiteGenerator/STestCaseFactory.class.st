@@ -204,6 +204,11 @@ STestCaseFactory >> generateReportOfUnexecutedMethods [
 ]
 
 { #category : #actions }
+STestCaseFactory >> generateResumeReportOfLogs [
+	SReportSGALog exportResumeOf: self engine logs onCSV: ('Report_Resume_' ,targetClassName asString)
+]
+
+{ #category : #actions }
 STestCaseFactory >> getClassOf: aString [
 	| aClassName class |
 	aClassName := aString asSymbol.
