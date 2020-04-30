@@ -169,20 +169,38 @@ STestCaseFactory >> fitness: aFitness [
 ]
 
 { #category : #actions }
+STestCaseFactory >> generateReportForAllMethodsOf: aLog [ 
+	self generateReportOf: aLog UsingFilter: #all
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportForAllMethodsOfAllLogs [
+	self engine logs do: [ :aLog | self generateReportForAllMethodsOf: aLog ]
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportForUnexecutedMethodsOf: anIndex [
+	self generateReportOf: anIndex UsingFilter: #notAllBlocksExecuted
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportForUnexecutedMethodsOfAllLogs [
+	self engine logs do: [ :aLog | self generateReportForUnexecutedMethodsOf: aLog ]
+]
+
+{ #category : #actions }
+STestCaseFactory >> generateReportOf: aLog UsingFilter: aSymbol [ 
+	SReportSGALog exportData: aLog onCSV: ('Report_', aLog generationNumber asString,'_', aSymbol asString capitalized,targetClassName asString) usingFilter: aSymbol
+]
+
+{ #category : #actions }
 STestCaseFactory >> generateReportOfAllMethods [
-	self generateReportUsingFilter: #all
+	self generateReportForAllMethodsOf: self engine logs last
 ]
 
 { #category : #actions }
 STestCaseFactory >> generateReportOfUnexecutedMethods [
-	self generateReportUsingFilter: #notAllBlocksExecuted
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportUsingFilter: aSymbol [ 
-	| log |
-	log := self engine logs last.
-	SReportSGALog exportData: log onCSV: ('Report', aSymbol asString capitalized,targetClassName asString) usingFilter: aSymbol
+	self generateReportForUnexecutedMethodsOf: self engine logs last
 ]
 
 { #category : #actions }

@@ -43,9 +43,9 @@ SGALog >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 
 { #category : #initialization }
 SGALog >> filteredMethodsBy: aSymbol [
-	^ (self selectorsFilter includes: aSymbol)
+	^ ((self selectorsFilter includes: aSymbol)
 		ifTrue: [ self summaryTargetClass select: aSymbol ]
-		ifFalse: [ self summaryTargetClass ]
+		ifFalse: [ self summaryTargetClass ]) select: #isNotNil
 ]
 
 { #category : #accessing }
