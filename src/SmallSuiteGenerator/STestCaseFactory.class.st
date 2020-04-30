@@ -17,7 +17,9 @@ Class {
 		'tearDownMethod',
 		'lastMessage',
 		'asDict',
-		'fitnessSeed'
+		'fitnessSeed',
+		'initialSeed',
+		'initialAsDict'
 	],
 	#classInstVars : [
 		'instance'
@@ -71,6 +73,7 @@ STestCaseFactory class >> lightColors [
 
 { #category : #actions }
 STestCaseFactory >> asDict: aBoolean [
+	initialAsDict := aBoolean.
 	SPlatform asDict: aBoolean
 ]
 
@@ -173,6 +176,16 @@ STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> fitnessSeed [
+	^ fitnessSeed 
+]
+
+{ #category : #'as yet unclassified' }
+STestCaseFactory >> fitnessSeedCalculated: number [ 
+	fitnessSeed := number
+]
+
 { #category : #actions }
 STestCaseFactory >> generateReportOfAllMethods [
 	self generateReportUsingFilter: #all
@@ -203,6 +216,16 @@ STestCaseFactory >> getClassOf: aString [
 
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> initialAsDict [
+	^ initialAsDict 
+]
+
+{ #category : #accessing }
+STestCaseFactory >> initialSeed [
+	^ initialSeed 
+]
+
 { #category : #initialization }
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
@@ -211,7 +234,9 @@ STestCaseFactory >> initialize [
 	engine := self engineDefault.
 	numberOfIterations := 20.
 	fitnessSeed := 0.
-	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
+	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
+	initialSeed := 0.
+	initialAsDict := false.
 ]
 
 { #category : #actions }
@@ -258,7 +283,8 @@ STestCaseFactory >> run [
 ]
 
 { #category : #'instance creation' }
-STestCaseFactory >> seed: aNumber [ 	
+STestCaseFactory >> seed: aNumber [ 
+	initialSeed := aNumber.
 	SPlatform seed: aNumber
 ]
 
