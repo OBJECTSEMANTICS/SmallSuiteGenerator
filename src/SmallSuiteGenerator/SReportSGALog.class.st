@@ -10,13 +10,17 @@ SReportSGALog class >> exportResumeOf: logColl onCSV: aString [
 		writeStreamDo: [ :stream | 
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut: #('ID' 'Avg Tests Size' '% Has Errors' 'BestTest Size' 'BestTest hasErrors').
+				nextPut: #('ID' 'Avg Tests Size' '% Has Errors' 'BestTest Size' 'BestTest hasErrors' 'Best' 'Average' 'Worst').
 			logColl do: [ :aLog | neoCSVWriter nextPut: (Array withAll:
-				(OrderedCollection with: aLog generationNumber
-					with: aLog averageTestSize 
-					with: aLog percenteageOftestCasesWithErrors
-					with: aLog fittestTestCase statements size
-					with: aLog fittestTestCase hasErrors )) ].
+				(OrderedCollection new add: aLog generationNumber;
+					add: aLog averageTestSize;
+					add: aLog percenteageOftestCasesWithErrors;
+					add: aLog fittestTestCase statements size;
+					add: aLog fittestTestCase hasErrors;
+					add: aLog fittestTestCase fitness values first;
+					add: aLog averageFit values first;
+					add: aLog lowestFit values first;
+					yourself )) ].
 			neoCSVWriter flush ]
 ]
 
