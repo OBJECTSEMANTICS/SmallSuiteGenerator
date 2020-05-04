@@ -185,6 +185,20 @@ SGAEngine >> crossoverRate: aNumber [
 	selectionStrategy crossoverRate: aNumber
 ]
 
+{ #category : #testing }
+SGAEngine >> differencesBtw: summary1 and: summary2 [
+	| result |
+   result := OrderedCollection new.
+   summary1 with: summary2 do: [:x :y |  x = y 
+		ifFalse: [ | aux |
+			aux := OrderedCollection new.
+         x keysAndValuesDo: [:key :value |  (x at: key) = (y at: key) 
+				ifFalse: [ aux add: key -> value; add: key -> (y at: key) ] ]. 
+		aux ifNotEmpty: [ aux addFirst: (x at: 'MethodName').
+	result add: aux] ] ].
+ 	^ result
+]
+
 { #category : #actions }
 SGAEngine >> doSelection [
 	self createNewPopulation.
@@ -238,6 +252,17 @@ SGAEngine >> fixPopulation: aCollection [
 	aCollection do: [ :testCase | 
 		testCase statements select: [ :stm | [(targetClassMessages collect: #selector) includes: stm value selector]
 			on: Error do: [ false ] ] thenDo: [ :stm | testCase fixTypeReturnOf: (stm needsBeFixed: true) ] ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> generateReportOfDifferencesBtwGenerations [
+	| generations result |
+	generations := self summaryGenerations.
+	result := OrderedCollection new.
+	2 to: generations size do: [ :index | |diff|
+		diff := self differencesBtw: (generations at: index-1) and: (generations at: index).
+		diff ifNotEmpty: [ result add: (index -> diff)] ].
+	^ result
 ]
 
 { #category : #initialization }
@@ -464,6 +489,12 @@ SGAEngine >> similarChild: testCase [
 		addParent: testCase; 
 		generationNumber: testCase generationNumber + 1;
 		yourself
+]
+
+{ #category : #updating }
+SGAEngine >> summaryGenerations [
+	^ logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ]
+	
 ]
 
 { #category : #accessing }
