@@ -1,26 +1,51 @@
 Class {
 	#name : #SNumericParameterization,
 	#superclass : #SInitialization,
+	#instVars : [
+		'configurationDict'
+	],
 	#category : #'SmallSuiteGenerator-Initialization'
 }
 
+{ #category : #initialization }
+SNumericParameterization >> initialize [ 	
+	configurationDict := self initializeDictionary
+]
+
+{ #category : #initialization }
+SNumericParameterization >> initializeDictionary [
+	^ Dictionary new 
+			at: #largePopulationNumber put: [ :testCaseFactory | 
+				testCaseFactory populationSize < 30 
+					ifTrue: [ testCaseFactory populationSize: 30 ] ];
+			at: #largeGenerationNumber put: [ :testCaseFactory | 
+				testCaseFactory numberOfGenerations < 50 
+					ifTrue: [ testCaseFactory numberOfGenerations: 50 ] ];
+			at: #largeStatementNumber put: [ :testCaseFactory |
+				testCaseFactory numberOfStatements < 30 ifTrue: [ 
+					testCaseFactory numberOfStatements: 30 ] ];
+			at: #smallPopulationNumber put: [ :testCaseFactory | 
+				testCaseFactory populationSize > 5 
+					ifTrue: [ testCaseFactory populationSize: 5 ] ];
+			at: #smallGenerationNumber put: [ :testCaseFactory | 
+				testCaseFactory numberOfGenerations > 3 
+					ifTrue: [ testCaseFactory numberOfGenerations: 3 ] ];
+			at: #smallStatementNumber put: [ :testCaseFactory |
+				testCaseFactory numberOfStatements > 3 ifTrue: [ 
+					testCaseFactory numberOfStatements: 3 ] ];
+			yourself
+]
+
 { #category : #'public tree building' }
-SNumericParameterization >> newInstances: testCaseFactory [
+SNumericParameterization >> newInstance: testCaseFactory with: symbol [
 	| instance |
-	"| generationSizes statementSizes populationSizes |
-	generationSizes := statementSizes := populationSizes := #(10 20)."
-	"generationSizes do: [ :gSize | 
-		statementSizes do: [ :stmtSize | 
-			populationSizes do: [ :pSize | 
-				[" instance := self copy: testCaseFactory.
-				instance numberOfGenerations: 10;
+	instance := self copy: testCaseFactory.
+	(configurationDict at: symbol) value: instance.
+	instance "numberOfGenerations: 10;
 				numberOfStatements: 15;
-				populationSize: 20;
+				populationSize: 20;"
 				createTestCases.
-				^ instance
-				"SInstanceStore save: instance ] on: Error do: [ nil ]" "]
-		]
-	]"
+	^ instance
 	
 ]
 

@@ -15,10 +15,13 @@ SInitialization >> copy: testCaseFactory [
 		asDict: testCaseFactory initialAsDict;
 		seed: testCaseFactory initialSeed;
 		fitnessSeedCalculated: testCaseFactory fitnessSeed;
+		numberOfGenerations: testCaseFactory numberOfGenerations;
+		numberOfStatements: testCaseFactory numberOfStatements;
+		populationSize: testCaseFactory populationSize;
 		yourself
 ]
 
 { #category : #'public tree building' }
-SInitialization >> newInstances: testCaseFactory [
+SInitialization >> newInstance: testCaseFactory with: key [
 	^ self subclassResponsibility
 ]

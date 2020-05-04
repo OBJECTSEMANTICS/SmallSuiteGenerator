@@ -251,6 +251,11 @@ STestCaseFactory >> lastMessage: aMessage [
 	engine lastMessage: aMessage 
 ]
 
+{ #category : #'as yet unclassified' }
+STestCaseFactory >> numberOfGenerations [
+	^ numberOfIterations
+]
+
 { #category : #initialization }
 STestCaseFactory >> numberOfGenerations: aNumber [
 	numberOfIterations := aNumber.
