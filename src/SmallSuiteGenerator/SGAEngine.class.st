@@ -193,7 +193,7 @@ SGAEngine >> differencesBtw: summary1 and: summary2 [
 		ifFalse: [ | aux |
 			aux := OrderedCollection new.
          x keysAndValuesDo: [:key :value |  (x at: key) = (y at: key) 
-				ifFalse: [ aux add: key -> value; add: key -> (y at: key) ] ]. 
+				ifFalse: [ aux add: key -> (Array with: value with: (y at: key)) ] ]. 
 		aux ifNotEmpty: [ aux addFirst: (x at: 'MethodName').
 	result add: aux] ] ].
  	^ result
@@ -254,7 +254,7 @@ SGAEngine >> fixPopulation: aCollection [
 			on: Error do: [ false ] ] thenDo: [ :stm | testCase fixTypeReturnOf: (stm needsBeFixed: true) ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #reporting }
 SGAEngine >> generateReportOfDifferencesBtwGenerations [
 	| generations result |
 	generations := self summaryGenerations.

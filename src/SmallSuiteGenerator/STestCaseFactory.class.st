@@ -204,6 +204,11 @@ STestCaseFactory >> generateReportOfUnexecutedMethods [
 ]
 
 { #category : #actions }
+STestCaseFactory >> generateResumeDifferenceOfGeneration [
+	SReportSGALog generateReportForDifferencesBtwGenerationsOf: self engine
+]
+
+{ #category : #actions }
 STestCaseFactory >> generateResumeReportOfLogs [
 	SReportSGALog exportResumeOf: self engine logs onCSV: ('Report_Resume_' ,targetClassName asString)
 ]
