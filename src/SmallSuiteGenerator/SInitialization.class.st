@@ -16,8 +16,8 @@ SInitialization >> copy: testCaseFactory [
 		seed: testCaseFactory initialSeed;
 		fitnessSeedCalculated: testCaseFactory fitnessSeed;
 		numberOfGenerations: testCaseFactory numberOfGenerations;
-		numberOfStatements: testCaseFactory numberOfStatements;
-		populationSize: testCaseFactory populationSize;
+		numberOfStatements: testCaseFactory engine numberOfStatements;
+		populationSize: testCaseFactory engine populationSize;
 		yourself
 ]
 

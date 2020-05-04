@@ -16,22 +16,22 @@ SNumericParameterization >> initialize [
 SNumericParameterization >> initializeDictionary [
 	^ Dictionary new 
 			at: #largePopulationNumber put: [ :testCaseFactory | 
-				testCaseFactory populationSize < 30 
+				testCaseFactory engine populationSize < 30 
 					ifTrue: [ testCaseFactory populationSize: 30 ] ];
 			at: #largeGenerationNumber put: [ :testCaseFactory | 
 				testCaseFactory numberOfGenerations < 50 
 					ifTrue: [ testCaseFactory numberOfGenerations: 50 ] ];
 			at: #largeStatementNumber put: [ :testCaseFactory |
-				testCaseFactory numberOfStatements < 30 ifTrue: [ 
+				testCaseFactory engine numberOfStatements < 30 ifTrue: [ 
 					testCaseFactory numberOfStatements: 30 ] ];
 			at: #smallPopulationNumber put: [ :testCaseFactory | 
-				testCaseFactory populationSize > 5 
+				testCaseFactory engine populationSize > 5 
 					ifTrue: [ testCaseFactory populationSize: 5 ] ];
 			at: #smallGenerationNumber put: [ :testCaseFactory | 
 				testCaseFactory numberOfGenerations > 3 
 					ifTrue: [ testCaseFactory numberOfGenerations: 3 ] ];
 			at: #smallStatementNumber put: [ :testCaseFactory |
-				testCaseFactory numberOfStatements > 3 ifTrue: [ 
+				testCaseFactory engine numberOfStatements > 3 ifTrue: [ 
 					testCaseFactory numberOfStatements: 3 ] ];
 			yourself
 ]
