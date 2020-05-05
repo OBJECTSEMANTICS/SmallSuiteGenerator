@@ -106,7 +106,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	| testCase aExpression |
-	testCase := SSTestCase with: utility typeInfoSStack4.
+	testCase := (SSTestCase with: utility typeInfoSStack4) addTargetClassName: #SStack.
 	testCase addFactoryMessage: #SStack ofSelector: #newStack.
 	aExpression := testCase
 		addFieldAccessMessage: #lastLinkStack
@@ -129,7 +129,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	| testCase aExpression |
-	testCase := SSTestCase with: utility typeInfoSStack4.
+	testCase := (SSTestCase with: utility typeInfoSStack4) addTargetClassName: #SStack.
 	testCase addFactoryMessage: #SStack ofSelector: #newStackWith:.
 	aExpression := testCase addMessage: #pop from: #SStack.
 	testCase addLiteral: #SmallInteger.

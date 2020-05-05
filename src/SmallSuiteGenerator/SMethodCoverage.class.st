@@ -7,23 +7,19 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #actions }
+SMethodCoverage >> fitnessOf: testCase withKey: string [
+	testCase fitness at:string put: profiler methodCoverage.
+]
+
 { #category : #accesing }
 SMethodCoverage >> functionName [
 	^ 'method-coverage'
 ]
 
 { #category : #actions }
-SMethodCoverage >> run: testCaseCollection [
-	| string |
-	string := self functionName.
-	testCaseCollection
-		do: [ :testCase | 
-			profiler cleanBlocksOfMethods.
-			testCase runWithoutAssertions.
-			testCase summaryExecutionMethods: profiler summaryExecutionMethods.
-			"self abstractDataOn: testCase."
-			testCase fitness at:string put: profiler methodCoverage.
-			testCase fitnessByClass at: string put: profiler methodCoverage1 ]
+SMethodCoverage >> runPopulation: testCaseCollection [
+	
 ]
 
 { #category : #actions }

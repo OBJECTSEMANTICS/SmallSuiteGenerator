@@ -687,6 +687,7 @@ SSTestShifterTest >> testPickFactoryMessagesFrom [
 	self
 		should: [ testCase addMessage: #price: from: #SEvent ]
 		raise: SError.
+	testCase addTargetClassName: #SConference.
 	testCase addFactoryMessage: #SConference ofSelector: #price:.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -808,7 +809,7 @@ SSTestShifterTest >> testValidTargetClassName [
 	self
 		shouldnt: [ testCase validTargetClassName: #SConference ]
 		raise: SError.
-	self should: [ testCase validTargetClassName: #SStudent ] raise: SError
+	self shouldnt: [ testCase validTargetClassName: #SStudent ] raise: SError
 ]
 
 { #category : #tests }

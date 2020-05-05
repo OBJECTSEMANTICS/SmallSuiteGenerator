@@ -48,11 +48,16 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var2 _var1 |
-_var0 := SStack newStack.
-_var2 := SStack newStack.
-_var1 := _var2 pop.
-^self analyze: thisContext
+	| _var0 _var1 _var2 _var8 _var3 _var4 _var5 _var6 _var9 |
+_var0 := 'teacher_Ann'.
+_var1 := SSTeacher new.
+_var2 := _var1 id.
+_var8 := SSTeacher name: _var0 with: _var2.
+_var3 := _var8 id: _var2.
+_var4 := _var3 nickname.
+_var5 := _var1 nickname.
+_var6 := _var3 name: _var4.
+_var9 := _var6 name: _var0
 ]
 
 { #category : #running }
