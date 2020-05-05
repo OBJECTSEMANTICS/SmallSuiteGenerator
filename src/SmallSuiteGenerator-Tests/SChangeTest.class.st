@@ -27,7 +27,7 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	| testCase expression expressionChanged |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase := (SSTestCase with: utility typeInfoSFoo1) addTargetClassName: #SFoo.
 	testCase
 		addLiteral: #SmallFloat64;
 		addLiteral: #SmallFloat64.

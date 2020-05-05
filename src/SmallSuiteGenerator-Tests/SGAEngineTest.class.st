@@ -99,15 +99,17 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
-	| first last functionFitness targetPackageRegex |
+	| first last functionFitness targetPackageRegex typeInfo |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.	
+	typeInfo := utility typeInfoSSTeacherOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SStatementCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
 	functionFitness targetClass: #SSTeacher.
+	functionFitness typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
-		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
+		typeInfo: typeInfo;
 		fitness: functionFitness;
 		targetClassName: #SSTeacher;
 		populationSize: 10;

@@ -470,7 +470,7 @@ SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
 	| options |
 	options := (aCollection asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | excludingColl includes: e ].
    options := self order: options.
-   ^ options first: 2.
+   ^ options first: (2 min: options size).
 ]
 
 { #category : #accessing }

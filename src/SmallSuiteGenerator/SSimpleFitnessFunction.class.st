@@ -25,6 +25,11 @@ SSimpleFitnessFunction >> compute: testCaseCollection [
 	self tearDown.
 ]
 
+{ #category : #actions }
+SSimpleFitnessFunction >> fitnessOf: testCase withKey: string [
+	self subclassResponsibility 
+]
+
 { #category : #accesing }
 SSimpleFitnessFunction >> functionName [
 	^ self subclassResponsibility
@@ -42,8 +47,18 @@ SSimpleFitnessFunction >> profiler: aProfiler [
 
 { #category : #actions }
 SSimpleFitnessFunction >> run: testCaseCollection [
-	
-	^ self subclassResponsibility.
+	| string |
+	string := self functionName.
+	testCaseCollection
+		do: [ :testCase | 
+			testCase length > 0 ifTrue: [
+				profiler cleanBlocksOfMethods.
+				testCase runWithoutAssertions.
+				testCase summaryExecutionMethods: profiler summaryExecutionMethods.
+				"self abstractDataOn: testCase."
+				self fitnessOf: testCase withKey: string.
+				testCase fitnessByClass at: string put: profiler statementCoverage1 ]
+			ifFalse: [ testCase fitness at: string put: 0 ] ]
 	
 ]
 
