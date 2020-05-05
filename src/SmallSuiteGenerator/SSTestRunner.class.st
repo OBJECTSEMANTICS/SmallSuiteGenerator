@@ -48,15 +48,10 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| var |
-var := Dictionary new.
-var at: 1 put: RSChart new.
-var at: 3 put: RSChart new.
-var at: 4 put: (var at: 1) niceGenerator.
-var at: 2 put: RSYLabelDecoration new.
-var at: 5 put: (var at: 2) initialize.
-var at: 6 put: (var at: 3) minValueY.
-var at: 7 put: RSSequentialAnimation new.
+	| _var0 _var2 _var1 |
+_var0 := SStack newStack.
+_var2 := SStack newStack.
+_var1 := _var2 pop.
 ^self analyze: thisContext
 ]
 

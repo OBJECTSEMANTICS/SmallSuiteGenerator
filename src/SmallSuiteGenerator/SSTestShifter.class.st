@@ -62,7 +62,8 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 SSTestShifter >> addAssignment: anExpression [
 	|assignment|
 	assignment := self newAssignment: anExpression.
-	assignment returnType = #SUndefinedObject ifFalse: [ self validTargetClassName: assignment returnType ].
+	(assignment returnType isNil or: [assignment returnType = #SUndefinedObject]) 
+		ifFalse: [ self validTargetClassName: assignment returnType ].
 	self addStatement: assignment.
 	^ assignment
 ]
@@ -1228,6 +1229,6 @@ SSTestShifter >> validTargetClassName: aClassName [
 		ifTrue: [ self addTargetClassName: aClassName ].
 	((targetClassesNames includes: aClassName) not
 		or: [ typeInfo isAbstractClass: aClassName ])
-		ifTrue: [ self error: 'Class: ' , aClassName , ' is not able to be used.' ]
+		ifTrue: [ [typeInfo scalars at: aClassName ] on: Error do:[ self error: 'Class: ' , aClassName , ' is not able to be used.' ]]
 		ifFalse: [ validatedTargetClassName := true ]
 ]
