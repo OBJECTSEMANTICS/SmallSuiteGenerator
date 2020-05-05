@@ -119,7 +119,8 @@ SGAEngine >> computeFitness [
 
 { #category : #actions }
 SGAEngine >> createNewPopulation [
-	| newPopulation currentPopulationSize newNumber |
+	| newPopulation currentPopulationSize newNumber lastLowestFitness |
+	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
   	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
@@ -140,10 +141,12 @@ SGAEngine >> createNewPopulation [
         fitness compute: (Array with: OM1 with: OM2).
         selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
 		  newNumber := newPopulation size.
-		  newPopulation addAll: (selectedOptions collect: [:option | 
-				newNumber:= newNumber + 1.
-			option idPopulation: newNumber ])
-		   ].
+		  selectedOptions 
+		  	   select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ]       
+				thenDo: [ :option | 
+					newNumber:= newNumber + 1.
+					option idPopulation: newNumber. 
+					newPopulation add: option ]].
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
