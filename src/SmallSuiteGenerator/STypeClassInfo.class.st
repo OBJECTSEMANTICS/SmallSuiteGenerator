@@ -157,6 +157,21 @@ STypeClassInfo >> copy [
 	^ copy
 ]
 
+{ #category : #adding }
+STypeClassInfo >> differenceWith: another usingSelector: aSymbol [
+	| dict1 dict2 result |
+	result := OrderedCollection new.
+	dict1 := self perform: aSymbol.
+	dict2 := another perform: aSymbol.
+	dict2 keysAndValuesDo: [ :key :val1 | | val2 |
+		[val2 := dict1 at: key.
+		(val1 = val2) ifFalse: [ result add: (Array with: val2 with: val1) ]]
+		on: KeyNotFound 
+		do: [result add: (Array with: nil with: val1)]
+	 ].
+	^ result
+]
+
 { #category : #actions }
 STypeClassInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 	
