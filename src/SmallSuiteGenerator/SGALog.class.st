@@ -35,6 +35,14 @@ SGALog >> averageFit: aNumber [
 	averageFit := aNumber
 ]
 
+{ #category : #accessing }
+SGALog >> averageTestSize [
+	| sum |
+	sum := 0.
+	population do: [ :e | sum := sum + e statements size ].
+	^ (sum / population size) asFloat
+]
+
 { #category : #initialization }
 SGALog >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 	(self filteredMethodsBy: aSymbol) doWithIndex: [ :each :i |
@@ -43,9 +51,9 @@ SGALog >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 
 { #category : #initialization }
 SGALog >> filteredMethodsBy: aSymbol [
-	^ (self selectorsFilter includes: aSymbol)
+	^ ((self selectorsFilter includes: aSymbol)
 		ifTrue: [ self summaryTargetClass select: aSymbol ]
-		ifFalse: [ self summaryTargetClass ]
+		ifFalse: [ self summaryTargetClass ]) select: #isNotNil
 ]
 
 { #category : #accessing }
@@ -109,6 +117,14 @@ SGALog >> mutationResult: mutationTestingResult [
 		at: 'mutationScore' put: mutationTestingResult mutationScore ]
 		on: Exception
 		do: [ nil ]
+]
+
+{ #category : #accessing }
+SGALog >> percenteageOftestCasesWithErrors [
+	| sum |
+	sum := 0.
+	population do: [ :e | e hasErrors ifTrue: [ sum := sum + 1 ] ].
+	^ (sum / population size) asFloat
 ]
 
 { #category : #accessing }

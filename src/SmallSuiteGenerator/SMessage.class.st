@@ -60,5 +60,5 @@ SMessage >> insertMethodMessage: aExpression using: aTestCase [
 
 { #category : #mutation }
 SMessage >> insertOn: aTestCase [
-	^ aTestCase addMessage: self selector from: self receiver returnType
+	[^ aTestCase addMessage: self selector from: self receiver returnType] on: SError do: [  ]
 ]

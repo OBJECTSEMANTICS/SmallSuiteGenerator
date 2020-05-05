@@ -21,7 +21,8 @@ SSTestRunner >> analyze: aSmalltalkContext [
 
 { #category : #compiling }
 SSTestRunner >> compile: aBlock [
-	self class compile: ('performTest',aBlock body formattedCode)
+	self class compile: ('performTest
+	',aBlock body formattedCode)
 ]
 
 { #category : #compiling }
@@ -46,26 +47,37 @@ SSTestRunner >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-SSTestRunner >> performTest| var [ |
-var := Dictionary new.
-var at: 1 put: 'David'.
-var at: 2 put: (Institute name: (var at: 1)).
-var at: 3 put: (var at: 2) students.
-var at: 4 put: (var at: 2) address.
-var at: 5 put: (var at: 2) name.
-var at: 7 put: (Student name: (var at: 5) lastName: (var at: 5)).
-var at: 9 put: ((var at: 2) inscribe: (var at: 7))
+SSTestRunner >> performTest [
+	| _var0 _var2 _var1 |
+_var0 := SStack newStack.
+_var2 := SStack newStack.
+_var1 := _var2 pop.
+^self analyze: thisContext
 ]
 
 { #category : #running }
 SSTestRunner >> run: aSTestCase [
+	testCase := aSTestCase.
 	self compile: aSTestCase parseTreeWithAssertions.
 	self setTestSelector: #performTest.
 	^ self run.
 ]
 
 { #category : #running }
+SSTestRunner >> runCase [
+	self resources do: [:each | each availableFor: self].
+	[[self setUp.
+	self performTest.
+	testCase hasErrors: false]
+    on: Error
+	 do: [ testCase hasErrors: true]] ensure: [
+		self tearDown.
+		self cleanUpInstanceVariables]
+]
+
+{ #category : #running }
 SSTestRunner >> runWithoutAssertions: aSTestCase [
+	testCase := aSTestCase.
 	self compile: aSTestCase parseTree.
 	self setTestSelector: #performTest.
 	^ self run.
