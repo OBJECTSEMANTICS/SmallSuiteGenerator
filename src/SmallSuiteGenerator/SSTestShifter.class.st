@@ -1123,7 +1123,7 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
 	selectionStrategy ifNil: [ ^ self random selectAtRandom: aCollection ]
-	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
+	ifNotNil: [ ^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions) ]
 	
 ]
 

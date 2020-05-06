@@ -19,5 +19,7 @@ SSelectionParameterization >> initializeDictionary [
 			testCaseFactory selectionStrategy: SGARankSelectionModified new ];
 		at: #tournamentSelection put: [ :testCaseFactory |
 			testCaseFactory selectionStrategy: SGATournamentSelection new ];
+		at: #rouleteWheelSelection put: [ :testCaseFactory |
+			testCaseFactory selectionStrategy: SGARouletteSelection new ];
 		yourself
 ]

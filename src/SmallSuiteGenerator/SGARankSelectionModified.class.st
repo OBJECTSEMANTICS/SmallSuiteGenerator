@@ -15,11 +15,6 @@ SGARankSelectionModified >> createRankOf: associations [
 		each value -> rank ]) sort: sortBlock
 ]
 
-{ #category : #actions }
-SGARankSelectionModified >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName
-]
-
 { #category : #selection }
 SGARankSelectionModified >> selectOf: aCollection [ 
 	^ self selectOf: aCollection with: (aCollection collect: [:testCase | self fitnessFor: testCase ])
@@ -32,5 +27,5 @@ SGARankSelectionModified >> selectOf: aCollection with: values [
 	rank := (self createRankOf: (values collect: [:val | 
 		indexValue := indexValue + 1.
 		val -> indexValue ])) collect: #value.
-	^ SGARouletteSelection new selectAllOf: aCollection with: rank
+	^ SGARouletteSelection new selectOf: aCollection with: rank
 ]

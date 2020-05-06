@@ -9,6 +9,7 @@ Class {
 
 { #category : #initialization }
 SSeedingParameterization >> initialize [ 
+	super initialize.
 	numberToChangeSeed := 0
 ]
 
@@ -16,9 +17,9 @@ SSeedingParameterization >> initialize [
 SSeedingParameterization >> initializeDictionary [
 	^ Dictionary new 
 		at: #lowerSeed put: [ :testCaseFactory | 
-			testCaseFactory seed: testCaseFactory seed - self numberToChangeSeed ];
+			testCaseFactory seed: testCaseFactory initialSeed - self numberToChangeSeed ];
 		at: #greaterSeed put: [ :testCaseFactory |
-			testCaseFactory seed: testCaseFactory seed + self numberToChangeSeed ];
+			testCaseFactory seed: testCaseFactory initialSeed + self numberToChangeSeed ];
 		yourself
 ]
 
@@ -26,4 +27,9 @@ SSeedingParameterization >> initializeDictionary [
 SSeedingParameterization >> numberToChangeSeed [
 	numberToChangeSeed == 0 ifTrue: [ numberToChangeSeed := 10 ].
 	^ numberToChangeSeed
+]
+
+{ #category : #accessing }
+SSeedingParameterization >> numberToChangeSeed: number [
+	numberToChangeSeed := number
 ]

@@ -10,11 +10,6 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #actions }
-SGATournamentSelection >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName.
-]
-
 { #category : #initialization }
 SGATournamentSelection >> initialize [
 	super initialize .

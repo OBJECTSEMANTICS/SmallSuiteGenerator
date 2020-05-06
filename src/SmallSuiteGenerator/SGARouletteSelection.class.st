@@ -18,8 +18,25 @@ SGARouletteSelection >> createRouletteWith: probability [
 	^ roulette 
 ]
 
-{ #category : #'as yet unclassified' }
-SGARouletteSelection >> selectAllOf: collection with: probability [
+{ #category : #selection }
+SGARouletteSelection >> selectJustOneOf: aCollection with: probability [
+	| roulette random |
+	roulette := self createRouletteWith: probability .
+	random := self next.
+	1 to: (aCollection size) do: [ :index |
+		(random < (roulette at: index)) ifTrue: [ 
+			^ aCollection at: index ] ].
+	^ nil
+]
+
+{ #category : #selection }
+SGARouletteSelection >> selectOf: aCollection [ 
+	^ self selectOf: aCollection with: (aCollection collect: [:testCase | self fitnessFor: testCase ])
+	"^ self selectOf: aCollection with: (aCollection collect: #fitness)"
+]
+
+{ #category : #selection }
+SGARouletteSelection >> selectOf: collection with: probability [
 	| roulette random newCollection collectionSize indexes index |
 	roulette := self createRouletteWith: probability.
 	newCollection := OrderedCollection new.
@@ -35,20 +52,4 @@ SGARouletteSelection >> selectAllOf: collection with: probability [
 				indexes add: index ]
 		].
 	^ newCollection
-]
-
-{ #category : #selection }
-SGARouletteSelection >> selectOf: aCollection [ 
-	^ self selectOf: aCollection with: (aCollection collect: #fitness)
-]
-
-{ #category : #selection }
-SGARouletteSelection >> selectOf: aCollection with: probability [
-	| roulette random |
-	roulette := self createRouletteWith: probability .
-	random := self next.
-	1 to: (aCollection size) do: [ :index |
-		(random < (roulette at: index)) ifTrue: [ 
-			^ aCollection at: index ] ].
-	^ nil
 ]

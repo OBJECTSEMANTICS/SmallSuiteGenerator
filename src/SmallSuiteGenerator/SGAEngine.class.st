@@ -47,7 +47,8 @@ Class {
 		'targetPackageRegex',
 		'elitismRate',
 		'crossoverRate',
-		'stopIterations'
+		'stopIterations',
+		'totalExecutionGA'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -279,6 +280,7 @@ SGAEngine >> initialize [
   elitismRate := 10.
   numberOfStatements := 10.
   stopIterations := 30.
+	totalExecutionGA := 0.
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -454,19 +456,22 @@ SGAEngine >> profilerForTargetClass [
 { #category : #actions }
 SGAEngine >> run [
   | counter bestFitness stopFlag |
-  
+  totalExecutionGA := Time millisecondClockValue.
   counter := 0.
   stopFlag := false.
   self initializePopulation.
+	totalExecutionGA := Time millisecondClockValue - totalExecutionGA.
   bestFitness := self fitnessFor: logs last fittestTestCase.
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
-        stopFlag ifFalse: [ t := Time now asSeconds.
+        stopFlag ifFalse: [ t := Time millisecondClockValue.
               self doSelection.
               logs add: (self logOfGeneration: iteration inTime: t).
               lastBestFitness := self fitnessFor: logs last fittestTestCase.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
-                    bestFitness := lastBestFitness ] ] ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+                    bestFitness := lastBestFitness ].
+				totalExecutionGA := totalExecutionGA + Time millisecondClockValue - t ]
+	 ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }
@@ -519,6 +524,11 @@ SGAEngine >> targetPackageRegex [
 { #category : #accessing }
 SGAEngine >> targetPackageRegex: aString [
 	targetPackageRegex := aString
+]
+
+{ #category : #accessing }
+SGAEngine >> totalExecutionGA [
+	^ totalExecutionGA 
 ]
 
 { #category : #accessing }
