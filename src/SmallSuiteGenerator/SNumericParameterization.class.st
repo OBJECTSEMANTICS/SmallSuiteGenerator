@@ -1,3 +1,9 @@
+"
+SNumericParametrization creates instances changing values like: 	
+	- numberOfStatements 
+	- numberOfPopulation
+	- numberOfGenerations
+"
 Class {
 	#name : #SNumericParameterization,
 	#superclass : #SInitialization,

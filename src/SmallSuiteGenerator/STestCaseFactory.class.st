@@ -20,7 +20,8 @@ Class {
 		'fitnessSeed',
 		'initialSeed',
 		'initialAsDict',
-		'typeInfoSeed'
+		'typeInfoSeed',
+		'typeInfoOrigin'
 	],
 	#classInstVars : [
 		'instance'
@@ -410,7 +411,13 @@ STestCaseFactory >> typeInfo [
 
 { #category : #accessing }
 STestCaseFactory >> typeInfo: aTypeInfo [
+	typeInfoOrigin := aTypeInfo copy.
 	typeInfo := aTypeInfo
+]
+
+{ #category : #accessing }
+STestCaseFactory >> typeInfoOrigin [
+	^ typeInfoOrigin 
 ]
 
 { #category : #accessing }

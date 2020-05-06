@@ -1,3 +1,6 @@
+"
+SSeedingParametrization creates instances changing the seed whether adding or reducing a value to the original seed
+"
 Class {
 	#name : #SSeedingParameterization,
 	#superclass : #SInitialization,

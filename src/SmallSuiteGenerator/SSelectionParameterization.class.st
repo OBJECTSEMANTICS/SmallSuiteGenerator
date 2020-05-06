@@ -1,3 +1,9 @@
+"
+SSelectionParametrization creates instances changing selectionStrategy of GA and use: 	
+	- SGATournamentSelection 
+	- SGARankSelectionModified 
+	- SGARouletteSelection 
+"
 Class {
 	#name : #SSelectionParameterization,
 	#superclass : #SInitialization,

@@ -1,3 +1,6 @@
+"
+SGARankSelectionModified is responsible for select testCases based of their rank
+"
 Class {
 	#name : #SGARankSelectionModified,
 	#superclass : #SGASelection,

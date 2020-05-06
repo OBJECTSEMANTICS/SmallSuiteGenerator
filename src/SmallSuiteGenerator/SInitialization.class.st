@@ -1,3 +1,6 @@
+"
+SInitialization is abstract class to create an instance taking some considerations
+"
 Class {
 	#name : #SInitialization,
 	#superclass : #SObject,
@@ -10,7 +13,7 @@ Class {
 { #category : #copying }
 SInitialization >> copy: testCaseFactory [
 	^ testCaseFactory class new 
-		typeInfo: (testCaseFactory typeInfoSeed isNotNil ifTrue: [ testCaseFactory typeInfoSeed copy ] ifFalse: [ testCaseFactory typeInfo copy ] );
+		typeInfo: testCaseFactory typeInfoOrigin copy;
 		fitness: testCaseFactory fitness class new;
 		targetClassName: testCaseFactory targetClassName;
 		targetPackageRegex: testCaseFactory targetPackageRegex;
