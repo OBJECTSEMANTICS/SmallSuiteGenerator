@@ -351,7 +351,7 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 	log lowestFit: population last fitness;
 	averageFit: (self pickAverageFitTest: dictFitness). 
 	log summaryTargetClass: (fitness runPopulation: population).
-	log typeInfoGeneration: typeInfo deepCopy.
+	log typeInfoGeneration: (typeInfo classAt: targetClassName) deepCopy.
 	^ log
 ]
 
@@ -497,7 +497,7 @@ SGAEngine >> similarChild: testCase [
 
 { #category : #actions }
 SGAEngine >> summaryGenerations [
-	^ logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ]
+	^ logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | e ifNotNil: [ Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ] ]
 	
 ]
 

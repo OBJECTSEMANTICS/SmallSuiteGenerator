@@ -155,16 +155,6 @@ STypeInfo >> defaultFactoryMessageFrom: aClassName [
 	self error: 'ClassMethodType of selector new cannot be applied at class: ', aClassName
 ]
 
-{ #category : #actions }
-STypeInfo >> difference: anotherTypeInfo for: aTargetClass [
-	| typeClass1 typeClass2 |
-	typeClass1 := self classAt: aTargetClass.
-	typeClass2 := anotherTypeInfo classAt: aTargetClass.
-	^ (OrderedCollection withAll: 
-		(typeClass1 differenceWith: typeClass2 usingSelector: #methodTypes ))
-		addAll: (typeClass1 differenceWith: typeClass2 usingSelector: #classMethodTypes); yourself
-]
-
 { #category : #'error handling' }
 STypeInfo >> error: aString [
 	^ SError signal: aString

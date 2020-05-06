@@ -158,6 +158,13 @@ STypeClassInfo >> copy [
 ]
 
 { #category : #adding }
+STypeClassInfo >> difference: anotherClassInfo [
+	^ (OrderedCollection withAll: 
+		(self differenceWith: anotherClassInfo usingSelector: #methodTypes ))
+		addAll: (self differenceWith: anotherClassInfo usingSelector: #classMethodTypes); yourself
+]
+
+{ #category : #adding }
 STypeClassInfo >> differenceWith: another usingSelector: aSymbol [
 	| dict1 dict2 result |
 	result := OrderedCollection new.

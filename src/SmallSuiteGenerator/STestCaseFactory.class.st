@@ -138,8 +138,8 @@ STestCaseFactory >> evolutionTypeInfo [
 	2 to: typeInfos size do: [ :index | | aTypeInfo1 aTypeInfo2 partialResult |
 		aTypeInfo1 := typeInfos at: index - 1.
 		aTypeInfo2 := typeInfos at: index.
-		partialResult := aTypeInfo1 difference: aTypeInfo2 for: targetClassName.
-		(partialResult notNil and: [partialResult notEmpty]) ifTrue: [ evolution at: ((index - 1) asString, ' -> ',index asString) put: partialResult ]
+		partialResult := aTypeInfo1 difference: aTypeInfo2.
+		(partialResult notNil and: [partialResult notEmpty]) ifTrue: [ evolution at: ((index - 2) asString, ' -> ',(index-1) asString) put: partialResult ]
 		 ].
 	^ evolution
 ]
@@ -321,7 +321,8 @@ STestCaseFactory >> setUp [
 		numberOfGenerations: numberOfIterations;
 		typeInfo: self typeInfo;
 		targetClassName: self targetClassName;
-		targetPackageRegex: targetPackageRegex 
+		targetPackageRegex: targetPackageRegex.
+	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy 
 ]
 
 { #category : #actions }
@@ -373,8 +374,7 @@ STestCaseFactory >> typeInfo [
 
 { #category : #accessing }
 STestCaseFactory >> typeInfo: aTypeInfo [
-	typeInfo := aTypeInfo.
-	typeInfoSeed := typeInfo deepCopy 
+	typeInfo := aTypeInfo
 ]
 
 { #category : #accessing }
