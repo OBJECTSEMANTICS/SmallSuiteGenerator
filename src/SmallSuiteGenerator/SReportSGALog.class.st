@@ -10,7 +10,7 @@ SReportSGALog class >> dictOfDifferences: differences [
 	result := OrderedCollection new.
 	keys := #('Generations' 'Method' 'UpdateReturnType' 'UpdateArgsType' 'ConvertToExecutedMethod' 'ConvertToUnexecutedMethod' 'AddTypeInfo' 'AddExecutedBlocks' 'DecreaseExecutedBlocks').
    differences do: [:e |  | generationText |
-		generationText := (e key - 2) asString , ' -> ' , (e key - 1) asString.
+		generationText := (e key - 1) asString , ' -> ' , (e key - 0) asString.
       e value do: [:diff |  | aux |
          aux := Dictionary newFromKeys: keys andValues: (OrderedCollection ofSize: 9).
          aux at: 'Generations' put: generationText.
@@ -20,8 +20,8 @@ SReportSGALog class >> dictOfDifferences: differences [
              d key = 'ReturnType' ifTrue: [ aux at: 'UpdateReturnType' put: true ].
              d key = 'HasTypeInfo' ifTrue: [ aux at: 'AddTypeInfo' put: true ].
              d key = 'ArgTypes' ifTrue: [ aux at: 'UpdateArgsType' put: true ].
-             d key = 'ExecutedBlock' ifTrue: [ aux at: 'AddExecutedBlocks' put: (d value second difference: d value first) ].
-             d key = 'UnexecutedBlock' ifTrue: [ aux at: 'DecreaseExecutedBlocks' put: (d value second difference: d value first) ] ].
+             d key = 'ExecutedBlock' ifTrue: [ aux at: 'AddExecutedBlocks' put: (d value second difference: d value first) asString].
+             d key = 'UnexecutedBlock' ifTrue: [ aux at: 'DecreaseExecutedBlocks' put: (d value second difference: d value first) asString ] ].
          result add: aux ] ].
   ^ result 
 ]

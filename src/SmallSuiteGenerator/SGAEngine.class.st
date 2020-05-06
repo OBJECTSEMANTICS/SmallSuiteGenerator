@@ -365,6 +365,21 @@ SGAEngine >> mergeTypeInfo: otherTypeInfo [
 	typeInfo joinWith: otherTypeInfo.
 ]
 
+{ #category : #'groups collecting' }
+SGAEngine >> methodTrackingFor: aSymbol [
+	| methodCalls dict idMethods |
+	idMethods := #().
+	methodCalls := self logs collect: [ :log | log population 
+		select: [ :testCase | testCase statements anySatisfy: 
+			[ :e | [e value selector = aSymbol] on: Error  do: [ false ] ] ] ].
+	dict := Dictionary new.
+	methodCalls doWithIndex: [ :methods :i | methods 
+		ifNotEmpty: [ dict at: i put: (self reportOf: methods withParents: idMethods).
+			idMethods := methods collect: #idPopulation ]
+		ifEmpty: [ idMethods := #() ] ].
+	^ dict
+]
+
 { #category : #actions }
 SGAEngine >> mutateAndUpdate: aTestCase [
 	| newStm |
@@ -449,6 +464,17 @@ SGAEngine >> profilerForTargetClass [
 	packageSpy classAt: targetClassName put: classSpy.
 	typeInfoProfiler addPackage: packageSpy.
 	classSpy packageSpy: packageSpy.
+]
+
+{ #category : #'groups collecting' }
+SGAEngine >> reportOf: methods withParents: idMethods [
+	| keys |
+	keys := #('TestCase' 'hasError' 'parentHasMethod').
+	^ methods collect: [ :method | Dictionary 
+		newFromKeys: keys 
+		andValues: (Array with: method
+			with: method hasErrors
+			with: ((method parents collect: #idPopulation) includesAny: idMethods) )]
 ]
 
 { #category : #actions }
