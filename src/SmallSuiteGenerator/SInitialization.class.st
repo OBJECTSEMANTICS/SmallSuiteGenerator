@@ -10,7 +10,7 @@ Class {
 { #category : #copying }
 SInitialization >> copy: testCaseFactory [
 	^ testCaseFactory class new 
-		typeInfo: [testCaseFactory typeInfoSeed isNotNil ifTrue: [ testCaseFactory typeInfoSeed copy ] ifFalse: [ testCaseFactory typeInfo copy ] ];
+		typeInfo: (testCaseFactory typeInfoSeed isNotNil ifTrue: [ testCaseFactory typeInfoSeed copy ] ifFalse: [ testCaseFactory typeInfo copy ] );
 		fitness: testCaseFactory fitness class new;
 		targetClassName: testCaseFactory targetClassName;
 		targetPackageRegex: testCaseFactory targetPackageRegex;
