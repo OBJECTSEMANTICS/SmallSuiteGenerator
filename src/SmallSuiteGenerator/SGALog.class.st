@@ -20,7 +20,8 @@ Class {
 		'lowestFit',
 		'averageFit',
 		'population',
-		'summaryTargetClass'
+		'summaryTargetClass',
+		'typeInfoGeneration'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -37,10 +38,7 @@ SGALog >> averageFit: aNumber [
 
 { #category : #accessing }
 SGALog >> averageTestSize [
-	| sum |
-	sum := 0.
-	population do: [ :e | sum := sum + e statements size ].
-	^ (sum / population size) asFloat
+	^ (self population collect: [ :x |  x statements size ]) average asFloat
 ]
 
 { #category : #initialization }
@@ -120,11 +118,8 @@ SGALog >> mutationResult: mutationTestingResult [
 ]
 
 { #category : #accessing }
-SGALog >> percenteageOftestCasesWithErrors [
-	| sum |
-	sum := 0.
-	population do: [ :e | e hasErrors ifTrue: [ sum := sum + 1 ] ].
-	^ (sum / population size) asFloat
+SGALog >> percentageOftestCasesWithErrors [
+	^((population select: [ :e | e hasErrors ]) size / population size) asFloat
 ]
 
 { #category : #accessing }
@@ -169,4 +164,14 @@ SGALog >> timeToProduceGeneration [
 { #category : #accessing }
 SGALog >> timeToProduceGeneration: anInteger [
 	timeToProduceGeneration := anInteger
+]
+
+{ #category : #accessing }
+SGALog >> typeInfoGeneration [
+	^ typeInfoGeneration
+]
+
+{ #category : #accessing }
+SGALog >> typeInfoGeneration: anObject [
+	typeInfoGeneration := anObject
 ]

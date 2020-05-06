@@ -36,7 +36,7 @@ SReportSGALog class >> exportResumeOf: logColl onCSV: aString [
 			logColl do: [ :aLog | neoCSVWriter nextPut: (Array withAll:
 				(OrderedCollection new add: aLog generationNumber;
 					add: aLog averageTestSize;
-					add: aLog percenteageOftestCasesWithErrors;
+					add: aLog percentageOftestCasesWithErrors;
 					add: aLog fittestTestCase statements size;
 					add: aLog fittestTestCase hasErrors;
 					add: aLog fittestTestCase fitness values first;

@@ -19,7 +19,8 @@ Class {
 		'asDict',
 		'fitnessSeed',
 		'initialSeed',
-		'initialAsDict'
+		'initialAsDict',
+		'typeInfoSeed'
 	],
 	#classInstVars : [
 		'instance'
@@ -27,7 +28,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'settings-colors' }
 STestCaseFactory class >> darkColors [
 	^ Dictionary new 
 		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
@@ -49,7 +50,7 @@ STestCaseFactory class >> darkColors [
 		yourself.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'settings-colors' }
 STestCaseFactory class >> lightColors [
 	^ Dictionary new 
 		at: 'background' put: Color white;
@@ -130,6 +131,20 @@ STestCaseFactory >> engineDefault [
 		numberOfStatements: 30;
 		numberOfGenerations: numberOfIterations;
 		yourself.
+]
+
+{ #category : #actions }
+STestCaseFactory >> evolutionTypeInfo [
+	| typeInfos evolution |
+	typeInfos := Array with: self typeInfoSeed withAll: (self engine logs collect: #typeInfoGeneration).
+	evolution := Dictionary new.
+	2 to: typeInfos size do: [ :index | | aTypeInfo1 aTypeInfo2 partialResult |
+		aTypeInfo1 := typeInfos at: index - 1.
+		aTypeInfo2 := typeInfos at: index.
+		partialResult := aTypeInfo1 difference: aTypeInfo2.
+		(partialResult notNil and: [partialResult notEmpty]) ifTrue: [ evolution at: ((index - 2) asString, ' -> ',(index-1) asString) put: partialResult ]
+		 ].
+	^ evolution
 ]
 
 { #category : #actions }
@@ -342,7 +357,8 @@ STestCaseFactory >> setUp [
 		numberOfGenerations: numberOfIterations;
 		typeInfo: self typeInfo;
 		targetClassName: self targetClassName;
-		targetPackageRegex: targetPackageRegex 
+		targetPackageRegex: targetPackageRegex.
+	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy 
 ]
 
 { #category : #actions }
@@ -395,6 +411,16 @@ STestCaseFactory >> typeInfo [
 { #category : #accessing }
 STestCaseFactory >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo
+]
+
+{ #category : #accessing }
+STestCaseFactory >> typeInfoSeed [
+	^ typeInfoSeed
+]
+
+{ #category : #accessing }
+STestCaseFactory >> typeInfoSeed: anObject [
+	typeInfoSeed := anObject
 ]
 
 { #category : #actions }

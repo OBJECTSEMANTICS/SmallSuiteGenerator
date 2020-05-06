@@ -117,9 +117,10 @@ SGAEngine >> computeFitness [
 	fitness compute: population.
 ]
 
-{ #category : #actions }
+{ #category : #creating }
 SGAEngine >> createNewPopulation [
-	| newPopulation currentPopulationSize newNumber |
+	| newPopulation currentPopulationSize newNumber lastLowestFitness |
+	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
   	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
@@ -140,17 +141,19 @@ SGAEngine >> createNewPopulation [
         fitness compute: (Array with: OM1 with: OM2).
         selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
 		  newNumber := newPopulation size.
-		  newPopulation addAll: (selectedOptions collect: [:option | 
-				newNumber:= newNumber + 1.
-			option idPopulation: newNumber ])
-		   ].
+		  selectedOptions 
+		  	   select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ]       
+				thenDo: [ :option | 
+					newNumber:= newNumber + 1.
+					option idPopulation: newNumber.
+					newPopulation size < currentPopulationSize ifTrue: [ newPopulation add: option ] ]].
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
    self order: population
 ]
 
-{ #category : #actions }
+{ #category : #creating }
 SGAEngine >> createRandomPopulation [
   ^ (1 to: populationSize) collect: [:val |  | value test |
         value := self next * numberOfStatements + 1.
@@ -165,7 +168,7 @@ SGAEngine >> createRandomPopulation [
         test ]
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SGAEngine >> crossoverOperator [
 	^ crossoverOperator
 ]
@@ -175,7 +178,7 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator := aCrossoverOperator
 ]
 
-{ #category : #accessing }
+{ #category : #rating }
 SGAEngine >> crossoverRate [
 	^ crossoverRate
 ]
@@ -217,7 +220,7 @@ SGAEngine >> eliteOfCurrentPopulation [
 	^ OrderedCollection new
 ]
 
-{ #category : #accessing }
+{ #category : #rating }
 SGAEngine >> elitismRate [
 	^ elitismRate
 ]
@@ -291,9 +294,9 @@ SGAEngine >> initializeMutationOperator [
 	mutationOperator mutationRate: (1 / 3) asFloat.
 ]
 
-{ #category : #actions }
+{ #category : #initialization }
 SGAEngine >> initializePopulation [
-	| t | 
+	| t |
 	t := Time now asSeconds.
    population := self createRandomPopulation.
    SExpression resetId.
@@ -330,7 +333,7 @@ SGAEngine >> is: testCase1 betterThan: testCase2 [
     ^ false.
 ]
 
-{ #category : #actions }
+{ #category : #accessing }
 SGAEngine >> lastMessage: anObject [
 	lastMessage := anObject 
 	
@@ -348,6 +351,7 @@ SGAEngine >> logOfGeneration: anInteger inTime: t [
 	log lowestFit: population last fitness;
 	averageFit: (self pickAverageFitTest: dictFitness). 
 	log summaryTargetClass: (fitness runPopulation: population).
+	log typeInfoGeneration: (typeInfo classAt: targetClassName) deepCopy.
 	^ log
 ]
 
@@ -369,7 +373,7 @@ SGAEngine >> mutateAndUpdate: aTestCase [
 	^ newStm 
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SGAEngine >> mutationRate: aFloat [
 	mutationOperator mutationRate: aFloat
 ]
@@ -392,7 +396,7 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
-{ #category : #testing }
+{ #category : #actions }
 SGAEngine >> order: aCollection [
 	aCollection sort: [ :stm1 :stm2 | self is: stm1 betterThan: stm2 ].
 	^ aCollection
@@ -478,7 +482,7 @@ SGAEngine >> selectionStrategy: aSelectionStrategy [
 	selectionStrategy := aSelectionStrategy 
 ]
 
-{ #category : #actions }
+{ #category : #testing }
 SGAEngine >> shouldCrossOver [
 	^ self next < self crossoverRate
 ]
@@ -491,9 +495,9 @@ SGAEngine >> similarChild: testCase [
 		yourself
 ]
 
-{ #category : #updating }
+{ #category : #actions }
 SGAEngine >> summaryGenerations [
-	^ logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ]
+	^ logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | e ifNotNil: [ Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ] ]
 	
 ]
 
