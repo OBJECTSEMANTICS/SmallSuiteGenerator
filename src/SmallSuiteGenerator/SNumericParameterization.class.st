@@ -1,9 +1,6 @@
 Class {
 	#name : #SNumericParameterization,
 	#superclass : #SInitialization,
-	#instVars : [
-		'configurationDict'
-	],
 	#category : #'SmallSuiteGenerator-Initialization'
 }
 
