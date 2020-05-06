@@ -11,3 +11,12 @@ SSelectionParameterization class >> setting: testCaseFactory [
 		selectionOfTestCase: self testCaseSelection;
 		yourself
 ]
+
+{ #category : #initialization }
+SSelectionParameterization >> initializeDictionary [
+	^ Dictionary new 
+		at: #rankSelection put: [ :testCaseFactory |
+			testCaseFactory 
+			 ];
+		yourself
+]

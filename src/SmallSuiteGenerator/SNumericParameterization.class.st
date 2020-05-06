@@ -8,11 +8,6 @@ Class {
 }
 
 { #category : #initialization }
-SNumericParameterization >> initialize [ 	
-	configurationDict := self initializeDictionary
-]
-
-{ #category : #initialization }
 SNumericParameterization >> initializeDictionary [
 	^ Dictionary new 
 			at: #largePopulationNumber put: [ :testCaseFactory | 
@@ -22,8 +17,8 @@ SNumericParameterization >> initializeDictionary [
 				testCaseFactory numberOfGenerations < 50 
 					ifTrue: [ testCaseFactory numberOfGenerations: 50 ] ];
 			at: #largeStatementNumber put: [ :testCaseFactory |
-				testCaseFactory engine numberOfStatements < 30 ifTrue: [ 
-					testCaseFactory numberOfStatements: 30 ] ];
+				testCaseFactory engine numberOfStatements < 20 ifTrue: [ 
+					testCaseFactory numberOfStatements: 20 ] ];
 			at: #smallPopulationNumber put: [ :testCaseFactory | 
 				testCaseFactory engine populationSize > 5 
 					ifTrue: [ testCaseFactory populationSize: 5 ] ];
@@ -34,19 +29,6 @@ SNumericParameterization >> initializeDictionary [
 				testCaseFactory engine numberOfStatements > 3 ifTrue: [ 
 					testCaseFactory numberOfStatements: 3 ] ];
 			yourself
-]
-
-{ #category : #'public tree building' }
-SNumericParameterization >> newInstance: testCaseFactory with: symbol [
-	| instance |
-	instance := self copy: testCaseFactory.
-	(configurationDict at: symbol) value: instance.
-	instance "numberOfGenerations: 10;
-				numberOfStatements: 15;
-				populationSize: 20;"
-				createTestCases.
-	^ instance
-	
 ]
 
 { #category : #'public tree building' }

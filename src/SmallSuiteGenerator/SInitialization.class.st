@@ -1,6 +1,9 @@
 Class {
 	#name : #SInitialization,
 	#superclass : #SObject,
+	#instVars : [
+		'configurationDict'
+	],
 	#category : #'SmallSuiteGenerator-Initialization'
 }
 
@@ -21,7 +24,22 @@ SInitialization >> copy: testCaseFactory [
 		yourself
 ]
 
+{ #category : #initialization }
+SInitialization >> initialize [ 	
+	configurationDict := self initializeDictionary
+]
+
+{ #category : #initialization }
+SInitialization >> initializeDictionary [
+	^ self subclassResponsibility 
+]
+
 { #category : #'public tree building' }
 SInitialization >> newInstance: testCaseFactory with: key [
-	^ self subclassResponsibility
+	| instance |
+	instance := self copy: testCaseFactory.
+	(configurationDict at: key) value: instance.
+	instance createTestCases.
+	^ instance
+	
 ]

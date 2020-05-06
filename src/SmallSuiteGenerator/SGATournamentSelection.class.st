@@ -28,8 +28,7 @@ SGATournamentSelection >> selectOf: aCollection [
 	| sample |
 	sample := (self random collectAtRandom: aCollection )
 		first: (tournamentSize min: aCollection size).
-	sample := sample
-		asSortedCollection: [ :a :b | (a fitness at: fitness functionName) > (b fitness  at: fitness functionName) ].
+	sample := sample sort: [ :a :b | (self fitnessFor: a) > (self fitnessFor: b) ].
 	^ sample
 ]
 
