@@ -17,8 +17,8 @@ SNumericParameterization >> initializeDictionary [
 				testCaseFactory numberOfGenerations < 50 
 					ifTrue: [ testCaseFactory numberOfGenerations: 50 ] ];
 			at: #largeStatementNumber put: [ :testCaseFactory |
-				testCaseFactory engine numberOfStatements < 20 ifTrue: [ 
-					testCaseFactory numberOfStatements: 20 ] ];
+				testCaseFactory engine numberOfStatements < 50 ifTrue: [ 
+					testCaseFactory numberOfStatements: 50 ] ];
 			at: #smallPopulationNumber put: [ :testCaseFactory | 
 				testCaseFactory engine populationSize > 5 
 					ifTrue: [ testCaseFactory populationSize: 5 ] ];

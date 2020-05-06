@@ -15,8 +15,9 @@ SSelectionParameterization class >> setting: testCaseFactory [
 { #category : #initialization }
 SSelectionParameterization >> initializeDictionary [
 	^ Dictionary new 
-		at: #rankSelection put: [ :testCaseFactory |
-			testCaseFactory 
-			 ];
+		at: #rankSelectionModified put: [ :testCaseFactory |
+			testCaseFactory selectionStrategy: SGARankSelectionModified new ];
+		at: #tournamentSelection put: [ :testCaseFactory |
+			testCaseFactory selectionStrategy: SGATournamentSelection new ];
 		yourself
 ]
