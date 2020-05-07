@@ -17,6 +17,7 @@ SGATruncatedSelection >> discarding: aNumber [
 
 { #category : #initialization }
 SGATruncatedSelection >> initialize [ 
+	super initialize.
 	discarding := 5
 ]
 

@@ -14,7 +14,3 @@ Class {
 SGASelection >> fitness: anObject [ 
 	fitness := anObject 
 ]
-
-{ #category : #initialization }
-SGASelection >> initialize [
-]

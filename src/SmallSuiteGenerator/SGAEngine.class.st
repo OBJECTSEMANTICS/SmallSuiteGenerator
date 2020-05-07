@@ -213,16 +213,11 @@ SGAEngine >> eliteOfCurrentPopulation [
 	| endIndex index |
 	endIndex := (population size * elitismRate * 0.01) asInteger.
 	index := 0.
-	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
+	endIndex >= 1 ifTrue: [ ^ ((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.
 			(self similarChild: testCase) idPopulation: index; yourself.
-			])) asOrderedCollection ].
+			]) asOrderedCollection ].
 	^ OrderedCollection new
-]
-
-{ #category : #rating }
-SGAEngine >> elitismRate [
-	^ elitismRate
 ]
 
 { #category : #rating }
@@ -317,22 +312,6 @@ SGAEngine >> initializeProfiler [
 	^ aProfiler
 ]
 
-{ #category : #testing }
-SGAEngine >> is: testCase1 betterThan: testCase2 [
-    |fitness1 fitness2|
-    fitness1 := self fitnessFor: testCase1.
-    fitness2 := self fitnessFor: testCase2.
-    (fitness1 > fitness2) ifTrue:[ ^ true ].
-	 (testCase1 hasErrors and: [ testCase2 hasErrors not and: [ self next < 0.5 ]]) ifTrue: [^ false].
-    ((fitness1 = fitness2) and:
-        [testCase1 length < testCase2 length]) 
-                ifTrue:[^ true]. 
-    (fitness1 = fitness2 and:
-        [testCase1 length = testCase2 length and:[ testCase1 idPopulation > testCase2 idPopulation]])
-                ifTrue:[^ true]. 
-    ^ false.
-]
-
 { #category : #accessing }
 SGAEngine >> lastMessage: anObject [
 	lastMessage := anObject 
@@ -400,11 +379,6 @@ SGAEngine >> numberOfGenerations: anInteger [
 ]
 
 { #category : #accessing }
-SGAEngine >> numberOfStatements [
-	^ numberOfStatements
-]
-
-{ #category : #accessing }
 SGAEngine >> numberOfStatements: anInteger [
 	"Set the number of statements the initial population should have.
 	Ideally, a small number, such as 3, is convenient. The evolution makes the individuals grow over time"
@@ -413,7 +387,7 @@ SGAEngine >> numberOfStatements: anInteger [
 
 { #category : #actions }
 SGAEngine >> order: aCollection [
-	aCollection sort: [ :stm1 :stm2 | self is: stm1 betterThan: stm2 ].
+	aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ].
 	^ aCollection
 ]
 
@@ -431,11 +405,6 @@ SGAEngine >> pickAverageFitTest: aDictionary [
 { #category : #accessing }
 SGAEngine >> population [
 	^ population
-]
-
-{ #category : #accessing }
-SGAEngine >> populationSize [ 	
-	^ populationSize 
 ]
 
 { #category : #accessing }

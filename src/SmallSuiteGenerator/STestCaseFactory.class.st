@@ -382,11 +382,6 @@ STestCaseFactory >> typeInfoSeed [
 	^ typeInfoSeed
 ]
 
-{ #category : #accessing }
-STestCaseFactory >> typeInfoSeed: anObject [
-	typeInfoSeed := anObject
-]
-
 { #category : #actions }
 STestCaseFactory >> uninstall [
 ]

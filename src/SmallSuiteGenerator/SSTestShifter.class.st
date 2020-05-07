@@ -421,11 +421,6 @@ SSTestShifter >> clean [
 	unused do: [ :stm | self removeStatement: stm ]
 ]
 
-{ #category : #accessing }
-SSTestShifter >> defaultNumberStatements [
-	^ 54
-]
-
 { #category : #repairing }
 SSTestShifter >> error: string [
 	
