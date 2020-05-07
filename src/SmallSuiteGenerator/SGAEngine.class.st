@@ -40,7 +40,6 @@ Class {
 		'targetClassName',
 		'numberOfGenerations',
 		'lastMessage',
-		'profiler',
 		'packageRegex',
 		'initialPopulation',
 		'typeInfoProfiler',
@@ -78,7 +77,7 @@ SGAEngine >> checkTypeInfo [
 		description: 'Set a typeInfo'
 ]
 
-{ #category : #accessing }
+{ #category : #cleaning }
 SGAEngine >> clean [
 	fitness ifNotNil: [ fitness tearDown ]
 ]
@@ -165,10 +164,10 @@ SGAEngine >> doSelection [
 	initialPopulation := population.
 ]
 
-{ #category : #'groups collecting' }
+{ #category : #actions }
 SGAEngine >> eliteOfCurrentPopulation [
 	| endIndex index |
-	endIndex := (population size * elitismRate * 0.01) asInteger.
+	endIndex := (population size * elitismRate) asInteger.
 	index := 0.
 	endIndex >= 1 ifTrue: [ ^ ((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.
@@ -193,7 +192,7 @@ SGAEngine >> fitness: aFitness [
 	selectionStrategy fitness: aFitness
 ]
 
-{ #category : #actions }
+{ #category : #updating }
 SGAEngine >> fixPopulation: aCollection [ 
 	| targetClassMessages |
 	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
@@ -212,7 +211,7 @@ SGAEngine >> initialize [
   numberOfGenerations := 100.
   selectionStrategy := SGARankSelection new.
   crossoverRate := 0.8.
-  elitismRate := 10.
+  elitismRate := 0.1.
   numberOfStatements := 10.
   stopIterations := 30.
   self initializeMutationOperator.
@@ -251,6 +250,11 @@ SGAEngine >> initializeProfiler [
 		do: #installGhosts
 		displayingProgress: 'Instrumenting ' , targetClassName.
 	^ aProfiler
+]
+
+{ #category : #actions }
+SGAEngine >> lastBestFitness [
+	^ logs last fittestTestCase fitnessFor: fitness functionName
 ]
 
 { #category : #accessing }
@@ -295,7 +299,7 @@ SGAEngine >> numberOfStatements: anInteger [
 	numberOfStatements := anInteger
 ]
 
-{ #category : #actions }
+{ #category : #sorting }
 SGAEngine >> order: aCollection [
 	aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ].
 	^ aCollection
@@ -346,12 +350,12 @@ SGAEngine >> run [
   counter := 0.
   stopFlag := false.
   self initializePopulation.
-  bestFitness := logs last fittestTestCase fitnessFor: fitness functionName.
+  bestFitness := self lastBestFitness.
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
         stopFlag ifFalse: [ t := Time now asSeconds.
               self doSelection.
 				  logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
-              lastBestFitness := logs last fittestTestCase fitnessFor: fitness functionName.
+              lastBestFitness := self lastBestFitness.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
                     bestFitness := lastBestFitness ] ] ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
@@ -401,11 +405,6 @@ SGAEngine >> targetPackageRegex [
 { #category : #accessing }
 SGAEngine >> targetPackageRegex: aString [
 	targetPackageRegex := aString
-]
-
-{ #category : #accessing }
-SGAEngine >> tournamentSize: aNumber [
-	selectionStrategy tournamentSize: aNumber
 ]
 
 { #category : #accessing }

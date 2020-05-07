@@ -7,7 +7,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Utility'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'class-factory' }
 SReportSGALog class >> engine: aSGAEngine [
 	^ self new engine: aSGAEngine 
 ]
@@ -48,7 +48,7 @@ SReportSGALog >> dictOfDifferences: differences [
 	result := OrderedCollection new.
 	keys := #('Generations' 'Method' 'UpdateReturnType' 'UpdateArgsType' 'ConvertToExecutedMethod' 'ConvertToUnexecutedMethod' 'AddTypeInfo' 'AddExecutedBlocks' 'DecreaseExecutedBlocks').
    differences do: [:e |  | generationText |
-		generationText := (e key - 1) asString , ' -> ' , (e key - 0) asString.
+		generationText := '{1} -> {2}' format: (Array with: (e key - 1) with: e key).
       e value do: [:diff |  | aux |
          aux := Dictionary newFromKeys: keys andValues: (OrderedCollection ofSize: 9).
          aux at: 'Generations' put: generationText.

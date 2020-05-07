@@ -130,11 +130,6 @@ SGALog >> lowestFit: aNumber [
 ]
 
 { #category : #accessing }
-SGALog >> mutationResult [
-	^ mutationResult 
-]
-
-{ #category : #accessing }
 SGALog >> mutationResult: mutationTestingResult [
 	self
 		assert: mutationResult isEmpty
@@ -188,11 +183,6 @@ SGALog >> summaryTargetClass [
 { #category : #accessing }
 SGALog >> summaryTargetClass: anObject [
 	summaryTargetClass := anObject
-]
-
-{ #category : #accessing }
-SGALog >> timeToProduceGeneration [
-	^ timeToProduceGeneration
 ]
 
 { #category : #accessing }
