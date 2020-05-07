@@ -51,7 +51,7 @@ SLiteral >> hash [
 
 { #category : #mutation }
 SLiteral >> insertOn: aTestCase [
-	^ aTestCase addLiteral: self returnType
+	[^ aTestCase addLiteral: self returnType] on: SError do: [  ]
 ]
 
 { #category : #printing }

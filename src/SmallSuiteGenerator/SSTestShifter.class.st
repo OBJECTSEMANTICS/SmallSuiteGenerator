@@ -62,6 +62,8 @@ SSTestShifter >> addArgument: arg before: aStatement considering: prevTypes and:
 SSTestShifter >> addAssignment: anExpression [
 	|assignment|
 	assignment := self newAssignment: anExpression.
+	(assignment returnType isNil or: [assignment returnType = #SUndefinedObject]) 
+		ifFalse: [ self validTargetClassName: assignment returnType ].
 	self addStatement: assignment.
 	^ assignment
 ]
@@ -1026,10 +1028,8 @@ SSTestShifter >> referencesIndexes: expression [
 
 { #category : #removing }
 SSTestShifter >> removeExpression: expression [
-	| exprsToRemove |
 	self removeFromStatements: expression.
-	exprsToRemove := self repair: expression.
-	exprsToRemove do: [ :expr | self removeExpression: expr ]
+	statements copy do: [ :stm | (stm pickUpReferences: expression) ifNotEmpty: [ self repairReferenceTo: expression of: stm ] ].
 ]
 
 { #category : #removing }
@@ -1059,7 +1059,7 @@ SSTestShifter >> removeStatement [
 	self
 		removeStatement:
 			(statements
-				at: (self random selectAtRandom: (1 to: self length) asArray))
+				at: (self random selectAtRandom: (1 to: self length) asArray)).
 ]
 
 { #category : #removing }
@@ -1229,6 +1229,6 @@ SSTestShifter >> validTargetClassName: aClassName [
 		ifTrue: [ self addTargetClassName: aClassName ].
 	((targetClassesNames includes: aClassName) not
 		or: [ typeInfo isAbstractClass: aClassName ])
-		ifTrue: [ self error: 'Class: ' , aClassName , ' is not able to be used.' ]
+		ifTrue: [ [typeInfo scalars at: aClassName ] on: Error do:[ self error: 'Class: ' , aClassName , ' is not able to be used.' ]]
 		ifFalse: [ validatedTargetClassName := true ]
 ]

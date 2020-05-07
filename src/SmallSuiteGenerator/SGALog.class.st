@@ -20,7 +20,8 @@ Class {
 		'lowestFit',
 		'averageFit',
 		'population',
-		'summaryTargetClass'
+		'summaryTargetClass',
+		'typeInfoGeneration'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -35,6 +36,11 @@ SGALog >> averageFit: aNumber [
 	averageFit := aNumber
 ]
 
+{ #category : #accessing }
+SGALog >> averageTestSize [
+	^ (self population collect: [ :x |  x statements size ]) average asFloat
+]
+
 { #category : #initialization }
 SGALog >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 	(self filteredMethodsBy: aSymbol) doWithIndex: [ :each :i |
@@ -43,9 +49,9 @@ SGALog >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 
 { #category : #initialization }
 SGALog >> filteredMethodsBy: aSymbol [
-	^ (self selectorsFilter includes: aSymbol)
+	^ ((self selectorsFilter includes: aSymbol)
 		ifTrue: [ self summaryTargetClass select: aSymbol ]
-		ifFalse: [ self summaryTargetClass ]
+		ifFalse: [ self summaryTargetClass ]) select: #isNotNil
 ]
 
 { #category : #accessing }
@@ -112,6 +118,11 @@ SGALog >> mutationResult: mutationTestingResult [
 ]
 
 { #category : #accessing }
+SGALog >> percentageOftestCasesWithErrors [
+	^((population select: [ :e | e hasErrors ]) size / population size) asFloat
+]
+
+{ #category : #accessing }
 SGALog >> population [
 	^ population
 ]
@@ -153,4 +164,14 @@ SGALog >> timeToProduceGeneration [
 { #category : #accessing }
 SGALog >> timeToProduceGeneration: anInteger [
 	timeToProduceGeneration := anInteger
+]
+
+{ #category : #accessing }
+SGALog >> typeInfoGeneration [
+	^ typeInfoGeneration
+]
+
+{ #category : #accessing }
+SGALog >> typeInfoGeneration: anObject [
+	typeInfoGeneration := anObject
 ]
