@@ -279,7 +279,7 @@ STestCaseFactory >> initialize [
 	numberOfIterations := 20.
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
-	initialSeed := 0.
+	initialSeed := 100.
 	initialAsDict := false.
 ]
 
