@@ -74,6 +74,11 @@ SSTestCase >> deepCopy [
   ^ copy
 ]
 
+{ #category : #actions }
+SSTestCase >> fitnessFor: functionName [ 
+	^ self fitness at: functionName
+]
+
 { #category : #accessing }
 SSTestCase >> generationNumber [
 	^ generationNumber

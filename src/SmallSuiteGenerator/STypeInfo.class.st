@@ -129,6 +129,23 @@ STypeInfo >> cleanBlockClosuresOf: aTypeCollector [
 	do: [].
 ]
 
+{ #category : #adding }
+STypeInfo >> completeTypeInfo [
+	self types keysDo: [:aClass | |classInfo realClassInfo|
+	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
+	realClassInfo := self types at: aClass.
+	classInfo methodTypes keysAndValuesDo: [ :key :value | 
+		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) ifTrue:[
+		realClassInfo methodTypes at: key
+		ifPresent: [  ]
+		ifAbsentPut: [ 
+			self updateArgsOf: value.
+			value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
+			value receiver type: aClass.
+			value hasProfiler: false.
+			value executions: 0.5 ] ] ] ]
+]
+
 { #category : #copying }
 STypeInfo >> copy [
 	| copy |
@@ -274,4 +291,14 @@ STypeInfo >> type: aAssoc [
 { #category : #accessing }
 STypeInfo >> types [ 
 	^ types
+]
+
+{ #category : #lookup }
+STypeInfo >> updateArgsOf: aMethod [ 
+	aMethod argTypes do: [ :argType |
+	|res|
+	res := argType types anySatisfy: [ :type | self scalars keys includes: type ].
+	res ifFalse: [ argType types do: [ :type | self scalars keys select: [ :scalar | 
+			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
+			argType type: scalar ] ] ] ]
 ]
