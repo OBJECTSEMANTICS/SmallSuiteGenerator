@@ -21,11 +21,17 @@ SSelectionParameterization class >> setting: testCaseFactory [
 { #category : #initialization }
 SSelectionParameterization >> initializeDictionary [
 	^ Dictionary new 
-		at: #rankSelectionModified put: [ :testCaseFactory |
-			testCaseFactory selectionStrategy: SGARankSelectionModified new ];
+		at: #rankSelection put: [ :testCaseFactory |
+			testCaseFactory selectionStrategy: SGARankSelection new ];
 		at: #tournamentSelection put: [ :testCaseFactory |
 			testCaseFactory selectionStrategy: SGATournamentSelection new ];
 		at: #rouleteWheelSelection put: [ :testCaseFactory |
 			testCaseFactory selectionStrategy: SGARouletteSelection new ];
+		at: #rankSelectionForTestCase put: [ :testCaseFactory |
+			testCaseFactory selectionStrategyTestCase: SGARankSelection new ];
+		at: #tournamentSelectionForTestCase put: [ :testCaseFactory |
+			testCaseFactory selectionStrategyTestCase: SGATournamentSelection new ];
+		at: #rouleteWheelSelectionForTestCase put: [ :testCaseFactory |
+			testCaseFactory selectionStrategyTestCase: SGARouletteSelection new ];
 		yourself
 ]

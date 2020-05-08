@@ -197,7 +197,7 @@ STestCaseFactory >> fitnessSeed [
 	^ fitnessSeed 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STestCaseFactory >> fitnessSeedCalculated: number [ 
 	fitnessSeed := number
 ]
@@ -295,7 +295,7 @@ STestCaseFactory >> lastMessage: aMessage [
 	engine lastMessage: aMessage 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 STestCaseFactory >> numberOfGenerations [
 	^ numberOfIterations
 ]
@@ -345,6 +345,11 @@ STestCaseFactory >> seedBlock: aBlock [
 { #category : #actions }
 STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 	engine selectionStrategy: aSelectionStrategy 
+]
+
+{ #category : #actions }
+STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
+	engine selectionStrategyTestCase: aSelectionStrategy 
 ]
 
 { #category : #actions }

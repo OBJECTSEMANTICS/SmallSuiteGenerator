@@ -48,7 +48,8 @@ Class {
 		'elitismRate',
 		'crossoverRate',
 		'stopIterations',
-		'totalExecutionGA'
+		'totalExecutionGA',
+		'selectionStrategyTestCase'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -166,6 +167,7 @@ SGAEngine >> createRandomPopulation [
            lastMessage: lastMessage;
            idPopulation: val;
 			  clean.
+		  selectionStrategyTestCase ifNotNil: [ test selectionStrategy: selectionStrategyTestCase ].
         test ]
 ]
 
@@ -275,7 +277,7 @@ SGAEngine >> initialize [
   logs := OrderedCollection new.
   populationSize := 30.
   numberOfGenerations := 100.
-  selectionStrategy := SGARankSelection new.
+  selectionStrategy := SGARandomSelection new.
   crossoverRate := 0.8.
   elitismRate := 10.
   numberOfStatements := 10.
@@ -485,6 +487,11 @@ SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
 { #category : #accessing }
 SGAEngine >> selectionStrategy: aSelectionStrategy [
 	selectionStrategy := aSelectionStrategy 
+]
+
+{ #category : #accessing }
+SGAEngine >> selectionStrategyTestCase: aSelectionStrategy [ 
+	selectionStrategyTestCase := aSelectionStrategy 
 ]
 
 { #category : #testing }

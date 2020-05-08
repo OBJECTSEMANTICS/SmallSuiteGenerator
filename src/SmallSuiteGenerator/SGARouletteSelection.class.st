@@ -19,12 +19,12 @@ SGARouletteSelection >> createRouletteWith: probability [
 ]
 
 { #category : #selection }
-SGARouletteSelection >> selectJustOneOf: aCollection with: probability [
+SGARouletteSelection >> selectJustOneOf: aCollection with: probabilities [
 	| roulette random |
-	roulette := self createRouletteWith: probability .
+	roulette := self createRouletteWith: probabilities.
 	random := self next.
-	1 to: (aCollection size) do: [ :index |
-		(random < (roulette at: index)) ifTrue: [ 
+	roulette doWithIndex: [ :probability :index |
+		(random < probability) ifTrue: [ 
 			^ aCollection at: index ] ].
 	^ nil
 ]
@@ -32,7 +32,6 @@ SGARouletteSelection >> selectJustOneOf: aCollection with: probability [
 { #category : #selection }
 SGARouletteSelection >> selectOf: aCollection [ 
 	^ self selectOf: aCollection with: (aCollection collect: [:testCase | self fitnessFor: testCase ])
-	"^ self selectOf: aCollection with: (aCollection collect: #fitness)"
 ]
 
 { #category : #selection }
