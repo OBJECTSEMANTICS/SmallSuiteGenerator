@@ -22,10 +22,8 @@ SReportSTestCaseFactory >> evolutionTypeInfo [
 	| typeInfos evolution |
 	typeInfos := Array with: factoryTestCase typeInfoSeed withAll: (self engine logs collect: #typeInfoGeneration).
 	evolution := Dictionary new.
-	2 to: typeInfos size do: [ :index | | aTypeInfo1 aTypeInfo2 partialResult |
-		aTypeInfo1 := typeInfos at: index - 1.
-		aTypeInfo2 := typeInfos at: index.
-		partialResult := aTypeInfo1 difference: aTypeInfo2.
+	2 to: typeInfos size do: [ :index | | partialResult |
+		partialResult := (typeInfos at: index - 1) difference: (typeInfos at: index).
 		(partialResult notNil and: [partialResult notEmpty]) ifTrue: [ 
 			evolution 
 				at: ('{1} -> {2}' format:(Array with: (index - 2) with: (index-1))) 

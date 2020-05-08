@@ -74,8 +74,7 @@ STypeClassInfo >> addClassMethod: methodTypeInfo [
 { #category : #adding }
 STypeClassInfo >> addClassMethods: methodTypeInfos [
 	methodTypeInfos do: [ :aMethodType | 
-		self addClassMethod: aMethodType.
-		]
+		self addClassMethod: aMethodType ]
 ]
 
 { #category : #adding }
@@ -90,8 +89,7 @@ STypeClassInfo >> addMethod: methodTypeInfo [
 
 { #category : #adding }
 STypeClassInfo >> addMethods: methodTypeInfos [
-	methodTypeInfos do: [ :aMethodType | self addMethod: aMethodType.
-		 ]
+	methodTypeInfos do: [ :aMethodType | self addMethod: aMethodType ]
 ]
 
 { #category : #adding }
@@ -100,8 +98,7 @@ STypeClassInfo >> addScalars: aDictionary [
 		do: [ :assoc | 
 			scalars
 				at: assoc key
-				ifPresent:
-					[ :values | scalars at: assoc key put: (values union: assoc value) asArray ]
+				ifPresent: [ :values | scalars at: assoc key put: (values union: assoc value) asArray ]
 				ifAbsentPut: [ assoc value asArray ] ]
 ]
 
@@ -187,7 +184,7 @@ STypeClassInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 
 { #category : #private }
 STypeClassInfo >> factoryMessages [
-	^ classMethodTypes values reject: [ :m | m selector = #basicNew ].
+	^ classMethodTypes values reject: [ :method | method selector = #basicNew ].
 ]
 
 { #category : #private }
@@ -223,13 +220,12 @@ STypeClassInfo >> instanceMethodsFor: aSpyClass [
 	instanceMethods := OrderedCollection new.
 	(aSpyClass typeName endsWith: ' class') ifFalse: [ 
 		instanceMethods := (aSpyClass methods reject: #isTest)
-				select: [ :each | each wasExecuted or: [ each isUnary ]].
-		instanceMethods do: [ :each | each wasExecuted ifFalse: [
-			each numberOfExecutions: 0.5.
-			each returnValue: SUndefinedObject basicNew.
-			each saveReceiver: (each originalMethod origin)
-		]]
-	].
+				select: [ :instMeth | instMeth wasExecuted or: [ instMeth isUnary ] ].
+		instanceMethods do: [ :instMeth | instMeth wasExecuted ifFalse: [
+			instMeth numberOfExecutions: 0.5.
+			instMeth returnValue: SUndefinedObject basicNew.
+			instMeth saveReceiver: (instMeth originalMethod origin)
+		] ] ].
 	^ instanceMethods
 ]
 

@@ -55,7 +55,13 @@ STypeMethodInfo class >> type: aAssoc [
 { #category : #comparing }
 STypeMethodInfo >> = other [
 
-	^ self class = other class and: [ selector = other selector and: [ receiver = other receiver and: [ returnType = other returnType and: [ argTypes = other argTypes and: [ isQuick = other isQuick  ] ] ] ] ]
+	^ self class = other class 
+		and: [ selector = other selector 
+			and: [ receiver = other receiver 
+				and: [ returnType = other returnType 
+					and: [ argTypes = other argTypes 
+						and: [ isQuick = other isQuick
+							and: [ hasProfiler = other hasProfiler ] ] ] ] ] ]
 ]
 
 { #category : #adding }
@@ -117,7 +123,8 @@ STypeMethodInfo >> copy [
 
 { #category : #actions }
 STypeMethodInfo >> copyValuesOf: otherTypeMethod [
-	(otherTypeMethod hasProfiler and: [ otherTypeMethod returnType types isNotEmpty ]) ifFalse: [^ self].
+	(otherTypeMethod hasProfiler and: [ otherTypeMethod returnType types isNotEmpty ]) 
+		ifFalse: [^ self].
 	returnType := otherTypeMethod returnType.
 	argTypes := otherTypeMethod argTypes.
 	receiver := otherTypeMethod receiver.
@@ -133,7 +140,7 @@ STypeMethodInfo >> dataCSV [
 			(argTypes
 				ifNil: [ #() ]
 				ifNotNil: [ (argTypes collect: [ :argType | argType types asArray ]) asArray ]);
-		add: (argTypes ifNil: [''] ifNotNil: [argTypes collect: [:argType | argType commonSuperclass]]);
+		add: (argTypes ifNil: [''] ifNotNil: [ argTypes collect: [:argType | argType commonSuperclass]]);
 		add: returnType types asArray;
 		add: returnType commonSuperclass; yourself)
 ]
@@ -207,8 +214,8 @@ STypeMethodInfo >> isSimpleTyped [
 	"
 
 	^ (Array with: receiver hasOnlyOneType
-	with: returnType hasOnlyOneType
-	with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
+			with: returnType hasOnlyOneType
+			with: (argTypes isNil or: [ argTypes allSatisfy: #hasOnlyOneType ]))
 		allSatisfy: #yourself
 ]
 
@@ -485,6 +492,5 @@ STypeMethodInfo >> transform: aSet [
 { #category : #converting }
 STypeMethodInfo >> transformArgs: allArgs [
 	^ allArgs
-		collect: [ :args | 
-			self transform: args ]
+		collect: [ :args | self transform: args ]
 ]

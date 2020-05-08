@@ -185,6 +185,11 @@ SSTestShifter >> addParent: aTestCase [
 	aTestCase addChild: self.
 ]
 
+{ #category : #accessing }
+SSTestShifter >> addParents: aCollection [
+   aCollection do: [ :e | self addParent: e ]
+]
+
 { #category : #inserting }
 SSTestShifter >> addStatement: anExpression [
 	self canAddStatement ifTrue: [ statements add: anExpression ]

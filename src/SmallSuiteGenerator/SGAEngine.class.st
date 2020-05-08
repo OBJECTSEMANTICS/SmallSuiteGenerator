@@ -100,7 +100,7 @@ SGAEngine >> createNewPopulation [
 		  P1copy := (self similarChild: P1) idPopulation: 1.
 		  P2copy := (self similarChild: P2) idPopulation: 2.
         self shouldCrossOver 
-				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
+				ifTrue: [ children := crossoverOperator crossover: P1 with: P2.
               O1 := children first.
               O2 := children second] 
 				ifFalse: [ 
@@ -125,22 +125,17 @@ SGAEngine >> createNewPopulation [
 
 { #category : #creating }
 SGAEngine >> createRandomPopulation [
-  ^ (1 to: populationSize) collect: [:val |  | value test |
+  ^ (1 to: populationSize) collect: [:idPop |  | value test |
         value := self next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
         test
-           addTargetClassName: self targetClassName;
-           addFactoryMessage: self targetClassName;
+           addTargetClassName: targetClassName;
+           addFactoryMessage: targetClassName;
            generateStatements: value;
            lastMessage: lastMessage;
-           idPopulation: val;
+           idPopulation: idPop;
 			  clean.
         test ]
-]
-
-{ #category : #accessing }
-SGAEngine >> crossoverOperator [
-	^ crossoverOperator
 ]
 
 { #category : #accessing }
@@ -166,13 +161,12 @@ SGAEngine >> doSelection [
 
 { #category : #actions }
 SGAEngine >> eliteOfCurrentPopulation [
-	| endIndex index |
-	endIndex := (population size * elitismRate) asInteger.
+	| indexLimit index |
+	indexLimit := (population size * elitismRate) asInteger.
 	index := 0.
-	endIndex >= 1 ifTrue: [ ^ ((population copyFrom: 1 to: endIndex) collect: [:testCase |
+	indexLimit >= 1 ifTrue: [ ^ ((population copyFrom: 1 to: indexLimit) collect: [:testCase |
 			index := index + 1.
-			(self similarChild: testCase) idPopulation: index; yourself.
-			]) asOrderedCollection ].
+			(self similarChild: testCase) idPopulation: index; yourself ]) asOrderedCollection ].
 	^ OrderedCollection new
 ]
 
@@ -195,7 +189,7 @@ SGAEngine >> fitness: aFitness [
 { #category : #updating }
 SGAEngine >> fixPopulation: aCollection [ 
 	| targetClassMessages |
-	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
+	targetClassMessages := (typeInfo types at: targetClassName) methodTypes values asOrderedCollection 
 		removeAllSuchThat: [:method | method returnType mustBeFixed not ].
 	 
 	aCollection do: [ :testCase | 
@@ -331,7 +325,7 @@ SGAEngine >> profilerForPackagesMatching [
 { #category : #updating }
 SGAEngine >> profilerForTargetClass [
 	| packageSpy cls classSpy |
-	cls := Smalltalk at: targetClassName .
+	cls := Smalltalk at: targetClassName.
 	Transcript show: 'profiling...'; cr.
 	typeInfoProfiler := SSTypeCollector new.
 	SSTypeCollector installOnClass: cls.
@@ -345,20 +339,25 @@ SGAEngine >> profilerForTargetClass [
 
 { #category : #actions }
 SGAEngine >> run [
-  | counter bestFitness stopFlag |
+	| counter bestFitness stopFlag |
   
-  counter := 0.
-  stopFlag := false.
-  self initializePopulation.
-  bestFitness := self lastBestFitness.
-  (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
-        stopFlag ifFalse: [ t := Time now asSeconds.
-              self doSelection.
-				  logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
-              lastBestFitness := self lastBestFitness.
-              lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
-                    counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
-                    bestFitness := lastBestFitness ] ] ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+	counter := 0.
+   stopFlag := false.
+   self initializePopulation.
+   bestFitness := self lastBestFitness.
+   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
+		stopFlag ifFalse: [ 
+			t := Time now asSeconds.
+         self doSelection.
+			logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
+         lastBestFitness := self lastBestFitness.
+         lastBestFitness <= bestFitness ifTrue: [ 
+				counter := counter + 1.
+				counter > stopIterations ifTrue: [ stopFlag := true ] ] 
+			ifFalse: [ 
+				counter := 0.
+				bestFitness := lastBestFitness ] ] ] 
+	displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }
@@ -387,7 +386,7 @@ SGAEngine >> similarChild: testCase [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 SGAEngine >> targetClassName [
 	^ targetClassName
 ]
@@ -395,11 +394,6 @@ SGAEngine >> targetClassName [
 { #category : #accessing }
 SGAEngine >> targetClassName: anObject [
 	targetClassName := anObject
-]
-
-{ #category : #accessing }
-SGAEngine >> targetPackageRegex [
-	^ targetPackageRegex 
 ]
 
 { #category : #accessing }
@@ -430,7 +424,7 @@ SGAEngine >> updateTypeInfoWith: aPopulation [
 	fitness profiler uninstallClass: targetClassName.
    self profilerForTargetClass.
    aPopulation do:
-		[ :testCase | testCase runWithoutAssertions ].
+		[ :aTestCase | aTestCase runWithoutAssertions ].
    self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
    self uninstall .
    fitness profiler updateClass: ((self initializeProfiler packages at:1) classes at: targetClassName).

@@ -138,6 +138,9 @@ SReportSGALog >> reportOf: methods withParents: idMethods [
 
 { #category : #reporting }
 SReportSGALog >> summaryGenerations [
-	^ engine logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | e ifNotNil: [ Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ] ]
+	^ engine logs collect: [ :aLog | 
+		aLog summaryTargetClass collect: [ :e | e ifNotNil: [ 
+				Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock')
+					 andValues: e summaryAsColl ] ] ]
 	
 ]

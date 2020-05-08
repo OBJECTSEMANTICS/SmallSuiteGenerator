@@ -79,7 +79,8 @@ STypeInfo >> asTypeInfo: aTypeCollector methodsBlacklist: aList [
 	typeInfo := self class new.
 	aTypeCollector allClasses
 		do: [ :aSpyClass | 
-			aList select: [ :e | e origin name == aSpyClass className ] thenDo: [:e | aSpyClass removeMethod: e ].
+			aList select: [ :aMethod | aMethod origin name == aSpyClass className ] 
+				thenDo: [:aMethod | aSpyClass removeMethod: aMethod ].
 			(aSpyClass className endsWith: 'BlockClosure')
 				ifFalse: [ typeInfo addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
 	typeInfo joinScalars: aTypeCollector scalars copy.
@@ -123,7 +124,7 @@ STypeInfo >> classes [
 { #category : #converting }
 STypeInfo >> cleanBlockClosuresOf: aTypeCollector [ 
 	[ |cleanBlocks|
-		cleanBlocks := (aTypeCollector scalars at: #BlockClosure) select: [ :e | e isClean ].
+		cleanBlocks := (aTypeCollector scalars at: #BlockClosure) select: [ :aBlock | aBlock isClean ].
 		aTypeCollector scalars at: #BlockClosure put: cleanBlocks ]
 	on: Error
 	do: [].
@@ -135,15 +136,16 @@ STypeInfo >> completeTypeInfo [
 	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
 	realClassInfo := self types at: aClass.
 	classInfo methodTypes keysAndValuesDo: [ :key :value | 
-		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) ifTrue:[
-		realClassInfo methodTypes at: key
-		ifPresent: [  ]
-		ifAbsentPut: [ 
-			self updateArgsOf: value.
-			value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
-			value receiver type: aClass.
-			value hasProfiler: false.
-			value executions: 0.5 ] ] ] ]
+		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) 
+		ifTrue: [
+			realClassInfo methodTypes 
+			at: key
+			ifAbsentPut: [ 
+				self updateArgsOf: value.
+				value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
+				value receiver type: aClass.
+				value hasProfiler: false.
+				value executions: 0.5 ] ] ] ]
 ]
 
 { #category : #copying }
@@ -245,10 +247,10 @@ STypeInfo >> methodType: aSelector from: aClassName [
 
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
-	noneAbstractClasses
-		ifNil: [ noneAbstractClasses := self classes associations
-				select: [ :assoc | (self isAbstractClass: assoc key) not ]
-				thenCollect: [ :assoc | assoc value ] ].
+	noneAbstractClasses ifNil: [ 
+		noneAbstractClasses := self classes associations
+			select: [ :assoc | (self isAbstractClass: assoc key) not ]
+			thenCollect: [ :assoc | assoc value ] ].
 	^ noneAbstractClasses
 ]
 
@@ -296,9 +298,11 @@ STypeInfo >> types [
 { #category : #lookup }
 STypeInfo >> updateArgsOf: aMethod [ 
 	aMethod argTypes do: [ :argType |
-	|res|
-	res := argType types anySatisfy: [ :type | self scalars keys includes: type ].
-	res ifFalse: [ argType types do: [ :type | self scalars keys select: [ :scalar | 
-			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
-			argType type: scalar ] ] ] ]
+	| includeTypes |
+	includeTypes := argType types anySatisfy: [ :type | self scalars keys includes: type ].
+	includeTypes ifFalse: [ 
+		argType types do: [ :type | 
+			self scalars keys 
+				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
+				thenDo: [ :scalar | argType type: scalar ] ] ] ]
 ]

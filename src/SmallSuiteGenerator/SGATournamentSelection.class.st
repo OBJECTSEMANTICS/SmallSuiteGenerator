@@ -10,11 +10,6 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #actions }
-SGATournamentSelection >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName.
-]
-
 { #category : #initialization }
 SGATournamentSelection >> initialize [
 	super initialize .
@@ -29,7 +24,7 @@ SGATournamentSelection >> selectOf: aCollection [
 	sample := (self random collectAtRandom: aCollection )
 		first: (tournamentSize min: aCollection size).
 	sample := sample
-		asSortedCollection: [ :a :b | (a fitness at: fitness functionName) > (b fitness  at: fitness functionName) ].
+		asSortedCollection: [ :a :b | (a fitnessFor: fitness functionName) > (b fitnessFor: fitness functionName) ].
 	^ sample
 ]
 

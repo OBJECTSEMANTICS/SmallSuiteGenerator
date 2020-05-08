@@ -8,7 +8,7 @@ SGAEngine >> addDescriptiveTextOn: canvas with: fitnessSeed ofColor: color and: 
 		color: color;
 		fontSize: 30;
 		yourself ].
-	text := blockText value: 'TargetClass: ', self targetClassName, ' in package: ', self targetPackageRegex, ' and fitnessSeed: ', fitnessSeed asString.
+	text := blockText value: 'TargetClass: ', targetClassName, ' in package: ', targetPackageRegex, ' and fitnessSeed: ', fitnessSeed asString.
 	RSLocation new top left offset: -60; move: text on: canvas shapes.
 	canvas addShape: text.
 	dictionary := Dictionary new 
