@@ -243,7 +243,7 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlight and: fitnessSeed [
 	| generationGroup filteredList generations memo shapeHeights |
 	generationGroup := RSGroup new.
-	generations := numberOfGenerations + 1.
+	generations := logs size.
 	filteredList := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])]).
 	memo := SMemo new.
 	shapeHeights := Array new: generations.

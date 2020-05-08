@@ -19,7 +19,8 @@ Class {
 		'lastMessage',
 		'asDict',
 		'fitnessSeed',
-		'typeInfoSeed'
+		'typeInfoSeed',
+		'firstExecution'
 	],
 	#classInstVars : [
 		'instance'
@@ -165,6 +166,11 @@ STestCaseFactory >> exportTests [
 	self createConfigurationMethods
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> firstExecution [
+	^ firstExecution ifNil: [ firstExecution := true ] ifNotNil: [ false ]
+]
+
 { #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
@@ -243,6 +249,12 @@ STestCaseFactory >> run [
 	
 ]
 
+{ #category : #running }
+STestCaseFactory >> run: aNumber [
+	numberOfIterations := aNumber.
+	self createTestCases
+]
+
 { #category : #'instance creation' }
 STestCaseFactory >> seed: aNumber [ 	
 	SPlatform seed: aNumber
@@ -260,8 +272,10 @@ STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 
 { #category : #actions }
 STestCaseFactory >> setUp [
-	SPlatform resetRandomGenerator.
+	
 	self initializeProfiler.
+	self firstExecution ifTrue: [
+	SPlatform resetRandomGenerator.
 	fitness profiler: profiler;
 		typeInfo: typeInfo;
 		targetClass: self targetClassName.
@@ -270,7 +284,9 @@ STestCaseFactory >> setUp [
 		typeInfo: self typeInfo;
 		targetClassName: self targetClassName;
 		targetPackageRegex: targetPackageRegex.
-	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy 
+	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy]
+ifFalse: [ engine fitness profiler: profiler.
+	engine numberOfGenerations: numberOfIterations ]
 ]
 
 { #category : #actions }

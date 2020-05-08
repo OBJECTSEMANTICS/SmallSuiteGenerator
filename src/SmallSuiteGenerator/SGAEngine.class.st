@@ -251,6 +251,11 @@ SGAEngine >> lastBestFitness [
 	^ logs last fittestTestCase fitnessFor: fitness functionName
 ]
 
+{ #category : #actions }
+SGAEngine >> lastGenerationNumber [
+	^ logs last generationNumber
+]
+
 { #category : #accessing }
 SGAEngine >> lastMessage: anObject [
 	lastMessage := anObject 
@@ -340,16 +345,18 @@ SGAEngine >> profilerForTargetClass [
 { #category : #actions }
 SGAEngine >> run [
 	| counter bestFitness stopFlag |
-  
 	counter := 0.
    stopFlag := false.
-   self initializePopulation.
+	population ifNil: [ self initializePopulation ]
+		ifNotNil: [ 
+			fitness typeInfo: typeInfo.
+			initialPopulation := population ].
    bestFitness := self lastBestFitness.
    (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
 		stopFlag ifFalse: [ 
 			t := Time now asSeconds.
          self doSelection.
-			logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
+			logs add: (SGALog logOf: self inGeneration: self lastGenerationNumber + 1 inTime: t).
          lastBestFitness := self lastBestFitness.
          lastBestFitness <= bestFitness ifTrue: [ 
 				counter := counter + 1.

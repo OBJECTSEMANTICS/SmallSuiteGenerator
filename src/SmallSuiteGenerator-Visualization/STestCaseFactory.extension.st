@@ -56,14 +56,14 @@ STestCaseFactory >> visualizeEvolutionFitness [
 		title: 'Fitness evolution';
 		container: canvas;
 		yourself.
-	y := (1 to: numberOfIterations + 1) asArray.
+	y := (1 to: engine logs size) asArray.
 	g := RSChart new.
 	g container: group.
 	self fitnessResultAsDictionary associations doWithIndex: [ :association :index | 
 		d := RSLinePlot new x: (association value collect: #x) y: (association value collect: #y).
 		g addPlot: d.
 		legend text: association key withBoxColor: (g colors range at: index) ].
-	d := RSLinePlot new x: y y: ((OrderedCollection ofSize: numberOfIterations + 1) atAllPut: fitnessSeed).
+	d := RSLinePlot new x: y y: ((OrderedCollection ofSize: engine logs size) atAllPut: fitnessSeed).
 	g addPlot: d.
 	legend text: 'Fitness seed' withBoxColor: (g colors range at: 4).
 	g addDecoration: (RSVerticalTick new).
