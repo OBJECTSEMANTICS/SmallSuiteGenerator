@@ -411,6 +411,11 @@ SSTestShifter >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
+{ #category : #accessing }
+SSTestShifter >> children [ 
+	^ children
+]
+
 { #category : #repairing }
 SSTestShifter >> clean [
 	|literals unused|
