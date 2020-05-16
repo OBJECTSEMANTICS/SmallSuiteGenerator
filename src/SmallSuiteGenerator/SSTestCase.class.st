@@ -114,6 +114,7 @@ SSTestCase >> initialize [
    super initialize.
    generationNumber := 1.
    idPopulation := 1.
+   summaryExecutionMethods := OrderedCollection new.
 	hasErrors := false
 ]
 
@@ -170,8 +171,10 @@ SSTestCase >> tearDown [
 ]
 
 { #category : #repairing }
-SSTestCase >> updateWith: anotherTestCase [
+SSTestCase >> updateWith: anotherTestCase andId: anIdPopulation [
 	self generationNumber: anotherTestCase generationNumber.
-	self idPopulation: anotherTestCase idPopulation + 1 .
-	anotherTestCase parents do: [ :parent | self addParent:  parent ]
+	self idPopulation: anIdPopulation.
+	anotherTestCase parents do: [ :parent | 
+		parent removeChild: anotherTestCase.
+		self addParent:  parent ]
 ]

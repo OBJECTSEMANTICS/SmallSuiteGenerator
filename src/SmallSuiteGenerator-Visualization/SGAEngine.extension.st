@@ -93,7 +93,6 @@ SGAEngine >> addSurvivorTestCase: testCase on: collection using: set [
 	| selected association additionBlock |
 	association := testCase generationNumber -> testCase idPopulation.
 	selected := testCase generationNumber == (numberOfGenerations + 1) and: [ (set includes: association) not ].
-	(testCase generationNumber = 31 and: [ testCase idPopulation = 1 ]) ifTrue: [ self halt ].
 	additionBlock := [ set add: association.
 		collection add: testCase ].
 	selected ifTrue: [ 

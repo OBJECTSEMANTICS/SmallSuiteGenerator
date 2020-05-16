@@ -125,24 +125,25 @@ SGAEngine >> createNewPopulation [
 	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
+	newNumber := newPopulation size.
   	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
         P1 := selectedList first.
         P2 := selectedList second.
-		  P1copy := (self similarChild: P1) idPopulation: 1.
-		  P2copy := (self similarChild: P2) idPopulation: 2.
+		  P1copy := self similarChild: P1 with: newNumber + 1.
+		  P2copy := self similarChild: P2 with: newNumber + 2.
         self shouldCrossOver 
 				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
-              O1 := children first.
-              O2 := children second] 
+              O1 := self updateHierarchyData: (Array with: P1 with: P2) of: (children first idPopulation: newNumber + 3).
+              O2 := self updateHierarchyData: (Array with: P1 with: P2) of: (children second idPopulation: newNumber + 4) ] 
 				ifFalse: [ 
-					O1 := (P1copy deepCopy) addParent: P1.
-              	O2 := (P2copy deepCopy) addParent: P2 ].
-        OM1 := (self mutateAndUpdate: O1) idPopulation: 3.
-        OM2 := (self mutateAndUpdate: O2) idPopulation: 4.
+					O1 := (P1copy deepCopy) idPopulation: newNumber + 3; addParent: P1.
+              	O2 := (P2copy deepCopy) idPopulation: newNumber + 4; addParent: P2 ].
+        OM1 := self mutateAndUpdate: O1 withId: newNumber + 5.
+        OM2 := self mutateAndUpdate: O2 withId: newNumber + 6.
         fitness compute: (Array with: OM1 with: OM2).
+		  (OM1 summaryExecutionMethods isNil or: [ OM2 summaryExecutionMethods isNil ]) ifTrue: [ self halt ].
         selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
-		  newNumber := newPopulation size.
 		  selectedOptions 
 		  	   select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ]       
 				thenDo: [ :option | 
@@ -218,7 +219,7 @@ SGAEngine >> eliteOfCurrentPopulation [
 	index := 0.
 	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.
-			(self similarChild: testCase) idPopulation: index; yourself.
+			self similarChild: testCase with: index.
 			])) asOrderedCollection ].
 	^ OrderedCollection new
 ]
@@ -370,11 +371,11 @@ SGAEngine >> mergeTypeInfo: otherTypeInfo [
 ]
 
 { #category : #actions }
-SGAEngine >> mutateAndUpdate: aTestCase [
-	| newStm |
-	newStm := mutationOperator mutate: aTestCase.
-   newStm updateWith: aTestCase.
-	^ newStm 
+SGAEngine >> mutateAndUpdate: aTestCase withId: idPopulation [
+	| newTestCase |
+	newTestCase := mutationOperator mutate: aTestCase.
+   newTestCase updateWith: aTestCase andId: idPopulation.
+	^ newTestCase 
 ]
 
 { #category : #actions }
@@ -500,10 +501,11 @@ SGAEngine >> shouldCrossOver [
 ]
 
 { #category : #actions }
-SGAEngine >> similarChild: testCase [ 
+SGAEngine >> similarChild: testCase with: idPopulation [
 	^ testCase deepCopy 
-		addParent: testCase; 
 		generationNumber: testCase generationNumber + 1;
+		idPopulation: idPopulation;
+		addParent: testCase; 
 		yourself
 ]
 
@@ -569,6 +571,12 @@ SGAEngine >> updateArgsOf: aMethod [
 	res ifFalse: [ argType types do: [ :type | typeInfo scalars keys select: [ :scalar | 
 			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
 			argType type: scalar ] ] ] ]
+]
+
+{ #category : #actions }
+SGAEngine >> updateHierarchyData: parents of: testCase [
+	parents do: [ :parent | testCase addParent: parent ].
+	^ testCase
 ]
 
 { #category : #updating }

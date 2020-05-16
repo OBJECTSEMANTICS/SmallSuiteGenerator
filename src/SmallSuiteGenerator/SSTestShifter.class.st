@@ -546,7 +546,7 @@ SSTestShifter >> initialize [
   targetClassesNames := Set new.
   validatedTargetClassName := false.
   parents := Set new.
-  children := Set new.
+  children := OrderedCollection new.
   selectionStrategy := SGARouletteSelection new.
 ]
 
@@ -1029,6 +1029,16 @@ SSTestShifter >> randomLiteralClassName [
 { #category : #repairing }
 SSTestShifter >> referencesIndexes: expression [
 	^ ((expression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
+]
+
+{ #category : #removing }
+SSTestShifter >> removeChild: testCase [ 
+	| index |
+	index := 0.
+	children detect: [:tC | index := index + 1.
+		(tC generationNumber = testCase generationNumber) and: [ tC idPopulation = testCase idPopulation ] ]
+		ifFound: [ :tC | children removeAt: index ]
+		ifNone: [ self halt ]
 ]
 
 { #category : #removing }
