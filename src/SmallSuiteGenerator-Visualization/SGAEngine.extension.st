@@ -498,7 +498,7 @@ SGAEngine >> testCaseShape: testCase ofColor: dictColor using: memo fitnessSeed:
 	group := RSGroup new.
 	group 
 		add: (self methodShapeGroup: testCase ofColor: scaleColorBlock memo: memo and: highlight);
-		add: (self progressBarFrom: fitnessSeed to: (testCase fitnessByClass values first at: targetClassName ifAbsent: 0) ofColor: dictColor).
+		add: (self progressBarFrom: fitnessSeed to: ([testCase fitnessByClass values first at: targetClassName ifAbsent: 0] on: SubscriptOutOfBounds do: [0]) ofColor: dictColor).
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
