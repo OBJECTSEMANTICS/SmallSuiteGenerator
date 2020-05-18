@@ -142,7 +142,6 @@ SGAEngine >> createNewPopulation [
         OM1 := self mutateAndUpdate: O1 withId: newNumber + 5.
         OM2 := self mutateAndUpdate: O2 withId: newNumber + 6.
         fitness compute: (Array with: OM1 with: OM2).
-		  (OM1 summaryExecutionMethods isNil or: [ OM2 summaryExecutionMethods isNil ]) ifTrue: [ self halt ].
         selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
 		  selectedOptions 
 		  	   select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ]       

@@ -282,8 +282,8 @@ STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
 	fitness := SMethodCoverage new.
-	engine := self engineDefault.
 	numberOfIterations := 20.
+	engine := self engineDefault.
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
 	initialSeed := 100.
@@ -309,6 +309,7 @@ STestCaseFactory >> numberOfGenerations [
 
 { #category : #initialization }
 STestCaseFactory >> numberOfGenerations: aNumber [
+	engine numberOfGenerations: aNumber.
 	numberOfIterations := aNumber.
 ]
 

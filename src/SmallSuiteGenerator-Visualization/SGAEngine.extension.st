@@ -89,10 +89,10 @@ SGAEngine >> addLegend: dictionary on: container withFontColor: color [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addSurvivorTestCase: testCase on: collection using: set [
+SGAEngine >> addSurvivorTestCase: testCase on: collection using: set and: maxNumber [
 	| selected association additionBlock |
 	association := testCase generationNumber -> testCase idPopulation.
-	selected := testCase generationNumber == (numberOfGenerations + 1) and: [ (set includes: association) not ].
+	selected := testCase generationNumber == maxNumber and: [ (set includes: association) not ].
 	additionBlock := [ set add: association.
 		collection add: testCase ].
 	selected ifTrue: [ 
@@ -100,7 +100,7 @@ SGAEngine >> addSurvivorTestCase: testCase on: collection using: set [
 		^ true ]. 
 	selected ifFalse: [
 		testCase children do: [ :each | 
-		selected := selected or: [self addSurvivorTestCase: each on: collection using: set ] ] ].
+		selected := selected or: [ (set includes: each generationNumber -> each idPopulation) or: [self addSurvivorTestCase: each on: collection using: set and: maxNumber ] ] ] ].
 	selected ifTrue: [ 
 		(set includes: association) ifFalse: additionBlock.
 		^ true ]. 
@@ -274,7 +274,7 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	canvas addShape: border.
 	widthShape := 800.
 	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor andSize: widthShape @shapeHeight negated.
-	RSLocation new top right offset: ((evolutionShape width + 30)@0); move: evolutionShape on: canvas shapes.
+	RSLocation new top right offset: ((evolutionShape width + 50)@0); move: evolutionShape on: canvas shapes.
 	"add evolutionShape on canvas"
 	canvas addShape: evolutionShape.
 	border := self borderOfSize: ((widthShape + 100) @ contributionShape height) andColor: (dictColor at: 'border').
@@ -289,19 +289,16 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights and: fitnessSeed [
-	| generationGroup filteredList generations memo shapeHeights scaleColorBlock set |
+	| generationGroup filteredList memo shapeHeights scaleColorBlock set |
 	generationGroup := RSGroup new.
-	generations := numberOfGenerations + 1.
-	"change here to filter list. Instead of select can be used do: to insert elements to the list"
-	"filteredList := ((logs flatCollect: #population) select: [:tC | (tC generationNumber = generations or: [ tC allChildren detect: [:tCe |  tCe generationNumber = generations ] ifFound: [ true ] ifNone: [ false ]])])."
 	filteredList := OrderedCollection new.
 	set := Set new.
 	(logs flatCollect: #population) do: [ :tC | 
-		self addSurvivorTestCase: tC on: filteredList using: set
+		self addSurvivorTestCase: tC on: filteredList using: set and: logs size
 	].
 	filteredList sort: [ :tC1 :tC2 | (tC1 generationNumber < tC2 generationNumber) or: [ (tC1 generationNumber = tC2 generationNumber) and: [  tC1 children size > tC2 children size ] ] ].
 	memo := SMemo new.
-	shapeHeights := Array new: generations.
+	shapeHeights := OrderedCollection new.
 	scaleColorBlock := self scaleColorBlock: (self methodColorDictionary: (dictColor at: 'rangeMethodColor')).
 	generationGroup addAll: (
 		(filteredList groupedBy: [:tC | tC generationNumber]) collect: [ :testCases | 
@@ -310,7 +307,7 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 			group addAll: (testCases collect: [ :testCase | 
 				(self testCaseShape: testCase ofColor: dictColor using: memo fitnessSeed: fitnessSeed highlight: highlights second and: scaleColorBlock) @ highlights first; yourself.
 			]).
-			shapeHeights at: testCases first generationNumber put: (group collect: #height) max.
+			shapeHeights add: (group collect: #height) max.
 			RSHorizontalLineLayout new gapSize: 20; on: group.
 			group
 	]).

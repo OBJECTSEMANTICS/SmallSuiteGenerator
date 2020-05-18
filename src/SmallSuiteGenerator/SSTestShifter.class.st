@@ -250,8 +250,22 @@ SSTestShifter >> allChildren [
 
 { #category : #hierarchy }
 SSTestShifter >> allParents [
-	^ (Set newFrom: parents)
-	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
+	|  list |
+	list := OrderedCollection new.
+	self allParents: self on: list using: Set new.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> allParents: testCase on: collection using: associationSet [
+	testCase parents do: [ :tC | | assoc |
+		assoc := tC generationNumber -> tC idPopulation.
+		(associationSet includes: assoc) ifFalse: [ 
+			associationSet add: assoc.
+			collection add: tC.
+			self allParents: tC on: collection using: associationSet	
+		]
+	]
 ]
 
 { #category : #accessing }
