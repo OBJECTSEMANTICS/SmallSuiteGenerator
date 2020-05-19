@@ -1,6 +1,6 @@
 Class {
 	#name : #SmallTypeCollector,
-	#superclass : #Object,
+	#superclass : #SObject,
 	#instVars : [
 		'classDict'
 	],

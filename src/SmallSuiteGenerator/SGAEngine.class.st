@@ -120,7 +120,7 @@ SGAEngine >> createNewPopulation [
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
-   self order: population
+   population := self order: population
 ]
 
 { #category : #creating }
@@ -231,7 +231,7 @@ SGAEngine >> initializePopulation [
    SExpression resetId.
 	self updateTypeInfoWith: population.
    self computeFitness.
-   self order: population.
+   population := self order: population.
    initialPopulation := population.
 	logs add: (SGALog logOf: self inGeneration: 0 inTime: t)
 ]
@@ -300,8 +300,7 @@ SGAEngine >> numberOfStatements: anInteger [
 
 { #category : #sorting }
 SGAEngine >> order: aCollection [
-	aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ].
-	^ aCollection
+	^ aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ]
 ]
 
 { #category : #accessing }
