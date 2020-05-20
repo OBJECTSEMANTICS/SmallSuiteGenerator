@@ -25,7 +25,7 @@ SMemo >> at: summaryExecMethod of: testCase ifAbsent: absentBlock [
 { #category : #accessing }
 SMemo >> at: summaryExecMethod of: testCase ifPresent: presentBlock ifAbsent: absentBlock [
 	^  (self at: summaryExecMethod of: testCase)
-		ifNotNil: [ :value | presentBlock rtValue: value ] 
+		ifNotNil: [ :value | presentBlock cull: value ] 
 		ifNil: [ absentBlock value ]
 ]
 
