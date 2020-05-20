@@ -73,9 +73,6 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
         lastStm needsBeFixed ifTrue: [ offSpring fixTypeReturnOf: lastStm ] ] on: SError do: [  ] ].
   offSpring
 	  generationNumber: parentA generationNumber + 1;
-	  "idPopulation: (parentA children size max: parentB children size) + 1; 
-     addParent: parentA;
-     addParent: parentB;"
 	  clean.
   ^ offSpring
 ]
