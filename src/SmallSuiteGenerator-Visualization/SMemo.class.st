@@ -9,10 +9,7 @@ Class {
 
 { #category : #accessing }
 SMemo >> at: summaryExecMethod of: testCase [
-	^ "memo at: (summaryExecMethod executorClass -> summaryExecMethod selector) 
-		ifPresent: [ :dict | dict at: testCase generationNumber 
-				ifPresent: [ :anotherDict | anotherDict at: testCase idPopulation ] ]"
-		self at: summaryExecMethod of: testCase ifAbsent: [ nil ]
+	^ self at: summaryExecMethod of: testCase ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
@@ -28,7 +25,7 @@ SMemo >> at: summaryExecMethod of: testCase ifAbsent: absentBlock [
 { #category : #accessing }
 SMemo >> at: summaryExecMethod of: testCase ifPresent: presentBlock ifAbsent: absentBlock [
 	^  (self at: summaryExecMethod of: testCase)
-		ifNotNil: [ :value | presentBlock rtValue: value ] 
+		ifNotNil: [ :value | presentBlock cull: value ] 
 		ifNil: [ absentBlock value ]
 ]
 

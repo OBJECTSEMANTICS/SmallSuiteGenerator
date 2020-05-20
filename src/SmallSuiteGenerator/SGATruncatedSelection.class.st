@@ -21,12 +21,15 @@ SGATruncatedSelection >> initialize [
 ]
 
 { #category : #selection }
+SGATruncatedSelection >> selectJustOneOf: aCollection with: probabilities [
+	^ (self selectOf: aCollection) first
+]
+
+{ #category : #selection }
 SGATruncatedSelection >> selectOf: aCollection [
 	| newColl |
-	newColl := (aCollection sort: [ :a :b |(a fitness at: fitness functionName)> (b fitness at: fitness functionName) ]).
+	newColl := (aCollection sort: [ :a :b | (self fitnessFor: a) > (self fitnessFor: b) ]).
 	(discarding < aCollection size)
-		ifTrue: [
-			newColl := newColl copyFrom: 1 to: (aCollection size - discarding)
-		].
+		ifTrue: [ newColl := newColl copyFrom: 1 to: (aCollection size - discarding) ].
 	^ newColl
 ]

@@ -18,7 +18,10 @@ Class {
 		'lastMessage',
 		'asDict',
 		'fitnessSeed',
-		'typeInfoSeed'
+		'initialSeed',
+		'initialAsDict',
+		'typeInfoSeed',
+		'typeInfoOrigin'
 	],
 	#classInstVars : [
 		'instance'
@@ -40,11 +43,13 @@ STestCaseFactory class >> darkColors [
 		at: 'classCoverage' put: (Color r: 0.5098039215686274 g: 0.7803921568627451 b: 0.9607843137254902);
 		at: 'methodCoverage' put: (Color r: 0.9607843137254902 g: 0.5098039215686274 b: 0.7215686274509804);
 		at: 'statementCoverage' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
-		at: 'highlight' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432);
+		at: 'highlightTestCase' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
+		at: 'highlightMethod' put: (Color r: 111/255 g: 1 b: 233/255 alpha: 0.8);
 		at: 'fontMethodBox' put: Color white;
 		at: 'border' put: Color white;
 		at: 'axis' put: Color white;
 		at: 'font' put: Color white;
+		at: 'rangeMethodColor' put: (Array with: (Color r: 0 g: 1 b: 0.67) with: (Color r: 246/255 g: 213/255 b: 92/255) with: (Color r: 242/255 g: 61/255 b: 29/255) with: (Color r:1 g:20/255 b:147/255) with: (Color r: 24/255 g: 159/255 b:196/255));
 		yourself.
 ]
 
@@ -54,24 +59,30 @@ STestCaseFactory class >> lightColors [
 		at: 'background' put: Color white;
 		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
 		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
+		at: 'scaleDarker' put: (Color r: 0 g: 0 b: 0 alpha: 0.1)"(Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253)";
 		at: 'baseBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
 		at: 'forwardBar' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'backwardBar' put: (Color r: 1 g: 0 b: 64/255);
+		at: 'backwardBar' put: (Color r: 1 g: 0 b: 0.25098039215686274);
 		at: 'edge' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
 		at: 'classCoverage' put: (Color r: 0.05 g: 0.75 b: 0.91);
 		at: 'methodCoverage' put: (Color r:0.88 g:0.26 b:0.5);
 		at: 'statementCoverage' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'highlight' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
+		at: 'highlightTestCase' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
+		at: 'highlightMethod' put: Color cyan"(Color r: 111/255 g: 1 b: 233/255)";
 		at: 'fontMethodBox' put: Color white;
 		at: 'border' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
 		at: 'axis' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
 		at: 'font' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'rangeMethodColor' put: 
+		(OrderedCollection new add: (Color fromHexString: '6bffb8'); add: (Color fromHexString: '97d1f4'); add: (Color fromHexString: 'ffcbf2'); yourself)
+		"(OrderedCollection new add: (Color fromHexString: '6bffb8'); add: (Color fromHexString: '2ceaa3'); add: (Color fromHexString: '14ddac'); add: (Color fromHexString: '158774'); add: (Color fromHexString: '97d1f4'); add: (Color fromHexString: '74bbe8'); add: (Color fromHexString: '2d92d1'); yourself)"
+		 "(Array with: (Color r: 0 g: 1 b: 0.67) with: (Color r: 246/255 g: 213/255 b: 92/255) (Color r: 242/255 g: 235/255 b: 29/255) (Color r: 0.8 g: 1 b: 0) with: (Color r: 242/255 g: 61/255 b: 29/255) (Color r: 1 g: 0.2 b: 0) with: (Color r:1 g:20/255 b:147/255) with: (Color r: 24/255 g: 159/255 b:196/255) (Color r: 0.35 g: 0.9 b: 0.98))";
 		yourself.
 ]
 
 { #category : #actions }
 STestCaseFactory >> asDict: aBoolean [
+	initialAsDict := aBoolean.
 	SPlatform asDict: aBoolean
 ]
 
@@ -179,8 +190,23 @@ STestCaseFactory >> exportTests [
 ]
 
 { #category : #configuration }
+STestCaseFactory >> fitness [
+	^ fitness
+]
+
+{ #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
 	fitness := aFitness
+]
+
+{ #category : #accessing }
+STestCaseFactory >> fitnessSeed [
+	^ fitnessSeed 
+]
+
+{ #category : #accessing }
+STestCaseFactory >> fitnessSeedCalculated: number [ 
+	fitnessSeed := number
 ]
 
 { #category : #actions }
@@ -241,15 +267,27 @@ STestCaseFactory >> getClassOf: aString [
 
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> initialAsDict [
+	^ initialAsDict 
+]
+
+{ #category : #accessing }
+STestCaseFactory >> initialSeed [
+	^ initialSeed 
+]
+
 { #category : #initialization }
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
 	fitness := SMethodCoverage new.
+	numberOfIterations := 20.
 	engine := self engineDefault.
-	numberOfIterations :=20.
 	fitnessSeed := 0.
-	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'
+	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
+	initialSeed := 100.
+	initialAsDict := false.
 ]
 
 { #category : #actions }
@@ -264,8 +302,14 @@ STestCaseFactory >> lastMessage: aMessage [
 	engine lastMessage: aMessage 
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> numberOfGenerations [
+	^ numberOfIterations
+]
+
 { #category : #initialization }
 STestCaseFactory >> numberOfGenerations: aNumber [
+	engine numberOfGenerations: aNumber.
 	numberOfIterations := aNumber.
 ]
 
@@ -296,7 +340,8 @@ STestCaseFactory >> run [
 ]
 
 { #category : #'instance creation' }
-STestCaseFactory >> seed: aNumber [ 	
+STestCaseFactory >> seed: aNumber [ 
+	initialSeed := aNumber.
 	SPlatform seed: aNumber
 ]
 
@@ -308,6 +353,11 @@ STestCaseFactory >> seedBlock: aBlock [
 { #category : #actions }
 STestCaseFactory >> selectionStrategy: aSelectionStrategy [
 	engine selectionStrategy: aSelectionStrategy 
+]
+
+{ #category : #actions }
+STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
+	engine selectionStrategyTestCase: aSelectionStrategy 
 ]
 
 { #category : #actions }
@@ -374,7 +424,13 @@ STestCaseFactory >> typeInfo [
 
 { #category : #accessing }
 STestCaseFactory >> typeInfo: aTypeInfo [
+	typeInfoOrigin := aTypeInfo copy.
 	typeInfo := aTypeInfo
+]
+
+{ #category : #accessing }
+STestCaseFactory >> typeInfoOrigin [
+	^ typeInfoOrigin 
 ]
 
 { #category : #accessing }

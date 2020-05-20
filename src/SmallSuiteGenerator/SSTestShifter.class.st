@@ -250,8 +250,22 @@ SSTestShifter >> allChildren [
 
 { #category : #hierarchy }
 SSTestShifter >> allParents [
-	^ (Set newFrom: parents)
-	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
+	|  list |
+	list := OrderedCollection new.
+	self allParents: self on: list using: Set new.
+	^ list
+]
+
+{ #category : #'as yet unclassified' }
+SSTestShifter >> allParents: testCase on: collection using: associationSet [
+	testCase parents do: [ :tC | | assoc |
+		assoc := tC generationNumber -> tC idPopulation.
+		(associationSet includes: assoc) ifFalse: [ 
+			associationSet add: assoc.
+			collection add: tC.
+			self allParents: tC on: collection using: associationSet	
+		]
+	]
 ]
 
 { #category : #accessing }
@@ -411,6 +425,11 @@ SSTestShifter >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
+{ #category : #accessing }
+SSTestShifter >> children [ 
+	^ children
+]
+
 { #category : #repairing }
 SSTestShifter >> clean [
 	|literals unused|
@@ -541,7 +560,7 @@ SSTestShifter >> initialize [
   targetClassesNames := Set new.
   validatedTargetClassName := false.
   parents := Set new.
-  children := Set new.
+  children := OrderedCollection new.
   selectionStrategy := SGARouletteSelection new.
 ]
 
@@ -1027,6 +1046,16 @@ SSTestShifter >> referencesIndexes: expression [
 ]
 
 { #category : #removing }
+SSTestShifter >> removeChild: testCase [ 
+	| index |
+	index := 0.
+	children detect: [:tC | index := index + 1.
+		(tC generationNumber = testCase generationNumber) and: [ tC idPopulation = testCase idPopulation ] ]
+		ifFound: [ :tC | children removeAt: index ]
+		ifNone: [ self halt ]
+]
+
+{ #category : #removing }
 SSTestShifter >> removeExpression: expression [
 	self removeFromStatements: expression.
 	statements copy do: [ :stm | (stm pickUpReferences: expression) ifNotEmpty: [ self repairReferenceTo: expression of: stm ] ].
@@ -1123,7 +1152,7 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
 	selectionStrategy ifNil: [ ^ self random selectAtRandom: aCollection ]
-	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
+	ifNotNil: [ ^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions) ]
 	
 ]
 

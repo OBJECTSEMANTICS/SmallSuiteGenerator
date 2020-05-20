@@ -10,15 +10,23 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #actions }
-SGATournamentSelection >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName.
-]
-
 { #category : #initialization }
 SGATournamentSelection >> initialize [
 	super initialize .
 	tournamentSize := 5.
+]
+
+{ #category : #selection }
+SGATournamentSelection >> selectJustOneOf: aCollection with: probabilities [
+	| sample index |
+	index := 0.
+	sample := (self random collectAtRandom: 
+		(probabilities collect: [:prob | 
+			index := index + 1.
+			index -> prob ] ) )
+		first: (2 min: probabilities size).
+	sample := (sample sort: [ :a :b | a value > b value ]) first.
+	^ aCollection at: sample key 
 ]
 
 { #category : #selection }
@@ -28,8 +36,7 @@ SGATournamentSelection >> selectOf: aCollection [
 	| sample |
 	sample := (self random collectAtRandom: aCollection )
 		first: (tournamentSize min: aCollection size).
-	sample := sample
-		asSortedCollection: [ :a :b | (a fitness at: fitness functionName) > (b fitness  at: fitness functionName) ].
+	sample := sample sort: [ :a :b | (self fitnessFor: a) > (self fitnessFor: b) ].
 	^ sample
 ]
 

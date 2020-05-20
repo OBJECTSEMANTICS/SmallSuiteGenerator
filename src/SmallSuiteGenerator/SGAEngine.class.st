@@ -47,7 +47,9 @@ Class {
 		'targetPackageRegex',
 		'elitismRate',
 		'crossoverRate',
-		'stopIterations'
+		'stopIterations',
+		'totalExecutionGA',
+		'selectionStrategyTestCase'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -123,24 +125,24 @@ SGAEngine >> createNewPopulation [
 	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
+	newNumber := newPopulation size.
   	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
 		  selectedList := selectionStrategy selectOf: initialPopulation.
         P1 := selectedList first.
         P2 := selectedList second.
-		  P1copy := (self similarChild: P1) idPopulation: 1.
-		  P2copy := (self similarChild: P2) idPopulation: 2.
+		  P1copy := self similarChild: P1 with: newNumber + 1.
+		  P2copy := self similarChild: P2 with: newNumber + 2.
         self shouldCrossOver 
 				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
-              O1 := children first.
-              O2 := children second] 
+              O1 := self updateHierarchyData: (Array with: P1 with: P2) of: (children first idPopulation: newNumber + 3).
+              O2 := self updateHierarchyData: (Array with: P1 with: P2) of: (children second idPopulation: newNumber + 4) ] 
 				ifFalse: [ 
-					O1 := (P1copy deepCopy) addParent: P1.
-              	O2 := (P2copy deepCopy) addParent: P2 ].
-        OM1 := (self mutateAndUpdate: O1) idPopulation: 3.
-        OM2 := (self mutateAndUpdate: O2) idPopulation: 4.
+					O1 := (P1copy deepCopy) idPopulation: newNumber + 3; addParent: P1.
+              	O2 := (P2copy deepCopy) idPopulation: newNumber + 4; addParent: P2 ].
+        OM1 := self mutateAndUpdate: O1 withId: newNumber + 5.
+        OM2 := self mutateAndUpdate: O2 withId: newNumber + 6.
         fitness compute: (Array with: OM1 with: OM2).
         selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
-		  newNumber := newPopulation size.
 		  selectedOptions 
 		  	   select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ]       
 				thenDo: [ :option | 
@@ -165,6 +167,7 @@ SGAEngine >> createRandomPopulation [
            lastMessage: lastMessage;
            idPopulation: val;
 			  clean.
+		  selectionStrategyTestCase ifNotNil: [ test selectionStrategy: selectionStrategyTestCase ].
         test ]
 ]
 
@@ -215,7 +218,7 @@ SGAEngine >> eliteOfCurrentPopulation [
 	index := 0.
 	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.
-			(self similarChild: testCase) idPopulation: index; yourself.
+			self similarChild: testCase with: index.
 			])) asOrderedCollection ].
 	^ OrderedCollection new
 ]
@@ -274,11 +277,12 @@ SGAEngine >> initialize [
   logs := OrderedCollection new.
   populationSize := 30.
   numberOfGenerations := 100.
-  selectionStrategy := SGARankSelection new.
+  selectionStrategy := SGARandomSelection new.
   crossoverRate := 0.8.
   elitismRate := 10.
   numberOfStatements := 10.
   stopIterations := 30.
+	totalExecutionGA := 0.
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -381,11 +385,11 @@ SGAEngine >> methodTrackingFor: aSymbol [
 ]
 
 { #category : #actions }
-SGAEngine >> mutateAndUpdate: aTestCase [
-	| newStm |
-	newStm := mutationOperator mutate: aTestCase.
-   newStm updateWith: aTestCase.
-	^ newStm 
+SGAEngine >> mutateAndUpdate: aTestCase withId: idPopulation [
+	| newTestCase |
+	newTestCase := mutationOperator mutate: aTestCase.
+   newTestCase updateWith: aTestCase andId: idPopulation.
+	^ newTestCase 
 ]
 
 { #category : #actions }
@@ -480,19 +484,22 @@ SGAEngine >> reportOf: methods withParents: idMethods [
 { #category : #actions }
 SGAEngine >> run [
   | counter bestFitness stopFlag |
-  
+  totalExecutionGA := Time millisecondClockValue.
   counter := 0.
   stopFlag := false.
   self initializePopulation.
+	totalExecutionGA := Time millisecondClockValue - totalExecutionGA.
   bestFitness := self fitnessFor: logs last fittestTestCase.
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
-        stopFlag ifFalse: [ t := Time now asSeconds.
+        stopFlag ifFalse: [ t := Time millisecondClockValue.
               self doSelection.
               logs add: (self logOfGeneration: iteration inTime: t).
               lastBestFitness := self fitnessFor: logs last fittestTestCase.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
-                    bestFitness := lastBestFitness ] ] ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+                    bestFitness := lastBestFitness ].
+				totalExecutionGA := totalExecutionGA + Time millisecondClockValue - t ]
+	 ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
 ]
 
 { #category : #actions }
@@ -508,16 +515,22 @@ SGAEngine >> selectionStrategy: aSelectionStrategy [
 	selectionStrategy := aSelectionStrategy 
 ]
 
+{ #category : #accessing }
+SGAEngine >> selectionStrategyTestCase: aSelectionStrategy [ 
+	selectionStrategyTestCase := aSelectionStrategy 
+]
+
 { #category : #testing }
 SGAEngine >> shouldCrossOver [
 	^ self next < self crossoverRate
 ]
 
 { #category : #actions }
-SGAEngine >> similarChild: testCase [ 
+SGAEngine >> similarChild: testCase with: idPopulation [
 	^ testCase deepCopy 
-		addParent: testCase; 
 		generationNumber: testCase generationNumber + 1;
+		idPopulation: idPopulation;
+		addParent: testCase; 
 		yourself
 ]
 
@@ -545,6 +558,11 @@ SGAEngine >> targetPackageRegex [
 { #category : #accessing }
 SGAEngine >> targetPackageRegex: aString [
 	targetPackageRegex := aString
+]
+
+{ #category : #accessing }
+SGAEngine >> totalExecutionGA [
+	^ totalExecutionGA 
 ]
 
 { #category : #accessing }
@@ -578,6 +596,12 @@ SGAEngine >> updateArgsOf: aMethod [
 	res ifFalse: [ argType types do: [ :type | typeInfo scalars keys select: [ :scalar | 
 			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
 			argType type: scalar ] ] ] ]
+]
+
+{ #category : #actions }
+SGAEngine >> updateHierarchyData: parents of: testCase [
+	parents do: [ :parent | testCase addParent: parent ].
+	^ testCase
 ]
 
 { #category : #updating }
