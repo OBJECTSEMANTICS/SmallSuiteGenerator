@@ -258,14 +258,13 @@ SSTestShifter >> allParents [
 
 { #category : #'as yet unclassified' }
 SSTestShifter >> allParents: testCase on: collection using: associationSet [
-	testCase parents do: [ :tC | | assoc |
-		assoc := tC generationNumber -> tC idPopulation.
-		(associationSet includes: assoc) ifFalse: [ 
-			associationSet add: assoc.
+	testCase parents 
+		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
+		thenDo:  [ :tC | 
+			associationSet add: tC generationNumber -> tC idPopulation.
 			collection add: tC.
 			self allParents: tC on: collection using: associationSet	
 		]
-	]
 ]
 
 { #category : #accessing }

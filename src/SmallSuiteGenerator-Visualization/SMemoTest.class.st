@@ -33,7 +33,7 @@ SMemoTest >> testAtOfIfPresentIfAbsent [
 	self deny: result.
 	memo at: summaryExecMethod of: testCase put: 50.
 	result := memo at: summaryExecMethod of: testCase ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
-	self assert: true
+	self assert: result
 ]
 
 { #category : #tests }

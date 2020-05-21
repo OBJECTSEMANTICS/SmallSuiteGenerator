@@ -17,16 +17,16 @@ SMemo >> at: summaryExecMethod of: testCase ifAbsent: absentBlock [
 	^ memo at: (summaryExecMethod executorClass -> summaryExecMethod selector) 
 		ifPresent: [ :dict | dict at: testCase generationNumber 
 				ifPresent: [ :anotherDict | anotherDict at: testCase idPopulation
-					ifAbsent: [ absentBlock value ] ]
-				ifAbsent: [ absentBlock value ] ]
-		ifAbsent: [ absentBlock value ]
+					ifAbsent: absentBlock ]
+				ifAbsent: absentBlock ]
+		ifAbsent: absentBlock
 ]
 
 { #category : #accessing }
 SMemo >> at: summaryExecMethod of: testCase ifPresent: presentBlock ifAbsent: absentBlock [
 	^  (self at: summaryExecMethod of: testCase)
 		ifNotNil: [ :value | presentBlock cull: value ] 
-		ifNil: [ absentBlock value ]
+		ifNil: absentBlock
 ]
 
 { #category : #accessing }
