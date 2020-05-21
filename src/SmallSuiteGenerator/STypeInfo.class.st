@@ -117,7 +117,7 @@ STypeInfo >> classes [
 		keysDo: [ :aClassName | 
 			classes
 				at: aClassName
-				ifAbsentPut: (SPlatform lookUpClass: aClassName) ].
+				ifAbsentPut: (SPlatform lookUpClass: (self fullSymbolOf: aClassName)) ].
 	^ classes
 ]
 

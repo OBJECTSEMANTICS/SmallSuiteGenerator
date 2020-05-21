@@ -33,13 +33,17 @@ SMessageTest >> testCopy [
 SMessageTest >> testInsertAsParameterUsing [
 	| testCase aExpression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo; addFactoryMessage: #SFoo; addLiteral: #ByteString.
-	aExpression := testCase addMessage: #returnString from: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo); 
+	addFactoryMessage: (self fullSymbolOf: #SFoo); addLiteral: (self fullSymbolOf: #ByteString).
+	aExpression := testCase addMessage: #returnString from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 returnString.').
-	testCase addMessage: #return: from: #SFoo.
+		hasSameElements: (Array
+									with: '_var0 := 7.3.'
+									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+									with: '_var2 := ''hello''.'
+									with: '_var3 := _var1 returnString.').
+	testCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	insertedExpression := aExpression
 		insertAsParameter: aExpression
 		using: testCase.
@@ -53,15 +57,22 @@ SMessageTest >> testInsertAsParameterUsing [
 SMessageTest >> testInsertMethodMessageUsing [
 	| testCase message |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo.
-	message := testCase addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	message := testCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.'
+									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+									with: '_var2 := ''hello''.'
+									with: '_var3 := _var1 return: _var2.').
 	message insertMethodMessage: message using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.' '_var4 := _var1 return: _var2.')
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.'
+									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+									with: '_var2 := ''hello''.'
+									with: '_var3 := _var1 return: _var2.'
+									with: '_var4 := _var1 return: _var2.').
 ]

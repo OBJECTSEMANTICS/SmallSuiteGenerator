@@ -48,25 +48,17 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var1 _var2 _var3 _var5 _var6 _var7 _var0 _var4 _var8 _var9 _var10 _var11 _var12 _var13 _var14 _var16 _var17 _var18 |
-_var1 := 137.
-_var2 := SSTeacher new.
-_var3 := _var2 id: _var1.
-_var5 := _var3 initialize.
-_var6 := _var2 idTeacher.
-_var7 := _var2 idTeacher.
-_var0 := _var2 idTeacher.
-_var4 := _var3 idTeacher.
-_var8 := _var5 idTeacher.
-_var9 := _var5 nickname.
-_var10 := 50.
-_var11 := _var2 yearsWorkExperience: _var6.
-_var12 := _var5 idTeacher.
-_var13 := SConference price: _var10.
-_var14 := _var2 canRegister: _var13.
-_var16 := _var5 yearsWorkExperience: _var7.
-_var17 := _var16 initialize.
-_var18 := _var17 yearsWorkExperience.
+	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 |
+_var0 := #(2 4 6 1).
+_var1 := SStack newStackWith: _var0.
+_var2 := _var1 firstLinkStack.
+_var3 := _var1 firstLinkStack.
+_var4 := _var1 firstLinkStack.
+_var5 := _var1 firstLinkStack.
+_var6 := _var1 pop.
+_var7 := _var1 pop.
+_var8 := _var1 firstLinkStack.
+_var9 := _var1 firstLinkStack.
 ^self analyze: thisContext
 ]
 

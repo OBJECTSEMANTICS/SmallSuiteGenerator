@@ -20,6 +20,16 @@ SObject class >> new [
 	^super new initialize
 ]
 
+{ #category : #'as yet unclassified' }
+SObject >> fullNameOfClass: aString [
+	^ aString
+]
+
+{ #category : #'as yet unclassified' }
+SObject >> fullSymbolOf: aSymbol [
+	^ aSymbol
+]
+
 { #category : #initialization }
 SObject >> initialize [
 ]

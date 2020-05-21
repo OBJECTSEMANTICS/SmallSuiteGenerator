@@ -80,7 +80,7 @@ SSTestShifter >> addFactoryMessage [
 	variables
 		ifEmpty: [ (self random collectAtRandom: typeInfo noneAbstractClasses)
 				do: [ :aClass | 
-					[ ^ self addFactoryMessage: aClass name ]
+					[ ^ self addFactoryMessage: (self fullSymbolOf: aClass name) ]
 						on: SError
 						do: [  ] ].
 			self error: 'Cannot create a factoryMessage.' ]

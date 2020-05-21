@@ -60,7 +60,7 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: utility typeInfoSFooOnPackage1; 	" STON fromString: utility typeInfoStringSFoo3."
 		fitness: functionFitness;
-		targetClassName: #SFoo;
+		targetClassName: (self fullSymbolOf: #SFoo);
 		populationSize: 5;
 		numberOfGenerations: 5;
 		populationSize: 10;
@@ -80,12 +80,12 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
-	functionFitness targetClass: #SSTeacher.
+	functionFitness targetClass: (self fullSymbolOf: #SSTeacher).
 	engine
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
-		targetClassName: #SSTeacher;
+		targetClassName: (self fullSymbolOf: #SSTeacher);
 		populationSize: 10;
 		numberOfGenerations: 5;
 		run.
@@ -105,13 +105,13 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
 	self profilerOf: targetPackageRegex.
 	functionFitness := SStatementCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
-	functionFitness targetClass: #SSTeacher.
+	functionFitness targetClass: (self fullSymbolOf: #SSTeacher).
 	functionFitness typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: typeInfo;
 		fitness: functionFitness;
-		targetClassName: #SSTeacher;
+		targetClassName: (self fullSymbolOf: #SSTeacher);
 		populationSize: 10;
 		numberOfGenerations: 5;
 		run.
