@@ -324,7 +324,10 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 			| group |
 			group := RSGroup new.
 			group addAll: (testCases collect: [ :testCase | 
-				(self testCaseShape: testCase ofColor: dictColor using: (Dictionary at: 'memo' put: memo; at: 'highlight' put: highlights second; at: 'scaleColorBlock' put: scaleColorBlock; at: 'filteredPopulation' put: (self filteredSummaryMethods: filteredList); yourself) and: fitnessSeed) @ highlights first; yourself.
+				(self testCaseShape: testCase 
+					ofColor: dictColor 
+					using: (Dictionary new at: 'memo' put: memo; at: 'highlight' put: highlights second; at: 'scaleColorBlock' put: scaleColorBlock; at: 'filteredSummaryMethods' put: (self filteredSummaryMethods: filteredList); yourself) 
+					and: fitnessSeed) @ highlights first; yourself.
 			]).
 			shapeHeights add: (group collect: #height) max.
 			RSHorizontalLineLayout new gapSize: 20; on: group.
@@ -367,7 +370,7 @@ SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: prev
 			memo at: summary of: testCase 
 			ifPresent: [ :value | value < currentCoverage ]
 			ifAbsent: [ testCase parents 
-				detect: [ :tC | self isCoverageSummary: summaryMethod of: tC newOrHigherThan: (summaryMethods at: tC generationNumber -> tC idPopulation) using: memo ]
+				detect: [ :tC | [ self isCoverageSummary: summaryMethod of: tC newOrHigherThan: (self previousSummaryMethods: summaryMethods of: testCase) using: memo and: summaryMethods ] on: KeyNotFound do: [ false ] ]
 				ifFound: [ true ]
 				ifNone: [ false ]  ] ] ]
 ]
@@ -444,13 +447,9 @@ SGAEngine >> methodShapeGroup: testCase with: dictionary [
 	scaleColorBlock := dictionary at: 'scaleColorBlock'.
 	highlight := dictionary at: 'highlight'.
 	summaryMethods := dictionary at: 'filteredSummaryMethods'.
-	prevSummaryMethods := summaryMethods at: testCase generationNumber -> testCase idPopulation.
-	group addAll: (testCase summaryExecutionMethods 
-		select: [:summary | (summary executorClass = self targetClassName
-			or: [ (summary executorClass splitOn: ' ') first = self targetClassName ]) and: [ | previous |
-				previous := prevSummaryMethods select: [ :prev | prev selector = summary selector ].
-				previous isEmpty or: [ 
-				self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo and: summaryMethods ] ] ]
+	prevSummaryMethods := self previousSummaryMethods: summaryMethods of: testCase.
+	group addAll: ((summaryMethods at: testCase generationNumber -> testCase idPopulation)
+		select: [:summary | self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo and: summaryMethods ]
 		thenCollect: [:summary | 
 			| valueFitness scaleColor |
 			valueFitness := self fitnessOf: summary.
@@ -468,6 +467,11 @@ SGAEngine >> positionsOf: heightShapes onYAxis: height [
 	sum := heightShapes allButLast log sum.
 	temp := sum.
 	^ (Array with: sum), (heightShapes allButLast collect: [ :h | temp := temp - h log ])
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> previousSummaryMethods: summaryMethods of: testCase [ 
+	^ testCase parents flatCollect: [:tC | [ summaryMethods at: tC generationNumber -> tC idPopulation ] on: KeyNotFound do: [ #() ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
