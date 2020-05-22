@@ -33,9 +33,12 @@ SMemo >> at: summaryExecMethod of: testCase ifPresent: presentBlock ifAbsent: ab
 { #category : #accessing }
 SMemo >> at: summaryExecMethod of: testCase put: aValue [
 	self at: summaryExecMethod of: testCase 
-		ifAbsent: [ memo at: ( summaryExecMethod executorClass -> summaryExecMethod selector) 
+		ifAbsent: (Array 
+			with: [  memo at: ( summaryExecMethod executorClass -> summaryExecMethod selector) 
 				put: ( Dictionary new at: testCase generationNumber 
 					put: (Dictionary new at: testCase idPopulation put: aValue; yourself ); yourself ) ]
+			with: [:dict | dict at: testCase generationNumber put: (Dictionary new at: testCase idPopulation put: aValue; yourself) ]
+			with: [:dict | dict at: testCase idPopulation put: aValue ])
 ]
 
 { #category : #initialization }
