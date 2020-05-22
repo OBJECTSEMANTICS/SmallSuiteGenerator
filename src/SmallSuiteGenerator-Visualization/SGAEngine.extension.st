@@ -343,10 +343,17 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: associations using: memo and: summaryMethods [
-	| currentCoverage prevSummaryMethods |
+	| currentCoverage prevSummaryMethods  |
 	prevSummaryMethods := associations select: [ :assoc | assoc key selector = summaryMethod selector ].
 	prevSummaryMethods ifEmpty: [ ^ true ].
-	^ ((Array with: summaryMethod) difference: (prevSummaryMethods collect: #key)) isNotEmpty or: [ 
+	^ ((Array with: summaryMethod) difference: (prevSummaryMethods collect: #key)) isNotEmpty or: [ |max index|
+		max := 0.
+		index := 0.
+		prevSummaryMethods := prevSummaryMethods do: [ :prev | | result |
+		result := self fitnessOf: prev key.
+		result > max ifTrue: [ max := result. index := index + 1.  ] ]. 
+		index == 0 ifFalse: [ 
+		prevSummaryMethods := Array with: (prevSummaryMethods at: index) ].
 		currentCoverage := self fitnessOf: summaryMethod.
 		prevSummaryMethods 
 		anySatisfy: [ :assoc | 
@@ -402,13 +409,13 @@ SGAEngine >> methodShapeGroup: testCase with: dictionary [
 	summaryMethods := dictionary at: 'filteredSummaryMethods'.
 	prevSummaryMethods := self previousSummaryMethods: summaryMethods of: testCase.
 	group addAll: ((summaryMethods at: testCase generationNumber -> testCase idPopulation)
-		select: [:summary | self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo and: summaryMethods ]
+		select: [:summary |
+			memo at: summary of: testCase put: (self fitnessOf: summary).
+			self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo and: summaryMethods ]
 		thenCollect: [:summary | 
-			| valueFitness scaleColor |
-			valueFitness := self fitnessOf: summary.
-			memo at: summary of: testCase put: valueFitness.
+			| scaleColor |
 			scaleColor := scaleColorBlock value: summary executorClass -> summary selector.
-			(self methodShape: summary withGradientFrom: (scaleColor scale: valueFitness) to: (scaleColor scale: 100)) @ highlight; yourself.
+			(self methodShape: summary withGradientFrom: (scaleColor scale: (memo at: summary of: testCase)) to: (scaleColor scale: 100)) @ highlight; yourself.
 		]).
 	RSGridLayout on: group.
 	^ group
