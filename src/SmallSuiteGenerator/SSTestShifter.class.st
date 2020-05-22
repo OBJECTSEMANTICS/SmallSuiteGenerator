@@ -70,6 +70,7 @@ SSTestShifter >> addAssignment: anExpression [
 
 { #category : #adding }
 SSTestShifter >> addChild: aTestCase [
+	children detect: [ :tC | tC generationNumber = aTestCase generationNumber and: [ tC idPopulation == aTestCase idPopulation ] ] ifFound: [ self halt ].
 	children add: aTestCase
 ]
 
@@ -181,6 +182,7 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 
 { #category : #accessing }
 SSTestShifter >> addParent: aTestCase [
+	parents detect: [ :tC | tC generationNumber == aTestCase generationNumber and: [ tC idPopulation == aTestCase idPopulation ] ] ifFound: [ self halt ].
    parents add: aTestCase.
 	aTestCase addChild: self.
 ]
@@ -256,7 +258,7 @@ SSTestShifter >> allParents [
 	^ list
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestShifter >> allParents: testCase on: collection using: associationSet [
 	testCase parents 
 		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
@@ -558,7 +560,7 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  parents := Set new.
+  parents := OrderedCollection new.
   children := OrderedCollection new.
   selectionStrategy := SGARouletteSelection new.
 ]
@@ -1045,13 +1047,12 @@ SSTestShifter >> referencesIndexes: expression [
 ]
 
 { #category : #removing }
-SSTestShifter >> removeChild: testCase [ 
+SSTestShifter >> removeChild: testCase [
 	| index |
 	index := 0.
 	children detect: [:tC | index := index + 1.
-		(tC generationNumber = testCase generationNumber) and: [ tC idPopulation = testCase idPopulation ] ]
+		(tC generationNumber == testCase generationNumber) and: [ tC idPopulation == testCase idPopulation ] ]
 		ifFound: [ :tC | children removeAt: index ]
-		ifNone: [ self halt ]
 ]
 
 { #category : #removing }

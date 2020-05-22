@@ -90,19 +90,16 @@ SGAEngine >> addLegend: dictionary on: container withFontColor: color [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addSurvivorTestCase: testCase on: collection using: set and: maxNumber [
-	| selected association additionBlock |
+	| selected association |
 	association := testCase generationNumber -> testCase idPopulation.
-	selected := testCase generationNumber == maxNumber and: [ (set includes: association) not ].
-	additionBlock := [ set add: association.
-		collection add: testCase ].
-	selected ifTrue: [ 
-		additionBlock value.
-		^ true ]. 
+	selected := testCase generationNumber == maxNumber.
 	selected ifFalse: [
-		testCase children do: [ :each | 
-		selected := selected or: [ (set includes: each generationNumber -> each idPopulation) or: [self addSurvivorTestCase: each on: collection using: set and: maxNumber ] ] ] ].
+		testCase children do: [ :each | | aux | 
+			aux := (set includes: each generationNumber -> each idPopulation) or: [self addSurvivorTestCase: each on: collection using: set and: maxNumber ].
+			selected := selected or: [ aux ] ] ].
 	selected ifTrue: [ 
-		(set includes: association) ifFalse: additionBlock.
+		(set includes: association) ifFalse: [ set add: association.
+		collection add: testCase ].
 		^ true ]. 
 	^ false
 ]
@@ -250,9 +247,9 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor andSize: size [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> filteredSummaryMethods: testCases [
   ^ (testCases 
-		collect: [:tC |  tC generationNumber -> tC idPopulation -> 
+		collect: [:tC |  (tC generationNumber -> tC idPopulation) -> 
 			(tC summaryExecutionMethods 
-				select: [:summary |  summary executorClass = self targetClassName or: [ (tC executorClass splitOn: ' ') first = targetClassName ] ]) ]) asDictionary 
+				select: [:summary |  summary executorClass = self targetClassName or: [ (summary executorClass splitOn: ' ') first = targetClassName ] ]) ]) asDictionary 
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -313,8 +310,9 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 	generationGroup := RSGroup new.
 	filteredList := OrderedCollection new.
 	set := Set new.
-	(logs flatCollect: #population) do: [ :tC | 
-		self addSurvivorTestCase: tC on: filteredList using: set and: logs size ].
+	logs first population do: [ :tC | self addSurvivorTestCase: tC on: filteredList using: set and: logs size ].
+	"(logs flatCollect: #population) do: [ :tC | 
+		self addSurvivorTestCase: tC on: filteredList using: set and: logs size ]."
 	filteredList sort: [ :tC1 :tC2 | (tC1 generationNumber < tC2 generationNumber) or: [ (tC1 generationNumber = tC2 generationNumber) and: [  tC1 children size < tC2 children size ] ] ].
 	memo := SMemo new.
 	shapeHeights := OrderedCollection new.
@@ -344,35 +342,17 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: previous using: memo [
-	| currentCoverage |
-	^ ((Array with: summaryMethod) difference: previous) isNotEmpty or: [ 
-		currentCoverage := self fitnessOf: summaryMethod.
-		previous 
-		anySatisfy: [ :summary | 
-			memo at: summary of: testCase 
-			ifPresent: [ :value | value < currentCoverage ]
-			ifAbsent: [ testCase parents 
-				detect: [ :tC | self isCoverageSummary: summaryMethod of: tC newOrHigherThan: (self previousSummaryMethods: summary of: tC) using: memo ]
-				ifFound: [ true ]
-				ifNone: [ false ]  ] ] ]
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: previous using: memo and: summaryMethods [
+SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: associations using: memo and: summaryMethods [
 	| currentCoverage prevSummaryMethods |
-	prevSummaryMethods := previous select: [ :prev | prev selector = summaryMethod selector ].
+	prevSummaryMethods := associations select: [ :assoc | assoc key selector = summaryMethod selector ].
 	prevSummaryMethods ifEmpty: [ ^ true ].
-	^ ((Array with: summaryMethod) difference: prevSummaryMethods) isNotEmpty or: [ 
+	^ ((Array with: summaryMethod) difference: (prevSummaryMethods collect: #key)) isNotEmpty or: [ 
 		currentCoverage := self fitnessOf: summaryMethod.
 		prevSummaryMethods 
-		anySatisfy: [ :summary | 
-			memo at: summary of: testCase 
+		anySatisfy: [ :assoc | 
+			memo at: assoc key of: assoc value 
 			ifPresent: [ :value | value < currentCoverage ]
-			ifAbsent: [ testCase parents 
-				detect: [ :tC | [ self isCoverageSummary: summaryMethod of: tC newOrHigherThan: (self previousSummaryMethods: summaryMethods of: testCase) using: memo and: summaryMethods ] on: KeyNotFound do: [ false ] ]
-				ifFound: [ true ]
-				ifNone: [ false ]  ] ] ]
+			ifAbsent: [ false ] ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -413,33 +393,6 @@ SGAEngine >> methodShape: summaryExecMethod withGradientFrom: darkColor to: ligh
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> methodShapeGroup: testCase ofColor: scaleColorBlock memo: memo and: highlight [
-	| group prevSummaryMethods |
-	group := RSGroup new.
-	"conditionBlock := [:summary | (summary executorClass = self targetClassName) 
-			or: [ (summary executorClass splitOn: ' ') first = self targetClassName ] ].
-	prevSummaryMethods := (testCase parents
-		flatCollect: [:tC | tC summaryExecutionMethods select: [ :summary | conditionBlock value: summary ]
-			]) asSet."
-	prevSummaryMethods := self previousSummaryMethodsOf: testCase.
-	group addAll: (testCase summaryExecutionMethods 
-		select: [:summary | (summary executorClass = self targetClassName
-			or: [ (summary executorClass splitOn: ' ') first = self targetClassName ]) and: [ | previous |
-				previous := prevSummaryMethods select: [ :prev | prev selector = summary selector ].
-				previous isEmpty or: [ 
-				self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo ] ] ]
-		thenCollect: [:summary | 
-			| valueFitness scaleColor |
-			valueFitness := self fitnessOf: summary.
-			memo at: summary of: testCase put: valueFitness.
-			scaleColor := scaleColorBlock value: summary executorClass -> summary selector.
-			(self methodShape: summary withGradientFrom: (scaleColor scale: valueFitness) to: (scaleColor scale: 100)) @ highlight; yourself.
-		]).
-	RSGridLayout on: group.
-	^ group
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> methodShapeGroup: testCase with: dictionary [
 	| group prevSummaryMethods memo scaleColorBlock highlight summaryMethods |
 	group := RSGroup new.
@@ -471,7 +424,9 @@ SGAEngine >> positionsOf: heightShapes onYAxis: height [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> previousSummaryMethods: summaryMethods of: testCase [ 
-	^ testCase parents flatCollect: [:tC | [ summaryMethods at: tC generationNumber -> tC idPopulation ] on: KeyNotFound do: [ #() ] ]
+	^ testCase parents flatCollect: [:tC | | association |
+		association := tC generationNumber -> tC idPopulation.
+		[(summaryMethods at: association) collect: [ :sum | sum -> tC ] ] on: KeyNotFound do: [ #() ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -565,22 +520,6 @@ SGAEngine >> testCaseShape: testCase ofColor: dictColor using: dictionary and: f
 	group := RSGroup new.
 	group 
 		add: (self methodShapeGroup: testCase with: dictionary);
-		add: (self progressBarFrom: fitnessSeed to: ([testCase fitnessByClass values first at: targetClassName ifAbsent: 0] on: SubscriptOutOfBounds do: [0]) ofColor: dictColor).
-	RSVerticalLineLayout on: group.
-	^ RSComposite new 
-		shapes: (group flatCollect: #yourself);
-		paint: (dictColor at: 'backgroundBoxMethod');
-		model: testCase;
-		padding: 10;
-		draggable 
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> testCaseShape: testCase ofColor: dictColor using: memo fitnessSeed: fitnessSeed highlight: highlight and: scaleColorBlock [ 
-	| group |
-	group := RSGroup new.
-	group 
-		add: (self methodShapeGroup: testCase ofColor: scaleColorBlock memo: memo and: highlight);
 		add: (self progressBarFrom: fitnessSeed to: ([testCase fitnessByClass values first at: targetClassName ifAbsent: 0] on: SubscriptOutOfBounds do: [0]) ofColor: dictColor).
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
