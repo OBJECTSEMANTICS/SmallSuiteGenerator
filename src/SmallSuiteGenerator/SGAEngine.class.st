@@ -151,10 +151,6 @@ SGAEngine >> createNewPopulation [
 			newPopulation addAll: (selectedOptions collect: [:option | 
 				newNumber := newNumber +1.
 				option idPopulation: newNumber ]) ].
-		  "selectedOptions do: [ :option | 
-					newNumber:= newNumber + 1.
-					option idPopulation: newNumber.
-					newPopulation size < currentPopulationSize ifTrue: [ newPopulation add: option ] ]]."
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.

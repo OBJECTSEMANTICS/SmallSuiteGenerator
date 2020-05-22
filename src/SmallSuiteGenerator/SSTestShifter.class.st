@@ -70,7 +70,6 @@ SSTestShifter >> addAssignment: anExpression [
 
 { #category : #adding }
 SSTestShifter >> addChild: aTestCase [
-	children detect: [ :tC | tC generationNumber = aTestCase generationNumber and: [ tC idPopulation == aTestCase idPopulation ] ] ifFound: [ self halt ].
 	children add: aTestCase
 ]
 
@@ -182,7 +181,6 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 
 { #category : #accessing }
 SSTestShifter >> addParent: aTestCase [
-	parents detect: [ :tC | tC generationNumber == aTestCase generationNumber and: [ tC idPopulation == aTestCase idPopulation ] ] ifFound: [ self halt ].
    parents add: aTestCase.
 	aTestCase addChild: self.
 ]
