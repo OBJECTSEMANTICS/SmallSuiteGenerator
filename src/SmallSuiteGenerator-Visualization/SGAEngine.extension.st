@@ -321,23 +321,15 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: associations using: memo [
-	| currentCoverage prevSummaryMethods  |
+	| prevSummaryMethods  |
 	prevSummaryMethods := associations select: [ :assoc | assoc key selector = summaryMethod selector ].
 	prevSummaryMethods ifEmpty: [ ^ true ].
-	^ ((Array with: summaryMethod) difference: (prevSummaryMethods collect: #key)) isNotEmpty or: [ |max index|
-		max := 0.
-		index := 0.
-		prevSummaryMethods := prevSummaryMethods do: [ :prev | | result |
-		result := self fitnessOf: prev key.
-		result > max ifTrue: [ max := result. index := index + 1.  ] ]. 
-		index == 0 ifFalse: [ 
-		prevSummaryMethods := Array with: (prevSummaryMethods at: index) ].
-		currentCoverage := self fitnessOf: summaryMethod.
-		prevSummaryMethods 
-		anySatisfy: [ :assoc | 
-			memo at: assoc key of: assoc value 
-			ifPresent: [ :value | value < currentCoverage ]
-			ifAbsent: [ false ] ] ]
+	^ ((Array with: summaryMethod) difference: (prevSummaryMethods collect: #key)) isNotEmpty or: [ | betterPrevious |
+		prevSummaryMethods sort: [ :assocA :assocB | (self fitnessOf: assocA key) > (self fitnessOf: assocB key) ].
+		betterPrevious := prevSummaryMethods first.
+			memo at: betterPrevious key of: betterPrevious value 
+			ifPresent: [ :value | value < (self fitnessOf: summaryMethod) ]
+			ifAbsent: [ false ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -409,7 +401,7 @@ SGAEngine >> positionsOf: heightShapes onYAxis: height [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> previousSummaryMethods: testCase [
 	^ testCase parents 
-		flatCollect: [:tC | testCase summaryExecutionMethods 
+		flatCollect: [:tC | tC summaryExecutionMethods 
 			collect: [ :sum | sum -> tC ] ]
 ]
 
