@@ -377,7 +377,7 @@ SGAEngine >> methodShapeGroup: testCase with: dictionary [
 	scaleColorBlock := dictionary at: 'scaleColorBlock'.
 	highlight := dictionary at: 'highlight'.
 	prevSummaryMethods := self previousSummaryMethods: testCase.
-	group addAll: (testCase summaryExecutionMethods
+	group addAll: ((self summaryMethodsOfTargetClass: testCase summaryExecutionMethods)
 		select: [:summary |
 			memo at: summary of: testCase put: (self fitnessOf: summary).
 			self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo ]
@@ -401,7 +401,7 @@ SGAEngine >> positionsOf: heightShapes onYAxis: height [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> previousSummaryMethods: testCase [
 	^ testCase parents 
-		flatCollect: [:tC | tC summaryExecutionMethods 
+		flatCollect: [:tC | (self summaryMethodsOfTargetClass: tC summaryExecutionMethods) 
 			collect: [ :sum | sum -> tC ] ]
 ]
 
@@ -488,6 +488,11 @@ SGAEngine >> sparkCircleGroupOfColor: dictColor andSize: size [
 		RSComposite new
 			shapes: group;
 			yourself ] as: RSGroup
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> summaryMethodsOfTargetClass: summaryMethods [
+	^ summaryMethods select: [ :summary | (summary executorClass = self targetClassName) or: [ (summary executorClass splitOn: ' ') first = self targetClassName ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
