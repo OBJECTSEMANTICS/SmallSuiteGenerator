@@ -13,37 +13,38 @@ SMemoTest >> setUp [
 ]
 
 { #category : #tests }
-SMemoTest >> testAtOf [
-	| summaryExecMethod generationNumber |
-	generationNumber := 1.
+SMemoTest >> testAtOfAnd [
+	| summaryExecMethod |
 	summaryExecMethod := SLSummaryExecutionMethod new 	
 		executed: true;
 		executorClass: #SSTeacher.
-	self assert: (memo at: summaryExecMethod of: generationNumber) isNil.
+	self assert: (memo at: summaryExecMethod of: 1 and: 1) isNil.
 ]
 
 { #category : #tests }
-SMemoTest >> testAtOfIfPresentIfAbsent [
-	| summaryExecMethod generationNumber result |
+SMemoTest >> testAtOfAndIfPresentIfAbsent [
+	| summaryExecMethod generationNumber idPopulation result |
 	generationNumber := 1.
+	idPopulation := 1.
 	summaryExecMethod := SLSummaryExecutionMethod new 	
 		executed: true;
 		executorClass: #SSTeacher.
-	result := memo at: summaryExecMethod of: generationNumber ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
+	result := memo at: summaryExecMethod of: generationNumber and: idPopulation ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
 	self deny: result.
-	memo at: summaryExecMethod of: generationNumber put: 50.
-	result := memo at: summaryExecMethod of: generationNumber ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
+	memo at: summaryExecMethod of: generationNumber and: idPopulation put: 50.
+	result := memo at: summaryExecMethod of: generationNumber and: idPopulation ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
 	self assert: result
 ]
 
 { #category : #tests }
-SMemoTest >> testAtOfPut [
-	| summaryExecMethod generationNumber |
+SMemoTest >> testAtOfAndPut [
+	| summaryExecMethod generationNumber idPopulation |
 	generationNumber := 1.
+	idPopulation := 1.
 	summaryExecMethod := SLSummaryExecutionMethod new 	
 		executed: true;
 		selector: #idTeacher;
 		executorClass: #SSTeacher.
-	memo at: summaryExecMethod of: generationNumber put: 50.
-	self assert: (memo at: summaryExecMethod of: generationNumber) equals: 50.
+	memo at: summaryExecMethod of: generationNumber and: idPopulation put: 50.
+	self assert: (memo at: summaryExecMethod of: generationNumber and: idPopulation) equals: 50.
 ]

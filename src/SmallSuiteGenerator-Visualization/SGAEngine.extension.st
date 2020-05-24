@@ -320,8 +320,16 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> isCoverageSummary: summaryMethod of: generationNumber newOrHigher: memo [
-	^ memo at: summaryMethod ofPreviousThan: generationNumber ifPresent: [ :value | value < (self fitnessOf: summaryMethod) ] ifAbsent: [ true ].
+SGAEngine >> isCoverage: coverage ofSummaryMethod: summaryMethod in: testCase newOrHigher: memo [
+	| previousValues |
+	testCase parents ifEmpty: [ ^ true ].
+	previousValues := testCase parents 
+		collect: [ :tC | memo at: summaryMethod of: tC generationNumber and: tC idPopulation ]
+		thenSelect: [ :val | val isNotNil ].
+	^ previousValues 
+		ifNotEmpty: [ previousValues max < coverage ] 
+		ifEmpty: [ testCase parents allSatisfy: [ :tC |
+				self isCoverage: coverage ofSummaryMethod: summaryMethod in: tC newOrHigher: memo ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -370,13 +378,14 @@ SGAEngine >> methodShapeGroup: testCase with: dictionary [
 	highlight := dictionary at: 'highlight'.
 	group addAll: ((self summaryMethodsOfTargetClass: testCase summaryExecutionMethods)
 		select: [:summary |
-			self isCoverageSummary: summary of: testCase generationNumber newOrHigher: memo ]
+			| coverage |
+			coverage := self fitnessOf: summary.
+			memo at: summary of: testCase generationNumber and: testCase idPopulation put: coverage.
+			self isCoverage: coverage ofSummaryMethod: summary in: testCase newOrHigher: memo ]
 		thenCollect: [:summary | 
-			| scaleColor fitnessSummary |
+			| scaleColor |
 			scaleColor := scaleColorBlock value: summary executorClass -> summary selector.
-			fitnessSummary := self fitnessOf: summary.
-			memo at: summary of: testCase generationNumber put: fitnessSummary.
-			(self methodShape: summary withGradientFrom: (scaleColor scale: fitnessSummary) to: (scaleColor scale: 100)) @ highlight; yourself.
+			(self methodShape: summary withGradientFrom: (scaleColor scale: (self fitnessOf: summary)) to: (scaleColor scale: 100)) @ highlight; yourself.
 		]).
 	RSGridLayout on: group.
 	^ group

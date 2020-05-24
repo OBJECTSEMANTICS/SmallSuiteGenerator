@@ -8,51 +8,42 @@ Class {
 }
 
 { #category : #accessing }
-SMemo >> at: summaryExecMethod of: generationNumber [
-	^ self at: summaryExecMethod of: generationNumber ifAbsent: [ nil ]
+SMemo >> at: summaryExecMethod of: generationNumber and: idPopulation [
+	^ self at: summaryExecMethod of: generationNumber and: idPopulation ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
-SMemo >> at: summaryExecMethod of: generationNumber ifAbsent: absentBlock [
+SMemo >> at: summaryExecMethod of: generationNumber and:idPopulation ifAbsent: absentBlock [
 	^ memo at: summaryExecMethod executorClass -> summaryExecMethod selector
 		ifPresent: [ :dictSummary | dictSummary at: summaryExecMethod 
-			ifPresent: [ :dict | dict at: generationNumber ifAbsent: absentBlock ]
+			ifPresent: [ :dictGeneration | dictGeneration at: generationNumber 
+				ifPresent: [ :dictIdP | dictIdP at: idPopulation ifAbsent: absentBlock  ] 
+				ifAbsent: absentBlock ]
 			ifAbsent: absentBlock ]
 		ifAbsent: absentBlock
 ]
 
 { #category : #accessing }
-SMemo >> at: summaryExecMethod of: generationNumber ifPresent: presentBlock ifAbsent: absentBlock [
-	^  (self at: summaryExecMethod of: generationNumber)
+SMemo >> at: summaryExecMethod of: generationNumber and: idPopulation ifPresent: presentBlock ifAbsent: absentBlock [
+	^  (self at: summaryExecMethod of: generationNumber and: idPopulation)
 		ifNotNil: [ :value | presentBlock cull: value ] 
 		ifNil: absentBlock
 ]
 
 { #category : #accessing }
-SMemo >> at: summaryExecMethod of: generationNumber put: newCoverage [
-	self at: summaryExecMethod of: generationNumber
+SMemo >> at: summaryExecMethod of: generationNumber and: idPopulation put: newCoverage [
+	self at: summaryExecMethod of: generationNumber and: idPopulation 
 		ifPresent: [ :value | 
-			value < newCoverage ifTrue: [((memo at: summaryExecMethod executorClass -> summaryExecMethod selector) at: summaryExecMethod) at: generationNumber put: newCoverage ]  ]
+			value < newCoverage ifTrue: [(((memo at: summaryExecMethod executorClass -> summaryExecMethod selector) at: summaryExecMethod) at: generationNumber) at: idPopulation put: newCoverage ]  ]
 		ifAbsent: [ memo at: summaryExecMethod executorClass -> summaryExecMethod selector 
 			ifPresent: [ :dictSummary | dictSummary at: summaryExecMethod 
-				ifPresent: [ :dictGeneration | dictGeneration at: generationNumber put: newCoverage ] 
-				ifAbsentPut: [ Dictionary new at: generationNumber put: newCoverage; yourself ] ]
+				ifPresent: [ :dictGeneration | dictGeneration at: generationNumber
+					ifPresent: [ :dictPop | dictPop at: idPopulation put: newCoverage ]
+					ifAbsentPut: [ Dictionary new at: idPopulation put: newCoverage; yourself ] ] 
+				ifAbsentPut: [ Dictionary new at: generationNumber put: (Dictionary new at: idPopulation put: newCoverage; yourself); yourself ] ]
 			ifAbsentPut: [ (Dictionary new at: summaryExecMethod 
-				put: (Dictionary new at: generationNumber put: newCoverage; yourself); yourself) ]
+				put: (Dictionary new at: generationNumber put: (Dictionary new at: idPopulation put: newCoverage; yourself); yourself); yourself) ]
 		]
-]
-
-{ #category : #accessing }
-SMemo >> at: summaryExecMethod ofPreviousThan: generationNumber ifPresent: presentBlock ifAbsent: absentBlock [
-	| max flag |
-	max := 0.
-	flag := false.
-	generationNumber - 1 == 0 ifTrue: [ ^ absentBlock value ].
-	(generationNumber - 1 to: 1 by: -1) do: [:generation | | value | 
-		value := self at: summaryExecMethod of: generation.
-		value ifNotNil: [ flag := true.
-			max := max max: value ] ].
-	^ flag ifTrue: [ presentBlock value: max ] ifFalse: absentBlock 
 ]
 
 { #category : #initialization }
