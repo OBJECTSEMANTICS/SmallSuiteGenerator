@@ -320,16 +320,8 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> isCoverageSummary: summaryMethod of: testCase newOrHigherThan: associations using: memo [
-	| prevSummaryMethods  |
-	prevSummaryMethods := associations select: [ :assoc | assoc key selector = summaryMethod selector ].
-	prevSummaryMethods ifEmpty: [ ^ true ].
-	^ ((Array with: summaryMethod) difference: (prevSummaryMethods collect: #key)) isNotEmpty or: [ | betterPrevious |
-		prevSummaryMethods sort: [ :assocA :assocB | (self fitnessOf: assocA key) > (self fitnessOf: assocB key) ].
-		betterPrevious := prevSummaryMethods first.
-			memo at: betterPrevious key of: betterPrevious value 
-			ifPresent: [ :value | value < (self fitnessOf: summaryMethod) ]
-			ifAbsent: [ false ] ]
+SGAEngine >> isCoverageSummary: summaryMethod of: generationNumber newOrHigher: memo [
+	^ memo at: summaryMethod ofPreviousThan: generationNumber ifPresent: [ :value | value < (self fitnessOf: summaryMethod) ] ifAbsent: [ true ].
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -371,20 +363,20 @@ SGAEngine >> methodShape: summaryExecMethod withGradientFrom: darkColor to: ligh
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> methodShapeGroup: testCase with: dictionary [
-	| group prevSummaryMethods memo scaleColorBlock highlight |
+	| group memo scaleColorBlock highlight |
 	group := RSGroup new.
 	memo := dictionary at: 'memo'.
 	scaleColorBlock := dictionary at: 'scaleColorBlock'.
 	highlight := dictionary at: 'highlight'.
-	prevSummaryMethods := self previousSummaryMethods: testCase.
 	group addAll: ((self summaryMethodsOfTargetClass: testCase summaryExecutionMethods)
 		select: [:summary |
-			memo at: summary of: testCase put: (self fitnessOf: summary).
-			self isCoverageSummary: summary of: testCase newOrHigherThan: prevSummaryMethods using: memo ]
+			self isCoverageSummary: summary of: testCase generationNumber newOrHigher: memo ]
 		thenCollect: [:summary | 
-			| scaleColor |
+			| scaleColor fitnessSummary |
 			scaleColor := scaleColorBlock value: summary executorClass -> summary selector.
-			(self methodShape: summary withGradientFrom: (scaleColor scale: (memo at: summary of: testCase)) to: (scaleColor scale: 100)) @ highlight; yourself.
+			fitnessSummary := self fitnessOf: summary.
+			memo at: summary of: testCase generationNumber put: fitnessSummary.
+			(self methodShape: summary withGradientFrom: (scaleColor scale: fitnessSummary) to: (scaleColor scale: 100)) @ highlight; yourself.
 		]).
 	RSGridLayout on: group.
 	^ group
@@ -396,13 +388,6 @@ SGAEngine >> positionsOf: heightShapes onYAxis: height [
 	sum := heightShapes allButLast log sum.
 	temp := sum.
 	^ (Array with: sum), (heightShapes allButLast collect: [ :h | temp := temp - h log ])
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> previousSummaryMethods: testCase [
-	^ testCase parents 
-		flatCollect: [:tC | (self summaryMethodsOfTargetClass: tC summaryExecutionMethods) 
-			collect: [ :sum | sum -> tC ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
