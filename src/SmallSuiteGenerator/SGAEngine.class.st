@@ -215,8 +215,10 @@ SGAEngine >> doSelection [
 
 { #category : #'groups collecting' }
 SGAEngine >> eliteOfCurrentPopulation [
-	| endIndex index |
-	endIndex := (population size * elitismRate * 0.01) asInteger.
+	| endIndex index popSize |
+	popSize := population size.
+	endIndex := ((popSize * elitismRate * 0.01) round: 0) asInteger.
+	(popSize > 0 and: [ endIndex == 0 ]) ifTrue: [ endIndex := 1 ].
 	index := 0.
 	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.

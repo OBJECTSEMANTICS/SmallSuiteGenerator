@@ -35,7 +35,7 @@ STestCaseFactory class >> darkColors [
 		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
 		"at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
 		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
-		at: 'backgroundHigherFitnessTestCase' put:  (Color fromHexString: '0B6969'"'1E7676'");
+		at: 'backgroundHigherFitnessTestCase' put:  (Color fromHexString: '1B8D8D' "'0B6969'""'1E7676'");
 		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
 		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
 		at: 'baseBar' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
@@ -63,7 +63,7 @@ STestCaseFactory class >> lightColors [
 		at: 'background' put: Color white;
 		"at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
 		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
-		at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: '0B6969'"'1E7676'");
+		at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: '1B8D8D'"'0B6969'""'1E7676'");
 		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
 		at: 'scaleDarker' put: (Color r: 0 g: 0 b: 0 alpha: 0.1)"(Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253)";
 		at: 'baseBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
