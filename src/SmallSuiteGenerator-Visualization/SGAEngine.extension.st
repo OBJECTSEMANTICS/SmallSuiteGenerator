@@ -361,7 +361,14 @@ SGAEngine >> methodShape: summaryExecMethod withGradientFrom: darkColor to: ligh
 	^ RSComposite new size: 50;
 				color: gradient; 
 				model: summaryExecMethod;
-				popupText: [ :summary | summary executorClass, '->', summary selector ];
+				popupText: [ :summary |  String streamContents: [ :stream | 
+							stream nextPutAll: summary executorClass;
+							nextPutAll: '->';
+							nextPutAll: summary selector.
+							summaryExecMethod summaryStatements 
+								select: #executed 
+								thenDo: [:sSt | stream nextPut: Character cr;
+									nextPutAll: sSt code] ] ];
 				shapes: (group collect: #yourself);
 				yourself.
 				
@@ -491,15 +498,18 @@ SGAEngine >> summaryMethodsOfTargetClass: summaryMethods [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> testCaseShape: testCase ofColor: dictColor using: dictionary and: fitnessSeed [
-	| group |
+	| group higher block progressValue |
+	block := [ :tC | [ tC fitnessByClass values first at: self targetClassName ifAbsent: 0 ] on: SubscriptOutOfBounds do: [ 0 ] ].
+	progressValue := block value: testCase.
+	higher := testCase parents ifEmpty: [ false ] ifNotEmpty: [ testCase parents allSatisfy: [ :tC | (block value: tC) < progressValue ] ].
 	group := RSGroup new.
 	group 
 		add: (self methodShapeGroup: testCase with: dictionary);
-		add: (self progressBarFrom: fitnessSeed to: ([testCase fitnessByClass values first at: targetClassName ifAbsent: 0] on: SubscriptOutOfBounds do: [0]) ofColor: dictColor).
+		add: (self progressBarFrom: fitnessSeed to: progressValue ofColor: dictColor).
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
-		paint: (dictColor at: 'backgroundBoxMethod');
+		paint: (higher ifTrue: [dictColor at: 'backgroundHigherFitnessTestCase' ] ifFalse: [dictColor at: 'backgroundTestCase' ]);
 		model: testCase;
 		padding: 10;
 		draggable 
