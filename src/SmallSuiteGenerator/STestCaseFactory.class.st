@@ -33,7 +33,9 @@ Class {
 STestCaseFactory class >> darkColors [
 	^ Dictionary new 
 		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		"at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
+		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'backgroundHigherFitnessTestCase' put:  (Color fromHexString: '1B8D8D' "'0B6969'""'1E7676'");
 		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
 		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
 		at: 'baseBar' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
@@ -49,7 +51,9 @@ STestCaseFactory class >> darkColors [
 		at: 'border' put: Color white;
 		at: 'axis' put: Color white;
 		at: 'font' put: Color white;
-		at: 'rangeMethodColor' put: (Array with: (Color r: 0 g: 1 b: 0.67) with: (Color r: 246/255 g: 213/255 b: 92/255) with: (Color r: 242/255 g: 61/255 b: 29/255) with: (Color r:1 g:20/255 b:147/255) with: (Color r: 24/255 g: 159/255 b:196/255));
+		"at: 'rangeMethodColor' put: (Array with: (Color r: 0 g: 1 b: 0.67) with: (Color r: 246/255 g: 213/255 b: 92/255) with: (Color r: 242/255 g: 61/255 b: 29/255) with: (Color r:1 g:20/255 b:147/255) with: (Color r: 24/255 g: 159/255 b:196/255));"
+		at: 'rangeMethodColor' put: 
+		(OrderedCollection new add: (Color fromHexString: '6bffb8'); add: (Color fromHexString: '97d1f4'); add: (Color fromHexString: 'ffcbf2'); yourself);
 		yourself.
 ]
 
@@ -57,7 +61,9 @@ STestCaseFactory class >> darkColors [
 STestCaseFactory class >> lightColors [
 	^ Dictionary new 
 		at: 'background' put: Color white;
-		at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		"at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
+		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
+		at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: '1B8D8D'"'0B6969'""'1E7676'");
 		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
 		at: 'scaleDarker' put: (Color r: 0 g: 0 b: 0 alpha: 0.1)"(Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253)";
 		at: 'baseBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);

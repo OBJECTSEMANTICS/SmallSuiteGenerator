@@ -171,9 +171,9 @@ SSTestCase >> tearDown [
 ]
 
 { #category : #repairing }
-SSTestCase >> updateWith: anotherTestCase andId: anIdPopulation [
+SSTestCase >> updateWith: anotherTestCase [
 	self generationNumber: anotherTestCase generationNumber.
-	self idPopulation: anIdPopulation.
+	self idPopulation: anotherTestCase idPopulation.
 	anotherTestCase parents do: [ :parent | 
 		parent removeChild: anotherTestCase.
 		self addParent:  parent ]

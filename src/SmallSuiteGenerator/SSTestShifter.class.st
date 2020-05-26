@@ -256,16 +256,15 @@ SSTestShifter >> allParents [
 	^ list
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSTestShifter >> allParents: testCase on: collection using: associationSet [
-	testCase parents do: [ :tC | | assoc |
-		assoc := tC generationNumber -> tC idPopulation.
-		(associationSet includes: assoc) ifFalse: [ 
-			associationSet add: assoc.
+	testCase parents 
+		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
+		thenDo:  [ :tC | 
+			associationSet add: tC generationNumber -> tC idPopulation.
 			collection add: tC.
 			self allParents: tC on: collection using: associationSet	
 		]
-	]
 ]
 
 { #category : #accessing }
@@ -559,7 +558,7 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  parents := Set new.
+  parents := OrderedCollection new.
   children := OrderedCollection new.
   selectionStrategy := SGARouletteSelection new.
 ]
@@ -1046,13 +1045,12 @@ SSTestShifter >> referencesIndexes: expression [
 ]
 
 { #category : #removing }
-SSTestShifter >> removeChild: testCase [ 
+SSTestShifter >> removeChild: testCase [
 	| index |
 	index := 0.
 	children detect: [:tC | index := index + 1.
-		(tC generationNumber = testCase generationNumber) and: [ tC idPopulation = testCase idPopulation ] ]
+		(tC generationNumber == testCase generationNumber) and: [ tC idPopulation == testCase idPopulation ] ]
 		ifFound: [ :tC | children removeAt: index ]
-		ifNone: [ self halt ]
 ]
 
 { #category : #removing }

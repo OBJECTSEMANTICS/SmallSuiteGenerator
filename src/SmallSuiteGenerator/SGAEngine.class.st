@@ -121,14 +121,14 @@ SGAEngine >> computeFitness [
 
 { #category : #creating }
 SGAEngine >> createNewPopulation [
-	| newPopulation currentPopulationSize newNumber lastLowestFitness |
+	| newPopulation currentPopulationSize lastLowestFitness options newNumber |
 	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
 	newNumber := newPopulation size.
   	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
-		  selectedList := selectionStrategy selectOf: initialPopulation.
-        P1 := selectedList first.
+		  selectedList := selectionStrategy selectOf: initialPopulation.   
+		  P1 := selectedList first.
         P2 := selectedList second.
 		  P1copy := self similarChild: P1 with: newNumber + 1.
 		  P2copy := self similarChild: P2 with: newNumber + 2.
@@ -139,16 +139,18 @@ SGAEngine >> createNewPopulation [
 				ifFalse: [ 
 					O1 := (P1copy deepCopy) idPopulation: newNumber + 3; addParent: P1.
               	O2 := (P2copy deepCopy) idPopulation: newNumber + 4; addParent: P2 ].
-        OM1 := self mutateAndUpdate: O1 withId: newNumber + 5.
-        OM2 := self mutateAndUpdate: O2 withId: newNumber + 6.
+        OM1 := self mutateAndUpdate: O1.
+        OM2 := self mutateAndUpdate: O2.
         fitness compute: (Array with: OM1 with: OM2).
-        selectedOptions := self selectTwoBestOf: (Array with: OM1 with: OM2 with: P1copy with: P2copy) excludingAll: newPopulation.
-		  selectedOptions 
-		  	   select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ]       
-				thenDo: [ :option | 
-					newNumber:= newNumber + 1.
-					option idPopulation: newNumber.
-					newPopulation size < currentPopulationSize ifTrue: [ newPopulation add: option ] ]].
+		  options := Array with: OM1 with: OM2 with: P1copy with: P2copy.
+        selectedOptions := (self selectTwoBestOf: options excludingAll: newPopulation) select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ].
+		  selectedOptions := selectedOptions first: (selectedOptions size min: currentPopulationSize - newPopulation size).
+		  options reject: [ :opt | selectedOptions includes: opt ] 
+				thenDo: [ :opt | P1 removeChild: opt.
+					P2 removeChild: opt ].
+			newPopulation addAll: (selectedOptions collect: [:option | 
+				newNumber := newNumber +1.
+				option idPopulation: newNumber ]) ].
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
@@ -213,8 +215,10 @@ SGAEngine >> doSelection [
 
 { #category : #'groups collecting' }
 SGAEngine >> eliteOfCurrentPopulation [
-	| endIndex index |
-	endIndex := (population size * elitismRate * 0.01) asInteger.
+	| endIndex index popSize |
+	popSize := population size.
+	endIndex := ((popSize * elitismRate * 0.01) round: 0) asInteger.
+	(popSize > 0 and: [ endIndex == 0 ]) ifTrue: [ endIndex := 1 ].
 	index := 0.
 	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.
@@ -385,10 +389,10 @@ SGAEngine >> methodTrackingFor: aSymbol [
 ]
 
 { #category : #actions }
-SGAEngine >> mutateAndUpdate: aTestCase withId: idPopulation [
+SGAEngine >> mutateAndUpdate: aTestCase [
 	| newTestCase |
 	newTestCase := mutationOperator mutate: aTestCase.
-   newTestCase updateWith: aTestCase andId: idPopulation.
+   newTestCase updateWith: aTestCase.
 	^ newTestCase 
 ]
 
