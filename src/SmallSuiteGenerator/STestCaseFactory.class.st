@@ -33,7 +33,6 @@ Class {
 STestCaseFactory class >> darkColors [
 	^ Dictionary new 
 		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		"at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
 		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
 		at: 'backgroundHigherFitnessTestCase' put:  (Color fromHexString: '1B8D8D' "'0B6969'""'1E7676'");
 		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
@@ -46,14 +45,17 @@ STestCaseFactory class >> darkColors [
 		at: 'methodCoverage' put: (Color r: 0.9607843137254902 g: 0.5098039215686274 b: 0.7215686274509804);
 		at: 'statementCoverage' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
 		at: 'highlightTestCase' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
-		at: 'highlightMethod' put: (Color r: 111/255 g: 1 b: 233/255 alpha: 0.8);
+		at: 'highlightMethod' put: Color cyan;
 		at: 'fontMethodBox' put: Color white;
 		at: 'border' put: Color white;
 		at: 'axis' put: Color white;
+		at: 'fittestCoverage' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'averageCoverage' put: (Color r: 0.5063538611925709 g: 0.5259042033235581 b: 0.8357771260997068);
+		at: 'lowestCoverage' put: (Color pink);
+		at: 'seedCoverage' put: (Color r: 0.9530791788856305 g: 0.5102639296187683 b: 0.43499511241446726);
 		at: 'font' put: Color white;
-		"at: 'rangeMethodColor' put: (Array with: (Color r: 0 g: 1 b: 0.67) with: (Color r: 246/255 g: 213/255 b: 92/255) with: (Color r: 242/255 g: 61/255 b: 29/255) with: (Color r:1 g:20/255 b:147/255) with: (Color r: 24/255 g: 159/255 b:196/255));"
-		at: 'rangeMethodColor' put: 
-		(OrderedCollection new add: (Color fromHexString: '6bffb8'); add: (Color fromHexString: '97d1f4'); add: (Color fromHexString: 'ffcbf2'); yourself);
+		at: 'rangeMethodColor' put:
+			(#('83142C' 'AF0404' 'BB1542' 'ED3833' 'EB5F5D' 'F3826F' 'FFBA92' 'F0DAB1' 'FFF8CD' 'F7FF56' 'DCFFCC' 'DDF796' 'C3F584' 'A3F7BF' '6bffb8' '42E6A4' '4DD599' '71A95A' '007944' '00818A' '216583' '366ED8' '64C4ED' '5EDFFF' 'B2FCFF' 'FFEDFF' 'C6CBEF' '8186D5' '494CA2' '560764' '930077' 'D527B7' 'FF78AE' 'FFA0D2' ) collect: [:c | Color fromHexString: c ]);
 		yourself.
 ]
 
@@ -61,7 +63,6 @@ STestCaseFactory class >> darkColors [
 STestCaseFactory class >> lightColors [
 	^ Dictionary new 
 		at: 'background' put: Color white;
-		"at: 'backgroundBoxMethod' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
 		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
 		at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: '1B8D8D'"'0B6969'""'1E7676'");
 		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
@@ -78,11 +79,13 @@ STestCaseFactory class >> lightColors [
 		at: 'fontMethodBox' put: Color white;
 		at: 'border' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
 		at: 'axis' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'fittestCoverage' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'averageCoverage' put: (Color r: 0.5063538611925709 g: 0.5259042033235581 b: 0.8357771260997068);
+		at: 'lowestCoverage' put: (Color pink);
+		at: 'seedCoverage' put: (Color r: 0.9530791788856305 g: 0.5102639296187683 b: 0.43499511241446726);
 		at: 'font' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		at: 'rangeMethodColor' put: 
-		(OrderedCollection new add: (Color fromHexString: '6bffb8'); add: (Color fromHexString: '97d1f4'); add: (Color fromHexString: 'ffcbf2'); yourself)
-		"(OrderedCollection new add: (Color fromHexString: '6bffb8'); add: (Color fromHexString: '2ceaa3'); add: (Color fromHexString: '14ddac'); add: (Color fromHexString: '158774'); add: (Color fromHexString: '97d1f4'); add: (Color fromHexString: '74bbe8'); add: (Color fromHexString: '2d92d1'); yourself)"
-		 "(Array with: (Color r: 0 g: 1 b: 0.67) with: (Color r: 246/255 g: 213/255 b: 92/255) (Color r: 242/255 g: 235/255 b: 29/255) (Color r: 0.8 g: 1 b: 0) with: (Color r: 242/255 g: 61/255 b: 29/255) (Color r: 1 g: 0.2 b: 0) with: (Color r:1 g:20/255 b:147/255) with: (Color r: 24/255 g: 159/255 b:196/255) (Color r: 0.35 g: 0.9 b: 0.98))";
+		at: 'rangeMethodColor' put:
+			(#('83142C' 'AF0404' 'BB1542' 'ED3833' 'EB5F5D' 'F3826F' 'FFBA92' 'F0DAB1' 'FFF8CD' 'F7FF56' 'DCFFCC' 'DDF796' 'C3F584' 'A3F7BF' '6bffb8' '42E6A4' '4DD599' '71A95A' '007944' '00818A' '216583' '366ED8' '64C4ED' '5EDFFF' 'B2FCFF' 'FFEDFF' 'C6CBEF' '8186D5' '494CA2' '560764' '930077' 'D527B7' 'FF78AE' 'FFA0D2' ) collect: [:c | Color fromHexString: c ]);
 		yourself.
 ]
 

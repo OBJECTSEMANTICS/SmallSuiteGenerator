@@ -74,17 +74,17 @@ SGAEngine >> addHighlightTestCaseEvent: highlight on: canvas ofColor: color [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addLegend: dictionary on: container withFontColor: color [
+SGAEngine >> addLegend: associations on: container withFontColor: color and: blockLocation [
 	| legend |
 	legend := RSLegend new 
 		container: container;
 		defaultLabel: (RSLabel new color: color; yourself);
 		yourself.
-		dictionary valuesDo: [ :assoc | legend text: assoc key withBoxColor: assoc value ].
+		associations do: [ :assoc | legend text: assoc key withBoxColor: assoc value ].
 		legend leyendDo: [ :l |
 				l
 					scaleBy: 1 ].
-		legend location below offset: 10.
+		blockLocation value: legend.
 		legend build
 ]
 
@@ -179,56 +179,77 @@ SGAEngine >> contributionShapeOfHeight: height color: dictColor and: ys [
 				bottom: 100);
 		border: (RSBorder new width: 2; color: (dictColor at: 'border'); yourself);
 		yourself.
-	self addLegend: infoColor on: element withFontColor: (dictColor at: 'font').
+	self addLegend: infoColor values on: element withFontColor: (dictColor at: 'font') and: [:legend | legend location below offset: 10 ].
 	^ element
 	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> evolutionPoints: ypositions withScale: scale [
-	| startPoint endPoint points ys |
-	points := OrderedCollection new.
-	ys := ypositions allButFirst.
-	startPoint := 0 @ ypositions first.
-	endPoint := 0 @ ypositions first.
+SGAEngine >> evolutionPoints: ypositions fitnessSeed: fitnessSeed withScale: scale [
+	| endPoint points listFittest listLowest listAverage listSeed |
+	points := Dictionary new.
+	endPoint := scale scale: (0 @ ypositions first).
+	listLowest := OrderedCollection new add: endPoint; yourself.
+	listAverage := OrderedCollection new add: endPoint; yourself.
+	listFittest := OrderedCollection new add: endPoint; yourself.
+	listSeed := OrderedCollection new add: endPoint; yourself.
+	points at: 'seed' put: listSeed; 
+		at: 'fittest' put: listFittest;
+		at: 'average' put: listAverage;
+		at: 'lowest' put: listLowest.
 	(self logs collect: [:log | 
-		log fittestTestCase fitnessByClass values first at: targetClassName])
-		doWithIndex: [ :value  :index | 
-			| stepPoint |
-			stepPoint := (value - startPoint x) @ 0.
-			endPoint := endPoint + stepPoint.
-			points add: (scale scale: startPoint);
-			add: (scale scale: endPoint).
-			startPoint :=  (endPoint x) @ (ys at: index).
-			endPoint := startPoint.
+		Array with: log lowestFit values first
+			with: log averageFit values first
+			with: (log fittestTestCase fitnessByClass values first at: targetClassName)])
+		doWithIndex: [ :array  :index | | y |
+			y := ypositions at: index.
+			listLowest add: (scale scale: array first @ y).
+			listAverage add: (scale scale: array second @ y).
+			listFittest add: (scale scale: array third @ y).
+			listSeed add: (scale scale: fitnessSeed @ y)
 		].
 	^ points
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor andSize: size [
-	| composite scale yMax points axis polyLine spaceStick |
+SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitnessSeed andSize: size [
+	| composite scale yMax points axis spaceStick |
 	composite := RSComposite new 
 		color: Color transparent.
 	yMax := yPositions first.
 	scale := NSScale linear 
 		domain: (Array with: 0@0 with: 100@yMax);
 		range: (Array with: 0@0 with: size).
-	points := self evolutionPoints: yPositions, #(0) withScale: scale.
+	points := self evolutionPoints: yPositions, #(0) fitnessSeed: fitnessSeed withScale: scale.
 	spaceStick := 0.1 negated.
 	axis := RSPolyline new 
 		color: (dictColor at: 'axis');
 		width: 10;	
 		controlPoints: ((Array with: 0@yMax with: 0@spaceStick with: 100@spaceStick) collect: [:p | scale scale: p]);
 		yourself.
-	polyLine := RSPolyline new 
-		controlPoints: points; 
-		color: (dictColor at: 'statementCoverage');
-		width: 10;
-		yourself.
-	composite addShape: axis; addShape: polyLine.
+	composite addShape: axis; 
+		addShape: (RSPolyline new 
+			controlPoints: (points at: 'seed'); 
+			color: (dictColor at: 'seedCoverage');
+			width: 10; yourself);
+		addShape: (RSPolyline new 
+			controlPoints: (points at: 'lowest'); 
+			color: (dictColor at: 'lowestCoverage');
+			width: 10; yourself);
+		addShape: (RSPolyline new 
+			controlPoints: (points at: 'average'); 
+			color: (dictColor at: 'averageCoverage');
+			width: 10; yourself);
+		addShape: (RSPolyline new 
+			controlPoints: (points at: 'fittest'); 
+			color: (dictColor at: 'fittestCoverage');
+			width: 10; yourself).
 	self addTickX: composite withScale: scale step: 20 andColor: (dictColor at: 'font').
 	self addTickY: composite withScale: scale ofColor: (dictColor at: 'font') andPositions: yPositions.
+	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
+		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))
+		with: ('Seed-Fitness' -> (dictColor at: 'seedCoverage'))) on: composite withFontColor: (dictColor at: 'font') and: [:legend | legend location below left offset: (140@60 negated) ]. 
 	^ composite adjustToChildren
 ]
 
@@ -270,7 +291,7 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 		move: border on: canvas shapes.
 	canvas addShape: border.
 	widthShape := 800.
-	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor andSize: widthShape @shapeHeight negated.
+	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor fitnessSeed: fitnessSeed andSize: widthShape @shapeHeight negated.
 	RSLocation new top right offset: ((evolutionShape width + 50)@0); move: evolutionShape on: canvas shapes.
 	"add evolutionShape on canvas"
 	canvas addShape: evolutionShape.
