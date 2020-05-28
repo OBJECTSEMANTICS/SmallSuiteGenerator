@@ -229,10 +229,10 @@ SGAEngine >> initializePopulation [
 	t := Time now asSeconds.
    population := self createRandomPopulation.
    SExpression resetId.
-	self updateTypeInfoWith: population.
    self computeFitness.
    population := self order: population.
    initialPopulation := population.
+	self updateTypeInfoWith: population.
 	logs add: (SGALog logOf: self inGeneration: 0 inTime: t)
 ]
 

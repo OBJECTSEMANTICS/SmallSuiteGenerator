@@ -52,7 +52,7 @@ SComparisonAssertion class >> comparisonAssertion: anExecutionContext with: arra
 SComparisonAssertion class >> for: anExecutionContext [
 	| assertions |
 	assertions := OrderedCollection new.
-	anExecutionContext keys
+	anExecutionContext keys asOrderedCollection
 		combinations: 2
 		atATimeDo: [ :comb | 
 			| compareAssert |

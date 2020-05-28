@@ -48,17 +48,30 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9 |
-_var0 := #(2 4 6 1).
-_var1 := SStack newStackWith: _var0.
-_var2 := _var1 firstLinkStack.
-_var3 := _var1 firstLinkStack.
-_var4 := _var1 firstLinkStack.
-_var5 := _var1 firstLinkStack.
-_var6 := _var1 pop.
-_var7 := _var1 pop.
-_var8 := _var1 firstLinkStack.
-_var9 := _var1 firstLinkStack.
+	| var |
+var := Dictionary new.
+var at: 1 put: (OrderedCollection new
+         add: 12;
+         add: -2;
+         add: 'hello';
+         add: #nameOf;
+         add: 0;
+         yourself).
+var at: 2 put: (SStack newStackWith: (var at: 1)).
+var at: 3 put: (var at: 2) pop.
+var at: 4 put: (var at: 2) firstLinkStack.
+var at: 5 put: ((var at: 2) push: (var at: 3)).
+var at: 6 put: (var at: 2) pop.
+var at: 7 put: (var at: 2) lastLinkStack.
+var at: 8 put: ((var at: 2) push: (var at: 3)).
+var at: 9 put: ((var at: 2) push: (var at: 3)).
+var at: 10 put: 'hello'.
+var at: 11 put: 'hello'.
+var at: 12 put: ((var at: 2) push: (var at: 11)).
+var at: 13 put: (var at: 2) firstLinkStack.
+var at: 14 put: (var at: 2) firstLinkStack.
+var at: 16 put: ((var at: 2) push: (var at: 10)).
+var at: 17 put: (var at: 2) top.
 ^self analyze: thisContext
 ]
 

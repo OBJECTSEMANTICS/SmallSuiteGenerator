@@ -472,7 +472,7 @@ SSTestShifter >> fixTypeReturnOf: aStatement [
 	aStatement value returnType: aReturnType.
 	aStatement needsBeFixed: false.
 	aStatement returnType: aReturnType ]
-	on: Error 
+	on: Exception 
 	do: [  ]
 ]
 

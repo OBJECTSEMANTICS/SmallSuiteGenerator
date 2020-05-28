@@ -38,7 +38,7 @@ SSTestCase >> analyze [
 	self setUp.
 	result := SSTestRunner new evaluate: self.
 	self tearDown.
-	SPlatform asDict ifTrue: [ result := result at: #var ].
+	SPlatform asDict ifTrue: [ result := result at: 'var' ].
 	^ result.
 ]
 
