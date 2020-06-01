@@ -381,6 +381,7 @@ SGAEngine >> methodShape: summaryExecMethod withGradientFrom: darkColor to: ligh
 	RSVerticalLineLayout new on: group; gapSize: 0.
 	^ RSComposite new size: 50;
 				color: gradient; 
+				border: RSBorder new;
 				model: summaryExecMethod;
 				popupText: [ :summary |  String streamContents: [ :stream | 
 							stream nextPutAll: summary executorClass;
