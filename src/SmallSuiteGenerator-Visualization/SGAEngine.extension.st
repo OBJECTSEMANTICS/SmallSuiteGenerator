@@ -105,8 +105,8 @@ SGAEngine >> addSurvivorTestCase: testCase on: collection using: set and: maxNum
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addTickX: composite withScale: scale step: step andColor: color [ 
-	step to: 100 by: step do: [ :i |
+SGAEngine >> addTickX: composite withScale: scale xMax: xMax andColor: color [ 
+	(xMax * 0.2) to: xMax by: (xMax * 0.2) do: [ :i |
 		| aTick lbl |
 		aTick := RSLine new 
 			startPoint: (scale scale: i@0.1 negated);
@@ -118,7 +118,7 @@ SGAEngine >> addTickX: composite withScale: scale step: step andColor: color [
 		lbl := RSLabel new 
 		fontSize: scale range second x * 0.04;
 		color: color;
-		text: i asString, '%'.
+		text: (i round: 2) asString, '%'.
 		RSLocation new below move: lbl on: aTick.
 		composite addShape: lbl.
 	].
@@ -132,7 +132,7 @@ SGAEngine >> addTickY: composite withScale: xScale ofColor: color andPositions: 
 			startPoint: (xScale scale: 0@y);
 			color: color;
 			width: 10;
-			endPoint: (xScale scale: -3@y);
+			endPoint: (xScale scale: (xScale domain last x * -0.03)@y);
 			yourself.
 		composite addShape: tick.
 		lbl := RSLabel new 	
@@ -213,19 +213,20 @@ SGAEngine >> evolutionPoints: ypositions fitnessSeed: fitnessSeed withScale: sca
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitnessSeed andSize: size [
-	| composite scale yMax points axis spaceStick |
+	| composite scale yMax points axis spaceStick xMax |
 	composite := RSComposite new 
 		color: Color transparent.
 	yMax := yPositions first.
+	xMax := (logs last fittestTestCase fitnessByClass values first at: targetClassName) max: fitnessSeed.
 	scale := NSScale linear 
-		domain: (Array with: 0@0 with: 100@yMax);
+		domain: (Array with: 0@0 with: xMax@yMax);
 		range: (Array with: 0@0 with: size).
 	points := self evolutionPoints: yPositions, #(0) fitnessSeed: fitnessSeed withScale: scale.
 	spaceStick := 0.1 negated.
 	axis := RSPolyline new 
 		color: (dictColor at: 'axis');
 		width: 10;	
-		controlPoints: ((Array with: 0@yMax with: 0@spaceStick with: 100@spaceStick) collect: [:p | scale scale: p]);
+		controlPoints: ((Array with: 0@yMax with: 0@spaceStick with: xMax@spaceStick) collect: [:p | scale scale: p]);
 		yourself.
 	composite addShape: axis; 
 		addShape: (RSPolyline new 
@@ -244,7 +245,7 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitn
 			controlPoints: (points at: 'fittest'); 
 			color: (dictColor at: 'fittestCoverage');
 			width: 10; yourself).
-	self addTickX: composite withScale: scale step: 20 andColor: (dictColor at: 'font').
+	self addTickX: composite withScale: scale xMax: xMax andColor: (dictColor at: 'font').
 	self addTickY: composite withScale: scale ofColor: (dictColor at: 'font') andPositions: yPositions.
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
