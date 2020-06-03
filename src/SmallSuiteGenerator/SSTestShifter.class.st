@@ -255,8 +255,21 @@ SSTestShifter >> allChildren [
 
 { #category : #hierarchy }
 SSTestShifter >> allParents [
-	^ (Set newFrom: parents)
-	addAll: (parents flatCollect: [ :tC | tC allParents ]); yourself
+	|  list |
+	list := OrderedCollection new.
+	self allParents: self on: list using: Set new.
+	^ list
+]
+
+{ #category : #accessing }
+SSTestShifter >> allParents: testCase on: collection using: associationSet [
+	testCase parents 
+		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
+		thenDo:  [ :tC | 
+			associationSet add: tC generationNumber -> tC idPopulation.
+			collection add: tC.
+			self allParents: tC on: collection using: associationSet	
+		]
 ]
 
 { #category : #accessing }
@@ -416,6 +429,11 @@ SSTestShifter >> changeStatementOfVarName: varName [
 	^ self changeStatement: (self statementOfVarName: varName)
 ]
 
+{ #category : #accessing }
+SSTestShifter >> children [ 
+	^ children
+]
+
 { #category : #repairing }
 SSTestShifter >> clean [
 	|literals unused|
@@ -540,8 +558,8 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
   targetClassesNames := Set new.
   validatedTargetClassName := false.
-  parents := Set new.
-  children := Set new.
+  parents := OrderedCollection new.
+  children := OrderedCollection new.
   selectionStrategy := SGARouletteSelection new.
 ]
 
@@ -1028,6 +1046,15 @@ SSTestShifter >> referencesIndexes: expression [
 ]
 
 { #category : #removing }
+SSTestShifter >> removeChild: testCase [
+	| index |
+	index := 0.
+	children detect: [:tC | index := index + 1.
+		(tC generationNumber == testCase generationNumber) and: [ tC idPopulation == testCase idPopulation ] ]
+		ifFound: [ :tC | children removeAt: index ]
+]
+
+{ #category : #removing }
 SSTestShifter >> removeExpression: expression [
 	self removeFromStatements: expression.
 	statements copy do: [ :stm | (stm pickUpReferences: expression) ifNotEmpty: [ self repairReferenceTo: expression of: stm ] ].
@@ -1124,7 +1151,7 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
 	selectionStrategy ifNil: [ ^ self random selectAtRandom: aCollection ]
-	ifNotNil: [ ^ selectionStrategy selectOf: aCollection with: (aCollection collect: #executions) ]
+	ifNotNil: [ ^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions) ]
 	
 ]
 

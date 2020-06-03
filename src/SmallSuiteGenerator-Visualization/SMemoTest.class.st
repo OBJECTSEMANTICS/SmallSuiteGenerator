@@ -13,37 +13,38 @@ SMemoTest >> setUp [
 ]
 
 { #category : #tests }
-SMemoTest >> testAtOf [
-	| summaryExecMethod testCase |
-	testCase := SSTestCase new idPopulation: 1; generationNumber: 1.
+SMemoTest >> testAtOfAnd [
+	| summaryExecMethod |
 	summaryExecMethod := SLSummaryExecutionMethod new 	
 		executed: true;
 		executorClass: #SSTeacher.
-	self assert: (memo at: summaryExecMethod of: testCase) isNil.
+	self assert: (memo at: summaryExecMethod of: 1 and: 1) isNil.
 ]
 
 { #category : #tests }
-SMemoTest >> testAtOfIfPresentIfAbsent [
-	| summaryExecMethod testCase result |
-	testCase := SSTestCase new idPopulation: 1; generationNumber: 1.
+SMemoTest >> testAtOfAndIfPresentIfAbsent [
+	| summaryExecMethod generationNumber idPopulation result |
+	generationNumber := 1.
+	idPopulation := 1.
 	summaryExecMethod := SLSummaryExecutionMethod new 	
 		executed: true;
 		executorClass: #SSTeacher.
-	result := memo at: summaryExecMethod of: testCase ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
+	result := memo at: summaryExecMethod of: generationNumber and: idPopulation ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
 	self deny: result.
-	memo at: summaryExecMethod of: testCase put: 50.
-	result := memo at: summaryExecMethod of: testCase ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
-	self assert: true
+	memo at: summaryExecMethod of: generationNumber and: idPopulation put: 50.
+	result := memo at: summaryExecMethod of: generationNumber and: idPopulation ifPresent: [:value | value > 0 ] ifAbsent: [ false ].
+	self assert: result
 ]
 
 { #category : #tests }
-SMemoTest >> testAtOfPut [
-	| summaryExecMethod testCase |
-	testCase := SSTestCase new idPopulation: 1; generationNumber: 1.
+SMemoTest >> testAtOfAndPut [
+	| summaryExecMethod generationNumber idPopulation |
+	generationNumber := 1.
+	idPopulation := 1.
 	summaryExecMethod := SLSummaryExecutionMethod new 	
 		executed: true;
 		selector: #idTeacher;
 		executorClass: #SSTeacher.
-	memo at: summaryExecMethod of: testCase put: 50.
-	self assert: (memo at: summaryExecMethod of: testCase ) equals: 50.
+	memo at: summaryExecMethod of: generationNumber and: idPopulation put: 50.
+	self assert: (memo at: summaryExecMethod of: generationNumber and: idPopulation) equals: 50.
 ]
