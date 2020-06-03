@@ -52,10 +52,10 @@ SMultiTypeInfo >> copy [
 
 { #category : #comparing }
 SMultiTypeInfo >> equals: other [
-	(self types size = other types size) ifFalse:[ ^ false.].
+	(self types size = other types size) ifFalse:[ ^ false ].
 	
-	self types asOrderedCollection  with: (other types asOrderedCollection) do:[ :a :b|
-		(a = b) ifFalse:[^ false].
+	self types asOrderedCollection with: (other types asOrderedCollection) do:[ :a :b|
+		(a = b) ifFalse:[ ^ false ].
 	].
 	^ true.
 ]
@@ -93,7 +93,9 @@ SMultiTypeInfo >> initialize [
 { #category : #metrics }
 SMultiTypeInfo >> isBlockSymbol [
 	
-	^ types size =  2 and:[ (types anySatisfy:[ :t| t= #BlockClosure]) and:[ types anySatisfy:[ :t| t= #ByteSymbol]]].
+	^ types size = 2 
+		and: [ (types anySatisfy: [ :aType | aType = #BlockClosure ]) 
+			and: [ types anySatisfy:[ :aType | aType = #ByteSymbol ] ] ]
 ]
 
 { #category : #actions }
@@ -114,7 +116,7 @@ SMultiTypeInfo >> mustBeFixed [
 SMultiTypeInfo >> stonOn: stonWriter [
 	stonWriter
 		writeObject: self
-		streamShortList: [ :array | self types do:[:type | array add: type] ]
+		streamShortList: [ :array | self types do: [:type | array add: type] ]
 ]
 
 { #category : #accessing }
@@ -125,7 +127,7 @@ SMultiTypeInfo >> type [
 { #category : #'accessing structure variables' }
 SMultiTypeInfo >> type: aClassName [
 	aClassName ~= #nil ifTrue: [ 
-	types add: aClassName]
+		types add: aClassName ]
 ]
 
 { #category : #accessing }

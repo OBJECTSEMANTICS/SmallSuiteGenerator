@@ -48,13 +48,11 @@ SSTestRunner >> initialize [
 
 { #category : #'as yet unclassified' }
 SSTestRunner >> performTest [
-	| var |
-var := Dictionary new.
-var at: 1 put: '2teacherG'.
-var at: 2 put: 100.
-var at: 5 put: (SSTeacher name: (var at: 1) with: (var at: 2)).
-var at: 6 put: (var at: 5) yearsWorkExperience.
-^self analyze: thisContext
+	| _var0 _var1 _var2 _var3 |
+_var0 := 'Ann'.
+_var1 := 34.
+_var2 := SSTeacher new.
+_var3 := _var2 nickname
 ]
 
 { #category : #running }

@@ -8,7 +8,7 @@ SGAEngine >> addDescriptiveTextOn: canvas with: fitnessSeed ofColor: color and: 
 		color: color;
 		fontSize: 30;
 		yourself ].
-	text := blockText value: 'TargetClass: ', self targetClassName, ' in package: ', self targetPackageRegex, ' and fitnessSeed: ', fitnessSeed asString.
+	text := blockText value: 'TargetClass: ', targetClassName, ' in package: ', targetPackageRegex, ' and fitnessSeed: ', fitnessSeed asString.
 	RSLocation new top left offset: -60; move: text on: canvas shapes.
 	canvas addShape: text.
 	dictionary := Dictionary new 
@@ -313,7 +313,7 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 	set := Set new.
 	logs first population do: [ :tC | self addSurvivorTestCase: tC on: filteredList using: set and: logs size ].
 	filteredList sort: [ :tC1 :tC2 | (tC1 generationNumber < tC2 generationNumber) or: [ (tC1 generationNumber = tC2 generationNumber) and: [  tC1 children size < tC2 children size ] ] ].
-	memo := SMemo new.
+  memo := SMemo new.
 	shapeHeights := OrderedCollection new.
 	scaleColorBlock := self scaleColorBlock: (self methodColorDictionary: (dictColor at: 'rangeMethodColor')).
 	generationGroup addAll: (

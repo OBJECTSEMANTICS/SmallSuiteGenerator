@@ -16,7 +16,8 @@ Class {
 		'types',
 		'classes',
 		'noneAbstractClasses',
-		'scalars'
+		'scalars',
+		'blackList'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -28,7 +29,7 @@ STypeInfo class >> asTypeInfo: aTypeCollector [
 
 { #category : #converting }
 STypeInfo class >> asTypeInfo: aTypeCollector methodsBlacklist: aList [
-	^ self new asTypeInfo: aTypeCollector methodsBlacklist: aList
+	^ self new blackList: aList; asTypeInfo: aTypeCollector" methodsBlacklist: aList"
 ]
 
 { #category : #comparing }
@@ -61,29 +62,20 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector [
-	| typeInfo |
-	self cleanBlockClosuresOf: aTypeCollector .
-	typeInfo := self class new.
+	self cleanBlockClosuresOf: aTypeCollector.
 	aTypeCollector allClasses
 		do: [ :aSpyClass | 
+			blackList select: [ :aMethod | aMethod origin name == aSpyClass className ] 
+				thenDo: [:aMethod | aSpyClass removeMethod: aMethod ].
 			(aSpyClass className endsWith: 'BlockClosure')
-				ifFalse: [ typeInfo addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
-	typeInfo joinScalars: aTypeCollector scalars copy.
-	^ typeInfo
+				ifFalse: [ self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
+	self joinScalars: aTypeCollector scalars copy.
+	^ self
 ]
 
-{ #category : #converting }
-STypeInfo >> asTypeInfo: aTypeCollector methodsBlacklist: aList [
-	| typeInfo |
-	self cleanBlockClosuresOf: aTypeCollector.
-	typeInfo := self class new.
-	aTypeCollector allClasses
-		do: [ :aSpyClass | 
-			aList select: [ :e | e origin name == aSpyClass className ] thenDo: [:e | aSpyClass removeMethod: e ].
-			(aSpyClass className endsWith: 'BlockClosure')
-				ifFalse: [ typeInfo addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
-	typeInfo joinScalars: aTypeCollector scalars copy.
-	^ typeInfo
+{ #category : #accessing }
+STypeInfo >> blackList: aList [
+	blackList := aList
 ]
 
 { #category : #accessing }
@@ -123,10 +115,28 @@ STypeInfo >> classes [
 { #category : #converting }
 STypeInfo >> cleanBlockClosuresOf: aTypeCollector [ 
 	[ |cleanBlocks|
-		cleanBlocks := (aTypeCollector scalars at: #BlockClosure) select: [ :e | e isClean ].
+		cleanBlocks := (aTypeCollector scalars at: #BlockClosure) select: [ :aBlock | aBlock isClean ].
 		aTypeCollector scalars at: #BlockClosure put: cleanBlocks ]
 	on: Error
 	do: [].
+]
+
+{ #category : #adding }
+STypeInfo >> completeTypeInfo [
+	self types keysDo: [:aClass | |classInfo realClassInfo|
+	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
+	realClassInfo := self types at: aClass.
+	classInfo methodTypes keysAndValuesDo: [ :key :value |
+		((self isInBlackListClass: aClass with: key) not and: [ key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ] ]) 
+		ifTrue: [
+			realClassInfo methodTypes 
+			at: key
+			ifAbsentPut: [ 
+				self updateArgsOf: value.
+				value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
+				value receiver type: aClass.
+				value hasProfiler: false.
+				value executions: 0.5 ] ] ] ]
 ]
 
 { #category : #copying }
@@ -178,7 +188,13 @@ STypeInfo >> factoryMessagesFrom: aClassName [
 STypeInfo >> initialize [
 	super initialize.
 	types := Dictionary new.
-	scalars := Dictionary new
+	scalars := Dictionary new.
+	self initializeBlackList
+]
+
+{ #category : #initialization }
+STypeInfo >> initializeBlackList [
+	blackList ifNil: [ blackList := OrderedCollection new ]
 ]
 
 { #category : #accessing }
@@ -186,6 +202,11 @@ STypeInfo >> isAbstractClass: symbol [
 	| aClass |
 	aClass := self classes at: symbol.
 	^  (aClass methods select: #isAbstract) isNotEmpty
+]
+
+{ #category : #accessing }
+STypeInfo >> isInBlackListClass: aClass with: selector [ 
+	^ (blackList anySatisfy: [:each | (each origin name = aClass) & (each selector = selector) ]) 
 ]
 
 { #category : #actions }
@@ -228,10 +249,10 @@ STypeInfo >> methodType: aSelector from: aClassName [
 
 { #category : #accessing }
 STypeInfo >> noneAbstractClasses [
-	noneAbstractClasses
-		ifNil: [ noneAbstractClasses := self classes associations
-				select: [ :assoc | (self isAbstractClass: assoc key) not ]
-				thenCollect: [ :assoc | assoc value ] ].
+	noneAbstractClasses ifNil: [ 
+		noneAbstractClasses := self classes associations
+			select: [ :assoc | (self isAbstractClass: assoc key) not ]
+			thenCollect: [ :assoc | assoc value ] ].
 	^ noneAbstractClasses
 ]
 
@@ -274,4 +295,27 @@ STypeInfo >> type: aAssoc [
 { #category : #accessing }
 STypeInfo >> types [ 
 	^ types
+]
+
+{ #category : #lookup }
+STypeInfo >> updateArgsOf: aMethod [ 
+	aMethod argTypes do: [ :argType |
+	| includeTypes |
+	includeTypes := argType types anySatisfy: [ :type | self scalars keys includes: type ].
+	includeTypes ifFalse: [ 
+		argType types do: [ :type | 
+			self scalars keys 
+				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
+				thenDo: [ :scalar | argType type: scalar ] ] ] ].
+	"updateArgsOf: aMethod 
+	aMethod argTypes do: [ :argType |
+	| includeTypes |
+	includeTypes := argType types anySatisfy: [ :type | self scalars keys includes: type ].
+	includeTypes ifFalse: [ 
+		argType types do: [ :type |
+			(type substrings: '.') last = 'Object' ifFalse: [
+			self scalars keys 
+				select: [ :scalar | ((self classOf: type asString) first allSubclasses 
+					collect: [:e | e fullName asSymbol]) includes: scalar ] 
+				thenDo: [ :scalar | argType type: scalar ] ] ] ]]"
 ]

@@ -9,15 +9,17 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	| testCase changed |
 	testCase := (SSTestCase with: utility typeInfoArrayedCollection).
 	testCase
-		addTargetClassName: #ArrayedCollection;
+		addTargetClassName: (self fullSymbolOf: #ArrayedCollection);
 		addFactoryMessage;
 		addLiteral;
 		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := ArrayedCollection new.' '_var1 := ''hello''.' '_var2 := ArrayedCollection new.').
-	changed := testCase changeStatementOfClassName: #ArrayedCollection.
+		hasSameElements: (Array 
+									with: ('_var0 := ', (self fullNameOfClass: 'ArrayedCollection')asString,' new.')
+									with: '_var1 := ''hello''.'
+									with: ('_var2 := ', (self fullNameOfClass: 'ArrayedCollection')asString,' new.')).
+	changed := testCase changeStatementOfClassName: (self fullSymbolOf: #ArrayedCollection).
 	self assert: changed equals: false.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -27,17 +29,17 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	| testCase expression expressionChanged |
-	testCase := (SSTestCase with: utility typeInfoSFoo1) addTargetClassName: #SFoo.
+	testCase := (SSTestCase with: utility typeInfoSFoo1) addTargetClassName: (self fullSymbolOf: #SFoo).
 	testCase
-		addLiteral: #SmallFloat64;
-		addLiteral: #SmallFloat64.
-	expression := testCase addFactoryMessage: #SFoo ofSelector: #score:.
+		addLiteral: (self fullSymbolOf: #SmallFloat64);
+		addLiteral: (self fullSymbolOf: #SmallFloat64).
+	expression := testCase addFactoryMessage: (self fullSymbolOf: #SFoo) ofSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		includesAll: #('_var0 := 7.3.' '_var1 := 7.3.').
 	self
 		assert:
-			(#('_var3 := SFoo score: _var2.')
+			((Array with: '_var3 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var2.')
 				includes: expression printString).
 	expressionChanged := testCase changeStatementOfVarName: '_var2'.
 	self
@@ -51,31 +53,36 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 	| testCase expressionChanged |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: (Array
+									with: '_var0 := 7.3.'
+									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.')).
 	expressionChanged := testCase changeStatementOfVarName: '_var1'.
 	self
-		assert:
-			(#('_var1 := SFoo new.' '_var1 := SFoo score: _var2.')
+		assert: ((Array
+									with: ('_var0 := ',(self fullNameOfClass: 'SFoo')asString,' new.')
+									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var2.'))
 				includes: expressionChanged printString).
-	self assert: testCase validReferences
+				self assert: testCase validReferences
 ]
 
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFieldAccessMessage [
 	| testCase exprField exprFieldChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: #SStack;
-	addFactoryMessage: #SStack ofSelector: #newStack.
+	testCase addTargetClassName: (self fullSymbolOf: #SStack);
+	addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
 	exprField := (testCase
 		addFieldAccessMessage: #firstLinkStack
-		from: #SStack) copy.
+		from: (self fullSymbolOf: #SStack)) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SStack newStack.' '_var1 := _var0 firstLinkStack.').
+		hasSameElements: (Array
+									with: ('_var0 := ',(self fullNameOfClass: 'SStack')asString,' newStack.')
+									with: '_var1 := _var0 firstLinkStack.').
 	exprFieldChanged := testCase changeStatement: exprField.
 	self
 		assert:
@@ -88,7 +95,7 @@ SChangeTest >> testChangeStatementOfFieldAccessMessage [
 SChangeTest >> testChangeStatementOfLiteral [
 	| testCase exprLiteral exprLiteralChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	exprLiteral := (testCase addLiteral: #SmallInteger) copy.
+	exprLiteral := (testCase addLiteral: (self fullSymbolOf: #SmallInteger)) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 5.').
@@ -101,12 +108,14 @@ SChangeTest >> testChangeStatementOfLiteral [
 SChangeTest >> testChangeStatementOfMessage [
 	| testCase exprMessage exprLiteralChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: #SStack;
-	addFactoryMessage: #SStack ofSelector: #newStack.
-	exprMessage := (testCase addMessage: #pop from: #SStack) copy.
+	testCase addTargetClassName: (self fullSymbolOf: #SStack);
+	addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
+	exprMessage := (testCase addMessage: #pop from: (self fullSymbolOf: #SStack)) copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SStack newStack.' '_var1 := _var0 pop.').
+		hasSameElements: (Array 
+									with: ('_var0 := ',(self fullNameOfClass: 'SStack')asString,' newStack.')
+									with: '_var1 := _var0 pop.').
 	exprLiteralChanged := testCase changeStatement: exprMessage.
 	self
 		assert:

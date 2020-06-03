@@ -17,13 +17,18 @@ SReport class >> exportData: anObject onCSV: aString usingFilter: aSymbol [
 
 { #category : #accessing }
 SReport class >> fileReference: aString [
-	| filename |
-	filename := aString , '.csv'.
-	filename asFileReference ensureDelete.
-	^ filename asFileReference
+	^ self new fileReference: aString
 ]
 
 { #category : #accessing }
 SReport class >> titles [
 	self subclassResponsibility 
+]
+
+{ #category : #accessing }
+SReport >> fileReference: aString [
+	| filename |
+	filename := aString , '.csv'.
+	filename asFileReference ensureDelete.
+	^ filename asFileReference
 ]

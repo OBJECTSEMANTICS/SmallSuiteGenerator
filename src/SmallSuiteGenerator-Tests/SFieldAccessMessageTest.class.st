@@ -26,17 +26,21 @@ SFieldAccessMessageTest >> testCopy [
 { #category : #tests }
 SFieldAccessMessageTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
-	testCase := (SSTestCase with: utility typeInfoSStack4) addTargetClassName: #SStack.
-	testCase addFactoryMessage: #SStack ofSelector: #newStackWith:.
+	testCase := (SSTestCase with: utility typeInfoSStack4)
+		addTargetClassName: (self fullSymbolOf: #SStack).
+	testCase addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStackWith:.
 	expression := testCase
 		addFieldAccessMessage: #firstLinkStack
-		from: #SStack.
-	testCase addLiteral: #SmallInteger.
+		from: (self fullSymbolOf: #SStack).
+	testCase addLiteral: (self fullSymbolOf: #SmallInteger).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := #(1 4 5 ).' '_var1 := SStack newStackWith: _var0.' '_var2 := _var1 firstLinkStack.' '_var3 := 5.').
-	testCase addMessage: #push: from: #SStack.
+		hasSameElements: (Array 
+								with: '_var0 := #(1 4 5 ).'
+								with: ('_var1 := ', (self fullNameOfClass: 'SStack')asString,' newStackWith: _var0.')
+								with: '_var2 := _var1 firstLinkStack.' 
+								with: '_var3 := 5.').
+	testCase addMessage: #push: from: (self fullSymbolOf: #SStack).
 	insertedExpression := expression
 		insertAsParameter: expression
 		using: testCase.
@@ -49,15 +53,21 @@ SFieldAccessMessageTest >> testInsertAsParameterUsing [
 SFieldAccessMessageTest >> testInsertRandomMessageUsing [
 	| testCase aExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addFactoryMessage: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	addFactoryMessage: (self fullSymbolOf: #SFoo).
 	aExpression := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.').
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.'
+									with: ('_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+									with: '_var2 := _var1 score.').
 	aExpression insertRandomMessage: aExpression using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		includesAll:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := _var1 score.' '_var3 := _var1 score.')
+		includesAll: (Array 
+								with: '_var0 := 7.3.'
+								with: ('_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+								with: '_var2 := _var1 score.'
+								with: '_var3 := _var1 score.')
 ]

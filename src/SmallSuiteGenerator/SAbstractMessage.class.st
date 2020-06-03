@@ -185,7 +185,7 @@ SAbstractMessage >> replaceArgBy: expression [
 SAbstractMessage >> replaceBy: anAbstractMessage [
 	" I replace my attributes values with the ones in the otherExpression."
 	
-	mutated := (receiver ~= anAbstractMessage receiver) or: (( selector ~= anAbstractMessage selector) or: [ args ~= anAbstractMessage args ]).
+	mutated := (receiver ~= anAbstractMessage receiver) or: [( selector ~= anAbstractMessage selector) or: [ args ~= anAbstractMessage args ]].
 	receiver replaceBy: anAbstractMessage receiver.
 	self selector: anAbstractMessage selector.
 	self args size = anAbstractMessage args size

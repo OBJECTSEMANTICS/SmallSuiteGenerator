@@ -104,7 +104,7 @@ SReportTypeInfo class >> fileReference: aString [
 
 { #category : #export }
 SReportTypeInfo class >> profilerProject: projectName [
-	^ SSTypeCollector
+	^ self aSTypeCollectorClass
 		profile: [ (SPlatform testCaseClass withAllSubclasses
 				select: [ :t | t category beginsWith: projectName ])
 				do: [ :tc | 

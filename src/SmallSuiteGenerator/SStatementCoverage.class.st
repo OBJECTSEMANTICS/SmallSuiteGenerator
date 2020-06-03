@@ -17,20 +17,12 @@ SStatementCoverage >> computeFitness [
 { #category : #actions }
 SStatementCoverage >> fitnessOf: testCase withKey: string [
 	testCase fitness at: string put: (profiler statementCoverageFor: targetClass ).
+	testCase fitnessByClass at: string put: profiler statementCoverage1
 ]
 
 { #category : #accesing }
 SStatementCoverage >> functionName [
 	^ 'block-coverage'
-]
-
-{ #category : #actions }
-SStatementCoverage >> runPopulation: testCaseCollection [
-	profiler cleanBlocksOfMethods.
-	testCaseCollection
-		do: [ :testCase | 
-			testCase length > 0 ifTrue: [ testCase runWithoutAssertions ] ].
-	^ profiler summaryMethodsOf: targetClass  
 ]
 
 { #category : #actions }
@@ -41,9 +33,4 @@ SStatementCoverage >> setUp [
 { #category : #actions }
 SStatementCoverage >> tearDown [
 	
-]
-
-{ #category : #accessing }
-SStatementCoverage >> typeInfo: anObject [ 
-	profiler typeInfo: anObject
 ]

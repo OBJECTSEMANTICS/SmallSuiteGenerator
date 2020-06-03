@@ -17,11 +17,15 @@ SMutatorTestCaseTest >> setUp [
 SMutatorTestCaseTest >> testRemoveArgsMethod [
 	| testCase expression numExprsBefore numExprsAfter |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.'
+									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.'
+									with: '_var2 := ''hello''.'
+									with: '_var3 := _var1 return: _var2.').
 	numExprsBefore := testCase length.
 	expression := testCase statementOfVarName: '_var2'.
 	testCase removeExpression: expression.
@@ -42,16 +46,22 @@ SMutatorTestCaseTest >> testRemoveExpression [
 SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.'
+									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.'
+									with: '_var2 := ''hello''.'
+									with: '_var3 := _var1 return: _var2.').
 	expression := testCase statementOfVarName: '_var2'.
 	testCase removeExpressionWithoutRepairing: expression.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.')
+		hasSameElements: (Array
+									with: '_var0 := 7.3.'
+									with:  '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.')
 ]
 
 { #category : #tests }
@@ -65,11 +75,15 @@ SMutatorTestCaseTest >> testRemoveInEmptyTestCase [
 SMutatorTestCaseTest >> testRepair [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := 7.3.' '_var1 := SFoo score: _var0.' '_var2 := ''hello''.' '_var3 := _var1 return: _var2.').
+		hasSameElements: (Array
+									with: '_var0 := 7.3.'
+									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.'
+									with: '_var2 := ''hello''.'
+									with: '_var3 := _var1 return: _var2.').
 	expression := testCase statementOfVarName: '_var2'.
 	self should: [ testCase repair: expression ] raise: SError.
 	testCase removeFromStatements: expression.

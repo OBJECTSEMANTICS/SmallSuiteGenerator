@@ -26,6 +26,40 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #'as yet unclassified' }
+SGALog class >> collectFitnessByNameOf: population [
+	| dictFit |
+	dictFit := Dictionary new.
+	((population collect: #fitness) flatCollect: #associations) do: [ 
+		:assoc | 
+		| aValue |
+		aValue := dictFit at: assoc key ifAbsentPut: [ OrderedCollection new].
+		aValue add: assoc value].
+	^ dictFit
+]
+
+{ #category : #'as yet unclassified' }
+SGALog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
+	| log dictFitness |
+	log := self new 
+		generationNumber: anInteger;
+		fittestTestCase: aSGAEngine population first;
+		timeToProduceGeneration: Time new asSeconds - t;
+		population: aSGAEngine population.
+	dictFitness := self collectFitnessByNameOf: aSGAEngine population.
+	log lowestFit: aSGAEngine population last fitness;
+	averageFit: (self pickAverageFitTest: dictFitness). 
+	log summaryTargetClass: (aSGAEngine fitness runPopulation: aSGAEngine population).
+	log typeInfoGeneration: (aSGAEngine typeInfo classAt: aSGAEngine targetClassName) deepCopy.
+	^ log
+]
+
+{ #category : #'as yet unclassified' }
+SGALog class >> pickAverageFitTest: aDictionary [
+	^ (aDictionary keys collect: [ :key | 
+		   key -> (aDictionary at: key) average ]) asDictionary
+]
+
 { #category : #accessing }
 SGALog >> averageFit [
 	^ averageFit 
@@ -96,11 +130,6 @@ SGALog >> lowestFit: aNumber [
 ]
 
 { #category : #accessing }
-SGALog >> mutationResult [
-	^ mutationResult 
-]
-
-{ #category : #accessing }
 SGALog >> mutationResult: mutationTestingResult [
 	self
 		assert: mutationResult isEmpty
@@ -154,11 +183,6 @@ SGALog >> summaryTargetClass [
 { #category : #accessing }
 SGALog >> summaryTargetClass: anObject [
 	summaryTargetClass := anObject
-]
-
-{ #category : #accessing }
-SGALog >> timeToProduceGeneration [
-	^ timeToProduceGeneration
 ]
 
 { #category : #accessing }

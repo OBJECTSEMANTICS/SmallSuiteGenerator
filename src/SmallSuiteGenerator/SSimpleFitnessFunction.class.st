@@ -56,10 +56,18 @@ SSimpleFitnessFunction >> run: testCaseCollection [
 				testCase runWithoutAssertions.
 				testCase summaryExecutionMethods: profiler summaryExecutionMethods.
 				"self abstractDataOn: testCase."
-				self fitnessOf: testCase withKey: string.
-				testCase fitnessByClass at: string put: profiler statementCoverage1 ]
+				self fitnessOf: testCase withKey: string. ]
 			ifFalse: [ testCase fitness at: string put: 0 ] ]
 	
+]
+
+{ #category : #actions }
+SSimpleFitnessFunction >> runPopulation: testCaseCollection [
+	profiler cleanBlocksOfMethods.
+	testCaseCollection
+		do: [ :testCase | 
+			testCase length > 0 ifTrue: [ testCase runWithoutAssertions ] ].
+	^ profiler summaryMethodsOf: targetClass  
 ]
 
 { #category : #actions }
@@ -68,4 +76,9 @@ SSimpleFitnessFunction >> setUp [
 
 { #category : #actions }
 SSimpleFitnessFunction >> tearDown [
+]
+
+{ #category : #accessing }
+SSimpleFitnessFunction >> typeInfo: anObject [ 
+	profiler typeInfo: anObject
 ]

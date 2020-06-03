@@ -80,7 +80,7 @@ SSTestShifter >> addFactoryMessage [
 	variables
 		ifEmpty: [ (self random collectAtRandom: typeInfo noneAbstractClasses)
 				do: [ :aClass | 
-					[ ^ self addFactoryMessage: aClass name ]
+					[ ^ self addFactoryMessage: (self fullSymbolOf: aClass name) ]
 						on: SError
 						do: [  ] ].
 			self error: 'Cannot create a factoryMessage.' ]
@@ -183,6 +183,11 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 SSTestShifter >> addParent: aTestCase [
    parents add: aTestCase.
 	aTestCase addChild: self.
+]
+
+{ #category : #accessing }
+SSTestShifter >> addParents: aCollection [
+   aCollection do: [ :e | self addParent: e ]
 ]
 
 { #category : #inserting }
@@ -439,11 +444,6 @@ SSTestShifter >> clean [
 	unused do: [ :stm | self removeStatement: stm ]
 ]
 
-{ #category : #accessing }
-SSTestShifter >> defaultNumberStatements [
-	^ 54
-]
-
 { #category : #repairing }
 SSTestShifter >> error: string [
 	
@@ -490,7 +490,7 @@ SSTestShifter >> fixTypeReturnOf: aStatement [
 	aStatement value returnType: aReturnType.
 	aStatement needsBeFixed: false.
 	aStatement returnType: aReturnType ]
-	on: Error 
+	on: Exception 
 	do: [  ]
 ]
 
@@ -867,7 +867,7 @@ SSTestShifter >> parseTreeAsDictWith: statementCollection [
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
 	rbParserClass := SPlatform rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
-	temporaries := Array with: (RBVariableNode named: 'var').
+	temporaries := Array with: (self aVariableNodeClass named: 'var').
 	node body temporaries: temporaries.
 	node body addNode: (rbParserClass parseExpression: 'var := Dictionary new.').
 	statementCollection
@@ -887,7 +887,8 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	rbParserClass := SPlatform rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
 	temporaries := (self allVarNames
-		collect: [ :varName | rbParserClass parseExpression: varName ]) select: [:e | e isKindOf: RBVariableNode ].
+		collect: [ :varName | rbParserClass parseExpression: varName ]) 
+		select: [:e | e isKindOf: self aVariableNodeClass ].
 	node body temporaries: temporaries.
 	statementCollection
 		do: [ :stm | 

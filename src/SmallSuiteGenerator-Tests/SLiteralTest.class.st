@@ -31,14 +31,18 @@ SLiteralTest >> testEqual [
 SLiteralTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo;addLiteral: #ByteString.
-	expression := testCase addLiteral: #ByteString.
-	testCase addFactoryMessage: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	addLiteral: (self fullSymbolOf: #ByteString).
+	expression := testCase addLiteral: (self fullSymbolOf: #ByteString).
+	testCase addFactoryMessage: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements:
-			#('_var0 := ''hello''.' '_var1 := ''hello''.' '_var2 := 7.3.' '_var3 := SFoo score: _var2.').
-	testCase addMessage: #return: from: #SFoo.
+		hasSameElements: (Array 
+									with: '_var0 := ''hello''.'
+									with: '_var1 := ''hello''.'
+									with: '_var2 := 7.3.'
+									with: ('_var3 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var2.')).
+	testCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	insertedExpression := expression
 		insertAsParameter: expression
 		using: testCase.
@@ -51,21 +55,23 @@ SLiteralTest >> testInsertAsParameterUsing [
 SLiteralTest >> testInsertParameterOn [
 	| testCase expression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo4.
-	testCase addTargetClassName: #SFoo; addLiteral: #SStudent; addMessage: #return: from: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo); 
+	addLiteral: (self fullSymbolOf: #SStudent); 
+	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
 				with: '_var0 := ' , SStudent new storeString , '.'
-				with: '_var1 := SFoo new.'
+				with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' new.'
 				with: '_var2 := _var1 return: _var0.').
-	expression := testCase addLiteral: #SStudent.
+	expression := testCase addLiteral: (self fullSymbolOf: #SStudent).
 	self
 		should: [ insertedExpression := expression
 				insertAsParameter: expression
 				using: testCase ]
 		raise: SError.
-	testCase addMessage: #return: from: #SFoo.
+	testCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		shouldnt: [ insertedExpression := expression
 				insertAsParameter: expression
