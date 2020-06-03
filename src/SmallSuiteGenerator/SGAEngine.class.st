@@ -174,7 +174,7 @@ SGAEngine >> eliteOfCurrentPopulation [
 	indexLimit >= 1 ifTrue: [ ^ ((population copyFrom: 1 to: indexLimit) collect: [:testCase |
 			index := index + 1.
 			self similarChild: testCase with: index.
-			])) asOrderedCollection ].
+			]) asOrderedCollection ].
 	^ OrderedCollection new
 ]
 
