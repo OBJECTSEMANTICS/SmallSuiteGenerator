@@ -103,7 +103,7 @@ SGAEngine >> createNewPopulation [
 		  P1copy := self similarChild: P1 with: newNumber + 1.
 		  P2copy := self similarChild: P2 with: newNumber + 2.
         self shouldCrossOver 
-				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
+				ifTrue: [ children := crossoverOperator crossover: P1 with: P2.
               O1 := self updateHierarchyData: (Array with: P1 with: P2) of: (children first idPopulation: newNumber + 3).
               O2 := self updateHierarchyData: (Array with: P1 with: P2) of: (children second idPopulation: newNumber + 4) ] 
 				ifFalse: [ 
@@ -171,10 +171,10 @@ SGAEngine >> eliteOfCurrentPopulation [
 	endIndex := ((popSize * elitismRate * 0.01) round: 0) asInteger.
 	(popSize > 0 and: [ endIndex == 0 ]) ifTrue: [ endIndex := 1 ].
 	index := 0.
-	indexLimit >= 1 ifTrue: [ ^ ((population copyFrom: 1 to: indexLimit) collect: [:testCase |
+	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
 			index := index + 1.
 			self similarChild: testCase with: index.
-			]) asOrderedCollection ].
+			])) asOrderedCollection ].
 	^ OrderedCollection new
 ]
 
@@ -358,12 +358,12 @@ SGAEngine >> run [
   stopFlag := false.
   self initializePopulation.
 	totalExecutionGA := Time millisecondClockValue - totalExecutionGA.
-  bestFitness := self fitnessFor: logs last fittestTestCase.
+  bestFitness := self lastBestFitness.
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
         stopFlag ifFalse: [ t := Time millisecondClockValue.
               self doSelection.
-              logs add: (self logOfGeneration: iteration inTime: t).
-              lastBestFitness := self fitnessFor: logs last fittestTestCase.
+              logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
+              lastBestFitness := self lastBestFitness.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
                     bestFitness := lastBestFitness ].
