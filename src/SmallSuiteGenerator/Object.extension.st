@@ -1,6 +1,11 @@
 Extension { #name : #Object }
 
 { #category : #'*SmallSuiteGenerator' }
+Object >> aVariableNodeClass [
+	^ RBVariableNode
+]
+
+{ #category : #'*SmallSuiteGenerator' }
 Object >> mutateToChange [
 	^ self
 ]

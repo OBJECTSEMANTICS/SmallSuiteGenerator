@@ -239,7 +239,7 @@ SGAEngine >> initializePopulation [
 { #category : #initialization }
 SGAEngine >> initializeProfiler [
 	| aProfiler |
-	aProfiler := SLProfilerCoverage profilerForClass: targetClassName.
+	aProfiler := self aSLProfilerCoverage profilerForClass: targetClassName.
 	(aProfiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
 		displayingProgress: 'Instrumenting ' , targetClassName.
@@ -321,7 +321,7 @@ SGAEngine >> populationSize: aInteger [
 { #category : #updating }
 SGAEngine >> profilerForPackagesMatching [
 	Transcript show: 'profiling...'; cr.
-	typeInfoProfiler := SSTypeCollector 
+	typeInfoProfiler := self aSTypeCollectorClass 
 		profilerForPackagesMatching: targetPackageRegex.
 	typeInfoProfiler beforeProfiling.
 ]
@@ -331,8 +331,8 @@ SGAEngine >> profilerForTargetClass [
 	| packageSpy cls classSpy |
 	cls := Smalltalk at: targetClassName.
 	Transcript show: 'profiling...'; cr.
-	typeInfoProfiler := SSTypeCollector new.
-	SSTypeCollector installOnClass: cls.
+	typeInfoProfiler := self aSTypeCollectorClass new.
+	self aSTypeCollectorClass installOnClass: cls.
 	typeInfoProfiler beforeProfiling .
 	classSpy := typeInfoProfiler spyForClass: cls.
 	packageSpy := typeInfoProfiler class spyClassForPackage new.

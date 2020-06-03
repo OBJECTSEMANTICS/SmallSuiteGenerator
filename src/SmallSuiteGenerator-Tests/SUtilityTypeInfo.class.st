@@ -310,7 +310,10 @@ SUtilityTypeInfo >> typeInfoSAbstractClass [
 			(self fullSymbolOf: #SAbstractClass)
 				->
 					(Array
-						with: (Array with: #id -> #(#SAbstractClass #SmallInteger #() false))
+						with: (Array with: #id -> (Array with: (self fullSymbolOf: #SAbstractClass)
+																with: (self fullSymbolOf: #SmallInteger)
+																with: #()
+																with: false))
 						with: #());
 		scalar: (self fullSymbolOf: #SmallInteger) with: #(1)
 ]

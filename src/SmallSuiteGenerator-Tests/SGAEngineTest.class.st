@@ -11,7 +11,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 SGAEngineTest >> profilerOf: string [
-	profiler := SLProfilerCoverage profilerForPackagesMatching: string.
+	profiler := self aSLProfilerCoverage profilerForPackagesMatching: string.
 	profiler beforeProfiling
 ]
 
@@ -19,7 +19,7 @@ SGAEngineTest >> profilerOf: string [
 SGAEngineTest >> setUp [
 	super setUp.
 	engine := SGAEngine new.
-	profiler := SLProfilerCoverage new.
+	profiler := self aSLProfilerCoverage new.
 	utility := SUtilityTypeInfo new
 ]
 

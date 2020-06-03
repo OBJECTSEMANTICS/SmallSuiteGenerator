@@ -262,7 +262,7 @@ STestCaseFactory >> seed: aNumber [
 
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
-	fitnessSeed := (SLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
+	fitnessSeed := (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
 ]
 
 { #category : #actions }

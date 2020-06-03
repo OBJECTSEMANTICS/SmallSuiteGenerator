@@ -22,7 +22,7 @@ SCoverageTest >> fitnessOf: aTestCase [
 { #category : #running }
 SCoverageTest >> installOn: aPackageName [
 	fitness tagetPackagesRegex: aPackageName.
-	profiler := SLProfilerCoverage profilerForPackagesMatching: aPackageName.
+	profiler := self aSLProfilerCoverage profilerForPackagesMatching: aPackageName.
 	fitness profiler: profiler.
 	profiler uninstall.
 	profiler beforeProfiling 
@@ -32,7 +32,7 @@ SCoverageTest >> installOn: aPackageName [
 SCoverageTest >> setUp [
 	utility := SUtilityTypeInfo new.
 	fitness := self fitnessClass new.
-	profiler := SLProfilerCoverage new
+	profiler := self aSLProfilerCoverage new
 ]
 
 { #category : #running }

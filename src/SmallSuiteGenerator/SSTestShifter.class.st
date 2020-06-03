@@ -849,7 +849,7 @@ SSTestShifter >> parseTreeAsDictWith: statementCollection [
 	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
 	rbParserClass := SPlatform rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
-	temporaries := Array with: (RBVariableNode named: 'var').
+	temporaries := Array with: (self aVariableNodeClass named: 'var').
 	node body temporaries: temporaries.
 	node body addNode: (rbParserClass parseExpression: 'var := Dictionary new.').
 	statementCollection
@@ -869,7 +869,8 @@ SSTestShifter >> parseTreeWith: statementCollection [
 	rbParserClass := SPlatform rbParserClass.
 	node := rbParserClass parseExpression: '[]'.
 	temporaries := (self allVarNames
-		collect: [ :varName | rbParserClass parseExpression: varName ]) select: [:e | e isKindOf: RBVariableNode ].
+		collect: [ :varName | rbParserClass parseExpression: varName ]) 
+		select: [:e | e isKindOf: self aVariableNodeClass ].
 	node body temporaries: temporaries.
 	statementCollection
 		do: [ :stm | 

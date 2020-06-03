@@ -30,7 +30,7 @@ STypeInfoTest >> testAccesssMessagesFrom [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 	| typeInfo messages |
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	messages := typeInfo messagesFrom: (self nameOf: SConference).
@@ -58,7 +58,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	classNameByteString := self nameOf: ByteString.
 	classNameSmallInteger := self nameOf: SmallInteger.
 	classNameSStudent := self nameOf: SStudent.
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ | aConference aPerson |
 			aConference := SConference new offerPrice: 95.
 			aPerson := SStudent new name: 'Mary'.
@@ -117,7 +117,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	classNameByteString := self nameOf: ByteString.
 	classNameSmallInteger := self nameOf: SmallInteger.
 	classNameDictionary := self nameOf: Dictionary.
-	profile := SSTypeCollector
+	profile := self aSTypeCollectorClass
 		profile: [ SFoo new
 				return: Dictionary new;
 				return: OrderedCollection new;
@@ -187,7 +187,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	| profile typeInfo methodInfo classNameSFoo |
 	classNameSFoo := self nameOf: SFoo.
-	profile := SSTypeCollector
+	profile := self aSTypeCollectorClass
 		profile: [ SFoo new return: OrderedCollection ]
 		forClassNamed: classNameSFoo.
 	typeInfo := STypeInfo asTypeInfo: profile.
@@ -215,7 +215,7 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 STypeInfoTest >> testAsTypeInfoSFooWithNil [
 	| profile typeInfo methodInfo classNameSFoo |
 	classNameSFoo := self nameOf: SFoo.
-	profile := SSTypeCollector
+	profile := self aSTypeCollectorClass
 		profile: [ SFoo new return: nil ]
 		forClassNamed: classNameSFoo.
 	typeInfo := STypeInfo asTypeInfo: profile.
@@ -243,7 +243,7 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 	| typeInfo classNameSTeacher |
 	classNameSTeacher := self nameOf: SSTeacher.
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
@@ -269,7 +269,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 	| typeInfo |
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
@@ -300,13 +300,13 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoScalars [
 	| typeInfo |
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: (typeInfo scalars values flatCollect: [ :val | val ])
 		hasSameElements: #(95 0 100 nil).
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SFoo new
 				returnCollection;
 				returnFloat;
@@ -395,17 +395,17 @@ STypeInfoTest >> testEquals [
 STypeInfoTest >> testFactoryMessages [
 	| typeInfo classNameStudent |
 	classNameStudent := self nameOf: SStudent.
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SStudent name: 'Mary' ]
 		forClassNamed: classNameStudent).
 	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SStudent name: 'Mary' ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection: ((typeInfo factoryMessagesFrom: #SStudent) collect: #selector)
 		hasSameElements: #(#name:).
-	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
@@ -460,21 +460,30 @@ STypeInfoTest >> testIsAbstracClass [
 	| typeInfo |
 	typeInfo := STypeInfo new
 		type:
-			#SSPerson
+			(self fullSymbolOf: #SSPerson)
 				->
 					(Array
 						with:
 							(Array
-								with: #name -> #(#SSPerson #ByteString #() true)
-								with: #id -> #(#SSPerson #SmallInteger #() false))
+								with: #name -> (Array with: (self fullSymbolOf: #SSPerson)
+									with: (self fullSymbolOf:#ByteString)
+									with: #()
+									with: true)
+								with: #id ->  (Array with: (self fullSymbolOf: #SSPerson)
+									with: (self fullSymbolOf:#SmallInteger)
+									with: #()
+									with: false))
 						with:
 							(Array
 								with:
 									#name:with:
-										-> #(#SSPerson #SSPerson #(#ByteString #SmallInteger) false)));
-		scalar: #SmallInteger with: #(50);
-		scalar: #ByteString with: #('Ann').
-	self assert: (typeInfo isAbstractClass: #SSPerson)
+										->  (Array with: (self fullSymbolOf: #SSPerson)
+									with: (self fullSymbolOf:#SSPerson)
+									with: (Array with: (self fullSymbolOf:#ByteString) with:  (self fullSymbolOf:#SmallInteger))
+									with: false)));
+		scalar: (self fullSymbolOf:#SmallInteger) with: #(50);
+		scalar: (self fullSymbolOf:#ByteString) with: #('Ann').
+	self assert: (typeInfo isAbstractClass:  (self fullSymbolOf:#SSPerson) )
 ]
 
 { #category : #tests }
@@ -560,35 +569,50 @@ STypeInfoTest >> testNoneAbstractClasses [
 	| typeInfo |
 	typeInfo := STypeInfo new
 		type:
-			#SSPerson
+			(self fullSymbolOf: #SSPerson)
 				->
 					(Array
 						with:
 							(Array
-								with: #name -> #(#SSPerson #ByteString #() true)
-								with: #id -> #(#SSPerson #SmallInteger #() false))
+								with: #name -> (Array with:(self fullSymbolOf: #SSPerson) 
+													with: (self fullSymbolOf: #ByteString)
+													with: #()
+													with: true)
+								with: #id -> (Array with:(self fullSymbolOf: #SSPerson) 
+													with: (self fullSymbolOf: #SmallInteger)
+													with: #()
+													with: false))
 						with:
 							(Array
 								with:
 									#name:with:
-										-> #(#SSPerson #SSPerson #(#ByteString #SmallInteger) false)));
+										-> (Array with:(self fullSymbolOf: #SSPerson) 
+													with: (self fullSymbolOf: #SSPerson)
+													with: (Array with: (self fullSymbolOf: #ByteString) with:(self fullSymbolOf: #SmallInteger) )
+													with: false)));
 		type:
-			#SAbstractClass
+			(self fullSymbolOf: #SAbstractClass)
 				->
 					(Array
-						with: (Array with: #id -> #(#SAbstractClass #SmallInteger #() true))
+						with: (Array with: #id ->  (Array with:(self fullSymbolOf: #SAbstractClass) 
+													with: (self fullSymbolOf: #SmallInteger)
+													with: #()
+													with: true))
 						with: #());
 		type:
-			#SStudent
+			(self fullSymbolOf: #SStudent)
 				->
 					(Array
-						with: (Array with: #scoreStudent -> #(#SStudent #SmallInteger #() true))
+						with: (Array with: #scoreStudent ->  (Array with:(self fullSymbolOf: #SStudent) 
+													with: (self fullSymbolOf: #SmallInteger)
+													with: #()
+													with: true))
 						with: #());
-		scalar: #SmallInteger with: #(50 1);
-		scalar: #ByteString with: #('Ann').
+		scalar: (self fullSymbolOf: #SmallInteger) with: #(50 1);
+		scalar: (self fullSymbolOf: #ByteString) with: #('Ann').
 	self
-		assertCollection: (typeInfo noneAbstractClasses collect: #name)
-		hasSameElements: #(#SStudent)
+		assertCollection: (typeInfo noneAbstractClasses collect: #name) asArray
+		hasSameElements:( Array with:  #SStudent)
 ]
 
 { #category : #tests }
