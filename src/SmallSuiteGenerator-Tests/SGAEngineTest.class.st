@@ -51,16 +51,19 @@ SGAEngineTest >> testRunOnClassSStudentManual [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesMatchingSFoo [
-	| first last functionFitness  targetPackageRegex |
+	| first last functionFitness  targetPackageRegex typeInfo |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
+	typeInfo := utility typeInfoSFooOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
-	functionFitness tagetPackagesRegex: targetPackageRegex.
+	functionFitness tagetPackagesRegex: targetPackageRegex;
+	 targetClass: (self fullSymbolOf: #SFoo);
+	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
-		typeInfo: utility typeInfoSFooOnPackage1; 	" STON fromString: utility typeInfoStringSFoo3."
-		fitness: functionFitness;
+		typeInfo: typeInfo; 	" STON fromString: utility typeInfoStringSFoo3."
 		targetClassName: (self fullSymbolOf: #SFoo);
+		fitness: functionFitness;
 		populationSize: 5;
 		numberOfGenerations: 5;
 		populationSize: 10;
@@ -75,15 +78,19 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
-	| first last functionFitness targetPackageRegex |
+	| first last functionFitness targetPackageRegex typeInfo |
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
+	
+	
+	typeInfo := utility typeInfoSSTeacherOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
-	functionFitness tagetPackagesRegex: targetPackageRegex.
-	functionFitness targetClass: (self fullSymbolOf: #SSTeacher).
+	functionFitness tagetPackagesRegex: targetPackageRegex;
+	 targetClass: (self fullSymbolOf: #SSTeacher);
+	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
-		typeInfo: utility typeInfoSSTeacherOnPackage1; "STON fromString: utility typeInfoStringSSTeacher1."
+		typeInfo: typeInfo; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
 		targetClassName: (self fullSymbolOf: #SSTeacher);
 		populationSize: 10;
