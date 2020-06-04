@@ -1,20 +1,17 @@
 Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addDescriptiveTextOn: canvas with: fitnessSeed ofColor: color and: offsets [
+SGAEngine >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
 	| blockText text dictionary |
 	blockText := [:string | RSLabel new 
 		text: string;
 		color: color;
-		fontSize: 30;
+		fontSize: 40;
 		yourself ].
-	text := blockText value: 'TargetClass: ', self targetClassName, ' in package: ', self targetPackageRegex, ' and fitnessSeed: ', fitnessSeed asString.
-	RSLocation new top left offset: -60; move: text on: canvas shapes.
-	canvas addShape: text.
 	dictionary := Dictionary new 
-		at: 'Generation contribution' put: (RSLocation new bottom left offset: (0@50); yourself);
-		at: 'Evolution of Genetic Algorithm' put: (RSLocation new bottom center offset: (offsets first@0); yourself);
-		at: 'Evolution Coverage %' put: (RSLocation new bottom right offset: (offsets second@0); yourself);
+		at: 'Generation contribution' put: (RSLocation new top left offset: (100 negated@110 negated); yourself);
+		at: 'Evolution of Genetic Algorithm' put: (RSLocation new top center offset: (offsets first@0); yourself);
+		at: 'Evolution Coverage %' put: (RSLocation new top right offset: (offsets second@0); yourself);
 		yourself.
 	dictionary associationsDo: [ :assoc |
 		| label |
@@ -22,6 +19,9 @@ SGAEngine >> addDescriptiveTextOn: canvas with: fitnessSeed ofColor: color and: 
 		assoc value move: label on: canvas shapes.
 		canvas addShape: label
 	].
+	text := blockText value: 'TargetClass: ', self targetClassName, ' in package: ', self targetPackageRegex.
+	RSLocation new top center offset: 0@130 negated; move: text on: canvas shapes.
+	canvas addShape: text.
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -80,12 +80,34 @@ SGAEngine >> addLegend: associations on: container withFontColor: color and: blo
 		container: container;
 		defaultLabel: (RSLabel new color: color; yourself);
 		yourself.
-		associations do: [ :assoc | legend text: assoc key withBoxColor: assoc value ].
+		associations do: [ :assoc | | colorBox |
+			colorBox := assoc value.
+			[ legend text: assoc key withBoxColor: colorBox ] on: Error do: [ legend text: assoc key withFadingRamp: colorBox ] ].
 		legend leyendDo: [ :l |
 				l
-					scaleBy: 1 ].
+					"withBorder;"
+					padding: 5;
+					scaleBy: 2.5 ].
 		blockLocation value: legend.
 		legend build
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> addLegendOn: canvas with: dictColor [
+	| colors |
+	self addLegend: (Array with: 'Class coverage' -> (dictColor at: 'classCoverage')
+		with: 'Method coverage' -> (dictColor at: 'methodCoverage')
+		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below left offset: (500@0) ].
+		
+	colors := dictColor at: 'rangeMethodColor'.
+	self addLegend: (Array  
+			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
+			with: 'TC with higher coverage than parents' -> (dictColor at: 'backgroundHigherFitnessTestCase')
+			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@200 negated ].
+			
+	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
+		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below right offset: -700@200 negated ].
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -179,22 +201,20 @@ SGAEngine >> contributionShapeOfHeight: height color: dictColor and: ys [
 				bottom: 100);
 		border: (RSBorder new width: 2; color: (dictColor at: 'border'); yourself);
 		yourself.
-	self addLegend: infoColor values on: element withFontColor: (dictColor at: 'font') and: [:legend | legend location below offset: 10 ].
+	"self addLegend: infoColor values on: element withFontColor: (dictColor at: 'font') and: [:legend | legend location below offset: 10 ]."
 	^ element
 	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> evolutionPoints: ypositions fitnessSeed: fitnessSeed withScale: scale [
-	| endPoint points listFittest listLowest listAverage listSeed |
+SGAEngine >> evolutionPoints: ypositions withScale: scale [
+	| endPoint points listFittest listLowest listAverage |
 	points := Dictionary new.
 	endPoint := scale scale: (0 @ ypositions first).
 	listLowest := OrderedCollection new add: endPoint; yourself.
 	listAverage := OrderedCollection new add: endPoint; yourself.
 	listFittest := OrderedCollection new add: endPoint; yourself.
-	listSeed := OrderedCollection new add: endPoint; yourself.
-	points at: 'seed' put: listSeed; 
-		at: 'fittest' put: listFittest;
+	points at: 'fittest' put: listFittest;
 		at: 'average' put: listAverage;
 		at: 'lowest' put: listLowest.
 	(self logs collect: [:log | 
@@ -205,14 +225,13 @@ SGAEngine >> evolutionPoints: ypositions fitnessSeed: fitnessSeed withScale: sca
 			y := ypositions at: index.
 			listLowest add: (scale scale: array first @ y).
 			listAverage add: (scale scale: array second @ y).
-			listFittest add: (scale scale: array third @ y).
-			listSeed add: (scale scale: fitnessSeed @ y)
+			listFittest add: (scale scale: array third @ y)
 		].
 	^ points
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitnessSeed andSize: size [
+SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor andSize: size [
 	| composite scale yMax points axis spaceStick |
 	composite := RSComposite new 
 		color: Color transparent.
@@ -220,7 +239,7 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitn
 	scale := NSScale linear 
 		domain: (Array with: 0@0 with: 100@yMax);
 		range: (Array with: 0@0 with: size).
-	points := self evolutionPoints: yPositions, #(0) fitnessSeed: fitnessSeed withScale: scale.
+	points := self evolutionPoints: yPositions, #(0) withScale: scale.
 	spaceStick := 0.1 negated.
 	axis := RSPolyline new 
 		color: (dictColor at: 'axis');
@@ -228,10 +247,6 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitn
 		controlPoints: ((Array with: 0@yMax with: 0@spaceStick with: 100@spaceStick) collect: [:p | scale scale: p]);
 		yourself.
 	composite addShape: axis; 
-		addShape: (RSPolyline new 
-			controlPoints: (points at: 'seed'); 
-			color: (dictColor at: 'seedCoverage');
-			width: 10; yourself);
 		addShape: (RSPolyline new 
 			controlPoints: (points at: 'lowest'); 
 			color: (dictColor at: 'lowestCoverage');
@@ -246,10 +261,9 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor fitnessSeed: fitn
 			width: 10; yourself).
 	self addTickX: composite withScale: scale step: 20 andColor: (dictColor at: 'font').
 	self addTickY: composite withScale: scale ofColor: (dictColor at: 'font') andPositions: yPositions.
-	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
+	"self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
-		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))
-		with: ('Seed-Fitness' -> (dictColor at: 'seedCoverage'))) on: composite withFontColor: (dictColor at: 'font') and: [:legend | legend location below left offset: (140@60 negated) ]. 
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: composite withFontColor: (dictColor at: 'font') and: [:legend | legend location below left offset: (140@60 negated) ]." 
 	^ composite adjustToChildren
 ]
 
@@ -291,7 +305,7 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 		move: border on: canvas shapes.
 	canvas addShape: border.
 	widthShape := 800.
-	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor fitnessSeed: fitnessSeed andSize: widthShape @shapeHeight negated.
+	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor andSize: widthShape @shapeHeight negated.
 	RSLocation new top right offset: ((evolutionShape width + 50)@0); move: evolutionShape on: canvas shapes.
 	"add evolutionShape on canvas"
 	canvas addShape: evolutionShape.
@@ -299,7 +313,8 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	RSLocation new top right move: border on: canvas shapes.
 	canvas addShape: border.
 	"add descriptive text on canvasa"
-	self addDescriptiveTextOn: canvas with: fitnessSeed ofColor: (dictColor at: 'font') and: (Array with: ((infoMethodShape width / 10) negated ) with: -200).
+	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: ((infoMethodShape width / 10) negated ) with: -200).
+	self addLegendOn: canvas with: dictColor.
 	canvas @ RSCanvasController.
 	^ canvas
 	
@@ -527,12 +542,18 @@ SGAEngine >> testCaseShape: testCase ofColor: dictColor using: dictionary and: f
 	group := RSGroup new.
 	group 
 		add: (self methodShapeGroup: testCase with: dictionary);
-		add: (self progressBarFrom: fitnessSeed to: progressValue ofColor: dictColor).
+		add: (RSGroup new add: (RSComposite new addShape: (RSLabel new text: progressValue asString, '%'; bold; color: (dictColor at: 'fontMethodBox'); fontSize: 20); padding: (Margin 
+				left: 10
+				right: 10
+				top: 1
+				bottom: 1)); yourself).
+		"add: (self progressBarFrom: fitnessSeed to: progressValue ofColor: dictColor)."
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
 		paint: (higher ifTrue: [dictColor at: 'backgroundHigherFitnessTestCase' ] ifFalse: [dictColor at: 'backgroundTestCase' ]);
 		model: testCase;
+		border: (RSBorder new);
 		padding: 10;
 		draggable 
 ]

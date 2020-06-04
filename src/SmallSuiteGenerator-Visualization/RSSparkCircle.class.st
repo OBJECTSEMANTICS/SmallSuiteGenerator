@@ -64,10 +64,11 @@ RSSparkCircle >> scaleTo: aNumber [
 
 { #category : #hooks }
 RSSparkCircle >> shapeFor: anObject index: index [
-	| slice value border externalRadius |
+	| slice value externalRadius width |
 	slice := self defaultSliceShape copy.
 	value := values at: index.
 	externalRadius := (Array with: 1 with: (value <= 1 ifTrue: [ value * 100 ] ifFalse: [ value ])) max.
+	width := (value * slice innerRadius) max: 0.2.
 	slice
 		model: value * 100;
 		index: index;
@@ -75,12 +76,14 @@ RSSparkCircle >> shapeFor: anObject index: index [
 		alphaAngle: (self alphaAngleFor: slice);
 		betaAngle: (self betaAngleFor: slice);
 		externalRadius: slice innerRadius + (slice externalRadius/10 * (externalRadius log)) + 1.
-	border := values min * slice innerRadius.
-	slice border: (RSBorder new width: border ; 
+	slice border: (RSBorder new width: width;
+		color: (width == 0.2 ifTrue: [ Color black] ifFalse: [ slice color muchDarker]));
+		popup.
+	"slice border: (RSBorder new width: values min * slice innerRadius ; 
 			color: (value > 0 
 				ifTrue: [ slice color muchDarker ] 
 				ifFalse: [ slice color muchLighter]));
-		popup.
+		popup."
 	^ slice
 ]
 
