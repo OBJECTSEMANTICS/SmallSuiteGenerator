@@ -66,11 +66,11 @@ STestCaseFactory class >> lightColors [
 		"at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
 		at: 'backgroundTestCase' put: (Color fromHexString: 'ebecf0');
 		"at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: '1B8D8D' '0B6969' '1E7676');"
-		at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: 'bebebe');
+		at: 'borderTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
 		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
 		at: 'scaleDarker' put: (Color r: 0 g: 0 b: 0 alpha: 0.1)"(Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253)";
-		at: 'baseBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
-		at: 'forwardBar' put: (Color r: 0 g: 1 b: 0.67);
+		at: 'baseBar' put: Color white;
+		at: 'forwardBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
 		at: 'backwardBar' put: (Color r: 1 g: 0 b: 0.25098039215686274);
 		at: 'edge' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
 		at: 'classCoverage' put: (Color r: 0.05 g: 0.75 b: 0.91);

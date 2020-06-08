@@ -102,7 +102,7 @@ SGAEngine >> addLegendOn: canvas with: dictColor [
 	colors := dictColor at: 'rangeMethodColor'.
 	self addLegend: (Array  
 			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
-			with: 'TC with higher coverage than parents' -> (dictColor at: 'backgroundHigherFitnessTestCase')
+			with: 'TC with higher coverage than parents' -> (dictColor at: 'borderTestCase')
 			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@200 negated ].
 			
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
@@ -276,7 +276,7 @@ SGAEngine >> fitnessOf: summaryExecMethod [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
-	| canvas contributionShape infoMethodShape evolutionShape infoHeights highlightTestCase highlightMethod shapeHeight ys border widthShape |
+	| canvas contributionShape infoMethodShape evolutionShape infoHeights highlightTestCase highlightMethod shapeHeight ys border widthShape barGroup |
 	canvas := RSCanvas new 
 		color: (dictColor at: 'background').
 	highlightTestCase := RSHighlightable new 
@@ -285,8 +285,9 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	highlightMethod := RSHighlightable new 
 		highlightColor: (dictColor at: 'highlightMethod');
 		yourself.
-	infoMethodShape := self infoMethodShapesOn: canvas ofColor: dictColor highlight: (Array with: highlightTestCase with: highlightMethod) and: fitnessSeed.	
-	infoHeights := infoMethodShape at: 2.
+	infoMethodShape := self infoMethodShapesOn: canvas ofColor: dictColor highlight: (Array with: highlightTestCase with: highlightMethod).	
+	infoHeights := infoMethodShape at: 3.
+	barGroup := RSComposite new shapes: (infoMethodShape at: 2).
 	infoMethodShape := infoMethodShape at: 1.
 	shapeHeight := infoMethodShape height.
 	ys := self positionsOf: infoHeights onYAxis: shapeHeight.
@@ -298,9 +299,12 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	canvas addShape: contributionShape.
 	"add infoMethodShapeGroup on canvas"
 	canvas addAll: infoMethodShape.
+	"add barGroup on canvas"
+	RSLocation new top right offset: ((barGroup width * 1.2)@50); move: barGroup on: canvas shapes.
+	canvas addShape: barGroup.
 	self addHighlightTestCaseEvent: highlightTestCase on: canvas ofColor: (dictColor at: 'highlightTestCase').
 	self addHighlightMethodEvent: highlightMethod on: canvas ofColor: (dictColor at: 'highlightMethod').
-	border := self borderOfSize: (infoMethodShape width) @ (contributionShape height) andColor: (dictColor at: 'border').
+	border := self borderOfSize: (infoMethodShape width + (barGroup width * 1.2)) @ (contributionShape height) andColor: (dictColor at: 'border').
 	RSLocation new top middle offset: ((contributionShape width - (contributionShape width * 0.45))@0); 
 		move: border on: canvas shapes.
 	canvas addShape: border.
@@ -321,9 +325,10 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights and: fitnessSeed [
-	| generationGroup filteredList memo shapeHeights scaleColorBlock set |
+SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
+	| generationGroup filteredList memo shapeHeights scaleColorBlock set barGroup |
 	generationGroup := RSGroup new.
+	barGroup := RSGroup new.
 	filteredList := OrderedCollection new.
 	set := Set new.
 	logs first population do: [ :tC | self addSurvivorTestCase: tC on: filteredList using: set and: logs size ].
@@ -333,16 +338,21 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 	scaleColorBlock := self scaleColorBlock: (self methodColorDictionary: (dictColor at: 'rangeMethodColor')).
 	generationGroup addAll: (
 		(filteredList groupedBy: [:tC | tC generationNumber]) collect: [ :testCases | 
-			| group |
+			| group contribution generationNumber |
 			group := RSGroup new.
+			contribution := 'contribution' -> 0.
 			group addAll: (testCases collect: [ :testCase | 
 				(self testCaseShape: testCase 
 					ofColor: dictColor 
-					using: (Dictionary new at: 'memo' put: memo; at: 'highlight' put: highlights second; at: 'scaleColorBlock' put: scaleColorBlock; yourself) 
-					and: fitnessSeed) @ highlights first; yourself.
+					with: memo
+					highlight: highlights second
+					scale: scaleColorBlock
+					and: contribution) @ highlights first; yourself.
 			]).
 			shapeHeights add: (group collect: #height) max.
 			RSHorizontalLineLayout new gapSize: 20; on: group.
+			generationNumber := testCases first generationNumber.
+			barGroup add: (self progressBarFrom: contribution value to: (logs at: generationNumber) population size ofColor: dictColor and: shapeHeights).
 			group
 	]).
 	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
@@ -352,7 +362,7 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 		width: 5;
 		color: (dictColor at: 'edge');
 		connectFromAll: [ :testCase | testCase parents ].
-	^ Array with: (generationGroup flatCollect: #yourself) with: shapeHeights
+	^ Array with: (generationGroup flatCollect: #yourself) with: barGroup with: shapeHeights
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -414,12 +424,9 @@ SGAEngine >> methodShape: summaryExecMethod withGradientFrom: darkColor to: ligh
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> methodShapeGroup: testCase with: dictionary [
-	| group memo scaleColorBlock highlight |
+SGAEngine >> methodShapeGroup: testCase with: memo highlight: highlight scale: scaleColorBlock [
+	| group |
 	group := RSGroup new.
-	memo := dictionary at: 'memo'.
-	scaleColorBlock := dictionary at: 'scaleColorBlock'.
-	highlight := dictionary at: 'highlight'.
 	group addAll: ((self summaryMethodsOfTargetClass: testCase summaryExecutionMethods)
 		select: [:summary |
 			| coverage |
@@ -444,26 +451,24 @@ SGAEngine >> positionsOf: heightShapes onYAxis: height [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> progressBarFrom: baseValue to: progressValue ofColor: dictColor [ 
-	| group groupBox groupData bar difference progressColor |
-	group := RSGroup new.
+SGAEngine >> progressBarFrom: progressValue to: maxValue ofColor: dictColor and: shapeHeights [
+	| groupBox groupData bar scale |
 	groupBox := RSGroup new.
 	groupData := RSGroup new.
-	difference := progressValue - baseValue.
-	progressColor := difference > 0 ifTrue: [ dictColor at: 'forwardBar' ] ifFalse: [ dictColor at: 'backwardBar' ].
+	scale := NSScale linear domain: (Array with: 0 with: maxValue);
+		range: (Array with: 0 with: 200).
 	groupBox 
-		add: (RSBox new height: 10; color: (dictColor at: 'baseBar'); width: (difference < 0 ifTrue: [ baseValue + difference ] ifFalse: [ baseValue ]));
-		add: (RSBox new height: 10; color: progressColor; width: difference abs).
+		add: (RSBox new height: 50; color: (dictColor at: 'baseBar'); width: (scale scale: progressValue));
+		add: (RSBox new height: 50; color: (dictColor at: 'forwardBar'); width: (scale scale: maxValue - progressValue); withBorder).
 	RSHorizontalLineLayout new gapSize: 0; on: groupBox.
 	bar := RSComposite new
 		shapes: groupBox;
 		yourself.
 	groupData 
 		add: bar;
-		add: (RSLabel new text: progressValue asString, '%'; bold; color: (dictColor at: 'fontMethodBox'); fontSize: 8).
+		add: (RSLabel new text: (maxValue - progressValue) asString; color: (dictColor at: 'fontMethodBox'); fontSize: 30).
 	RSHorizontalLineLayout new gapSize: 10; on: groupData.
-	group add: (RSComposite new shapes: groupData).
-	^ group
+	^ RSComposite new shapes: groupData; position: 0@([shapeHeights allButLast sum + (195 * (shapeHeights size - 1))] on: CollectionIsEmpty do: [ 0 ])
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -534,26 +539,27 @@ SGAEngine >> summaryMethodsOfTargetClass: summaryMethods [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> testCaseShape: testCase ofColor: dictColor using: dictionary and: fitnessSeed [
-	| group higher block progressValue |
+SGAEngine >> testCaseShape: testCase ofColor: dictColor with: memo highlight: highlight scale: scaleColorBlock and: association [
+	| group higher block progressValue methodGroup contribute |
 	block := [ :tC | [ tC fitnessByClass values first at: self targetClassName ifAbsent: 0 ] on: SubscriptOutOfBounds do: [ 0 ] ].
 	progressValue := block value: testCase.
 	higher := testCase parents ifEmpty: [ false ] ifNotEmpty: [ testCase parents allSatisfy: [ :tC | (block value: tC) < progressValue ] ].
 	group := RSGroup new.
-	group 
-		add: (self methodShapeGroup: testCase with: dictionary);
-		add: (RSGroup new add: (RSComposite new addShape: (RSLabel new text: progressValue asString, '%'; bold; color: (dictColor at: 'fontMethodBox'); fontSize: 20); padding: (Margin 
+	methodGroup := self methodShapeGroup: testCase with: memo highlight: highlight scale: scaleColorBlock.
+	contribute := methodGroup isNotEmpty or: [ higher ].
+	contribute ifTrue: [ association value: association value + 1 ].
+	group add: methodGroup;
+		add: (RSGroup new add: (RSComposite new addShape: (RSLabel new text: progressValue asString, '%'; bold; color: ((dictColor at: 'fontMethodBox') alpha: (contribute ifFalse: [ 0.5 ] ifTrue: [ 1 ])); fontSize: 20); padding: (Margin 
 				left: 10
 				right: 10
 				top: 1
 				bottom: 1)); yourself).
-		"add: (self progressBarFrom: fitnessSeed to: progressValue ofColor: dictColor)."
 	RSVerticalLineLayout on: group.
 	^ RSComposite new 
 		shapes: (group flatCollect: #yourself);
-		paint: (higher ifTrue: [dictColor at: 'backgroundHigherFitnessTestCase' ] ifFalse: [dictColor at: 'backgroundTestCase' ]);
+		paint: ((dictColor at: 'backgroundTestCase') alpha: (contribute ifFalse: [ 0.5 ] ifTrue: [ 1 ]));
 		model: testCase;
-		border: (RSBorder new);
+		border: (RSBorder new width: (higher ifTrue: [ 8 ] ifFalse: [ 1 ]); color: (dictColor at: 'borderTestCase'));
 		padding: 10;
 		draggable 
 ]
