@@ -516,7 +516,7 @@ SGAEngine >> sparkCircleGroupOfColor: dictColor andSize: size [
 					dictPrevData at: 'methodCoverage' put: numberMethods.
 					difference / totalMethods]
 				with: [:model | | coverage difference |
-					coverage := model fittestTestCase fitnessByClass values first at: targetClassName.
+					coverage := model fitness values first.
 					difference := coverage - (dictPrevData at: 'branchCoverage').
 					dictPrevData at: 'branchCoverage' put: coverage.
 					difference / 100  ]);
