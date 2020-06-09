@@ -82,7 +82,10 @@ SGAEngine >> addLegend: associations on: container withFontColor: color and: blo
 		yourself.
 		associations do: [ :assoc | | colorBox |
 			colorBox := assoc value.
-			[ legend text: assoc key withBoxColor: colorBox ] on: Error do: [ legend text: assoc key withFadingRamp: colorBox ] ].
+			colorBox isArray ifFalse: [ legend text: assoc key withBoxColor: colorBox ] 
+				ifTrue:  [ colorBox first isColor 
+					ifTrue: [ legend text: assoc key withShape: (legend defaultBox border: (RSBorder new color: colorBox second); paint: colorBox first) ] 
+					ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ].
 		legend leyendDo: [ :l |
 				l
 					"withBorder;"
@@ -102,7 +105,7 @@ SGAEngine >> addLegendOn: canvas with: dictColor [
 	colors := dictColor at: 'rangeMethodColor'.
 	self addLegend: (Array  
 			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
-			with: 'TC with higher coverage than parents' -> (dictColor at: 'borderTestCase')
+			with: 'TC with higher coverage than parents' -> (Array with: (dictColor at: 'backgroundTestCase') with: (dictColor at: 'borderTestCase'))
 			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@200 negated ].
 			
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
