@@ -38,7 +38,7 @@ SSTestCase >> analyze [
 	self setUp.
 	result := SSTestRunner new evaluate: self.
 	self tearDown.
-	SPlatform asDict ifTrue: [ result := result at: #var ].
+	SPlatform asDict ifTrue: [ result := result at: 'var' ].
 	^ result.
 ]
 
@@ -72,6 +72,11 @@ SSTestCase >> deepCopy [
   copy summaryExecutionMethods: self summaryExecutionMethods.
   copy hasErrors: self hasErrors.
   ^ copy
+]
+
+{ #category : #actions }
+SSTestCase >> fitnessFor: functionName [ 
+	^ self fitness at: functionName
 ]
 
 { #category : #accessing }
@@ -116,6 +121,22 @@ SSTestCase >> initialize [
    idPopulation := 1.
    summaryExecutionMethods := OrderedCollection new.
 	hasErrors := false
+]
+
+{ #category : #accessing }
+SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
+    |fitness1 fitness2|
+    fitness1 := self fitness at: fitnessStrategy.
+    fitness2 := testCase2 fitness at: fitnessStrategy.
+    (fitness1 > fitness2) ifTrue:[ ^ true ].
+	 (self hasErrors and: [ testCase2 hasErrors not and: [ self next < 0.5 ]]) ifTrue: [^ false].
+    ((fitness1 = fitness2) and:
+        [self length < testCase2 length]) 
+                ifTrue:[^ true]. 
+    (fitness1 = fitness2 and:
+        [self length = testCase2 length and:[ self idPopulation > testCase2 idPopulation]])
+                ifTrue:[^ true]. 
+    ^ false
 ]
 
 { #category : #actions }

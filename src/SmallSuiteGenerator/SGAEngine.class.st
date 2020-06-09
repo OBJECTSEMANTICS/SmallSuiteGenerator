@@ -40,7 +40,6 @@ Class {
 		'targetClassName',
 		'numberOfGenerations',
 		'lastMessage',
-		'profiler',
 		'packageRegex',
 		'initialPopulation',
 		'typeInfoProfiler',
@@ -80,38 +79,9 @@ SGAEngine >> checkTypeInfo [
 		description: 'Set a typeInfo'
 ]
 
-{ #category : #accessing }
+{ #category : #cleaning }
 SGAEngine >> clean [
 	fitness ifNotNil: [ fitness tearDown ]
-]
-
-{ #category : #'groups collecting' }
-SGAEngine >> collectFitnessByName [
-	| dictFit |
-	dictFit := Dictionary new.
-	((population collect: #fitness) flatCollect: #associations) do: [ 
-		:assoc | 
-		| aValue |
-		aValue := dictFit at: assoc key ifAbsentPut: [ OrderedCollection new].
-		aValue add: assoc value].
-	^ dictFit
-]
-
-{ #category : #updating }
-SGAEngine >> completeTypeInfo [
-	typeInfo types keysDo: [:aClass | |classInfo realClassInfo|
-	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
-	realClassInfo := typeInfo types at: aClass.
-	classInfo methodTypes keysAndValuesDo: [ :key :value | 
-		(key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ]) ifTrue:[
-		realClassInfo methodTypes at: key
-		ifPresent: [  ]
-		ifAbsentPut: [ 
-			self updateArgsOf: value.
-			value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
-			value receiver type: aClass.
-			value hasProfiler: false.
-			value executions: 0.5 ] ] ] ]
 ]
 
 { #category : #actions }
@@ -133,7 +103,7 @@ SGAEngine >> createNewPopulation [
 		  P1copy := self similarChild: P1 with: newNumber + 1.
 		  P2copy := self similarChild: P2 with: newNumber + 2.
         self shouldCrossOver 
-				ifTrue: [ children := self crossoverOperator crossover: P1 with: P2.
+				ifTrue: [ children := crossoverOperator crossover: P1 with: P2.
               O1 := self updateHierarchyData: (Array with: P1 with: P2) of: (children first idPopulation: newNumber + 3).
               O2 := self updateHierarchyData: (Array with: P1 with: P2) of: (children second idPopulation: newNumber + 4) ] 
 				ifFalse: [ 
@@ -154,28 +124,23 @@ SGAEngine >> createNewPopulation [
    self updateTypeInfoWith: newPopulation.
    self fixPopulation: newPopulation.
    population := newPopulation.
-   self order: population
+   population := self order: population
 ]
 
 { #category : #creating }
 SGAEngine >> createRandomPopulation [
-  ^ (1 to: populationSize) collect: [:val |  | value test |
+  ^ (1 to: populationSize) collect: [:idPop |  | value test |
         value := self next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
         test
-           addTargetClassName: self targetClassName;
-           addFactoryMessage: self targetClassName;
+           addTargetClassName: targetClassName;
+           addFactoryMessage: targetClassName;
            generateStatements: value;
            lastMessage: lastMessage;
-           idPopulation: val;
+           idPopulation: idPop;
 			  clean.
 		  selectionStrategyTestCase ifNotNil: [ test selectionStrategy: selectionStrategyTestCase ].
         test ]
-]
-
-{ #category : #accessing }
-SGAEngine >> crossoverOperator [
-	^ crossoverOperator
 ]
 
 { #category : #accessing }
@@ -193,27 +158,13 @@ SGAEngine >> crossoverRate: aNumber [
 	selectionStrategy crossoverRate: aNumber
 ]
 
-{ #category : #testing }
-SGAEngine >> differencesBtw: summary1 and: summary2 [
-	| result |
-   result := OrderedCollection new.
-   summary1 with: summary2 do: [:x :y |  x = y 
-		ifFalse: [ | aux |
-			aux := OrderedCollection new.
-         x keysAndValuesDo: [:key :value |  (x at: key) = (y at: key) 
-				ifFalse: [ aux add: key -> (Array with: value with: (y at: key)) ] ]. 
-		aux ifNotEmpty: [ aux addFirst: (x at: 'MethodName').
-	result add: aux] ] ].
- 	^ result
-]
-
 { #category : #actions }
 SGAEngine >> doSelection [
 	self createNewPopulation.
 	initialPopulation := population.
 ]
 
-{ #category : #'groups collecting' }
+{ #category : #actions }
 SGAEngine >> eliteOfCurrentPopulation [
 	| endIndex index popSize |
 	popSize := population size.
@@ -228,13 +179,8 @@ SGAEngine >> eliteOfCurrentPopulation [
 ]
 
 { #category : #rating }
-SGAEngine >> elitismRate [
-	^ elitismRate
-]
-
-{ #category : #rating }
 SGAEngine >> elitismRate: aNumber [
-	selectionStrategy elitismRate: aNumber.
+	elitismRate := aNumber
 ]
 
 { #category : #accessing }
@@ -248,31 +194,15 @@ SGAEngine >> fitness: aFitness [
 	selectionStrategy fitness: aFitness
 ]
 
-{ #category : #actions }
-SGAEngine >> fitnessFor: aTestCase [
-	^ aTestCase fitness at: fitness functionName.
-]
-
-{ #category : #actions }
+{ #category : #updating }
 SGAEngine >> fixPopulation: aCollection [ 
 	| targetClassMessages |
-	targetClassMessages := (typeInfo types at: self targetClassName)methodTypes values asOrderedCollection 
+	targetClassMessages := (typeInfo types at: targetClassName) methodTypes values asOrderedCollection 
 		removeAllSuchThat: [:method | method returnType mustBeFixed not ].
 	 
 	aCollection do: [ :testCase | 
 		testCase statements select: [ :stm | [(targetClassMessages collect: #selector) includes: stm value selector]
 			on: Error do: [ false ] ] thenDo: [ :stm | testCase fixTypeReturnOf: (stm needsBeFixed: true) ] ]
-]
-
-{ #category : #reporting }
-SGAEngine >> generateReportOfDifferencesBtwGenerations [
-	| generations result |
-	generations := self summaryGenerations.
-	result := OrderedCollection new.
-	2 to: generations size do: [ :index | |diff|
-		diff := self differencesBtw: (generations at: index-1) and: (generations at: index).
-		diff ifNotEmpty: [ result add: (index -> diff)] ].
-	^ result
 ]
 
 { #category : #initialization }
@@ -283,7 +213,7 @@ SGAEngine >> initialize [
   numberOfGenerations := 100.
   selectionStrategy := SGARandomSelection new.
   crossoverRate := 0.8.
-  elitismRate := 10.
+  elitismRate := 0.1.
   numberOfStatements := 10.
   stopIterations := 30.
 	totalExecutionGA := 0.
@@ -308,59 +238,37 @@ SGAEngine >> initializePopulation [
 	t := Time now asSeconds.
    population := self createRandomPopulation.
    SExpression resetId.
-	self updateTypeInfoWith: population.
    self computeFitness.
-   self order: population.
+   population := self order: population.
    initialPopulation := population.
-   logs add: (self logOfGeneration: 0 inTime: t).
+	self updateTypeInfoWith: population.
+	logs add: (SGALog logOf: self inGeneration: 0 inTime: t)
 ]
 
 { #category : #initialization }
 SGAEngine >> initializeProfiler [
 	| aProfiler |
-	aProfiler := SLProfilerCoverage profilerForClass: targetClassName.
+	aProfiler := self aSLProfilerCoverage profilerForClass: targetClassName.
 	(aProfiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
 		displayingProgress: 'Instrumenting ' , targetClassName.
 	^ aProfiler
 ]
 
-{ #category : #testing }
-SGAEngine >> is: testCase1 betterThan: testCase2 [
-    |fitness1 fitness2|
-    fitness1 := self fitnessFor: testCase1.
-    fitness2 := self fitnessFor: testCase2.
-    (fitness1 > fitness2) ifTrue:[ ^ true ].
-	 (testCase1 hasErrors and: [ testCase2 hasErrors not and: [ self next < 0.5 ]]) ifTrue: [^ false].
-    ((fitness1 = fitness2) and:
-        [testCase1 length < testCase2 length]) 
-                ifTrue:[^ true]. 
-    (fitness1 = fitness2 and:
-        [testCase1 length = testCase2 length and:[ testCase1 idPopulation > testCase2 idPopulation]])
-                ifTrue:[^ true]. 
-    ^ false.
+{ #category : #actions }
+SGAEngine >> lastBestFitness [
+	^ logs last fittestTestCase fitnessFor: fitness functionName
+]
+
+{ #category : #actions }
+SGAEngine >> lastGenerationNumber [
+	^ logs last generationNumber
 ]
 
 { #category : #accessing }
 SGAEngine >> lastMessage: anObject [
 	lastMessage := anObject 
 	
-]
-
-{ #category : #log }
-SGAEngine >> logOfGeneration: anInteger inTime: t [
-	| log dictFitness |
-	log := SGALog new 
-		generationNumber: anInteger;
-		fittestTestCase: population first;
-		timeToProduceGeneration: Time new asSeconds - t;
-		population: population.
-	dictFitness := self collectFitnessByName.
-	log lowestFit: population last fitness;
-	averageFit: (self pickAverageFitTest: dictFitness). 
-	log summaryTargetClass: (fitness runPopulation: population).
-	log typeInfoGeneration: (typeInfo classAt: targetClassName) deepCopy.
-	^ log
 ]
 
 { #category : #accessing }
@@ -371,21 +279,6 @@ SGAEngine >> logs [
 { #category : #updating }
 SGAEngine >> mergeTypeInfo: otherTypeInfo [
 	typeInfo joinWith: otherTypeInfo.
-]
-
-{ #category : #'groups collecting' }
-SGAEngine >> methodTrackingFor: aSymbol [
-	| methodCalls dict idMethods |
-	idMethods := #().
-	methodCalls := self logs collect: [ :log | log population 
-		select: [ :testCase | testCase statements anySatisfy: 
-			[ :e | [e value selector = aSymbol] on: Error  do: [ false ] ] ] ].
-	dict := Dictionary new.
-	methodCalls doWithIndex: [ :methods :i | methods 
-		ifNotEmpty: [ dict at: i put: (self reportOf: methods withParents: idMethods).
-			idMethods := methods collect: #idPopulation ]
-		ifEmpty: [ idMethods := #() ] ].
-	^ dict
 ]
 
 { #category : #actions }
@@ -408,21 +301,15 @@ SGAEngine >> numberOfGenerations: anInteger [
 ]
 
 { #category : #accessing }
-SGAEngine >> numberOfStatements [
-	^ numberOfStatements
-]
-
-{ #category : #accessing }
 SGAEngine >> numberOfStatements: anInteger [
 	"Set the number of statements the initial population should have.
 	Ideally, a small number, such as 3, is convenient. The evolution makes the individuals grow over time"
 	numberOfStatements := anInteger
 ]
 
-{ #category : #actions }
+{ #category : #sorting }
 SGAEngine >> order: aCollection [
-	aCollection sort: [ :stm1 :stm2 | self is: stm1 betterThan: stm2 ].
-	^ aCollection
+	^ aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ]
 ]
 
 { #category : #accessing }
@@ -430,20 +317,9 @@ SGAEngine >> packageRegex: aString [
 	packageRegex := aString
 ]
 
-{ #category : #actions }
-SGAEngine >> pickAverageFitTest: aDictionary [
-	^ (aDictionary keys collect: [ :key | 
-		   key -> (aDictionary at: key) average ]) asDictionary
-]
-
 { #category : #accessing }
 SGAEngine >> population [
 	^ population
-]
-
-{ #category : #accessing }
-SGAEngine >> populationSize [ 	
-	^ populationSize 
 ]
 
 { #category : #accessing }
@@ -454,7 +330,7 @@ SGAEngine >> populationSize: aInteger [
 { #category : #updating }
 SGAEngine >> profilerForPackagesMatching [
 	Transcript show: 'profiling...'; cr.
-	typeInfoProfiler := SSTypeCollector 
+	typeInfoProfiler := self aSTypeCollectorClass 
 		profilerForPackagesMatching: targetPackageRegex.
 	typeInfoProfiler beforeProfiling.
 ]
@@ -462,27 +338,16 @@ SGAEngine >> profilerForPackagesMatching [
 { #category : #updating }
 SGAEngine >> profilerForTargetClass [
 	| packageSpy cls classSpy |
-	cls := Smalltalk at: targetClassName .
+	cls := Smalltalk at: targetClassName.
 	Transcript show: 'profiling...'; cr.
-	typeInfoProfiler := SSTypeCollector new.
-	SSTypeCollector installOnClass: cls.
+	typeInfoProfiler := self aSTypeCollectorClass new.
+	self aSTypeCollectorClass installOnClass: cls.
 	typeInfoProfiler beforeProfiling .
 	classSpy := typeInfoProfiler spyForClass: cls.
 	packageSpy := typeInfoProfiler class spyClassForPackage new.
 	packageSpy classAt: targetClassName put: classSpy.
 	typeInfoProfiler addPackage: packageSpy.
 	classSpy packageSpy: packageSpy.
-]
-
-{ #category : #'groups collecting' }
-SGAEngine >> reportOf: methods withParents: idMethods [
-	| keys |
-	keys := #('TestCase' 'hasError' 'parentHasMethod').
-	^ methods collect: [ :method | Dictionary 
-		newFromKeys: keys 
-		andValues: (Array with: method
-			with: method hasErrors
-			with: ((method parents collect: #idPopulation) includesAny: idMethods) )]
 ]
 
 { #category : #actions }
@@ -493,12 +358,12 @@ SGAEngine >> run [
   stopFlag := false.
   self initializePopulation.
 	totalExecutionGA := Time millisecondClockValue - totalExecutionGA.
-  bestFitness := self fitnessFor: logs last fittestTestCase.
+  bestFitness := self lastBestFitness.
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
         stopFlag ifFalse: [ t := Time millisecondClockValue.
               self doSelection.
-              logs add: (self logOfGeneration: iteration inTime: t).
-              lastBestFitness := self fitnessFor: logs last fittestTestCase.
+              logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
+              lastBestFitness := self lastBestFitness.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
                     bestFitness := lastBestFitness ].
@@ -509,7 +374,7 @@ SGAEngine >> run [
 { #category : #actions }
 SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
 	| options |
-	options := (aCollection asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | excludingColl includes: e ].
+	options := (aCollection asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | excludingColl includes: e ]; yourself.
    options := self order: options.
    ^ options first: (2 min: options size).
 ]
@@ -539,12 +404,6 @@ SGAEngine >> similarChild: testCase with: idPopulation [
 ]
 
 { #category : #actions }
-SGAEngine >> summaryGenerations [
-	^ logs collect: [ :aLog | aLog summaryTargetClass collect: [ :e | e ifNotNil: [ Dictionary newFromKeys: #('ClassName' 'MethodName' 'IsClassSide' 'WasExecuted' 'HasTypeInfo' 'Code' 'ArgTypes' 'ReturnType' 'ExecutedBlock' 'UnexecutedBlock') andValues: e summaryAsColl ] ] ]
-	
-]
-
-{ #category : #accessing }
 SGAEngine >> targetClassName [
 	^ targetClassName
 ]
@@ -552,11 +411,6 @@ SGAEngine >> targetClassName [
 { #category : #accessing }
 SGAEngine >> targetClassName: anObject [
 	targetClassName := anObject
-]
-
-{ #category : #accessing }
-SGAEngine >> targetPackageRegex [
-	^ targetPackageRegex 
 ]
 
 { #category : #accessing }
@@ -582,7 +436,7 @@ SGAEngine >> typeInfo [
 { #category : #accessing }
 SGAEngine >> typeInfo: aTypeInfo [
 	typeInfo := aTypeInfo.
-	self completeTypeInfo
+	typeInfo completeTypeInfo
 ]
 
 { #category : #updating }
@@ -613,7 +467,7 @@ SGAEngine >> updateTypeInfoWith: aPopulation [
 	fitness profiler uninstallClass: targetClassName.
    self profilerForTargetClass.
    aPopulation do:
-		[ :testCase | testCase runWithoutAssertions ].
+		[ :aTestCase | aTestCase runWithoutAssertions ].
    self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
    self uninstall .
    fitness profiler updateClass: ((self initializeProfiler packages at:1) classes at: targetClassName).

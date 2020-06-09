@@ -5,6 +5,7 @@ Class {
 	#name : #STestCaseFactory,
 	#superclass : #SObject,
 	#instVars : [
+		'reportClass',
 		'engine',
 		'typeInfo',
 		'targetClassName',
@@ -154,20 +155,6 @@ STestCaseFactory >> engineDefault [
 ]
 
 { #category : #actions }
-STestCaseFactory >> evolutionTypeInfo [
-	| typeInfos evolution |
-	typeInfos := Array with: self typeInfoSeed withAll: (self engine logs collect: #typeInfoGeneration).
-	evolution := Dictionary new.
-	2 to: typeInfos size do: [ :index | | aTypeInfo1 aTypeInfo2 partialResult |
-		aTypeInfo1 := typeInfos at: index - 1.
-		aTypeInfo2 := typeInfos at: index.
-		partialResult := aTypeInfo1 difference: aTypeInfo2.
-		(partialResult notNil and: [partialResult notEmpty]) ifTrue: [ evolution at: ((index - 2) asString, ' -> ',(index-1) asString) put: partialResult ]
-		 ].
-	^ evolution
-]
-
-{ #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
 	| class |
 	class := self getClassOf: ('GA' , self targetClassName , 'Test').
@@ -196,9 +183,14 @@ STestCaseFactory >> exportTests [
 	engine population
 		do: [ :test | 
 			test lastMessage: lastMessage.
-			self export: test with: 'test' , index printString.
+			self export: test with: ('test{1}' format: {index}).
 			index := index + 1 ].
 	self createConfigurationMethods
+]
+
+{ #category : #accessing }
+STestCaseFactory >> firstExecution [
+	^ firstExecution ifNil: [ firstExecution := true ] ifNotNil: [ false ]
 ]
 
 { #category : #configuration }
@@ -219,51 +211,6 @@ STestCaseFactory >> fitnessSeed [
 { #category : #accessing }
 STestCaseFactory >> fitnessSeedCalculated: number [ 
 	fitnessSeed := number
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportForAllMethodsOf: aLog [ 
-	self generateReportOf: aLog UsingFilter: #all
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportForAllMethodsOfAllLogs [
-	self engine logs do: [ :aLog | self generateReportForAllMethodsOf: aLog ]
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportForUnexecutedMethodsOf: anIndex [
-	self generateReportOf: anIndex UsingFilter: #notAllBlocksExecuted
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportForUnexecutedMethodsOfAllLogs [
-	self engine logs do: [ :aLog | self generateReportForUnexecutedMethodsOf: aLog ]
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportOf: aLog UsingFilter: aSymbol [ 
-	SReportSGALog exportData: aLog onCSV: ('Report_', aLog generationNumber asString,'_', aSymbol asString capitalized,targetClassName asString) usingFilter: aSymbol
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportOfAllMethods [
-	self generateReportForAllMethodsOf: self engine logs last
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateReportOfUnexecutedMethods [
-	self generateReportForUnexecutedMethodsOf: self engine logs last
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateResumeDifferenceOfGeneration [
-	SReportSGALog generateReportForDifferencesBtwGenerationsOf: self engine
-]
-
-{ #category : #actions }
-STestCaseFactory >> generateResumeReportOfLogs [
-	SReportSGALog exportResumeOf: self engine logs onCSV: ('Report_Resume_' ,targetClassName asString)
 ]
 
 { #category : #actions }
@@ -345,10 +292,22 @@ STestCaseFactory >> populationSize: int [
 	engine populationSize: int
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> reportClass [
+	reportClass ifNil: [ reportClass := SReportSTestCaseFactory on: self ].
+	^ reportClass 
+]
+
 { #category : #actions }
 STestCaseFactory >> run [
 	engine run.
 	
+]
+
+{ #category : #running }
+STestCaseFactory >> run: aNumber [
+	numberOfIterations := aNumber.
+	self createTestCases
 ]
 
 { #category : #'instance creation' }
@@ -359,7 +318,7 @@ STestCaseFactory >> seed: aNumber [
 
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
-	fitnessSeed := (SLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
+	fitnessSeed := (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
 ]
 
 { #category : #actions }
@@ -374,8 +333,10 @@ STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
 
 { #category : #actions }
 STestCaseFactory >> setUp [
-	SPlatform resetRandomGenerator.
+	
 	self initializeProfiler.
+	self firstExecution ifTrue: [
+	SPlatform resetRandomGenerator.
 	fitness profiler: profiler;
 		typeInfo: typeInfo;
 		targetClass: self targetClassName.
@@ -384,7 +345,9 @@ STestCaseFactory >> setUp [
 		typeInfo: self typeInfo;
 		targetClassName: self targetClassName;
 		targetPackageRegex: targetPackageRegex.
-	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy 
+	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy]
+ifFalse: [ engine fitness profiler: profiler.
+	engine numberOfGenerations: numberOfIterations ]
 ]
 
 { #category : #actions }
@@ -448,11 +411,6 @@ STestCaseFactory >> typeInfoOrigin [
 { #category : #accessing }
 STestCaseFactory >> typeInfoSeed [
 	^ typeInfoSeed
-]
-
-{ #category : #accessing }
-STestCaseFactory >> typeInfoSeed: anObject [
-	typeInfoSeed := anObject
 ]
 
 { #category : #actions }

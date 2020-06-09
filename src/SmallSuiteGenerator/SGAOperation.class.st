@@ -9,7 +9,3 @@ Class {
 	#superclass : #SGAObject,
 	#category : #'SmallSuiteGenerator-GA'
 }
-
-{ #category : #initialization }
-SGAOperation >> initialize [
-]

@@ -9,7 +9,7 @@ Class {
 
 { #category : #actions }
 STestCaseFactoryPharo >> initializeProfiler [
-	profiler := SLProfilerCoverage profilerForPackagesMatching: self targetPackageRegex.
+	profiler := self aSLProfilerCoverage profilerForPackagesMatching: self targetPackageRegex.
 	(profiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
 		displayingProgress: 'Instrumenting ' , self targetPackageRegex.

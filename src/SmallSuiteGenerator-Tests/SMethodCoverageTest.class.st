@@ -15,7 +15,7 @@ SMethodCoverageTest >> testCoverageClassSEvent [
 	testCase := self
 		testCase: utility typeInfoSEvent2
 		withNumStatements: 20
-		andTargetClassName: #SEvent.
+		andTargetClassName: (self fullSymbolOf: #SEvent).
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -29,7 +29,7 @@ SMethodCoverageTest >> testCoverageClassSFoo [
 	testCase := self
 		testCase: utility typeInfoSFoo4
 		withNumStatements: 20
-		andTargetClassName: #SFoo.
+		andTargetClassName: (self fullSymbolOf: #SFoo).
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -43,7 +43,7 @@ SMethodCoverageTest >> testCoverageOnClassSSTeacher [
 	testCase := self
 		testCase: utility typeInfoSSTeacher3
 		withNumStatements: 20
-		andTargetClassName: #SSTeacher.
+		andTargetClassName: (self fullSymbolOf: #SSTeacher).
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -57,7 +57,7 @@ SMethodCoverageTest >> testCoverageOnClassSStack [
 	testCase := self
 		testCase: utility typeInfoSStack3
 		withNumStatements: 20
-		andTargetClassName: #SStack.
+		andTargetClassName: (self fullSymbolOf: #SStack).
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -71,7 +71,7 @@ SMethodCoverageTest >> testCoverageOnClassSStudent [
 	testCase := self
 		testCase: utility typeInfosSStudent first
 		withNumStatements: 20
-		andTargetClassName: #SStudent.
+		andTargetClassName: (self fullSymbolOf: #SStudent).
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -85,7 +85,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 	testCase := self
 		testCase: utility typeInfoSEventOnPackage1 " (STON fromString: utility typeInfoStringSEvent)"
 		withNumStatements: 20
-		andTargetClassName: #SEvent.
+		andTargetClassName: (self fullSymbolOf: #SEvent).
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -99,8 +99,8 @@ SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 	testCase := SSTestCase
 		with: utility typeInfoSFooOnPackage2  "(STON fromString: utility typeInfoStringSFoo2)".
 	testCase
-		addTargetClassName: #SFoo;
-		addFactoryMessage: #SFoo;
+		addTargetClassName: (self fullSymbolOf: #SFoo);
+		addFactoryMessage: (self fullSymbolOf: #SFoo);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
@@ -115,8 +115,8 @@ SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 	testCase := SSTestCase
 		with: utility typeInfoSSTeacherOnPackage2."(STON fromString: utility typeInfoStringSSTeacher2)."
 	testCase
-		addTargetClassName: #SSTeacher;
-		addFactoryMessage: #SSTeacher;
+		addTargetClassName: (self fullSymbolOf: #SSTeacher);
+		addFactoryMessage: (self fullSymbolOf: #SSTeacher);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
@@ -131,8 +131,8 @@ SMethodCoverageTest >> testCoverageOnPackagesSStack [
 	testCase := SSTestCase
 		with: utility typeInfoSStackOnPackage1. "(STON fromString: utility typeInfoStringSStack2)."
 	testCase
-		addTargetClassName: #SStack;
-		addFactoryMessage: #SStack;
+		addTargetClassName: (self fullSymbolOf: #SStack);
+		addFactoryMessage: (self fullSymbolOf: #SStack);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
@@ -147,8 +147,8 @@ SMethodCoverageTest >> testCoverageOnPackagesSStudent [
 	testCase := SSTestCase
 		with: utility typeInfoSStudentOnPackage1. "(STON fromString: utility typeInfoStringSStudent1)."
 	testCase
-		addTargetClassName: #SStudent;
-		addFactoryMessage: #SStudent;
+		addTargetClassName: (self fullSymbolOf: #SStudent);
+		addFactoryMessage: (self fullSymbolOf: #SStudent);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness compute: (Array with: testCase).

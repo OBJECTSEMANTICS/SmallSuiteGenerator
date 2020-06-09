@@ -28,12 +28,15 @@ SFactoryMessageTest >> testCopy [
 SFactoryMessageTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo2.
-	testCase addTargetClassName: #SFoo.
-	expression := testCase addFactoryMessage: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	expression := testCase addFactoryMessage: (self fullSymbolOf: #SFoo).
 	testCase addMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := SFoo new.' '_var1 := SFoo new.' '_var2 := _var0 return: _var0.').
+		hasSameElements: (Array 
+									with: ('_var0 := ', (self fullNameOfClass: 'SFoo') asString, ' new.') 
+									with: ('_var1 := ', (self fullNameOfClass: 'SFoo') asString, ' new.') 
+									with: '_var2 := _var0 return: _var0.').
 	insertedExpression := expression
 		insertAsParameter: expression
 		using: testCase.
@@ -47,11 +50,13 @@ SFactoryMessageTest >> testInsertAsParameterUsing [
 SFactoryMessageTest >> testInsertMethodMessageUsing [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo.
-	expression := testCase addFactoryMessage: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	expression := testCase addFactoryMessage: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.'
+									with: ('_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.')).
 	self
 		should: [ expression insertMethodMessage: expression using: testCase ]
 		raise: SError
@@ -61,14 +66,18 @@ SFactoryMessageTest >> testInsertMethodMessageUsing [
 SFactoryMessageTest >> testInsertRandomMessageUsing [
 	| testCase factoryMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: #SFoo.
-	factoryMessage := testCase addFactoryMessage: #SFoo.
+	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	factoryMessage := testCase addFactoryMessage: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.' '_var1 := SFoo score: _var0.').
+		hasSameElements: (Array 
+									with: '_var0 := 7.3.' 
+									with: ('_var1 := ', (self fullNameOfClass: 'SFoo')asString, ' score: _var0.')).
 	factoryMessage insertRandomMessage: factoryMessage using: testCase.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		includesAll:
-			#('_var0 := 7.3.' '_var2 := SFoo score: _var0.' '_var1 := SFoo score: _var0.')
+		includesAll: (Array 
+									with: '_var0 := 7.3.' 
+									with: ('_var2 := ', (self fullNameOfClass: 'SFoo')asString, ' score: _var0.')
+									with: ('_var1 := ', (self fullNameOfClass: 'SFoo')asString, ' score: _var0.')).
 ]
