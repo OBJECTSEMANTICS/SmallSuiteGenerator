@@ -31,7 +31,7 @@ Metacello new
 
 ### VisualWorks
 
-See documentation in [Install FuzzyTester](VW7.x/FuzzyTester.md.md)
+See documentation in [Install FuzzyTester](VW7.x/FuzzyTester.md)
 
 ## Configuration
 
