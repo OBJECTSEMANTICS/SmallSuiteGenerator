@@ -22,7 +22,8 @@ Class {
 		'initialSeed',
 		'initialAsDict',
 		'typeInfoSeed',
-		'typeInfoOrigin'
+		'typeInfoOrigin',
+		'firstExecution'
 	],
 	#classInstVars : [
 		'instance'
