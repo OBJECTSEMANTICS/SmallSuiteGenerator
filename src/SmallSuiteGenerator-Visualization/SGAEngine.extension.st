@@ -478,7 +478,7 @@ SGAEngine >> progressBarFrom: progressValue to: maxValue ofColor: dictColor and:
 SGAEngine >> scaleColorBlock: methodColorDictionary [
 	^ [:key | 
 		| color |
-		color := methodColorDictionary at: key.
+		color := [ methodColorDictionary at: key] on: KeyNotFound do: [ Color black ].
 		NSScale linear 
 		range: (Array with: (color alphaMixed: 0.6 with: Color black) with: color);
 		domain: #(0 100)].
