@@ -31,10 +31,7 @@ Metacello new
 
 ### VisualWorks
 
-You can load SmallSuiteGenerator into VW image with the next steps:
-
-- Clone or download Parcels8.3/SmallSuiteWithSpyLite directory of this project
-- Load parcel SmallSuiteGenerator-Extensions.pcl
+See documentation in [Install FuzzyTester](VW7.x/FuzzyTester.md.md)
 
 ## Configuration
 
