@@ -341,21 +341,19 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 	scaleColorBlock := self scaleColorBlock: (self methodColorDictionary: (dictColor at: 'rangeMethodColor')).
 	generationGroup addAll: (
 		(filteredList groupedBy: [:tC | tC generationNumber]) collect: [ :testCases | 
-			| group contribution generationNumber |
+			| group generationNumber |
 			group := RSGroup new.
-			contribution := 'contribution' -> 0.
 			group addAll: (testCases collect: [ :testCase | 
 				(self testCaseShape: testCase 
 					ofColor: dictColor 
 					with: memo
 					highlight: highlights second
-					scale: scaleColorBlock
-					and: contribution) @ highlights first; yourself.
+					scale: scaleColorBlock) @ highlights first; yourself.
 			]).
 			shapeHeights add: (group collect: #height) max.
 			RSHorizontalLineLayout new gapSize: 20; on: group.
 			generationNumber := testCases first generationNumber.
-			barGroup add: (self progressBarFrom: contribution value to: (logs at: generationNumber) population size ofColor: dictColor and: shapeHeights).
+			barGroup add: (self progressBarFrom: testCases size value to: (logs at: generationNumber) population size ofColor: dictColor and: shapeHeights).
 			group
 	]).
 	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
@@ -462,14 +460,14 @@ SGAEngine >> progressBarFrom: progressValue to: maxValue ofColor: dictColor and:
 		range: (Array with: 0 with: 200).
 	groupBox 
 		add: (RSBox new height: 50; color: (dictColor at: 'baseBar'); width: (scale scale: progressValue));
-		add: (RSBox new height: 50; color: (dictColor at: 'forwardBar'); width: (scale scale: progressValue); withBorder).
+		add: (RSBox new height: 50; color: (dictColor at: 'forwardBar'); width: (scale scale: (maxValue - progressValue)); withBorder).
 	RSHorizontalLineLayout new gapSize: 0; on: groupBox.
 	bar := RSComposite new
 		shapes: groupBox;
 		yourself.
 	groupData 
 		add: bar;
-		add: (RSLabel new text: progressValue asString; color: (dictColor at: 'fontMethodBox'); fontSize: 30).
+		add: (RSLabel new text: (maxValue - progressValue) asString; color: (dictColor at: 'fontMethodBox'); fontSize: 30).
 	RSHorizontalLineLayout new gapSize: 10; on: groupData.
 	^ RSComposite new shapes: groupData; position: 0@([shapeHeights allButLast sum + (195 * (shapeHeights size - 1))] on: CollectionIsEmpty do: [ 0 ])
 ]
@@ -542,7 +540,7 @@ SGAEngine >> summaryMethodsOfTargetClass: summaryMethods [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> testCaseShape: testCase ofColor: dictColor with: memo highlight: highlight scale: scaleColorBlock and: association [
+SGAEngine >> testCaseShape: testCase ofColor: dictColor with: memo highlight: highlight scale: scaleColorBlock [
 	| group higher block progressValue methodGroup contribute |
 	block := [ :tC | [ tC fitnessByClass values first at: self targetClassName ifAbsent: 0 ] on: SubscriptOutOfBounds do: [ 0 ] ].
 	progressValue := block value: testCase.
@@ -550,7 +548,6 @@ SGAEngine >> testCaseShape: testCase ofColor: dictColor with: memo highlight: hi
 	group := RSGroup new.
 	methodGroup := self methodShapeGroup: testCase with: memo highlight: highlight scale: scaleColorBlock.
 	contribute := methodGroup isNotEmpty or: [ higher ].
-	contribute ifTrue: [ association value: association value + 1 ].
 	group add: methodGroup;
 		add: (RSGroup new add: (RSComposite new addShape: (RSLabel new text: progressValue asString, '%'; bold; color: ((dictColor at: 'fontMethodBox') alpha: (contribute ifFalse: [ 0.5 ] ifTrue: [ 1 ])); fontSize: 20); padding: (Margin 
 				left: 10
