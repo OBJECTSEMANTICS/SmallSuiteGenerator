@@ -462,14 +462,14 @@ SGAEngine >> progressBarFrom: progressValue to: maxValue ofColor: dictColor and:
 		range: (Array with: 0 with: 200).
 	groupBox 
 		add: (RSBox new height: 50; color: (dictColor at: 'baseBar'); width: (scale scale: progressValue));
-		add: (RSBox new height: 50; color: (dictColor at: 'forwardBar'); width: (scale scale: maxValue - progressValue); withBorder).
+		add: (RSBox new height: 50; color: (dictColor at: 'forwardBar'); width: (scale scale: progressValue); withBorder).
 	RSHorizontalLineLayout new gapSize: 0; on: groupBox.
 	bar := RSComposite new
 		shapes: groupBox;
 		yourself.
 	groupData 
 		add: bar;
-		add: (RSLabel new text: (maxValue - progressValue) asString; color: (dictColor at: 'fontMethodBox'); fontSize: 30).
+		add: (RSLabel new text: progressValue asString; color: (dictColor at: 'fontMethodBox'); fontSize: 30).
 	RSHorizontalLineLayout new gapSize: 10; on: groupData.
 	^ RSComposite new shapes: groupData; position: 0@([shapeHeights allButLast sum + (195 * (shapeHeights size - 1))] on: CollectionIsEmpty do: [ 0 ])
 ]
