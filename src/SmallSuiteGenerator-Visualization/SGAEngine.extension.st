@@ -145,21 +145,21 @@ SGAEngine >> addTickX: composite withScale: scale step: step andColor: color [
 		lbl := RSLabel new 
 		fontSize: scale range second x * 0.04;
 		color: color;
-		text: i asString, '%'.
+		text: (i round: 2) asString, '%'.
 		RSLocation new below move: lbl on: aTick.
 		composite addShape: lbl.
 	].
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAEngine >> addTickY: composite withScale: xScale ofColor: color andPositions: ys [
+SGAEngine >> addTickY: composite withScale: xScale xMax: xMax ofColor: color andPositions: ys [
 	ys doWithIndex: [ :y :index | 
 		| tick lbl |
 		tick := RSLine new 
 			startPoint: (xScale scale: 0@y);
 			color: color;
 			width: 10;
-			endPoint: (xScale scale: -3@y);
+			endPoint: (xScale scale: (xMax * -0.03)@y);
 			yourself.
 		composite addShape: tick.
 		lbl := RSLabel new 	
@@ -266,7 +266,7 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor andSize: size [
 			color: (dictColor at: 'fittestCoverage');
 			width: 10; yourself).
 	self addTickX: composite withScale: scale step: xMax andColor: (dictColor at: 'font').
-	self addTickY: composite withScale: scale ofColor: (dictColor at: 'font') andPositions: yPositions.
+	self addTickY: composite withScale: scale xMax: xMax ofColor: (dictColor at: 'font') andPositions: yPositions.
 	"self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
 		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: composite withFontColor: (dictColor at: 'font') and: [:legend | legend location below left offset: (140@60 negated) ]." 
