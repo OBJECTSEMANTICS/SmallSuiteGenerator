@@ -86,7 +86,7 @@ SMultiTypeInfo >> includes: aType [
 
 { #category : #initialization }
 SMultiTypeInfo >> initialize [
-	types := Set new.
+	types := OrderedSet new.
 	mustBeFixed := false
 ]
 
@@ -102,7 +102,7 @@ SMultiTypeInfo >> isBlockSymbol [
 SMultiTypeInfo >> joinWith: otherTypeReturn [
 	| hasOneType |
 	hasOneType := self hasOnlyOneType.	
-	otherTypeReturn types do: [ :aType | self type: aType ].
+	otherTypeReturn orderedtypes do: [ :aType | self type: aType ].
 	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ] ].
 	mustBeFixed := hasOneType and: [ types size > 1 ]
 ]
@@ -110,6 +110,11 @@ SMultiTypeInfo >> joinWith: otherTypeReturn [
 { #category : #accessing }
 SMultiTypeInfo >> mustBeFixed [ 
 	^ mustBeFixed
+]
+
+{ #category : #accessing }
+SMultiTypeInfo >> orderedtypes [
+	^ types orderedList
 ]
 
 { #category : #'ston persistence' }

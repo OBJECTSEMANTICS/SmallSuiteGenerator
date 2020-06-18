@@ -50,55 +50,40 @@ SSTestRunner >> initialize [
 SSTestRunner >> performTest [
 	| var |
 var := Dictionary new.
-var at: 1 put: ((Array new: 3)
-         at: 1 put: (DataSeries new
-               add: #Female -> 41.58;
-               add: #Male -> 55.03;
-               yourself);
-         at: 2 put: (DataSeries new
-               add: #Female -> 20.79;
-               add: #Male -> 18.343333333333334;
-               yourself);
-         at: 3 put: (DataSeries new
-               add: #Female -> 2.31;
-               add: #Male -> 2.8233333333333337;
-               yourself);
-         yourself).
-var at: 2 put: (DataFrame withColumns: (var at: 1)).
-var at: 3 put: #average.
-var at: 4 put: (var at: 2) rowNames.
-var at: 5 put: (var at: 2) rowNames.
-var at: 45 put: (DataFrame withRows: (var at: 1)).
-var at: 10 put: (var at: 2) columnNames.
-var at: 11 put: (var at: 45) rowNames.
-var at: 12 put: (var at: 2) rowNames.
-var at: 13 put: (var at: 45) numberOfColumns.
-var at: 8 put: ((var at: 2) applyToAllColumns: (var at: 3)).
-var at: 9 put: ((var at: 2) applyToAllColumns: (var at: 3)).
-var at: 14 put: ((var at: 2) tail: (var at: 13)).
-var at: 17 put: ((var at: 14) rowsFrom: (var at: 13) to: (var at: 13) put: (var at: 1)).
-var at: 19 put: (var at: 2) contents.
-var at: 20 put: (var at: 14) columnNames.
-var at: 21 put: (var at: 14) columnNames.
-var at: 6 put: (var at: 2) rowNames.
-var at: 7 put: (var at: 17) numberOfRows.
-var at: 16 put: ((var at: 2) column: (var at: 7)).
-var at: 18 put: (var at: 16) name.
-var at: 22 put: (var at: 45) columnNames.
-var at: 23 put: (var at: 2) columnNames.
-var at: 24 put: (var at: 17) tail.
-var at: 25 put: (var at: 14) rowNames.
-var at: 26 put: (var at: 17) numberOfRows.
-var at: 27 put: (var at: 45) rowNames.
-var at: 28 put: ((var at: 8) atIndex: (var at: 7)).
-var at: 29 put: (var at: 45) rowNames.
-var at: 30 put: ((var at: 9) atIndex: (var at: 13)).
-var at: 31 put: (var at: 14) rowNames.
-var at: 32 put: (var at: 8) name.
-var at: 34 put: ((var at: 17) columnNames: (var at: 1)).
-var at: 35 put: (var at: 17) rowNames.
-var at: 36 put: (var at: 16) name.
-var at: 39 put: ((var at: 9) atIndex: (var at: 26)).
+var at: 2 put: #(3 4 5).
+var at: 3 put: (DataSeries withKeys: (var at: 2) values: (var at: 2)).
+var at: 4 put: (var at: 3) isSequenceable.
+var at: 5 put: (var at: 3) isSequenceable.
+var at: 6 put: 3.
+var at: 7 put: ((var at: 3) head: (var at: 6)).
+var at: 8 put: (var at: 7) isSequenceable.
+var at: 9 put: (var at: 7) name.
+var at: 10 put: (var at: 3) interquartileRange.
+var at: 11 put: (var at: 7) isSequenceable.
+var at: 1 put: (var at: 3) name.
+var at: 12 put: (var at: 7) valueCounts.
+var at: 13 put: (var at: 3) isSequenceable.
+var at: 14 put: (var at: 3) isSequenceable.
+var at: 15 put: (var at: 12) isSequenceable.
+var at: 16 put: (var at: 12) isSequenceable.
+var at: 17 put: (var at: 7) isSequenceable.
+var at: 18 put: (var at: 3) second.
+var at: 19 put: (var at: 7) isSequenceable.
+var at: 20 put: (var at: 12) isSequenceable.
+var at: 21 put: 1.
+var at: 22 put: (var at: 12) initialize.
+var at: 23 put: (var at: 12) name.
+var at: 24 put: (var at: 12) mode.
+var at: 25 put: ((var at: 22) initialize: (var at: 21)).
+var at: 26 put: (var at: 22) initialize.
+var at: 27 put: (var at: 3) name.
+var at: 28 put: (var at: 7) name.
+var at: 29 put: (var at: 25) isSequenceable.
+var at: 30 put: (var at: 3) sort.
+var at: 31 put: (var at: 25) initialize.
+var at: 32 put: (var at: 7) isSequenceable.
+var at: 34 put: ((var at: 26) quartile: (var at: 10)).
+var at: 35 put: (var at: 3) sort.
 ^self analyze: thisContext
 ]
 

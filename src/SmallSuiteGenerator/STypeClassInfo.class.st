@@ -98,8 +98,8 @@ STypeClassInfo >> addScalars: aDictionary [
 		do: [ :assoc | 
 			scalars
 				at: assoc key
-				ifPresent: [ :values | scalars at: assoc key put: (values union: assoc value) asArray ]
-				ifAbsentPut: [ assoc value asArray ] ]
+				ifPresent: [ :values | scalars at: assoc key put: (values orderedUnion: assoc value) ]
+				ifAbsentPut: [ assoc value orderedList ] ]
 ]
 
 { #category : #'accessing - read only' }
@@ -209,9 +209,9 @@ STypeClassInfo >> hash [
 
 { #category : #initialization }
 STypeClassInfo >> initialize [
-	methodTypes := Dictionary new.
-	classMethodTypes := Dictionary new.
-	scalars := Dictionary new
+	methodTypes := OrderedDictionary new.
+	classMethodTypes := OrderedDictionary new.
+	scalars := OrderedDictionary new
 ]
 
 { #category : #accesing }

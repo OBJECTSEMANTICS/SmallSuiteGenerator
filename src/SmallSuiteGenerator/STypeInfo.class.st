@@ -215,8 +215,8 @@ STypeInfo >> joinScalars: aDict [
 		scalars
 			at: assoc key
 			ifPresent: [ :values | 
-			scalars at: assoc key put: (values union: assoc value) asArray ]
-			ifAbsentPut: [ assoc value asArray ] ]
+			scalars at: assoc key put: (values orderedUnion: assoc value) ]
+			ifAbsentPut: [assoc value ] ]
 ]
 
 { #category : #actions }
@@ -273,7 +273,7 @@ STypeInfo >> reportFrequencyByFilter [
 
 { #category : #actions }
 STypeInfo >> scalar: aClassName with: aValue [
-	scalars at: aClassName put: aValue asSet asArray
+	scalars at: aClassName put: aValue asOrderedSet orderedList
 ]
 
 { #category : #accessing }

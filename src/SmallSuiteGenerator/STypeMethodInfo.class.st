@@ -178,7 +178,7 @@ STypeMethodInfo >> initialize [
 	returnType := SMultiTypeInfo new.
 	receiver := SMultiTypeInfo new.
 	isDeprecated := false.
-	scalars := Dictionary new.
+	scalars := OrderedDictionary new.
 	hasProfiler := true
 ]
 
