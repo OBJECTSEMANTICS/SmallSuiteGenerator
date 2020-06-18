@@ -95,11 +95,12 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 { #category : #adding }
 STypeClassInfo >> addScalars: aDictionary [
 	aDictionary associations
-		do: [ :assoc | 
+		do: [ :assoc |
 			scalars
 				at: assoc key
-				ifPresent: [ :values | scalars at: assoc key put: (values union: assoc value) asArray ]
-				ifAbsentPut: [ assoc value asArray ] ]
+				ifPresent: [ :values | 
+					scalars at: assoc key put: (values union: assoc value) asArray ]
+				ifAbsentPut: [ assoc value asArray ]]
 ]
 
 { #category : #'accessing - read only' }

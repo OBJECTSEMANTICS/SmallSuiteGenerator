@@ -503,7 +503,7 @@ SGAEngine >> sparkCircleGroupOfColor: dictColor andSize: size [
 		at: 'branchCoverage' put: 0;
 		yourself.
 	totalClasses := self typeInfo classes size.
-	totalMethods := (self typeInfo types flatCollect: #allMethods) size.
+	totalMethods := (self typeInfo types values flatCollect: #allMethods) size.
 	block := [ :log | (log population flatCollect: [ :t | 
 			(t summaryExecutionMethods collect: [:summary | 
 				(summary executorClass -> summary selector)]) asSet ]) asSet ].

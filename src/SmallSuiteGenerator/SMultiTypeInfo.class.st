@@ -9,7 +9,8 @@ Class {
 	#superclass : #STypeObjectInfo,
 	#instVars : [
 		'types',
-		'mustBeFixed'
+		'mustBeFixed',
+		'orderedTypes'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -28,9 +29,9 @@ SMultiTypeInfo >> = other [
 SMultiTypeInfo >> commonSuperclass [
 	| commonSuperclass |
 	types ifEmpty: [ ^ '' ].
-	commonSuperclass := SPlatform lookUpClass: types anyOne.
+	commonSuperclass := SPlatform lookUpClass: self types anyOne.
 	commonSuperclass ifNil: [ ^ '' ].
-	types
+	self types
 		do: [ :aType | 
 			| otherClass |
 			otherClass := SPlatform lookUpClass: aType.
@@ -46,7 +47,7 @@ SMultiTypeInfo >> commonSuperclass [
 SMultiTypeInfo >> copy [
 	| copy |
 	copy := self class instance.
-	types do: [ :aType | copy type: aType ].
+	self types do: [ :aType | copy type: aType ].
 	^ copy
 ]
 
@@ -87,13 +88,14 @@ SMultiTypeInfo >> includes: aType [
 { #category : #initialization }
 SMultiTypeInfo >> initialize [
 	types := Set new.
+	orderedTypes := OrderedCollection new.
 	mustBeFixed := false
 ]
 
 { #category : #metrics }
 SMultiTypeInfo >> isBlockSymbol [
 	
-	^ types size = 2 
+	^ self types size = 2 
 		and: [ (types anySatisfy: [ :aType | aType = #BlockClosure ]) 
 			and: [ types anySatisfy:[ :aType | aType = #ByteSymbol ] ] ]
 ]
@@ -103,7 +105,8 @@ SMultiTypeInfo >> joinWith: otherTypeReturn [
 	| hasOneType |
 	hasOneType := self hasOnlyOneType.	
 	otherTypeReturn types do: [ :aType | self type: aType ].
-	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ] ].
+	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ].
+		orderedTypes remove: #SUndefinedObject ifAbsent: [  ] ].
 	mustBeFixed := hasOneType and: [ types size > 1 ]
 ]
 
@@ -126,11 +129,12 @@ SMultiTypeInfo >> type [
 
 { #category : #'accessing structure variables' }
 SMultiTypeInfo >> type: aClassName [
-	aClassName ~= #nil ifTrue: [ 
+	aClassName = #nil ifFalse: [ 
+		(types includes: aClassName) ifFalse: [ orderedTypes add: aClassName ].
 		types add: aClassName ]
 ]
 
 { #category : #accessing }
 SMultiTypeInfo >> types [
-	^ types asArray
+	^ orderedTypes asArray"types asArray"
 ]

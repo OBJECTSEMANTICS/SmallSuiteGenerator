@@ -28,6 +28,32 @@ STypeInfoTest >> testAccesssMessagesFrom [
 ]
 
 { #category : #tests }
+STypeInfoTest >> testAsTypeInfoOrderedScalars [
+	| typeInfo |
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
+		profile: [ SConference price: 95 ]
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
+	self assertCollection: (typeInfo scalars values flatCollect: [:val | val ])
+		equals: #(100 0 nil 95).
+	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
+		profile: [ SFoo new
+				returnCollection;
+				returnFloat;
+				returnNum;
+				returnString ]
+		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
+	self
+		assertCollection: typeInfo scalars associations
+		equals:
+			(Array
+				with: (self nameOf: SmallInteger) -> #(0 4)
+				with: (self nameOf: (SUndefinedObject basicNew) class) -> #(nil)
+				with: (self nameOf: OrderedCollection) -> (Array with: OrderedCollection new)
+				with: (self nameOf: ByteString) -> #('Hello')
+				with: (self nameOf: 2.3 class) -> #(2.3))
+]
+
+{ #category : #tests }
 STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 	| typeInfo messages |
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass

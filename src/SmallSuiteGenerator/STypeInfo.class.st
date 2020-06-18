@@ -45,7 +45,7 @@ STypeInfo >> = other [
 
 { #category : #accessing }
 STypeInfo >> accessMessagesFrom: aClassName [
-	^ types
+	^ types values
 		flatCollect: [ :aClassType | 
 			aClassType accessMessages
 				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
@@ -69,7 +69,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 				thenDo: [:aMethod | aSpyClass removeMethod: aMethod ].
 			(aSpyClass className endsWith: 'BlockClosure')
 				ifFalse: [ self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
-	self joinScalars: aTypeCollector scalars copy.
+	self joinScalars: aTypeCollector orderedScalars copy.
 	^ self
 ]
 
@@ -114,9 +114,11 @@ STypeInfo >> classes [
 
 { #category : #converting }
 STypeInfo >> cleanBlockClosuresOf: aTypeCollector [ 
-	[ |cleanBlocks|
+	[ |cleanBlocks backupBlocks |
 		cleanBlocks := (aTypeCollector scalars at: #BlockClosure) select: [ :aBlock | aBlock isClean ].
-		aTypeCollector scalars at: #BlockClosure put: cleanBlocks ]
+		aTypeCollector scalars at: #BlockClosure put: cleanBlocks.
+		backupBlocks := (aTypeCollector orderedScalars at: #BlockClosure) select: [ :aBlock | aBlock isClean ].
+		aTypeCollector orderedScalars at: #BlockClosure put: backupBlocks. ]
 	on: Error
 	do: [].
 ]
@@ -178,7 +180,7 @@ STypeInfo >> exportDataCSV: neoCSVWriter withFilter: aSymbol [
 
 { #category : #lookup }
 STypeInfo >> factoryMessagesFrom: aClassName [
-	^ types
+	^ types values
 		flatCollect: [ :aClassType | 
 			aClassType factoryMessages
 				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
@@ -187,8 +189,8 @@ STypeInfo >> factoryMessagesFrom: aClassName [
 { #category : #initialization }
 STypeInfo >> initialize [
 	super initialize.
-	types := Dictionary new.
-	scalars := Dictionary new.
+	types := OrderedDictionary new.
+	scalars := OrderedDictionary new.
 	self initializeBlackList
 ]
 
@@ -214,7 +216,7 @@ STypeInfo >> joinScalars: aDict [
 	aDict associations do: [ :assoc | 
 		scalars
 			at: assoc key
-			ifPresent: [ :values | 
+			ifPresent: [ :values |
 			scalars at: assoc key put: (values union: assoc value) asArray ]
 			ifAbsentPut: [ assoc value asArray ] ]
 ]
@@ -228,7 +230,7 @@ STypeInfo >> joinWith: otherTypeInfo [
 
 { #category : #accessing }
 STypeInfo >> messagesFrom: aClassName [
-	^ types
+	^ types values
 		flatCollect: [ :aClassType | 
 			aClassType messages
 				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
@@ -273,7 +275,7 @@ STypeInfo >> reportFrequencyByFilter [
 
 { #category : #actions }
 STypeInfo >> scalar: aClassName with: aValue [
-	scalars at: aClassName put: aValue asSet asArray
+	scalars at: aClassName put: aValue asOrderedSet asArray
 ]
 
 { #category : #accessing }

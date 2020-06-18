@@ -633,7 +633,7 @@ SSTestShifter >> invariant [
 { #category : #querying }
 SSTestShifter >> involvedClasses [
 	
-	^ (self objectVariables collect:[:var| var returnType]) asSet.
+	^ (self objectVariables collect:[:var| var returnType]) asOrderedSet.
 ]
 
 { #category : #accessing }
@@ -779,7 +779,7 @@ SSTestShifter >> newLiteral: aClassName [
 				ifEmpty: [ self error: 'Scalar of type: ' , aClassName , ' is empty.' ].
 			^ SLiteral new
 				returnType: aClassName;
-				value: (self random selectAtRandom: values asOrderedCollection) ].
+				value: (self random selectAtRandom: (typeInfo scalars at: aClassName)) ].
 	self error: 'Scalars dont include: ' , aClassName
 ]
 
@@ -1237,7 +1237,7 @@ SSTestShifter >> validReferences [
 	^ statements
 		detect: [ :stm | 
 			| variables |
-			variables := stm variablesWithId asSet.
+			variables := stm variablesWithId asOrderedSet.
 			references add: stm reference.
 			(references includesAll: variables)
 				ifFalse: [self halt. true ]

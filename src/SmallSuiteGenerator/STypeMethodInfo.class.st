@@ -95,11 +95,11 @@ STypeMethodInfo >> argTypes: anObject [
 STypeMethodInfo >> asMethodInfo: typeCollMethod [
 	^ self class new
 		selector: typeCollMethod selector;
-		receiver: (self transform: typeCollMethod receiverType);
-		returnType: (self transform: typeCollMethod returnType);
-		argTypes: (self transformArgs: typeCollMethod argTypes);
+		receiver: (self transform: typeCollMethod orderedReceiverType);
+		returnType: (self transform: typeCollMethod orderedReturnType);
+		argTypes: (self transformArgs: typeCollMethod orderedArgTypes);
 		isQuick: typeCollMethod isQuick;
-		scalars: typeCollMethod dictLiterals;
+		scalars: typeCollMethod orderedLiterals;
 		isDeprecated: typeCollMethod isDeprecated;
 		executions: typeCollMethod numberOfExecutions;
 		hasProfiler: typeCollMethod wasExecuted 
@@ -178,7 +178,7 @@ STypeMethodInfo >> initialize [
 	returnType := SMultiTypeInfo new.
 	receiver := SMultiTypeInfo new.
 	isDeprecated := false.
-	scalars := Dictionary new.
+	scalars := OrderedDictionary new.
 	hasProfiler := true
 ]
 
