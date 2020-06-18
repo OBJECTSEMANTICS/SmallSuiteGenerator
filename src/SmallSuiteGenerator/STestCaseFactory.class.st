@@ -94,6 +94,12 @@ STestCaseFactory class >> lightColors [
 		yourself.
 ]
 
+{ #category : #'instance creation' }
+STestCaseFactory class >> seed: aNumber [
+	SPlatform seed: aNumber.
+	^ self new
+]
+
 { #category : #actions }
 STestCaseFactory >> asDict: aBoolean [
 	initialAsDict := aBoolean.
