@@ -99,7 +99,7 @@ STypeMethodInfo >> asMethodInfo: typeCollMethod [
 		returnType: (self transform: typeCollMethod orderedReturnType);
 		argTypes: (self transformArgs: typeCollMethod orderedArgTypes);
 		isQuick: typeCollMethod isQuick;
-		scalars: typeCollMethod orderedLiterals;
+		scalars: typeCollMethod dictLiterals;
 		isDeprecated: typeCollMethod isDeprecated;
 		executions: typeCollMethod numberOfExecutions;
 		hasProfiler: typeCollMethod wasExecuted 

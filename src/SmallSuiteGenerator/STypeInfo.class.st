@@ -213,12 +213,12 @@ STypeInfo >> isInBlackListClass: aClass with: selector [
 
 { #category : #actions }
 STypeInfo >> joinScalars: aDict [
-	aDict associations do: [ :assoc | 
-		scalars
-			at: assoc key
+	aDict associations do: [ :assoc | | key |
+		key := assoc key. 
+		scalars at: key
 			ifPresent: [ :values |
-			scalars at: assoc key put: (values union: assoc value) asArray ]
-			ifAbsentPut: [ assoc value asArray ] ]
+				scalars at: key put: (values union: assoc value) asArray ]
+			ifAbsentPut: [ assoc key = #SUndefinedObject ifTrue: [ #(nil) ] ifFalse: [assoc value asOrderedSet asArray ] ] ]
 ]
 
 { #category : #actions }
@@ -275,7 +275,9 @@ STypeInfo >> reportFrequencyByFilter [
 
 { #category : #actions }
 STypeInfo >> scalar: aClassName with: aValue [
-	scalars at: aClassName put: aValue asOrderedSet asArray
+	aClassName = #SUndefinedObject 
+		ifTrue: [ scalars at: aClassName put: #(nil) ] 
+		ifFalse: [ scalars at: aClassName put: aValue asOrderedSet asArray ]
 ]
 
 { #category : #accessing }
