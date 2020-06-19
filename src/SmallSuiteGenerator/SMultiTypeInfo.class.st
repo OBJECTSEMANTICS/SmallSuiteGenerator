@@ -114,7 +114,7 @@ SMultiTypeInfo >> mustBeFixed [
 
 { #category : #accessing }
 SMultiTypeInfo >> orderedtypes [
-	^ types orderedList
+	^ types getOrderedList
 ]
 
 { #category : #'ston persistence' }

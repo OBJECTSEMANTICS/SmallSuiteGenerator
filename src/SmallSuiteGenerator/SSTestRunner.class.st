@@ -50,40 +50,29 @@ SSTestRunner >> initialize [
 SSTestRunner >> performTest [
 	| var |
 var := Dictionary new.
-var at: 2 put: #(3 4 5).
-var at: 3 put: (DataSeries withKeys: (var at: 2) values: (var at: 2)).
-var at: 4 put: (var at: 3) isSequenceable.
-var at: 5 put: (var at: 3) isSequenceable.
-var at: 6 put: 3.
-var at: 7 put: ((var at: 3) head: (var at: 6)).
-var at: 8 put: (var at: 7) isSequenceable.
-var at: 9 put: (var at: 7) name.
-var at: 10 put: (var at: 3) interquartileRange.
-var at: 11 put: (var at: 7) isSequenceable.
-var at: 1 put: (var at: 3) name.
-var at: 12 put: (var at: 7) valueCounts.
-var at: 13 put: (var at: 3) isSequenceable.
-var at: 14 put: (var at: 3) isSequenceable.
-var at: 15 put: (var at: 12) isSequenceable.
-var at: 16 put: (var at: 12) isSequenceable.
-var at: 17 put: (var at: 7) isSequenceable.
-var at: 18 put: (var at: 3) second.
-var at: 19 put: (var at: 7) isSequenceable.
-var at: 20 put: (var at: 12) isSequenceable.
-var at: 21 put: 1.
-var at: 22 put: (var at: 12) initialize.
-var at: 23 put: (var at: 12) name.
-var at: 24 put: (var at: 12) mode.
-var at: 25 put: ((var at: 22) initialize: (var at: 21)).
-var at: 26 put: (var at: 22) initialize.
-var at: 27 put: (var at: 3) name.
-var at: 28 put: (var at: 7) name.
-var at: 29 put: (var at: 25) isSequenceable.
-var at: 30 put: (var at: 3) sort.
-var at: 31 put: (var at: 25) initialize.
-var at: 32 put: (var at: 7) isSequenceable.
-var at: 34 put: ((var at: 26) quartile: (var at: 10)).
-var at: 35 put: (var at: 3) sort.
+var at: 1 put: NeoJSONObjectMapping new.
+var at: 2 put: Point.
+var at: 26 put: Point.
+var at: 3 put: ((var at: 1) subjectClass: (var at: 26)).
+var at: 24 put: NeoJSONReader basicNew yourself.
+var at: 4 put: 'Integer digit expected'.
+var at: 5 put: [ nil ].
+var at: 9 put: ((var at: 1) mapProperty: (var at: 4) getter: (var at: 5) setter: (var at: 5)).
+var at: 11 put: 'Inst var not found: '.
+var at: 12 put: ((var at: 9) propertyName: (var at: 11)).
+var at: 13 put: #(#x #y).
+var at: 14 put: ((var at: 3) mapInstVars: (var at: 13)).
+var at: 15 put: (var at: 1) identifier.
+var at: 17 put: ((var at: 9) setter: (var at: 5)).
+var at: 18 put: (var at: 12) propertyName.
+var at: 6 put: (var at: 9) propertyName.
+var at: 7 put: (var at: 1) identifier.
+var at: 8 put: (var at: 1) identifier.
+var at: 16 put: (var at: 9) propertyName.
+var at: 21 put: ((var at: 1) readFrom: (var at: 24)).
+var at: 22 put: 3 @ 4.
+var at: 23 put: NeoJSONReader basicNew yourself.
+var at: 25 put: ((var at: 17) readObject: (var at: 22) from: (var at: 23)).
 ^self analyze: thisContext
 ]
 

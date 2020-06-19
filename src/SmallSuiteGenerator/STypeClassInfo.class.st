@@ -95,11 +95,11 @@ STypeClassInfo >> addMethods: methodTypeInfos [
 { #category : #adding }
 STypeClassInfo >> addScalars: aDictionary [
 	aDictionary associations
-		do: [ :assoc | 
+		do: [ :assoc |
 			scalars
 				at: assoc key
 				ifPresent: [ :values | scalars at: assoc key put: (values orderedUnion: assoc value) ]
-				ifAbsentPut: [ assoc value orderedList ] ]
+				ifAbsentPut: [ assoc value getOrderedList ] ]
 ]
 
 { #category : #'accessing - read only' }

@@ -69,7 +69,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 				thenDo: [:aMethod | aSpyClass removeMethod: aMethod ].
 			(aSpyClass className endsWith: 'BlockClosure')
 				ifFalse: [ self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
-	self joinScalars: aTypeCollector scalars copy.
+	self joinScalars: (self copyScalarsOf: aTypeCollector).
 	^ self
 ]
 
@@ -147,6 +147,16 @@ STypeInfo >> copy [
 		do: [ :aClassTypeInfo | copy addClassInfo: aClassTypeInfo copy ].
 	copy scalars: scalars copy.
 	^ copy
+]
+
+{ #category : #accessing }
+STypeInfo >> copyScalarsOf: aTypeCollector [
+	|copy|
+	copy := aTypeCollector scalars copy.
+	copy keysDo: [ :key | |value|
+		value := copy at: key.
+		copy at: key put: value getOrderedList ].
+	^copy
 ]
 
 { #category : #'accessing structure variables' }
@@ -273,7 +283,7 @@ STypeInfo >> reportFrequencyByFilter [
 
 { #category : #actions }
 STypeInfo >> scalar: aClassName with: aValue [
-	scalars at: aClassName put: aValue asOrderedSet orderedList
+	scalars at: aClassName put: aValue asOrderedSet getOrderedList
 ]
 
 { #category : #accessing }
