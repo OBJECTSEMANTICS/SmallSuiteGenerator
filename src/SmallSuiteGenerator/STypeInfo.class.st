@@ -70,6 +70,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 			(aSpyClass className endsWith: 'BlockClosure')
 				ifFalse: [ self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
 	self joinScalars: (self copyScalarsOf: aTypeCollector).
+	self orderBlockClosureScalars.
 	^ self
 ]
 
@@ -266,6 +267,14 @@ STypeInfo >> noneAbstractClasses [
 	^ noneAbstractClasses
 ]
 
+{ #category : #converting }
+STypeInfo >> orderBlockClosureScalars [
+	scalars at: #BlockClosure 
+		ifPresent: [ :value | scalars 
+				at: #BlockClosure 
+				put: (value sort: [ :a :b | a asString hash > b asString hash ]) ]
+]
+
 { #category : #accessing }
 STypeInfo >> reportFrequencyByFilter [
 	| report |
@@ -317,6 +326,7 @@ STypeInfo >> updateArgsOf: aMethod [
 			self scalars keys 
 				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
 				thenDo: [ :scalar | argType type: scalar ] ] ] ].
+	self orderBlockClosureScalars.
 	"updateArgsOf: aMethod 
 	aMethod argTypes do: [ :argType |
 	| includeTypes |

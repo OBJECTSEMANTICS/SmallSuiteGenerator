@@ -99,7 +99,11 @@ STypeClassInfo >> addScalars: aDictionary [
 			scalars
 				at: assoc key
 				ifPresent: [ :values | scalars at: assoc key put: (values orderedUnion: assoc value) ]
-				ifAbsentPut: [ assoc value getOrderedList ] ]
+				ifAbsentPut: [ assoc value getOrderedList ].
+			assoc key = #BlockClosure ifTrue: 
+				[ scalars 
+					at: #BlockClosure 
+					put: ((scalars at: #BlockClosure) sort: [ :a :b | a asString hash > b asString hash ])] ]
 ]
 
 { #category : #'accessing - read only' }
