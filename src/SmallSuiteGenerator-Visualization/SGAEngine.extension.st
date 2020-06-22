@@ -106,11 +106,11 @@ SGAEngine >> addLegendOn: canvas with: dictColor [
 	self addLegend: (Array  
 			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
 			with: 'TC with higher coverage than parents' -> (Array with: (dictColor at: 'backgroundTestCase') with: (dictColor at: 'borderTestCase'))
-			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@200 negated ].
+			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@150 negated ].
 			
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
-		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below right offset: -700@200 negated ].
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below right offset: -700@150 negated ].
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -206,7 +206,6 @@ SGAEngine >> contributionShapeOfHeight: height color: dictColor and: ys [
 				bottom: 100);
 		border: (RSBorder new width: 2; color: (dictColor at: 'border'); yourself);
 		yourself.
-	"self addLegend: infoColor values on: element withFontColor: (dictColor at: 'font') and: [:legend | legend location below offset: 10 ]."
 	^ element
 	
 ]
@@ -293,7 +292,6 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	ys := infoMethodShape at: 3.
 	infoMethodShape := infoMethodShape at: 1.
 	shapeHeight := infoMethodShape height.
-	"ys := self positionsOf: infoHeights onYAxis: shapeHeight."
 	shapeHeight := shapeHeight - (shapeHeight * 0.015).
 	contributionShape := self contributionShapeOfHeight: shapeHeight color: dictColor and: ys.
 	barGroup := RSComposite new shapes: (self setPositions: barGroup using: ys).
@@ -309,7 +307,7 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	self addHighlightTestCaseEvent: highlightTestCase on: canvas ofColor: (dictColor at: 'highlightTestCase').
 	self addHighlightMethodEvent: highlightMethod on: canvas ofColor: (dictColor at: 'highlightMethod').
 	border := self borderOfSize: (infoMethodShape width + (barGroup width * 1.2)) @ (contributionShape height) andColor: (dictColor at: 'border').
-	RSLocation new top middle offset: ((contributionShape width - (contributionShape width * 0.45))@0); 
+	RSLocation new top middle offset: ((contributionShape width - (contributionShape width * 0.45))@5 negated); 
 		move: border on: canvas shapes.
 	canvas addShape: border.
 	widthShape := 800.
@@ -318,7 +316,7 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	"add evolutionShape on canvas"
 	canvas addShape: evolutionShape.
 	border := self borderOfSize: ((widthShape * 1.1) @ contributionShape height) andColor: (dictColor at: 'border').
-	RSLocation new top right move: border on: canvas shapes.
+	RSLocation new top right offset: 0@5 negated; move: border on: canvas shapes.
 	canvas addShape: border.
 	"add descriptive text on canvasa"
 	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: ((infoMethodShape width / 10) negated ) with: -200).
