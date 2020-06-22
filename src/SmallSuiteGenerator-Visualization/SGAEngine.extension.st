@@ -106,11 +106,11 @@ SGAEngine >> addLegendOn: canvas with: dictColor [
 	self addLegend: (Array  
 			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
 			with: 'TC with higher coverage than parents' -> (Array with: (dictColor at: 'backgroundTestCase') with: (dictColor at: 'borderTestCase'))
-			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@200 negated ].
+			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@150 negated ].
 			
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
-		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below right offset: -700@200 negated ].
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below right offset: -700@150 negated ].
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
