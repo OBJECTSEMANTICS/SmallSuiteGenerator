@@ -202,8 +202,8 @@ SGAEngine >> contributionShapeOfHeight: height color: dictColor and: ys [
 		padding: (Margin
 				left: 30
 				right: 30
-				top: 20
-				bottom: 100);
+				top: 0
+				bottom: 0);
 		border: (RSBorder new width: 2; color: (dictColor at: 'border'); yourself);
 		yourself.
 	^ element
@@ -333,7 +333,7 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 	barGroup := RSGroup new.
 	filteredList := OrderedCollection new.
 	set := Set new.
-	ys := OrderedCollection new.
+	ys := OrderedSet new.
 	logs first population do: [ :tC | self addSurvivorTestCase: tC on: filteredList using: set and: logs size ].
 	filteredList sort: [ :tC1 :tC2 | (tC1 generationNumber < tC2 generationNumber) or: [ (tC1 generationNumber = tC2 generationNumber) and: [  tC1 children size < tC2 children size ] ] ].
   memo := SMemo new.
@@ -356,16 +356,14 @@ SGAEngine >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights
 	]).
 	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
 	shapes := generationGroup flatCollect: #yourself.
-	shapes do: [ :s | | y | 
-		y := s encompassingRectangle origin y.
-		(ys includes: y) ifFalse: [ ys add: y ] ].
+	ys addAll: (shapes collect: [ :s | s encompassingRectangle origin y ]).
 	RSEdgeBuilder verticalBezier  
 		shapes: shapes;
 		canvas: canvas;
 		width: 5;
 		color: (dictColor at: 'edge');
 		connectFromAll: [ :testCase | testCase parents ].
-	^ Array with: shapes with: barGroup with: ys
+	^ Array with: shapes with: barGroup with: ys orderedList
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -563,5 +561,6 @@ SGAEngine >> testCaseShape: testCase ofColor: dictColor with: memo highlight: hi
 		model: testCase;
 		border: (RSBorder new width: (higher ifTrue: [ 8 ] ifFalse: [ 1 ]); color: (dictColor at: 'borderTestCase'));
 		padding: 10;
+		popupText: testCase asString;
 		draggable 
 ]

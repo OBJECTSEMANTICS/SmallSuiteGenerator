@@ -139,6 +139,13 @@ SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
     ^ false
 ]
 
+{ #category : #printing }
+SSTestCase >> printOn: aStream [
+	self statements do: [ :stm | 
+			stm printOn: aStream.
+			aStream nextPut: Character cr ]
+]
+
 { #category : #actions }
 SSTestCase >> run [
 	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
