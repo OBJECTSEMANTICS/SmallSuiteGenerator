@@ -217,7 +217,7 @@ STypeInfo >> joinScalars: aDict [
 		key := assoc key. 
 		scalars at: key
 			ifPresent: [ :values |
-				scalars at: key put: (values union: assoc value) asArray ]
+				scalars at: key put: (values unionOrdered: assoc value) asArray ]
 			ifAbsentPut: [ assoc key = #SUndefinedObject ifTrue: [ #(nil) ] ifFalse: [assoc value asOrderedSet asArray ] ] ]
 ]
 

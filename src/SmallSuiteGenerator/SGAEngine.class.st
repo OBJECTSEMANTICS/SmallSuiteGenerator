@@ -211,7 +211,7 @@ SGAEngine >> initialize [
   logs := OrderedCollection new.
   populationSize := 30.
   numberOfGenerations := 100.
-  selectionStrategy := SGARandomSelection new.
+  selectionStrategy := SGATournamentSelection new.
   crossoverRate := 0.8.
   elitismRate := 0.1.
   numberOfStatements := 10.
