@@ -414,6 +414,11 @@ SGAEngine >> targetClassName: anObject [
 ]
 
 { #category : #accessing }
+SGAEngine >> targetPackageRegex [
+	^ targetPackageRegex
+]
+
+{ #category : #accessing }
 SGAEngine >> targetPackageRegex: aString [
 	targetPackageRegex := aString
 ]
