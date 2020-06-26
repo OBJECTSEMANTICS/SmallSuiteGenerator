@@ -300,14 +300,14 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	self addHighlightMethodEvent: highlightMethod on: canvas ofColor: (dictColor at: 'highlightMethod').
 	widthShape := 800.
 	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor size: widthShape @height negated.
-	height := (Array with: contributionShape height with: height with: evolutionShape height) max + 10.
+	height := (Array with: contributionShape height with: height with: evolutionShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (numberOfGenerations + 1)  ] ] thenCollect: #height) max).
 	"addition of contributionShape border"
 	border := self borderOfSize: contributionShape width @ height andColor: (dictColor at: 'border').
 	border translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.
 	canvas addShape: border.
 	"addition of infoMethodShape border"
 	border := self borderOfSize: (infoMethodShape width + (barGroup width * 1.3)) @ height andColor: (dictColor at: 'border').
-	border translateTo: (infoMethodShape encompassingRectangle topCenter x + (contributionShape encompassingRectangle width * 0.9)) @ contributionShape position y.
+	RSLocation new middle offset: 120@0; move: border on: canvas shapes. 
 	canvas addShape: border.
 	"add evolutionShape on canvas"
 	RSLocation new top right offset: ((evolutionShape width * 1.1)@0); move: evolutionShape on: canvas shapes.
