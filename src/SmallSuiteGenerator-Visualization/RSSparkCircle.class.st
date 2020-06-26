@@ -79,11 +79,6 @@ RSSparkCircle >> shapeFor: anObject index: index [
 	slice border: (RSBorder new width: width;
 		color: (width == 0.2 ifTrue: [ Color black] ifFalse: [ slice color muchDarker]));
 		popup.
-	"slice border: (RSBorder new width: values min * slice innerRadius ; 
-			color: (value > 0 
-				ifTrue: [ slice color muchDarker ] 
-				ifFalse: [ slice color muchLighter]));
-		popup."
 	^ slice
 ]
 
