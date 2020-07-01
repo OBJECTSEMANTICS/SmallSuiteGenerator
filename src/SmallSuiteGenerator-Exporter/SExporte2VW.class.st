@@ -14,7 +14,8 @@ SExporte2VW >> blackList [
 	| result |
 	result := OrderedCollection new.
 	SExporte2VW selectors do: [ :sel | 
-		(sel match: '#blackList+') ifTrue: [ result addAll: (self perform: sel) ]  ].
+		(('blackList*' match: sel asString ) and: [ (sel = #blackList) not ])
+			 ifTrue: [ result addAll: (self perform: sel) ]  ].
 	^ result 
 ]
 
@@ -53,6 +54,11 @@ SGAEngineTest >> #tearDown}
 { #category : #'as yet unclassified' }
 SExporte2VW >> blackListSInsertTest [
 	^ {SInsertTest >> #testInsertStatementOfSelectorRandomMessageInLiteral}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSInspectorAssertion [
+	^ {SInspectorAssertion class >> #inspectorAssertionOf:}
 ]
 
 { #category : #'as yet unclassified' }
@@ -110,6 +116,11 @@ SExporte2VW >> blackListSTestCaseFactoryVisualWorks [
 { #category : #'as yet unclassified' }
 SExporte2VW >> blackListSTestCaseTest [
 	^ {SSTestCaseTest >> #typeInfo}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSTestShifter [
+	^ {SSTestShifter>> #canAddStatement}
 ]
 
 { #category : #'as yet unclassified' }
@@ -171,5 +182,5 @@ SExporte2VW >> export [
 
 { #category : #'as yet unclassified' }
 SExporte2VW >> packages [ 
-	^ #('SmallSuiteGenerator' 'SmallSuiteGenerator-Exporter' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2' 'SmallSuiteGenerator-Tests')
+	^ #('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2' 'SmallSuiteGenerator-Tests')
 ]
