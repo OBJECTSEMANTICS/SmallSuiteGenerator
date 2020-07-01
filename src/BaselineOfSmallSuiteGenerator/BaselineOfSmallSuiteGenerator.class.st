@@ -27,17 +27,21 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				baseline: 'TinyLogger'
 				with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
 			spec
+				baseline: 'Pharo2VW'
+				with: [ spec repository: 'github://ObjectProfile/Pharo2VW:master/src' ].
+			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('RoelTyper' 'SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
 				package: 'SmallSuiteGenerator-Scenario';
 				package: 'SmallSuiteGenerator-Scenario2';
 				package: 'SmallSuiteGenerator-Visualization' with: [ spec requires: #('Roassal3') ];
+				package: 'SmallSuiteGenerator-Exporter' with: [ spec requires: #('Pharo2VW') ];
 				package: 'SmallSuiteGenerator-Tests'
 					with: [ spec
 						requires:
 							#('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2') ].
 			spec 
 				group: 'default' with: #('SmallSuiteGenerator-Tests');
-				group: 'All' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization') ]
+				group: 'All' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization' 'SmallSuiteGenerator-Exporter') ]
 					
 ]
