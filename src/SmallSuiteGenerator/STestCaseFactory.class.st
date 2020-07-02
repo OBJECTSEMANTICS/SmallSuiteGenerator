@@ -256,10 +256,12 @@ STestCaseFactory >> initializeProfiler [
 	
 ]
 
-{ #category : #configuration }
+{ #category : #actions }
 STestCaseFactory >> lastMessage: aMessage [
+	(aMessage isNotNil and: [aMessage isNotEmpty]) ifFalse: [ ^ self ].
 	lastMessage := aMessage.
-	engine lastMessage: aMessage 
+	engine lastMessage: aMessage
+	
 ]
 
 { #category : #accessing }
@@ -353,8 +355,8 @@ ifFalse: [ engine fitness profiler: profiler.
 
 { #category : #actions }
 STestCaseFactory >> setUpMethod: anObject [
-	setUpMethod := anObject 
-	
+	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
+	setUpMethod := anObject
 ]
 
 { #category : #accessing }
@@ -389,8 +391,8 @@ STestCaseFactory >> tearDown [
 
 { #category : #actions }
 STestCaseFactory >> tearDownMethod: anObject [
-	tearDownMethod := anObject 
-	
+	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
+	tearDownMethod := anObject
 ]
 
 { #category : #accessing }
