@@ -25,8 +25,19 @@ SExporte2VW >> blackListSAssertionTest [
 ]
 
 { #category : #'as yet unclassified' }
+SExporte2VW >> blackListSAssignment [
+	^ {SAssignment >> #mutantColor .
+	SAssignment >> #stmColor }
+]
+
+{ #category : #'as yet unclassified' }
 SExporte2VW >> blackListSChangeTest [
 	^ {SChangeTest >> #testChangeStatementOfFactoryMessageWithMoreThanOneLiteral}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSClassInfoTest [
+	^ {SClassInfoTest >> #testToString}
 ]
 
 { #category : #'as yet unclassified' }
@@ -35,9 +46,49 @@ SExporte2VW >> blackListSError [
 ]
 
 { #category : #'as yet unclassified' }
+SExporte2VW >> blackListSExpression [
+	^ {SExpression >> #mutantColor .
+	SExpression >> #stmColor }
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSFactoryMessage [
+	^ {SFactoryMessage >> #stmColor }
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSFieldAccessMessage [
+	^ {SFieldAccessMessage >> #stmColor }
+]
+
+{ #category : #'as yet unclassified' }
 SExporte2VW >> blackListSGAEngine [
 	^ {"SGAEngine >> #exportFitnessLog ."
-SGAEngine >> #updateTypeInfoWith:}
+SGAEngine >> #updateTypeInfoWith:. "VisualizationPackage"
+SGAEngine >> #addDescriptiveTextOn:ofColor:and: .
+SGAEngine >> #addHighlightMethodEvent:on:ofColor:.
+SGAEngine >> #addHighlightTestCaseEvent:on:ofColor:.
+SGAEngine >> #addLegend:on:withFontColor:and:.
+SGAEngine >> #addLegendOn:with:.
+SGAEngine >> #addSurvivorTestCase:on:using:and:.
+SGAEngine >> #addTickX:withScale:color:y:and: .
+SGAEngine >> #addTickY:withScale:xMax:ofColor:andPositions: .
+SGAEngine >> #borderOfSize:andColor: .
+SGAEngine >> #contributionShapeOfHeight:color:and:.
+SGAEngine >> #evolutionPoints:withScale: .
+SGAEngine >> #evolutionShapeWith:ofColor:size: .
+SGAEngine >> #generationVisualization:ofColor: .
+SGAEngine >> #infoMethodShapesOn:ofColor:highlight: .
+SGAEngine >> #isCoverage:ofSummaryMethod:in:newOrHigher: .
+SGAEngine >> #methodColorDictionary: .
+SGAEngine >> #methodShape:withGradientFrom:to: .
+SGAEngine >> #methodShapeGroup:with:highlight:scale: .
+SGAEngine >> #progressBarFrom:to:ofColor:.
+SGAEngine >> #scaleColorBlock:.
+SGAEngine >> #setPositions:using: .
+SGAEngine >> #sparkCircleGroupOfColor:andSize:.
+SGAEngine >> #summaryMethodsOfTargetClass:.
+SGAEngine >> #testCaseShape:ofColor:with:highlight:scale:}
 ]
 
 { #category : #'as yet unclassified' }
@@ -62,6 +113,28 @@ SExporte2VW >> blackListSInspectorAssertion [
 ]
 
 { #category : #'as yet unclassified' }
+SExporte2VW >> blackListSLiteral [
+	^ {SLiteral >> #stmColor }
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSMessage [
+	^ {SMessage >> #stmColor }
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSMethodInfoTest [
+	^ {SMethodInfoTest >> #testToString.
+	SMethodInfoTest >> #testFromSton}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSMultiTypeInfoTest [
+	^ {SMultiTypeInfoTest >> #testToString.
+	SMultiTypeInfoTest >> #testFromSton}
+]
+
+{ #category : #'as yet unclassified' }
 SExporte2VW >> blackListSObject [
 	^ {"SObject >> #classOf:."
 "SObject >> #findClass:."
@@ -71,12 +144,37 @@ SObject >> #initialize}
 ]
 
 { #category : #'as yet unclassified' }
+SExporte2VW >> blackListSPlatformPharo [
+	^ {SPlatformPharo class >> #classLogger.
+	SPlatformPharo class >> #implementationType .
+	SPlatformPharo class >> #rbParserClass .
+	SPlatformPharo class >> #testCaseClass }
+]
+
+{ #category : #'as yet unclassified' }
 SExporte2VW >> blackListSPlatformVisualWorks [
 	^ {"SPlatformVisualWorks class >> #classConfigurationName."
 "SPlatformVisualWorks class >> #createTestCaseClass:inPackage:."
 "SPlatformVisualWorks class >> #implementationType."
 "SPlatformVisualWorks class >> #rbParserClass."
 "SPlatformVisualWorks class >> #testCaseClass"}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSReport [
+	^ {SReport class >> #exportData:onCSV:usingFilter:}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSReportSGALog [
+	^ {SReportSGALog class >> #exportResumeOf:onCSV: .
+	SReportSGALog >> #generateReportForDifferencesBtwGenerations}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSReportTypeInfo [
+	^ {SReportTypeInfo class >> #writeReport:ofCaseStudy: .
+	SReportTypeInfo class >> #writeReport:ofFrequency:}
 ]
 
 { #category : #'as yet unclassified' }
@@ -103,7 +201,26 @@ STestCaseFactory >> #export:with: .
 STestCaseFactory >> #exportTests .
 "STestCaseFactory >> #moveClass: ."
 STestCaseFactory >> #tearDown .
-"STestCaseFactory class >> #from:"}
+"STestCaseFactory class >> #from:"
+STestCaseFactory >> #fitnessResultAsDictionary .
+STestCaseFactory >> #generationEvolutionCanvas .
+STestCaseFactory >> #gtInspectorCanvasIn: .
+STestCaseFactory >> #gtInspectorViewIn: .
+STestCaseFactory >> #visualizeEvolutionFitness }
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSTestCaseFactoryExample [
+	^ {STestCaseFactoryExample >> #clean .
+STestCaseFactoryExample >> #exampleEmptyBlockOnPackages .
+STestCaseFactoryExample >> #exampleSSTeacherOnClass .
+STestCaseFactoryExample >> #exampleSSTeacherOnPackages .
+STestCaseFactoryExample >> #exampleSStackOnClass .
+STestCaseFactoryExample >> #exampleSStackOnPackages .
+STestCaseFactoryExample >> #exampleSStudentOnClass .
+STestCaseFactoryExample >> #exampleWithSubclassToRun .
+STestCaseFactoryExample >> #exampleWithWrongClassToRun .
+STestCaseFactoryExample >> #exampleWithWrongRegexToRun}
 ]
 
 { #category : #'as yet unclassified' }
@@ -147,7 +264,10 @@ STypeInfoTest >> #testAsTypeInfoSFooOnClass.
 STypeInfoTest >> #testAsTypeInfoSFooWithNil.
 STypeInfoTest >> #testAsTypeInfoSTeacherOnClass.
 STypeInfoTest >> #testAsTypeInfoSTeacherOnPackagesMatching.
-STypeInfoTest >> #testFactoryMessages}
+STypeInfoTest >> #testFactoryMessages.
+STypeInfoTest >> #testToStringComplexScalar.
+STypeInfoTest >> #testToString.
+STypeInfoTest >> #testFromString}
 ]
 
 { #category : #'as yet unclassified' }
