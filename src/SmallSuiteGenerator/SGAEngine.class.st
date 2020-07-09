@@ -403,6 +403,16 @@ SGAEngine >> similarChild: testCase with: idPopulation [
 		yourself
 ]
 
+{ #category : #initialization }
+SGAEngine >> stopIterations [
+	^ stopIterations
+]
+
+{ #category : #initialization }
+SGAEngine >> stopIterations: aNumber [
+	stopIterations := aNumber
+]
+
 { #category : #actions }
 SGAEngine >> targetClassName [
 	^ targetClassName

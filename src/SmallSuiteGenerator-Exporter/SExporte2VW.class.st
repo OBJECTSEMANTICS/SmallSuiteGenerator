@@ -37,7 +37,8 @@ SExporte2VW >> blackListSChangeTest [
 
 { #category : #'as yet unclassified' }
 SExporte2VW >> blackListSClassInfoTest [
-	^ {SClassInfoTest >> #testToString}
+	^ {SClassInfoTest >> #testToString .
+	SClassInfoTest >> #testFromString}
 ]
 
 { #category : #'as yet unclassified' }
@@ -93,7 +94,8 @@ SGAEngine >> #testCaseShape:ofColor:with:highlight:scale:}
 
 { #category : #'as yet unclassified' }
 SExporte2VW >> blackListSGAEngineExample [
-	^ {SGAEngineExample >> #runOnClass:withBlock:andFitness:}
+	^ {SGAEngineExample >> #runOnClass:withBlock:andFitness: .
+	SGAEngineExample >> #runOnPackagesMatching:withBlock:andFitness:}
 ]
 
 { #category : #'as yet unclassified' }
@@ -132,6 +134,11 @@ SExporte2VW >> blackListSMethodInfoTest [
 SExporte2VW >> blackListSMultiTypeInfoTest [
 	^ {SMultiTypeInfoTest >> #testToString.
 	SMultiTypeInfoTest >> #testFromSton}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSNumericParameterization [
+	^ {SNumericParameterization >> #newInstancesM:}
 ]
 
 { #category : #'as yet unclassified' }
@@ -175,6 +182,11 @@ SExporte2VW >> blackListSReportSGALog [
 SExporte2VW >> blackListSReportTypeInfo [
 	^ {SReportTypeInfo class >> #writeReport:ofCaseStudy: .
 	SReportTypeInfo class >> #writeReport:ofFrequency:}
+]
+
+{ #category : #'as yet unclassified' }
+SExporte2VW >> blackListSSelectionParameterization [
+	^ {SSelectionParameterization class >> #setting:}
 ]
 
 { #category : #'as yet unclassified' }
@@ -246,11 +258,17 @@ SExporte2VW >> blackListSTestShifterTest [
 ]
 
 { #category : #'as yet unclassified' }
+SExporte2VW >> blackListSTypeClassInfo [
+	^ {STypeClassInfo >> #differenceWith:usingSelector:}
+]
+
+{ #category : #'as yet unclassified' }
 SExporte2VW >> blackListSTypeInfo [
 	^ {"STypeInfo >> #asTypeInfo:methodsBlacklist:."
 STypeInfo >> #completeTypeInfo.
 STypeInfo >> #isAbstractClass:.
-STypeInfo >> #updateArgsOf:}
+STypeInfo >> #updateArgsOf: .
+STypeInfo >> #deleteBlackListMethods}
 ]
 
 { #category : #'as yet unclassified' }

@@ -359,6 +359,11 @@ STestCaseFactory >> setUpMethod: anObject [
 	setUpMethod := anObject
 ]
 
+{ #category : #configuration }
+STestCaseFactory >> stopIterations: anInteger [
+	engine stopIterations: anInteger
+]
+
 { #category : #accessing }
 STestCaseFactory >> targetClassName [
 	^ targetClassName 
