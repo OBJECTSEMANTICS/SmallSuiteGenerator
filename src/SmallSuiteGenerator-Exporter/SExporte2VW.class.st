@@ -218,7 +218,8 @@ STestCaseFactory >> #fitnessResultAsDictionary .
 STestCaseFactory >> #generationEvolutionCanvas .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
-STestCaseFactory >> #visualizeEvolutionFitness }
+STestCaseFactory >> #visualizeEvolutionFitness .
+STestCaseFactory >> #generatedClass}
 ]
 
 { #category : #'as yet unclassified' }

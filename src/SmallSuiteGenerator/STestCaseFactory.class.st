@@ -23,7 +23,8 @@ Class {
 		'initialAsDict',
 		'typeInfoSeed',
 		'typeInfoOrigin',
-		'firstExecution'
+		'firstExecution',
+		'generatedClass'
 	],
 	#classInstVars : [
 		'instance'
@@ -157,20 +158,15 @@ STestCaseFactory >> engineDefault [
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
-	| class |
-	class := self getClassOf: ('GA' , self targetClassName , 'Test').
 	[ aTestCase generateAssertions.
-	class
+	self generatedClass
 		compile:
-			(SPlatform rbParserClass
-				parseMethod:
-					aSelector , aTestCase printDescriptiveComment
-						, aTestCase parseTreeWithAssertions body formattedCode)
-				formattedCode ]
+			(aSelector, String lf, aTestCase printDescriptiveComment,
+			String lf, aTestCase parseTreeWithAssertions body formattedCode) ]
 		on: Error
 		do: [ | carReturn |
 			carReturn := String with: Character cr.
-			class
+			self generatedClass
 				compile:
 					aSelector , carReturn , 'self should:'
 						, aTestCase parseTree formattedCode , carReturn
@@ -212,6 +208,19 @@ STestCaseFactory >> fitnessSeed [
 { #category : #accessing }
 STestCaseFactory >> fitnessSeedCalculated: number [ 
 	fitnessSeed := number
+]
+
+{ #category : #actions }
+STestCaseFactory >> generatedClass [
+	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').
+		"Move class to package"].
+	^ generatedClass
+	
+]
+
+{ #category : #configuration }
+STestCaseFactory >> generatedClass: anObject [
+	generatedClass := anObject
 ]
 
 { #category : #actions }
