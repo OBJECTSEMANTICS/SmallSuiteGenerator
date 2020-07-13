@@ -23,7 +23,8 @@ Class {
 		'initialAsDict',
 		'typeInfoSeed',
 		'typeInfoOrigin',
-		'firstExecution'
+		'firstExecution',
+		'generatedClass'
 	],
 	#classInstVars : [
 		'instance'
@@ -157,20 +158,15 @@ STestCaseFactory >> engineDefault [
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
-	| class |
-	class := self getClassOf: ('GA' , self targetClassName , 'Test').
 	[ aTestCase generateAssertions.
-	class
+	self generatedClass
 		compile:
-			(SPlatform rbParserClass
-				parseMethod:
-					aSelector , aTestCase printDescriptiveComment
-						, aTestCase parseTreeWithAssertions body formattedCode)
-				formattedCode ]
+			(aSelector, String lf, aTestCase printDescriptiveComment,
+			String lf, aTestCase parseTreeWithAssertions body formattedCode) ]
 		on: Error
 		do: [ | carReturn |
 			carReturn := String with: Character cr.
-			class
+			self generatedClass
 				compile:
 					aSelector , carReturn , 'self should:'
 						, aTestCase parseTree formattedCode , carReturn
@@ -215,6 +211,19 @@ STestCaseFactory >> fitnessSeedCalculated: number [
 ]
 
 { #category : #actions }
+STestCaseFactory >> generatedClass [
+	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').
+		"Move class to package"].
+	^ generatedClass
+	
+]
+
+{ #category : #configuration }
+STestCaseFactory >> generatedClass: anObject [
+	generatedClass := anObject
+]
+
+{ #category : #actions }
 STestCaseFactory >> getClassOf: aString [
 	| aClassName class |
 	aClassName := aString asSymbol.
@@ -256,10 +265,12 @@ STestCaseFactory >> initializeProfiler [
 	
 ]
 
-{ #category : #configuration }
+{ #category : #actions }
 STestCaseFactory >> lastMessage: aMessage [
+	(aMessage isNotNil and: [aMessage isNotEmpty]) ifFalse: [ ^ self ].
 	lastMessage := aMessage.
-	engine lastMessage: aMessage 
+	engine lastMessage: aMessage
+	
 ]
 
 { #category : #accessing }
@@ -353,8 +364,13 @@ ifFalse: [ engine fitness profiler: profiler.
 
 { #category : #actions }
 STestCaseFactory >> setUpMethod: anObject [
-	setUpMethod := anObject 
-	
+	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
+	setUpMethod := anObject
+]
+
+{ #category : #configuration }
+STestCaseFactory >> stopIterations: anInteger [
+	engine stopIterations: anInteger
 ]
 
 { #category : #accessing }
@@ -389,8 +405,8 @@ STestCaseFactory >> tearDown [
 
 { #category : #actions }
 STestCaseFactory >> tearDownMethod: anObject [
-	tearDownMethod := anObject 
-	
+	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
+	tearDownMethod := anObject
 ]
 
 { #category : #accessing }

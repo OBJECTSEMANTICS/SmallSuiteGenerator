@@ -75,7 +75,8 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 
 { #category : #accessing }
 STypeInfo >> blackList: aList [
-	blackList := aList
+	blackList := aList.
+	self deleteBlackListMethods 
 ]
 
 { #category : #accessing }
@@ -163,6 +164,26 @@ STypeInfo >> defaultFactoryMessageFrom: aClassName [
 								with: #()
 								with: false) ].
 	self error: 'ClassMethodType of selector new cannot be applied at class: ', aClassName
+]
+
+{ #category : #converting }
+STypeInfo >> deleteBlackListMethods [
+
+	blackList do: [:compMethod |
+		|aClass selector|
+		selector := #methodTypes.
+		compMethod origin isMeta ifTrue: [ 
+			selector := #classMethodTypes.
+			aClass := compMethod origin instanceSide ]
+		ifFalse: [ aClass := compMethod origin ].
+		self types at: aClass name asSymbol
+			ifPresent: [:classInfo | 
+				(classInfo perform: selector)
+						removeKey: compMethod selector
+				 		ifAbsent: []
+			] 
+			ifAbsent: [].
+	]
 ]
 
 { #category : #'error handling' }
