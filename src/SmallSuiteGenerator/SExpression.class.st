@@ -16,8 +16,7 @@ Class {
 		'id',
 		'mutated',
 		'parent',
-		'identifier',
-		'needsBeFixed'
+		'identifier'
 	],
 	#classInstVars : [
 		'nextId'
@@ -71,7 +70,6 @@ SExpression >> copy [
 		id: self id;
 		returnType: self returnType;
 		mutated: self mutated;
-		needsBeFixed: self needsBeFixed;
 		parent: self         
 ]
 
@@ -79,10 +77,6 @@ SExpression >> copy [
 SExpression >> error: aString [
 	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
 	^ SError signal: aString
-]
-
-{ #category : #fixing }
-SExpression >> fixWith: anObject in: aTestCase [
 ]
 
 { #category : #comparing }
@@ -105,7 +99,6 @@ SExpression >> initialize [
 	super initialize .
 	mutated := false.
 	identifier := self class nextIdentifier.
-	needsBeFixed := false
 ]
 
 { #category : #mutation }
@@ -154,16 +147,6 @@ SExpression >> mutated [
 { #category : #accessing }
 SExpression >> mutated: aBoolean [
 	mutated := aBoolean
-]
-
-{ #category : #accessing }
-SExpression >> needsBeFixed [
-	^ needsBeFixed
-]
-
-{ #category : #accessing }
-SExpression >> needsBeFixed: aBoolean [
-	needsBeFixed := aBoolean 
 ]
 
 { #category : #accessing }

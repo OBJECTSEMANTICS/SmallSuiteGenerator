@@ -133,8 +133,12 @@ SSTestShifter >> addFieldAccessMessage: aSelector from: aClassName [
 
 { #category : #inserting }
 SSTestShifter >> addFieldAccessMessage: method withReceiver: receiver [
-	^ self
-		addAssignment: (SFieldAccessMessage newFromReceiver: receiver copy andMethod: method)
+	|result|
+	result := self
+		addAssignment: (SFieldAccessMessage newFromReceiver: receiver copy andMethod: method).
+	self typeCheck.
+	^  result
+	
 ]
 
 { #category : #inserting }
@@ -342,11 +346,11 @@ SSTestShifter >> alternativeOfVariable: aVariable before: aExpression [
 { #category : #actions }
 SSTestShifter >> analyze [
   " we use a meta interpreter to use smalltalk and interpret our AST"
-  | result context |
+  | context |
   self setUp.
   context := SSExecutionContext new.
   context at: 'self' put: TestCase new.
-  result := self interpret: self statements , self assertions with: context.
+  self interpret: self statements , self assertions with: context.
   context removeKey:'self'.
   self tearDown.
   ^ context.
@@ -377,7 +381,7 @@ SSTestShifter >> buildArgs: argTypes before: aStatement [
 	argTypes
 		ifNotNil: [ | prevTypes scalarsKeys |
 			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-				select: [ :stm | stm needsBeFixed not and: [ stm returnType isNil not ]]
+				select: [ :stm | stm returnType isNil not]
 				thenCollect: #returnType.
 			scalarsKeys := typeInfo scalars keys asOrderedCollection .
 			argTypes
@@ -406,7 +410,10 @@ SSTestShifter >> changeMessageNotUnderstood: aSelector from: aClassName [
 SSTestShifter >> changeStatement [
 	(self random collectAtRandom: statements)
 		do: [ :stm | 
-			[ ^ self changeStatement: stm ]
+			[ |result|
+				result := self changeStatement: stm.
+				self typeCheck.
+				^ result. ]
 				on: SError
 				do: [  ] ]
 ]
@@ -418,8 +425,7 @@ SSTestShifter >> changeStatement: aStatement [
 		repairOn: self
 		changing: aStatement.
 	(self statementAt: aStatement ) replaceBy: statementChanged.
-	newStm := self statementAt: statementChanged .
-	self fixTypeReturnOf: (newStm needsBeFixed: true).
+	newStm := self statementAt: statementChanged.
 	^ statementChanged
 ]
 
@@ -493,25 +499,6 @@ SSTestShifter >> fitnessByClass [
 ]
 
 { #category : #actions }
-SSTestShifter >> fixTypeReturnOf: aStatement [
-	[| executionContext aReturnType |
-	executionContext := self analyze.
-	aReturnType := (executionContext at: aStatement variable key) class name.
-	aStatement returnType = aReturnType ifTrue: [ 
-		aStatement needsBeFixed: false.
-		^ self ].
-	(self subStatementsAfterIndexOf: aStatement) do: [ :stm | 
-		self repairReferenceTo: aStatement of: stm
-	].
-	aStatement variable returnType: aReturnType.
-	aStatement value returnType: aReturnType.
-	aStatement needsBeFixed: false.
-	aStatement returnType: aReturnType ]
-	on: Exception 
-	do: [  ]
-]
-
-{ #category : #actions }
 SSTestShifter >> generateAssertions [
 	^ self
 		generateAssertions:
@@ -543,7 +530,7 @@ SSTestShifter >> generateStatements [
         array := self random collectAtRandom: (Array with: #addMessage with: #addFieldAccessMessage).
         array detect: [:aMethod |  [ (self perform: aMethod) isNotNil ] on: SError do: [ false ] ] ifFound: [:aMethod |  | lastStm |
               lastStm := statements last.
-              lastStm needsBeFixed ifTrue: [ self fixTypeReturnOf: lastStm ] ] ifNone: [ counter := counter + 1.
+              ] ifNone: [ counter := counter + 1.
               counter > self maxNumberOfStatements ifTrue: [ flag := false.
                     self error: 'Not able to generate statements' ] ]
         "	[ self addMessage ]
@@ -588,8 +575,7 @@ SSTestShifter >> insertAsParameter: expression after: aStatement [
 		do: [ :stm | [ | mutatedStm |
 			mutatedStm := stm replaceArgBy: expression.
 			(mutatedStm pickUpReferences: expression) ifNotEmpty: 
-				[ mutatedStm value mutated: true.
-				mutatedStm needsBeFixed: true ].
+				[ mutatedStm value mutated: true.].
 			 ^ mutatedStm ]
 				on: SError
 				do: [  ] ].
@@ -610,7 +596,6 @@ SSTestShifter >> insertExpressionRandomly [
 		do: [ :selector | 
 			[ | insertedStm |
 			insertedStm := self insertStatementOfSelector: selector.
-			insertedStm value mutated ifTrue: [ self fixTypeReturnOf: insertedStm ].
 			^ insertedStm ]
 				on: Error
 				do: [  ] ]
@@ -866,8 +851,7 @@ SSTestShifter >> numMaxStatements: anObject [
 SSTestShifter >> objectVariables [
 	
 	^ statements select:[:stm| 
-			stm needsBeFixed not and: 
-				[ (self typeInfo classAt: stm returnType ifNone:[nil]) isNil not]] 
+				(self typeInfo classAt: stm returnType ifNone:[nil]) isNil not] 
 		thenCollect:[:stm| stm variable].
 ]
 

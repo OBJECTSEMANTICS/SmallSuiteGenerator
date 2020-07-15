@@ -69,8 +69,7 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   offSpring addStatements: (parentA statements copyFrom: 1 to: ((sizeA * alpha) asInteger max: 1)) copy.
   (parentB statements copyFrom: ((alpha * sizeB) asInteger max: 1) + 1 to: sizeB) do: [:aStm |  [ | lastStm |
         aStm insertOn: offSpring.
-        lastStm := offSpring statements last.
-        lastStm needsBeFixed ifTrue: [ offSpring fixTypeReturnOf: lastStm ] ] on: SError do: [  ] ].
+        lastStm := offSpring statements last.] on: SError do: [  ] ].
   offSpring
 	  generationNumber: parentA generationNumber + 1;
 	  clean.

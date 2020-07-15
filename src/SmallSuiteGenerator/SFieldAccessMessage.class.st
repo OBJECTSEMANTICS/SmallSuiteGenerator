@@ -20,7 +20,6 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		returnType: aMethod returnType type;
 		selector: aMethod selector;
 		receiver: aReceiver;
-		needsBeFixed: ((aMethod returnType types size > 1) or: [ aMethod hasProfiler not ]);
 		yourself 
 ]
 

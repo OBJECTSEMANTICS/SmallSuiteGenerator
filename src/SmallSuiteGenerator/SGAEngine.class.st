@@ -122,7 +122,6 @@ SGAEngine >> createNewPopulation [
 				newNumber := newNumber +1.
 				option idPopulation: newNumber ]) ].
    self updateTypeInfoWith: newPopulation.
-   self fixPopulation: newPopulation.
    population := newPopulation.
    population := self order: population
 ]
@@ -192,17 +191,6 @@ SGAEngine >> fitness [
 SGAEngine >> fitness: aFitness [
 	fitness := aFitness.
 	selectionStrategy fitness: aFitness
-]
-
-{ #category : #updating }
-SGAEngine >> fixPopulation: aCollection [ 
-	| targetClassMessages |
-	targetClassMessages := (typeInfo types at: targetClassName) methodTypes values asOrderedCollection 
-		removeAllSuchThat: [:method | method returnType mustBeFixed not ].
-	 
-	aCollection do: [ :testCase | 
-		testCase statements select: [ :stm | [(targetClassMessages collect: #selector) includes: stm value selector]
-			on: Error do: [ false ] ] thenDo: [ :stm | testCase fixTypeReturnOf: (stm needsBeFixed: true) ] ]
 ]
 
 { #category : #initialization }

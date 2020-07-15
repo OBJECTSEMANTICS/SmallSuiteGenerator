@@ -30,7 +30,6 @@ SAssignment class >> name: aVariable value: anExpression [
 		variable:  aVariable;
 		value: anExpression;
 		returnType: anExpression returnType;
-		needsBeFixed: anExpression needsBeFixed;
 		yourself
 ]
 
@@ -55,7 +54,6 @@ SAssignment >> fixWith: anObject in: aTestCase [
 	value fixWith: anObject in: aTestCase.
 	returnType := value returnType.
 	variable returnType: value returnType.
-	needsBeFixed := value needsBeFixed 
 ]
 
 { #category : #comparing }
@@ -101,12 +99,6 @@ SAssignment >> interpret: aExecutionContext [
 { #category : #accessing }
 SAssignment >> mutated [ 
 	^ value mutated
-]
-
-{ #category : #accessing }
-SAssignment >> needsBeFixed: aBoolean [
-	super needsBeFixed: aBoolean.
-	value ifNotNil: [ value needsBeFixed: aBoolean ]
 ]
 
 { #category : #mutation }

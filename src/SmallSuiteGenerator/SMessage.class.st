@@ -28,7 +28,6 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		selector: aMethod selector;
 		receiver: aReceiver;
 		args: (self args: aMethod with: statements);
-		needsBeFixed: ((aMethod returnType types size > 1) or: [ aMethod hasProfiler not ]);
 		yourself
 ]
 
