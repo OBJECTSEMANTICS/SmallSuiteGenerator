@@ -261,6 +261,7 @@ STestCaseFactory >> initialSeed [
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
+	SPlatform vizClass: nil.
 	fitness := SMethodCoverage new.
 	numberOfIterations := 20.
 	engine := self engineDefault.

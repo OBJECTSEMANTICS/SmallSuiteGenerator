@@ -35,9 +35,6 @@ STestCaseFactory >> generationEvolutionCanvas [
 STestCaseFactory >> gtInspectorCanvasIn: composite [
 	<gtInspectorPresentationOrder: -5>
 	SPlatform vizClass gtInspectorCanvasIn: composite for: self
-	"composite roassal3
-		title: 'GenerationEvoution';
-		initializeCanvas: [ self generationEvolutionCanvas ]"
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
