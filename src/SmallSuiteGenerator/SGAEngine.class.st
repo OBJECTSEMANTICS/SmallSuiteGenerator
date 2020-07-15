@@ -230,7 +230,7 @@ SGAEngine >> initializePopulation [
    population := self order: population.
    initialPopulation := population.
 	self updateTypeInfoWith: population.
-	logs add: (SGALog logOf: self inGeneration: 0 inTime: t)
+	logs add: (SPlatform logClass logOf: self inGeneration: 0 inTime: t)
 ]
 
 { #category : #initialization }
@@ -350,7 +350,7 @@ SGAEngine >> run [
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
         stopFlag ifFalse: [ t := Time millisecondClockValue.
               self doSelection.
-              logs add: (SGALog logOf: self inGeneration: iteration inTime: t).
+              logs add: (SPlatform logClass logOf: self inGeneration: iteration inTime: t).
               lastBestFitness := self lastBestFitness.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.

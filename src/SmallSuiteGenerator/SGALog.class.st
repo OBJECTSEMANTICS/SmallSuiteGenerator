@@ -49,7 +49,7 @@ SGALog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 	dictFitness := self collectFitnessByNameOf: aSGAEngine population.
 	log lowestFit: aSGAEngine population last fitness;
 	averageFit: (self pickAverageFitTest: dictFitness). 
-	"log summaryTargetClass: (aSGAEngine fitness runPopulation: aSGAEngine population)."
+	log summaryTargetClass: (aSGAEngine fitness runPopulation: aSGAEngine population).
 	log typeInfoGeneration: (aSGAEngine typeInfo classAt: aSGAEngine targetClassName) deepCopy.
 	^ log
 ]
@@ -58,6 +58,11 @@ SGALog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 SGALog class >> pickAverageFitTest: aDictionary [
 	^ (aDictionary keys collect: [ :key | 
 		   key -> (aDictionary at: key) average ]) asDictionary
+]
+
+{ #category : #'as yet unclassified' }
+SGALog class >> summaryExecutionMethodsOf: aTestCase with: aProfiler [
+	aTestCase summaryExecutionMethods: aProfiler summaryExecutionMethods.
 ]
 
 { #category : #accessing }

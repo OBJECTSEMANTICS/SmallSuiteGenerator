@@ -12,7 +12,8 @@ Class {
 		'seed',
 		'configurationClass',
 		'logName',
-		'asDict'
+		'asDict',
+		'logClass'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -95,6 +96,17 @@ SPlatform class >> initLevelToPrint [
 { #category : #accessing }
 SPlatform class >> levelToPrint [
 	^ level
+]
+
+{ #category : #settings }
+SPlatform class >> logClass [
+	logClass ifNil: [ logClass := SGANullLog ].
+	^ logClass
+]
+
+{ #category : #accessing }
+SPlatform class >> logClass: aClass [
+	logClass := aClass
 ]
 
 { #category : #accessing }

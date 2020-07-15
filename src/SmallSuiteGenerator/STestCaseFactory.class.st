@@ -210,6 +210,11 @@ STestCaseFactory >> fitnessSeedCalculated: number [
 	fitnessSeed := number
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> generateLogs [
+	SPlatform logClass: SGALog
+]
+
 { #category : #actions }
 STestCaseFactory >> generatedClass [
 	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').
@@ -400,8 +405,9 @@ STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
 	SPlatform asDict: false.
+	SPlatform logClass: nil.
 	SPlatform resetRandomGenerator.
-	SmallTypeCollector resetClassDict 
+	SmallTypeCollector resetClassDict
 ]
 
 { #category : #actions }
