@@ -12,7 +12,9 @@ Class {
 		'seed',
 		'configurationClass',
 		'logName',
-		'asDict'
+		'asDict',
+		'logClass',
+		'vizClass'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -97,6 +99,17 @@ SPlatform class >> levelToPrint [
 	^ level
 ]
 
+{ #category : #settings }
+SPlatform class >> logClass [
+	logClass ifNil: [ logClass := SGANullLog ].
+	^ logClass
+]
+
+{ #category : #accessing }
+SPlatform class >> logClass: aClass [
+	logClass := aClass
+]
+
 { #category : #accessing }
 SPlatform class >> logName [ 
 	^ logName ifNil: [ self defaultLogName  ]
@@ -169,4 +182,15 @@ SPlatform class >> seed: aNumber [
 { #category : #tests }
 SPlatform class >> testCaseClass [
 	^ self configurationClass testCaseClass
+]
+
+{ #category : #settings }
+SPlatform class >> vizClass [
+	vizClass ifNil: [ vizClass := SGANullViz ].
+	^ vizClass
+]
+
+{ #category : #accessing }
+SPlatform class >> vizClass: aClass [
+	vizClass := aClass
 ]

@@ -210,6 +210,17 @@ STestCaseFactory >> fitnessSeedCalculated: number [
 	fitnessSeed := number
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> generateLogs [
+	SPlatform logClass: SGALog
+]
+
+{ #category : #accessing }
+STestCaseFactory >> generateViews [
+	SPlatform vizClass: SGAViz;
+		logClass: SGALog 
+]
+
 { #category : #actions }
 STestCaseFactory >> generatedClass [
 	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').
@@ -250,6 +261,7 @@ STestCaseFactory >> initialSeed [
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
+	SPlatform vizClass: nil.
 	fitness := SMethodCoverage new.
 	numberOfIterations := 20.
 	engine := self engineDefault.
@@ -399,9 +411,10 @@ STestCaseFactory >> targetPackageRegex: anObject [
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
-	SPlatform asDict: false.
-	SPlatform resetRandomGenerator.
-	SmallTypeCollector resetClassDict 
+	SPlatform asDict: false;
+		logClass: nil;
+		resetRandomGenerator.
+	SmallTypeCollector resetClassDict
 ]
 
 { #category : #actions }
