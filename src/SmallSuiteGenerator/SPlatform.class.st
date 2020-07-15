@@ -13,7 +13,8 @@ Class {
 		'configurationClass',
 		'logName',
 		'asDict',
-		'logClass'
+		'logClass',
+		'vizClass'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -181,4 +182,15 @@ SPlatform class >> seed: aNumber [
 { #category : #tests }
 SPlatform class >> testCaseClass [
 	^ self configurationClass testCaseClass
+]
+
+{ #category : #settings }
+SPlatform class >> vizClass [
+	vizClass ifNil: [ vizClass := SGANullViz ].
+	^ vizClass
+]
+
+{ #category : #accessing }
+SPlatform class >> vizClass: aClass [
+	vizClass := aClass
 ]

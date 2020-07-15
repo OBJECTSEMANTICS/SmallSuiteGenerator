@@ -4,7 +4,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #log }
 SGANullLog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 	| log |
 	log := self new 
@@ -15,6 +15,6 @@ SGANullLog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 	^ log
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #summaries }
 SGANullLog class >> summaryExecutionMethodsOf: aTestCase with: aProfiler [
 ]

@@ -26,7 +26,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGALog class >> collectFitnessByNameOf: population [
 	| dictFit |
 	dictFit := Dictionary new.
@@ -38,7 +38,7 @@ SGALog class >> collectFitnessByNameOf: population [
 	^ dictFit
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #log }
 SGALog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 	| log dictFitness |
 	log := self new 
@@ -54,13 +54,13 @@ SGALog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 	^ log
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGALog class >> pickAverageFitTest: aDictionary [
 	^ (aDictionary keys collect: [ :key | 
 		   key -> (aDictionary at: key) average ]) asDictionary
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #summaries }
 SGALog class >> summaryExecutionMethodsOf: aTestCase with: aProfiler [
 	aTestCase summaryExecutionMethods: aProfiler summaryExecutionMethods.
 ]

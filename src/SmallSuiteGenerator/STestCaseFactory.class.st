@@ -215,6 +215,12 @@ STestCaseFactory >> generateLogs [
 	SPlatform logClass: SGALog
 ]
 
+{ #category : #accessing }
+STestCaseFactory >> generateViews [
+	SPlatform vizClass: SGAViz;
+		logClass: SGALog 
+]
+
 { #category : #actions }
 STestCaseFactory >> generatedClass [
 	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').
@@ -404,9 +410,9 @@ STestCaseFactory >> targetPackageRegex: anObject [
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
-	SPlatform asDict: false.
-	SPlatform logClass: nil.
-	SPlatform resetRandomGenerator.
+	SPlatform asDict: false;
+		logClass: nil;
+		resetRandomGenerator.
 	SmallTypeCollector resetClassDict
 ]
 
