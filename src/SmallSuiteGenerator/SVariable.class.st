@@ -55,6 +55,12 @@ SVariable >> copy [
 	^ copy
 ]
 
+{ #category : #accessing }
+SVariable >> fullName [
+  self id ifNil:[ ^ self varName].
+  ^self varName , self id asString
+]
+
 { #category : #comparing }
 SVariable >> hash [
 	^ super hash bitXor: varName  hash
@@ -64,6 +70,11 @@ SVariable >> hash [
 SVariable >> initialize [
 	super initialize.
 	varName := '_var'
+]
+
+{ #category : #actions }
+SVariable >> interpret: aExecutionContext [
+  ^aExecutionContext at: self fullName.
 ]
 
 { #category : #accessing }

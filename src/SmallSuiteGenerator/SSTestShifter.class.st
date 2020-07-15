@@ -19,6 +19,7 @@ Class {
 	#name : #SSTestShifter,
 	#superclass : #SObject,
 	#instVars : [
+		'previousOpenWindows',
 		'statements',
 		'assertions',
 		'typeInfo',
@@ -176,7 +177,10 @@ SSTestShifter >> addMessage: aSelector from: aClassName [
 
 { #category : #inserting }
 SSTestShifter >> addMessage: method withReceiver: receiver [
-	^ self addAssignment: (self messageUsing: method and: receiver before: nil)
+|result|
+result := self addAssignment: (self messageUsing: method and: receiver before: nil).
+self typeCheck.
+^  result
 ]
 
 { #category : #accessing }
@@ -333,6 +337,19 @@ SSTestShifter >> alternativeOfVariable: aVariable before: aExpression [
 		detect: [ :stm | stm reference ~= aVariable ]
 		ifFound: [ :stm | ^ stm reference ].
 	^ (self addStatementOfType: returnType before: aExpression) reference
+]
+
+{ #category : #actions }
+SSTestShifter >> analyze [
+  " we use a meta interpreter to use smalltalk and interpret our AST"
+  | result context |
+  self setUp.
+  context := SSExecutionContext new.
+  context at: 'self' put: TestCase new.
+  result := self interpret: self statements , self assertions with: context.
+  context removeKey:'self'.
+  self tearDown.
+  ^ context.
 ]
 
 { #category : #accessing }
@@ -621,6 +638,13 @@ SSTestShifter >> insertStatementOfSelector: selector [
 				do: [  ] ].
 	self
 		error: 'Cannot insert statement of selector: ' , selector printString
+]
+
+{ #category : #actions }
+SSTestShifter >> interpret: aStatementCollection with: aExecutionContext [
+  | objects |
+  objects := aStatementCollection collect: [:stm |  stm interpret: aExecutionContext ].
+  ^objects last
 ]
 
 { #category : #repairing }
@@ -1148,6 +1172,30 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 		by: otherExpression 
 ]
 
+{ #category : #actions }
+SSTestShifter >> run [
+  " we use a meta interpreter to use smalltalk and interpret our AST"
+  |result context|
+  self setUp.
+  context := SSExecutionContext new.
+  context at: 'self' put: TestCase new.
+  result := self interpret: (self statements, self assertions) with: context.
+  self tearDown.
+  ^ result.
+]
+
+{ #category : #actions }
+SSTestShifter >> runWithoutAssertions [
+  " we use a meta interpreter to use smalltalk and interpret our AST"
+  | result context |
+  self setUp.
+  context := SSExecutionContext new.
+  context at: 'self' put: TestCase new.
+  result := self interpret: self statements with: context.
+  self tearDown.
+  ^result
+]
+
 { #category : #inserting }
 SSTestShifter >> selectMethod: aCollection [ 
 	selectionStrategy ifNil: [ ^ self random selectAtRandom: aCollection ]
@@ -1158,6 +1206,11 @@ SSTestShifter >> selectMethod: aCollection [
 { #category : #accessing }
 SSTestShifter >> selectionStrategy: selectStrategy [
 	selectionStrategy := selectStrategy 
+]
+
+{ #category : #actions }
+SSTestShifter >> setUp [
+	previousOpenWindows := SystemWindow allInstances.
 ]
 
 { #category : #accessing }
@@ -1213,6 +1266,27 @@ SSTestShifter >> subStatementsFrom: start toPrevIndexOf: aStatement [
 { #category : #accessing }
 SSTestShifter >> targetClassesNames [
 	^ targetClassesNames 
+]
+
+{ #category : #actions }
+SSTestShifter >> tearDown [ 
+	|windowsToDelete|
+	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
+	windowsToDelete do:[:w| w close].
+]
+
+{ #category : #actions }
+SSTestShifter >> typeCheck [
+  | context |
+  context := self analyze.
+  self statements do: [:assig |  | realValue |
+realValue := context at: assig variable fullName.    
+assig variable returnType = realValue class name
+ifFalse: [ assig variable returnType: realValue class name ].
+assig value returnType = realValue class name
+ifFalse: [ assig value returnType: realValue class name ].
+
+].
 ]
 
 { #category : #accessing }

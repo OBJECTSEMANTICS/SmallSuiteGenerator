@@ -14,3 +14,8 @@ SSelf >> initialize [
 	super initialize.
 	varName := 'self'.
 ]
+
+{ #category : #actions }
+SSelf >> interpret: aExecutionContext [
+  ^aExecutionContext at: 'self'
+]

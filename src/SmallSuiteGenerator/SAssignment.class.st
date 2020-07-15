@@ -93,6 +93,11 @@ SAssignment >> insertRandomMessage: aExpression using: aTestCase [
 	^ value insertRandomMessage:aExpression using: aTestCase
 ]
 
+{ #category : #actions }
+SAssignment >> interpret: aExecutionContext [
+  ^aExecutionContext at: self variable fullName put: (self value interpret: aExecutionContext)
+]
+
 { #category : #accessing }
 SAssignment >> mutated [ 
 	^ value mutated

@@ -20,7 +20,8 @@ SSExecutionContext >> associations [
 
 { #category : #initialization }
 SSExecutionContext >> at: aSymbol [
-	^ values at: aSymbol.
+  ^ values at: aSymbol ifAbsent:[ Smalltalk at: aSymbol]
+
 ]
 
 { #category : #initialization }
@@ -37,4 +38,9 @@ SSExecutionContext >> initialize [
 { #category : #initialization }
 SSExecutionContext >> keys [
 	^ values keys asOrderedCollection 
+]
+
+{ #category : #initialization }
+SSExecutionContext >> removeKey: key [
+	^ values removeKey: key. 
 ]

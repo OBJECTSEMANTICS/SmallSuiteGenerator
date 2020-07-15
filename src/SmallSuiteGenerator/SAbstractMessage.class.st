@@ -113,6 +113,15 @@ SAbstractMessage >> insertRandomMessage: expression using: aTestCase [
 	^ aTestCase insertExpression: anotherExpression after: expression
 ]
 
+{ #category : #actions }
+SAbstractMessage >> interpret: aExecutionContext [
+  "this method interpret the AST using smalltalk reflection features"
+  | object objArgs |
+  object := aExecutionContext at: self receiver fullName.
+  objArgs := self args collect: [:arg |  aExecutionContext at: arg fullName ].
+  ^object perform: self selector withArguments: objArgs asArray.
+]
+
 { #category : #accessing }
 SAbstractMessage >> mutated [ 
 	^ mutated or: [receiver mutated or: [ args detect: #mutated ifFound: [ true ] ifNone: [ false ] ]]

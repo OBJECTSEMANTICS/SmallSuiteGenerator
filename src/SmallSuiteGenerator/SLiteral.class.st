@@ -54,6 +54,11 @@ SLiteral >> insertOn: aTestCase [
 	[^ aTestCase addLiteral: self returnType] on: SError do: [  ]
 ]
 
+{ #category : #actions }
+SLiteral >> interpret: aExecutionContext [
+  ^ value.
+]
+
 { #category : #printing }
 SLiteral >> printOn: aStream [
 	aStream

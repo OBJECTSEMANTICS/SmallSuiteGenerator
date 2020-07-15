@@ -6,7 +6,6 @@ Class {
 	#superclass : #SSTestShifter,
 	#instVars : [
 		'idPopulation',
-		'previousOpenWindows',
 		'summaryExecutionMethods',
 		'generationNumber',
 		'hasErrors'
@@ -29,17 +28,6 @@ SSTestCase >> = another [
 		and: [ fitness = another fitness 
 			and: [ parents = another parents 
 				and: [ generationNumber = another generationNumber and: [ idPopulation = another idPopulation  ] ] ] ] ]
-]
-
-{ #category : #actions }
-SSTestCase >> analyze [
-	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	|result|
-	self setUp.
-	result := SSTestRunner new evaluate: self.
-	self tearDown.
-	SPlatform asDict ifTrue: [ result := result at: 'var' ].
-	^ result.
 ]
 
 { #category : #actions }
@@ -146,26 +134,6 @@ SSTestCase >> printOn: aStream [
 			aStream nextPut: Character cr ]
 ]
 
-{ #category : #actions }
-SSTestCase >> run [
-	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	|result|
-	self setUp.
-	result := SSTestRunner new run: self.
-	self tearDown.
-	^ result.
-]
-
-{ #category : #actions }
-SSTestCase >> runWithoutAssertions [
-	" we delegate the responsibility to a test runner, in the future we would like to add new ways to run the tests "
-	|result|
-	self setUp.
-	result := SSTestRunner new runWithoutAssertions: self.
-	self tearDown.
-	^ result.
-]
-
 { #category : #initialization }
 SSTestCase >> setFitness: aDictionary [ 
 	fitness := aDictionary copy
@@ -176,11 +144,6 @@ SSTestCase >> setFitnessByClass: aDictionary [
 	fitnessByClass := aDictionary copy
 ]
 
-{ #category : #actions }
-SSTestCase >> setUp [
-	previousOpenWindows := SystemWindow allInstances.
-]
-
 { #category : #accessing }
 SSTestCase >> summaryExecutionMethods [
 	^ summaryExecutionMethods
@@ -189,13 +152,6 @@ SSTestCase >> summaryExecutionMethods [
 { #category : #accessing }
 SSTestCase >> summaryExecutionMethods: summaryExecutionMethod [ 
 	summaryExecutionMethods := summaryExecutionMethod 
-]
-
-{ #category : #actions }
-SSTestCase >> tearDown [ 
-	|windowsToDelete|
-	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
-	windowsToDelete do:[:w| w close].
 ]
 
 { #category : #repairing }

@@ -129,6 +129,12 @@ SExpression >> insertRandomMessage: expression using: aTestCase [
 	self error: 'cannot be inserted the randomMessage: ', expression printString
 ]
 
+{ #category : #actions }
+SExpression >> interpret: aExecutionContext [
+  "this method interpret the AST using smalltalk reflection features"
+  ^ self subclassResponsibility.
+]
+
 { #category : #testing }
 SExpression >> isFactoryMessage [
 	^ false
