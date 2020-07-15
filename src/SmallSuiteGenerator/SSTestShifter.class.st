@@ -499,6 +499,15 @@ SSTestShifter >> fitnessByClass [
 ]
 
 { #category : #actions }
+SSTestShifter >> fixAssertions [
+	SPlatform asDict ifTrue: [ 
+		assertions do: [ :ass | 
+			ass args do: [ :arg |
+				arg fix
+			 ] ] ]
+]
+
+{ #category : #actions }
 SSTestShifter >> generateAssertions [
 	^ self
 		generateAssertions:
@@ -517,7 +526,8 @@ SSTestShifter >> generateAssertions: classAssertions [
 	| executionContext |
 	executionContext := self analyze.
 	assertions := classAssertions
-		flatCollect: [ :assertion | assertion for: executionContext ]
+		flatCollect: [ :assertion | assertion for: executionContext ].
+	self fixAssertions 
 ]
 
 { #category : #actions }

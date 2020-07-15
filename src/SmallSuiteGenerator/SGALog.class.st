@@ -49,7 +49,7 @@ SGALog class >> logOf: aSGAEngine inGeneration: anInteger inTime: t [
 	dictFitness := self collectFitnessByNameOf: aSGAEngine population.
 	log lowestFit: aSGAEngine population last fitness;
 	averageFit: (self pickAverageFitTest: dictFitness). 
-	log summaryTargetClass: (aSGAEngine fitness runPopulation: aSGAEngine population).
+	"log summaryTargetClass: (aSGAEngine fitness runPopulation: aSGAEngine population)."
 	log typeInfoGeneration: (aSGAEngine typeInfo classAt: aSGAEngine targetClassName) deepCopy.
 	^ log
 ]

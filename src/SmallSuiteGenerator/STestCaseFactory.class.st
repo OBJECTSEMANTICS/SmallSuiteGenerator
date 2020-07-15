@@ -400,7 +400,8 @@ STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
 	SPlatform asDict: false.
-	SPlatform resetRandomGenerator 
+	SPlatform resetRandomGenerator.
+	SmallTypeCollector resetClassDict 
 ]
 
 { #category : #actions }

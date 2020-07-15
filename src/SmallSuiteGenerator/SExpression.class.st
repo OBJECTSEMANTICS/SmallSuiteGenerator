@@ -80,6 +80,10 @@ SExpression >> error: aString [
 ]
 
 { #category : #comparing }
+SExpression >> fix [
+]
+
+{ #category : #comparing }
 SExpression >> hash [
 	^ self id hash bitXor: self returnType hash
 ]

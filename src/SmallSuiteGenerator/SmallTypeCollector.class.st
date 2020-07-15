@@ -1,11 +1,25 @@
 Class {
 	#name : #SmallTypeCollector,
 	#superclass : #SObject,
-	#instVars : [
+	#classVars : [
 		'classDict'
 	],
 	#category : #'SmallSuiteGenerator-SmallType'
 }
+
+{ #category : #'as yet unclassified' }
+SmallTypeCollector class >> classDict [
+	classDict ifNil: [classDict := Dictionary new.
+	Object withAllSubclasses do: [ :class|
+			classDict at: class name asLowercase put: class.
+		]].
+	^ classDict 
+]
+
+{ #category : #'as yet unclassified' }
+SmallTypeCollector class >> resetClassDict [
+	classDict := nil
+]
 
 { #category : #action }
 SmallTypeCollector >> collectTypeFrom: aClass [
@@ -81,12 +95,12 @@ SmallTypeCollector >> typeFor: argName [
 	|index lastPart|
 	(argName = 'arg') ifTrue:[^#nil.].
 	"Case 1:"
-	(classDict at: argName asLowercase ifPresent:[ :value | ^ value name ]).
+	(self class classDict at: argName asLowercase ifPresent:[ :value | ^ value name ]).
 	"Case 2:"
 	index := 1.	
 	[(index <= argName size) and:[ (argName at: index) isLowercase]] whileTrue:[ index := index + 1.].
 	lastPart := argName copyFrom: index to: argName size.
-	(classDict at: lastPart asLowercase ifPresent:[ :value | ^ value name ]).
+	(self class classDict at: lastPart asLowercase ifPresent:[ :value | ^ value name ]).
 	"Case 3:"
 	(argName asLowercase = 'spec') ifTrue:[^ #MetacelloAbstractVersionConstructor].
 	"Case 4:"

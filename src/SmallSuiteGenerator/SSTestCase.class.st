@@ -8,7 +8,8 @@ Class {
 		'idPopulation',
 		'summaryExecutionMethods',
 		'generationNumber',
-		'hasErrors'
+		'hasErrors',
+		'summaryTargetClass'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -152,6 +153,16 @@ SSTestCase >> summaryExecutionMethods [
 { #category : #accessing }
 SSTestCase >> summaryExecutionMethods: summaryExecutionMethod [ 
 	summaryExecutionMethods := summaryExecutionMethod 
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryTargetClass [
+	^ summaryTargetClass
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryTargetClass: anObject [
+	summaryTargetClass := anObject 
 ]
 
 { #category : #repairing }

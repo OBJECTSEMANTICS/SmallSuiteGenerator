@@ -55,6 +55,12 @@ SVariable >> copy [
 	^ copy
 ]
 
+{ #category : #mutation }
+SVariable >> fix [
+	self id: (varName allButFirst: 4) asInteger.
+	self varName:  '_var'.
+]
+
 { #category : #accessing }
 SVariable >> fullName [
   self id ifNil:[ ^ self varName].

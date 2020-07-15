@@ -55,6 +55,7 @@ SSimpleFitnessFunction >> run: testCaseCollection [
 				profiler cleanBlocksOfMethods.
 				testCase runWithoutAssertions.
 				testCase summaryExecutionMethods: profiler summaryExecutionMethods.
+				testCase summaryTargetClass: (profiler summaryMethodsOf: targetClass).
 				"self abstractDataOn: testCase."
 				self fitnessOf: testCase withKey: string. ]
 			ifFalse: [ testCase fitness at: string put: 0 ] ]

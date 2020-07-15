@@ -201,8 +201,8 @@ SExporte2VW >> blackListSStack [
 
 { #category : #'as yet unclassified' }
 SExporte2VW >> blackListSTestCase [
-	^ {SSTestCase >> #setUp .
-SSTestCase >> #tearDown}
+	^ {"SSTestCase >> #setUp .
+SSTestCase >> #tearDown"}
 ]
 
 { #category : #'as yet unclassified' }
@@ -219,7 +219,10 @@ STestCaseFactory >> #generationEvolutionCanvas .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
 STestCaseFactory >> #visualizeEvolutionFitness .
-STestCaseFactory >> #generatedClass}
+STestCaseFactory >> #generatedClass .
+STestCaseFactory class >> #darkColors .
+STestCaseFactory class >> #lightColors .
+STestCaseFactory >> #classesForRegex: }
 ]
 
 { #category : #'as yet unclassified' }
@@ -250,7 +253,11 @@ SExporte2VW >> blackListSTestCaseTest [
 
 { #category : #'as yet unclassified' }
 SExporte2VW >> blackListSTestShifter [
-	^ {SSTestShifter>> #canAddStatement}
+	^ {SSTestShifter>> #canAddStatement.
+	SSTestShifter>>#analyze.
+	SSTestShifter>>#typeCheck.
+	SSTestShifter>>#runWithoutAssertions.
+	SSTestShifter>>#run}
 ]
 
 { #category : #'as yet unclassified' }
