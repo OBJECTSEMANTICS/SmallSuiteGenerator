@@ -1,24 +1,24 @@
 Class {
 	#name : #SmallTypeCollector,
 	#superclass : #SObject,
-	#classVars : [
+	#classInstVars : [
 		'classDict'
 	],
 	#category : #'SmallSuiteGenerator-SmallType'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SmallTypeCollector class >> classDict [
 	classDict ifNil: [classDict := Dictionary new.
 	Object withAllSubclasses do: [ :class|
 			classDict at: class name asLowercase put: class.
 		]].
-	^ classDict 
+	^ classDict  
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #reset }
 SmallTypeCollector class >> resetClassDict [
-	classDict := nil
+	classDict := nil 
 ]
 
 { #category : #action }
@@ -47,15 +47,6 @@ SmallTypeCollector >> collectTypeFrom: aClass [
 			]
 		].
 	^ typeInfo.
-]
-
-{ #category : #initalize }
-SmallTypeCollector >> initialize [
-	super initialize.
-	classDict := Dictionary new.
-	Object withAllSubclasses do:[ :class|
-			classDict at: class name asLowercase put: class.
-		]
 ]
 
 { #category : #action }

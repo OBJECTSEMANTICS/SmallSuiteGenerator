@@ -257,7 +257,9 @@ SExporte2VW >> blackListSTestShifter [
 	SSTestShifter>>#analyze.
 	SSTestShifter>>#typeCheck.
 	SSTestShifter>>#runWithoutAssertions.
-	SSTestShifter>>#run}
+	SSTestShifter>>#run.
+	SSTestShifter>>#setUp.
+	SSTestShifter>>#tearDown}
 ]
 
 { #category : #'as yet unclassified' }
