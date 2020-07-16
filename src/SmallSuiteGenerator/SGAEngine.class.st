@@ -53,8 +53,19 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #updating }
+SGAEngine >> assignTypeToArgumentsOf: argType [
+  ^ argType types 
+		do: [ :type |
+			self scalarsKeysOfTypeInfo 
+				select: [ :scalar |
+					self collectNameOfAllSubclassesOf: type includesOn: scalar ] 
+				thenDo: [ :scalar |  argType type: scalar ] ]
+]
+
 { #category : #testing }
 SGAEngine >> checkFitness [
+
 	self
 		assert: [ fitness notNil ]
 		description: 'Need to set a fitnessBlock'
@@ -62,6 +73,7 @@ SGAEngine >> checkFitness [
 
 { #category : #testing }
 SGAEngine >> checkIfReadyToRun [
+
 	self checkTypeInfo.
 	self checkFitness.
 	self checkLogs
@@ -69,11 +81,13 @@ SGAEngine >> checkIfReadyToRun [
 
 { #category : #testing }
 SGAEngine >> checkLogs [
+
 	self assert: [ logs isEmpty ] description: 'Already been run'
 ]
 
 { #category : #testing }
 SGAEngine >> checkTypeInfo [
+
 	self
 		assert: [ typeInfo notNil ]
 		description: 'Set a typeInfo'
@@ -81,43 +95,54 @@ SGAEngine >> checkTypeInfo [
 
 { #category : #cleaning }
 SGAEngine >> clean [
+
 	fitness ifNotNil: [ fitness tearDown ]
 ]
 
 { #category : #actions }
+SGAEngine >> collectNameOfAllSubclassesOf: type includesOn: scalar [
+
+  ^ (type class allSubclasses collect: #name) includes: scalar
+]
+
+{ #category : #actions }
 SGAEngine >> computeFitness [
+
 	fitness compute: population.
 ]
 
 { #category : #creating }
 SGAEngine >> createNewPopulation [
+
 	| newPopulation currentPopulationSize lastLowestFitness options newNumber |
 	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
 	newNumber := newPopulation size.
-  	[ newPopulation size < currentPopulationSize ] whileTrue: [ | selectedList P1copy P2copy P1 P2 O1 O2 OM1 OM2 selectedOptions children |
-		  selectedList := selectionStrategy selectOf: initialPopulation.   
-		  P1 := selectedList first.
-        P2 := selectedList second.
-		  P1copy := self similarChild: P1 with: newNumber + 1.
-		  P2copy := self similarChild: P2 with: newNumber + 2.
+  	[ newPopulation size < currentPopulationSize ] 
+		whileTrue: [ | selectedList p1copy p2copy p1 p2 o1 o2 om1 om2 selectedOptions children |
+			selectedList := selectionStrategy selectOf: initialPopulation.   
+		  	p1 := selectedList first.
+        	p2 := selectedList second.
+		  	p1copy := self similarChild: p1 with: newNumber + 1.
+		  	p2copy := self similarChild: p2 with: newNumber + 2.
         self shouldCrossOver 
-				ifTrue: [ children := crossoverOperator crossover: P1 with: P2.
-              O1 := self updateHierarchyData: (Array with: P1 with: P2) of: (children first idPopulation: newNumber + 3).
-              O2 := self updateHierarchyData: (Array with: P1 with: P2) of: (children second idPopulation: newNumber + 4) ] 
+				ifTrue: [ 
+					children := crossoverOperator crossover: p1 with: p2.
+					o1 := self updateHierarchyData: (Array with: p1 with: p2) of: (children first idPopulation: newNumber + 3).
+					o2 := self updateHierarchyData: (Array with: p1 with: p2) of: (children second idPopulation: newNumber + 4) ] 
 				ifFalse: [ 
-					O1 := (P1copy deepCopy) idPopulation: newNumber + 3; addParent: P1.
-              	O2 := (P2copy deepCopy) idPopulation: newNumber + 4; addParent: P2 ].
-        OM1 := self mutateAndUpdate: O1.
-        OM2 := self mutateAndUpdate: O2.
-        fitness compute: (Array with: OM1 with: OM2).
-		  options := Array with: OM1 with: OM2 with: P1copy with: P2copy.
+					o1 := (p1copy deepCopy) idPopulation: newNumber + 3; addParent: p1.
+              	o2 := (p2copy deepCopy) idPopulation: newNumber + 4; addParent: p2 ].
+        om1 := self mutateAndUpdate: o1.
+        om2 := self mutateAndUpdate: o2.
+        fitness compute: (Array with: om1 with: om2).
+		  options := Array with: om1 with: om2 with: p1copy with: p2copy.
         selectedOptions := (self selectTwoBestOf: options excludingAll: newPopulation) select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ].
 		  selectedOptions := selectedOptions first: (selectedOptions size min: currentPopulationSize - newPopulation size).
 		  options reject: [ :opt | selectedOptions includes: opt ] 
-				thenDo: [ :opt | P1 removeChild: opt.
-					P2 removeChild: opt ].
+				thenDo: [ :opt | p1 removeChild: opt.
+					p2 removeChild: opt ].
 			newPopulation addAll: (selectedOptions collect: [:option | 
 				newNumber := newNumber +1.
 				option idPopulation: newNumber ]) ].
@@ -128,6 +153,7 @@ SGAEngine >> createNewPopulation [
 
 { #category : #creating }
 SGAEngine >> createRandomPopulation [
+
   ^ (1 to: populationSize) collect: [:idPop |  | value test |
         value := self next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
@@ -211,11 +237,13 @@ SGAEngine >> initialize [
 
 { #category : #initialization }
 SGAEngine >> initializeCrossoverOperator [
+
 	crossoverOperator := SGACrossoverOperation new.
 ]
 
 { #category : #initialization }
 SGAEngine >> initializeMutationOperator [
+
 	mutationOperator := SGAMutationOperation new.
 	mutationOperator mutationRate: (1 / 3) asFloat.
 ]
@@ -259,6 +287,12 @@ SGAEngine >> lastMessage: anObject [
 	
 ]
 
+{ #category : #actions }
+SGAEngine >> logInGeneration: iteration withTime: t [
+
+  ^ SPlatform logClass logOf: self inGeneration: iteration inTime: t
+]
+
 { #category : #accessing }
 SGAEngine >> logs [
 	^ logs
@@ -266,6 +300,7 @@ SGAEngine >> logs [
 
 { #category : #updating }
 SGAEngine >> mergeTypeInfo: otherTypeInfo [
+
 	typeInfo joinWith: otherTypeInfo.
 ]
 
@@ -297,26 +332,31 @@ SGAEngine >> numberOfStatements: anInteger [
 
 { #category : #sorting }
 SGAEngine >> order: aCollection [
+
 	^ aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ]
 ]
 
 { #category : #accessing }
 SGAEngine >> packageRegex: aString [
+
 	packageRegex := aString
 ]
 
 { #category : #accessing }
 SGAEngine >> population [
+
 	^ population
 ]
 
 { #category : #accessing }
 SGAEngine >> populationSize: aInteger [
+
 	populationSize := aInteger
 ]
 
 { #category : #updating }
 SGAEngine >> profilerForPackagesMatching [
+
 	Transcript show: 'profiling...'; cr.
 	typeInfoProfiler := self aSTypeCollectorClass 
 		profilerForPackagesMatching: targetPackageRegex.
@@ -345,22 +385,28 @@ SGAEngine >> run [
   counter := 0.
   stopFlag := false.
   self initializePopulation.
-	totalExecutionGA := Time millisecondClockValue - totalExecutionGA.
+  totalExecutionGA := Time millisecondClockValue - totalExecutionGA.
   bestFitness := self lastBestFitness.
   (1 to: numberOfGenerations) do: [:iteration |  | t lastBestFitness |
         stopFlag ifFalse: [ t := Time millisecondClockValue.
               self doSelection.
-              logs add: (SPlatform logClass logOf: self inGeneration: iteration inTime: t).
+              logs add: (self logInGeneration: iteration withTime: t).
               lastBestFitness := self lastBestFitness.
               lastBestFitness <= bestFitness ifTrue: [ counter := counter + 1.
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
                     bestFitness := lastBestFitness ].
-				totalExecutionGA := totalExecutionGA + Time millisecondClockValue - t ]
-	 ] displayingProgress: [:iteration |  'Evolving - Iteration' , iteration printString ]
+              totalExecutionGA := totalExecutionGA + Time millisecondClockValue - t ] ] displayingProgress: [:iteration |  'Evolving - Iteration', iteration printString ]
+]
+
+{ #category : #accessing }
+SGAEngine >> scalarsKeysOfTypeInfo [
+
+  ^ typeInfo scalars keys
 ]
 
 { #category : #actions }
 SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
+
 	| options |
 	options := (aCollection asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | excludingColl includes: e ]; yourself.
    options := self order: options.
@@ -373,17 +419,20 @@ SGAEngine >> selectionStrategy: aSelectionStrategy [
 ]
 
 { #category : #accessing }
-SGAEngine >> selectionStrategyTestCase: aSelectionStrategy [ 
+SGAEngine >> selectionStrategyTestCase: aSelectionStrategy [
+
 	selectionStrategyTestCase := aSelectionStrategy 
 ]
 
 { #category : #testing }
 SGAEngine >> shouldCrossOver [
+
 	^ self next < self crossoverRate
 ]
 
 { #category : #actions }
 SGAEngine >> similarChild: testCase with: idPopulation [
+
 	^ testCase deepCopy 
 		generationNumber: testCase generationNumber + 1;
 		idPopulation: idPopulation;
@@ -393,41 +442,49 @@ SGAEngine >> similarChild: testCase with: idPopulation [
 
 { #category : #initialization }
 SGAEngine >> stopIterations [
+
 	^ stopIterations
 ]
 
 { #category : #initialization }
 SGAEngine >> stopIterations: aNumber [
+
 	stopIterations := aNumber
 ]
 
 { #category : #actions }
 SGAEngine >> targetClassName [
+
 	^ targetClassName
 ]
 
 { #category : #accessing }
 SGAEngine >> targetClassName: anObject [
+
 	targetClassName := anObject
 ]
 
 { #category : #accessing }
 SGAEngine >> targetPackageRegex [
+
 	^ targetPackageRegex
 ]
 
 { #category : #accessing }
 SGAEngine >> targetPackageRegex: aString [
+
 	targetPackageRegex := aString
 ]
 
 { #category : #accessing }
 SGAEngine >> totalExecutionGA [
+
 	^ totalExecutionGA 
 ]
 
 { #category : #accessing }
 SGAEngine >> tournamentSize: aNumber [
+
 	selectionStrategy tournamentSize: aNumber
 ]
 
@@ -438,8 +495,15 @@ SGAEngine >> typeInfo [
 
 { #category : #accessing }
 SGAEngine >> typeInfo: aTypeInfo [
+
 	typeInfo := aTypeInfo.
 	typeInfo completeTypeInfo
+]
+
+{ #category : #accessing }
+SGAEngine >> typeInfoProfilerAsTypeInfo [
+
+  ^ STypeInfo asTypeInfo: typeInfoProfiler
 ]
 
 { #category : #updating }
@@ -450,30 +514,27 @@ SGAEngine >> uninstall [
 ]
 
 { #category : #updating }
-SGAEngine >> updateArgsOf: aMethod [ 
-	aMethod argTypes do: [ :argType |
-	|res|
-	res := argType types anySatisfy: [ :type | typeInfo scalars keys includes: type ].
-	res ifFalse: [ argType types do: [ :type | typeInfo scalars keys select: [ :scalar | 
-			 (type asClass allSubclasses collect: #name) includes: scalar ] thenDo: [ :scalar |
-			argType type: scalar ] ] ] ]
+SGAEngine >> updateArgsOf: aMethod [
+
+  aMethod argTypes do: [:argType |  | res |
+        res := argType types anySatisfy: [:type |  self scalarsKeysOfTypeInfo includes: type ].
+        res ifFalse: [ self assignTypeToArgumentsOf: argType ] ]
 ]
 
 { #category : #actions }
 SGAEngine >> updateHierarchyData: parents of: testCase [
+
 	parents do: [ :parent | testCase addParent: parent ].
 	^ testCase
 ]
 
 { #category : #updating }
 SGAEngine >> updateTypeInfoWith: aPopulation [
-	fitness profiler uninstallClass: targetClassName.
-   self profilerForTargetClass.
-   aPopulation do:
-		[ :aTestCase | aTestCase runWithoutAssertions ].
-   self mergeTypeInfo: (STypeInfo asTypeInfo: typeInfoProfiler).
-   self uninstall .
-   fitness profiler updateClass: ((self initializeProfiler packages at:1) classes at: targetClassName).
-	fitness profiler deleteCache.
-	
+  fitness profiler uninstallClass: targetClassName.
+  self profilerForTargetClass.
+  aPopulation do: [:aTestCase |  aTestCase runWithoutAssertions ].
+  self mergeTypeInfo: self typeInfoProfilerAsTypeInfo.
+  self uninstall.
+  fitness profiler updateClass: ((self initializeProfiler packages at: 1) classes at: targetClassName).
+  fitness profiler deleteCache
 ]

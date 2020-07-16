@@ -7,7 +7,7 @@ Class {
 { #category : #'gt-inspector-extension' }
 SGAViz class >> gtInspectorCanvasIn: composite for: testCaseFactory [
 	composite roassal3
-		title: 'GenerationEvoution';
+		title: 'GenerationEvolution';
 		initializeCanvas: [ testCaseFactory generationEvolutionCanvas ]
 ]
 

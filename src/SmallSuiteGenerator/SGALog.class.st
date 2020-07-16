@@ -28,14 +28,17 @@ Class {
 
 { #category : #actions }
 SGALog class >> collectFitnessByNameOf: population [
-	| dictFit |
-	dictFit := Dictionary new.
-	((population collect: #fitness) flatCollect: #associations) do: [ 
-		:assoc | 
-		| aValue |
-		aValue := dictFit at: assoc key ifAbsentPut: [ OrderedCollection new].
-		aValue add: assoc value].
-	^ dictFit
+  | dictFit |
+  dictFit := Dictionary new.
+  (self fitnessAndAssociationsOf: population) do: [:assoc |  | aValue |
+	aValue := dictFit at: assoc key ifAbsentPut: [ OrderedCollection new ].
+	aValue add: assoc value ].
+  ^ dictFit
+]
+
+{ #category : #actions }
+SGALog class >> fitnessAndAssociationsOf: population [
+  ^(population collect: #fitness) flatCollect: #associations
 ]
 
 { #category : #log }

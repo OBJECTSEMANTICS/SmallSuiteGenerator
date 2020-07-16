@@ -2,58 +2,41 @@ Extension { #name : #SGAEngine }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
-	| blockText text dictionary |
-	blockText := [:string | RSLabel new 
-		text: string;
-		color: color;
-		fontSize: 40;
-		yourself ].
-	dictionary := Dictionary new 
-		at: 'Generation contribution' put: (RSLocation new top left offset: (100 negated@110 negated); yourself);
-		at: 'Evolution of Genetic Algorithm' put: (RSLocation new top center offset: (offsets first@0); yourself);
-		at: 'Evolution Coverage %' put: (RSLocation new top right offset: (offsets second@0); yourself);
-		yourself.
-	dictionary associationsDo: [ :assoc |
-		| label |
-		label := blockText value: assoc key. 
-		assoc value move: label on: canvas shapes.
-		canvas addShape: label
-	].
-	text := blockText value: 'TargetClass: ', self targetClassName, ' in package: ', self targetPackageRegex.
-	RSLocation new top center offset: 0@130 negated; move: text on: canvas shapes.
-	canvas addShape: text.
+	"Add descriptive text on canvas with color and offsets"
+	
+  | blockText text dictionary label |
+  blockText := [:string |  self createRSLabelWith: string and: color ].
+  dictionary := self generationDictionaryWith: offsets.
+  dictionary associationsDo: [:association |
+        label := blockText value: association key.
+        association value move: label on: canvas shapes.
+        canvas addShape: label ].
+  text := blockText value: self stringTargetClassInPackage.
+  self createTopCenterRSLocationOn: canvas with: text.
+  canvas addShape: text
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addHighlightMethodEvent: highlight on: canvas ofColor: color [
-	| interaction |
-	interaction := RSHighlightable new highlightColor: color; yourself.
-	highlight 
-		when: RSHighlightEvent do: [ :evt | 
-			| shapes shape index |
-			index := 0.
-			shape := canvas shapes detect: [ :sh | 
-				index := index + 1.
-				sh model isNotNil and: [ sh children isNotNil and: [ sh children includes: evt shape ] ]  ] ifNone: [ nil ].
-			shape ifNotNil: [ 
-				shapes := shape model allParents.
-				shapes := (canvas shapes first: index - 1) select: [ :s | shapes includes: s model ].
-				shapes := (shapes flatCollect: #children) select: [ :sh |
-					[ sh model selector = evt shape model selector ] on: MessageNotUnderstood do: [ false ]
-					 ].
-				interaction doHighlightShapes: shapes.
-				canvas propertyAt: #summaryExecutedMethods put: shapes
-			] ];
-		when: RSUnHighlightEvent do: [ :evt | 
-			(canvas propertyAt: #summaryExecutedMethods ifAbsent: [ #() ]) do: [:shape | 
-				interaction restore: shape selector: #color
-				]]
+  | interaction |
+  interaction := self rshighlightableWith: color.
+  highlight
+     when: RSHighlightEvent do: [:evt |  | shapes shape index |
+        index := 0.
+        shape := canvas shapes detect: [:sh |  index := index + 1.
+              sh model isNotNil and: [ sh children isNotNil and: [ sh children includes: evt shape ] ] ] ifNone: [ nil ].
+        shape ifNotNil: [ shapes := shape model allParents.
+              shapes := (canvas shapes first: index - 1) select: [:s |  shapes includes: s model ].
+              shapes := (shapes flatCollect: #children) select: [:sh |  [ sh model selector = evt shape model selector ] on: MessageNotUnderstood do: [ false ] ].
+              interaction doHighlightShapes: shapes.
+              canvas propertyAt: #summaryExecutedMethods put: shapes ] ];
+     when: RSUnHighlightEvent do: [:evt |  (canvas propertyAt: #summaryExecutedMethods ifAbsent: [ #() ]) do: [:shape |  interaction restore: shape selector: #color ] ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addHighlightTestCaseEvent: highlight on: canvas ofColor: color [
 	| interaction  |
-	interaction := RSHighlightable new highlightColor: color; yourself.
+	interaction := self rshighlightableWith: color.
 	highlight 
 		when: RSHighlightEvent do: [ :evt | 
 			| shapes edges index |
@@ -75,23 +58,21 @@ SGAEngine >> addHighlightTestCaseEvent: highlight on: canvas ofColor: color [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> addLegend: associations on: container withFontColor: color and: blockLocation [
-	| legend |
-	legend := RSLegend new 
-		container: container;
-		defaultLabel: (RSLabel new color: color; yourself);
-		yourself.
-		associations do: [ :assoc | | colorBox |
-			colorBox := assoc value.
-			colorBox isArray ifFalse: [ legend text: assoc key withBoxColor: colorBox ] 
-				ifTrue:  [ colorBox first isColor 
-					ifTrue: [ legend text: assoc key withShape: (legend defaultBox border: (RSBorder new color: colorBox second); paint: colorBox first) ] 
-					ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ].
-		legend leyendDo: [ :l |
-				l
-					padding: 5;
-					scaleBy: 2.5 ].
-		blockLocation value: legend.
-		legend build
+  | legend |
+  legend := RSLegend new
+     container: container;
+     defaultLabel: (self rsLabelWith: color);
+     yourself.
+  associations do: [:assoc |  | colorBox |
+        colorBox := assoc value.
+        colorBox isArray ifFalse: [ legend text: assoc key withBoxColor: colorBox ] ifTrue: [ colorBox first isColor ifTrue: [ legend text: assoc key withShape: (legend defaultBox
+                             border: (self rsBorderWithColorBox: colorBox);
+                             paint: colorBox first) ] ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ].
+  legend leyendDo: [:l |  l
+           padding: 5;
+           scaleBy: 2.5 ].
+  blockLocation value: legend.
+  legend build
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -203,6 +184,44 @@ SGAEngine >> contributionShapeOfHeight: height color: dictColor and: ys [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> createRSLabelWith: aString and: aColor [
+
+ 	^ RSLabel new
+     	text: aString;
+     	color: aColor;
+     	fontSize: 40;
+     	yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> createTopCenterRSLocationOn: canvas with: text [
+  RSLocation new top center
+     offset: 0 @ 130 negated;
+     move: text on: canvas shapes
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> createTopCenterRSLocationWith: offsets [
+  ^ RSLocation new top center
+     offset: offsets first @ 0;
+     yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> createTopLeftRSLocation [
+  ^ RSLocation new top left
+     offset: 100 negated @ 110 negated;
+     yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> createTopRightRSLocationWith: offsets [
+  ^RSLocation new top right
+     offset: offsets second @ 0;
+     yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> evolutionPoints: ypositions withScale: scale [
 	| endPoint points listFittest listLowest listAverage |
 	points := Dictionary new.
@@ -266,6 +285,15 @@ SGAEngine >> fitnessOf: summaryExecMethod [
 	^ summaryExecMethod summaryStatements 
 		ifEmpty: [ 100 ] 
 		ifNotEmpty: [ ((summaryExecMethod summaryStatements select: #executed) size / summaryExecMethod summaryStatements size) asFloat * 100 ]
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> generationDictionaryWith: offsets [
+  ^Dictionary new
+     at: 'Generation contribution' put: self createTopLeftRSLocation;
+     at: 'Evolution of Genetic Algorithm' put: (self createTopCenterRSLocationWith: offsets);
+     at: 'Evolution Coverage %' put: (self createTopRightRSLocationWith: offsets);
+     yourself
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -464,6 +492,26 @@ SGAEngine >> progressBarFrom: progressValue to: maxValue ofColor: dictColor [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> rsBorderWithColorBox: colorBox [
+  ^RSBorder new color: colorBox second
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> rsLabelWith: color [
+  ^RSLabel new
+     color: color;
+     yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> rshighlightableWith: color [
+
+	^ RSHighlightable new
+     highlightColor: color;
+     yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> scaleColorBlock: methodColorDictionary [
 	^ [:key | 
 		| color |
@@ -527,6 +575,11 @@ SGAEngine >> sparkCircleGroupOfColor: dictColor andSize: size [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+SGAEngine >> stringTargetClassInPackage [
+  ^ 'TargetClass: ' , self targetClassName , ' in package: ' , self targetPackageRegex
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> summaryMethodsOfTargetClass: summaryMethods [
 	^ summaryMethods select: [ :summary | 
 		(summary executorClass = self targetClassName) or: 
@@ -535,6 +588,7 @@ SGAEngine >> summaryMethodsOfTargetClass: summaryMethods [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAEngine >> testCaseShape: testCase ofColor: dictColor with: memo highlight: highlight scale: scaleColorBlock [
+
 	| group higher block progressValue methodGroup contribute |
 	block := [ :tC | [ tC fitnessByClass values first at: self targetClassName ifAbsent: 0 ] on: SubscriptOutOfBounds do: [ 0 ] ].
 	progressValue := block value: testCase.

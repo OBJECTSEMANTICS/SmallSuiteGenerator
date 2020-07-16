@@ -7,7 +7,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGARankSelection >> ranksOf: values [
 	| indexValue |
 	indexValue := 0.

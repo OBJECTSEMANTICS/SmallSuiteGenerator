@@ -29,28 +29,31 @@ Class {
 
 { #category : #accessing }
 SGACrossoverOperation >> alpha [
+
 	^ (self random selectAtRandom: (0.1 to: 0.9 by: 0.1)) round: 1
 ]
 
 { #category : #validation }
 SGACrossoverOperation >> checkReferencesOf: testCase withDescription: aString [
+
 	self
 		assert: testCase validReferences
-		description: aString , ' must have valid references'
+		description: aString, ' must have valid references'
 ]
 
 { #category : #actions }
 SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
+
 	| alpha offSpring1 offSpring2 |
 	self checkReferencesOf: testCaseA withDescription: 'testCase'.
 	self checkReferencesOf: testCaseB withDescription: 'testCase'.
 	"join typeInfo of testCaseA with testCaseB"
 	testCaseA typeInfo joinWith: testCaseB typeInfo.
 	alpha := self alpha.
-	"first alpha(P1) and last (1-alpha)(P2)"
+	"first alpha(p1) and last (1-alpha)(p2)"
 	offSpring1 := self offSpringOf: testCaseA and: testCaseB using: alpha.
 	self checkReferencesOf: offSpring1 withDescription: 'offspring'.
-	"first alpha(P2) and last (1-alpha)(P1)"
+	"first alpha(p2) and last (1-alpha)(p1)"
 	offSpring2 := self offSpringOf: testCaseB and: testCaseA using: (alpha).
 	self checkReferencesOf: offSpring2 withDescription: 'offspring'.
 	^ (Array with: offSpring1 with: offSpring2) do: 
@@ -69,7 +72,7 @@ SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   offSpring addStatements: (parentA statements copyFrom: 1 to: ((sizeA * alpha) asInteger max: 1)) copy.
   (parentB statements copyFrom: ((alpha * sizeB) asInteger max: 1) + 1 to: sizeB) do: [:aStm |  [ | lastStm |
         aStm insertOn: offSpring.
-        lastStm := offSpring statements last.] on: SError do: [  ] ].
+        lastStm := offSpring statements last ] on: SError do: [ ] ].
   offSpring
 	  generationNumber: parentA generationNumber + 1;
 	  clean.

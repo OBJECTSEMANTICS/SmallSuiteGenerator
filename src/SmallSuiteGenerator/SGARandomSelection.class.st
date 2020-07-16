@@ -9,10 +9,12 @@ Class {
 
 { #category : #selection }
 SGARandomSelection >> selectJustOneOf: aCollection with: probabilities [
+
 	^ self random selectAtRandom: aCollection
 ]
 
 { #category : #selection }
-SGARandomSelection >> selectOf: aCollection [ 
+SGARandomSelection >> selectOf: aCollection [
+
 	^ self random collectAtRandom: aCollection
 ]
