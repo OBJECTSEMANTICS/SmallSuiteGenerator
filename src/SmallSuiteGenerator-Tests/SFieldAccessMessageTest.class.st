@@ -26,27 +26,26 @@ SFieldAccessMessageTest >> testCopy [
 { #category : #tests }
 SFieldAccessMessageTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
-	testCase := (SSTestCase with: utility typeInfoSStack4)
-		addTargetClassName: (self fullSymbolOf: #SStack).
-	testCase addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStackWith:.
+	testCase := (SSTestCase with: utility typeInfoSSTeacher1)
+		addTargetClassName: (self fullSymbolOf: #SSTeacher).
+	testCase addFactoryMessage: (self fullSymbolOf: #SSTeacher).
 	expression := testCase
-		addFieldAccessMessage: #firstLinkStack
-		from: (self fullSymbolOf: #SStack).
+		addFieldAccessMessage: #yearsWorkExperience
+		from: (self fullSymbolOf: #SSTeacher).
 	testCase addLiteral: (self fullSymbolOf: #SmallInteger).
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 
-								with: '_var0 := #(1 4 5 ).'
-								with: ('_var1 := ', (self fullNameOfClass: 'SStack')asString,' newStackWith: _var0.')
-								with: '_var2 := _var1 firstLinkStack.' 
-								with: '_var3 := 5.').
-	testCase addMessage: #push: from: (self fullSymbolOf: #SStack).
+								with: ('_var0 := ', (self fullNameOfClass: 'SSTeacher')asString, ' new.')
+								with: '_var1 := _var0 yearsWorkExperience.'
+								with: '_var2 := 0.').
+	testCase addMessage: #yearsWorkExperience: from: (self fullSymbolOf: #SSTeacher).
 	insertedExpression := expression
 		insertAsParameter: expression
 		using: testCase.
 	self
 		assert: insertedExpression printString
-		equals: '_var5 := _var1 push: _var2.'
+		equals: '_var3 := _var0 yearsWorkExperience: _var1.'
 ]
 
 { #category : #tests }

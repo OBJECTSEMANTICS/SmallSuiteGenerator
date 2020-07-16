@@ -588,7 +588,7 @@ SSTestShifter >> insertAsParameter: expression after: aStatement [
 				[ mutatedStm value mutated: true.].
 			 ^ mutatedStm ]
 				on: SError
-				do: [ :e | ] ].
+				do: [ :e |  ] ].
 	self
 		error: 'Cannot insert any parameter by: ' , expression printString
 ]
