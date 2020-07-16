@@ -112,30 +112,29 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	| testCase aExpression |
-	testCase := (SSTestCase with: utility typeInfoSStack4) addTargetClassName: (self fullSymbolOf: #SStack).
-	testCase addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
+	testCase := (SSTestCase with: utility typeInfoSSTeacher1) addTargetClassName: (self fullSymbolOf: #SSTeacher).
+	testCase addFactoryMessage: (self fullSymbolOf: #SSTeacher).
 	aExpression := testCase
-		addFieldAccessMessage: #lastLinkStack
-		from: (self fullSymbolOf: #SStack).
+		addFieldAccessMessage: #yearsWorkExperience
+		from: (self fullSymbolOf: #SSTeacher).
 	testCase addLiteral: (self fullSymbolOf: #SmallInteger).
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 	
-									with: ('_var0 := ', (self fullNameOfClass: 'SStack')asString,' newStack.')
-									with: '_var1 := _var0 lastLinkStack.'
-									with: '_var2 := 5.').
-	testCase addMessage: #push: from: (self fullSymbolOf: #SStack).
+									with: ('_var0 := ', (self fullNameOfClass: 'SSTeacher')asString,' new.')
+									with: '_var1 := _var0 yearsWorkExperience.'
+									with: '_var2 := 0.').
+	testCase addMessage: #yearsWorkExperience: from: (self fullSymbolOf: #SSTeacher).
 	testCase
 		perform: #insertAsParameter:using:
 		inStatement: aExpression copy.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 	
-									with: ('_var0 := ', (self fullNameOfClass: 'SStack')asString,' newStack.')
-									with: '_var1 := _var0 lastLinkStack.'
-									with: '_var2 := 5.'
-									with: '_var3 := 5.'
-									with: '_var4 := _var0 push: _var1.')
+									with: ('_var0 := ', (self fullNameOfClass: 'SSTeacher')asString,' new.')
+									with: '_var1 := _var0 yearsWorkExperience.'
+									with: '_var2 := 0.'
+									with: '_var3 := _var0 yearsWorkExperience: _var1.')
 ]
 
 { #category : #'mutation-insert' }

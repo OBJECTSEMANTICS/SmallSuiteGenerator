@@ -191,7 +191,7 @@ SAbstractMessage >> repairOn: aTestCase changing: expression [
 SAbstractMessage >> replaceArgBy: expression [
 	args ifEmpty: [ self error: self printString, ' does not have args to replace.' ].
 	
-	args do: [ :arg | [ ^ arg replaceArgBy: expression ] on: SError do: [  ] ].
+	args do: [ :arg | [ ^ arg replaceArgBy: expression ] on: SError do: [ :e |  ] ].
 	self error: 'Cannot replace any argument by: ', expression printString
 ]
 
