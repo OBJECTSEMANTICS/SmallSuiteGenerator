@@ -17,6 +17,7 @@ SGASelection >> fitness: anObject [
 
 { #category : #actions }
 SGASelection >> fitnessFor: aTestCase [
+
 	^ aTestCase fitness at: fitness functionName
 ]
 
@@ -26,10 +27,12 @@ SGASelection >> initialize [
 
 { #category : #selection }
 SGASelection >> selectJustOneOf: aCollection with: probabilities [
+
 	^ self subclassResponsibility 
 ]
 
 { #category : #selection }
-SGASelection >> selectOf: collection [ 
+SGASelection >> selectOf: collection [
+
 	^ self subclassResponsibility 
 ]

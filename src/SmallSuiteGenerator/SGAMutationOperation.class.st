@@ -33,10 +33,11 @@ SGAMutationOperation >> initialize [
 
 { #category : #actions }
 SGAMutationOperation >> mutate: aTestCase [
-  | newTestCase |
-  newTestCase := aTestCase copy. "copyForMutation"
-  self doMutate: newTestCase.
-  ^newTestCase
+	| newTestCase |
+	"Copy for mutation"
+	newTestCase := aTestCase copy. 
+	self doMutate: newTestCase.
+	^ newTestCase
 ]
 
 { #category : #accessing }

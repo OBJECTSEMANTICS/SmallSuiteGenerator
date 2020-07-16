@@ -10,7 +10,7 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
-{ #category : #actions }
+{ #category : #accessing }
 SGATruncatedSelection >> discarding: aNumber [
 	discarding := aNumber
 ]
@@ -23,6 +23,7 @@ SGATruncatedSelection >> initialize [
 
 { #category : #selection }
 SGATruncatedSelection >> selectJustOneOf: aCollection with: probabilities [
+
 	^ (self selectOf: aCollection) first
 ]
 
