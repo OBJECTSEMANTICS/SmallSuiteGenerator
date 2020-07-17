@@ -64,6 +64,16 @@ SExpression >> allParents [
 		yourself ]
 ]
 
+{ #category : #actions }
+SExpression >> changeOn: aTestCase [
+	^ self subclassResponsibility.
+]
+
+{ #category : #actions }
+SExpression >> containsVariable: aVariable [
+	^ self subclassResponsibility.
+]
+
 { #category : #copying }
 SExpression >> copy [
 	^ self class new
@@ -143,6 +153,11 @@ SExpression >> isPrimitive: anObject [
 		or: [ anObject isKindOf: String ]]
 ]
 
+{ #category : #actions }
+SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
+	^ true
+]
+
 { #category : #accessing }
 SExpression >> mutated [ 
 	^ mutated
@@ -151,6 +166,11 @@ SExpression >> mutated [
 { #category : #accessing }
 SExpression >> mutated: aBoolean [
 	mutated := aBoolean
+]
+
+{ #category : #actions }
+SExpression >> negateId [
+	^ self subclassResponsibility.
 ]
 
 { #category : #accessing }
@@ -176,6 +196,11 @@ SExpression >> reference [
 { #category : #accessing }
 SExpression >> referenceTo: aClassName [
 	^ false
+]
+
+{ #category : #actions }
+SExpression >> rename: aDictionary [
+	^ self subclassResponsibility.
 ]
 
 { #category : #mutation }

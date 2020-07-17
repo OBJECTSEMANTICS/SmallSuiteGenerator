@@ -31,15 +31,9 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		yourself
 ]
 
-{ #category : #override }
-SMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	| otherMessage |
-	otherMessage := aTestCase
-		alternativeMessage: self
-		before: aExpression.
-	mutated := otherMessage selector ~= self selector.
-	self selector: otherMessage selector.
-	self args: otherMessage args
+{ #category : #action }
+SMessage >> changeOn: aTestCase [
+	aTestCase
 ]
 
 { #category : #fixing }
@@ -59,5 +53,5 @@ SMessage >> insertMethodMessage: aExpression using: aTestCase [
 
 { #category : #mutation }
 SMessage >> insertOn: aTestCase [
-	[^ aTestCase addMessage: self selector from: self receiver returnType] on: SError do: [  ]
+	^ aTestCase addMessage: self selector from: self receiver returnType.
 ]

@@ -17,7 +17,7 @@ SMutatorTestCaseTest >> setUp [
 SMutatorTestCaseTest >> testRemoveArgsMethod [
 	| testCase expression numExprsBefore numExprsAfter |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -46,7 +46,7 @@ SMutatorTestCaseTest >> testRemoveExpression [
 SMutatorTestCaseTest >> testRemoveExpressionWithoutRepairing [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -75,7 +75,7 @@ SMutatorTestCaseTest >> testRemoveInEmptyTestCase [
 SMutatorTestCaseTest >> testRepair [
 	| testCase expression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)

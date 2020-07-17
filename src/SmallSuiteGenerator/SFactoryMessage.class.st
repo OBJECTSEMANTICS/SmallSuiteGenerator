@@ -71,6 +71,12 @@ SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements 
 		yourself
 ]
 
+{ #category : #action }
+SFactoryMessage >> changeOn: aTestCase [
+	"nothing to change"
+	aTestCase addAlternativeFactoryMessage: self.
+]
+
 { #category : #override }
 SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
 	| otherFactoryMessage |
@@ -84,9 +90,9 @@ SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
 
 { #category : #mutation }
 SFactoryMessage >> insertOn: aTestCase [
-	[^ aTestCase
+	^ aTestCase
 		addFactoryMessage: self returnType
-		ofSelector: self selector] on: SError do: [  ]
+		ofSelector: self selector.
 ]
 
 { #category : #testing }

@@ -9,6 +9,11 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
+{ #category : #actions }
+SSelf >> containsVariable: aVariable [
+	^ false.
+]
+
 { #category : #initialization }
 SSelf >> initialize [
 	super initialize.
@@ -18,4 +23,15 @@ SSelf >> initialize [
 { #category : #actions }
 SSelf >> interpret: aExecutionContext [
   ^aExecutionContext at: 'self'
+]
+
+{ #category : #actions }
+SSelf >> negateId [
+	"nothing to negate"
+]
+
+{ #category : #actions }
+SSelf >> rename: aDictionary [
+	"nothing to rename"
+	
 ]

@@ -13,8 +13,8 @@ SUtilityTypeInfo >> testSuiteOf: aCollection withTargetClassName: symbol [
 		assert: aCollection size >= 2
 		description: 'list must have at least two or more testCases.'.
 	^ OrderedCollection new
-		add: ((SSTestCase with: aCollection first) addTargetClassName: symbol; generateStatements);
-		add: ((SSTestCase with: aCollection second) addTargetClassName: symbol; generateStatements);
+		add: ((SSTestCase with: aCollection first) targetClassName: symbol; generateStatements);
+		add: ((SSTestCase with: aCollection second) targetClassName: symbol; generateStatements);
 		yourself
 ]
 
@@ -49,7 +49,7 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 	^ OrderedCollection new
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
-				addTargetClassName: (self fullSymbolOf: #SStudent);
+				targetClassName: (self fullSymbolOf: #SStudent);
 				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
 				addLiteral: (self fullSymbolOf: #ByteString);
 				addFieldAccessMessage: #idStudent from: (self fullSymbolOf: #SStudent);
@@ -59,7 +59,7 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 				yourself);
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
-				addTargetClassName: (self fullSymbolOf: #SStudent);
+				targetClassName: (self fullSymbolOf: #SStudent);
 				addLiteral: (self fullSymbolOf: #SmallInteger);
 				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
 				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
@@ -68,7 +68,7 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 				yourself);
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
-				addTargetClassName: (self fullSymbolOf: #SStudent);
+				targetClassName: (self fullSymbolOf: #SStudent);
 				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
 				addLiteral: (self fullSymbolOf: #SmallInteger);
 				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);

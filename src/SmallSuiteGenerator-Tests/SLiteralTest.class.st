@@ -31,7 +31,7 @@ SLiteralTest >> testEqual [
 SLiteralTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addLiteral: (self fullSymbolOf: #ByteString).
 	expression := testCase addLiteral: (self fullSymbolOf: #ByteString).
 	testCase addFactoryMessage: (self fullSymbolOf: #SFoo).
@@ -55,7 +55,7 @@ SLiteralTest >> testInsertAsParameterUsing [
 SLiteralTest >> testInsertParameterOn [
 	| testCase expression insertedExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo4.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo); 
+	testCase targetClassName: (self fullSymbolOf: #SFoo); 
 	addLiteral: (self fullSymbolOf: #SStudent); 
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self

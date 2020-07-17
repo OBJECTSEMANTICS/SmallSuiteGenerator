@@ -9,7 +9,7 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 	| testCase changed |
 	testCase := (SSTestCase with: utility typeInfoArrayedCollection).
 	testCase
-		addTargetClassName: (self fullSymbolOf: #ArrayedCollection);
+		targetClassName: (self fullSymbolOf: #ArrayedCollection);
 		addFactoryMessage;
 		addLiteral;
 		addFactoryMessage.
@@ -29,7 +29,7 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
 { #category : #'mutation-change' }
 SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 	| testCase expression expressionChanged |
-	testCase := (SSTestCase with: utility typeInfoSFoo1) addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase := (SSTestCase with: utility typeInfoSFoo1) targetClassName: (self fullSymbolOf: #SFoo).
 	testCase
 		addLiteral: (self fullSymbolOf: #SmallFloat64);
 		addLiteral: (self fullSymbolOf: #SmallFloat64).
@@ -53,7 +53,7 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
 SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 	| testCase expressionChanged |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -73,7 +73,7 @@ SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
 SChangeTest >> testChangeStatementOfFieldAccessMessage [
 	| testCase exprField exprFieldChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: (self fullSymbolOf: #SStack);
+	testCase targetClassName: (self fullSymbolOf: #SStack);
 	addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
 	exprField := (testCase
 		addFieldAccessMessage: #firstLinkStack
@@ -108,7 +108,7 @@ SChangeTest >> testChangeStatementOfLiteral [
 SChangeTest >> testChangeStatementOfMessage [
 	| testCase exprMessage exprLiteralChanged |
 	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: (self fullSymbolOf: #SStack);
+	testCase targetClassName: (self fullSymbolOf: #SStack);
 	addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
 	exprMessage := (testCase addMessage: #pop from: (self fullSymbolOf: #SStack)) copy.
 	self

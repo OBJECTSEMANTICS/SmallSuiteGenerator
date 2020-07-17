@@ -23,6 +23,11 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		yourself 
 ]
 
+{ #category : #actions }
+SFieldAccessMessage >> changeOn: aTestCase [
+	aTestCase addAlternativeFieldAccessMessage: self.
+]
+
 { #category : #override }
 SFieldAccessMessage >> changeSelectorFrom: expression in: aTestCase [
 	| otherFieldAccessMessage |
@@ -41,7 +46,7 @@ SFieldAccessMessage >> fixWith: anObject in: aTestCase [
 
 { #category : #mutation }
 SFieldAccessMessage >> insertOn: aTestCase [
-	[^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType] on: SError do: [  ]
+	^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType.
 ]
 
 { #category : #actions }

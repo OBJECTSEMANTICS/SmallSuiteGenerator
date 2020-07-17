@@ -36,6 +36,16 @@ SLiteral >> = other [
 				ifFalse: [ value className = other value className ]]) ]
 ]
 
+{ #category : #actions }
+SLiteral >> changeOn: aTestCase [
+	self value: value mutateToChange
+]
+
+{ #category : #actions }
+SLiteral >> containsVariable: aVariable [
+	^ false.
+]
+
 { #category : #copying }
 SLiteral >> copy [ 
 	| copy|
@@ -51,12 +61,17 @@ SLiteral >> hash [
 
 { #category : #mutation }
 SLiteral >> insertOn: aTestCase [
-	[^ aTestCase addLiteral: self returnType] on: SError do: [  ]
+	^ aTestCase addLiteral: self returnType.
 ]
 
 { #category : #actions }
 SLiteral >> interpret: aExecutionContext [
   ^ value.
+]
+
+{ #category : #actions }
+SLiteral >> negateId [
+	"nothing to negate"
 ]
 
 { #category : #printing }
@@ -73,6 +88,11 @@ SLiteral >> referenceTo: aClassName [
 	^( value isClass
 		ifTrue: [ value name ]
 		ifFalse: [ value className ]) = aClassName asString
+]
+
+{ #category : #actions }
+SLiteral >> rename: aDictionary [
+	"nothing to rename"
 ]
 
 { #category : #mutation }

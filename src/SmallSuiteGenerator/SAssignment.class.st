@@ -40,6 +40,16 @@ SAssignment >> = other [
 			and: [ (value = other value) ] ]
 ]
 
+{ #category : #actions }
+SAssignment >> changeOn: aTestCase [
+	^ self value changeOn: aTestCase.
+]
+
+{ #category : #accessing }
+SAssignment >> containsVariable: aVariable [
+	^ self value containsVariable: aVariable.
+]
+
 { #category : #copying }
 SAssignment >> copy [ 
 	|copy|
@@ -96,9 +106,20 @@ SAssignment >> interpret: aExecutionContext [
   ^aExecutionContext at: self variable fullName put: (self value interpret: aExecutionContext)
 ]
 
+{ #category : #actions }
+SAssignment >> isThereEnoughArgumentsToBuild: aTestCase [
+	^ self value isThereEnoughArgumentsToBuild: aTestCase
+]
+
 { #category : #accessing }
 SAssignment >> mutated [ 
 	^ value mutated
+]
+
+{ #category : #actions }
+SAssignment >> negateId [
+	self variable negateId.
+	self value negateId.
 ]
 
 { #category : #mutation }
@@ -130,6 +151,12 @@ SAssignment >> reference [
 { #category : #accessing }
 SAssignment >> referenceTo: aClassName [
 	^ value referenceTo: aClassName
+]
+
+{ #category : #actions }
+SAssignment >> rename: aDictionary [
+	self variable rename: aDictionary.
+	self value rename: aDictionary.
 ]
 
 { #category : #mutation }

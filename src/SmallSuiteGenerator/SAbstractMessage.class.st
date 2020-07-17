@@ -67,6 +67,18 @@ SAbstractMessage >> changeArgsFrom: expression in: aTestCase [
 	args do: [ :arg | arg repairOn: aTestCase changing: expression ]
 ]
 
+{ #category : #actions }
+SAbstractMessage >> changeOn: aTestCase [
+	"nothing to change"
+	#(#addAlternativeReceiverFor: #addAlternativeSelectorFor: #addAlternativeArgsFor:) 
+		safelyPickAny: [ :aSelector | 
+			[ ^ aTestCase
+				perform: aSelector
+				with: self]
+		] ifNone:[self error: 'Cannot change the statement ' , self printString].
+	
+]
+
 { #category : #mutation }
 SAbstractMessage >> changeReceiverFrom: expression in: aTestCase [
 	receiver repairOn: aTestCase changing: expression
@@ -74,7 +86,13 @@ SAbstractMessage >> changeReceiverFrom: expression in: aTestCase [
 
 { #category : #override }
 SAbstractMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	^ self subclassResponsibility
+	| otherMessage |
+	otherMessage := aTestCase
+		alternativeMessage: self
+		before: aExpression.
+	mutated := otherMessage selector ~= self selector.
+	self selector: otherMessage selector.
+	self args: otherMessage args
 ]
 
 { #category : #copying }
@@ -127,9 +145,20 @@ SAbstractMessage >> interpret: aExecutionContext [
   ^object perform: self selector withArguments: objArgs asArray.
 ]
 
+{ #category : #actions }
+SAbstractMessage >> isThereEnoughArgumentsToBuild: aTestCase [
+	^ self variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
+]
+
 { #category : #accessing }
 SAbstractMessage >> mutated [ 
 	^ mutated or: [receiver mutated or: [ args detect: #mutated ifFound: [ true ] ifNone: [ false ] ]]
+]
+
+{ #category : #actions }
+SAbstractMessage >> negateId [
+ 	self receiver negateId.
+	self args do:[ :arg| arg negateId].
 ]
 
 { #category : #mutation }
@@ -173,6 +202,12 @@ SAbstractMessage >> receiver [
 { #category : #accessing }
 SAbstractMessage >> receiver: anObject [
 	receiver := anObject
+]
+
+{ #category : #actions }
+SAbstractMessage >> rename: aDictionary [
+	self receiver rename: aDictionary.
+	self args do:[ :arg| arg rename: aDictionary.].
 ]
 
 { #category : #mutation }

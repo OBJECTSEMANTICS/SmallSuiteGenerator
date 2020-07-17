@@ -16,7 +16,7 @@ Class {
 }
 
 { #category : #actions }
-SGAMutationOperation >> doMutate: aTestCase [
+SGAMutationOperation >> doMutate: aTestCase [ 
 	self next <= mutationRate
 		ifTrue: [ aTestCase removeStatement ].
 	self next <= mutationRate
@@ -36,7 +36,9 @@ SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
 	"Copy for mutation"
 	newTestCase := aTestCase copy. 
-	self doMutate: newTestCase.
+	[ self doMutate: newTestCase.] 
+		on: SError 
+		do:[newTestCase := aTestCase copy.].
 	^ newTestCase
 ]
 

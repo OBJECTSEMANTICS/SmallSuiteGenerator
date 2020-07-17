@@ -14,7 +14,7 @@ SInsertTest >> setUp [
 SInsertTest >> testInsertStatementAsParameterInMessage [
 	| testCase anExpression |
 	testCase := SSTestCase with: utility typeInfoSFoo4.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFactoryMessage: (self fullSymbolOf: #SFoo);
 	addLiteral;
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
@@ -53,7 +53,7 @@ SInsertTest >> testInsertStatementAsParameterInMessage [
 SInsertTest >> testInsertStatementOfMixingSelectors [
 	| testCase fieldAccess message |
 	testCase := (SSTestCase with: utility typeInfosSStudent first)
-		addTargetClassName: (self fullSymbolOf: #SStudent);
+		targetClassName: (self fullSymbolOf: #SStudent);
 		addLiteral: (self fullSymbolOf: #SmallInteger);
 		addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
 		addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
@@ -90,7 +90,7 @@ SInsertTest >> testInsertStatementOfMixingSelectors [
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 	| testCase auxExpr expression |
 	testCase := SSTestCase with: utility typeInfoSFoo2.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: (self fullSymbolOf: #SFoo).
 	expression := testCase addFactoryMessage.
 	testCase addFactoryMessage.
 	self
@@ -112,7 +112,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFactoryMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 	| testCase aExpression |
-	testCase := (SSTestCase with: utility typeInfoSStack4) addTargetClassName: (self fullSymbolOf: #SStack).
+	testCase := (SSTestCase with: utility typeInfoSStack4) targetClassName: (self fullSymbolOf: #SStack).
 	testCase addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
 	aExpression := testCase
 		addFieldAccessMessage: #lastLinkStack
@@ -141,7 +141,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInFieldMessage [
 { #category : #'mutation-insert' }
 SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 	| testCase aExpression |
-	testCase := (SSTestCase with: utility typeInfoSStack4) addTargetClassName: (self fullSymbolOf: #SStack).
+	testCase := (SSTestCase with: utility typeInfoSStack4) targetClassName: (self fullSymbolOf: #SStack).
 	testCase addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStackWith:.
 	aExpression := testCase addMessage: #pop from: (self fullSymbolOf: #SStack).
 	testCase addLiteral: (self fullSymbolOf: #SmallInteger).
@@ -170,7 +170,7 @@ SInsertTest >> testInsertStatementOfSelectorAsParameterInMessage [
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -186,7 +186,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInFactoryMessage [
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInFieldMessage [
 	| testCase fieldMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: (self fullSymbolOf: #SFoo).
 	fieldMessage := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -218,7 +218,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInLiteral [
 SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 	| testCase message |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: (self fullSymbolOf: #SFoo).
 	message := testCase addMessage: #returnNum from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -242,7 +242,7 @@ SInsertTest >> testInsertStatementOfSelectorMethodMessageInMessage [
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -262,7 +262,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInFactoryMessage [
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInFieldMessage [
 	| testCase fieldMessage |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: (self fullSymbolOf: #SFoo).
 	fieldMessage := testCase addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -299,7 +299,7 @@ SInsertTest >> testInsertStatementOfSelectorRandomMessageInLiteral [
 SInsertTest >> testInsertStatementOfSelectorRandomMessageInMessage [
 	| testCase message |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: (self fullSymbolOf: #SFoo).
 	message := testCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)

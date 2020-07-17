@@ -27,7 +27,7 @@ SRandomTest >> testCollectAtRandomOnStatements [
 	generator := SRandom seed: 100.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: (self fullSymbolOf: #SFoo);
 		addFactoryMessage;
 		addMessage: #returnNum from: (self fullSymbolOf: #SFoo);
 		addFieldAccessMessage: #score from: (self fullSymbolOf: #SFoo).
@@ -52,7 +52,7 @@ SRandomTest >> testSelectAtRandomOnStatements [
 	generator := SRandom seed: 100.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase
-		addTargetClassName:(self fullSymbolOf: #SFoo);
+		targetClassName:(self fullSymbolOf: #SFoo);
 		addFactoryMessage;
 		addMessage: #returnNum from: (self fullSymbolOf: #SFoo);
 		addFieldAccessMessage: #score from: (self fullSymbolOf: #SFoo).

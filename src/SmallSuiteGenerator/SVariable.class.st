@@ -46,6 +46,18 @@ SVariable >> = other [
 	^ super = other and: [ varName = other varName ]
 ]
 
+{ #category : #actions }
+SVariable >> changeOn: aTestCase [
+	"nothing to change"
+]
+
+{ #category : #actions }
+SVariable >> containsVariable: aVariable [
+	self id ifNil:[ ^ self varName = aVariable varName].
+	^ self id = aVariable id.
+	
+]
+
 { #category : #copying }
 SVariable >> copy [
 	| copy |
@@ -89,6 +101,12 @@ SVariable >> key [
 
 ]
 
+{ #category : #actions }
+SVariable >> negateId [
+	id ifNotNil:[id := id * -1.].
+	
+]
+
 { #category : #mutation }
 SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
@@ -114,6 +132,12 @@ SVariable >> printOn: aStream [
 { #category : #accessing }
 SVariable >> referenceTo: aClassName [
 	^ self returnType = aClassName
+]
+
+{ #category : #actions }
+SVariable >> rename: aDictionary [
+
+	id ifNotNil:[ id := aDictionary at: id. ].
 ]
 
 { #category : #mutation }

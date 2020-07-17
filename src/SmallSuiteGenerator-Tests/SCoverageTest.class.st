@@ -44,7 +44,7 @@ SCoverageTest >> tearDown [
 SCoverageTest >> testCase: typeInfo withNumStatements: aNumber andTargetClassName: symbol [
 	^ (SSTestCase with: typeInfo)
 		numMaxStatements: aNumber;
-		addTargetClassName: symbol;
+		targetClassName: symbol;
 			generateStatements
 ]
 

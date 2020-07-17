@@ -9,7 +9,7 @@ SRemoveTest >> testRemoveArgsFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: (self fullSymbolOf: #SFoo);
 		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -29,7 +29,7 @@ SRemoveTest >> testRemoveArgsFactoryMessage [
 SRemoveTest >> testRemoveArgsMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -53,7 +53,7 @@ SRemoveTest >> testRemoveArgsMessage [
 SRemoveTest >> testRemoveFactoryMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -70,7 +70,7 @@ SRemoveTest >> testRemoveFactoryMessage [
 SRemoveTest >> testRemoveFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -90,7 +90,7 @@ SRemoveTest >> testRemoveFieldAccessMessage [
 SRemoveTest >> testRemoveMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -112,7 +112,7 @@ SRemoveTest >> testRemoveMessage [
 SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -134,7 +134,7 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 SRemoveTest >> testRemoveReceiverMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addMessage: #return: from: (self fullSymbolOf: #SFoo).
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -157,7 +157,7 @@ SRemoveTest >> testRemoveReceiverMessage [
 SRemoveTest >> testRemoveStatementNoRepairing [
 	| testCase statement |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: (self fullSymbolOf: #SFoo).
 	statement := testCase addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
@@ -169,7 +169,7 @@ SRemoveTest >> testRemoveStatementNoRepairing [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: #('_var0 := 7.3.').
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName:  (self fullSymbolOf: #SFoo).
+	testCase targetClassName:  (self fullSymbolOf: #SFoo).
 	statement := testCase addFactoryMessage.
 	testCase addMessage: #returnFloat from:  (self fullSymbolOf: #SFoo).
 	self
