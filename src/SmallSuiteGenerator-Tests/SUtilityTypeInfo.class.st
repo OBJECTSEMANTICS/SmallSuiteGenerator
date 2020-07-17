@@ -50,30 +50,30 @@ SUtilityTypeInfo >> testSuiteSStudentManual [
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
 				targetClassName: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
+				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
 				addLiteral: (self fullSymbolOf: #ByteString);
 				addFieldAccessMessage: #idStudent from: (self fullSymbolOf: #SStudent);
 				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
+				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
 				addFieldAccessMessage: #scoreStudent from: (self fullSymbolOf: #SStudent);
 				yourself);
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
 				targetClassName: (self fullSymbolOf: #SStudent);
 				addLiteral: (self fullSymbolOf: #SmallInteger);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
+				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
 				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
+				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
 				addFieldAccessMessage: #idStudent from: (self fullSymbolOf: #SStudent);
 				yourself);
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
 				targetClassName: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
+				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
 				addLiteral: (self fullSymbolOf: #SmallInteger);
 				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
 				addLiteral: (self fullSymbolOf: #SmallInteger);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) ofSelector: #new;
+				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
 				yourself);
 		yourself
 ]
@@ -466,6 +466,50 @@ SUtilityTypeInfo >> typeInfoSFoo1 [
 ]
 
 { #category : #examples }
+SUtilityTypeInfo >> typeInfoSFoo100 [
+	^ STypeInfo new
+		type:
+			(self fullSymbolOf: #SFoo)
+				->
+					(Array
+						with:
+							(Array
+								with: #returnNum -> (Array 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (self fullSymbolOf: #SmallInteger) 
+									with: #()
+									with: false)
+								with: #returnFloat -> (Array 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (self fullSymbolOf: #SmallFloat64) 
+									with: #()
+									with: false)
+								with: #returnString -> (Array 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (self fullSymbolOf: #ByteString) 
+									with: #()
+									with: false)
+								with: #score -> (Array 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (self fullSymbolOf: #SmallFloat64) 
+									with: #()
+									with: true)
+								with: #return: -> (Array 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (self fullSymbolOf: #ByteString) 
+									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: false))
+						with: (Array with: #score: -> (Array 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (self fullSymbolOf: #SFoo) 
+									with: (Array with: (self fullSymbolOf: #SmallFloat64))
+									with: false)));
+		scalar: (self fullSymbolOf: #ByteString) with: #('hello');
+		scalar: (self fullSymbolOf: #SmallInteger) with: #(5);
+		scalar: (self fullSymbolOf: #SmallFloat64) with: #(7.3 4.7)
+]
+
+{ #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo2 [
 	^ STypeInfo new
 		type:
@@ -544,7 +588,31 @@ SUtilityTypeInfo >> typeInfoSFoo4 [
 									with: (Array with: (self fullSymbolOf: #SStudent))
 									with: false))
 						with: #());
-		scalar: (self fullSymbolOf: #SStudent) with: (Array with: SStudent new)
+		type:
+			(self fullSymbolOf: #SStudent)
+				->
+					(Array
+						with:
+							(Array
+								with: #initialize -> (Array with: (self fullSymbolOf: #SStudent)
+																with: (self fullSymbolOf: #SStudent)
+																with: #()
+																with: false)
+								with: #idStudent -> (Array with: (self fullSymbolOf: #SStudent)
+																with: (self fullSymbolOf: #SmallInteger)
+																with: #()
+																with: true)
+								with: #scoreStudent -> (Array with: (self fullSymbolOf: #SStudent)
+																with: (self fullSymbolOf: #SmallInteger)
+																with: #()
+																with: true)
+								with: #scoreStudent: -> (Array with: (self fullSymbolOf: #SStudent)
+																with: (self fullSymbolOf: #SmallInteger)
+																with: (Array with: (self fullSymbolOf: #SmallInteger))
+																with: false))
+						with: #());
+		scalar: (1 class name fullClassNameSymbol ) with: { 1 . 2 };
+		yourself.
 ]
 
 { #category : #examples }

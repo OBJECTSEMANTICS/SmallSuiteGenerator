@@ -25,7 +25,7 @@ SRandom >> collectAtRandom: collection [
 
 { #category : #enumerating }
 SRandom >> nextIntBetween: min and: max [ 
-	^ (self next*(max-min))+ min.
+	^ (self next*(max-min)) truncated + min.
 ]
 
 { #category : #enumerating }

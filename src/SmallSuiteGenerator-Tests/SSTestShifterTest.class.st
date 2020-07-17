@@ -82,7 +82,7 @@ SSTestShifterTest >> testAddFactoryMessageOfInexistentSelector [
 	testCase := SSTestCase with: utility typeInfoSFoo2.
 	testCase
 		targetClassName: (self fullSymbolOf: #SFoo);
-		addFactoryMessage: (self fullSymbolOf: #SFoo) ofSelector: #score:.
+		addFactoryMessage: (self fullSymbolOf: #SFoo) usingSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array with: '_var0 := ', (self fullNameOfClass: 'SFoo')asString,' new.')
@@ -94,7 +94,7 @@ SSTestShifterTest >> testAddFactoryMessageOfSelector [
 	testCase := SSTestCase with: utility typeInfoSFoo3.
 	testCase
 		targetClassName: (self fullSymbolOf: #SFoo);
-		addFactoryMessage: (self fullSymbolOf: #SFoo) ofSelector: #score:.
+		addFactoryMessage: (self fullSymbolOf: #SFoo) usingSelector: #score:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array with:'_var0 := 4.'
@@ -730,7 +730,7 @@ SSTestShifterTest >> testPickFactoryMessagesFrom [
 		should: [ testCase addMessage: #price: from: (self fullSymbolOf:#SEvent) ]
 		raise: SError.
 	testCase targetClassName: (self fullSymbolOf:#SConference).
-	testCase addFactoryMessage: (self fullSymbolOf:#SConference) ofSelector: #price:.
+	testCase addFactoryMessage: (self fullSymbolOf:#SConference) usingSelector: #price:.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array with: '_var0 := 95.'

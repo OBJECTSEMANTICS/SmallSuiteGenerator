@@ -38,10 +38,9 @@ Class {
 
 { #category : #'mutation-change' }
 SSTestShifter >> addAlternativeArgsFor: aMessageStatement [
-	|copy successCounter newArgs|
+	|copy newArgs|
 	copy := aMessageStatement copy.
 	newArgs := OrderedCollection new.
-	successCounter := 0.
 	copy args do:[ :arg|
 		|alternatives|
 		alternatives := self alternativeOfVariables: arg.
@@ -49,12 +48,10 @@ SSTestShifter >> addAlternativeArgsFor: aMessageStatement [
 				newArgs add: arg.
 			] ifFalse: [ 
 				newArgs add: alternatives pickAny.
-				successCounter := successCounter + 1] .
 		].
-	successCounter > 0 ifFalse:[ self error:'there is not alternatives for the arguments'].
+	].
 	copy args: newArgs.
-	self addAssignment: copy. 
-
+	self addAssignment: copy.
 ]
 
 { #category : #'mutation-change' }
@@ -65,7 +62,7 @@ SSTestShifter >> addAlternativeFactoryMessage: aFactoryMessage [
 		detect: [ :meth | 
 			meth returnType = returnType
 				and: [ meth selector ~= aFactoryMessage selector ] ]
-		ifFound: [ :meth | self addFactoryMessage: returnType ofSelector: meth selector.
+		ifFound: [ :meth | self addFactoryMessage: returnType usingSelector: meth selector.
 	self error:'there is not alternative factory method'].
 ]
 
@@ -76,10 +73,10 @@ SSTestShifter >> addAlternativeFieldAccessMessage: aFieldAccessMessage [
 	returnType := aFieldAccessMessage returnType.
 	(self pickAccessorsOf: receiver returnType)
 		detect: [ :meth | 
-			meth returnType = returnType
+				meth returnType = returnType
 				and: [ meth selector ~= aFieldAccessMessage selector ] ]
 		ifFound:
-			[ :meth | self addFieldAccessMessage: meth selector from: returnType ] .
+			[ :meth | self addFieldAccessMessage: meth selector from: receiver returnType ] .
 	self
 		error:
 			'There is no alternative for fieldAccessMessage of selector: '
@@ -98,13 +95,14 @@ SSTestShifter >> addAlternativeReceiverFor: aMessageStatement [
 
 { #category : #'mutation-change' }
 SSTestShifter >> addAlternativeSelectorFor: aMessageStatement [
-	| returnType |
+	| returnType receiverType|
+	receiverType := aMessageStatement receiver returnType.
 	returnType := aMessageStatement returnType.
-	^ (typeInfo pickMessagesOf: returnType)
+	^ (self pickMessagesOf: receiverType)
 		detect: [ :meth | 
-			meth returnType = returnType
+			(meth returnType types includes:returnType)
 				and: [ meth selector ~= aMessageStatement selector ] ]
-		ifFound: [ :meth | self addMessage: meth selector from: returnType ]
+		ifFound: [ :meth | self addMessage: meth selector from: receiverType ]
 		ifNone: [ self error: 'there is not alternative message'].
 ]
 
@@ -138,7 +136,7 @@ SSTestShifter >> addAssignment: anExpression [
 	^ assignment
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestShifter >> addChild: aTestCase [
 	children add: aTestCase
 ]
@@ -148,8 +146,8 @@ SSTestShifter >> addFactoryMessage [
 	| variables |
 	variables := self objectVariables.
 	variables ifNotEmpty: [ ^ self addFactoryMessage: (variables pickAny returnType) ].
-	^ typeInfo noneAbstractClasses 
-		safelyPick:[ :class | self addFactoryMessage: class name fullClassNameSymbol.]
+	^ typeInfo noneAbstractClasses
+		safelyPickAny:[ :class | self addFactoryMessage: class name fullClassNameSymbol.]
 		ifNone:[ self error: 'Cannot create a factoryMessage.' ].
 	
 	
@@ -157,23 +155,14 @@ SSTestShifter >> addFactoryMessage [
 
 { #category : #'building-actions' }
 SSTestShifter >> addFactoryMessage: symbol [
-	^ self addAssignment: (self newFactoryMessage: symbol before: nil)
+	^ self addAssignment: (self newFactoryMessage: symbol).
 ]
 
-{ #category : #'cross-over' }
-SSTestShifter >> addFactoryMessage: aClassName ofSelector: aSelector [
-	^ [ self
-		addAssignment:
-			(self factoryMessageUsing: (typeInfo classMethodType: aSelector from: aClassName) before: nil) ]
-		on: SError
-		do: [ self addFactoryMessage: aClassName ]
-]
-
-{ #category : #'cross-over' }
-SSTestShifter >> addFactoryMessage: aClassName otherSelector: aSelector [
-	^ [ self
-		addAssignment:
-			(self factoryMessageUsing: (typeInfo classMethodType: aSelector from: aClassName) before: nil) ]
+{ #category : #'building-actions' }
+SSTestShifter >> addFactoryMessage: aClassName usingSelector: aSelector [
+	|className|
+	className :=  typeInfo classMethodType: aSelector from: aClassName.
+	^ [ self addFactoryMessage: className ]
 		on: SError
 		do: [ self addFactoryMessage: aClassName ]
 ]
@@ -188,7 +177,7 @@ SSTestShifter >> addFieldAccessMessage [
 	
 ]
 
-{ #category : #'cross-over' }
+{ #category : #'building-actions' }
 SSTestShifter >> addFieldAccessMessage: selector from: returnType [
 	| receiver accessors accessor|
 	accessors := self pickAccessorsOf: returnType.
@@ -228,32 +217,32 @@ SSTestShifter >> addMessage [
 	^ self addMessage: (self selectMethod: methods) withReceiver: receiver.
 ]
 
-{ #category : #'cross-over' }
-SSTestShifter >> addMessage: selector from: returnType [
+{ #category : #'building-actions' }
+SSTestShifter >> addMessage: selector from: receiverType [
 	| receiver method methods|
-	methods := (self pickMessagesOf: returnType) , (typeInfo factoryMessagesFrom: returnType).
+	methods := (self pickMessagesOf: receiverType) , (typeInfo factoryMessagesFrom: receiverType).
 	method := methods 
 		detect: [ :aMessage | aMessage selector = selector ]
-		ifNone: [ self error: ('None message of selector: {1} matches with: {2}' format:{ selector . returnType}) ].
-	receiver := self pickOrCreateObjectVariableOf: returnType.
+		ifNone: [ self error: ('None message of selector: {1} matches with: {2}' format:{ selector . receiverType}) ].
+	receiver := self pickOrCreateObjectVariableOf: receiverType.
 	^ self addMessage: method withReceiver: receiver.
 ]
 
 { #category : #'building-actions' }
 SSTestShifter >> addMessage: method withReceiver: receiver [
 	|result|
-	result := self addAssignment: (self messageUsing: method and: receiver before: nil).
+	result := self addAssignment: (self newMessage: method on: receiver).
 	self typeCheck.
 	^ result
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestShifter >> addParent: aTestCase [
    parents add: aTestCase.
 	aTestCase addChild: self.
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestShifter >> addParents: aCollection [
    aCollection do: [ :e | self addParent: e ]
 ]
@@ -307,13 +296,13 @@ SSTestShifter >> addStatements: collStatements [
 	statements addAll: collStatements"
 ]
 
-{ #category : #hierarchy }
+{ #category : #util }
 SSTestShifter >> allChildren [
 	^ (Set newFrom: children)
 	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
 ]
 
-{ #category : #hierarchy }
+{ #category : #util }
 SSTestShifter >> allParents [
 	|  list |
 	list := OrderedCollection new.
@@ -321,7 +310,7 @@ SSTestShifter >> allParents [
 	^ list
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestShifter >> allParents: testCase on: collection using: associationSet [
 	testCase parents 
 		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
@@ -337,76 +326,6 @@ SSTestShifter >> allVarNames [
 	^ statements collect: [ :stm | stm reference printString ]
 ]
 
-{ #category : #repairing }
-SSTestShifter >> alternativeFactoryMessage: aFactoryMessage [
-	| returnType |
-	returnType := aFactoryMessage returnType.
-	^ (typeInfo factoryMessagesFrom: returnType)
-		detect: [ :meth | 
-			meth returnType = returnType
-				and: [ meth selector ~= aFactoryMessage selector ] ]
-		ifFound: [ :meth | self addFactoryMessage: returnType ofSelector: meth selector ]
-		ifNone: [ self addFactoryMessage: returnType ofSelector:  aFactoryMessage selector].
-]
-
-{ #category : #repairing }
-SSTestShifter >> alternativeFactoryMessage: aFactoryMessage before: aExpression [
-	| returnType |
-	returnType := aFactoryMessage returnType.
-	^ (typeInfo factoryMessagesFrom: returnType)
-		detect: [ :meth | 
-			meth returnType = returnType
-				and: [ meth selector ~= aFactoryMessage selector ] ]
-		ifFound: [ :meth | self factoryMessageUsing: meth before: aExpression ]
-		ifNone: [ SFactoryMessage default: returnType ]
-]
-
-{ #category : #repairing }
-SSTestShifter >> alternativeFieldAccessMessage: aFieldAccessMessage [
-	| returnType receiver |
-	receiver := aFieldAccessMessage receiver.
-	returnType := aFieldAccessMessage returnType.
-	(self pickAccessorsOf: receiver returnType)
-		detect: [ :meth | 
-			meth returnType = returnType
-				and: [ meth selector ~= aFieldAccessMessage selector ] ]
-		ifFound:
-			[ :meth | ^ SFieldAccessMessage newFromReceiver: receiver andMethod: meth ].
-	self
-		error:
-			'There is no alternative for fieldAccessMessage of selector: '
-				, aFieldAccessMessage selector
-]
-
-{ #category : #repairing }
-SSTestShifter >> alternativeMessage: aMessage before: expression [
-	| returnType receiver |
-	receiver := aMessage receiver.
-	returnType := aMessage returnType.
-	(self pickMessagesOf: receiver returnType)
-		detect: [ :meth | 
-			meth returnType = returnType
-				and: [ meth selector ~= aMessage selector ] ]
-		ifFound:
-			[ :meth | ^ self messageUsing: meth and: receiver before: expression ].
-	self
-		error:
-			'There is no alternative for message of selector: '
-				, aMessage selector
-]
-
-{ #category : #repairing }
-SSTestShifter >> alternativeOfVariable: aVariable before: aExpression [
-	| returnType |
-	
-	self statementOfVarName: aVariable printString.
-	returnType := aVariable returnType.
-	(self statementsOfType: returnType before: aExpression)
-		detect: [ :stm | stm reference ~= aVariable ]
-		ifFound: [ :stm | ^ stm reference ].
-	^ (self addStatementOfType: returnType before: aExpression) reference
-]
-
 { #category : #'mutation-change' }
 SSTestShifter >> alternativeOfVariables: aVariable [
 
@@ -417,7 +336,7 @@ SSTestShifter >> alternativeOfVariables: aVariable [
 	
 ]
 
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> analyze [
   " we use a meta interpreter to use smalltalk and interpret our AST"
   | context |
@@ -445,29 +364,26 @@ SSTestShifter >> assignId [
 	^ idToAssign
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestShifter >> assignedIds [
 	^ statements collect: #id
 ]
 
 { #category : #repairing }
-SSTestShifter >> buildArgs: argTypes before: aStatement [
-	argTypes
-		ifNotNil: [ | prevTypes scalarsKeys |
-			prevTypes := (self subStatementsFrom: 1 toPrevIndexOf: aStatement)
-				select: [ :stm | stm returnType isNil not]
-				thenCollect: #returnType.
-			scalarsKeys := typeInfo scalars keys asOrderedCollection .
-			argTypes
-				do: [ :arg | 
-					self
-						addArgument: arg
-						before: aStatement
-						considering: prevTypes
-						and: scalarsKeys ] ]
+SSTestShifter >> buildArgs: argTypes [
+	^ argTypes collect:[ :type|
+		|vars|
+		vars := self variablesWithReturnType: type.
+		vars ifEmpty: [ 
+			self createStatementOfType: type.
+			vars := self variablesWithReturnType: type].
+		vars pickAny].
+	
+	
+
 ]
 
-{ #category : #'building-actions' }
+{ #category : #util }
 SSTestShifter >> canAddStatement [
 	SPlatform asDict 
 		ifFalse: [
@@ -483,7 +399,7 @@ SSTestShifter >> changeMessageNotUnderstood: aSelector from: aClassName [
 { #category : #'mutation-change' }
 SSTestShifter >> changeStatement [
 
-	^ (1 to: self length) asOrderedCollection randomShuffle safelyPickAny: [ :index|
+	^ (1 to: self length) asOrderedCollection safelyPickAny: [ :index|
 			self changeStatementAt: index.
 		] ifNone:[ 
 			self error:'There is not an statement that could be created with the current arguments'].
@@ -502,21 +418,23 @@ SSTestShifter >> changeStatement: aStatement [
 
 { #category : #'mutation-change' }
 SSTestShifter >> changeStatementAt: index [
+	"only for testing"
 	|copy |
-	copy := SSTestCase new with: self typeInfo.
+	copy := SSTestCase with: self typeInfo.
 	1 to: (index-1) do: [:i |
 		|stm|
 		stm := self statements at: i.
 		copy addStatement: stm copy.
-		self assignId.].
+		copy assignId.].
 	
-	(self statements at: index) changeOn: copy.
+	(copy statements at: index) changeOn: copy.
 		
 	(index+1) to: self length do: [:i |
 		|stm|
 		stm := self statements at: i.
 		copy addStatement: stm copy.
-		self assignId.].
+		copy assignId.].
+	^ copy.
 	
 ]
 
@@ -538,11 +456,6 @@ SSTestShifter >> changeStatementOfClassName: aClassName [
 	^ changed
 ]
 
-{ #category : #'mutation-remove' }
-SSTestShifter >> changeStatementOfVarName: varName [
-	^ self changeStatement: (self statementOfVarName: varName)
-]
-
 { #category : #accessing }
 SSTestShifter >> children [ 
 	^ children
@@ -558,12 +471,12 @@ SSTestShifter >> clean [
 	unused do: [ :stm | self removeStatement: stm ]
 ]
 
-{ #category : #'mutation-remove' }
+{ #category : #util }
 SSTestShifter >> containsVariable: aVariable [
 	^ self statements anySatisfy: [ :stm | stm variable = aVariable].
 ]
 
-{ #category : #'mutation-remove' }
+{ #category : #util }
 SSTestShifter >> containsVariableWithReturnType: aClassName [
 	^ self statements anySatisfy: [ :stm | stm returnType = aClassName].
 ]
@@ -572,8 +485,8 @@ SSTestShifter >> containsVariableWithReturnType: aClassName [
 SSTestShifter >> copyWithANewMethodCallToAnArgumentOfTheTargetClass [
 	|copy indexs pair insertionIndex argumentFactoryIndex messageIndex receiver methods|
 	copy := SSTestCase with: self typeInfo.
-	indexs := self targetClassIndexs.
-	indexs ifEmpty: [ ^ self]. "we can not do it"
+	indexs := self targetClassArgumentIndexs.
+	indexs ifEmpty: [ self error:'there is object arguments']. "we can not do it"
 	pair :=  indexs pickAny.
 	argumentFactoryIndex := pair first.
 	messageIndex := pair second.
@@ -592,14 +505,16 @@ SSTestShifter >> copyWithANewMethodCallToAnArgumentOfTheTargetClass [
 	receiver := (self statements at: argumentFactoryIndex) variable copy.
 	methods := self pickMessagesOf: receiver returnType.
 	methods ifEmpty: [ self error: 'There are no method typeInfos for: ' , receiver returnType , '.' ].
+	copy addMessage: methods pickAny withReceiver: receiver.
 	"adding the rest of statements"
 	(insertionIndex +1) to: self length do:[ :i|
 		|statement|
 		statement := self statements at: i.
 		copy addStatement: statement copy.
-		self assignId.].
+		copy assignId.].
 	"no we got un ordered ids... because we put bigger ides in the middel to avoid collision, so we will fix the ides"
-	self repairIds.
+	copy repairIds.
+	^ copy.
 	
 ]
 
@@ -608,7 +523,7 @@ SSTestShifter >> copyWithANewMethodCallToAnyValue [
 	|copy indexs insertionIndex factoryIndex receiver methods|
 	copy := SSTestCase with: self typeInfo.
 	indexs := self noTargetClassIndexs.
-	indexs ifEmpty: [ ^ self]. "we can not do it"
+	indexs ifEmpty: [ self error:'there is not object besides target class']. "we can not do it"
 	factoryIndex :=  indexs pickAny.
 	"we can insert the call any index after the target class object was created"
 	insertionIndex := self random nextIntBetween: factoryIndex and: self length.
@@ -625,14 +540,16 @@ SSTestShifter >> copyWithANewMethodCallToAnyValue [
 	receiver := (self statements at: factoryIndex) variable copy.
 	methods := self pickMessagesOf: receiver returnType.
 	methods ifEmpty: [ self error: 'There are no method typeInfos for: ' , receiver returnType , '.' ].
+	copy addMessage: methods pickAny withReceiver: receiver.
 	"adding the rest of statements"
 	(insertionIndex +1) to: self length do:[ :i|
 		|statement|
 		statement := self statements at: i.
 		copy addStatement: statement copy.
-		self assignId.].
+		copy assignId.].
 	"no we got un ordered ids... because we put bigger ides in the middel to avoid collision, so we will fix the ides"
-	self repairIds.
+	copy repairIds.
+	^ copy.
 	
 ]
 
@@ -641,7 +558,7 @@ SSTestShifter >> copyWithANewMethodCallToTargetClass [
 	|copy indexs insertionIndex factoryIndex receiver methods|
 	copy := SSTestCase with: self typeInfo.
 	indexs := self targetClassIndexs.
-	indexs ifEmpty: [ ^ self]. "we can not do it"
+	indexs ifEmpty: [ self error:'No target class object has found']. "we can not do it"
 	factoryIndex :=  indexs pickAny.
 	"we can insert the call any index after the target class object was created"
 	insertionIndex := self random nextIntBetween: factoryIndex and: self length.
@@ -651,22 +568,22 @@ SSTestShifter >> copyWithANewMethodCallToTargetClass [
 		|statement|
 		statement := self statements at: i.
 		copy addStatement: statement copy.].
-	
 	"assigning ids that do not exists in previous test, then there will be no collitions when at the last part of the statements"
 	copy nextId: self nextId.
 	"add the new method call"
 	receiver := (self statements at: factoryIndex) variable copy.
 	methods := self pickMessagesOf: receiver returnType.
 	methods ifEmpty: [ self error: 'There are no method typeInfos for: ' , receiver returnType , '.' ].
+	copy addMessage: methods pickAny withReceiver: receiver.
 	"adding the rest of statements"
-	(insertionIndex +1) to: self length do:[ :i|
+	(insertionIndex+1) to: self length do:[ :i|
 		|statement|
 		statement := self statements at: i.
 		copy addStatement: statement copy.
-		self assignId.].
+		copy assignId.].
 	"no we got un ordered ids... because we put bigger ides in the middel to avoid collision, so we will fix the ides"
-	self repairIds.
-	
+	copy repairIds.
+	^ copy.
 ]
 
 { #category : #'mutation-insert' }
@@ -678,43 +595,14 @@ SSTestShifter >> copyWithARandomStatement [
 		] ifNone: [  ^ self error:'We could not insert any statement'].
 ]
 
-{ #category : #'mutation-remove' }
-SSTestShifter >> copyWithoutStatementAt: index [
-	|deletedVariables copy|
-	copy := SSTestCase new.
-	deletedVariables := OrderedCollection new.
+{ #category : #repairing }
+SSTestShifter >> createStatementOfType: aMultiTypeInfo [
 	
-	"to give different names to variables"
-	copy nextId: self nextId.
-
-	"lo borramos"
-	deletedVariables add: (self statements at: index) variable.
-	"copy the first half"
-	1 to: (index-1) do:[ :i|
-		|stm|
-		stm := self statements at: i.
-		copy addStatement: stm copy.
-		].
-	"carrefully copy the other half"
-	(index+1) to: self length do:[ :i |
-		|stm|
-		stm := self statements at: i.
-		(deletedVariables anySatisfy:[:delVar| stm containsVariable: delVar]) ifTrue:[
-			(deletedVariables allSatisfy: [:delVar| stm isThereEnoughArgumentsToBuild: copy]) ifTrue:[
-				stm insertOn: copy.
-			] ifFalse:[
-				deletedVariables add: stm variable.
-			].						
-		] ifFalse:[
-			copy addStatement: stm copy.		
-		]
-	].
-	"ahora borramos los statements que dependen de el statement borrado"
-
-	
-	
-	
-	
+	aMultiTypeInfo types safelyPickAny:[ :type |
+		(self typeInfo isScalar: type) 
+			ifTrue:[ self addLiteral: type.] 
+			ifFalse:[ self addFactoryMessage: type.].	
+	] ifNone:[ self error:'we could not build the argument needed'].
 	
 ]
 
@@ -749,7 +637,7 @@ SSTestShifter >> fitnessByClass [
 	^ fitnessByClass 
 ]
 
-{ #category : #actions }
+{ #category : #util }
 SSTestShifter >> fixAssertions [
 	SPlatform asDict ifTrue: [ 
 		assertions do: [ :ass | 
@@ -824,29 +712,6 @@ SSTestShifter >> initialize [
   selectionStrategy := SGARouletteSelection new.
 ]
 
-{ #category : #'building-actions' }
-SSTestShifter >> insertAsParameter: expression after: aStatement [
-	(self random collectAtRandom: (statements
-		copyFrom: (statements indexOf: aStatement) + 1
-		to: self length))
-		do: [ :stm | [ | mutatedStm |
-			mutatedStm := stm replaceArgBy: expression.
-			(mutatedStm pickUpReferences: expression) ifNotEmpty: 
-				[ mutatedStm value mutated: true.].
-			 ^ mutatedStm ]
-				on: SError
-				do: [ :e | ] ].
-	self
-		error: 'Cannot insert any parameter by: ' , expression printString
-]
-
-{ #category : #'building-actions' }
-SSTestShifter >> insertExpression: expression after: aStatement [
-	^ self
-		addStatement: (self newAssignment: expression)
-		after: aStatement
-]
-
 { #category : #'mutation-insert' }
 SSTestShifter >> insertStatement [
 	|alpha count testCase|
@@ -860,18 +725,7 @@ SSTestShifter >> insertStatement [
 	^ testCase.
 ]
 
-{ #category : #'building-actions' }
-SSTestShifter >> insertStatementOfSelector: selector [
-	(self random collectAtRandom: statements copy)
-		do: [ :stm | 
-			[ ^ self perform: selector inStatement: stm ]
-				on: SError
-				do: [  ] ].
-	self
-		error: 'Cannot insert statement of selector: ' , selector printString
-]
-
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> interpret: aStatementCollection with: aExecutionContext [
   | objects |
   objects := aStatementCollection collect: [:stm |  stm interpret: aExecutionContext ].
@@ -967,39 +821,35 @@ SSTestShifter >> newAssignment: anExpression [
 		value: anExpression copy ]
 		on: MessageNotUnderstood
 		do: [ :error | 
-			self
-				error: anExpression printString , ' is not an expression.' ]
+			self halt.
+			self error: anExpression printString , ' is not an expression.' ]
 ]
 
 { #category : #'instance creation' }
-SSTestShifter >> newFactoryMessage: aClassName before: aStatement [
-	| methods |
+SSTestShifter >> newFactoryMessage: aClassName [
+	| methods|
 	typeInfo
 		classAt: aClassName
-		ifNone: [ self
-				error:
-					'Error to create factoryMessage of: ' , aClassName
-						, ' because it is not found in typeInfo.' ].
+		ifNone: [ self error: 'Error to create factoryMessage of: ' , aClassName , ' because it is not found in typeInfo.' ].
 	methods := typeInfo factoryMessagesFrom: aClassName.
 	^ methods
 		ifEmpty: [ SFactoryMessage default: aClassName ]
-		ifNotEmpty: [  self newFactoryMessageUsing: aClassName and: aStatement ]
+		ifNotEmpty: [  self  newFactoryMessage: methods pickAny from: aClassName].
 ]
 
 { #category : #'instance creation' }
-SSTestShifter >> newFactoryMessageUsing: aClassName and: aStatement [
-	| methods |
-	methods := typeInfo factoryMessagesFrom: aClassName.
-	(self random collectAtRandom: methods)
-		do: [ :method | 
-			[ self buildArgs: method argTypes before: aStatement.
-			^ SFactoryMessage
-				method: method
-				class: aClassName
-				previousStatements: (self subStatementsFrom: 1 toPrevIndexOf: aStatement) ]
-				on: SError
-				do: [  ] ].
-	self error: 'Error to create a factoryMessage of: ' , aClassName
+SSTestShifter >> newFactoryMessage: method from: aClassName [
+	^	SFactoryMessage new
+			receiver: (SVariable new
+				varName: aClassName;
+				returnType: aClassName;
+				yourself);
+			selector: method selector;
+			args: (self buildArgs: method argTypes);
+			returnType: aClassName;
+			yourself.
+				
+	
 ]
 
 { #category : #'instance creation' }
@@ -1035,6 +885,16 @@ SSTestShifter >> newLiteral: aClassName [
 				returnType: aClassName;
 				value: (self random selectAtRandom: values asOrderedCollection) ].
 	self error: 'Scalars dont include: ' , aClassName
+]
+
+{ #category : #'instance creation' }
+SSTestShifter >> newMessage: method on: receiver [
+	^ SMessage new
+			receiver: receiver;
+			selector: method selector;
+			args: (self buildArgs: method argTypes);
+			returnType: method returnType types first.
+				
 ]
 
 { #category : #'instance creation' }
@@ -1092,7 +952,7 @@ SSTestShifter >> noTargetClassIndexs [
 	|indexs|
 	indexs := OrderedCollection new.
 	self statements doWithIndex:[ :stm :index|
-		(stm isFactoryMessage and:[stm returnType ~= self targetClassesName]) ifTrue:[ indexs add: index.].
+		(stm value isFactoryMessage and:[stm returnType ~= self targetClassesName]) ifTrue:[ indexs add: index.].
 	].
 	^ indexs.
 	
@@ -1116,7 +976,7 @@ SSTestShifter >> numMaxStatements: anObject [
 { #category : #querying }
 SSTestShifter >> objectVariables [
 	
-	^ statements select:[:stm| 
+	^ statements select:[:stm|
 				(self typeInfo classAt: stm returnType ifNone:[nil]) isNil not] 
 		thenCollect:[:stm| stm variable].
 ]
@@ -1214,7 +1074,8 @@ SSTestShifter >> pickMessagesOf: aType [
 
 { #category : #querying }
 SSTestShifter >> pickObjectVariableOf: aClassName [
-	(self random collectAtRandom: (self subStatementsFrom: 1 toPrevIndexOf: nil))
+	self halt.
+	self statements randomShuffle
 		detect: [ :stm | stm returnType = aClassName ]
 		ifFound: [ :stm | ^ stm reference ]
 		ifNone: [  ].
@@ -1223,9 +1084,13 @@ SSTestShifter >> pickObjectVariableOf: aClassName [
 
 { #category : #querying }
 SSTestShifter >> pickOrCreateObjectVariableOf: aClassName [
-	^ [ self pickObjectVariableOf: aClassName ]
-		on: SError
-		do: [ (self addFactoryMessage: aClassName) variable ]
+	|variables|
+	variables := self objectVariables select:[ :var| var returnType = aClassName].
+	variables ifEmpty: [
+		self addFactoryMessage: aClassName.
+		variables := self objectVariables select:[ :var| var returnType = aClassName].].
+	^ variables pickAny.
+	
 ]
 
 { #category : #printing }
@@ -1306,7 +1171,7 @@ SSTestShifter >> randomIndexToAdd: aExpression before: aStatement [
 	^ self random selectAtRandom: (1 to: anIndex)
 ]
 
-{ #category : #'building-actions' }
+{ #category : #util }
 SSTestShifter >> randomLiteralClassName [
 	|scalars|
 	scalars := typeInfo scalars keys.
@@ -1319,7 +1184,7 @@ SSTestShifter >> referencesIndexes: expression [
 	^ ((expression variablesWithId ) allButFirst collect: [ :var | statements indexOf: (self statementOfVarName: var printString) ])
 ]
 
-{ #category : #'mutation-remove' }
+{ #category : #util }
 SSTestShifter >> removeChild: testCase [
 	| index |
 	index := 0.
@@ -1329,36 +1194,16 @@ SSTestShifter >> removeChild: testCase [
 ]
 
 { #category : #'mutation-remove' }
-SSTestShifter >> removeExpression: expression [
-	self removeFromStatements: expression.
-	statements copy do: [ :stm | (stm pickUpReferences: expression) ifNotEmpty: [ self repairReferenceTo: expression of: stm ] ].
-]
-
-{ #category : #'mutation-remove' }
-SSTestShifter >> removeExpressionWithoutRepairing: expression [
-	self removeFromStatements: expression.
-	[ self statementAt: expression ]
-		on: SError
-		do: [ (self statements copy
-				flatCollect: [ :stm | 
-					(stm pickUpReferences: expression)
-						ifNotEmpty: [ Array with: stm ] ])
-				do: [ :stm | self removeExpressionWithoutRepairing: stm ] ]
-]
-
-{ #category : #'mutation-remove' }
-SSTestShifter >> removeFromStatements: expression [
-	[ statements remove: expression ]
-		on: Error
-		do: [ self error: expression printString , ' is not found.' ]
-]
-
-{ #category : #'mutation-remove' }
 SSTestShifter >> removeStatement [
-	|deletedVariables copy index|
+	^ self removeStatementAt: (self random nextInt: self length).
+]
+
+{ #category : #'mutation-remove' }
+SSTestShifter >> removeStatementAt: index [
+	|deletedVariables copy|
+	self length = 0 ifTrue:[self error:'there is not statements to delete'].
 	copy := SSTestCase with: self typeInfo.
 	deletedVariables := OrderedCollection new.
-	index := self random nextInt: self length.
 	"to give different names to variables"
 	copy nextId: self nextId.
 
@@ -1375,7 +1220,7 @@ SSTestShifter >> removeStatement [
 		|stm|
 		stm := self statements at: i.
 		(deletedVariables anySatisfy:[:delVar| stm containsVariable: delVar]) ifTrue:[
-			(deletedVariables allSatisfy: [:delVar| stm isThereEnoughArgumentsToBuild: copy]) ifTrue:[
+			(stm isThereEnoughArgumentsToBuild: copy) ifTrue:[
 				stm insertOn: copy.
 			] ifFalse:[
 				deletedVariables add: stm variable.
@@ -1394,23 +1239,6 @@ SSTestShifter >> removeStatement [
 	
 ]
 
-{ #category : #'mutation-remove' }
-SSTestShifter >> removeStatement: anExpression [
-	self removeExpression: (self statementAt: anExpression)
-]
-
-{ #category : #'mutation-remove' }
-SSTestShifter >> removeStatementNoRepairing: aStatement [
-	"remove all statements that reference to statement because this cant be fixed"
-
-	self removeExpressionWithoutRepairing: (self statementAt: aStatement)
-]
-
-{ #category : #'mutation-remove' }
-SSTestShifter >> removeStatementOfVarName: varName [
-	^ self removeStatement: (self statementOfVarName: varName) copy
-]
-
 { #category : #repairing }
 SSTestShifter >> repair: expression [
 	[ self statementAt: expression ]
@@ -1421,24 +1249,13 @@ SSTestShifter >> repair: expression [
 		error: expression printString , ' does not exist.'
 ]
 
-{ #category : #'building-actions' }
-SSTestShifter >> repair: exprToReplace of: expression [
-	| aType replacement |
-	aType := exprToReplace returnType.
-	replacement := (self random collectAtRandom:(self subStatementsFrom: 1 toPrevIndexOf: expression))
-		detect:
-			[ :stm | stm reference ~= exprToReplace and: [ stm returnType = aType ] ]
-		ifNone: [ self addStatementOfType: aType before: expression ].
-	self replace: exprToReplace by: replacement on: expression
-]
-
 { #category : #'mutation-insert' }
 SSTestShifter >> repairIds [
 	|map|
 	statements do:[ :stm | stm negateId].
 	map := Dictionary new.
 	statements doWithIndex:[ :stm :index |
-		map at: (stm variable id) put: index.].
+		map at: (stm variable id) put: (index-1).].
 	statements do:[ :stm | stm rename: map].
 ]
 
@@ -1462,7 +1279,7 @@ SSTestShifter >> replace: exprToReplace by: otherExpression on: expression [
 		by: otherExpression 
 ]
 
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> run [
   " we use a meta interpreter to use smalltalk and interpret our AST"
   |result context|
@@ -1474,7 +1291,7 @@ SSTestShifter >> run [
   ^ result.
 ]
 
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> runWithoutAssertions [
   " we use a meta interpreter to use smalltalk and interpret our AST"
   | result context |
@@ -1486,7 +1303,7 @@ SSTestShifter >> runWithoutAssertions [
   ^result
 ]
 
-{ #category : #'building-actions' }
+{ #category : #util }
 SSTestShifter >> selectMethod: aCollection [ 
 	selectionStrategy ifNil: [  ^ aCollection  pickAny].
 	^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions).
@@ -1498,7 +1315,7 @@ SSTestShifter >> selectionStrategy: selectStrategy [
 	selectionStrategy := selectStrategy 
 ]
 
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> setUp [
 	previousOpenWindows := SystemWindow allInstances.
 ]
@@ -1558,11 +1375,11 @@ SSTestShifter >> targetClassArgumentIndexs [
 	|indexs|
 	indexs := OrderedCollection new.
 	self statements doWithIndex:[ :stm :index|
-		(stm isMessage and:[stm value receiver returnType = self targetClassesName]) ifTrue:[ 
+		(stm value isMessage and:[stm value receiver returnType = self targetClassesName]) ifTrue:[ 
 			1 to: (index-1) do:[ :i|
 				|stmAnt|
 				stmAnt := (self statements at: i).
-					(stmAnt isFactoryMessage and:[ stm value containsVariable: stmAnt variable]) ifTrue:[
+					( (self typeInfo isScalar: stmAnt returnType) not and:[ stm value containsVariable: stmAnt variable]) ifTrue:[
 						indexs add: { i . index}.
 					]	
 				].
@@ -1577,13 +1394,14 @@ SSTestShifter >> targetClassIndexs [
 	|indexs|
 	indexs := OrderedCollection new.
 	self statements doWithIndex:[ :stm :index|
-		(stm isFactoryMessage and:[stm returnType = self targetClassesName]) ifTrue:[ indexs add: index.].
-		].
+		(stm value isFactoryMessage and:[stm returnType = self targetClassesName]) 
+			ifTrue:[ indexs add: index.].
+	].
 	^ indexs.
 	
 ]
 
-{ #category : #actions }
+{ #category : #accessing }
 SSTestShifter >> targetClassName: aSymbol [
 	typeInfo types at: aSymbol 
 		ifAbsent: [ self error: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
@@ -1595,14 +1413,14 @@ SSTestShifter >> targetClassesName [
 	^ targetClassesName
 ]
 
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> tearDown [ 
 	|windowsToDelete|
 	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
 	windowsToDelete do:[:w| w close].
 ]
 
-{ #category : #actions }
+{ #category : #running }
 SSTestShifter >> typeCheck [
   | context |
   context := self analyze.
@@ -1626,12 +1444,12 @@ SSTestShifter >> typeInfo: anObject [
 	typeInfo := anObject
 ]
 
-{ #category : #repairing }
+{ #category : #util }
 SSTestShifter >> updateNextId [ 
 	nextId = 0 ifTrue: [ nextId := statements size ]
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestShifter >> validReferences [
 	| references |
 	references := Set new.
@@ -1648,7 +1466,9 @@ SSTestShifter >> validReferences [
 		ifNone: [ true ]
 ]
 
-{ #category : #'mutation-remove' }
-SSTestShifter >> variablesWithReturnType: aReturnType [
-	^ self statements select:[ :stm| stm returnType = aReturnType].
+{ #category : #util }
+SSTestShifter >> variablesWithReturnType: aMultipleTypeInfo [
+  ^self statements 
+			select: [:stm |  aMultipleTypeInfo types anySatisfy: [:type |  stm returnType = type ] ] 
+			thenCollect: [:stm |  stm variable ]
 ]

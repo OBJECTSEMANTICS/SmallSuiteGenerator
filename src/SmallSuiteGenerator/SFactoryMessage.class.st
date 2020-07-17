@@ -41,58 +41,17 @@ SFactoryMessage class >> default: aClassName [
 		yourself
 ]
 
-{ #category : #creation }
-SFactoryMessage class >> method: aMethodTypeInfo class: aClassName previousStatements: statements [
-	^ self new
-		receiver:
-			(SVariable new
-				varName: aClassName;
-				returnType: aClassName ;
-				yourself);
-		returnType: aClassName;
-		selector: aMethodTypeInfo selector;
-		args: (self args: aMethodTypeInfo with: statements);
-		yourself
-]
-
-{ #category : #creation }
-SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements [
-	|returnType|
-	returnType := aMethodTypeInfo returnType type.
-	^ self new
-		receiver:
-			(SVariable new
-				varName: returnType ;
-				returnType: returnType ;
-				yourself);
-		returnType: returnType;
-		selector: aMethodTypeInfo selector;
-		args: (self args: aMethodTypeInfo with: statements);
-		yourself
-]
-
 { #category : #action }
 SFactoryMessage >> changeOn: aTestCase [
 	"nothing to change"
 	aTestCase addAlternativeFactoryMessage: self.
 ]
 
-{ #category : #override }
-SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	| otherFactoryMessage |
-	otherFactoryMessage := aTestCase
-		alternativeFactoryMessage: self
-		before: aExpression.
-	mutated := otherFactoryMessage selector ~= self selector.
-	self selector: otherFactoryMessage selector.
-	self args: otherFactoryMessage args
-]
-
 { #category : #mutation }
 SFactoryMessage >> insertOn: aTestCase [
 	^ aTestCase
 		addFactoryMessage: self returnType
-		ofSelector: self selector.
+		usingSelector: self selector.
 ]
 
 { #category : #testing }

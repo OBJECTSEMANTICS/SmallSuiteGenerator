@@ -43,7 +43,7 @@ SVariable class >> nameOrId: anObject [
 
 { #category : #comparing }
 SVariable >> = other [
-	^ super = other and: [ varName = other varName ]
+	^ self containsVariable: other.
 ]
 
 { #category : #actions }
@@ -138,17 +138,6 @@ SVariable >> referenceTo: aClassName [
 SVariable >> rename: aDictionary [
 
 	id ifNotNil:[ id := aDictionary at: id. ].
-]
-
-{ #category : #mutation }
-SVariable >> repairOn: aTestCase changing: anExpression [
-	| otherVariable |
-	otherVariable := aTestCase
-		alternativeOfVariable: self
-		before: anExpression.
-	mutated := otherVariable ~= self.
-	self varName: otherVariable varName.
-	self id: otherVariable id.
 ]
 
 { #category : #mutation }

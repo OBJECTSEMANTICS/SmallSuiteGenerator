@@ -42,6 +42,15 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 			dict at: ft ]
 ]
 
+{ #category : #creation }
+SAbstractMessage class >> receiver: receiver selector: aSelector args: aArgCollection [
+	^ self new
+			selector: aSelector;
+			receiver: receiver;
+			args: aArgCollection;
+			yourself.
+]
+
 { #category : #comparing }
 SAbstractMessage >> = other [
 	^ super = other 
@@ -84,15 +93,9 @@ SAbstractMessage >> changeReceiverFrom: expression in: aTestCase [
 	receiver repairOn: aTestCase changing: expression
 ]
 
-{ #category : #override }
-SAbstractMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	| otherMessage |
-	otherMessage := aTestCase
-		alternativeMessage: self
-		before: aExpression.
-	mutated := otherMessage selector ~= self selector.
-	self selector: otherMessage selector.
-	self args: otherMessage args
+{ #category : #actions }
+SAbstractMessage >> containsVariable: aVariable [
+	^ (self receiver containsVariable: aVariable) or:[ self args anySatisfy: [:arg| arg containsVariable: aVariable]].
 ]
 
 { #category : #copying }
@@ -148,11 +151,6 @@ SAbstractMessage >> interpret: aExecutionContext [
 { #category : #actions }
 SAbstractMessage >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ self variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
-]
-
-{ #category : #accessing }
-SAbstractMessage >> mutated [ 
-	^ mutated or: [receiver mutated or: [ args detect: #mutated ifFound: [ true ] ifNone: [ false ] ]]
 ]
 
 { #category : #actions }
@@ -228,20 +226,6 @@ SAbstractMessage >> replaceArgBy: expression [
 	
 	args do: [ :arg | [ ^ arg replaceArgBy: expression ] on: SError do: [  ] ].
 	self error: 'Cannot replace any argument by: ', expression printString
-]
-
-{ #category : #accessing }
-SAbstractMessage >> replaceBy: anAbstractMessage [
-	" I replace my attributes values with the ones in the otherExpression."
-	
-	mutated := (receiver ~= anAbstractMessage receiver) or: [( selector ~= anAbstractMessage selector) or: [ args ~= anAbstractMessage args ]].
-	receiver replaceBy: anAbstractMessage receiver.
-	self selector: anAbstractMessage selector.
-	self args size = anAbstractMessage args size
-		ifTrue: [ self args
-				with: anAbstractMessage args
-				do: [ :arg :newArg | arg replaceBy: newArg ] ]
-		ifFalse: [ self args: anAbstractMessage args deepCopy ].
 ]
 
 { #category : #actions }

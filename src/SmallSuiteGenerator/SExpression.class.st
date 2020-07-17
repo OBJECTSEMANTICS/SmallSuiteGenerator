@@ -14,7 +14,6 @@ Class {
 	#instVars : [
 		'returnType',
 		'id',
-		'mutated',
 		'parent',
 		'identifier'
 	],
@@ -79,7 +78,6 @@ SExpression >> copy [
 	^ self class new
 		id: self id;
 		returnType: self returnType;
-		mutated: self mutated;
 		parent: self         
 ]
 
@@ -111,7 +109,6 @@ SExpression >> id: anObject [
 { #category : #initialization }
 SExpression >> initialize [
 	super initialize .
-	mutated := false.
 	identifier := self class nextIdentifier.
 ]
 
@@ -147,6 +144,11 @@ SExpression >> isFactoryMessage [
 	^ false
 ]
 
+{ #category : #accesing }
+SExpression >> isMessage [
+	^ false.
+]
+
 { #category : #comparing }
 SExpression >> isPrimitive: anObject [
 	^ (anObject isKindOf: Number) or: [ (anObject isKindOf: Boolean)
@@ -156,16 +158,6 @@ SExpression >> isPrimitive: anObject [
 { #category : #actions }
 SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ true
-]
-
-{ #category : #accessing }
-SExpression >> mutated [ 
-	^ mutated
-]
-
-{ #category : #accessing }
-SExpression >> mutated: aBoolean [
-	mutated := aBoolean
 ]
 
 { #category : #actions }
@@ -211,11 +203,6 @@ SExpression >> repairOn: aTestCase changing: aExpression [
 { #category : #mutation }
 SExpression >> replaceArgBy: expression [
 	self error: 'cannot be inserted: ', expression printString, ' as parameter'
-]
-
-{ #category : #actions }
-SExpression >> replaceBy: otherExpression [
-	self subclassResponsibility 
 ]
 
 { #category : #actions }

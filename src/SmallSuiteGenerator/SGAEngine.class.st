@@ -129,8 +129,10 @@ SGAEngine >> createNewPopulation [
         self shouldCrossOver 
 				ifTrue: [ 
 					children := crossoverOperator crossover: p1 with: p2.
-					o1 := self updateHierarchyData: selectedIndividuals of: (children first idPopulation: newNumber + 3).
-					o2 := self updateHierarchyData: selectedIndividuals of: (children second idPopulation: newNumber + 4) ] 
+					o1 := self updateHierarchyData: { p1 . p2 } of: (children first idPopulation: newNumber + 3).
+					o2 := self updateHierarchyData: { p1 . p2 } of: (children second idPopulation: newNumber + 4).
+					
+					 ] 
 				ifFalse: [ 
 					o1 := (p1copy deepCopy) idPopulation: newNumber + 3; addParent: p1.
               	o2 := (p2copy deepCopy) idPopulation: newNumber + 4; addParent: p2 ].

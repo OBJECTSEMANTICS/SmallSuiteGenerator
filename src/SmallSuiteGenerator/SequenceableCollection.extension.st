@@ -13,8 +13,8 @@ SequenceableCollection >> randomShuffle [
 { #category : #'*SmallSuiteGenerator' }
 SequenceableCollection >> safelyPickAny: aBlock ifNone: aNoneBlock [
 
-	self shuffle do:[ :each|
-		[ ^ aBlock value: each. ] on: Error 
+	self randomShuffle do:[ :each|
+		[ ^ aBlock value: each. ] on: SError 
 		do:[ false ]. ].
 	aNoneBlock value.
 ]

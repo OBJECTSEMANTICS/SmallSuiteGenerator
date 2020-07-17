@@ -7,7 +7,7 @@ String >> fullClassName [
 
 { #category : #'*SmallSuiteGenerator' }
 String >> fullClassNameSymbol [
-	^ self.
+	^ self asSymbol.
 ]
 
 { #category : #'*SmallSuiteGenerator' }

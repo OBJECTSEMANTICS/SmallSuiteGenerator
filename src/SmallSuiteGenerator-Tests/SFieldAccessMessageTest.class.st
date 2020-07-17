@@ -28,7 +28,7 @@ SFieldAccessMessageTest >> testInsertAsParameterUsing [
 	| testCase expression insertedExpression |
 	testCase := (SSTestCase with: utility typeInfoSStack4)
 		targetClassName: (self fullSymbolOf: #SStack).
-	testCase addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStackWith:.
+	testCase addFactoryMessage: (self fullSymbolOf: #SStack) usingSelector: #newStackWith:.
 	expression := testCase
 		addFieldAccessMessage: #firstLinkStack
 		from: (self fullSymbolOf: #SStack).
