@@ -38,10 +38,13 @@ SLiteral >> = other [
 
 { #category : #actions }
 SLiteral >> changeOn: aTestCase [
-	self value: value mutateToChange
+	|copy|
+	copy := self copy.
+	copy value: value mutateToChange.
+	aTestCase addAssignment: copy.
 ]
 
-{ #category : #actions }
+{ #category : #querying }
 SLiteral >> containsVariable: aVariable [
 	^ false.
 ]
@@ -59,7 +62,7 @@ SLiteral >> hash [
 	^ super hash bitXor: value hash
 ]
 
-{ #category : #mutation }
+{ #category : #actions }
 SLiteral >> insertOn: aTestCase [
 	^ aTestCase addLiteral: self returnType.
 ]
@@ -83,7 +86,7 @@ SLiteral >> printOn: aStream [
 				ifFalse: [ value storeString ])
 ]
 
-{ #category : #actions }
+{ #category : #querying }
 SLiteral >> referenceTo: aClassName [
 	^( value isClass
 		ifTrue: [ value name ]
@@ -93,18 +96,6 @@ SLiteral >> referenceTo: aClassName [
 { #category : #actions }
 SLiteral >> rename: aDictionary [
 	"nothing to rename"
-]
-
-{ #category : #mutation }
-SLiteral >> repairOn: aTestCase changing: aExpression [
-	self value: value mutateToChange
-]
-
-{ #category : #actions }
-SLiteral >> replaceBy: otherExpression [
-	" I replace my attributes values with the ones in the otherExpression.
-	  the argument is an object from my same class"
-	self value: otherExpression value
 ]
 
 { #category : #evaluating }

@@ -32,21 +32,11 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 ]
 
 { #category : #action }
-SMessage >> changeOn: aTestCase [
-	aTestCase
-]
-
-{ #category : #mutation }
-SMessage >> insertMethodMessage: aExpression using: aTestCase [
-	^ self insertRandomMessage: aExpression using: aTestCase
-]
-
-{ #category : #mutation }
 SMessage >> insertOn: aTestCase [
 	^ aTestCase addMessage: self selector from: self receiver returnType.
 ]
 
-{ #category : #action }
+{ #category : #testing }
 SMessage >> isMessage [
 	^ true.
 ]

@@ -28,11 +28,7 @@ SFieldAccessMessage >> changeOn: aTestCase [
 	aTestCase addAlternativeFieldAccessMessage: self.
 ]
 
-{ #category : #mutation }
+{ #category : #actions }
 SFieldAccessMessage >> insertOn: aTestCase [
 	^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType.
-]
-
-{ #category : #actions }
-SFieldAccessMessage >> replaceArg: expressions by: newExpressions [
 ]

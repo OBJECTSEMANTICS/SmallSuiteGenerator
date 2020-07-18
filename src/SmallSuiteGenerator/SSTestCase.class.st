@@ -5,13 +5,19 @@ Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
 	#instVars : [
+		'fitness',
+		'previousOpenWindows',
 		'idPopulation',
 		'summaryExecutionMethods',
 		'generationNumber',
 		'hasErrors',
-		'summaryTargetClass'
+		'summaryTargetClass',
+		'fitnessByClass',
+		'selectionStrategy',
+		'parents',
+		'children'
 	],
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #'instance creation' }
@@ -29,6 +35,52 @@ SSTestCase >> = another [
 		and: [ fitness = another fitness 
 			and: [ parents = another parents 
 				and: [ generationNumber = another generationNumber and: [ idPopulation = another idPopulation  ] ] ] ] ]
+]
+
+{ #category : #accessing }
+SSTestCase >> addChild: aTestCase [
+	children add: aTestCase
+]
+
+{ #category : #accessing }
+SSTestCase >> addParent: aTestCase [
+   parents add: aTestCase.
+	aTestCase addChild: self.
+]
+
+{ #category : #accessing }
+SSTestCase >> addParents: aCollection [
+   aCollection do: [ :e | self addParent: e ]
+]
+
+{ #category : #accessing }
+SSTestCase >> allChildren [
+	^ (Set newFrom: children)
+	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
+]
+
+{ #category : #accessing }
+SSTestCase >> allParents [
+	|  list |
+	list := OrderedCollection new.
+	self allParents: self on: list using: Set new.
+	^ list
+]
+
+{ #category : #accessing }
+SSTestCase >> allParents: testCase on: collection using: associationSet [
+	testCase parents 
+		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
+		thenDo:  [ :tC | 
+			associationSet add: tC generationNumber -> tC idPopulation.
+			collection add: tC.
+			self allParents: tC on: collection using: associationSet	
+		]
+]
+
+{ #category : #accessing }
+SSTestCase >> children [ 
+	^ children
 ]
 
 { #category : #actions }
@@ -61,6 +113,16 @@ SSTestCase >> deepCopy [
   copy summaryExecutionMethods: self summaryExecutionMethods.
   copy hasErrors: self hasErrors.
   ^ copy
+]
+
+{ #category : #accessing }
+SSTestCase >> fitness [ 	
+	^ fitness
+]
+
+{ #category : #accessing }
+SSTestCase >> fitnessByClass [
+	^ fitnessByClass 
 ]
 
 { #category : #actions }
@@ -108,11 +170,16 @@ SSTestCase >> initialize [
    super initialize.
    generationNumber := 1.
    idPopulation := 1.
+	parents := OrderedCollection new.
+  	children := OrderedCollection new.
    summaryExecutionMethods := OrderedCollection new.
-	hasErrors := false
+	hasErrors := false.
+	fitness := Dictionary new.
+	fitnessByClass := Dictionary new.
+	selectionStrategy := SGARouletteSelection new.
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
     |fitness1 fitness2|
     fitness1 := self fitness at: fitnessStrategy.
@@ -128,6 +195,11 @@ SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
     ^ false
 ]
 
+{ #category : #accessing }
+SSTestCase >> parents [
+	^ parents
+]
+
 { #category : #printing }
 SSTestCase >> printOn: aStream [
 	self statements do: [ :stm | 
@@ -135,14 +207,76 @@ SSTestCase >> printOn: aStream [
 			aStream nextPut: Character cr ]
 ]
 
-{ #category : #initialization }
+{ #category : #printing }
+SSTestCase >> printSummaryFitness [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"Fitness: ';
+				nextPut: Character cr.
+			fitness
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: ': ';
+						nextPutAll: assoc value printString;
+						nextPut: Character cr ].
+			stream
+				nextPutAll: '"' ]
+]
+
+{ #category : #printing }
+SSTestCase >> printSummaryFitnessByClass [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"This test covers: ';
+				nextPut: Character cr.
+			fitnessByClass
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: (String with: Character cr).
+					self printFunctionByClassName: assoc value on: stream ].
+			stream
+				nextPutAll: '"';
+				nextPutAll: (String with: Character cr) ]
+]
+
+{ #category : #accessing }
+SSTestCase >> removeChild: testCase [
+	| index |
+	index := 0.
+	children detect: [:tC | index := index + 1.
+		(tC generationNumber == testCase generationNumber) and: [ tC idPopulation == testCase idPopulation ] ]
+		ifFound: [ :tC | children removeAt: index ]
+]
+
+{ #category : #util }
+SSTestCase >> selectMethod: aCollection [ 
+	selectionStrategy ifNil: [  ^ aCollection  pickAny].
+	^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions).
+	
+]
+
+{ #category : #accessing }
+SSTestCase >> selectionStrategy: selectStrategy [
+	selectionStrategy := selectStrategy 
+]
+
+{ #category : #accessing }
 SSTestCase >> setFitness: aDictionary [ 
 	fitness := aDictionary copy
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SSTestCase >> setFitnessByClass: aDictionary [ 
 	fitnessByClass := aDictionary copy
+]
+
+{ #category : #running }
+SSTestCase >> setUp [
+	previousOpenWindows := SystemWindow allInstances.
 ]
 
 { #category : #accessing }
@@ -165,7 +299,14 @@ SSTestCase >> summaryTargetClass: anObject [
 	summaryTargetClass := anObject 
 ]
 
-{ #category : #repairing }
+{ #category : #running }
+SSTestCase >> tearDown [ 
+	|windowsToDelete|
+	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
+	windowsToDelete do:[:w| w close].
+]
+
+{ #category : #util }
 SSTestCase >> updateWith: anotherTestCase [
 	self generationNumber: anotherTestCase generationNumber.
 	self idPopulation: anotherTestCase idPopulation.

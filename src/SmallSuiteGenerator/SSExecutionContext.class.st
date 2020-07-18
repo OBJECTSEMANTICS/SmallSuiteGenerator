@@ -10,7 +10,7 @@ Class {
 	#instVars : [
 		'values'
 	],
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-AST'
 }
 
 { #category : #accessing }

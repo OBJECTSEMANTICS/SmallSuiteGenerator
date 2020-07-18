@@ -54,7 +54,7 @@ SExpression >> = another [
 	
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 SExpression >> allParents [
 	"I return my self with all my parents"
 	^ parent ifNil: #() ifNotNil: [ 
@@ -68,7 +68,7 @@ SExpression >> changeOn: aTestCase [
 	^ self subclassResponsibility.
 ]
 
-{ #category : #actions }
+{ #category : #querying }
 SExpression >> containsVariable: aVariable [
 	^ self subclassResponsibility.
 ]
@@ -81,13 +81,7 @@ SExpression >> copy [
 		parent: self         
 ]
 
-{ #category : #'error handling' }
-SExpression >> error: aString [
-	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
-	^ SError signal: aString
-]
-
-{ #category : #comparing }
+{ #category : #actions }
 SExpression >> fix [
 ]
 
@@ -112,25 +106,9 @@ SExpression >> initialize [
 	identifier := self class nextIdentifier.
 ]
 
-{ #category : #mutation }
-SExpression >> insertAsParameter: aExpression using: aTestCase [
-	
-	^ aTestCase insertAsParameter: self copy after: aExpression
-]
-
-{ #category : #mutation }
-SExpression >> insertMethodMessage: expression using: aTestCase [
-	self error: 'cannot be inserted the methodMessage: ', expression printString
-]
-
-{ #category : #mutation }
+{ #category : #actions }
 SExpression >> insertOn: aTestCase [
 	
-]
-
-{ #category : #mutation }
-SExpression >> insertRandomMessage: expression using: aTestCase [
-	self error: 'cannot be inserted the randomMessage: ', expression printString
 ]
 
 { #category : #actions }
@@ -144,18 +122,18 @@ SExpression >> isFactoryMessage [
 	^ false
 ]
 
-{ #category : #accesing }
+{ #category : #testing }
 SExpression >> isMessage [
 	^ false.
 ]
 
-{ #category : #comparing }
+{ #category : #querying }
 SExpression >> isPrimitive: anObject [
 	^ (anObject isKindOf: Number) or: [ (anObject isKindOf: Boolean)
 		or: [ anObject isKindOf: String ]]
 ]
 
-{ #category : #actions }
+{ #category : #querying }
 SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ true
 ]
@@ -175,7 +153,7 @@ SExpression >> parent: anObject [
 	parent := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SExpression >> pickUpReferences: aExpression [
 	^ #()
 ]
@@ -195,21 +173,6 @@ SExpression >> rename: aDictionary [
 	^ self subclassResponsibility.
 ]
 
-{ #category : #mutation }
-SExpression >> repairOn: aTestCase changing: aExpression [
-	
-]
-
-{ #category : #mutation }
-SExpression >> replaceArgBy: expression [
-	self error: 'cannot be inserted: ', expression printString, ' as parameter'
-]
-
-{ #category : #actions }
-SExpression >> replaceExpression: expression by: newExpression [
-	"It replace the references to this expresion to the newExpresion"
-]
-
 { #category : #accessing }
 SExpression >> returnType [
 	^ returnType
@@ -220,7 +183,13 @@ SExpression >> returnType: anObject [
 	returnType := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #'error handling' }
+SExpression >> serror: aString [
+	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
+	^ SError signal: aString
+]
+
+{ #category : #querying }
 SExpression >> variablesWithId [
 	^ #()
 ]

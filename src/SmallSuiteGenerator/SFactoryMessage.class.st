@@ -47,7 +47,7 @@ SFactoryMessage >> changeOn: aTestCase [
 	aTestCase addAlternativeFactoryMessage: self.
 ]
 
-{ #category : #mutation }
+{ #category : #action }
 SFactoryMessage >> insertOn: aTestCase [
 	^ aTestCase
 		addFactoryMessage: self returnType
@@ -59,7 +59,7 @@ SFactoryMessage >> isFactoryMessage [
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 SFactoryMessage >> referenceTo: aClassName [
 	^ receiver referenceTo: aClassName
 ]

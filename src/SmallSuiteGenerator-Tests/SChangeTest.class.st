@@ -44,6 +44,33 @@ SChangeTest >> testArgumentChange [
 ]
 
 { #category : #tests }
+SChangeTest >> testFactoryErrorChange [
+	| testCase newTestCase targetClass index|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo100.
+	testCase targetClassName: targetClass;
+		addFactoryMessage: targetClass;
+		addFactoryMessage: targetClass;
+		addMessage: #return: from: targetClass.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := ''hello''.' .
+								'_var4 := _var2 return: _var3.'}.
+	newTestCase := SSTestCase with: testCase typeInfo.
+	index := 2.
+	1 to: (index-1) do: [:i |
+		|stm|
+		stm := testCase statements at: i.
+		newTestCase addStatement: stm copy.
+		newTestCase assignId.].
+	self should:[newTestCase addAlternativeFactoryMessage: (testCase statements at: index) value.] raise:SError.
+	
+]
+
+{ #category : #tests }
 SChangeTest >> testLiteralChange [
 	| testCase newTestCase targetClass|
 	targetClass := 'SFoo' fullClassNameSymbol.

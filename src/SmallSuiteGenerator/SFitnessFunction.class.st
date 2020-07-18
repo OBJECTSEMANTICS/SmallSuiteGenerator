@@ -7,7 +7,7 @@ SFitnessFunction is an abstract class that represents a fitness abstract functio
 "
 Class {
 	#name : #SFitnessFunction,
-	#superclass : #SObject,
+	#superclass : #SGAObject,
 	#instVars : [
 		'tagetPackagesRegex',
 		'targetClass'

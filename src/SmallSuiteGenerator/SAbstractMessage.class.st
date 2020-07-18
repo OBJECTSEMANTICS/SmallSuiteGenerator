@@ -69,31 +69,34 @@ SAbstractMessage >> args: anObject [
 	args := anObject
 ]
 
-{ #category : #mutation }
-SAbstractMessage >> changeArgsFrom: expression in: aTestCase [
-	args isEmpty
-		ifTrue: [ ^ self error: 'Cannot change args from: ', self selector  ].
-	args do: [ :arg | arg repairOn: aTestCase changing: expression ]
-]
-
 { #category : #actions }
 SAbstractMessage >> changeOn: aTestCase [
 	"nothing to change"
+	|val|
+	val := self random next.
+	val <=0.3 
+		ifTrue:[	
+			aTestCase addAlternativeReceiverFor: self. 
+		] ifFalse:[
+			val <= 0.6 
+				ifTrue:[
+					aTestCase addAlternativeSelectorFor: self. 
+				] ifFalse:[
+					aTestCase addAlternativeArgsFor: self. 
+				]
+			]
+		
+	"
 	#(#addAlternativeReceiverFor: #addAlternativeSelectorFor: #addAlternativeArgsFor:) 
 		safelyPickAny: [ :aSelector | 
 			[ ^ aTestCase
 				perform: aSelector
 				with: self]
-		] ifNone:[self error: 'Cannot change the statement ' , self printString].
+		] ifNone:[self serror: 'Cannot change the statement ' , self printString]."
 	
 ]
 
-{ #category : #mutation }
-SAbstractMessage >> changeReceiverFrom: expression in: aTestCase [
-	receiver repairOn: aTestCase changing: expression
-]
-
-{ #category : #actions }
+{ #category : #querying }
 SAbstractMessage >> containsVariable: aVariable [
 	^ (self receiver containsVariable: aVariable) or:[ self args anySatisfy: [:arg| arg containsVariable: aVariable]].
 ]
@@ -131,14 +134,6 @@ SAbstractMessage >> initialize [
 	args := OrderedCollection new: 2
 ]
 
-{ #category : #mutation }
-SAbstractMessage >> insertRandomMessage: expression using: aTestCase [
-	| anotherExpression |
-	anotherExpression := self copy.
-	anotherExpression mutated: true.
-	^ aTestCase insertExpression: anotherExpression after: expression
-]
-
 { #category : #actions }
 SAbstractMessage >> interpret: aExecutionContext [
   "this method interpret the AST using smalltalk reflection features"
@@ -148,7 +143,7 @@ SAbstractMessage >> interpret: aExecutionContext [
   ^object perform: self selector withArguments: objArgs asArray.
 ]
 
-{ #category : #actions }
+{ #category : #querying }
 SAbstractMessage >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ self variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
 ]
@@ -159,7 +154,7 @@ SAbstractMessage >> negateId [
 	self args do:[ :arg| arg negateId].
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SAbstractMessage >> pickUpReferences: aExpression [
 	^ (receiver pickUpReferences: aExpression)
 		, (args flatCollect: [ :arg | arg pickUpReferences: aExpression ])
@@ -208,33 +203,6 @@ SAbstractMessage >> rename: aDictionary [
 	self args do:[ :arg| arg rename: aDictionary.].
 ]
 
-{ #category : #mutation }
-SAbstractMessage >> repairOn: aTestCase changing: expression [
-	(self random collectAtRandom: #(#changeReceiverFrom:in: #changeSelectorFrom:in: #changeArgsFrom:in:))
-		do: [ :aSelector | 
-			[ ^ self
-				perform: aSelector
-				withArguments: (Array with: expression with: aTestCase) ]
-				on: SError
-				do: [  ] ].
-	self error: 'Cannot change the statement: ' , expression printString
-]
-
-{ #category : #mutation }
-SAbstractMessage >> replaceArgBy: expression [
-	args ifEmpty: [ self error: self printString, ' does not have args to replace.' ].
-	
-	args do: [ :arg | [ ^ arg replaceArgBy: expression ] on: SError do: [  ] ].
-	self error: 'Cannot replace any argument by: ', expression printString
-]
-
-{ #category : #actions }
-SAbstractMessage >> replaceExpression: anExpression by: newExpression [
-	"It replace the references to this expresion to the newExpresion"
-	receiver replaceExpression: anExpression by: newExpression.
-	args do: [ :arg | arg replaceExpression: anExpression by: newExpression ]
-]
-
 { #category : #accessing }
 SAbstractMessage >> selector [
 	^ selector
@@ -245,7 +213,7 @@ SAbstractMessage >> selector: anObject [
 	selector := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SAbstractMessage >> variablesWithId [
 	^ receiver variablesWithId , (args flatCollect: [:arg | arg variablesWithId])
 ]

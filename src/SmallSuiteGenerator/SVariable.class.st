@@ -51,7 +51,7 @@ SVariable >> changeOn: aTestCase [
 	"nothing to change"
 ]
 
-{ #category : #actions }
+{ #category : #querying }
 SVariable >> containsVariable: aVariable [
 	self id ifNil:[ ^ self varName = aVariable varName].
 	^ self id = aVariable id.
@@ -67,7 +67,7 @@ SVariable >> copy [
 	^ copy
 ]
 
-{ #category : #mutation }
+{ #category : #actions }
 SVariable >> fix [
 	self id: (varName allButFirst: 4) asInteger.
 	self varName:  '_var'.
@@ -107,7 +107,7 @@ SVariable >> negateId [
 	
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
 		ifFalse: [ #() ]
@@ -129,7 +129,7 @@ SVariable >> printOn: aStream [
 			]
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 SVariable >> referenceTo: aClassName [
 	^ self returnType = aClassName
 ]
@@ -138,39 +138,6 @@ SVariable >> referenceTo: aClassName [
 SVariable >> rename: aDictionary [
 
 	id ifNotNil:[ id := aDictionary at: id. ].
-]
-
-{ #category : #mutation }
-SVariable >> replaceArgBy: expression [
-	returnType = expression returnType
-		ifFalse: [ ^ self
-				error:
-					'Cannot replace argument of type: ' , returnType , ' by: '
-						, expression returnType ].
-	self replaceBy: expression
-]
-
-{ #category : #accessing }
-SVariable >> replaceBy: otherVariable [
-	" I replace my attributes values with the ones in the otherExpression.
-	  the argument is an object from my same class"
-	self varName: otherVariable varName.
-	self id: otherVariable id.
-	self returnType: otherVariable returnType
-]
-
-{ #category : #actions }
-SVariable >> replaceExpression: anExpression by: newExpression [
-	"If I am referencing to anExprension. I will now reference to the newExpresion"	
-	| reference |
-	self = anExpression
-		ifFalse: [ ^ self ].
-	reference := newExpression reference.
-	self
-		id: reference id;
-		varName: reference varName;
-		returnType: reference returnType;
-		mutated: true
 ]
 
 { #category : #accessing }
@@ -183,7 +150,7 @@ SVariable >> varName: anObject [
 	varName := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SVariable >> variablesWithId [
 	^ id ifNotNil: [ (Array with: self) ] ifNil: [ super variablesWithId ]
 ]

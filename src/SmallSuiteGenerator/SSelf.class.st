@@ -9,7 +9,7 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
-{ #category : #actions }
+{ #category : #querying }
 SSelf >> containsVariable: aVariable [
 	^ false.
 ]

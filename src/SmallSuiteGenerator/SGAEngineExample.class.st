@@ -4,7 +4,7 @@ SGAEngineExample contains some examples to validate correct project functionalit
 Class {
 	#name : #SGAEngineExample,
 	#superclass : #SObject,
-	#category : #'SmallSuiteGenerator-GA'
+	#category : #'SmallSuiteGenerator-Examples'
 }
 
 { #category : #'examples - onClass' }

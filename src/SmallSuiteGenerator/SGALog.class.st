@@ -23,7 +23,7 @@ Class {
 		'summaryTargetClass',
 		'typeInfoGeneration'
 	],
-	#category : #'SmallSuiteGenerator-GA'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #actions }

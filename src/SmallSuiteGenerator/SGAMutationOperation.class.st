@@ -17,12 +17,16 @@ Class {
 
 { #category : #actions }
 SGAMutationOperation >> doMutate: aTestCase [ 
+	|result |
+	result := aTestCase.
 	self next <= mutationRate
-		ifTrue: [ aTestCase removeStatement ].
+		ifTrue: [ result:= aTestCase removeStatement. result run.].
 	self next <= mutationRate
-		ifTrue: [ aTestCase changeStatement ].
+		ifTrue: [  result := aTestCase changeStatement. result run. ].
 	self next <= mutationRate
-		ifTrue: [ aTestCase insertStatement ]
+		ifTrue: [  result := aTestCase insertStatement. result run. ].
+
+	^ result.
 ]
 
 { #category : #initialization }
@@ -35,10 +39,9 @@ SGAMutationOperation >> initialize [
 SGAMutationOperation >> mutate: aTestCase [
 	| newTestCase |
 	"Copy for mutation"
-	newTestCase := aTestCase copy. 
-	[ self doMutate: newTestCase.] 
+	[newTestCase := self doMutate: aTestCase.] 
 		on: SError 
-		do:[newTestCase := aTestCase copy.].
+		do:[ :e| newTestCase := aTestCase copy.].
 	^ newTestCase
 ]
 
