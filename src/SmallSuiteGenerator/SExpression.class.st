@@ -54,6 +54,11 @@ SExpression >> = another [
 	
 ]
 
+{ #category : #visitor }
+SExpression >> accept: aSSVisitor [
+	^ self subclassResponsibility.
+]
+
 { #category : #accessing }
 SExpression >> allParents [
 	"I return my self with all my parents"

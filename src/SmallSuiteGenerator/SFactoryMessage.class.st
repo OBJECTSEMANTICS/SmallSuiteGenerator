@@ -41,6 +41,11 @@ SFactoryMessage class >> default: aClassName [
 		yourself
 ]
 
+{ #category : #visitor }
+SFactoryMessage >> accept: aSSVisitor [
+	aSSVisitor visitFactoryMessage: self.
+]
+
 { #category : #action }
 SFactoryMessage >> changeOn: aTestCase [
 	"nothing to change"

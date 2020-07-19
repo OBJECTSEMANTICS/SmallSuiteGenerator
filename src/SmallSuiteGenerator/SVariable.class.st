@@ -46,6 +46,11 @@ SVariable >> = other [
 	^ self containsVariable: other.
 ]
 
+{ #category : #visitor }
+SVariable >> accept: aSSVisitor [
+	aSSVisitor visitVariable: self.
+]
+
 { #category : #actions }
 SVariable >> changeOn: aTestCase [
 	"nothing to change"
@@ -112,21 +117,6 @@ SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
 		ifFalse: [ #() ]
 		ifTrue: [ (Array with: self) ]
-]
-
-{ #category : #printing }
-SVariable >> printOn: aStream [
-	SPlatform asDict 
-		ifFalse: [
-			aStream nextPutAll: varName.
-			id ifNotNil: [ aStream nextPutAll: id printString ]]
-		ifTrue: [
-			id ifNil: [ aStream nextPutAll: varName. ]
-			ifNotNil: [ 
-				aStream nextPutAll: '( var at: '.
-				aStream nextPutAll: (id+1) printString.
-				aStream nextPutAll: ' )' ].
-			]
 ]
 
 { #category : #querying }

@@ -52,3 +52,8 @@ SStringAssertion class >> stringAssertionsOf: assoc [
 						show: aValue class name , ' cant answer printString without error' ] ]
 		ifNone: [ nil ]
 ]
+
+{ #category : #visitor }
+SStringAssertion >> accept: aSSVisitor [
+	aSSVisitor visitStringAssertionMessage: self.
+]

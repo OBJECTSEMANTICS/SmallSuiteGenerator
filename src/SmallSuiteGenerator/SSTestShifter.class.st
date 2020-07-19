@@ -710,63 +710,6 @@ SSTestShifter >> objectVariables [
 		thenCollect:[:stm| stm variable].
 ]
 
-{ #category : #parsing }
-SSTestShifter >> parseTree [
-	| stmList |
-	stmList := self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]).
-	SPlatform asDict 
-		ifTrue: [ ^ self parseTreeAsDictWith: stmList ]
-		ifFalse: [ ^ self parseTreeWith: stmList]
-]
-
-{ #category : #parsing }
-SSTestShifter >> parseTreeAsDictWith: statementCollection [
-	| node temporaries rbParserClass |
-	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
-	rbParserClass := SPlatform rbParserClass.
-	node := rbParserClass parseExpression: '[]'.
-	temporaries := Array with: (self aVariableNodeClass named: 'var').
-	node body temporaries: temporaries.
-	node body addNode: (rbParserClass parseExpression: 'var := Dictionary new.').
-	statementCollection
-		do: [ :stm | 
-			| aNode |
-			[ aNode := rbParserClass parseExpression: (self getStringOf: stm).
-			node body addNode: aNode ]
-				on: Error
-				do: [  ] ].
-	^ node
-]
-
-{ #category : #parsing }
-SSTestShifter >> parseTreeWith: statementCollection [
-	| node temporaries rbParserClass |
-	statementCollection ifEmpty: [ self error: 'testCase does not have statements' ].
-	rbParserClass := SPlatform rbParserClass.
-	node := rbParserClass parseExpression: '[]'.
-	temporaries := (self allVarNames
-		collect: [ :varName | rbParserClass parseExpression: varName ]) 
-		select: [:e | e isKindOf: self aVariableNodeClass ].
-	node body temporaries: temporaries.
-	statementCollection
-		do: [ :stm | 
-			| aNode |
-			[ aNode := rbParserClass parseExpression: (self getStringOf: stm).
-			node body addNode: aNode ]
-				on: Error
-				do: [  ] ].
-	^ node
-]
-
-{ #category : #parsing }
-SSTestShifter >> parseTreeWithAssertions [
-	| stmList |
-	stmList := self statements, (lastMessage ifNil: [#()] ifNotNil: [Array with: lastMessage]), self assertions.
-	SPlatform asDict 
-		ifTrue: [ ^ self parseTreeAsDictWith: stmList ]
-		ifFalse: [ ^ self parseTreeWith: stmList]
-]
-
 { #category : #querying }
 SSTestShifter >> pickAccessorsOf: aType [
 	^ typeInfo accessMessagesFrom: aType

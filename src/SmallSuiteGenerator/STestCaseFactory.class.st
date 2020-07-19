@@ -162,14 +162,14 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 	self generatedClass
 		compile:
 			(aSelector, String lf, aTestCase printDescriptiveComment,
-			String lf, aTestCase parseTreeWithAssertions body formattedCode) ]
+			String lf, aTestCase printStringWithAssertions) ]
 		on: Error
 		do: [ | carReturn |
 			carReturn := String with: Character cr.
 			self generatedClass
 				compile:
 					aSelector , carReturn , 'self should:'
-						, aTestCase parseTree formattedCode , carReturn
+						, aTestCase printStringWithAssertions , carReturn
 						, ' raise:Error.' , carReturn ]
 ]
 

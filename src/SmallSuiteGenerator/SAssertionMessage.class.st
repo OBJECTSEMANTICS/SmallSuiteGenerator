@@ -16,15 +16,14 @@ SAssertionMessage class >> for: aExecutionContext [
 	^ self subclassResponsibility.
 ]
 
+{ #category : #visitor }
+SAssertionMessage >> accept: aSSVisitor [
+	aSSVisitor visitAssertionMessage: self.
+]
+
 { #category : #initialization }
 SAssertionMessage >> initialize [
 	super initialize.
 	receiver := SSelf new.
 	 
-]
-
-{ #category : #printing }
-SAssertionMessage >> printOn: stream [
-	super printOn: stream.
-	stream nextPut: $.
 ]

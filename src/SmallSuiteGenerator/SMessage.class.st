@@ -31,6 +31,11 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		yourself
 ]
 
+{ #category : #visitor }
+SMessage >> accept: aSSVisitor [
+	aSSVisitor visitMessage: self.
+]
+
 { #category : #action }
 SMessage >> insertOn: aTestCase [
 	^ aTestCase addMessage: self selector from: self receiver returnType.

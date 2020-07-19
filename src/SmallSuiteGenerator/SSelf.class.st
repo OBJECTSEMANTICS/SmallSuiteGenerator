@@ -9,6 +9,11 @@ Class {
 	#category : #'SmallSuiteGenerator-AST'
 }
 
+{ #category : #visitor }
+SSelf >> accept: aSSVisitor [
+	aSSVisitor visitSelf: self.
+]
+
 { #category : #querying }
 SSelf >> containsVariable: aVariable [
 	^ false.

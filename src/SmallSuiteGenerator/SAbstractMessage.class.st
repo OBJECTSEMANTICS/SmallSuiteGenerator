@@ -59,6 +59,11 @@ SAbstractMessage >> = other [
 				and: [ (selector = other selector) ] ] ]
 ]
 
+{ #category : #visitor }
+SAbstractMessage >> accept: aSSVisitor [
+	aSSVisitor visitAbstractMessage: self.
+]
+
 { #category : #accessing }
 SAbstractMessage >> args [
 	^ args
@@ -158,33 +163,6 @@ SAbstractMessage >> negateId [
 SAbstractMessage >> pickUpReferences: aExpression [
 	^ (receiver pickUpReferences: aExpression)
 		, (args flatCollect: [ :arg | arg pickUpReferences: aExpression ])
-]
-
-{ #category : #printing }
-SAbstractMessage >> printOn: aStream [
-	receiver printOn: aStream.
-	aStream	nextPut: Character space.
-	self printSelectors: aStream
-]
-
-{ #category : #printing }
-SAbstractMessage >> printSelectors: aStream [
-	args
-		ifEmpty: [ aStream nextPutAll: self selector ]
-		ifNotEmpty: [ | withColon index stop |
-			withColon := self selector includes: $:.
-			index := 0.
-			stop := self args size.
-			(self selector substrings: ':')
-				with: self args
-				do: [ :selectorPart :arg | 
-					index := index + 1.
-					aStream nextPutAll: selectorPart.
-					withColon
-						ifTrue: [ aStream nextPutAll: ': ' ].
-					aStream nextPutAll: arg printString.
-					(index < stop and: [ withColon ])
-						ifTrue: [ aStream nextPut: Character space ] ] ]
 ]
 
 { #category : #accessing }

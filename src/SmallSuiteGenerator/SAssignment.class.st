@@ -40,6 +40,11 @@ SAssignment >> = other [
 			and: [ (value = other value) ] ]
 ]
 
+{ #category : #visitor }
+SAssignment >> accept: aSSVisitor [
+	aSSVisitor visitAssignment: self.
+]
+
 { #category : #actions }
 SAssignment >> changeOn: aTestCase [
 	^ self value changeOn: aTestCase.
@@ -105,22 +110,6 @@ SAssignment >> negateId [
 { #category : #querying }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
-]
-
-{ #category : #printing }
-SAssignment >> printOn: aStream [
-	SPlatform asDict 
-		ifFalse: [
-			variable printOn: aStream.
-			aStream nextPutAll: ' := '.
-			value printOn: aStream.
-			aStream nextPut:$.]
-		ifTrue: [
-			aStream nextPutAll: 'var at: '.
-			aStream nextPutAll: (variable id + 1) printString.
-			aStream nextPutAll: ' put: ('.
-			value printOn: aStream.
-			aStream nextPutAll:' ).']
 ]
 
 { #category : #querying }

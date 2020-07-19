@@ -6,7 +6,6 @@ Class {
 	#superclass : #SSTestShifter,
 	#instVars : [
 		'fitness',
-		'previousOpenWindows',
 		'idPopulation',
 		'summaryExecutionMethods',
 		'generationNumber',
@@ -15,10 +14,18 @@ Class {
 		'fitnessByClass',
 		'selectionStrategy',
 		'parents',
-		'children'
+		'children',
+		'setUpAction',
+		'tearDownAction',
+		'properties'
 	],
 	#category : #'SmallSuiteGenerator-AST'
 }
+
+{ #category : #'instance creation' }
+SSTestCase class >> defaultPrinterClass [
+	^ SSStandardPrinter
+]
 
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
@@ -35,6 +42,11 @@ SSTestCase >> = another [
 		and: [ fitness = another fitness 
 			and: [ parents = another parents 
 				and: [ generationNumber = another generationNumber and: [ idPopulation = another idPopulation  ] ] ] ] ]
+]
+
+{ #category : #visitor }
+SSTestCase >> accept: aVisitor [
+	aVisitor visitStatements: self statements.
 ]
 
 { #category : #accessing }
@@ -177,6 +189,9 @@ SSTestCase >> initialize [
 	fitness := Dictionary new.
 	fitnessByClass := Dictionary new.
 	selectionStrategy := SGARouletteSelection new.
+	setUpAction := [  :t :p | ].
+	tearDownAction := [  :t :p | ].
+	properties := Dictionary new.
 ]
 
 { #category : #util }
@@ -202,9 +217,20 @@ SSTestCase >> parents [
 
 { #category : #printing }
 SSTestCase >> printOn: aStream [
-	self statements do: [ :stm | 
-			stm printOn: aStream.
-			aStream nextPut: Character cr ]
+	self accept: (self printerClass on: aStream).
+]
+
+{ #category : #printing }
+SSTestCase >> printString [
+	^ String streamContents: [ :stream | self printOn: stream].
+]
+
+{ #category : #printing }
+SSTestCase >> printStringWithAssertions [
+	^ String streamContents: [ :stream | 
+		(self printerClass on: stream) 
+			visitStatements: self statements, self assertions.
+		].
 ]
 
 { #category : #printing }
@@ -243,6 +269,16 @@ SSTestCase >> printSummaryFitnessByClass [
 				nextPutAll: (String with: Character cr) ]
 ]
 
+{ #category : #printing }
+SSTestCase >> printerClass [
+	^ self class defaultPrinterClass.
+]
+
+{ #category : #accessing }
+SSTestCase >> properties [
+	^ self.
+]
+
 { #category : #accessing }
 SSTestCase >> removeChild: testCase [
 	| index |
@@ -276,7 +312,7 @@ SSTestCase >> setFitnessByClass: aDictionary [
 
 { #category : #running }
 SSTestCase >> setUp [
-	previousOpenWindows := SystemWindow allInstances.
+	setUpAction value: self value: self properties.
 ]
 
 { #category : #accessing }
@@ -301,9 +337,7 @@ SSTestCase >> summaryTargetClass: anObject [
 
 { #category : #running }
 SSTestCase >> tearDown [ 
-	|windowsToDelete|
-	windowsToDelete := SystemWindow allInstances asOrderedCollection removeAll: previousOpenWindows.
-	windowsToDelete do:[:w| w close].
+	tearDownAction value: self value: self properties.
 ]
 
 { #category : #util }

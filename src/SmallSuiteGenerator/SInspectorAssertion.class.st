@@ -50,3 +50,8 @@ SInspectorAssertion class >> inspectorAssertionOf: assoc and: compiledMethod [
 						with: (SLiteral new value: result));
 				yourself ]
 ]
+
+{ #category : #visitor }
+SInspectorAssertion >> accept: aSSVisitor [
+	aSSVisitor visitInspectorAssertionMessage: self.
+]

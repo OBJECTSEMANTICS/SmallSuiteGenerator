@@ -23,6 +23,11 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 		yourself 
 ]
 
+{ #category : #visitor }
+SFieldAccessMessage >> accept: aSSVisitor [
+	aSSVisitor visitFieldAccessMessage: self.
+]
+
 { #category : #actions }
 SFieldAccessMessage >> changeOn: aTestCase [
 	aTestCase addAlternativeFieldAccessMessage: self.

@@ -36,6 +36,11 @@ SLiteral >> = other [
 				ifFalse: [ value className = other value className ]]) ]
 ]
 
+{ #category : #visitor }
+SLiteral >> accept: aSSVisitor [
+	aSSVisitor visitLiteral: self.
+]
+
 { #category : #actions }
 SLiteral >> changeOn: aTestCase [
 	|copy|
@@ -75,15 +80,6 @@ SLiteral >> interpret: aExecutionContext [
 { #category : #actions }
 SLiteral >> negateId [
 	"nothing to negate"
-]
-
-{ #category : #printing }
-SLiteral >> printOn: aStream [
-	aStream
-		nextPutAll:
-			((value isNumber or: [ value isBlock ])
-				ifTrue: [ value printString ]
-				ifFalse: [ value storeString ])
 ]
 
 { #category : #querying }

@@ -30,3 +30,8 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 						with: (SLiteral new value: assoc value));
 				yourself ]
 ]
+
+{ #category : #visitor }
+SPrimitiveAssertion >> accept: aSSVisitor [
+	aSSVisitor visitPrimitiveAssertionMessage: self.
+]
