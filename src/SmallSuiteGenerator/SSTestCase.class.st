@@ -9,7 +9,6 @@ Class {
 		'idPopulation',
 		'summaryExecutionMethods',
 		'generationNumber',
-		'hasErrors',
 		'summaryTargetClass',
 		'fitnessByClass',
 		'selectionStrategy',
@@ -150,16 +149,6 @@ SSTestCase >> generationNumber [
 { #category : #accessing }
 SSTestCase >> generationNumber: anObject [
 	generationNumber := anObject
-]
-
-{ #category : #actions }
-SSTestCase >> hasErrors [
-	^ hasErrors
-]
-
-{ #category : #actions }
-SSTestCase >> hasErrors: aBoolean [
-	hasErrors := aBoolean 
 ]
 
 { #category : #comparing }

@@ -25,7 +25,8 @@ Class {
 		'nextId',
 		'targetClassesName',
 		'maxNumberOfStatements',
-		'lastMessage'
+		'lastMessage',
+		'hasErrors'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -163,7 +164,6 @@ SSTestShifter >> addFieldAccessMessage: selector from: returnType [
 SSTestShifter >> addFieldAccessMessage: method withReceiver: receiver [
 	|result|
 	result := self addAssignment: (SFieldAccessMessage newFromReceiver: receiver copy andMethod: method).
-	self typeCheck.
 	^  result
 	
 ]
@@ -203,15 +203,15 @@ SSTestShifter >> addMessage: selector from: receiverType [
 SSTestShifter >> addMessage: method withReceiver: receiver [
 	|result|
 	result := self addAssignment: (self newMessage: method on: receiver).
-	self typeCheck.
 	^ result
 ]
 
 { #category : #'building-actions' }
 SSTestShifter >> addStatement: anExpression [
-	self canAddStatement ifTrue: [ 
-		statements add: anExpression.
-	]
+	self canAddStatement ifFalse:[^self]. 
+	statements add: anExpression.
+	self run.
+	
 ]
 
 { #category : #'building-actions' }
@@ -328,7 +328,6 @@ SSTestShifter >> changeStatementAt: index [
 		copy addStatement: stm copy.
 		copy assignId.].
 	copy repairIds.
-	copy typeCheck.
 	^ copy.
 	
 ]
@@ -385,8 +384,6 @@ SSTestShifter >> copyWithANewMethodCallToAnArgumentOfTheTargetClass [
 		copy addStatement: statement copy.
 		copy assignId.].
 	"no we got un ordered ids... because we put bigger ides in the middel to avoid collision, so we will fix the ides"
-	copy repairIds.
-		copy typeCheck.
 	^ copy.
 	
 ]
@@ -420,9 +417,6 @@ SSTestShifter >> copyWithANewMethodCallToAnyValue [
 		statement := self statements at: i.
 		copy addStatement: statement copy.
 		copy assignId.].
-	"no we got un ordered ids... because we put bigger ides in the middel to avoid collision, so we will fix the ides"
-	copy repairIds.
-		copy typeCheck.
 	^ copy.
 	
 ]
@@ -455,9 +449,6 @@ SSTestShifter >> copyWithANewMethodCallToTargetClass [
 		statement := self statements at: i.
 		copy addStatement: statement copy.
 		copy assignId.].
-	"no we got un ordered ids... because we put bigger ides in the middel to avoid collision, so we will fix the ides"
-	copy repairIds.
-		copy typeCheck.
 	^ copy.
 ]
 
@@ -537,6 +528,16 @@ SSTestShifter >> generateStatements: anInteger [
 SSTestShifter >> getStringOf: stm [
 	stm isString ifTrue: [ ^ stm ].
 	^ stm printString 
+]
+
+{ #category : #actions }
+SSTestShifter >> hasErrors [
+	^ hasErrors
+]
+
+{ #category : #actions }
+SSTestShifter >> hasErrors: aBoolean [
+	hasErrors := aBoolean 
 ]
 
 { #category : #initalize }
@@ -803,9 +804,6 @@ SSTestShifter >> removeStatementAt: index [
 			copy addStatement: stm copy.		
 		]
 	].
-	"ahora borramos los statements que dependen de el statement borrado"
-	copy repairIds.
-	copy typeCheck.
 	^ copy.
 	
 	
@@ -822,19 +820,27 @@ SSTestShifter >> repairIds [
 { #category : #action }
 SSTestShifter >> run [
   " we use a meta interpreter to use smalltalk and interpret our AST"
-  self interpreterClass new 
-			visitStatements: self statements, self assertions;
-			clean;
-			context.
+ 	|interpreter|
+	interpreter := self interpreterClass new.
+	
+   [ interpreter visitStatements: self statements, self assertions;
+						clean.
+		hasErrors := false.
+		interpreter context.
+  	] on:Error do:[ hasErrors:= true. Dictionary new].
 ]
 
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
   " we use a meta interpreter to use smalltalk and interpret our AST"
-  ^ self interpreterClass new 
-			visitStatements: self statements;
-			clean;
-			context.
+	|interpreter|
+	interpreter := self interpreterClass new.
+	
+   [ interpreter visitStatements: self statements;
+						clean.
+		hasErrors := false.
+		interpreter context.
+  	] on:Error do:[ hasErrors:= true. Dictionary new].
 ]
 
 { #category : #accessing }
@@ -900,20 +906,6 @@ SSTestShifter >> targetClassName: aSymbol [
 { #category : #accessing }
 SSTestShifter >> targetClassesName [
 	^ targetClassesName
-]
-
-{ #category : #action }
-SSTestShifter >> typeCheck [
-  | context |
-  context := self analyze.
-  self statements do: [:assig |  | realValue |
-realValue := context at: assig variable fullName.    
-assig variable returnType = realValue class name
-ifFalse: [ assig variable returnType: realValue class name ].
-assig value returnType = realValue class name
-ifFalse: [ assig value returnType: realValue class name ].
-
-].
 ]
 
 { #category : #accessing }

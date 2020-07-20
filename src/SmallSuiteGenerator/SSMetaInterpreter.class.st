@@ -2,10 +2,16 @@ Class {
 	#name : #SSMetaInterpreter,
 	#superclass : #SSVisitor,
 	#instVars : [
-		'context'
+		'context',
+		'type'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #initialization }
+SSMetaInterpreter >> accept: aSSVisitor [
+	aSSVisitor visitVariable: self.
+]
 
 { #category : #accessing }
 SSMetaInterpreter >> clean [
@@ -26,21 +32,30 @@ SSMetaInterpreter >> context: anObject [
 SSMetaInterpreter >> initialize [
 	super initialize.
 	context := Dictionary new.
+	type := Dictionary new.
 	context at:'self' put: TestCase new.
 ]
 
 { #category : #initialization }
 SSMetaInterpreter >> visitAbstractMessage: aMessage [
-  | object objArgs |
+  | object objArgs result|
   object := aMessage receiver accept: self.
   objArgs := aMessage args collect: [:arg |  arg accept: self ].
-  ^ object perform: aMessage selector withArguments: objArgs asArray.
+  result := object perform: aMessage selector withArguments: objArgs asArray.
+  aMessage returnType: result class name.
+  ^ result.
 ]
 
 { #category : #initialization }
 SSMetaInterpreter >> visitAssignment: anAssignmnet [
-	context at: anAssignmnet variable fullName put: (anAssignmnet value accept: self).
-	
+	|result returnType|
+	result := anAssignmnet value accept: self.
+	returnType := result class name.
+	context at: anAssignmnet variable fullName put: result.
+	anAssignmnet variable returnType: returnType.
+	anAssignmnet returnType: returnType.
+	type at: anAssignmnet variable id put: returnType.
+	^ result.
 ]
 
 { #category : #initialization }
@@ -55,6 +70,7 @@ SSMetaInterpreter >> visitSelf: aSelf [
 
 { #category : #initialization }
 SSMetaInterpreter >> visitVariable: aVariable [
+	aVariable id ifNotNil:[ aVariable returnType: (type at: aVariable id)].
 	^ aVariable id 
 		ifNil:[Smalltalk at: aVariable varName.]
 		ifNotNil:[ context at: aVariable fullName].

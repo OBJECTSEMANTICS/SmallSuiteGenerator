@@ -20,12 +20,13 @@ SGAMutationOperation >> doMutate: aTestCase [
 	|result |
 	result := aTestCase.
 	self next <= mutationRate
-		ifTrue: [ result:= aTestCase removeStatement. result run.].
+		ifTrue: [ result:= aTestCase removeStatement.].
 	self next <= mutationRate
-		ifTrue: [  result := aTestCase changeStatement. result run. ].
+		ifTrue: [  result := aTestCase changeStatement.].
 	self next <= mutationRate
-		ifTrue: [  result := aTestCase insertStatement. result run. ].
-
+		ifTrue: [  result := aTestCase insertStatement.].
+	result repairIds.
+	result run.
 	^ result.
 ]
 

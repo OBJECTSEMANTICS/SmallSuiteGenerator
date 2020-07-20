@@ -158,7 +158,8 @@ STestCaseFactory >> engineDefault [
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
-	[ aTestCase generateAssertions.
+	[
+	aTestCase generateAssertions.
 	self generatedClass
 		compile:
 			(aSelector, String lf, aTestCase printDescriptiveComment,
@@ -168,9 +169,9 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 			carReturn := String with: Character cr.
 			self generatedClass
 				compile:
-					aSelector , carReturn , 'self should:'
+					aSelector , carReturn , 'self should:['
 						, aTestCase printStringWithAssertions , carReturn
-						, ' raise:Error.' , carReturn ]
+						, '] raise:Error.' , carReturn ]
 ]
 
 { #category : #actions }
