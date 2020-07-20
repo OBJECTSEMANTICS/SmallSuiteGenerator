@@ -26,19 +26,20 @@ SInsertTest >> testCopyWithANewMethodCallToAnArgumentOfTheTargetClass [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{  '_var0 := ', targetClass asString,' new.' .
-				'_var1 := ' , studentClass asString, ' new.' .
-				'_var2 := ' , studentClass asString, ' new.' .
-				'_var3 := _var0 return: _var1.'}.
+			{  '_var0 := ', targetClass asString,' new' .
+				'_var1 := ' , studentClass asString, ' new' .
+				'_var2 := ' , studentClass asString, ' new' .
+				'_var3 := _var0 return: _var1 '}.
 	newTestCase := testCase copyWithANewMethodCallToAnArgumentOfTheTargetClass.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements:
-			{  '_var0 := ', targetClass asString,' new.' .
-				'_var1 := ' , studentClass asString, ' new.' .
-				'_var2 := ' , studentClass asString, ' new.' .
-				'_var3 := _var1 initialize.' .
-				'_var4 := _var0 return: _var1.'}.
+			{  '_var0 := ', targetClass asString,' new' .
+				'_var1 := ' , studentClass asString, ' new' .
+				'_var2 := ' , studentClass asString, ' new' .
+				'_var3 := _var1 initialize' .
+				'_var4 := _var0 return: _var1 '}.
 ]
 
 { #category : #'mutation-insert' }
@@ -57,19 +58,20 @@ SInsertTest >> testCopyWithANewMethodCallToAnyValue [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{  '_var0 := ', targetClass asString,' new.' .
-				'_var1 := ' , studentClass asString, ' new.' .
-				'_var2 := ' , studentClass asString, ' new.' .
-				'_var3 := _var0 return: _var1.'}.
+			{  '_var0 := ', targetClass asString,' new' .
+				'_var1 := ' , studentClass asString, ' new' .
+				'_var2 := ' , studentClass asString, ' new' .
+				'_var3 := _var0 return: _var1 '}.
 	newTestCase := testCase copyWithANewMethodCallToAnyValue.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements:
-			{  '_var0 := ', targetClass asString,' new.' .
-				'_var1 := ' , studentClass asString, ' new.' .
-				'_var2 := ' , studentClass asString, ' new.' .
-				'_var3 := _var2 initialize.' .
-				'_var4 := _var0 return: _var1.'}.
+			{  '_var0 := ', targetClass asString,' new' .
+				'_var1 := ' , studentClass asString, ' new' .
+				'_var2 := ' , studentClass asString, ' new' .
+				'_var3 := _var2 initialize' .
+				'_var4 := _var0 return: _var1 '}.
 ]
 
 { #category : #'mutation-insert' }
@@ -86,16 +88,16 @@ SInsertTest >> testCopyWithANewMethodCallToTargetClass [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			{  '_var0 := ', targetClass asString,' new.' .
-				'_var1 := ' , studentClass asString, ' new.' .
-				'_var2 := _var0 return: _var1.'}.
+			{  '_var0 := ', targetClass asString,' new' .
+				'_var1 := ' , studentClass asString, ' new' .
+				'_var2 := _var0 return: _var1 '}.
 	newTestCase := testCase copyWithANewMethodCallToTargetClass.
-	
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements:
-			{  '_var0 := ', targetClass asString,' new.' .
-				'_var1 := ' , studentClass asString, ' new.' .
-				'_var2 := _var0 initialize.' .
-				'_var3 := _var0 return: _var1.'}.
+			{  '_var0 := ', targetClass asString,' new' .
+				'_var1 := ' , studentClass asString, ' new' .
+				'_var2 := _var0 initialize' .
+				'_var3 := _var0 return: _var1 '}.
 ]

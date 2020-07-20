@@ -25,7 +25,7 @@ SUtilityTypeInfo >> testSuiteSSTeacher [
 			(Array
 				with: self typeInfoSSTeacher1
 				with: self typeInfoSSTeacher2
-				with: self typeInfoSSTeacher3) withTargetClassName: (self fullSymbolOf: #SSTeacher)
+				with: self typeInfoSSTeacher3) withTargetClassName: #SSTeacher fullClassNameSymbol
 ]
 
 { #category : #tests }
@@ -36,197 +36,202 @@ SUtilityTypeInfo >> testSuiteSStack [
 				with: self typeInfoSStack1
 				with: self typeInfoSStack2
 				with: self typeInfoSStack3
-				with: self typeInfoSStack4) withTargetClassName: (self fullSymbolOf: #SStack)
+				with: self typeInfoSStack4) withTargetClassName: #SStack fullClassNameSymbol 
 ]
 
 { #category : #tests }
 SUtilityTypeInfo >> testSuiteSStudent [
-	^ self testSuiteOf: self typeInfosSStudent withTargetClassName: (self fullSymbolOf: #SStudent)
+	^ self testSuiteOf: self typeInfosSStudent withTargetClassName: #SStudent fullClassNameSymbol
 ]
 
 { #category : #tests }
 SUtilityTypeInfo >> testSuiteSStudentManual [
+	| studentSymbol intSymbol stringSymbol |
+	studentSymbol := #SStudent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
 	^ OrderedCollection new
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
-				targetClassName: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
-				addLiteral: (self fullSymbolOf: #ByteString);
-				addFieldAccessMessage: #idStudent from: (self fullSymbolOf: #SStudent);
-				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
-				addFieldAccessMessage: #scoreStudent from: (self fullSymbolOf: #SStudent);
+				targetClassName: studentSymbol;
+				addFactoryMessage: studentSymbol usingSelector: #new;
+				addLiteral: stringSymbol;
+				addFieldAccessMessage: #idStudent from: studentSymbol;
+				addMessage: #scoreStudent: from: studentSymbol;
+				addFactoryMessage: studentSymbol usingSelector: #new;
+				addFieldAccessMessage: #scoreStudent from: studentSymbol;
 				yourself);
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
-				targetClassName: (self fullSymbolOf: #SStudent);
-				addLiteral: (self fullSymbolOf: #SmallInteger);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
-				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
-				addFieldAccessMessage: #idStudent from: (self fullSymbolOf: #SStudent);
+				targetClassName: studentSymbol;
+				addLiteral: intSymbol;
+				addFactoryMessage: studentSymbol usingSelector: #new;
+				addMessage: #scoreStudent: from: studentSymbol;
+				addFactoryMessage: studentSymbol usingSelector: #new;
+				addFieldAccessMessage: #idStudent from: studentSymbol;
 				yourself);
 		add:
 			((SSTestCase with: self typeInfosSStudent first)
-				targetClassName: (self fullSymbolOf: #SStudent);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
-				addLiteral: (self fullSymbolOf: #SmallInteger);
-				addMessage: #scoreStudent: from: (self fullSymbolOf: #SStudent);
-				addLiteral: (self fullSymbolOf: #SmallInteger);
-				addFactoryMessage: (self fullSymbolOf: #SStudent) usingSelector: #new;
+				targetClassName: studentSymbol;
+				addFactoryMessage: studentSymbol usingSelector: #new;
+				addLiteral: intSymbol;
+				addMessage: #scoreStudent: from: studentSymbol;
+				addLiteral: intSymbol;
+				addFactoryMessage: studentSymbol usingSelector: #new;
 				yourself);
 		yourself
 ]
 
 { #category : #examples }
-SUtilityTypeInfo >> typeInfoArrayedCollection [
-	^ STypeInfo new
-		type:
-			(self fullSymbolOf: #ArrayedCollection)
-				->
-					(Array
-						with:
-							(Array
-								with: #add -> #(#AthensCairoCanvas #nil #() false)
-								with: #size -> #(#AthensCairoCanvas #nil #() false))
-						with: #());
-		scalar: (self fullSymbolOf: #ByteString) with: #('hello')
-]
-
-{ #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage1 [
 	"the first typeInfo is about a class has as argument other class from other package"
+	| eventSymbol confSymbol falseSymbol studentSymbol intSymbol |
+	eventSymbol := #SEvent fullClassNameSymbol.
+	confSymbol := #SConference fullClassNameSymbol.
+	falseSymbol := #False fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SEvent)
+			eventSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #canRegister: -> (Array 
-									with: (self fullSymbolOf: #SConference) 
-									with: (self fullSymbolOf: #False) 
-									with: (Array with: (self fullSymbolOf: #SStudent))
+									with: confSymbol 
+									with: falseSymbol  
+									with: (Array with: studentSymbol)
 									with: false)
 								with: #price -> (Array 
-									with: (self fullSymbolOf: #SConference) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: confSymbol 
+									with: intSymbol 
 									with: #()
 									with: false))
 						with: #());
 		type:
-			(self fullSymbolOf: #SConference)
+			confSymbol 
 				->
 					(Array
 						with:
 							(Array
 								with: #initialize -> (Array 
-									with: (self fullSymbolOf: #SConference) 
-									with: (self fullSymbolOf: #SConference) 
+									with: confSymbol  
+									with: confSymbol
 									with: #()
 									with: false)
 								with: #offerPrice -> (Array 
-									with: (self fullSymbolOf: #SConference) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: confSymbol
+									with: intSymbol
 									with: #()
 									with: true)
 								with: #offerPrice: -> (Array 
-									with: (self fullSymbolOf: #SConference) 
-									with: (self fullSymbolOf: #SConference) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: confSymbol
+									with: confSymbol
+									with: (Array with: intSymbol)
 									with: false)
 								with: #discount -> (Array 
-									with: (self fullSymbolOf: #SConference) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: confSymbol
+									with: intSymbol
 									with: #()
 									with: true))
 						with: #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(95 100);
-		scalar: (self fullSymbolOf: #False) with: #(false);
-		scalar: (self fullSymbolOf: #SStudent) with: (Array with: (SStudent new name: 'Mary'))
+		scalar: intSymbol with: #(95 100);
+		scalar: falseSymbol with: #(false);
+		scalar: studentSymbol with: (Array with: (SStudent new name: 'Mary'))
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage2 [
 	"the first typeInfo is about a class has as argument other class from other package"
-
+	| eventSymbol confSymbol intSymbol |
+	eventSymbol := #SEvent fullClassNameSymbol.
+	confSymbol := #SConference fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SEvent)
+			eventSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #price: -> (Array with: (self fullSymbolOf:#SConference) 
-															with: (self fullSymbolOf:#SConference)
-															with: (Array with: (self fullSymbolOf:#SmallInteger))
+								with: #price: -> (Array with: confSymbol
+															with: confSymbol
+															with: (Array with: intSymbol)
 															with: false))
 						with:
 							(Array
-								with: #price: -> (Array with: (self fullSymbolOf:#SConference)
-															with: (self fullSymbolOf:#SConference)
-															with: (Array with: (self fullSymbolOf:#SmallInteger))
+								with: #price: -> (Array with: confSymbol
+															with: confSymbol
+															with: (Array with: intSymbol)
 															with: false)));
 		type:
-			(self fullSymbolOf: #SConference)
+			confSymbol 
 				->
 					(Array
-						with: (Array with: #initialize -> (Array with: (self fullSymbolOf:#SConference)
-															with: (self fullSymbolOf:#SConference)
+						with: (Array with: #initialize -> (Array with: confSymbol
+															with: confSymbol
 															with: #()
 															with: false))
 						with: #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(95)
+		scalar: intSymbol with: #(95)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage3 [
 	"the first typeInfo is about a class has as argument other class from other package"
-
 	"review and modify"
+	| teacherSymbol confSymbol falseSymbol studentSymbol intSymbol stringSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	confSymbol := #SConference fullClassNameSymbol.
+	falseSymbol := #False fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
 
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(OrderedCollection new
-								add: #name: -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf: #SSTeacher)
-														with: (Array with: (self fullSymbolOf: #ByteString))
+								add: #name: -> (Array with: teacherSymbol
+														with: teacherSymbol
+														with: (Array with: stringSymbol)
 														with: false);
-								add: #id: -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf: #SSTeacher)
-														with: (Array with: (self fullSymbolOf: #SmallInteger))
+								add: #id: -> (Array with: teacherSymbol
+														with: teacherSymbol
+														with: (Array with: intSymbol)
 														with: false);
-								add: #nickname: -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf:  #SSTeacher)
-														with: (Array with: (self fullSymbolOf: #ByteString))
+								add: #nickname: -> (Array with: teacherSymbol
+														with: teacherSymbol
+														with: (Array with: stringSymbol)
 														with: false);
-								add: #initialize -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf: #SSTeacher)
+								add: #initialize -> (Array with: teacherSymbol
+														with: teacherSymbol
 														with: #()
 														with: false);
-								add: #nickname -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf: #ByteString)
+								add: #nickname -> (Array with: teacherSymbol
+														with: stringSymbol 
 														with: #()
 														with: false);
-								add: #name -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf: #ByteString)
-														with: #()
-														with: true);
-								add: #id -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf:  #SmallInteger)
+								add: #name -> (Array with: teacherSymbol
+														with: stringSymbol 
 														with: #()
 														with: true);
-								add: #yearsWorkExperience -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf:  #SmallInteger)
+								add: #id -> (Array with: teacherSymbol
+														with: intSymbol 
 														with: #()
 														with: true);
-								add: #idTeacher -> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf:  #SmallInteger)
+								add: #yearsWorkExperience -> (Array with: teacherSymbol
+														with: intSymbol 
+														with: #()
+														with: true);
+								add: #idTeacher -> (Array with: teacherSymbol
+														with: intSymbol 
 														with: #()
 														with: true);
 								yourself)
@@ -234,381 +239,425 @@ SUtilityTypeInfo >> typeInfoOnPackage3 [
 							(Array
 								with:
 									#name:with:
-										-> (Array with: (self fullSymbolOf: #SSTeacher)
-														with: (self fullSymbolOf:  #SSTeacher)
-														with: (Array with: (self fullSymbolOf: #ByteString) with: (self fullSymbolOf: #SmallInteger))
+										-> (Array with: teacherSymbol 
+														with: teacherSymbol
+														with: (Array with: stringSymbol with: intSymbol )
 														with: false)));
 		type:
-			(self fullSymbolOf: #SConference)
+			confSymbol 
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SConference)
-														with: (self fullSymbolOf:  #SConference)
+								with: #initialize -> (Array with: confSymbol
+														with: confSymbol
 														with: #()
 														with: false)
-								with: #offerPrice -> (Array with: (self fullSymbolOf: #SConference)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #offerPrice -> (Array with: confSymbol
+														with: intSymbol 
 														with: #()
 														with: true)
-								with: #offerPrice: -> (Array with: (self fullSymbolOf: #SConference)
-														with: (self fullSymbolOf:  #SConference)
-														with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #offerPrice: -> (Array with: confSymbol
+														with: confSymbol 
+														with: (Array with: intSymbol )
 														with: false)
-								with: #discount -> (Array with: (self fullSymbolOf: #SConference)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #discount -> (Array with: confSymbol
+														with: intSymbol 
 														with: #()
 														with: true))
 						with: #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(95);
-		scalar: (self fullSymbolOf: #False) with: #(false);
-		scalar: (self fullSymbolOf: #SStudent) with: (Array with: (SStudent new name: 'Mary'));
-		scalar: (self fullSymbolOf: #ByteString) with: #('Mary')
+		scalar: intSymbol with: #(95);
+		scalar: falseSymbol  with: #(false);
+		scalar: studentSymbol with: (Array with: (SStudent new name: 'Mary'));
+		scalar: stringSymbol with: #('Mary')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoOnPackage4 [
 	"the first typeInfo is about a class has as argument other class from other package"
-
 	"review and modify"
+	| eventSymbol confSymbol intSymbol |
+	eventSymbol := #SEvent fullClassNameSymbol.
+	confSymbol := #SConference fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SEvent)
+			eventSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #price: -> (Array with: (self fullSymbolOf:#SConference)
-															with: (self fullSymbolOf:#SConference)
-															with: (Array with: (self fullSymbolOf:#SmallInteger))
+								with: #price: -> (Array with: confSymbol
+															with: confSymbol
+															with: (Array with: intSymbol)
 															with: false))
 						with:
 							(Array
-								with: #price: -> (Array with: (self fullSymbolOf:#SConference)
-															with: (self fullSymbolOf: #SConference)
-															with: (Array with: (self fullSymbolOf:#SmallInteger))
+								with: #price: -> (Array with: confSymbol
+															with: confSymbol
+															with: (Array with: intSymbol )
 															with: false)));
 		type:
-			(self fullSymbolOf: #SConference)
+			confSymbol
 				->
 					(Array
-						with: (Array with: #initialize -> (Array with: (self fullSymbolOf:#SConference)
-															with: (self fullSymbolOf:#SConference)
+						with: (Array with: #initialize -> (Array with: confSymbol
+															with: confSymbol
 															with: #() 
 															with: false))
 						with: #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(95)
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol with: #(95)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSAbstractClass [
+	| abstractSymbol intSymbol |
+	abstractSymbol := #SAbstractClass fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SAbstractClass)
+			abstractSymbol
 				->
 					(Array
-						with: (Array with: #id -> (Array with: (self fullSymbolOf: #SAbstractClass)
-																with: (self fullSymbolOf: #SmallInteger)
+						with: (Array with: #id -> (Array with: abstractSymbol
+																with: intSymbol
 																with: #()
 																with: false))
 						with: #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(1)
+		scalar: intSymbol with: #(1)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent1 [
+	| eventSymbol intSymbol |
+	eventSymbol := #SEvent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SEvent)
+			eventSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SEvent)
+								with: #initialize -> (Array with: eventSymbol
+																with: eventSymbol
 																with: #()
 																with: false)
-								with: #discount -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #discount -> (Array with: eventSymbol
+																with: intSymbol
 																with: #()
 																with: true)
-								with: #discount: -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SEvent)
-																with: (Array with: (self fullSymbolOf: #SmallInteger)) 
+								with: #discount: -> (Array with: eventSymbol
+																with: eventSymbol
+																with: (Array with: intSymbol) 
 																with: false)
-								with: #price -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #price -> (Array with: eventSymbol
+																with: intSymbol
 																with: #() 
 																with: true)
-								with: #price: -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SEvent)
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #price: -> (Array with: eventSymbol
+																with: eventSymbol
+																with: (Array with: intSymbol)
 																with: false))
-						with: (Array with: #price: -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SEvent)
-																with: (Array with: (self fullSymbolOf: #SmallInteger)) 
+						with: (Array with: #price: -> (Array with: eventSymbol
+																with: eventSymbol
+																with: (Array with: intSymbol) 
 																with: false)));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(8)
+		scalar: intSymbol with: #(8)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEvent2 [
+	| eventSymbol intSymbol |
+	eventSymbol := #SEvent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SEvent)
+			eventSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SEvent)
+								with: #initialize -> (Array with: eventSymbol
+																with: eventSymbol
 																with: #()
 																with: false)
-								with: #discount -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #discount -> (Array with: eventSymbol
+																with: intSymbol
 																with: #()
 																with: true)
-								with: #price -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #price -> (Array with: eventSymbol
+																with: intSymbol
 																with: #()
 																with: true))
-						with: (Array with: #price: -> (Array with: (self fullSymbolOf: #SEvent)
-																with: (self fullSymbolOf: #SEvent) 
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+						with: (Array with: #price: -> (Array with: eventSymbol
+																with: eventSymbol
+																with: (Array with: intSymbol)
 																with: false)));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(0 15)
+		scalar: intSymbol with: #(0 15)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSEventOnPackage1 [
+	| eventSymbol intSymbol |
+	eventSymbol := #SEvent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SEvent)
+			eventSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #price -> (Array with: (self fullSymbolOf:#SEvent)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #price -> (Array with: eventSymbol
+														with: intSymbol
 														with: #()
 														with: false)
-								with: #discount -> (Array with: (self fullSymbolOf:#SEvent)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #discount -> (Array with: eventSymbol
+														with: intSymbol
 														with: #()
 														with: true)
-								with: #initialize -> (Array with: (self fullSymbolOf:#SEvent)
-														with: (self fullSymbolOf: #SEvent)
+								with: #initialize -> (Array with: eventSymbol
+														with: eventSymbol
 														with: #()
 														with: false)
-								with: #price: -> (Array with: (self fullSymbolOf:#SEvent)
-														with: (self fullSymbolOf:#SEvent)
-														with: (Array with: (self fullSymbolOf:#SmallInteger))
+								with: #price: -> (Array with: eventSymbol
+														with: eventSymbol
+														with: (Array with: intSymbol)
 														with: false))
-						with: (Array with: #price: -> (Array with: (self fullSymbolOf:#SEvent)
-														with: (self fullSymbolOf: #SEvent)
-														with: (Array with: (self fullSymbolOf:#SmallInteger))
+						with: (Array with: #price: -> (Array with: eventSymbol
+														with: eventSymbol
+														with: (Array with: intSymbol)
 														with: false)));
-		type: (self fullSymbolOf: #SSTeacher) -> #(#() #());
-		type: (self fullSymbolOf: #SSPerson )-> #(#() #());
-		type: (self fullSymbolOf: #SStack) -> #(#() #());
-		type: (self fullSymbolOf: #SConference) -> #(#() #());
-		type: (self fullSymbolOf: #SFoo) -> #(#() #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		type: (self fullSymbolOf: #SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(15 0)
+		type: #SSTeacher fullClassNameSymbol -> #(#() #());
+		type: #SSPerson fullClassNameSymbol -> #(#() #());
+		type: #SStack fullClassNameSymbol -> #(#() #());
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SFoo fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: eventSymbol -> #(#() #());
+		scalar: intSymbol with: #(15 0)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo1 [
+	| sfooSymbol stringSymbol floatSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	floatSymbol := #SmallFloat64 fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #returnNum -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: sfooSymbol 
+									with: intSymbol 
 									with: #()
 									with: false)
 								with: #returnFloat -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallFloat64) 
+									with: sfooSymbol
+									with: floatSymbol
 									with: #()
 									with: false)
 								with: #returnString -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #ByteString) 
+									with: sfooSymbol
+									with: stringSymbol 
 									with: #()
 									with: false)
 								with: #score -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallFloat64) 
+									with: sfooSymbol
+									with: floatSymbol
 									with: #()
 									with: true)
 								with: #return: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #ByteString) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: sfooSymbol
+									with: stringSymbol
+									with: (Array with: stringSymbol)
 									with: false))
 						with: (Array with: #score: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (Array with: (self fullSymbolOf: #SmallFloat64))
+									with: sfooSymbol
+									with: sfooSymbol
+									with: (Array with: floatSymbol)
 									with: false)));
-		scalar: (self fullSymbolOf: #ByteString) with: #('hello');
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(5);
-		scalar: (self fullSymbolOf: #SmallFloat64) with: #(7.3)
+		scalar: stringSymbol with: #('hello');
+		scalar: intSymbol with: #(5);
+		scalar: floatSymbol with: #(7.3)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo100 [
+	| sfooSymbol stringSymbol floatSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	floatSymbol := #SmallFloat64 fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #returnNum -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: sfooSymbol
+									with: intSymbol
 									with: #()
 									with: false)
 								with: #returnFloat -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallFloat64) 
+									with: sfooSymbol
+									with: floatSymbol
 									with: #()
 									with: false)
 								with: #returnString -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #ByteString) 
+									with: sfooSymbol
+									with: stringSymbol
 									with: #()
 									with: false)
 								with: #score -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallFloat64) 
+									with: sfooSymbol
+									with: floatSymbol 
 									with: #()
 									with: true)
 								with: #return: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #ByteString) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: sfooSymbol
+									with: stringSymbol
+									with: (Array with: stringSymbol)
 									with: false))
 						with: (Array with: #score: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (Array with: (self fullSymbolOf: #SmallFloat64))
+									with: sfooSymbol
+									with: sfooSymbol
+									with: (Array with: floatSymbol)
 									with: false)));
-		scalar: (self fullSymbolOf: #ByteString) with: #('hello');
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(5);
-		scalar: (self fullSymbolOf: #SmallFloat64) with: #(7.3 4.7)
+		scalar: stringSymbol with: #('hello');
+		scalar: intSymbol with: #(5);
+		scalar: floatSymbol with: #(7.3 4.7)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo2 [
+	| sfooSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with: (Array with: #return: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (Array with: (self fullSymbolOf: #SFoo))
+									with: sfooSymbol 
+									with: sfooSymbol
+									with: (Array with: sfooSymbol)
 									with: false))
 						with: #())
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo3 [
+	| sfooSymbol stringSymbol floatSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	floatSymbol := #SmallFloat64 fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #returnNum -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
+																with: sfooSymbol
+																with: intSymbol 
 																with: #()
 																with: false)
 								with: #returnFloat -> (Array
-																with: (self fullSymbolOf:#SFoo)
-																with: (self fullSymbolOf:#SmallFloat64)
+																with: sfooSymbol
+																with: floatSymbol 
 																with: #()
 																with: false)
 								with: #returnString -> (Array
-																with: (self fullSymbolOf:#SFoo)
-																with: (self fullSymbolOf:#ByteString)
+																with: sfooSymbol
+																with: stringSymbol
 																with: #()
 																with: false)
 								with: #score -> (Array 
-																with: (self fullSymbolOf:#SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
+																with: sfooSymbol
+																with: intSymbol
 																with: #()
 																with: true)
 								with: #score: -> (Array
-																with: (self fullSymbolOf:#SFoo)
-																with: (self fullSymbolOf: #SFoo) 
-																with: (Array with: (self fullSymbolOf:#SmallInteger))
+																with: sfooSymbol
+																with: sfooSymbol 
+																with: (Array with: intSymbol)
 																with: false))
 						with: (Array with: #score: -> (Array 
-																with: (self fullSymbolOf:#SFoo)
-																with: (self fullSymbolOf: #SFoo)
-																with: (Array with: (self fullSymbolOf:#SmallInteger))
+																with: sfooSymbol
+																with: sfooSymbol
+																with: (Array with: intSymbol)
 																with: false)));
-		scalar: (self fullSymbolOf: #ByteString) with: #('Hello');
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(4);
-		scalar: (self fullSymbolOf: #SmallFloat64) with: #(2.3)
+		scalar: stringSymbol with: #('Hello');
+		scalar: intSymbol with: #(4);
+		scalar: floatSymbol with: #(2.3)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo4 [
+	| sfooSymbol studentSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #initialize -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SFoo) 
+									with: sfooSymbol
+									with: sfooSymbol
 									with: #()
 									with: false)
 								with: #return: ->  (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #SStudent))
+									with: sfooSymbol
+									with: studentSymbol 
+									with: (Array with: studentSymbol)
 									with: false))
 						with: #());
 		type:
-			(self fullSymbolOf: #SStudent)
+			studentSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SStudent)
+								with: #initialize -> (Array with: studentSymbol
+																with: studentSymbol
 																with: #()
 																with: false)
-								with: #idStudent -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #idStudent -> (Array with: studentSymbol
+																with: intSymbol
 																with: #()
 																with: true)
-								with: #scoreStudent -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #scoreStudent -> (Array with: studentSymbol
+																with: intSymbol
 																with: #()
 																with: true)
-								with: #scoreStudent: -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SmallInteger)
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #scoreStudent: -> (Array with: studentSymbol
+																with: intSymbol
+																with: (Array with: intSymbol)
 																with: false))
 						with: #());
 		scalar: (1 class name fullClassNameSymbol ) with: { 1 . 2 };
@@ -617,19 +666,23 @@ SUtilityTypeInfo >> typeInfoSFoo4 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFoo5 [
+	| sfooSymbol collSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	collSymbol := #OrderedCollection fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #return: -> (Array with: (self fullSymbolOf: #SFoo)
-															with: (self fullSymbolOf: #OrderedCollection)
-															with: (Array with: (self fullSymbolOf: #OrderedCollection))
+								with: #return: -> (Array with: sfooSymbol
+															with: collSymbol
+															with: (Array with: collSymbol)
 															with:  false))
 						with: #());
-		scalar: (self fullSymbolOf: #OrderedCollection)
+		scalar: collSymbol
 			with:
 			(Array
 				with:
@@ -640,47 +693,54 @@ SUtilityTypeInfo >> typeInfoSFoo5 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooEmpty [
-	^ STypeInfo new type: (self fullSymbolOf: #SFoo) -> (Array with: #() with: #())
+	^ STypeInfo new type: #SFoo fullClassNameSymbol -> (Array with: #() with: #())
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
+	| sfooSymbol stringSymbol intSymbol studentSymbol collSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	collSymbol := #OrderedCollection fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #returnCollection -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #OrderedCollection) 
+									with: sfooSymbol 
+									with: collSymbol
 									with: #()
 									with: false)
 								with: #returnString -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #ByteString) 
+									with:sfooSymbol
+									with: stringSymbol 
 									with: #()
 									with: false)
 								with: #score -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: sfooSymbol 
+									with: intSymbol  
 									with: #()
 									with: true)
 								with: #score: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: sfooSymbol
+									with: sfooSymbol
+									with: (Array with: intSymbol)
 									with: false)
 								with: #return: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #SStudent))
+									with: sfooSymbol
+									with: studentSymbol 
+									with: (Array with: studentSymbol)
 									with: false))
 						with: (Array with: #score: -> (Array 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (self fullSymbolOf: #SFoo) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: sfooSymbol 
+									with: sfooSymbol
+									with: (Array with: intSymbol)
 									with: false)));
 		type:
 			(self fullSymbolOf: #SSPerson)
@@ -689,36 +749,36 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 						with:
 							(Array
 								with: #id: -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: studentSymbol
+									with: studentSymbol
+									with: (Array with: intSymbol)
 									with: false)
 								with: #nickname: -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: studentSymbol 
+									with: studentSymbol
+									with: (Array with: stringSymbol)
 									with: false)
 								with: #name: -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: studentSymbol
+									with: studentSymbol
+									with: (Array with: stringSymbol )
 									with: false))
 						with: (Array with: #name: -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: studentSymbol
+									with: studentSymbol
+									with: (Array with: stringSymbol )
 									with: false)));
-		type: (self fullSymbolOf: #SStack) -> #(#() #());
-		type: (self fullSymbolOf: #SConference) -> #(#() #());
-		type: (self fullSymbolOf: #SEvent) -> #(#() #());
-		type: (self fullSymbolOf: #SSTeacher) -> #(#() #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		type: (self fullSymbolOf: #SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(5 1 4);
-		scalar: (self fullSymbolOf: #ByteString) with: #('Emily' 'Hello');
-		scalar: (self fullSymbolOf: #OrderedCollection)
+		type: #SStack fullClassNameSymbol -> #(#() #());
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SEvent fullClassNameSymbol -> #(#() #());
+		type: #SSTeacher fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: #SEventTest fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol with: #(5 1 4);
+		scalar: stringSymbol with: #('Emily' 'Hello');
+		scalar: collSymbol
 			with: (Array with: OrderedCollection new);
-		scalar: (self fullSymbolOf: #SStudent)
+		scalar: studentSymbol
 			with:
 			(Array
 				with:
@@ -730,120 +790,136 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage2 [
+	| sfooSymbol intSymbol studentSymbol collSymbol floatSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	collSymbol := #OrderedCollection fullClassNameSymbol.
+	floatSymbol := #SmallFloat64 fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #returnFloat -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallFloat64)
+								with: #returnFloat -> (Array with: sfooSymbol
+																with: floatSymbol
 																with: #()
 																with: false)
-								with: #returnCollection -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #OrderedCollection)
+								with: #returnCollection -> (Array with: sfooSymbol
+																with: collSymbol 
 																with: #()
 																with: false)
-								with: #initialize -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SFoo)
+								with: #initialize -> (Array with: sfooSymbol
+																with: sfooSymbol
 																with: #()
 																with: false)
-								with: #score -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #score -> (Array with: sfooSymbol
+																with: intSymbol 
 																with: #()
 																with: true)
-								with: #score: -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SFoo)
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #score: -> (Array with: sfooSymbol
+																with: sfooSymbol
+																with: (Array with: intSymbol )
 																with: false)
-								with: #return: -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SStudent)
-																with: (Array with: (self fullSymbolOf: #SStudent))
+								with: #return: -> (Array with: sfooSymbol
+																with: studentSymbol 
+																with: (Array with: studentSymbol)
 																with: false))
-						with: (Array with: #score: -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SFoo)
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+						with: (Array with: #score: -> (Array with: sfooSymbol
+																with: sfooSymbol
+																with: (Array with: intSymbol )
 																with: false)));
-		type: (self fullSymbolOf: #SSPerson) -> #(#() #());
-		type: (self fullSymbolOf: #SStack) -> #(#() #());
-		type: (self fullSymbolOf: #SConference) -> #(#() #());
-		type: (self fullSymbolOf: #SEvent) -> #(#() #());
-		type: (self fullSymbolOf: #SSTeacher) -> #(#() #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		type: (self fullSymbolOf: #SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(15);
-		scalar: (self fullSymbolOf: #SmallFloat64) with: #(2.3);
-		scalar: (self fullSymbolOf: #OrderedCollection)
+		type: #SSPerson fullClassNameSymbol -> #(#() #());
+		type: #SStack fullClassNameSymbol -> #(#() #());
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SEvent fullClassNameSymbol -> #(#() #());
+		type: #SSTeacher fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: #SEventTest fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol  with: #(15);
+		scalar: floatSymbol with: #(2.3);
+		scalar: collSymbol 
 			with: (Array with: OrderedCollection new);
-		scalar: (self fullSymbolOf: #Array) with: #(#(1 5 6))
+		scalar: #Array fullClassNameSymbol with: #(#(1 5 6))
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
+	| personSymbol intSymbol studentSymbol stringSymbol sfooSymbol dictSymbol stackSymbol |
+	personSymbol := #SSPerson fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	dictSymbol := #Dictionary fullClassNameSymbol.
+	stackSymbol := #SStack fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSPerson)
+			personSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #id: -> (Array with: (self fullSymbolOf: #SStudent)
-														with: (self fullSymbolOf: #SStudent)
-														with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #id: -> (Array with: studentSymbol
+														with: studentSymbol
+														with: (Array with: intSymbol)
 														with: false)
-								with: #nickname: -> (Array with: (self fullSymbolOf: #SStudent)
-														with: (self fullSymbolOf: #SStudent)
-														with: (Array with: (self fullSymbolOf: #ByteString))
+								with: #nickname: -> (Array with:studentSymbol
+														with: studentSymbol
+														with: (Array with: stringSymbol)
 														with: false)
-								with: #name: -> (Array with: (self fullSymbolOf: #SStudent)
-														with: (self fullSymbolOf: #SStudent)
-														with: (Array with: (self fullSymbolOf: #ByteString))
+								with: #name: -> (Array with: studentSymbol
+														with: studentSymbol
+														with: (Array with: stringSymbol)
 														with: false))
 						with:
 							(Array
 								with:
 									#name:with:
-										-> (Array with: (self fullSymbolOf: #SStudent)
-												with: (self fullSymbolOf: #SStudent)
-												with: (Array with: (self fullSymbolOf: #ByteString) with: (self fullSymbolOf:  #SmallInteger))
+										-> (Array with: studentSymbol
+												with: studentSymbol
+												with: (Array with: stringSymbol with: intSymbol)
 												with: false)));
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf:  #SFoo)
+								with: #initialize -> (Array with: sfooSymbol
+																with: sfooSymbol
 																with: #()
 																with: false)
-								with: #return: -> (Array with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #Dictionary)
-																with: (Array with: (self fullSymbolOf: #Dictionary))
+								with: #return: -> (Array with: sfooSymbol
+																with: dictSymbol
+																with: (Array with: dictSymbol)
 																with: false))
 						with: #());
 		type:
-			(self fullSymbolOf: #SStack)
+			stackSymbol 
 				->
 					(Array
-						with: (Array with: #push: -> (Array with: (self fullSymbolOf: #SStack)
-																with: (self fullSymbolOf: #SStudent)
-																with: (Array with: (self fullSymbolOf: #SStudent))
+						with: (Array with: #push: -> (Array with: stackSymbol 
+																with: studentSymbol 
+																with: (Array with: studentSymbol)
 																with: false))
 						with: #());
-		type: (self fullSymbolOf: #SConference) -> #(#() #());
-		type: (self fullSymbolOf: #SEvent) -> #(#() #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		type: (self fullSymbolOf: #SSTeacher) -> #(#() #());
-		type: (self fullSymbolOf: #SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf: #SStudent)
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SEvent fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: #SSTeacher fullClassNameSymbol -> #(#() #());
+		type: #SEventTest fullClassNameSymbol -> #(#() #());
+		scalar: studentSymbol
 			with:
 			(Array
 				with: (SStudent name: 'Mery' with: 5)
 				with: (SStudent name: 'Josh' with: 2)
 				with: (SStudent name: 'Lian'));
-		scalar: (self fullSymbolOf: #Dictionary)
+		scalar: dictSymbol
 			with:
 			(Array
 				with:
@@ -860,447 +936,509 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage3 [
 								add: (SStudent name: 'Mery' with: 5);
 								yourself);
 						yourself));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(5 1 2);
-		scalar: (self fullSymbolOf: #ByteString) with: #('Josh' 'Lian' 'Mery')
+		scalar: intSymbol with: #(5 1 2);
+		scalar: stringSymbol with: #('Josh' 'Lian' 'Mery')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSPerson1 [
+	| personSymbol intSymbol stringSymbol |
+	personSymbol := #SSPerson fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullNameOfClass: #SSPerson)
+			personSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #name -> (Array with: (self fullNameOfClass: #SSPerson)
-														with: (self fullNameOfClass:  #ByteString)
+								with: #name -> (Array with: personSymbol
+														with: stringSymbol 
 														with: #()
 														with: true)
-								with: #id -> (Array with: (self fullNameOfClass: #SSPerson)
-														with: (self fullNameOfClass:  #SmallInteger)
+								with: #id -> (Array with: personSymbol
+														with: intSymbol 
 														with:  #()
 														with: false))
 						with:
 							(Array
 								with:
 									#name:with:
-										-> (Array with: (self fullNameOfClass: #SSPerson)
-													with: (self fullNameOfClass: #SSPerson)
-													with: (Array with: (self fullNameOfClass: #ByteString)with: (self fullNameOfClass: #SmallInteger))
+										-> (Array with: personSymbol
+													with: personSymbol
+													with: (Array with: stringSymbol with: intSymbol )
 													with: false)));
-		scalar: (self fullNameOfClass: #SmallInteger) with: #(50);
-		scalar: (self fullNameOfClass: #ByteString) with: #('Ann')
+		scalar: intSymbol with: #(50);
+		scalar: stringSymbol with: #('Ann')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher1 [
+	| teacherSymbol intSymbol stringSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf: #SSTeacher)
+								with: #initialize -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: false)
-								with: #yearsWorkExperience -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #yearsWorkExperience -> (Array with: teacherSymbol
+																with: intSymbol 
 																with: #()
 																with: true)
 								with:
 									#yearsWorkExperience:
-										-> (Array with: (self fullSymbolOf:#SSTeacher)
-												with: (self fullSymbolOf: #SSTeacher)
-												with: (Array with: (self fullSymbolOf: #SmallInteger))
+										-> (Array with: teacherSymbol
+												with: teacherSymbol
+												with: (Array with: intSymbol)
 												with: false))
 						with: #());
-		scalar: #SmallInteger with: #(0 100);
-		scalar: #ByteString with: #('teacher_Ann')
+		scalar: intSymbol with: #(0 100);
+		scalar: stringSymbol with: #('teacher_Ann')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher2 [
+	| teacherSymbol intSymbol stringSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf:  #SSTeacher)
+								with: #initialize -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: false)
-								with: #idTeacher -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf:  #SmallInteger)
+								with: #idTeacher -> (Array with: teacherSymbol
+																with: intSymbol 
 																with: #()
 																with: true)
 								with:
 									#yearsWorkExperience:
-										-> (Array with: (self fullSymbolOf: #SSTeacher)
-													with: (self fullSymbolOf: #SSTeacher)
-													with: (Array with: (self fullSymbolOf: #SmallInteger))
+										-> (Array with: teacherSymbol
+													with: teacherSymbol
+													with: (Array with: intSymbol)
 													with: false)
-								with: #nickname -> (Array with: (self fullSymbolOf: #SSTeacher)
-													with: (self fullSymbolOf: #ByteString)
+								with: #nickname -> (Array with: teacherSymbol
+													with: stringSymbol
 													with: #()
 													with: false))
 						with: #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(1 29 -7 9);
-		scalar: (self fullSymbolOf: #ByteString) with: #('teacher_Amy' 'teacher_Mark')
+		scalar: intSymbol with: #(1 29 -7 9);
+		scalar: stringSymbol with: #('teacher_Amy' 'teacher_Mark')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher3 [
+	| teacherSymbol intSymbol stringSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf: #SSTeacher)
+								with: #initialize -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: false)
-								with: #yearsWorkExperience -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf:  #SmallInteger)
+								with: #yearsWorkExperience -> (Array with: teacherSymbol
+																with: intSymbol
 																with: #()
 																with: false)
-								with: #nickname -> (Array with: (self fullSymbolOf: #SSTeacher)
-																with: (self fullSymbolOf: #ByteString) 
+								with: #nickname -> (Array with: teacherSymbol
+																with: stringSymbol
 																with: #()
 																with: false))
 						with: #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(1 10);
-		scalar: (self fullSymbolOf: #ByteString) with: #('teacher_Amy' 'teacher_Mark')
+		scalar: intSymbol with: #(1 10);
+		scalar: stringSymbol with: #('teacher_Amy' 'teacher_Mark')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacher4 [
+	| teacherSymbol intSymbol stringSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf:#SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf:#SSTeacher)
-																with: (self fullSymbolOf: #SSTeacher)
+								with: #initialize -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: false)
-								with: #idTeacher -> (Array with: (self fullSymbolOf:#SSTeacher)
-																with: (self fullSymbolOf:#SmallInteger)
+								with: #idTeacher -> (Array with: teacherSymbol
+																with: intSymbol
 																with: #()
 																with: true)
-								with: #yearsWorkExperience -> (Array with: (self fullSymbolOf:#SSTeacher)
-																with: (self fullSymbolOf: #SSTeacher)
+								with: #yearsWorkExperience -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: true))
 						with: #());
-		scalar: (self fullSymbolOf:#SmallInteger) with: #(1 29 9);
-		scalar: (self fullSymbolOf:#ByteString) with: #('teacher_Amy' 'teacher_Mark')
+		scalar: intSymbol with: #(1 29 9);
+		scalar: stringSymbol with: #('teacher_Amy' 'teacher_Mark')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage1 [
+	| teacherSymbol intSymbol stringSymbol personSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	personSymbol := #SSPerson fullClassNameSymbol.
+
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSPerson)
+			personSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #id: -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: teacherSymbol
+									with: teacherSymbol
+									with: (Array with: intSymbol )
 									with: false)
 								with: #nickname: -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: teacherSymbol
+									with: teacherSymbol
+									with: (Array with: stringSymbol )
 									with: false)
 								with: #name -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #ByteString) 
+									with: teacherSymbol
+									with: stringSymbol 
 									with: #()
 									with: true)
 								with: #id -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: teacherSymbol
+									with: stringSymbol 
 									with: #()
 									with: true)
 								with: #name: -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (Array with: (self fullSymbolOf: #ByteString))
+									with: teacherSymbol
+									with: teacherSymbol
+									with: (Array with: stringSymbol )
 									with: false))
 						with:
 							(Array
 								with:
 									#name:with:
 										-> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (Array with: (self fullSymbolOf: #ByteString) with: (self fullSymbolOf: #SmallInteger))
+									with: teacherSymbol
+									with: teacherSymbol
+									with: (Array with: stringSymbol with: intSymbol)
 									with: false)));
 		type:
-			(self fullSymbolOf: #SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #initialize -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SSTeacher) 
+									with: teacherSymbol
+									with: teacherSymbol
 									with: #()
 									with: false)
 								with: #idTeacher -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: teacherSymbol
+									with: intSymbol 
 									with: #()
 									with: true)
 								with:
 									#yearsWorkExperience:
 										-> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: teacherSymbol
+									with: teacherSymbol
+									with: (Array with: intSymbol )
 									with: false)
 								with: #nickname -> (Array 
-									with: (self fullSymbolOf: #SSTeacher) 
-									with: (self fullSymbolOf: #ByteString) 
+									with: teacherSymbol
+									with: stringSymbol 
 									with: #()
 									with: false))
 						with: #());
-		type: (self fullSymbolOf: #SStack) -> #(#() #());
-		type: (self fullSymbolOf: #SConference) -> #(#() #());
-		type: (self fullSymbolOf: #SEvent) -> #(#() #());
-		type: (self fullSymbolOf: #SFoo) -> #(#() #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		type: (self fullSymbolOf: #SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(0 100 34);
-		scalar: (self fullSymbolOf: #ByteString) with: #('Ann' 'teacher_Ann')
+		type: #SStack fullClassNameSymbol -> #(#() #());
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SEvent fullClassNameSymbol -> #(#() #());
+		type: #SFoo fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: #SEventTest fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol with: #(0 100 34);
+		scalar: stringSymbol with: #('Ann' 'teacher_Ann')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSSTeacherOnPackage2 [
+	| teacherSymbol intSymbol stringSymbol |
+	teacherSymbol := #SSTeacher fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SSTeacher)
+			teacherSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf:#SSTeacher)
-																with: (self fullSymbolOf: #SSTeacher)
+								with: #initialize -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: false)
-								with: #nickname -> (Array with: (self fullSymbolOf:#SSTeacher)
-																with: (self fullSymbolOf: #SSTeacher)
+								with: #nickname -> (Array with: teacherSymbol
+																with: teacherSymbol
 																with: #()
 																with: false)
-								with: #yearsWorkExperience -> (Array with: (self fullSymbolOf:#SSTeacher)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #yearsWorkExperience -> (Array with: teacherSymbol
+																with: intSymbol
 																with: #()
 																with: true))
 						with: #());
-		type: (self fullSymbolOf:#SSPerson) -> #(#() #());
-		type: (self fullSymbolOf:#SStack) -> #(#() #());
-		type: (self fullSymbolOf:#SConference) -> #(#() #());
-		type: (self fullSymbolOf:#SEvent) -> #(#() #());
-		type: (self fullSymbolOf:#SFoo) -> #(#() #());
-		type: (self fullSymbolOf:#SParty) -> #(#() #());
-		type: (self fullSymbolOf:#SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf:#SmallInteger) with: #(0);
-		scalar: (self fullSymbolOf:#ByteString) with: #('teacher_1')
+		type: #SSPerson fullClassNameSymbol -> #(#() #());
+		type: #SStack fullClassNameSymbol -> #(#() #());
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SEvent fullClassNameSymbol -> #(#() #());
+		type: #SFoo fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: #SEventTest fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol with: #(0);
+		scalar: stringSymbol with: #('teacher_1')
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack1 [
+	| stackSymbol intSymbol arraySymbol |
+	stackSymbol := #SStack fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	arraySymbol := #Array fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SStack)
+			stackSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #firstLinkStack -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SmallInteger)
+								with: #firstLinkStack -> (Array with: stackSymbol
+																	with: intSymbol
 																	with: #()
 																	with: true)
-								with: #pop -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SmallInteger)
+								with: #pop -> (Array with: stackSymbol
+																	with: intSymbol
 																	with: #()
 																	with: false)
-								with: #push: -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SmallInteger)
-																	with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #push: -> (Array with: stackSymbol
+																	with: intSymbol 
+																	with: (Array with: intSymbol)
 																	with: false))
-						with: (Array with: #newStackWith: -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SStack)
-																	with: (Array with: (self fullSymbolOf: #Array))
+						with: (Array with: #newStackWith: -> (Array with: stackSymbol
+																	with: stackSymbol
+																	with: (Array with: arraySymbol)
 																	with: false)));
-		scalar: (self fullSymbolOf: #Array) with: #(#(2 4 6 1));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(1 2 4 6 8)
+		scalar: arraySymbol with: #(#(2 4 6 1));
+		scalar: intSymbol with: #(1 2 4 6 8)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack2 [
+	| stackSymbol intSymbol arraySymbol |
+	stackSymbol := #SStack fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	arraySymbol := #Array fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SStack)
+			stackSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #lastLinkStack -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SmallInteger)
+								with: #lastLinkStack -> (Array with: stackSymbol
+																	with: intSymbol
 																	with: #()
 																	with: true)
-								with: #pop -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SmallInteger)
+								with: #pop -> (Array with: stackSymbol
+																	with: intSymbol
 																	with: #()
 																	with: false)
-								with: #top -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SmallInteger)
+								with: #top -> (Array with: stackSymbol
+																	with: intSymbol
 																	with: #()
 																	with: false))
 						with:
 							(Array
-								with: #newStack -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SStack)
+								with: #newStack -> (Array with: stackSymbol
+																	with: stackSymbol
 																	with: #()
 																	with: false)
-								with: #newStackWith: -> (Array with: (self fullSymbolOf: #SStack)
-																	with: (self fullSymbolOf: #SStack)
-																	with: (Array with: (self fullSymbolOf: #Array))
+								with: #newStackWith: -> (Array with: stackSymbol
+																	with: stackSymbol
+																	with: (Array with: arraySymbol)
 																	with: false)));
-		scalar: (self fullSymbolOf: #Array) with: #(#(2 4 6 1) #(5 7 9 0));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(1 2 5 8 9)
+		scalar: arraySymbol with: #(#(2 4 6 1) #(5 7 9 0));
+		scalar: intSymbol with: #(1 2 5 8 9)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack3 [
+	| stackSymbol intSymbol arraySymbol |
+	stackSymbol := #SStack fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	arraySymbol := #Array fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SStack)
+			stackSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #pop -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #pop -> (Array with: stackSymbol
+														with: intSymbol
 														with: #()
 														with: false)
-								with: #push: -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SmallInteger)
-														with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #push: -> (Array with: stackSymbol
+														with: intSymbol
+														with: (Array with: intSymbol)
 														with: false)
-								with: #top -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #top -> (Array with: stackSymbol
+														with: intSymbol
 														with: #()
 														with: false))
-						with: (Array with: #newStackWith: -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SStack)
-														with: (Array with: (self fullSymbolOf: #Array))
+						with: (Array with: #newStackWith: -> (Array with: stackSymbol
+														with: stackSymbol
+														with: (Array with: arraySymbol)
 														with: false)));
-		scalar: (self fullSymbolOf: #Array) with: (Array with: #(2 4 6 1));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(7 5 9 1)
+		scalar: arraySymbol with: (Array with: #(2 4 6 1));
+		scalar: intSymbol with: #(7 5 9 1)
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStack4 [
+	| stackSymbol intSymbol arraySymbol |
+	stackSymbol := #SStack fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	arraySymbol := #Array fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SStack)
+			stackSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #firstLinkStack -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: stackSymbol
+									with: intSymbol 
 									with: #()
 									with: true)
 								with: #lastLinkStack -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: stackSymbol
+									with: intSymbol 
 									with: #()
 									with: true)
 								with: #pop -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: stackSymbol
+									with: intSymbol 
 									with: #()
 									with: false)
 								with: #push: -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SmallInteger) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: stackSymbol
+									with: intSymbol 
+									with: (Array with: intSymbol )
 									with: false)
 								with: #top -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: stackSymbol
+									with: intSymbol
 									with: #()
 									with: false))
 						with:
 							(Array
 								with: #newStack -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SStack) 
+									with: stackSymbol
+									with: stackSymbol
 									with: #()
 									with: false)
 								with: #newStackWith: -> (Array 
-									with: (self fullSymbolOf: #SStack) 
-									with: (self fullSymbolOf: #SStack) 
-									with: (Array with: (self fullSymbolOf: #Array))
+									with: stackSymbol
+									with: stackSymbol
+									with: (Array with: arraySymbol)
 									with: false)));
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(5);
-		scalar: (self fullSymbolOf: #Array) with: #(#(1 4 5))
+		scalar: intSymbol with: #(5);
+		scalar: arraySymbol with: #(#(1 4 5))
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage1 [
+	| stackSymbol intSymbol arraySymbol |
+	stackSymbol := #SStack fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	arraySymbol := #Array fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SStack)
+			stackSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #pop -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #pop -> (Array with: stackSymbol
+														with: intSymbol 
 														with: #()
 														with: false)
-								with: #push: -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SmallInteger)
-														with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #push: -> (Array with: stackSymbol
+														with: intSymbol 
+														with: (Array with: intSymbol)
 														with: false)
-								with: #top -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SmallInteger)
+								with: #top -> (Array with: stackSymbol
+														with: intSymbol 
 														with: #()
 														with: false))
-						with: (Array with: #newStackWith: -> (Array with: (self fullSymbolOf: #SStack)
-														with: (self fullSymbolOf: #SStack)
-														with: (Array with: (self fullSymbolOf: #Array))
+						with: (Array with: #newStackWith: -> (Array with: stackSymbol
+														with: stackSymbol
+														with: (Array with: arraySymbol)
 														with: false)));
-		type: (self fullSymbolOf: #SSPerson) -> #(#() #());
-		type: (self fullSymbolOf: #SSTeacher) -> #(#() #());
-		type: (self fullSymbolOf: #SConference) -> #(#() #());
-		type: (self fullSymbolOf: #SEvent) -> #(#() #());
-		type: (self fullSymbolOf: #SFoo) -> #(#() #());
-		type: (self fullSymbolOf: #SParty) -> #(#() #());
-		type: (self fullSymbolOf: #SEventTest) -> #(#() #());
-		scalar: (self fullSymbolOf: #SmallInteger) with: #(1 2 4 6 8);
-		scalar: (self fullSymbolOf: #Array) with: #(#(2 4 6 1))
+		type: #SSPerson fullClassNameSymbol -> #(#() #());
+		type: #SSTeacher fullClassNameSymbol -> #(#() #());
+		type: #SConference fullClassNameSymbol -> #(#() #());
+		type: #SEvent fullClassNameSymbol -> #(#() #());
+		type: #SFoo fullClassNameSymbol -> #(#() #());
+		type: #SParty fullClassNameSymbol -> #(#() #());
+		type: #SEventTest fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol with: #(1 2 4 6 8);
+		scalar: arraySymbol with: #(#(2 4 6 1))
 ]
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
+	
 	^ STypeInfo new
 		type:
 			#SSPerson
@@ -1354,32 +1492,36 @@ SUtilityTypeInfo >> typeInfoSStackOnPackage2 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfoSStudentOnPackage1 [
+	| studentSymbol intSymbol |
+	studentSymbol := #SStudent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	^ STypeInfo new
 		type:
-			(self fullSymbolOf: #SStudent)
+			studentSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #initialize -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SStudent)
+								with: #initialize -> (Array with: studentSymbol
+																with: studentSymbol
 																with: #()
 																with: false)
-								with: #idStudent -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #idStudent -> (Array with: studentSymbol
+																with: intSymbol 
 																with: #()
 																with: true)
-								with: #scoreStudent -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SmallInteger)
+								with: #scoreStudent -> (Array with: studentSymbol
+																with: intSymbol 
 																with: #()
 																with: true)
-								with: #scoreStudent: -> (Array with: (self fullSymbolOf: #SStudent)
-																with: (self fullSymbolOf: #SmallInteger)
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+								with: #scoreStudent: -> (Array with: studentSymbol
+																with: intSymbol 
+																with: (Array with: intSymbol)
 																with: false))
 						with: #());
-		type: (self fullSymbolOf:#SAbstractClass) -> #(#() #());
-		scalar: (self fullSymbolOf:#SmallInteger) with: #(10 1)
+		type: #SAbstractClass fullClassNameSymbol -> #(#() #());
+		scalar: intSymbol with: #(10 1)
 ]
 
 { #category : #examples }
@@ -2521,58 +2663,63 @@ SUtilityTypeInfo >> typeInfoStringSStudent1 [
 
 { #category : #examples }
 SUtilityTypeInfo >> typeInfosSStudent [
+	| studentSymbol intSymbol stringSymbol |
+	studentSymbol := #SStudent fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	
 	^ OrderedCollection new
 		add:
 			(STypeInfo new
 				type:
-					(self fullSymbolOf: #SStudent)
+					studentSymbol
 						->
 							(Array
 								with:
 									(Array
 										with: #initialize -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
+									with: studentSymbol
+									with: studentSymbol
 									with: #()
 									with: false)
 										with: #scoreStudent -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: studentSymbol
+									with: intSymbol
 									with: #()
 									with: true)
 										with: #scoreStudent: -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: studentSymbol 
+									with: studentSymbol
+									with: (Array with: intSymbol)
 									with: false)
 										with: #idStudent -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SmallInteger) 
+									with: studentSymbol 
+									with: intSymbol 
 									with: #()
 									with: true))
 								with: #());
-				scalar: (self fullSymbolOf: #SmallInteger) with: #(1);
-				scalar: (self fullSymbolOf: #ByteString) with: #('student_Jane'));
+				scalar: intSymbol with: #(1);
+				scalar: stringSymbol with: #('student_Jane'));
 		add:
 			(STypeInfo new
 				type:
-					(self fullSymbolOf: #SStudent)
+					studentSymbol
 						->
 							(Array
 								with:
 									(Array
 										with: #scoreStudent: -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (Array with: (self fullSymbolOf: #SmallInteger))
+									with: studentSymbol
+									with: studentSymbol
+									with: (Array with: intSymbol)
 									with: false)
 										with: #nickname -> (Array 
-									with: (self fullSymbolOf: #SStudent) 
-									with: (self fullSymbolOf: #ByteString) 
+									with: studentSymbol
+									with: stringSymbol
 									with: #()
 									with: false))
 								with: #());
-				scalar: (self fullSymbolOf: #SmallInteger) with: #(1 6 8);
-				scalar: (self fullSymbolOf: #ByteString) with: #('Jane' 'Ann' 'Peter'));
+				scalar: intSymbol with: #(1 6 8);
+				scalar: stringSymbol with: #('Jane' 'Ann' 'Peter'));
 		yourself
 ]

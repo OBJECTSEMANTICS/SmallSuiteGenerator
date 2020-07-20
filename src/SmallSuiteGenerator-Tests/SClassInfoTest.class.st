@@ -6,43 +6,49 @@ Class {
 
 { #category : #tests }
 SClassInfoTest >> testEquals [
+	| sfooSymbol studentSymbol stringSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	stringSymbol :=  #ByteString fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
+	
 	self
-		assert: (STypeClassInfo type: #SFoo -> #(#() #()))
-		equals: (STypeClassInfo type: #SFoo -> #(#() #())).
+		assert: (STypeClassInfo type: sfooSymbol -> #(#() #()))
+		equals: (STypeClassInfo type: sfooSymbol -> #(#() #())).
 	self
 		assert:
 			(STypeClassInfo
 				type:
-					#SStudent
+					studentSymbol
 						->
 							(Array
-								with: (Array with: #name -> #(#SStudent #ByteString #() false))
+								with: (Array with: #name -> (Array with: studentSymbol with: stringSymbol with: #() with: false))
 								with: #()))
 		equals:
 			(STypeClassInfo
 				type:
-					#SStudent
+					studentSymbol
 						->
 							(Array
-								with: (Array with: #name -> #(#SStudent #ByteString #() false))
+								with: (Array with: #name -> (Array with: studentSymbol with: stringSymbol with: #() with: false))
 								with: #())).
 	self
 		assert:
 			(STypeClassInfo
 				type:
-					#SFoo
+					sfooSymbol
 						->
 							(Array
-								with: (Array with: #score -> #(#SFoo #SmallInteger #() false))
-								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))))
+								with: (Array with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: false))
+								with: (Array with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with:intSymbol) with: false))))
 		equals:
 			(STypeClassInfo
 				type:
-					#SFoo
+					sfooSymbol
 						->
 							(Array
-								with: (Array with: #score -> #(#SFoo #SmallInteger #() false))
-								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false))))
+								with: (Array with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: false))
+								with: (Array with: #score: -> (Array with: sfooSymbol with: sfooSymbol with:(Array with: intSymbol) with: false))))
 ]
 
 { #category : #tests }
@@ -101,53 +107,58 @@ SClassInfoTest >> testToString [
 
 { #category : #tests }
 SClassInfoTest >> testType [
-	| classInfo methodInfo |
+	| classInfo methodInfo sfooSymbol floatSymbol stringSymbol collSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	floatSymbol := #SmallFloat64 fullClassNameSymbol.
+	stringSymbol := #ByteSymbol fullClassNameSymbol.
+	collSymbol := #OrderedCollection fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 	classInfo := STypeClassInfo
 		type:
-			#SFoo
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with:
-									#returnFloat -> #(#SFoo #SmallFloat64 #() false)
-								with: #returnString -> #(#SFoo #ByteString #() false)
+									#returnFloat -> (Array with: sfooSymbol with: floatSymbol with: #() with: false)
+								with: #returnString -> (Array with: sfooSymbol with:stringSymbol with: #() with: false)
 								with:
-									#return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false)
+									#return: -> (Array with: sfooSymbol with: collSymbol with: (Array with: collSymbol) with: false)
 								with:
-									#score: -> #(#SFoo #SFoo #(#SmallInteger) false)
-								with: #score -> #(#SFoo #SmallInteger #() true))
+									#score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false)
+								with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: true))
 						with:
 							(Array with:
-								#score: -> #(#SFoo #SFoo #(#SmallInteger) false))).
-	classInfo typeMethod: #returnNum -> #(#SFoo #SmallInteger #() false).
+								#score: -> (Array with: sfooSymbol with: sfooSymbol with:(Array with: intSymbol) with: false))).
+	classInfo typeMethod: #returnNum -> (Array with: sfooSymbol with: intSymbol with: #() with: false).
 	self assert: classInfo methodTypes size equals: 6.
 	self assert: classInfo classMethodTypes size equals: 1.
 	methodInfo := classInfo methodTypes at: #return:.
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #OrderedCollection.
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: collSymbol.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: #(#OrderedCollection).
+		hasSameElements: (Array with: collSymbol).
 	self
 		assert: (classInfo methodTypes at: #returnFloat) returnType type
-		equals: #SmallFloat64.
+		equals: floatSymbol.
 	self
 		assert: (classInfo methodTypes at: #returnString) returnType type
-		equals: #ByteString.
+		equals: stringSymbol.
 	self
 		assert: (classInfo methodTypes at: #score) returnType type
-		equals: #SmallInteger.
+		equals: intSymbol.
 	methodInfo := classInfo methodTypes at: #score:.
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #SFoo.
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: sfooSymbol.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: #(#SmallInteger).
+		hasSameElements: (Array with: intSymbol).
 	self
 		assert: (classInfo classMethodTypes at: #score:) returnType type
-		equals: #SFoo.
+		equals: sfooSymbol.
 	self
 		assert: (classInfo methodTypes at: #returnNum) returnType type
-		equals: #SmallInteger
+		equals: intSymbol
 ]

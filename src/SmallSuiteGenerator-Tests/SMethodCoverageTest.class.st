@@ -15,7 +15,7 @@ SMethodCoverageTest >> testCoverageClassSEvent [
 	testCase := self
 		testCase: utility typeInfoSEvent2
 		withNumStatements: 20
-		andTargetClassName: (self fullSymbolOf: #SEvent).
+		andTargetClassName: #SEvent fullClassNameSymbol.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -29,7 +29,7 @@ SMethodCoverageTest >> testCoverageClassSFoo [
 	testCase := self
 		testCase: utility typeInfoSFoo4
 		withNumStatements: 20
-		andTargetClassName: (self fullSymbolOf: #SFoo).
+		andTargetClassName: #SFoo fullClassNameSymbol.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -43,7 +43,7 @@ SMethodCoverageTest >> testCoverageOnClassSSTeacher [
 	testCase := self
 		testCase: utility typeInfoSSTeacher3
 		withNumStatements: 20
-		andTargetClassName: (self fullSymbolOf: #SSTeacher).
+		andTargetClassName: #SSTeacher fullClassNameSymbol.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -57,7 +57,7 @@ SMethodCoverageTest >> testCoverageOnClassSStack [
 	testCase := self
 		testCase: utility typeInfoSStack3
 		withNumStatements: 20
-		andTargetClassName: (self fullSymbolOf: #SStack).
+		andTargetClassName: #SStack fullClassNameSymbol.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -71,7 +71,7 @@ SMethodCoverageTest >> testCoverageOnClassSStudent [
 	testCase := self
 		testCase: utility typeInfosSStudent first
 		withNumStatements: 20
-		andTargetClassName: (self fullSymbolOf: #SStudent).
+		andTargetClassName: #SStudent fullClassNameSymbol.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -85,7 +85,7 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 	testCase := self
 		testCase: utility typeInfoSEventOnPackage1 " (STON fromString: utility typeInfoStringSEvent)"
 		withNumStatements: 20
-		andTargetClassName: (self fullSymbolOf: #SEvent).
+		andTargetClassName: #SEvent fullClassNameSymbol.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
 	self uninstall.
@@ -95,12 +95,13 @@ SMethodCoverageTest >> testCoverageOnPackagesSEvent [
 
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSFoo [
-	| testCase valueFitness |
+	| testCase valueFitness targetClass |
+	targetClass := #SFoo fullClassNameSymbol.
 	testCase := SSTestCase
 		with: utility typeInfoSFooOnPackage2  "(STON fromString: utility typeInfoStringSFoo2)".
 	testCase
-		targetClassName: (self fullSymbolOf: #SFoo);
-		addFactoryMessage: (self fullSymbolOf: #SFoo);
+		targetClassName: targetClass;
+		addFactoryMessage: targetClass;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
@@ -111,12 +112,13 @@ SMethodCoverageTest >> testCoverageOnPackagesSFoo [
 
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
-	| testCase valueFitness |
+	| testCase valueFitness targetClass |
+	targetClass := #SSTeacher fullClassNameSymbol.
 	testCase := SSTestCase
 		with: utility typeInfoSSTeacherOnPackage2."(STON fromString: utility typeInfoStringSSTeacher2)."
 	testCase
-		targetClassName: (self fullSymbolOf: #SSTeacher);
-		addFactoryMessage: (self fullSymbolOf: #SSTeacher);
+		targetClassName: targetClass;
+		addFactoryMessage: targetClass;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
@@ -127,12 +129,13 @@ SMethodCoverageTest >> testCoverageOnPackagesSSTeacher [
 
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSStack [
-	| testCase valueFitness |
+	| testCase valueFitness targetClass |
+	targetClass := #SStack fullClassNameSymbol.
 	testCase := SSTestCase
 		with: utility typeInfoSStackOnPackage1. "(STON fromString: utility typeInfoStringSStack2)."
 	testCase
-		targetClassName: (self fullSymbolOf: #SStack);
-		addFactoryMessage: (self fullSymbolOf: #SStack);
+		targetClassName: targetClass;
+		addFactoryMessage: targetClass;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness compute: (Array with: testCase).
@@ -143,12 +146,13 @@ SMethodCoverageTest >> testCoverageOnPackagesSStack [
 
 { #category : #tests }
 SMethodCoverageTest >> testCoverageOnPackagesSStudent [
-	| testCase valueFitness |
+	| testCase valueFitness targetClass |
+	targetClass := #SStudent fullClassNameSymbol.
 	testCase := SSTestCase
 		with: utility typeInfoSStudentOnPackage1. "(STON fromString: utility typeInfoStringSStudent1)."
 	testCase
-		targetClassName: (self fullSymbolOf: #SStudent);
-		addFactoryMessage: (self fullSymbolOf: #SStudent);
+		targetClassName: targetClass;
+		addFactoryMessage: targetClass;
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness compute: (Array with: testCase).

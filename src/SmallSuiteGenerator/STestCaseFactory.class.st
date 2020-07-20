@@ -119,7 +119,7 @@ STestCaseFactory >> classesForRegex: regexExpressions [
 { #category : #actions }
 STestCaseFactory >> createConfigurationMethods [
 	| class |
-	class := self getClassOf: ('GA' , self targetClassName , 'Test').
+	class := self generatedClass.
 	setUpMethod ifNotNil: [ class compile: setUpMethod  ].
 	tearDownMethod ifNotNil: [ class compile: tearDownMethod ]
 ]

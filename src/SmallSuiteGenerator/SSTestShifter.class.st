@@ -850,7 +850,7 @@ SSTestShifter >> runWithoutAssertions [
    [ interpreter visitStatements: self statements;
 						clean.
 		hasErrors := false.
-		interpreter context.
+		^ interpreter context.
   	] on:Error do:[ hasErrors:= true. Dictionary new].
 ]
 
