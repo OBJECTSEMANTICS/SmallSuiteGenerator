@@ -763,7 +763,7 @@ SSTestShifter >> printStatements [
 SSTestShifter >> randomLiteralClassName [
 	|scalars|
 	scalars := typeInfo scalars keys.
-	scalars ifEmpty: [ self error: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ].
+	scalars ifEmpty: [ self serror: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ].
 	^ scalars pickAny.
 ]
 
@@ -893,7 +893,7 @@ SSTestShifter >> targetClassIndexs [
 { #category : #accessing }
 SSTestShifter >> targetClassName: aSymbol [
 	typeInfo types at: aSymbol 
-		ifAbsent: [ self error: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
+		ifAbsent: [ self serror: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
 	targetClassesName := aSymbol.
 ]
 
