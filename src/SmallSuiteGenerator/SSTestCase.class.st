@@ -19,7 +19,7 @@ Class {
 		'tearDownAction',
 		'properties'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -228,6 +228,7 @@ SSTestCase >> printString [
 { #category : #printing }
 SSTestCase >> printStringWithAssertions [
 	^ String streamContents: [ :stream | 
+		self printerClass printTempVariables: self on: stream.
 		(self printerClass on: stream) 
 			visitStatements: self statements, self assertions.
 		].
@@ -313,6 +314,10 @@ SSTestCase >> setFitnessByClass: aDictionary [
 { #category : #running }
 SSTestCase >> setUp [
 	setUpAction value: self value: self properties.
+]
+
+{ #category : #printing }
+SSTestCase >> storeOn: aStream [
 ]
 
 { #category : #accessing }

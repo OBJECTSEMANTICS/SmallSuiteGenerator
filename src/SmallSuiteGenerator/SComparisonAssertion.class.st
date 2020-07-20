@@ -20,7 +20,7 @@ For example:
 Class {
 	#name : #SComparisonAssertion,
 	#superclass : #SAssertionMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -67,5 +67,5 @@ SComparisonAssertion class >> for: anExecutionContext [
 
 { #category : #visitor }
 SComparisonAssertion >> accept: aSSVisitor [
-	aSSVisitor visitComparisonAssertionMessage: self.
+	^ aSSVisitor visitComparisonAssertionMessage: self.
 ]

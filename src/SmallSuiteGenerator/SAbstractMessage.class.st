@@ -17,7 +17,7 @@ Class {
 		'selector',
 		'args'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #creation }
@@ -61,7 +61,7 @@ SAbstractMessage >> = other [
 
 { #category : #visitor }
 SAbstractMessage >> accept: aSSVisitor [
-	aSSVisitor visitAbstractMessage: self.
+	^ aSSVisitor visitAbstractMessage: self.
 ]
 
 { #category : #accessing }
@@ -139,24 +139,9 @@ SAbstractMessage >> initialize [
 	args := OrderedCollection new: 2
 ]
 
-{ #category : #actions }
-SAbstractMessage >> interpret: aExecutionContext [
-  "this method interpret the AST using smalltalk reflection features"
-  | object objArgs |
-  object := aExecutionContext at: self receiver fullName.
-  objArgs := self args collect: [:arg |  aExecutionContext at: arg fullName ].
-  ^object perform: self selector withArguments: objArgs asArray.
-]
-
 { #category : #querying }
 SAbstractMessage >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ self variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
-]
-
-{ #category : #actions }
-SAbstractMessage >> negateId [
- 	self receiver negateId.
-	self args do:[ :arg| arg negateId].
 ]
 
 { #category : #querying }
@@ -173,12 +158,6 @@ SAbstractMessage >> receiver [
 { #category : #accessing }
 SAbstractMessage >> receiver: anObject [
 	receiver := anObject
-]
-
-{ #category : #actions }
-SAbstractMessage >> rename: aDictionary [
-	self receiver rename: aDictionary.
-	self args do:[ :arg| arg rename: aDictionary.].
 ]
 
 { #category : #accessing }

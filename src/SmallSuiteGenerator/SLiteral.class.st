@@ -18,7 +18,7 @@ Class {
 	#instVars : [
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #parsing }
@@ -38,7 +38,7 @@ SLiteral >> = other [
 
 { #category : #visitor }
 SLiteral >> accept: aSSVisitor [
-	aSSVisitor visitLiteral: self.
+	^ aSSVisitor visitLiteral: self.
 ]
 
 { #category : #actions }
@@ -72,16 +72,6 @@ SLiteral >> insertOn: aTestCase [
 	^ aTestCase addLiteral: self returnType.
 ]
 
-{ #category : #actions }
-SLiteral >> interpret: aExecutionContext [
-  ^ value.
-]
-
-{ #category : #actions }
-SLiteral >> negateId [
-	"nothing to negate"
-]
-
 { #category : #querying }
 SLiteral >> referenceTo: aClassName [
 	^( value isClass
@@ -89,9 +79,11 @@ SLiteral >> referenceTo: aClassName [
 		ifFalse: [ value className ]) = aClassName asString
 ]
 
-{ #category : #actions }
-SLiteral >> rename: aDictionary [
-	"nothing to rename"
+{ #category : #'as yet unclassified' }
+SLiteral >> stmColor [
+  ^ Color r: 0.2072336265884653 g: 0.8504398826979472 b: 0.1573802541544477
+"Color r: 0.2072336265884653 g: 0.5503421309872922 b: 0.19745845552297164"
+"Color r: 0.5953079178885631 g: 0.7644183773216031 b: 0.1466275659824047"
 ]
 
 { #category : #evaluating }

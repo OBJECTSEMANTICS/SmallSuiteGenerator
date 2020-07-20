@@ -21,7 +21,7 @@ Class {
 		'variable',
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -42,7 +42,7 @@ SAssignment >> = other [
 
 { #category : #visitor }
 SAssignment >> accept: aSSVisitor [
-	aSSVisitor visitAssignment: self.
+	^ aSSVisitor visitAssignment: self.
 ]
 
 { #category : #actions }
@@ -91,20 +91,14 @@ SAssignment >> insertOn: aTestCase [
 	^ value insertOn: aTestCase
 ]
 
-{ #category : #actions }
-SAssignment >> interpret: aExecutionContext [
-  ^aExecutionContext at: self variable fullName put: (self value interpret: aExecutionContext)
-]
-
 { #category : #querying }
 SAssignment >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ self value isThereEnoughArgumentsToBuild: aTestCase
 ]
 
-{ #category : #actions }
-SAssignment >> negateId [
-	self variable negateId.
-	self value negateId.
+{ #category : #'as yet unclassified' }
+SAssignment >> mutantColor [
+	^ self value mutantColor
 ]
 
 { #category : #querying }
@@ -122,10 +116,9 @@ SAssignment >> referenceTo: aClassName [
 	^ value referenceTo: aClassName
 ]
 
-{ #category : #actions }
-SAssignment >> rename: aDictionary [
-	self variable rename: aDictionary.
-	self value rename: aDictionary.
+{ #category : #'as yet unclassified' }
+SAssignment >> stmColor [
+  ^ self value stmColor
 ]
 
 { #category : #evaluating }

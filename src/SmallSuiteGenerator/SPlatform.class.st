@@ -16,7 +16,7 @@ Class {
 		'logClass',
 		'vizClass'
 	],
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Builder'
 }
 
 { #category : #accessing }

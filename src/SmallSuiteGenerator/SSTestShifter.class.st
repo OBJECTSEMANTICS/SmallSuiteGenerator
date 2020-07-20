@@ -27,8 +27,13 @@ Class {
 		'maxNumberOfStatements',
 		'lastMessage'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'as yet unclassified' }
+SSTestShifter class >> defaultInterpreterClass [
+	^ SSMetaInterpreter
+]
 
 { #category : #'mutation-change' }
 SSTestShifter >> addAlternativeArgsFor: aMessageStatement [
@@ -247,14 +252,8 @@ SSTestShifter >> alternativeOfVariables: aVariable [
 { #category : #action }
 SSTestShifter >> analyze [
   " we use a meta interpreter to use smalltalk and interpret our AST"
-  | context |
-  self setUp.
-  context := SSExecutionContext new.
-  context at: 'self' put: TestCase new.
-  self interpret: self statements , self assertions with: context.
-  context removeKey:'self'.
-  self tearDown.
-  ^ context.
+
+  ^ self runWithoutAssertions.
 ]
 
 { #category : #accessing }
@@ -264,9 +263,7 @@ SSTestShifter >> assertions [
 
 { #category : #action }
 SSTestShifter >> assignId [
-	| idToAssign assignedIds |
-	"assignedIds := self assignedIds.
-	[ assignedIds includes: nextId ] whileTrue: [ nextId := nextId + 1 ]."
+	| idToAssign|
 	idToAssign := nextId.
 	nextId := nextId + 1.
 	^ idToAssign
@@ -565,11 +562,9 @@ SSTestShifter >> insertStatement [
 	^ testCase.
 ]
 
-{ #category : #action }
-SSTestShifter >> interpret: aStatementCollection with: aExecutionContext [
-  | objects |
-  objects := aStatementCollection collect: [:stm |  stm interpret: aExecutionContext ].
-  ^objects last
+{ #category : #accessing }
+SSTestShifter >> interpreterClass [
+	^ self class defaultInterpreterClass.
 ]
 
 { #category : #util }
@@ -652,7 +647,7 @@ SSTestShifter >> newLiteral: aClassName [
 				ifEmpty: [ self serror: 'Scalar of type: ' , aClassName , ' is empty.' ].
 			^ SLiteral new
 				returnType: aClassName;
-				value: (self random selectAtRandom: values asOrderedCollection) ].
+				value: (self random selectAtRandom: values asOrderedCollection) copy].
 	self serror: 'Scalars dont include: ' , aClassName
 ]
 
@@ -821,36 +816,25 @@ SSTestShifter >> removeStatementAt: index [
 
 { #category : #action }
 SSTestShifter >> repairIds [
-	|map|
-	statements do:[ :stm | stm negateId].
-	map := Dictionary new.
-	statements doWithIndex:[ :stm :index |
-		map at: (stm variable id) put: (index-1).].
-	statements do:[ :stm | stm rename: map].
+	SSVariableNameSwapper repairNamesOf: self.
 ]
 
 { #category : #action }
 SSTestShifter >> run [
   " we use a meta interpreter to use smalltalk and interpret our AST"
-  |result context|
-  self setUp.
-  context := SSExecutionContext new.
-  context at: 'self' put: TestCase new.
-  result := self interpret: (self statements, self assertions) with: context.
-  self tearDown.
-  ^ result.
+  self interpreterClass new 
+			visitStatements: self statements, self assertions;
+			clean;
+			context.
 ]
 
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
   " we use a meta interpreter to use smalltalk and interpret our AST"
-  | result context |
-  self setUp.
-  context := SSExecutionContext new.
-  context at: 'self' put: TestCase new.
-  result := self interpret: self statements with: context.
-  self tearDown.
-  ^result
+  ^ self interpreterClass new 
+			visitStatements: self statements;
+			clean;
+			context.
 ]
 
 { #category : #accessing }

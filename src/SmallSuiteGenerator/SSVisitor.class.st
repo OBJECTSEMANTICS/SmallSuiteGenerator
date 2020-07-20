@@ -1,19 +1,19 @@
 Class {
 	#name : #SSVisitor,
 	#superclass : #SObject,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #util }
 SSVisitor >> visitAbstractMessage: aMessage [
 	"this only propagate the visit"
 	aMessage receiver accept: self.
-	aMessage arguments do:[ :arg| arg accept: self ].
+	aMessage args do:[ :arg| arg accept: self ].
 ]
 
 { #category : #'visiting-assertions' }
 SSVisitor >> visitAssertionMessage: aMessage [
-	self visitAbstractMessage: aMessage.
+	^ self visitAbstractMessage: aMessage.
 	
 ]
 
@@ -26,25 +26,25 @@ SSVisitor >> visitAssignment: anAssignmnet [
 
 { #category : #'visiting-assertions' }
 SSVisitor >> visitComparisonAssertionMessage: aMessage [
-	self visitAssertionMessage: aMessage.
+	^ self visitAssertionMessage: aMessage.
 	
 ]
 
 { #category : #'visiting-core' }
 SSVisitor >> visitFactoryMessage: aMessage [
-	self visitAbstractMessage: aMessage.
+	^ self visitAbstractMessage: aMessage.
 	
 ]
 
 { #category : #'visiting-core' }
 SSVisitor >> visitFieldAccessMessage: aMessage [
-	self visitAbstractMessage: aMessage.
+	^ self visitAbstractMessage: aMessage.
 	
 ]
 
 { #category : #'visiting-assertions' }
 SSVisitor >> visitInspectorAssertionMessage: aMessage [
-	self visitAssertionMessage: aMessage.
+	^ self visitAssertionMessage: aMessage.
 	
 ]
 
@@ -55,13 +55,13 @@ SSVisitor >> visitLiteral: aLiteral [
 
 { #category : #'visiting-core' }
 SSVisitor >> visitMessage: aMessage [
-	self visitAbstractMessage: aMessage.
+	^  self visitAbstractMessage: aMessage.
 	
 ]
 
 { #category : #'visiting-assertions' }
 SSVisitor >> visitPrimitiveAssertionMessage: aMessage [
-	self visitAssertionMessage: aMessage.
+	^  self visitAssertionMessage: aMessage.
 	
 ]
 
@@ -77,7 +77,7 @@ SSVisitor >> visitStatements: expresions [
 
 { #category : #'visiting-assertions' }
 SSVisitor >> visitStringAssertionMessage: aMessage [
-	self visitAssertionMessage: aMessage.
+	^ self visitAssertionMessage: aMessage.
 	
 ]
 

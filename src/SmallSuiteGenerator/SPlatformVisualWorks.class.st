@@ -4,7 +4,7 @@ SConfigurationVisualWorks is a subclass called when the project environment is r
 Class {
 	#name : #SPlatformVisualWorks,
 	#superclass : #SPlatform,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Builder'
 }
 
 { #category : #accessing }

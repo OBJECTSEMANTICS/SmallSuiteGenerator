@@ -6,12 +6,12 @@ SSelf is a node which is part of the assertion message.
 Class {
 	#name : #SSelf,
 	#superclass : #SVariable,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #visitor }
 SSelf >> accept: aSSVisitor [
-	aSSVisitor visitSelf: self.
+	^ aSSVisitor visitSelf: self.
 ]
 
 { #category : #querying }
@@ -23,20 +23,4 @@ SSelf >> containsVariable: aVariable [
 SSelf >> initialize [
 	super initialize.
 	varName := 'self'.
-]
-
-{ #category : #actions }
-SSelf >> interpret: aExecutionContext [
-  ^aExecutionContext at: 'self'
-]
-
-{ #category : #actions }
-SSelf >> negateId [
-	"nothing to negate"
-]
-
-{ #category : #actions }
-SSelf >> rename: aDictionary [
-	"nothing to rename"
-	
 ]

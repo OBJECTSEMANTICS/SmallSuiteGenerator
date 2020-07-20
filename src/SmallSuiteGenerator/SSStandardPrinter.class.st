@@ -4,12 +4,20 @@ Class {
 	#instVars : [
 		'stream'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
 SSStandardPrinter class >> on: aStream [
 	^ self new stream: aStream; yourself.
+]
+
+{ #category : #'instance creation' }
+SSStandardPrinter class >> printTempVariables: aTestCase on: aStream [
+	aStream tab;nextPut:$|; space.
+	aTestCase assignedIds do:[:id| aStream nextPutAll:'_var'; nextPutAll: id asString; space.].
+	aStream space;nextPut:$|;cr.
+	
 ]
 
 { #category : #accessing }
@@ -70,6 +78,7 @@ SSStandardPrinter >> visitSelf: aSelf [
 { #category : #'visiting-core' }
 SSStandardPrinter >> visitStatements: expresions [
 	expresions do:[ :exp | 
+			stream tab.
 			exp accept: self. 
 			stream nextPut:$.;
 			cr].

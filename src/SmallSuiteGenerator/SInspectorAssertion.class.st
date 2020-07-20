@@ -12,7 +12,7 @@ For example:
 Class {
 	#name : #SInspectorAssertion,
 	#superclass : #SAssertionMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -53,5 +53,5 @@ SInspectorAssertion class >> inspectorAssertionOf: assoc and: compiledMethod [
 
 { #category : #visitor }
 SInspectorAssertion >> accept: aSSVisitor [
-	aSSVisitor visitInspectorAssertionMessage: self.
+	^ aSSVisitor visitInspectorAssertionMessage: self.
 ]

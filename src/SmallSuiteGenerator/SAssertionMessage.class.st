@@ -8,7 +8,7 @@ Superclass of assertion messages nodes for
 Class {
 	#name : #SAssertionMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -18,7 +18,7 @@ SAssertionMessage class >> for: aExecutionContext [
 
 { #category : #visitor }
 SAssertionMessage >> accept: aSSVisitor [
-	aSSVisitor visitAssertionMessage: self.
+	^ aSSVisitor visitAssertionMessage: self.
 ]
 
 { #category : #initialization }

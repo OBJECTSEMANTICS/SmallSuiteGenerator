@@ -4,7 +4,7 @@ STestCaseFactoryPharo is a subclass that it is called when the project runs in P
 Class {
 	#name : #STestCaseFactoryPharo,
 	#superclass : #STestCaseFactory,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Builder'
 }
 
 { #category : #actions }

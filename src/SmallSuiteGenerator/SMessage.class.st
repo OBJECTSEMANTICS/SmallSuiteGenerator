@@ -18,7 +18,7 @@ For example:
 Class {
 	#name : #SMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -33,7 +33,7 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 
 { #category : #visitor }
 SMessage >> accept: aSSVisitor [
-	aSSVisitor visitMessage: self.
+	^ aSSVisitor visitMessage: self.
 ]
 
 { #category : #action }
@@ -44,4 +44,11 @@ SMessage >> insertOn: aTestCase [
 { #category : #testing }
 SMessage >> isMessage [
 	^ true.
+]
+
+{ #category : #'as yet unclassified' }
+SMessage >> stmColor [
+  ^ Color r: 0.7996089931573802 g: 1.0 b: 0.0
+"Color r: 0.8885630498533724 g: 0.8611925708699902 b: 0.41642228739002934"
+"Color r: 0.9139784946236559 g: 0.8172043010752689 b: 0.4858260019550342"
 ]

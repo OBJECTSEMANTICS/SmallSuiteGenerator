@@ -4,8 +4,16 @@ Class {
 	#instVars : [
 		'dictionaryName'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'instance creation' }
+SSDictionaryBasedPrinter class >> printTempVariables: aTestCase on: aStream [
+	aStream tab; nextPut:$|; space.
+	aStream nextPutAll:'var'.
+	aStream space; nextPut:$|;cr.
+	aStream tab; nextPutAll:'var := Dictionary new.'.
+]
 
 { #category : #accessing }
 SSDictionaryBasedPrinter >> dictionaryName [

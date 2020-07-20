@@ -4,7 +4,7 @@ SRandom is a subclass of Random that is responsible for select an item of the co
 Class {
 	#name : #SRandom,
 	#superclass : #Random,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
