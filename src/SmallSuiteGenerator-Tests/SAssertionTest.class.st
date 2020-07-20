@@ -20,10 +20,10 @@ SAssertionTest >> testAssertComparison [
 	self assert: test assertions size equals: 2.
 	self
 		assert: test assertions first printString
-		equals: 'self assert: _var0 equals: _var1.'.
+		equals: 'self assert: _var3 equals: _var2 '.
 	self
 		assert: test assertions second printString
-		equals: 'self assert: _var2 equals: _var3.'
+		equals: 'self assert: _var1 equals: _var0 '
 ]
 
 { #category : #tests }
@@ -42,10 +42,10 @@ SAssertionTest >> testAssertComparison2 [
 	self assert: test assertions size equals: 2.
 	self
 		assert: test assertions first printString
-		equals: 'self deny: _var0 equals: _var1.'.
+		equals: 'self deny: _var3 equals: _var2 '.
 	self
 		assert: test assertions second printString
-		equals: 'self deny: _var2 equals: _var3.'
+		equals: 'self deny: _var1 equals: _var0 '
 ]
 
 { #category : #tests }
@@ -61,7 +61,7 @@ SAssertionTest >> testAssertInspector [
 			 _var3 := Point x: _var1 y: _var0.').
 	test generateAssertions: (Array with: SInspectorAssertion).
 	self assert: test assertions size equals: 2.
-	self assertCollection: (test assertions collect: #printString) hasSameElements: #('self assert: _var3 x equals: 2.' 'self assert: _var3 y equals: 1.').
+	self assertCollection: (test assertions collect: #printString) hasSameElements: #('self assert: _var3 x equals: 2 ' 'self assert: _var3 y equals: 1 ').
 ]
 
 { #category : #tests }
@@ -79,10 +79,10 @@ SAssertionTest >> testAssertPrimitive [
 	self assert: test assertions size equals: 2.
 	self
 		assert: test assertions first printString
-		equals: 'self assert: _var0 equals: 1.'.
+		equals: 'self assert: _var0 equals: 1 '.
 	self
 		assert: test assertions second printString
-		equals: 'self assert: _var1 equals: 2.'
+		equals: 'self assert: _var1 equals: 2 '
 ]
 
 { #category : #tests }
@@ -100,7 +100,7 @@ SAssertionTest >> testAssertString [
 	self assert: test assertions size equals: 1.
 	self
 		assert: test assertions first printString
-		equals: 'self assert: _var3 printString equals: ''(2@1)''.'
+		equals: 'self assert: _var3 printString equals: ''(2@1)'' '
 ]
 
 { #category : #tests }
@@ -112,7 +112,7 @@ SAssertionTest >> testExecutionContext [
 			 _var1 := 2.
 			 _var2 := Point x: _var0 y: _var1.').
 	context := test analyze.
-	self assert: (context at:'_var0') equals: 1.
-	self assert: (context at:'_var1') equals: 2.
-	self assert: (context at:'_var2') equals: (1@2).
+	self assert: (context at: '_var0') equals: 1.
+	self assert: (context at: '_var1') equals: 2.
+	self assert: (context at: '_var2') equals: (1@2).
 ]

@@ -17,12 +17,12 @@ SChangeTest >> testArgumentChange [
 		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := ''hello''.' .
-								'_var1 := ''hello''.' .
-								'_var2 := 7.3.' .
-								'_var3 := ', targetClass asString,' score: _var2.' .
-								'_var4 := ', targetClass asString,' score: _var2.' .
-								'_var5 := _var4 return: _var1.'}.
+		hasSameElements: { '_var0 := ''hello''' .
+								'_var1 := ''hello''' .
+								'_var2 := 7.3' .
+								'_var3 := ', targetClass asString,' score: _var2 ' .
+								'_var4 := ', targetClass asString,' score: _var2 ' .
+								'_var5 := _var4 return: _var1 '}.
 	newTestCase := SSTestCase with: testCase typeInfo.
 	index := 6.
 	1 to: (index-1) do: [:i |
@@ -33,12 +33,12 @@ SChangeTest >> testArgumentChange [
 	newTestCase addAlternativeArgsFor: (testCase statements at: index) value.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := ''hello''.' .
-								'_var1 := ''hello''.' .
-								'_var2 := 7.3.' .
-								'_var3 := ', targetClass asString,' score: _var2.' .
-								'_var4 := ', targetClass asString,' score: _var2.' .
-								'_var5 := _var4 return: _var0.'}.
+		hasSameElements: { '_var0 := ''hello''' .
+								'_var1 := ''hello''' .
+								'_var2 := 7.3' .
+								'_var3 := ', targetClass asString,' score: _var2 ' .
+								'_var4 := ', targetClass asString,' score: _var2 ' .
+								'_var5 := _var4 return: _var0 '}.
 									
 	self assert: testCase validReferences.
 ]
@@ -54,11 +54,11 @@ SChangeTest >> testFactoryErrorChange [
 		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 4.7.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ', targetClass asString,' score: _var0.' .
-								'_var3 := ''hello''.' .
-								'_var4 := _var2 return: _var3.'}.
+		hasSameElements: { '_var0 := 4.7' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ', targetClass asString,' score: _var0 ' .
+								'_var3 := ''hello''' .
+								'_var4 := _var2 return: _var3 '}.
 	newTestCase := SSTestCase with: testCase typeInfo.
 	index := 2.
 	1 to: (index-1) do: [:i |
@@ -80,18 +80,18 @@ SChangeTest >> testLiteralChange [
 
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 4.7.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ''hello''.' .
-								'_var3 := _var1 return: _var2.'}.
+		hasSameElements: { '_var0 := 4.7' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ''hello''' .
+								'_var3 := _var1 return: _var2 '}.
 
 	newTestCase := testCase changeStatementAt: 1.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 417.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ''hello''.' .
-								'_var3 := _var1 return: _var2.'}.	
+		hasSameElements: { '_var0 := 417.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ''hello''' .
+								'_var3 := _var1 return: _var2 '}.	
 									
 	self assert: testCase validReferences.
 ]
@@ -107,11 +107,11 @@ SChangeTest >> testReceiverChange [
 		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 4.7.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ', targetClass asString,' score: _var0.' .
-								'_var3 := ''hello''.' .
-								'_var4 := _var2 return: _var3.'}.
+		hasSameElements: { '_var0 := 4.7' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ', targetClass asString,' score: _var0 ' .
+								'_var3 := ''hello''' .
+								'_var4 := _var2 return: _var3 '}.
 	newTestCase := SSTestCase with: testCase typeInfo.
 	index := 5.
 	1 to: (index-1) do: [:i |
@@ -122,11 +122,11 @@ SChangeTest >> testReceiverChange [
 	newTestCase addAlternativeReceiverFor: (testCase statements at: index) value.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 4.7.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ', targetClass asString,' score: _var0.' .
-								'_var3 := ''hello''.' .
-								'_var4 := _var1 return: _var3.'}.
+		hasSameElements: { '_var0 := 4.7' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ', targetClass asString,' score: _var0 ' .
+								'_var3 := ''hello''' .
+								'_var4 := _var1 return: _var3 '}.
 									
 	self assert: testCase validReferences.
 ]
@@ -143,11 +143,11 @@ SChangeTest >> testSelectorChange [
 		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 4.7.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ', targetClass asString,' score: _var0.' .
-								'_var3 := ''hello''.' .
-								'_var4 := _var2 return: _var3.'}.
+		hasSameElements: { '_var0 := 4.7' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ', targetClass asString,' score: _var0 ' .
+								'_var3 := ''hello''' .
+								'_var4 := _var2 return: _var3 '}.
 	newTestCase := SSTestCase with: testCase typeInfo.
 	index := 5.
 	1 to: (index-1) do: [:i |
@@ -158,11 +158,11 @@ SChangeTest >> testSelectorChange [
 	newTestCase addAlternativeSelectorFor: (testCase statements at: index) value.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 4.7.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ', targetClass asString,' score: _var0.' .
-								'_var3 := ''hello''.' .
-								'_var4 := _var2 returnString.'}.
+		hasSameElements: { '_var0 := 4.7' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ', targetClass asString,' score: _var0 ' .
+								'_var3 := ''hello''' .
+								'_var4 := _var2 returnString'}.
 									
 	self assert: testCase validReferences.
 ]

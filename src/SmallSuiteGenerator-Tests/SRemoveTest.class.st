@@ -14,8 +14,8 @@ SRemoveTest >> testRemoveArgsFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', 'SFoo' fullClassName,' score: _var0.').
+									with: '_var0 := 7.3'
+									with: '_var1 := ', 'SFoo' fullClassName,' score: _var0 ').
 									
 	newTestCase := testCase removeStatementAt: 1.
 	
@@ -34,16 +34,16 @@ SRemoveTest >> testRemoveArgsMessage [
 	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ''hello''.' .
-								'_var3 := _var1 return: _var2.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ''hello''' .
+								'_var3 := _var1 return: _var2 '}.
 	newTestCase := testCase removeStatementAt: 3.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', targetClass asString,' score: _var0.').
+									with: '_var0 := 7.3'
+									with: '_var1 := ', targetClass asString,' score: _var0 ').
 	self assert: testCase validReferences
 ]
 
@@ -58,18 +58,19 @@ SRemoveTest >> testRemoveArgsMessage2 [
 			addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ''hello''.' .
-								'_var3 := _var1 return: _var2.'.
-								'_var4 := _var1 return: _var3.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ''hello''' .
+								'_var3 := _var1 return: _var2 '.
+								'_var4 := _var1 return: _var3 '}.
 	newTestCase := testCase removeStatementAt: 4.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ''hello''.' .
-								'_var3 := _var1 return: _var2.'.}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ''hello''' .
+								'_var3 := _var1 return: _var2 '.}.
 	self assert: newTestCase validReferences
 ]
 
@@ -83,12 +84,13 @@ SRemoveTest >> testRemoveFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', targetClass asString,' score: _var0.').
+									with: '_var0 := 7.3'
+									with: '_var1 := ', targetClass asString,' score: _var0 ').
 	newTestCase := testCase removeStatementAt: 2.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.').
+		hasSameElements: #('_var0 := 7.3').
 ]
 
 { #category : #'mutation-remove' }
@@ -99,14 +101,15 @@ SRemoveTest >> testRemoveFieldAccessMessage [
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'.
-							   '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.' .
-								'_var2 := _var1 score.'}.
+		hasSameElements: {'_var0 := 7.3'.
+							   '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 ' .
+								'_var2 := _var1 score'}.
 	newTestCase := testCase removeStatementAt: 3.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'}
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 '}
 ]
 
 { #category : #'mutation-remove' }
@@ -118,14 +121,15 @@ SRemoveTest >> testRemoveLiteral [
 	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								 '_var1 := ', targetClass asString,' score: _var0.' .
-								 '_var2 := ''hello''.' .
-								 '_var3 := _var1 return: _var2.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								 '_var1 := ', targetClass asString,' score: _var0 ' .
+								 '_var2 := ''hello''' .
+								 '_var3 := _var1 return: _var2 '}.
 	newTestCase := testCase removeStatementAt: 1.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements:  { '_var0 := ''hello''.' }
+		hasSameElements:  { '_var0 := ''hello''' }
 ]
 
 { #category : #'mutation-remove' }
@@ -137,16 +141,16 @@ SRemoveTest >> testRemoveMessage [
 	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								 '_var1 := ', targetClass asString,' score: _var0.' .
-								 '_var2 := ''hello''.' .
-								 '_var3 := _var1 return: _var2.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								 '_var1 := ', targetClass asString,' score: _var0 ' .
+								 '_var2 := ''hello''' .
+								 '_var3 := _var1 return: _var2 '}.
 	newTestCase := testCase removeStatementAt: 4.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements:  {'_var0 := 7.3.' .
-								 '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.' .
-								 '_var2 := ''hello''.'}
+		hasSameElements:  {'_var0 := 7.3' .
+								 '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 ' .
+								 '_var2 := ''hello'''}
 ]
 
 { #category : #'mutation-remove' }
@@ -158,13 +162,13 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage [
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := _var1 score.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := _var1 score'}.
 	newTestCase := testCase removeStatementAt: 2.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: {'_var0 := 7.3.'}
+		hasSameElements: {'_var0 := 7.3'}
 ]
 
 { #category : #'mutation-remove' }
@@ -178,16 +182,17 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage2 [
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ', targetClass asString,' score: _var0.' .
-								'_var3 := _var2 score.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ', targetClass asString,' score: _var0 ' .
+								'_var3 := _var2 score'}.
 	newTestCase := testCase removeStatementAt: 3.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := _var1 score.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := _var1 score'}.
 		
 	
 
@@ -202,13 +207,14 @@ SRemoveTest >> testRemoveReceiverMessage [
 	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ', targetClass asString,' score: _var0.' .
-								'_var2 := ''hello''.' .
-								'_var3 := _var1 return: _var2.'}.
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ', targetClass asString,' score: _var0 ' .
+								'_var2 := ''hello''' .
+								'_var3 := _var1 return: _var2 '}.
 	newTestCase := testCase removeStatementAt: 2.
+	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
-		hasSameElements: { '_var0 := 7.3.' .
-								'_var1 := ''hello''.'}
+		hasSameElements: { '_var0 := 7.3' .
+								'_var1 := ''hello'''}
 ]

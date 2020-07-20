@@ -24,14 +24,14 @@ SSTestShifterTest >> testAddAssignment [
 	| testCase expression |
 	testCase := SSTestCase new.
 	expression := testCase addAssignment: (SLiteral new value: 3).
-	self assert: expression printString equals: '_var0 := 3.'.
+	self assert: expression printString equals: '_var0 := 3'.
 	expression := testCase
 		addAssignment:
 			(SMessage new
 				receiver: (SVariable new id: 0);
 				selector: #foo;
 				yourself).
-	self assert: expression printString equals: '_var1 := _var0 foo.'
+	self assert: expression printString equals: '_var1 := _var0 foo'
 ]
 
 { #category : #tests }
@@ -44,9 +44,9 @@ SSTestShifterTest >> testAddFactoryMessage [
 		addFactoryMessage: (self fullSymbolOf: #SFoo).
 	self assert: testCase statements size equals: 2.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array with: '_var0 := 4.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.').
+		assertCollection: (testCase statements collect: #printString) asArray
+		hasSameElements: (Array with: '_var0 := 4'
+									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 ').
 	self should: [ testCase addFactoryMessage: (self fullSymbolOf: #SStack) ] raise: SError.
 	aTypeInfo
 		type:
@@ -70,10 +70,10 @@ SSTestShifterTest >> testAddFactoryMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
-			(Array with: '_var0 := 4.'
-					with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-					with: '_var2 := #(1 3 2 ).'
-					with: '_var3 := ', (self fullNameOfClass: 'SStack')asString,' newStack: _var2.')
+			(Array with: '_var0 := 4'
+					with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 '
+					with: '_var2 := #(1 3 2 )'
+					with: '_var3 := ', (self fullNameOfClass: 'SStack')asString,' newStack: _var2 ')
 ]
 
 { #category : #tests }
@@ -142,7 +142,7 @@ SSTestShifterTest >> testAddFieldAccessMessage [
 	testCase targetClassName: (self fullSymbolOf: #SSTeacher).
 	self
 		assert: testCase addFieldAccessMessage printString
-		equals: '_var1 := _var0 idTeacher.'.
+		equals: '_var1 := _var0 idTeacher'.
 ]
 
 { #category : #tests }
@@ -155,7 +155,7 @@ SSTestShifterTest >> testAddFieldAccessMessageFrom [
 	testCase targetClassName: (self fullSymbolOf:#SFoo).
 	self
 		assert: (testCase addFieldAccessMessage: #score from: (self fullSymbolOf:#SFoo)) printString
-		equals: '_var2 := _var1 score.'
+		equals: '_var2 := _var1 score'
 ]
 
 { #category : #tests }
@@ -204,7 +204,7 @@ SSTestShifterTest >> testAddFieldAccessMessageWithReceiver [
 			(testCase
 				addFieldAccessMessage: (typeInfo accessMessagesFrom: (self fullSymbolOf: #SFoo)) first
 				withReceiver: receiver) printString
-		equals: '_var2 := _var1 score.'
+		equals: '_var2 := _var1 score'
 ]
 
 { #category : #tests }
@@ -239,16 +239,16 @@ SSTestShifterTest >> testAddLiteral [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := ''World''.'
+				with: '_var0 := ''World'''
 				with:
 					'_var1 := '
 						,
 							(OrderedCollection new
 								add: 1;
 								add: 4;
-								yourself) storeString , '.'
-				with: '_var2 := 2.'
-				with: '_var3 := ' , SStudent new storeString , '.')
+								yourself) storeString , ''
+				with: '_var2 := 2'
+				with: '_var3 := ' , SStudent new storeString , '')
 ]
 
 { #category : #tests }
@@ -279,9 +279,9 @@ SSTestShifterTest >> testAddMessage [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := ',(self fullNameOfClass: 'SFoo')asString,' new.'
-				with: '_var1 := ' , (OrderedCollection newFrom: #(1 4 5)) storeString , '.'
-				with: '_var2 := _var0 return: _var1.')
+				with: '_var0 := ',(self fullNameOfClass: 'SFoo')asString,' new'
+				with: '_var1 := ' , (OrderedCollection newFrom: #(1 4 5)) storeString , ''
+				with: '_var2 := _var0 return: _var1 ')
 ]
 
 { #category : #tests }
@@ -296,15 +296,15 @@ SSTestShifterTest >> testAddMessageFrom [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := 4.'
-				with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-				with: '_var2 := _var1 returnFloat.').
+				with: '_var0 := 4'
+				with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 '
+				with: '_var2 := _var1 returnFloat').
 	self
 		assert: (testCase addMessage: #returnNum from: (self fullSymbolOf: #SFoo)) printString
-		equals: '_var3 := _var1 returnNum.'.
+		equals: '_var3 := _var1 returnNum'.
 	self
 		assert:
-			(#('_var4 := _var1 score: _var0.' '_var4 := _var1 score: _var3.' '_var5 := _var1 score: _var3.' '_var5 := _var1 score: _var4.')
+			(#('_var4 := _var1 score: _var0' '_var4 := _var1 score: _var3 ' '_var5 := _var1 score: _var3' '_var5 := _var1 score: _var4')
 				includes: (testCase addMessage: #score: from:  (self fullSymbolOf: #SFoo)) printString)
 ]
 
@@ -323,9 +323,9 @@ SSTestShifterTest >> testAddMessageFromDifferentReceiver [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements:
 			(Array
-				with: '_var0 := ',(self fullNameOfClass: 'SConference')asString,' new.'
-				with: '_var1 := ' , (SStudent new name: 'Mary') storeString , '.'
-				with: '_var2 := _var0 canRegister: _var1.')
+				with: '_var0 := ',(self fullNameOfClass: 'SConference')asString,' new'
+				with: '_var1 := ' , (SStudent new name: 'Mary') storeString , ''
+				with: '_var2 := _var0 canRegister: _var1 ')
 ]
 
 { #category : #tests }
@@ -347,7 +347,7 @@ SSTestShifterTest >> testAddMessageWithReceiver [
 			(testCase
 				addMessage: (typeInfo messagesFrom: (self fullSymbolOf: #SFoo)) first
 				withReceiver: receiver) printString
-		equals: '_var1 := _var0 return: _var0.'
+		equals: '_var1 := _var0 return: _var0 '
 ]
 
 { #category : #tests }
@@ -392,18 +392,18 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 					(Array
 						with:
 							(OrderedCollection new
-								add: '_var0 := SStack new.';
-								add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , '.';
-								add: '_var2 := ' , (SStudent name: 'Josh' with: 2) storeString , '.';
-								add: '_var3 := ((OrderedCollection new) add: _var1; add: _var2; yourself).';
-								add: '_var4 := _var0 push: _var3.';
+								add: '_var0 := SStack new';
+								add: '_var1 := ' , (SStudent name: 'Lian' with: 1) storeString , ' ';
+								add: '_var2 := ' , (SStudent name: 'Josh' with: 2) storeString , ' ';
+								add: '_var3 := ((OrderedCollection new) add: _var1; add: _var2; yourself)';
+								add: '_var4 := _var0 push: _var3 ';
 								yourself)
 						with:
 							(OrderedCollection new
-								add: '_var0 := SStack new.';
-								add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , '.';
-								add: '_var2 := ((OrderedCollection new) add: _var1; yourself).';
-								add: '_var3 := _var0 push: _var2.';
+								add: '_var0 := SStack new';
+								add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , ' ';
+								add: '_var2 := ((OrderedCollection new) add: _var1; yourself)';
+								add: '_var3 := _var0 push: _var2 ';
 								yourself)))
 ]
 
@@ -529,7 +529,7 @@ SSTestShifterTest >> testPickOrCreateObjectVariableOf [
 	self
 		assert: (testCase pickOrCreateObjectVariableOf: (self fullSymbolOf:#SFoo)) printString
 		equals: '_var0'.
-	self assertCollection: (testCase statements collect: #printString) hasSameElements: (Array with: '_var0 := ',(self fullNameOfClass: 'SFoo')asString,' new.').
+	self assertCollection: (testCase statements collect: #printString) hasSameElements: (Array with: '_var0 := ',(self fullNameOfClass: 'SFoo')asString,' new').
 	testCase pickOrCreateObjectVariableOf: (self fullSymbolOf:#SFoo).
 	self assert: testCase statements size equals: 1
 ]

@@ -43,23 +43,23 @@ SSTestCaseTest >> testCopy [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := _var1 returnNum.'
-									with: '_var3 := _var1 score.'
-									with: '_var4 := 5.'
-									with: '_var5 := ''hello''.').
+									with: '_var0 := 7.3'
+									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 '
+									with: '_var2 := _var1 returnNum'
+									with: '_var3 := _var1 score'
+									with: '_var4 := 5'
+									with: '_var5 := ''hello''').
 	self
 		assertCollection: (otherTestCase statements collect: #printString)
 		hasSameElements: (OrderedCollection new 
-									add: '_var0 := 7.3.';
-									add: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.';
-									add: '_var2 := _var1 returnNum.';
-									add: '_var3 := _var1 score.';
-									add: '_var4 := 5.';
-									add: '_var5 := _var1 returnFloat.';
-									add: '_var6 := ''hello''.';
-									add: '_var7 := _var1 return: _var6.';
+									add: '_var0 := 7.3';
+									add: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 ';
+									add: '_var2 := _var1 returnNum';
+									add: '_var3 := _var1 score';
+									add: '_var4 := 5';
+									add: '_var5 := _var1 returnFloat';
+									add: '_var6 := ''hello''';
+									add: '_var7 := _var1 return: _var6 ';
 									yourself)
 ]
 
@@ -98,9 +98,9 @@ SSTestCaseTest >> testFieldAccessMessage [
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 
-									with: '_var0 := 5.'
-									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := _var1 score.')
+									with: '_var0 := 5'
+									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 '
+									with: '_var2 := _var1 score')
 ]
 
 { #category : #tests }
