@@ -6,12 +6,16 @@ Class {
 
 { #category : #tests }
 SMethodInfoTest >> testEquals [
+	| studentSymbol sfooSymbol stringSymbol |
+	studentSymbol := #SStudent fullClassNameSymbol.
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
 	self
-		assert: (STypeMethodInfo type: #name -> #(#SStudent #ByteString #() false))
-		equals: (STypeMethodInfo type: #name -> #(#SStudent #ByteString #() false)).
+		assert: (STypeMethodInfo type: #name -> (Array with: studentSymbol with: stringSymbol with: #() with: false))
+		equals: (STypeMethodInfo type: #name -> (Array with: studentSymbol with: stringSymbol with: #() with: false)).
 	self assert: (STypeMethodInfo
-		type: #return: -> #(#SFoo #ByteString #(#ByteString) false)) equals: (STypeMethodInfo
-		type: #return: -> #(#SFoo #ByteString #(#ByteString) false))
+		type: #return: -> (Array with: sfooSymbol with: stringSymbol with: (Array with: stringSymbol) with: false)) equals: (STypeMethodInfo
+		type: #return: -> (Array with: sfooSymbol with: stringSymbol with: (Array with: stringSymbol) with: false))
 ]
 
 { #category : #tests }
@@ -56,40 +60,45 @@ SMethodInfoTest >> testToString [
 
 { #category : #tests }
 SMethodInfoTest >> testType [
-	| methodInfo |
+	| methodInfo sfooSymbol floatSymbol stringSymbol collSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	floatSymbol := #SmallFloat64 fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	collSymbol := #OrderedCollection fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 	methodInfo := STypeMethodInfo
-		type: #returnFloat -> #(#SFoo #SmallFloat64 #() false).
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #SmallFloat64.
+		type: #returnFloat -> (Array with: sfooSymbol with: floatSymbol with: #() with: false).
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: floatSymbol.
 	self assert: methodInfo allArgTypes isEmpty.
 	self deny: methodInfo isQuick.
 	self deny: methodInfo isDeprecated.
 	methodInfo := STypeMethodInfo
-		type: #returnString -> #(#SFoo #ByteString #() false).
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #ByteString.
+		type: #returnString -> (Array with: sfooSymbol with: stringSymbol with: #() with: false).
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: stringSymbol.
 	self assert: methodInfo allArgTypes isEmpty.
 	self deny: methodInfo isQuick.
 	methodInfo := STypeMethodInfo
-		type: #return: -> #(#SFoo #OrderedCollection #(#OrderedCollection) false).
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #OrderedCollection.
+		type: #return: -> (Array with: sfooSymbol with: collSymbol with:(Array with: collSymbol) with: false).
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: collSymbol.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: #(#OrderedCollection).
+		hasSameElements: (Array with: collSymbol).
 	self deny: methodInfo isQuick.
 	methodInfo := STypeMethodInfo
-		type: #score: -> #(#SFoo #SFoo #(#SmallInteger) false).
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #SFoo.
+		type: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false).
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: sfooSymbol.
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: #(#SmallInteger).
+		hasSameElements: (Array with: intSymbol).
 	self deny: methodInfo isQuick.
 	methodInfo := STypeMethodInfo
-		type: #score -> #(#SFoo #SmallInteger #() true).
-	self assert: methodInfo receiver type equals: #SFoo.
-	self assert: methodInfo returnType type equals: #SmallInteger.
+		type: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: true).
+	self assert: methodInfo receiver type equals: sfooSymbol.
+	self assert: methodInfo returnType type equals: intSymbol.
 	self assert: methodInfo argTypes isEmpty.
 	self assert: methodInfo isQuick
 ]

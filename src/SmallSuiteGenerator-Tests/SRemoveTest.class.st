@@ -95,21 +95,22 @@ SRemoveTest >> testRemoveFactoryMessage [
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveFieldAccessMessage [
-	| testCase newTestCase|
+	| testCase newTestCase targetClass |
+	targetClass := 'SFoo' fullClassName.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase targetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: #SFoo fullClassNameSymbol;
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: {'_var0 := 7.3'.
-							   '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 ' .
+							   '_var1 := ', targetClass,' score: _var0 ' .
 								'_var2 := _var1 score'}.
 	newTestCase := testCase removeStatementAt: 3.
 	newTestCase repairIds.
 	self
 		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements: { '_var0 := 7.3' .
-								'_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 '}
+								'_var1 := ', targetClass,' score: _var0 '}
 ]
 
 { #category : #'mutation-remove' }
@@ -149,7 +150,7 @@ SRemoveTest >> testRemoveMessage [
 	self
 		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements:  {'_var0 := 7.3' .
-								 '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0 ' .
+								 '_var1 := ', targetClass asString,' score: _var0 ' .
 								 '_var2 := ''hello'''}
 ]
 

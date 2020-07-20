@@ -23,28 +23,30 @@ SSTestCaseTest >> tearDown [
 
 { #category : #tests }
 SSTestCaseTest >> testCopy [
-	| testCase typeInfo otherTestCase |
+	| testCase typeInfo otherTestCase sfooSymbol sfooName |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	sfooName := 'SFoo' fullClassName.
 	typeInfo := self typeInfo.
 	testCase := SSTestCase with: typeInfo.
 	testCase
-		targetClassName: (self fullSymbolOf: #SFoo);
-		addMessage: #returnNum from: (self fullSymbolOf: #SFoo);
-		addFieldAccessMessage: #score from: (self fullSymbolOf: #SFoo);
-		addLiteral: (self fullSymbolOf: #SmallInteger).
+		targetClassName: sfooSymbol;
+		addMessage: #returnNum from: sfooSymbol;
+		addFieldAccessMessage: #score from: sfooSymbol;
+		addLiteral:  #SmallInteger fullClassNameSymbol.
 	otherTestCase := testCase copy.
 	self assert: testCase length equals: 5.
 	self assert: testCase equals: otherTestCase.
 	self
 		assert: testCase targetClassesName
 		equals: #SFoo.
-	testCase addLiteral: (self fullSymbolOf: #ByteString).
-	otherTestCase addMessage: #returnFloat from: (self fullSymbolOf: #SFoo).
-	otherTestCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
+	testCase addLiteral: #ByteString fullClassNameSymbol.
+	otherTestCase addMessage: #returnFloat from: sfooSymbol.
+	otherTestCase addMessage: #return: from: sfooSymbol.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array
 									with: '_var0 := 7.3'
-									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 '
+									with: '_var1 := ',sfooName,' score: _var0 '
 									with: '_var2 := _var1 returnNum'
 									with: '_var3 := _var1 score'
 									with: '_var4 := 5'
@@ -53,7 +55,7 @@ SSTestCaseTest >> testCopy [
 		assertCollection: (otherTestCase statements collect: #printString)
 		hasSameElements: (OrderedCollection new 
 									add: '_var0 := 7.3';
-									add: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 ';
+									add: '_var1 := ',sfooName,' score: _var0 ';
 									add: '_var2 := _var1 returnNum';
 									add: '_var3 := _var1 score';
 									add: '_var4 := 5';
@@ -65,41 +67,43 @@ SSTestCaseTest >> testCopy [
 
 { #category : #tests }
 SSTestCaseTest >> testFieldAccessMessage [
-	| testCase |
+	| testCase sfooSymbol smallIntegerSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	smallIntegerSymbol := #SmallInteger fullClassNameSymbol.
 	testCase := SSTestCase
 		with:
 			(STypeInfo new
 				type:
-					(self fullSymbolOf: #SFoo)
+					sfooSymbol
 						->
 							(Array
 								with:
 									(Array
 										with: #score -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
+																with: sfooSymbol
+																with: smallIntegerSymbol
 																with: #()
 																with: true)
 										with: #score: -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
-																with: (Array with: (self fullSymbolOf: #SFoo))
+																with: sfooSymbol
+																with: smallIntegerSymbol
+																with: (Array with: sfooSymbol)
 																with: false))
 								with: (Array with: #score: -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SFoo)
-																with: (Array with: (self fullSymbolOf: #SmallInteger))
+																with: sfooSymbol
+																with: sfooSymbol
+																with: (Array with: smallIntegerSymbol)
 																with: false)));
-				scalar: (self fullSymbolOf: #SmallInteger) with: #(5)).
+				scalar: smallIntegerSymbol with: #(5)).
 	testCase
-		targetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: sfooSymbol;
 		addFieldAccessMessage.
 	self assert: testCase statements size equals: 3.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 
 									with: '_var0 := 5'
-									with: '_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0 '
+									with: '_var1 := ', 'SFoo' fullClassName,' score: _var0 '
 									with: '_var2 := _var1 score')
 ]
 
@@ -107,7 +111,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 SSTestCaseTest >> testGenerateStatements [
 	| testCase  |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase targetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: #SFoo fullClassNameSymbol;
 	numMaxStatements: 30.
 	self shouldnt: [ testCase generateStatements ] raise: SError
 ]
@@ -117,9 +121,9 @@ SSTestCaseTest >> testPickAccessorsOf [
 	| testCase |
 	testCase := SSTestCase new.
 	testCase typeInfo: utility typeInfoOnPackage1 .
-	self assert: (testCase pickAccessorsOf: (self fullSymbolOf: #SEvent)) isEmpty.
+	self assert: (testCase pickAccessorsOf: #SEvent fullClassNameSymbol) isEmpty.
 	self
-		assertCollection: ((testCase pickAccessorsOf: (self fullSymbolOf: #SConference)) collect: #selector)
+		assertCollection: ((testCase pickAccessorsOf: #SConference fullClassNameSymbol) collect: #selector)
 		hasSameElements: #(#discount #offerPrice)
 ]
 
@@ -128,49 +132,53 @@ SSTestCaseTest >> testPickMessagesOf [
 	| testCase |
 	testCase := SSTestCase new.
 	testCase typeInfo: utility typeInfoOnPackage1 .
-	self assert: (testCase pickMessagesOf: (self fullSymbolOf: #SEvent)) isEmpty.
+	self assert: (testCase pickMessagesOf: #SEvent fullClassNameSymbol) isEmpty.
 	self
-		assertCollection: ((testCase pickMessagesOf: (self fullSymbolOf: #SConference)) collect: #selector)
+		assertCollection: ((testCase pickMessagesOf: #SConference fullClassNameSymbol) collect: #selector)
 		hasSameElements: #(#initialize #offerPrice: #canRegister: #price)
 ]
 
 { #category : #tests }
 SSTestCaseTest >> typeInfo [ 
-	|typeInfo|
+	|typeInfo sfooSymbol smallIntegerSymbol byteStringSymbol smallFloatSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	smallIntegerSymbol := #SmallInteger fullClassNameSymbol.
+	byteStringSymbol := #ByteString fullClassNameSymbol.
+	smallFloatSymbol := #SmallFloat64 fullClassNameSymbol .
 	typeInfo := STypeInfo new
 		type:
-			(self fullSymbolOf: #SFoo)
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
 								with: #returnNum -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
+																with: sfooSymbol
+																with: smallIntegerSymbol
 																with: #()
 																with: false)
 								with: #returnFloat -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallFloat64)
+																with: sfooSymbol
+																with: smallFloatSymbol
 																with: #()
 																with: false)
 								with: #score -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SmallInteger)
+																with: sfooSymbol
+																with: smallIntegerSymbol
 																with: #()
 																with: true)
 								with: #return: -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #ByteString)
-																with: (Array with: (self fullSymbolOf: #ByteString))
+																with: sfooSymbol
+																with: byteStringSymbol
+																with: (Array with: byteStringSymbol)
 																with: false))
 						with: (Array with: #score: -> (Array
-																with: (self fullSymbolOf: #SFoo)
-																with: (self fullSymbolOf: #SFoo)
-																with: (Array with: (self fullSymbolOf: #SmallFloat64))
+																with: sfooSymbol
+																with: sfooSymbol
+																with: (Array with: smallFloatSymbol)
 																with: false))).
-	typeInfo scalar: (self fullSymbolOf: #ByteString) with: #('hello').
-	typeInfo scalar: (self fullSymbolOf: #SmallInteger) with: #(5).
-	typeInfo scalar: (self fullSymbolOf: #SmallFloat64) with: #(7.3).
+	typeInfo scalar: byteStringSymbol with: #('hello').
+	typeInfo scalar: smallIntegerSymbol with: #(5).
+	typeInfo scalar: smallFloatSymbol with: #(7.3).
 	^ typeInfo
 ]

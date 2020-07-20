@@ -10,7 +10,7 @@ SConfigurationTest >> tearDown [
 	SPlatform cleanAllLogs
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 SConfigurationTest >> testFileLogger [
 	self
 		shouldnt: (SPlatform fileLogger: 'STestLog.log')

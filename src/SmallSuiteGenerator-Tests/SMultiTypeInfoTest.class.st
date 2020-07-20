@@ -5,8 +5,10 @@ Class {
 }
 
 { #category : #tests }
-SMultiTypeInfoTest >> testEqual [ 
-	self assert: (SMultiTypeInfo new type: #ByteString) equals: (SMultiTypeInfo new type: #ByteString)
+SMultiTypeInfoTest >> testEqual [
+	|stringSymbol|
+	stringSymbol := #ByteString fullClassNameSymbol.
+	self assert: (SMultiTypeInfo new type: stringSymbol) equals: (SMultiTypeInfo new type: stringSymbol)
 ]
 
 { #category : #tests }

@@ -9,7 +9,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SGAEngineTest >> profilerOf: string [
 	profiler := self aSLProfilerCoverage profilerForPackagesMatching: string.
 	profiler beforeProfiling
@@ -51,18 +51,19 @@ SGAEngineTest >> testRunOnClassSStudentManual [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesMatchingSFoo [
-	| first last functionFitness  targetPackageRegex typeInfo |
+	| first last functionFitness  targetPackageRegex typeInfo targetClass |
+	targetClass := #SFoo fullClassNameSymbol.
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
 	typeInfo := utility typeInfoSFooOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex;
-	 targetClass: (self fullSymbolOf: #SFoo);
+	 targetClass: targetClass;
 	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: typeInfo; 	" STON fromString: utility typeInfoStringSFoo3."
-		targetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: targetClass;
 		fitness: functionFitness;
 		populationSize: 5;
 		numberOfGenerations: 5;
@@ -78,21 +79,21 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
-	| first last functionFitness targetPackageRegex typeInfo |
+	| first last functionFitness targetPackageRegex typeInfo targetClass |
+	targetClass := #SSTeacher fullClassNameSymbol.
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.
-	
 	
 	typeInfo := utility typeInfoSSTeacherOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex;
-	 targetClass: (self fullSymbolOf: #SSTeacher);
+	 targetClass: targetClass;
 	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: typeInfo; "STON fromString: utility typeInfoStringSSTeacher1."
 		fitness: functionFitness;
-		targetClassName: (self fullSymbolOf: #SSTeacher);
+		targetClassName: targetClass;
 		populationSize: 10;
 		numberOfGenerations: 5;
 		run.
@@ -106,19 +107,20 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 
 { #category : #tests }
 SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
-	| first last functionFitness targetPackageRegex typeInfo |
+	| first last functionFitness targetPackageRegex typeInfo targetClass |
+	targetClass := #SSTeacher fullClassNameSymbol.
 	targetPackageRegex := 'SmallSuiteGenerator-Scenario'.	
 	typeInfo := utility typeInfoSSTeacherOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SStatementCoverage new profiler: profiler.
 	functionFitness tagetPackagesRegex: targetPackageRegex.
-	functionFitness targetClass: (self fullSymbolOf: #SSTeacher).
+	functionFitness targetClass: targetClass.
 	functionFitness typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: typeInfo;
 		fitness: functionFitness;
-		targetClassName: (self fullSymbolOf: #SSTeacher);
+		targetClassName: targetClass;
 		populationSize: 10;
 		numberOfGenerations: 5;
 		run.

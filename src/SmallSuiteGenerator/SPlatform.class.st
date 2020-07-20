@@ -169,8 +169,7 @@ SPlatform class >> saveOnLog: message [
 
 { #category : #accessing }
 SPlatform class >> seed [ 	
-	seed ifNil: [ seed := self defaultSeed.
-		 ].
+	seed ifNil: [ seed := self defaultSeed].
 	^ seed
 ]
 

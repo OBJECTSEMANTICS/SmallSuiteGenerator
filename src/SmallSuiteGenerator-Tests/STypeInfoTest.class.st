@@ -11,19 +11,22 @@ STypeInfoTest >> nameOf: aClass [
 
 { #category : #tests }
 STypeInfoTest >> testAccesssMessagesFrom [
-	| typeInfo |
+	| typeInfo sfooSymbol stringSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 	typeInfo := STypeInfo new
 		type:
-			#SFoo
+			sfooSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #returnString -> #(#SFoo #ByteString #() false)
-								with: #score -> #(#SFoo #SmallInteger #() true))
+								with: #returnString -> (Array with: sfooSymbol with: stringSymbol with: #() with: false)
+								with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: true))
 						with: #()).
 	self
-		assertCollection: ((typeInfo accessMessagesFrom: #SFoo) collect: #selector)
+		assertCollection: ((typeInfo accessMessagesFrom: sfooSymbol) collect: #selector)
 		hasSameElements: #(#score)
 ]
 
@@ -326,90 +329,98 @@ STypeInfoTest >> testAsTypeInfoScalars [
 
 { #category : #tests }
 STypeInfoTest >> testClassMethodTypeFrom [
-	| typeInfo |
+	| typeInfo sfooSymbol|
+	sfooSymbol := #SFoo fullClassNameSymbol.
 	typeInfo := STypeInfo new
-		type: #SFoo -> (Array with: #() with: #()).
+		type: sfooSymbol -> (Array with: #() with: #()).
 	self
-		should: [ typeInfo classMethodType: #new from: #SFoo ]
+		should: [ typeInfo classMethodType: #new from: sfooSymbol ]
 		raise: SError.
 	typeInfo := STypeInfo new
 		type:
-			#SFoo
+			sfooSymbol
 				->
 					(Array
-						with: (Array with: #initialize -> #(#SFoo #SFoo #() false))
+						with: (Array with: #initialize -> (Array with: sfooSymbol with: sfooSymbol with: #() with: false))
 						with: #()).
 	self
-		shouldnt: [ typeInfo classMethodType: #new from: #SFoo ]
+		shouldnt: [ typeInfo classMethodType: #new from: sfooSymbol ]
 		raise: SError
 ]
 
 { #category : #tests }
 STypeInfoTest >> testEquals [
+	| sfooSymbol studentSymbol stringSymbol intSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
+	studentSymbol := #SStudent fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 	self
-		assert: (STypeInfo new type: #SFoo -> #(#() #()))
-		equals: (STypeInfo new type: #SFoo -> #(#() #())).
-	self
-		assert:
-			(STypeInfo new
-				type:
-					#SStudent
-						->
-							(Array
-								with: (Array with: #name -> #(#SStudent #ByteString #() false))
-								with: #());
-				scalar: #ByteString with: #('Abi'))
-		equals:
-			(STypeInfo new
-				type:
-					#SStudent
-						->
-							(Array
-								with: (Array with: #name -> #(#SStudent #ByteString #() false))
-								with: #());
-				scalar: #ByteString with: #('Abi')).
+		assert: (STypeInfo new type: sfooSymbol -> #(#() #()))
+		equals: (STypeInfo new type: sfooSymbol -> #(#() #())).
 	self
 		assert:
 			(STypeInfo new
 				type:
-					#SFoo
+					studentSymbol
 						->
 							(Array
-								with: (Array with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
-								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
-				scalar: #SmallInteger with: #(1 3 4);
-				scalar: #SStudent with: (Array with: (SStudent name: 'Nilson')))
+								with: (Array with: #name -> (Array with: studentSymbol with: stringSymbol with: #() with: false))
+								with: #());
+				scalar: stringSymbol with: #('Abi'))
 		equals:
 			(STypeInfo new
 				type:
-					#SFoo
+					studentSymbol
 						->
 							(Array
-								with: (Array with: #return: -> #(#SFoo #SStudent #(#SStudent) false))
-								with: (Array with: #score: -> #(#SFoo #SFoo #(#SmallInteger) false)));
-				scalar: #SmallInteger with: #(1 3 4);
-				scalar: #SStudent with: (Array with: (SStudent name: 'Nilson')))
+								with: (Array with: #name -> (Array with: studentSymbol with: stringSymbol with: #() with: false))
+								with: #());
+				scalar: stringSymbol with: #('Abi')).
+	self
+		assert:
+			(STypeInfo new
+				type:
+					sfooSymbol
+						->
+							(Array
+								with: (Array with: #return: -> (Array with: sfooSymbol with: studentSymbol with: (Array with: studentSymbol) with: false))
+								with: (Array with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false)));
+				scalar: intSymbol with: #(1 3 4);
+				scalar: studentSymbol with: (Array with: (SStudent name: 'Nilson')))
+		equals:
+			(STypeInfo new
+				type:
+					sfooSymbol
+						->
+							(Array
+								with: (Array with: #return: -> (Array with: sfooSymbol with: studentSymbol with: (Array with: studentSymbol) with: false))
+								with: (Array with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false)));
+				scalar: intSymbol with: #(1 3 4);
+				scalar: studentSymbol with: (Array with: (SStudent name: 'Nilson')))
 ]
 
 { #category : #tests }
 STypeInfoTest >> testFactoryMessages [
-	| typeInfo classNameStudent |
+	| typeInfo classNameStudent studentSymbol confSymbol |
 	classNameStudent := self nameOf: SStudent.
+	studentSymbol :=#SStudent fullClassNameSymbol.
+	confSymbol := #SConference fullClassNameSymbol.
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SStudent name: 'Mary' ]
 		forClassNamed: classNameStudent).
-	self assert: (typeInfo factoryMessagesFrom: #SStudent) isEmpty.
+	self assert: (typeInfo factoryMessagesFrom: studentSymbol) isEmpty.
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SStudent name: 'Mary' ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
-		assertCollection: ((typeInfo factoryMessagesFrom: #SStudent) collect: #selector)
+		assertCollection: ((typeInfo factoryMessagesFrom: studentSymbol) collect: #selector)
 		hasSameElements: #(#name:).
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
-		assertCollection: ((typeInfo factoryMessagesFrom: #SConference) collect: #selector)
+		assertCollection: ((typeInfo factoryMessagesFrom: confSymbol) collect: #selector)
 		hasSameElements: #(#price:)
 ]
 
@@ -457,33 +468,36 @@ STypeInfoTest >> testFromString [
 
 { #category : #tests }
 STypeInfoTest >> testIsAbstracClass [
-	| typeInfo |
+	| typeInfo personSymbol stringSymbol intSymbol |
+	personSymbol := #SSPerson fullClassNameSymbol.
+	stringSymbol := #ByteString fullClassNameSymbol.
+	intSymbol := #SmallInteger fullClassNameSymbol.
 	typeInfo := STypeInfo new
 		type:
-			(self fullSymbolOf: #SSPerson)
+			personSymbol
 				->
 					(Array
 						with:
 							(Array
-								with: #name -> (Array with: (self fullSymbolOf: #SSPerson)
-									with: (self fullSymbolOf:#ByteString)
+								with: #name -> (Array with: personSymbol
+									with: stringSymbol
 									with: #()
 									with: true)
-								with: #id ->  (Array with: (self fullSymbolOf: #SSPerson)
-									with: (self fullSymbolOf:#SmallInteger)
+								with: #id ->  (Array with: personSymbol
+									with: intSymbol
 									with: #()
 									with: false))
 						with:
 							(Array
 								with:
 									#name:with:
-										->  (Array with: (self fullSymbolOf: #SSPerson)
-									with: (self fullSymbolOf:#SSPerson)
-									with: (Array with: (self fullSymbolOf:#ByteString) with:  (self fullSymbolOf:#SmallInteger))
+										->  (Array with: personSymbol
+									with: personSymbol
+									with: (Array with: stringSymbol with: intSymbol)
 									with: false)));
-		scalar: (self fullSymbolOf:#SmallInteger) with: #(50);
-		scalar: (self fullSymbolOf:#ByteString) with: #('Ann').
-	self assert: (typeInfo isAbstractClass:  (self fullSymbolOf:#SSPerson) )
+		scalar: intSymbol with: #(50);
+		scalar: stringSymbol with: #('Ann').
+	self assert: (typeInfo isAbstractClass: personSymbol )
 ]
 
 { #category : #tests }

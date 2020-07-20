@@ -23,14 +23,15 @@ SRandomTest >> testCollectAtRandom [
 
 { #category : #tests }
 SRandomTest >> testCollectAtRandomOnStatements [
-	| generator testCase |
+	| generator testCase sfooSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
 	generator := SRandom seed: 100.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase
-		targetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: sfooSymbol;
 		addFactoryMessage;
-		addMessage: #returnNum from: (self fullSymbolOf: #SFoo);
-		addFieldAccessMessage: #score from: (self fullSymbolOf: #SFoo).
+		addMessage: #returnNum from: sfooSymbol;
+		addFieldAccessMessage: #score from: sfooSymbol.
 	self
 		assertCollection: testCase printStatements
 		hasSameElements:
@@ -48,14 +49,15 @@ SRandomTest >> testSelectAtRandom [
 
 { #category : #tests }
 SRandomTest >> testSelectAtRandomOnStatements [
-	| generator testCase stringStatements statements |
+	| generator testCase stringStatements statements sfooSymbol |
+	sfooSymbol := #SFoo fullClassNameSymbol.
 	generator := SRandom seed: 100.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase
-		targetClassName:(self fullSymbolOf: #SFoo);
+		targetClassName: sfooSymbol;
 		addFactoryMessage;
-		addMessage: #returnNum from: (self fullSymbolOf: #SFoo);
-		addFieldAccessMessage: #score from: (self fullSymbolOf: #SFoo).
+		addMessage: #returnNum from: sfooSymbol;
+		addFieldAccessMessage: #score from: sfooSymbol.
 	stringStatements := testCase printStatements.
 	statements := testCase statements.
 	100 timesRepeat: [

@@ -22,7 +22,7 @@ SGAMutationOperationTest >> testMutation [
 	testCase := SSTestCase with: utility typeInfoSStack3.
 	testCase numMaxStatements: 10.
 	testCase
-		targetClassName: (self fullSymbolOf: #SStack);
+		targetClassName: #SStack fullClassNameSymbol;
 		generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
@@ -34,7 +34,7 @@ SGAMutationOperationTest >> testMutationSSteacher [
 	| typeInfo testCase mutatedTestCase |
 	typeInfo := utility typeInfoSSTeacher1.
 	testCase := SSTestCase with: typeInfo.
-	testCase targetClassName: (self fullSymbolOf: #SSTeacher);
+	testCase targetClassName: #SSTeacher fullClassNameSymbol;
 	generateStatements.
 	mutatedTestCase := operation mutate: testCase.
 	mutatedTestCase := operation mutate: mutatedTestCase.
