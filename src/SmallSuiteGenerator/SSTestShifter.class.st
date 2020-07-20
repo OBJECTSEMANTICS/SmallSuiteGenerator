@@ -547,7 +547,22 @@ SSTestShifter >> initialize [
   assertions := OrderedCollection new.
   nextId := 0.
   maxNumberOfStatements := 10.
+]
 
+{ #category : #inserting }
+SSTestShifter >> insertAsParameter: expression after: aStatement [
+	(self random collectAtRandom: (statements
+		copyFrom: (statements indexOf: aStatement) + 1
+		to: self length))
+		do: [ :stm | [ | mutatedStm |
+			mutatedStm := stm replaceArgBy: expression.
+			(mutatedStm pickUpReferences: expression) ifNotEmpty: 
+				[ mutatedStm value mutated: true.].
+			 ^ mutatedStm ]
+				on: SError
+				do: [ :e |  ] ].
+	self
+		error: 'Cannot insert any parameter by: ' , expression printString
 ]
 
 { #category : #'mutation-insert' }
@@ -805,10 +820,6 @@ SSTestShifter >> removeStatementAt: index [
 		]
 	].
 	^ copy.
-	
-	
-	
-	
 	
 ]
 
