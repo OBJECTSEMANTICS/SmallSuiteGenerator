@@ -21,7 +21,7 @@ Class {
 		'variable',
 		'value'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -40,6 +40,21 @@ SAssignment >> = other [
 			and: [ (value = other value) ] ]
 ]
 
+{ #category : #visitor }
+SAssignment >> accept: aSSVisitor [
+	^ aSSVisitor visitAssignment: self.
+]
+
+{ #category : #actions }
+SAssignment >> changeOn: aTestCase [
+	^ self value changeOn: aTestCase.
+]
+
+{ #category : #querying }
+SAssignment >> containsVariable: aVariable [
+	^ self value containsVariable: aVariable.
+]
+
 { #category : #copying }
 SAssignment >> copy [ 
 	|copy|
@@ -49,7 +64,7 @@ SAssignment >> copy [
 	^ copy
 ]
 
-{ #category : #fixing }
+{ #category : #actions }
 SAssignment >> fixWith: anObject in: aTestCase [
 	value fixWith: anObject in: aTestCase.
 	returnType := value returnType.
@@ -71,89 +86,39 @@ SAssignment >> initialize [
 	super initialize.
 ]
 
-{ #category : #mutation }
-SAssignment >> insertAsParameter: aExpression using: aTestCase [
-	^ variable insertAsParameter: aExpression using: aTestCase
-]
-
-{ #category : #mutation }
-SAssignment >> insertMethodMessage: aExpression using: aTestCase [
-	^ value insertMethodMessage: aExpression using: aTestCase
-]
-
-{ #category : #mutation }
+{ #category : #actions }
 SAssignment >> insertOn: aTestCase [
 	^ value insertOn: aTestCase
 ]
 
-{ #category : #mutation }
-SAssignment >> insertRandomMessage: aExpression using: aTestCase [
-	^ value insertRandomMessage:aExpression using: aTestCase
+{ #category : #querying }
+SAssignment >> isThereEnoughArgumentsToBuild: aTestCase [
+	^ self value isThereEnoughArgumentsToBuild: aTestCase
 ]
 
-{ #category : #actions }
-SAssignment >> interpret: aExecutionContext [
-  ^aExecutionContext at: self variable fullName put: (self value interpret: aExecutionContext)
+{ #category : #'as yet unclassified' }
+SAssignment >> mutantColor [
+	^ self value mutantColor
 ]
 
-{ #category : #accessing }
-SAssignment >> mutated [ 
-	^ value mutated
-]
-
-{ #category : #mutation }
+{ #category : #querying }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
 ]
 
-{ #category : #printing }
-SAssignment >> printOn: aStream [
-	SPlatform asDict 
-		ifFalse: [
-			variable printOn: aStream.
-			aStream nextPutAll: ' := '.
-			value printOn: aStream.
-			aStream nextPut:$.]
-		ifTrue: [
-			aStream nextPutAll: 'var at: '.
-			aStream nextPutAll: (variable id + 1) printString.
-			aStream nextPutAll: ' put: ('.
-			value printOn: aStream.
-			aStream nextPutAll:' ).']
-]
-
-{ #category : #accessing }
+{ #category : #querying }
 SAssignment >> reference [ 
 	^ variable
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 SAssignment >> referenceTo: aClassName [
 	^ value referenceTo: aClassName
 ]
 
-{ #category : #mutation }
-SAssignment >> repairOn: aTestCase changing: expression [
-	self reference = expression reference
-		ifTrue: [ value repairOn: aTestCase changing: expression ]
-]
-
-{ #category : #mutation }
-SAssignment >> replaceArgBy: expression [
-	value replaceArgBy: expression
-]
-
-{ #category : #accessing }
-SAssignment >> replaceBy: aExpression [
-	" If I am the expresion to be replace it.
-	I replace my attributes values with the ones in the otherExpression."
-	self reference = aExpression reference ifTrue: [ value replaceBy: aExpression value ]
-]
-
-{ #category : #actions }
-SAssignment >> replaceExpression: expression by: newExpression [
-	"It replace the references to this expresion to the newExpresion"
-	value replaceExpression: expression by: newExpression
+{ #category : #'as yet unclassified' }
+SAssignment >> stmColor [
+  ^ self value stmColor
 ]
 
 { #category : #evaluating }
@@ -176,7 +141,7 @@ SAssignment >> variable: anObject [
 	variable := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SAssignment >> variablesWithId [
 	^ variable variablesWithId, value variablesWithId
 ]

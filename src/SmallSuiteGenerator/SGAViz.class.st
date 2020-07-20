@@ -1,7 +1,7 @@
 Class {
 	#name : #SGAViz,
 	#superclass : #SObject,
-	#category : #'SmallSuiteGenerator-GA'
+	#category : #'SmallSuiteGenerator-Builder'
 }
 
 { #category : #'gt-inspector-extension' }

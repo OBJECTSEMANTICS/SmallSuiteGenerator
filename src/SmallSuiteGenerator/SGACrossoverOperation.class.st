@@ -62,18 +62,25 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 
 { #category : #actions }
 SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
-  | sizeA sizeB offSpring |
+  | sizeA sizeB offSpring limitA limitB|
   sizeA := parentA length.
   sizeB := parentB length.
   offSpring := SSTestCase with: parentA typeInfo copy.
-  offSpring
-     addTargetClassNames: parentA targetClassesNames;
-     addTargetClassNames: parentB targetClassesNames.
-  offSpring addStatements: (parentA statements copyFrom: 1 to: ((sizeA * alpha) asInteger max: 1)) copy.
-  (parentB statements copyFrom: ((alpha * sizeB) asInteger max: 1) + 1 to: sizeB) do: [:aStm |  [ | lastStm |
-        aStm insertOn: offSpring.
-        lastStm := offSpring statements last ] on: SError do: [ ] ].
-  offSpring
+  offSpring targetClassName: parentA targetClassesName.
+  limitA := ((sizeA * alpha) asInteger max: 1).
+  1 to: limitA do:[ :i |
+	|stm|
+	stm := parentA statements at:i.
+	offSpring addStatement: stm copy.
+	offSpring assignId.
+	].
+	limitB := ((alpha * sizeB) asInteger max: 1) + 1.
+	limitB to: sizeB do:[ :i|
+		|stm|
+		stm := parentB statements at:i.
+		[stm insertOn: offSpring.] on:Error do:[ "nothing" nil].
+		].
+	offSpring
 	  generationNumber: parentA generationNumber + 1;
 	  clean.
   ^ offSpring

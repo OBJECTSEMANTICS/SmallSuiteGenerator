@@ -43,3 +43,9 @@ SObject >> next [
 SObject >> random [
   ^ SPlatform randomGenerator
 ]
+
+{ #category : #'error handling' }
+SObject >> serror: aString [
+	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
+	^ SError signal: aString
+]

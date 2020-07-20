@@ -4,7 +4,7 @@ STestCaseFactoryExample contains some examples to run and validate the project f
 Class {
 	#name : #STestCaseFactoryExample,
 	#superclass : #SObject,
-	#category : #'SmallSuiteGenerator-GA'
+	#category : #'SmallSuiteGenerator-Examples'
 }
 
 { #category : #accessing }

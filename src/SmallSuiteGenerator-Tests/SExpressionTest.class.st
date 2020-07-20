@@ -12,9 +12,9 @@ SExpressionTest >> parse: anExpresion [
 	| sequence |
 	sequence := SPlatform rbParserClass parseExpression: anExpresion.
 	^ sequence statements
-		collect: [ :assig | 
+		collect: [ :assig |
 			SAssignment new
-				variable: (SVariable name: assig variable name asString);
+				variable: (self variableFor: assig variable name asString);
 				value: (self parseMessage: assig value);
 				yourself ]
 ]
@@ -24,7 +24,7 @@ SExpressionTest >> parseMessage: aRBMessageNode [
 	aRBMessageNode isLiteralNode
 		ifTrue: [ ^ SLiteral value: aRBMessageNode value ].
 	^ SMessage new
-		receiver: (SVariable name: aRBMessageNode receiver name);
+		receiver: (self variableFor: aRBMessageNode receiver name);
 		selector: aRBMessageNode selector;
 		args:
 			(aRBMessageNode arguments
@@ -34,7 +34,7 @@ SExpressionTest >> parseMessage: aRBMessageNode [
 { #category : #parsing }
 SExpressionTest >> parseVariableOrValue: aRBVariableOrLiteral [
 	^ aRBVariableOrLiteral isVariable
-		ifTrue: [ SVariable name: aRBVariableOrLiteral name ]
+		ifTrue: [ self variableFor: aRBVariableOrLiteral name ]
 		ifFalse: [ SLiteral value: aRBVariableOrLiteral value ]
 ]
 
@@ -48,4 +48,24 @@ SExpressionTest >> setUp [
 { #category : #running }
 SExpressionTest >> tearDown [
 	SPlatform resetRandomGenerator
+]
+
+{ #category : #parsing }
+SExpressionTest >> variableFor: name [
+	^ (SVariable new 
+			varName: (self variableName: name); 
+			id: (self variableId: name); 
+			yourself)
+]
+
+{ #category : #parsing }
+SExpressionTest >> variableId: aString [
+	^ ('_var*' match: aString) 
+			ifTrue:[ (aString copyFrom: 5 to: aString size) asInteger ] 
+			ifFalse:[nil].
+]
+
+{ #category : #parsing }
+SExpressionTest >> variableName: aString [
+	^('_var*' match: aString) ifTrue:[ '_var'] ifFalse:[ aString].
 ]

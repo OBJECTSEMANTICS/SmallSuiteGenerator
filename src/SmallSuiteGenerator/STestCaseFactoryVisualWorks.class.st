@@ -4,5 +4,5 @@ STestCaseFactoryVisualWorks is a subclass that it is called when the project run
 Class {
 	#name : #STestCaseFactoryVisualWorks,
 	#superclass : #STestCaseFactory,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Builder'
 }

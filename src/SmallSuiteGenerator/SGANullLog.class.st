@@ -1,7 +1,7 @@
 Class {
 	#name : #SGANullLog,
 	#superclass : #SGALog,
-	#category : #'SmallSuiteGenerator-GA'
+	#category : #'SmallSuiteGenerator-Builder'
 }
 
 { #category : #log }

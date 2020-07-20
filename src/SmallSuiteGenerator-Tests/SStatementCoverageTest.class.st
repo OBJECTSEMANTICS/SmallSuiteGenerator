@@ -14,7 +14,7 @@ SStatementCoverageTest >> testCoverageClassSEvent [
 	| testCase valueFitness |
 	testCase := SSTestCase with: utility typeInfoSEvent2.
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SEvent);
+		targetClassName: (self fullSymbolOf: #SEvent);
 		addFactoryMessage: (self fullSymbolOf: #SEvent);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
@@ -30,7 +30,7 @@ SStatementCoverageTest >> testCoverageClassSFoo [
 	| testCase valueFitness |
 	testCase := SSTestCase with: utility typeInfoSFoo4.
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: (self fullSymbolOf: #SFoo);
 		addFactoryMessage: (self fullSymbolOf: #SFoo);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
@@ -92,7 +92,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSEvent [
 	testCase := SSTestCase
 		with: utility typeInfoSEventOnPackage1." (STON fromString: utility typeInfoStringSEvent)."
 	testCase
-		addTargetClassName: (self fullSymbolOf:#SEvent);
+		targetClassName: (self fullSymbolOf:#SEvent);
 		addFactoryMessage: (self fullSymbolOf:#SEvent);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
@@ -109,7 +109,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSFoo [
 	testCase := SSTestCase
 		with: utility typeInfoSFooOnPackage2. "(STON fromString: utility typeInfoStringSFoo2)."
 	testCase
-		addTargetClassName: (self fullSymbolOf:#SFoo);
+		targetClassName: (self fullSymbolOf:#SFoo);
 		addFactoryMessage: (self fullSymbolOf:#SFoo);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
@@ -126,7 +126,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSSTeacher [
 	testCase := SSTestCase
 		with: utility typeInfoSSTeacherOnPackage2.	"(STON fromString: utility typeInfoStringSSTeacher2)."
 	testCase
-		addTargetClassName: (self fullSymbolOf:#SSTeacher);
+		targetClassName: (self fullSymbolOf:#SSTeacher);
 		addFactoryMessage: (self fullSymbolOf:#SSTeacher);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
@@ -142,7 +142,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSStack [
 	testCase := SSTestCase
 		with: utility typeInfoSStackOnPackage1. "(STON fromString: utility typeInfoStringSStack2)"
 	testCase
-		addTargetClassName: (self fullSymbolOf:#SStack);
+		targetClassName: (self fullSymbolOf:#SStack);
 		addFactoryMessage: (self fullSymbolOf:#SStack);
 		generateStatements: 19.
 	testCase inspect.
@@ -160,7 +160,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSStudent [
 	testCase := SSTestCase
 		with: utility typeInfoSStudentOnPackage1."(STON fromString: utility typeInfoStringSStudent1)."
 	testCase
-		addTargetClassName: (self fullSymbolOf:#SStudent);
+		targetClassName: (self fullSymbolOf:#SStudent);
 		addFactoryMessage: (self fullSymbolOf:#SStudent);
 		generateStatements: 19.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.

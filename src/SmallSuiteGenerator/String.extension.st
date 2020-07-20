@@ -1,6 +1,16 @@
 Extension { #name : #String }
 
 { #category : #'*SmallSuiteGenerator' }
+String >> fullClassName [
+	^ self.
+]
+
+{ #category : #'*SmallSuiteGenerator' }
+String >> fullClassNameSymbol [
+	^ self asSymbol.
+]
+
+{ #category : #'*SmallSuiteGenerator' }
 String >> mutateToChange [
 	| interval stringCopy |
 	"correct bug to some characters form the string correctly, e.g: $-> problem in a string"

@@ -20,7 +20,7 @@ Class {
 	#instVars : [
 		'varName'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #accessing }
@@ -33,17 +33,44 @@ SVariable class >> name: aString [
 
 { #category : #accessing }
 SVariable class >> nameOrId: anObject [
-	| variable |
-	variable := self new.
-	anObject isString 
-		ifTrue: [ variable varName: anObject ]
-		ifFalse: [ variable id: (anObject - 1) ].
-	^ variable
+	^ (self new 
+			varName: (self variableName: anObject); 
+			id: (self variableId: anObject); 
+			yourself)
+]
+
+{ #category : #accessing }
+SVariable class >> variableId: aString [
+	^ ('_var*' match: aString) 
+			ifTrue:[ (aString copyFrom: 5 to: aString size) asInteger ] 
+			ifFalse:[nil].
+]
+
+{ #category : #accessing }
+SVariable class >> variableName: aString [
+	^('_var*' match: aString) ifTrue:[ '_var'] ifFalse:[ aString].
 ]
 
 { #category : #comparing }
 SVariable >> = other [
-	^ super = other and: [ varName = other varName ]
+	^ self containsVariable: other.
+]
+
+{ #category : #visitor }
+SVariable >> accept: aSSVisitor [
+	^ aSSVisitor visitVariable: self.
+]
+
+{ #category : #actions }
+SVariable >> changeOn: aTestCase [
+	"nothing to change"
+]
+
+{ #category : #querying }
+SVariable >> containsVariable: aVariable [
+	self id ifNil:[ ^ self varName = aVariable varName].
+	^ self id = aVariable id.
+	
 ]
 
 { #category : #copying }
@@ -55,10 +82,10 @@ SVariable >> copy [
 	^ copy
 ]
 
-{ #category : #mutation }
+{ #category : #actions }
 SVariable >> fix [
-	self id: (varName allButFirst: 4) asInteger.
-	self varName:  '_var'.
+	"self id: (varName allButFirst: 4) asInteger.
+	self varName:  '_var'."
 ]
 
 { #category : #accessing }
@@ -78,86 +105,22 @@ SVariable >> initialize [
 	varName := '_var'
 ]
 
-{ #category : #actions }
-SVariable >> interpret: aExecutionContext [
-  ^aExecutionContext at: self fullName.
-]
-
 { #category : #accessing }
 SVariable >> key [
 	SPlatform asDict ifTrue: [ ^ id + 1 ] ifFalse: [ ^ self printString asSymbol ]
 
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
 		ifFalse: [ #() ]
 		ifTrue: [ (Array with: self) ]
 ]
 
-{ #category : #printing }
-SVariable >> printOn: aStream [
-	SPlatform asDict 
-		ifFalse: [
-			aStream nextPutAll: varName.
-			id ifNotNil: [ aStream nextPutAll: id printString ]]
-		ifTrue: [
-			id ifNil: [ aStream nextPutAll: varName. ]
-			ifNotNil: [ 
-				aStream nextPutAll: '( var at: '.
-				aStream nextPutAll: (id+1) printString.
-				aStream nextPutAll: ' )' ].
-			]
-]
-
-{ #category : #accessing }
+{ #category : #querying }
 SVariable >> referenceTo: aClassName [
 	^ self returnType = aClassName
-]
-
-{ #category : #mutation }
-SVariable >> repairOn: aTestCase changing: anExpression [
-	| otherVariable |
-	otherVariable := aTestCase
-		alternativeOfVariable: self
-		before: anExpression.
-	mutated := otherVariable ~= self.
-	self varName: otherVariable varName.
-	self id: otherVariable id.
-]
-
-{ #category : #mutation }
-SVariable >> replaceArgBy: expression [
-	returnType = expression returnType
-		ifFalse: [ ^ self
-				error:
-					'Cannot replace argument of type: ' , returnType , ' by: '
-						, expression returnType ].
-	self replaceBy: expression
-]
-
-{ #category : #accessing }
-SVariable >> replaceBy: otherVariable [
-	" I replace my attributes values with the ones in the otherExpression.
-	  the argument is an object from my same class"
-	self varName: otherVariable varName.
-	self id: otherVariable id.
-	self returnType: otherVariable returnType
-]
-
-{ #category : #actions }
-SVariable >> replaceExpression: anExpression by: newExpression [
-	"If I am referencing to anExprension. I will now reference to the newExpresion"	
-	| reference |
-	self = anExpression
-		ifFalse: [ ^ self ].
-	reference := newExpression reference.
-	self
-		id: reference id;
-		varName: reference varName;
-		returnType: reference returnType;
-		mutated: true
 ]
 
 { #category : #accessing }
@@ -170,7 +133,7 @@ SVariable >> varName: anObject [
 	varName := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SVariable >> variablesWithId [
 	^ id ifNotNil: [ (Array with: self) ] ifNil: [ super variablesWithId ]
 ]

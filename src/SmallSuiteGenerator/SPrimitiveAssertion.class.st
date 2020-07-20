@@ -14,7 +14,7 @@ For example:
 Class {
 	#name : #SPrimitiveAssertion,
 	#superclass : #SAssertionMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -29,4 +29,9 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 						with: (SVariable nameOrId: assoc key)
 						with: (SLiteral new value: assoc value));
 				yourself ]
+]
+
+{ #category : #visitor }
+SPrimitiveAssertion >> accept: aSSVisitor [
+	^ aSSVisitor visitPrimitiveAssertionMessage: self.
 ]

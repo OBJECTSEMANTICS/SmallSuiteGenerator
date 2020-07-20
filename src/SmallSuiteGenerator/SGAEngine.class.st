@@ -120,17 +120,17 @@ SGAEngine >> createNewPopulation [
    newPopulation := self eliteOfCurrentPopulation.
 	newNumber := newPopulation size.
   	[ newPopulation size < currentPopulationSize ] 
-		whileTrue: [ | selectedList p1copy p2copy p1 p2 o1 o2 om1 om2 selectedOptions children |
-			selectedList := selectionStrategy selectOf: initialPopulation.   
-		  	p1 := selectedList first.
-        	p2 := selectedList second.
+		whileTrue: [ | selectedIndividuals p1copy p2copy p1 p2 o1 o2 om1 om2 selectedOptions children |
+			selectedIndividuals := selectionStrategy selectOf: initialPopulation.   
+		  	p1 := selectedIndividuals first.
+        	p2 := selectedIndividuals second.
 		  	p1copy := self similarChild: p1 with: newNumber + 1.
 		  	p2copy := self similarChild: p2 with: newNumber + 2.
         self shouldCrossOver 
 				ifTrue: [ 
 					children := crossoverOperator crossover: p1 with: p2.
-					o1 := self updateHierarchyData: (Array with: p1 with: p2) of: (children first idPopulation: newNumber + 3).
-					o2 := self updateHierarchyData: (Array with: p1 with: p2) of: (children second idPopulation: newNumber + 4) ] 
+					o1 := self updateHierarchyData: { p1 . p2 } of: (children first idPopulation: newNumber + 3).
+					o2 := self updateHierarchyData: { p1 . p2 } of: (children second idPopulation: newNumber + 4).] 
 				ifFalse: [ 
 					o1 := (p1copy deepCopy) idPopulation: newNumber + 3; addParent: p1.
               	o2 := (p2copy deepCopy) idPopulation: newNumber + 4; addParent: p2 ].
@@ -158,7 +158,7 @@ SGAEngine >> createRandomPopulation [
         value := self next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
         test
-           addTargetClassName: targetClassName;
+           targetClassName: targetClassName;
            addFactoryMessage: targetClassName;
            generateStatements: value;
            lastMessage: lastMessage;

@@ -4,7 +4,7 @@ SConfigurationPharo is a subclass called when the project environment is running
 Class {
 	#name : #SPlatformPharo,
 	#superclass : #SPlatform,
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Builder'
 }
 
 { #category : #accessing }

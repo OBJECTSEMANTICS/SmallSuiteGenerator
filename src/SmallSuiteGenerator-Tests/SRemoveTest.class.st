@@ -6,180 +6,209 @@ Class {
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveArgsFactoryMessage [
-	| testCase |
+	| testCase newTestCase|
 	testCase := SSTestCase with: utility typeInfoSFoo1.
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: ('SFoo' fullClassNameSymbol );
 		addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 
 									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.').
-	testCase removeStatementOfVarName: '_var0'.
+									with: '_var1 := ', 'SFoo' fullClassName,' score: _var0.').
+									
+	newTestCase := testCase removeStatementAt: 1.
+	
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var2 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var2.').
-	self assert: testCase validReferences
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: (Array new).
+	self assert: newTestCase validReferences
 ]
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveArgsMessage [
-	| testCase |
+	| testCase newTestCase targetClass|
+	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
-	addMessage: #return: from: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: targetClass;
+	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ''hello''.' .
+								'_var3 := _var1 return: _var2.'}.
+	newTestCase := testCase removeStatementAt: 3.
+	self
+		assertCollection: (newTestCase statements collect: #printString)
 		hasSameElements: (Array 
 									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := ''hello''.'
-									with: '_var3 := _var1 return: _var2.').
-	testCase removeStatementOfVarName: '_var2'.
-	self
-		assert:
-			(#('_var4 := ''hello''.' '_var4 := _var1 returnString.')
-				includes: (testCase statementOfVarName: '_var4') printString).
-	self
-		assert: (testCase statementOfVarName: '_var3') printString
-		equals: '_var3 := _var1 return: _var4.'.
+									with: '_var1 := ', targetClass asString,' score: _var0.').
 	self assert: testCase validReferences
 ]
 
 { #category : #'mutation-remove' }
-SRemoveTest >> testRemoveFactoryMessage [
-	| testCase |
+SRemoveTest >> testRemoveArgsMessage2 [
+	| testCase newTestCase targetClass|
+	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: targetClass.
+	testCase 
+			addMessage: #return: from: targetClass;
+			addMessage: #return: from: targetClass.
+	self
+		assertCollection: (testCase statements collect: #printString)
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ''hello''.' .
+								'_var3 := _var1 return: _var2.'.
+								'_var4 := _var1 return: _var3.'}.
+	newTestCase := testCase removeStatementAt: 4.
+	self
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ''hello''.' .
+								'_var3 := _var1 return: _var2.'.}.
+	self assert: newTestCase validReferences
+]
+
+{ #category : #'mutation-remove' }
+SRemoveTest >> testRemoveFactoryMessage [
+	| testCase newTestCase targetClass|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase targetClassName: targetClass;
 	addFactoryMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array
 									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.').
-	testCase removeStatementOfVarName: '_var1'.
+									with: '_var1 := ', targetClass asString,' score: _var0.').
+	newTestCase := testCase removeStatementAt: 2.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.')
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: #('_var0 := 7.3.').
 ]
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveFieldAccessMessage [
-	| testCase |
+	| testCase newTestCase|
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := _var1 score.').
-	testCase removeStatementOfVarName: '_var2'.
+		hasSameElements: {'_var0 := 7.3.'.
+							   '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.' .
+								'_var2 := _var1 score.'}.
+	newTestCase := testCase removeStatementAt: 3.
+	self
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'}
+]
+
+{ #category : #'mutation-remove' }
+SRemoveTest >> testRemoveLiteral [
+	| testCase targetClass newTestCase|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase targetClassName: targetClass;
+	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+		hasSameElements: { '_var0 := 7.3.' .
+								 '_var1 := ', targetClass asString,' score: _var0.' .
+								 '_var2 := ''hello''.' .
+								 '_var3 := _var1 return: _var2.'}.
+	newTestCase := testCase removeStatementAt: 1.
+	self
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements:  { '_var0 := ''hello''.' }
 ]
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveMessage [
-	| testCase |
+	| testCase targetClass newTestCase|
+	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
-	addMessage: #return: from: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: targetClass;
+	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := ''hello''.'
-									with: '_var3 := _var1 return: _var2.').
-	testCase removeStatementOfVarName: '_var3'.
+		hasSameElements: { '_var0 := 7.3.' .
+								 '_var1 := ', targetClass asString,' score: _var0.' .
+								 '_var2 := ''hello''.' .
+								 '_var3 := _var1 return: _var2.'}.
+	newTestCase := testCase removeStatementAt: 4.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := ''hello''.')
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements:  {'_var0 := 7.3.' .
+								 '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.' .
+								 '_var2 := ''hello''.'}
 ]
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveReceiverFieldAccessMessage [
-	| testCase |
+	| testCase targetClass newTestCase|
+	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: targetClass;
 	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := _var1 score.').
-	testCase removeStatementOfVarName: '_var1'.
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := _var1 score.'}.
+	newTestCase := testCase removeStatementAt: 2.
+	self
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: {'_var0 := 7.3.'}
+]
+
+{ #category : #'mutation-remove' }
+SRemoveTest >> testRemoveReceiverFieldAccessMessage2 [
+	| testCase targetClass newTestCase|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo1.
+	testCase targetClassName: targetClass;
+	addFactoryMessage;
+	addFactoryMessage;
+	addFieldAccessMessage.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var2 := _var4 score.'
-									with: '_var3 := 7.3.'
-									with: '_var4 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.')
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := _var2 score.'}.
+	newTestCase := testCase removeStatementAt: 3.
+	self
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := _var1 score.'}.
+		
+	
+
 ]
 
 { #category : #'mutation-remove' }
 SRemoveTest >> testRemoveReceiverMessage [
-	| testCase |
+	| testCase targetClass newTestCase|
+	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
-	addMessage: #return: from: (self fullSymbolOf: #SFoo).
+	testCase targetClassName: targetClass;
+	addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := ''hello''.'
-									with: '_var3 := _var1 return: _var2.').
-	testCase removeStatementOfVarName: '_var1'.
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ''hello''.' .
+								'_var3 := _var1 return: _var2.'}.
+	newTestCase := testCase removeStatementAt: 2.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: '_var0 := 7.3.'
-									with: '_var4 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := ''hello''.'
-									with: '_var3 := _var4 return: _var2.')
-]
-
-{ #category : #'mutation-remove' }
-SRemoveTest >> testRemoveStatementNoRepairing [
-	| testCase statement |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo).
-	statement := testCase addFactoryMessage.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.').
-	testCase removeStatementNoRepairing: statement.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.').
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName:  (self fullSymbolOf: #SFoo).
-	statement := testCase addFactoryMessage.
-	testCase addMessage: #returnFloat from:  (self fullSymbolOf: #SFoo).
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: '_var1 := ', (self fullNameOfClass: 'SFoo')asString,' score: _var0.'
-									with: '_var2 := _var1 returnFloat.').
-	testCase removeStatementNoRepairing: statement.
-	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 7.3.')
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 7.3.' .
+								'_var1 := ''hello''.'}
 ]

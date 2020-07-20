@@ -18,7 +18,7 @@ For example:
 Class {
 	#name : #SMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -31,33 +31,24 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 		yourself
 ]
 
-{ #category : #override }
-SMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	| otherMessage |
-	otherMessage := aTestCase
-		alternativeMessage: self
-		before: aExpression.
-	mutated := otherMessage selector ~= self selector.
-	self selector: otherMessage selector.
-	self args: otherMessage args
+{ #category : #visitor }
+SMessage >> accept: aSSVisitor [
+	^ aSSVisitor visitMessage: self.
 ]
 
-{ #category : #fixing }
-SMessage >> fixWith: anObject in: aTestCase [
-	(anObject receiver types includes: receiver returnType) ifFalse: [ self halt ].
-	returnType := self random selectAtRandom: anObject returnType types.
-	anObject argTypes with: args do: [ :arg1 :arg2 | 
-		(arg1 types includes: arg2 returnType) ifFalse: [ self halt. ]
-		 ].
-	needsBeFixed := false.
-]
-
-{ #category : #mutation }
-SMessage >> insertMethodMessage: aExpression using: aTestCase [
-	^ self insertRandomMessage: aExpression using: aTestCase
-]
-
-{ #category : #mutation }
+{ #category : #action }
 SMessage >> insertOn: aTestCase [
-	[^ aTestCase addMessage: self selector from: self receiver returnType] on: SError do: [  ]
+	^ aTestCase addMessage: self selector from: self receiver returnType.
+]
+
+{ #category : #testing }
+SMessage >> isMessage [
+	^ true.
+]
+
+{ #category : #'as yet unclassified' }
+SMessage >> stmColor [
+  ^ Color r: 0.7996089931573802 g: 1.0 b: 0.0
+"Color r: 0.8885630498533724 g: 0.8611925708699902 b: 0.41642228739002934"
+"Color r: 0.9139784946236559 g: 0.8172043010752689 b: 0.4858260019550342"
 ]

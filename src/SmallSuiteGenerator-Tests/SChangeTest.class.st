@@ -4,122 +4,165 @@ Class {
 	#category : #'SmallSuiteGenerator-Tests-Core'
 }
 
-{ #category : #'mutation-change' }
-SChangeTest >> testChangeStatementOfFactoryMessageWithAbstractClass [
-	| testCase changed |
-	testCase := (SSTestCase with: utility typeInfoArrayedCollection).
-	testCase
-		addTargetClassName: (self fullSymbolOf: #ArrayedCollection);
-		addFactoryMessage;
-		addLiteral;
-		addFactoryMessage.
+{ #category : #tests }
+SChangeTest >> testArgumentChange [
+	| testCase newTestCase targetClass index|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo100.
+	testCase targetClassName: targetClass;
+		addLiteral:#ByteString;
+		addLiteral:#ByteString;
+		addFactoryMessage: targetClass;
+		addFactoryMessage: targetClass;
+		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: ('_var0 := ', (self fullNameOfClass: 'ArrayedCollection')asString,' new.')
-									with: '_var1 := ''hello''.'
-									with: ('_var2 := ', (self fullNameOfClass: 'ArrayedCollection')asString,' new.')).
-	changed := testCase changeStatementOfClassName: (self fullSymbolOf: #ArrayedCollection).
-	self assert: changed equals: false.
+		hasSameElements: { '_var0 := ''hello''.' .
+								'_var1 := ''hello''.' .
+								'_var2 := 7.3.' .
+								'_var3 := ', targetClass asString,' score: _var2.' .
+								'_var4 := ', targetClass asString,' score: _var2.' .
+								'_var5 := _var4 return: _var1.'}.
+	newTestCase := SSTestCase with: testCase typeInfo.
+	index := 6.
+	1 to: (index-1) do: [:i |
+		|stm|
+		stm := testCase statements at: i.
+		newTestCase addStatement: stm copy.
+		newTestCase assignId.].
+	newTestCase addAlternativeArgsFor: (testCase statements at: index) value.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var1 := ''hello''.')
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := ''hello''.' .
+								'_var1 := ''hello''.' .
+								'_var2 := 7.3.' .
+								'_var3 := ', targetClass asString,' score: _var2.' .
+								'_var4 := ', targetClass asString,' score: _var2.' .
+								'_var5 := _var4 return: _var0.'}.
+									
+	self assert: testCase validReferences.
 ]
 
-{ #category : #'mutation-change' }
-SChangeTest >> testChangeStatementOfFactoryMessageWithMoreThanOneLiteral [
-	| testCase expression expressionChanged |
-	testCase := (SSTestCase with: utility typeInfoSFoo1) addTargetClassName: (self fullSymbolOf: #SFoo).
-	testCase
-		addLiteral: (self fullSymbolOf: #SmallFloat64);
-		addLiteral: (self fullSymbolOf: #SmallFloat64).
-	expression := testCase addFactoryMessage: (self fullSymbolOf: #SFoo) ofSelector: #score:.
+{ #category : #tests }
+SChangeTest >> testFactoryErrorChange [
+	| testCase newTestCase targetClass index|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo100.
+	testCase targetClassName: targetClass;
+		addFactoryMessage: targetClass;
+		addFactoryMessage: targetClass;
+		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		includesAll: #('_var0 := 7.3.' '_var1 := 7.3.').
-	self
-		assert:
-			((Array with: '_var3 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var2.')
-				includes: expression printString).
-	expressionChanged := testCase changeStatementOfVarName: '_var2'.
-	self
-		assert:
-			(#('_var2 := 679.9.')
-				includes: expressionChanged printString).
-	self assert: testCase validReferences
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := ''hello''.' .
+								'_var4 := _var2 return: _var3.'}.
+	newTestCase := SSTestCase with: testCase typeInfo.
+	index := 2.
+	1 to: (index-1) do: [:i |
+		|stm|
+		stm := testCase statements at: i.
+		newTestCase addStatement: stm copy.
+		newTestCase assignId.].
+	self should:[newTestCase addAlternativeFactoryMessage: (testCase statements at: index) value.] raise:SError.
+	
 ]
 
-{ #category : #'mutation-change' }
-SChangeTest >> testChangeStatementOfFactoryMessageWithOneLiteral [
-	| testCase expressionChanged |
-	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
-	addFactoryMessage.
+{ #category : #tests }
+SChangeTest >> testLiteralChange [
+	| testCase newTestCase targetClass|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo100.
+	testCase targetClassName: targetClass;
+		addMessage: #return: from: targetClass.
+
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array
-									with: '_var0 := 7.3.'
-									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var0.')).
-	expressionChanged := testCase changeStatementOfVarName: '_var1'.
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ''hello''.' .
+								'_var3 := _var1 return: _var2.'}.
+
+	newTestCase := testCase changeStatementAt: 1.
 	self
-		assert: ((Array
-									with: ('_var0 := ',(self fullNameOfClass: 'SFoo')asString,' new.')
-									with: ('_var1 := ',(self fullNameOfClass: 'SFoo')asString,' score: _var2.'))
-				includes: expressionChanged printString).
-				self assert: testCase validReferences
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 417.3.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ''hello''.' .
+								'_var3 := _var1 return: _var2.'}.	
+									
+	self assert: testCase validReferences.
 ]
 
-{ #category : #'mutation-change' }
-SChangeTest >> testChangeStatementOfFieldAccessMessage [
-	| testCase exprField exprFieldChanged |
-	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: (self fullSymbolOf: #SStack);
-	addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
-	exprField := (testCase
-		addFieldAccessMessage: #firstLinkStack
-		from: (self fullSymbolOf: #SStack)) copy.
+{ #category : #tests }
+SChangeTest >> testReceiverChange [
+	| testCase newTestCase targetClass index|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo100.
+	testCase targetClassName: targetClass;
+		addFactoryMessage: targetClass;
+		addFactoryMessage: targetClass;
+		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array
-									with: ('_var0 := ',(self fullNameOfClass: 'SStack')asString,' newStack.')
-									with: '_var1 := _var0 firstLinkStack.').
-	exprFieldChanged := testCase changeStatement: exprField.
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := ''hello''.' .
+								'_var4 := _var2 return: _var3.'}.
+	newTestCase := SSTestCase with: testCase typeInfo.
+	index := 5.
+	1 to: (index-1) do: [:i |
+		|stm|
+		stm := testCase statements at: i.
+		newTestCase addStatement: stm copy.
+		newTestCase assignId.].
+	newTestCase addAlternativeReceiverFor: (testCase statements at: index) value.
 	self
-		assert:
-			(#('_var1 := _var0 lastLinkStack.' '_var1 := _var3 firstLinkStack.' '_var1 := _var2 firstLinkStack.')
-				includes: exprFieldChanged printString).
-	self assert: testCase validReferences
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := ''hello''.' .
+								'_var4 := _var1 return: _var3.'}.
+									
+	self assert: testCase validReferences.
 ]
 
-{ #category : #'mutation-change' }
-SChangeTest >> testChangeStatementOfLiteral [
-	| testCase exprLiteral exprLiteralChanged |
-	testCase := SSTestCase with: utility typeInfoSStack4.
-	exprLiteral := (testCase addLiteral: (self fullSymbolOf: #SmallInteger)) copy.
+{ #category : #tests }
+SChangeTest >> testSelectorChange [
+	| testCase newTestCase targetClass index|
+	targetClass := 'SFoo' fullClassNameSymbol.
+	testCase := SSTestCase with: utility typeInfoSFoo100.
+	testCase targetClassName: targetClass;
+		addLiteral: #SmallFloat64;
+		addFactoryMessage: targetClass;
+		addFactoryMessage: targetClass;
+		addMessage: #return: from: targetClass.
 	self
 		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: #('_var0 := 5.').
-	exprLiteralChanged := testCase changeStatementOfVarName: '_var0'.
-	self deny: exprLiteral equals: exprLiteralChanged.
-	self assert: testCase validReferences
-]
-
-{ #category : #'mutation-change' }
-SChangeTest >> testChangeStatementOfMessage [
-	| testCase exprMessage exprLiteralChanged |
-	testCase := SSTestCase with: utility typeInfoSStack4.
-	testCase addTargetClassName: (self fullSymbolOf: #SStack);
-	addFactoryMessage: (self fullSymbolOf: #SStack) ofSelector: #newStack.
-	exprMessage := (testCase addMessage: #pop from: (self fullSymbolOf: #SStack)) copy.
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := ''hello''.' .
+								'_var4 := _var2 return: _var3.'}.
+	newTestCase := SSTestCase with: testCase typeInfo.
+	index := 5.
+	1 to: (index-1) do: [:i |
+		|stm|
+		stm := testCase statements at: i.
+		newTestCase addStatement: stm copy.
+		newTestCase assignId.].
+	newTestCase addAlternativeSelectorFor: (testCase statements at: index) value.
 	self
-		assertCollection: (testCase statements collect: #printString)
-		hasSameElements: (Array 
-									with: ('_var0 := ',(self fullNameOfClass: 'SStack')asString,' newStack.')
-									with: '_var1 := _var0 pop.').
-	exprLiteralChanged := testCase changeStatement: exprMessage.
-	self
-		assert:
-			(#('_var1 := _var0 top.' '_var1 := _var0 push: _var2.' '_var1 := _var3 pop.' '_var1 := _var2 pop.')
-				includes: exprLiteralChanged printString).
-	self assert: testCase validReferences
+		assertCollection: (newTestCase statements collect: #printString)
+		hasSameElements: { '_var0 := 4.7.' .
+								'_var1 := ', targetClass asString,' score: _var0.' .
+								'_var2 := ', targetClass asString,' score: _var0.' .
+								'_var3 := ''hello''.' .
+								'_var4 := _var2 returnString.'}.
+									
+	self assert: testCase validReferences.
 ]

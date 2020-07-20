@@ -230,6 +230,11 @@ STypeInfo >> isInBlackListClass: aClass with: selector [
 	^ (blackList anySatisfy: [:each | (each origin name = aClass) & (each selector = selector) ]) 
 ]
 
+{ #category : #'error handling' }
+STypeInfo >> isScalar: aClassName [
+	^ scalars at: aClassName ifPresent:[ true] ifAbsent:[false].
+]
+
 { #category : #actions }
 STypeInfo >> joinScalars: aDict [
 	aDict associations do: [ :assoc | 

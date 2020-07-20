@@ -25,7 +25,7 @@ For example:
 Class {
 	#name : #SFactoryMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #accessing }
@@ -41,52 +41,22 @@ SFactoryMessage class >> default: aClassName [
 		yourself
 ]
 
-{ #category : #creation }
-SFactoryMessage class >> method: aMethodTypeInfo class: aClassName previousStatements: statements [
-	^ self new
-		receiver:
-			(SVariable new
-				varName: aClassName;
-				returnType: aClassName ;
-				yourself);
-		returnType: aClassName;
-		selector: aMethodTypeInfo selector;
-		args: (self args: aMethodTypeInfo with: statements);
-		yourself
+{ #category : #visitor }
+SFactoryMessage >> accept: aSSVisitor [
+	^ aSSVisitor visitFactoryMessage: self.
 ]
 
-{ #category : #creation }
-SFactoryMessage class >> method: aMethodTypeInfo previousStatements: statements [
-	|returnType|
-	returnType := aMethodTypeInfo returnType type.
-	^ self new
-		receiver:
-			(SVariable new
-				varName: returnType ;
-				returnType: returnType ;
-				yourself);
-		returnType: returnType;
-		selector: aMethodTypeInfo selector;
-		args: (self args: aMethodTypeInfo with: statements);
-		yourself
+{ #category : #action }
+SFactoryMessage >> changeOn: aTestCase [
+	"nothing to change"
+	aTestCase addAlternativeFactoryMessage: self.
 ]
 
-{ #category : #override }
-SFactoryMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	| otherFactoryMessage |
-	otherFactoryMessage := aTestCase
-		alternativeFactoryMessage: self
-		before: aExpression.
-	mutated := otherFactoryMessage selector ~= self selector.
-	self selector: otherFactoryMessage selector.
-	self args: otherFactoryMessage args
-]
-
-{ #category : #mutation }
+{ #category : #action }
 SFactoryMessage >> insertOn: aTestCase [
-	[^ aTestCase
+	^ aTestCase
 		addFactoryMessage: self returnType
-		ofSelector: self selector] on: SError do: [  ]
+		usingSelector: self selector.
 ]
 
 { #category : #testing }
@@ -94,7 +64,15 @@ SFactoryMessage >> isFactoryMessage [
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 SFactoryMessage >> referenceTo: aClassName [
 	^ receiver referenceTo: aClassName
+]
+
+{ #category : #'as yet unclassified' }
+SFactoryMessage >> stmColor [
+  ^ Color cyan
+"Color r: 0.01857282502443793 g: 0.2512218963831867 b: 0.9110459433040078"
+"Color r: 0.1573802541544477 g: 0.3196480938416422 b: 0.5141739980449658"
+"Color r: 0.21407624633431085 g: 0.3831867057673509 b: 0.6803519061583577"
 ]

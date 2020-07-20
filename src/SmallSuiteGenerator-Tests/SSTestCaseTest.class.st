@@ -27,7 +27,7 @@ SSTestCaseTest >> testCopy [
 	typeInfo := self typeInfo.
 	testCase := SSTestCase with: typeInfo.
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: (self fullSymbolOf: #SFoo);
 		addMessage: #returnNum from: (self fullSymbolOf: #SFoo);
 		addFieldAccessMessage: #score from: (self fullSymbolOf: #SFoo);
 		addLiteral: (self fullSymbolOf: #SmallInteger).
@@ -35,8 +35,8 @@ SSTestCaseTest >> testCopy [
 	self assert: testCase length equals: 5.
 	self assert: testCase equals: otherTestCase.
 	self
-		assertCollection: testCase targetClassesNames
-		hasSameElements: (Array with: (self fullSymbolOf: #SFoo)).
+		assert: testCase targetClassesName
+		equals: #SFoo.
 	testCase addLiteral: (self fullSymbolOf: #ByteString).
 	otherTestCase addMessage: #returnFloat from: (self fullSymbolOf: #SFoo).
 	otherTestCase addMessage: #return: from: (self fullSymbolOf: #SFoo).
@@ -92,7 +92,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 																with: false)));
 				scalar: (self fullSymbolOf: #SmallInteger) with: #(5)).
 	testCase
-		addTargetClassName: (self fullSymbolOf: #SFoo);
+		targetClassName: (self fullSymbolOf: #SFoo);
 		addFieldAccessMessage.
 	self assert: testCase statements size equals: 3.
 	self
@@ -107,7 +107,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 SSTestCaseTest >> testGenerateStatements [
 	| testCase  |
 	testCase := SSTestCase with: utility typeInfoSFoo1.
-	testCase addTargetClassName: (self fullSymbolOf: #SFoo);
+	testCase targetClassName: (self fullSymbolOf: #SFoo);
 	numMaxStatements: 30.
 	self shouldnt: [ testCase generateStatements ] raise: SError
 ]

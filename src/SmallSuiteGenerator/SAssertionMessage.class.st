@@ -8,7 +8,7 @@ Superclass of assertion messages nodes for
 Class {
 	#name : #SAssertionMessage,
 	#superclass : #SAbstractMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -16,9 +16,9 @@ SAssertionMessage class >> for: aExecutionContext [
 	^ self subclassResponsibility.
 ]
 
-{ #category : #override }
-SAssertionMessage >> changeSelectorFrom: aExpression in: aTestCase [
-	"not sure what it should return"
+{ #category : #visitor }
+SAssertionMessage >> accept: aSSVisitor [
+	^ aSSVisitor visitAssertionMessage: self.
 ]
 
 { #category : #initialization }
@@ -26,10 +26,4 @@ SAssertionMessage >> initialize [
 	super initialize.
 	receiver := SSelf new.
 	 
-]
-
-{ #category : #printing }
-SAssertionMessage >> printOn: stream [
-	super printOn: stream.
-	stream nextPut: $.
 ]

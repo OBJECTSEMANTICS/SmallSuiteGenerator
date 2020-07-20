@@ -5,14 +5,26 @@ Class {
 	#name : #SSTestCase,
 	#superclass : #SSTestShifter,
 	#instVars : [
+		'fitness',
 		'idPopulation',
 		'summaryExecutionMethods',
 		'generationNumber',
-		'hasErrors',
-		'summaryTargetClass'
+		'summaryTargetClass',
+		'fitnessByClass',
+		'selectionStrategy',
+		'parents',
+		'children',
+		'setUpAction',
+		'tearDownAction',
+		'properties'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
+
+{ #category : #'instance creation' }
+SSTestCase class >> defaultPrinterClass [
+	^ SSStandardPrinter
+]
 
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
@@ -31,6 +43,57 @@ SSTestCase >> = another [
 				and: [ generationNumber = another generationNumber and: [ idPopulation = another idPopulation  ] ] ] ] ]
 ]
 
+{ #category : #visitor }
+SSTestCase >> accept: aVisitor [
+	aVisitor visitStatements: self statements.
+]
+
+{ #category : #accessing }
+SSTestCase >> addChild: aTestCase [
+	children add: aTestCase
+]
+
+{ #category : #accessing }
+SSTestCase >> addParent: aTestCase [
+   parents add: aTestCase.
+	aTestCase addChild: self.
+]
+
+{ #category : #accessing }
+SSTestCase >> addParents: aCollection [
+   aCollection do: [ :e | self addParent: e ]
+]
+
+{ #category : #accessing }
+SSTestCase >> allChildren [
+	^ (Set newFrom: children)
+	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
+]
+
+{ #category : #accessing }
+SSTestCase >> allParents [
+	|  list |
+	list := OrderedCollection new.
+	self allParents: self on: list using: Set new.
+	^ list
+]
+
+{ #category : #accessing }
+SSTestCase >> allParents: testCase on: collection using: associationSet [
+	testCase parents 
+		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
+		thenDo:  [ :tC | 
+			associationSet add: tC generationNumber -> tC idPopulation.
+			collection add: tC.
+			self allParents: tC on: collection using: associationSet	
+		]
+]
+
+{ #category : #accessing }
+SSTestCase >> children [ 
+	^ children
+]
+
 { #category : #actions }
 SSTestCase >> computeFitness: fitnessClass [
 
@@ -45,7 +108,7 @@ SSTestCase >> computeFitness: fitnessClass [
 SSTestCase >> copy [
 	| copy |
 	copy := self class with: typeInfo copy.
-	copy addTargetClassNames: targetClassesNames.
+	copy targetClassName: targetClassesName.
 	statements do: [ :stm | copy addStatement: stm copy ].
 	copy updateNextId.
 	^ copy
@@ -63,6 +126,16 @@ SSTestCase >> deepCopy [
   ^ copy
 ]
 
+{ #category : #accessing }
+SSTestCase >> fitness [ 	
+	^ fitness
+]
+
+{ #category : #accessing }
+SSTestCase >> fitnessByClass [
+	^ fitnessByClass 
+]
+
 { #category : #actions }
 SSTestCase >> fitnessFor: functionName [ 
 	^ self fitness at: functionName
@@ -76,16 +149,6 @@ SSTestCase >> generationNumber [
 { #category : #accessing }
 SSTestCase >> generationNumber: anObject [
 	generationNumber := anObject
-]
-
-{ #category : #actions }
-SSTestCase >> hasErrors [
-	^ hasErrors
-]
-
-{ #category : #actions }
-SSTestCase >> hasErrors: aBoolean [
-	hasErrors := aBoolean 
 ]
 
 { #category : #comparing }
@@ -108,11 +171,19 @@ SSTestCase >> initialize [
    super initialize.
    generationNumber := 1.
    idPopulation := 1.
+	parents := OrderedCollection new.
+  	children := OrderedCollection new.
    summaryExecutionMethods := OrderedCollection new.
-	hasErrors := false
+	hasErrors := false.
+	fitness := Dictionary new.
+	fitnessByClass := Dictionary new.
+	selectionStrategy := SGARouletteSelection new.
+	setUpAction := [  :t :p | ].
+	tearDownAction := [  :t :p | ].
+	properties := Dictionary new.
 ]
 
-{ #category : #accessing }
+{ #category : #util }
 SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
     |fitness1 fitness2|
     fitness1 := self fitness at: fitnessStrategy.
@@ -128,21 +199,114 @@ SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
     ^ false
 ]
 
-{ #category : #printing }
-SSTestCase >> printOn: aStream [
-	self statements do: [ :stm | 
-			stm printOn: aStream.
-			aStream nextPut: Character cr ]
+{ #category : #accessing }
+SSTestCase >> parents [
+	^ parents
 ]
 
-{ #category : #initialization }
+{ #category : #printing }
+SSTestCase >> printOn: aStream [
+	self accept: (self printerClass on: aStream).
+]
+
+{ #category : #printing }
+SSTestCase >> printString [
+	^ String streamContents: [ :stream | self printOn: stream].
+]
+
+{ #category : #printing }
+SSTestCase >> printStringWithAssertions [
+	^ String streamContents: [ :stream | 
+		self printerClass printTempVariables: self on: stream.
+		(self printerClass on: stream) 
+			visitStatements: self statements, self assertions.
+		].
+]
+
+{ #category : #printing }
+SSTestCase >> printSummaryFitness [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"Fitness: ';
+				nextPut: Character cr.
+			fitness
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: ': ';
+						nextPutAll: assoc value printString;
+						nextPut: Character cr ].
+			stream
+				nextPutAll: '"' ]
+]
+
+{ #category : #printing }
+SSTestCase >> printSummaryFitnessByClass [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: '"This test covers: ';
+				nextPut: Character cr.
+			fitnessByClass
+				associationsDo: [ :assoc | 
+					stream
+						nextPutAll: assoc key;
+						nextPutAll: (String with: Character cr).
+					self printFunctionByClassName: assoc value on: stream ].
+			stream
+				nextPutAll: '"';
+				nextPutAll: (String with: Character cr) ]
+]
+
+{ #category : #printing }
+SSTestCase >> printerClass [
+	^ self class defaultPrinterClass.
+]
+
+{ #category : #accessing }
+SSTestCase >> properties [
+	^ self.
+]
+
+{ #category : #accessing }
+SSTestCase >> removeChild: testCase [
+	| index |
+	index := 0.
+	children detect: [:tC | index := index + 1.
+		(tC generationNumber == testCase generationNumber) and: [ tC idPopulation == testCase idPopulation ] ]
+		ifFound: [ :tC | children removeAt: index ]
+]
+
+{ #category : #util }
+SSTestCase >> selectMethod: aCollection [ 
+	selectionStrategy ifNil: [  ^ aCollection  pickAny].
+	^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions).
+	
+]
+
+{ #category : #accessing }
+SSTestCase >> selectionStrategy: selectStrategy [
+	selectionStrategy := selectStrategy 
+]
+
+{ #category : #accessing }
 SSTestCase >> setFitness: aDictionary [ 
 	fitness := aDictionary copy
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SSTestCase >> setFitnessByClass: aDictionary [ 
 	fitnessByClass := aDictionary copy
+]
+
+{ #category : #running }
+SSTestCase >> setUp [
+	setUpAction value: self value: self properties.
+]
+
+{ #category : #printing }
+SSTestCase >> storeOn: aStream [
 ]
 
 { #category : #accessing }
@@ -165,7 +329,12 @@ SSTestCase >> summaryTargetClass: anObject [
 	summaryTargetClass := anObject 
 ]
 
-{ #category : #repairing }
+{ #category : #running }
+SSTestCase >> tearDown [ 
+	tearDownAction value: self value: self properties.
+]
+
+{ #category : #util }
 SSTestCase >> updateWith: anotherTestCase [
 	self generationNumber: anotherTestCase generationNumber.
 	self idPopulation: anotherTestCase idPopulation.

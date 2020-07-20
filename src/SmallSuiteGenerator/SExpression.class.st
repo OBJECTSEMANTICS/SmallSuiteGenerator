@@ -14,14 +14,13 @@ Class {
 	#instVars : [
 		'returnType',
 		'id',
-		'mutated',
 		'parent',
 		'identifier'
 	],
 	#classInstVars : [
 		'nextId'
 	],
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'error handling' }
@@ -55,7 +54,12 @@ SExpression >> = another [
 	
 ]
 
-{ #category : #accesing }
+{ #category : #visitor }
+SExpression >> accept: aSSVisitor [
+	^ self subclassResponsibility.
+]
+
+{ #category : #accessing }
 SExpression >> allParents [
 	"I return my self with all my parents"
 	^ parent ifNil: #() ifNotNil: [ 
@@ -64,22 +68,25 @@ SExpression >> allParents [
 		yourself ]
 ]
 
+{ #category : #actions }
+SExpression >> changeOn: aTestCase [
+	^ self subclassResponsibility.
+]
+
+{ #category : #querying }
+SExpression >> containsVariable: aVariable [
+	^ self subclassResponsibility.
+]
+
 { #category : #copying }
 SExpression >> copy [
 	^ self class new
 		id: self id;
 		returnType: self returnType;
-		mutated: self mutated;
 		parent: self         
 ]
 
-{ #category : #'error handling' }
-SExpression >> error: aString [
-	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
-	^ SError signal: aString
-]
-
-{ #category : #comparing }
+{ #category : #actions }
 SExpression >> fix [
 ]
 
@@ -101,35 +108,12 @@ SExpression >> id: anObject [
 { #category : #initialization }
 SExpression >> initialize [
 	super initialize .
-	mutated := false.
 	identifier := self class nextIdentifier.
 ]
 
-{ #category : #mutation }
-SExpression >> insertAsParameter: aExpression using: aTestCase [
-	
-	^ aTestCase insertAsParameter: self copy after: aExpression
-]
-
-{ #category : #mutation }
-SExpression >> insertMethodMessage: expression using: aTestCase [
-	self error: 'cannot be inserted the methodMessage: ', expression printString
-]
-
-{ #category : #mutation }
+{ #category : #actions }
 SExpression >> insertOn: aTestCase [
 	
-]
-
-{ #category : #mutation }
-SExpression >> insertRandomMessage: expression using: aTestCase [
-	self error: 'cannot be inserted the randomMessage: ', expression printString
-]
-
-{ #category : #actions }
-SExpression >> interpret: aExecutionContext [
-  "this method interpret the AST using smalltalk reflection features"
-  ^ self subclassResponsibility.
 ]
 
 { #category : #testing }
@@ -137,20 +121,26 @@ SExpression >> isFactoryMessage [
 	^ false
 ]
 
-{ #category : #comparing }
+{ #category : #testing }
+SExpression >> isMessage [
+	^ false.
+]
+
+{ #category : #querying }
 SExpression >> isPrimitive: anObject [
 	^ (anObject isKindOf: Number) or: [ (anObject isKindOf: Boolean)
 		or: [ anObject isKindOf: String ]]
 ]
 
-{ #category : #accessing }
-SExpression >> mutated [ 
-	^ mutated
+{ #category : #querying }
+SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
+	^ true
 ]
 
-{ #category : #accessing }
-SExpression >> mutated: aBoolean [
-	mutated := aBoolean
+{ #category : #'as yet unclassified' }
+SExpression >> mutantColor [
+  ^ self mutated ifTrue: [ Color r: 0.9726295210166178 g: 0.0 b: 0.0
+	"Color r: 0.7038123167155426 g: 0.3841642228739003 b: 0.4310850439882698" "Color r: 0.40762463343108507 g: 0.0039100684261974585 b: 0.20234604105571846" ] ifFalse: [ Color gray ]
 ]
 
 { #category : #accessing }
@@ -163,9 +153,14 @@ SExpression >> parent: anObject [
 	parent := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #querying }
 SExpression >> pickUpReferences: aExpression [
 	^ #()
+]
+
+{ #category : #printing }
+SExpression >> printOn: aStream [
+	self accept: (SSStandardPrinter on: aStream)
 ]
 
 { #category : #accessing }
@@ -178,26 +173,6 @@ SExpression >> referenceTo: aClassName [
 	^ false
 ]
 
-{ #category : #mutation }
-SExpression >> repairOn: aTestCase changing: aExpression [
-	
-]
-
-{ #category : #mutation }
-SExpression >> replaceArgBy: expression [
-	self error: 'cannot be inserted: ', expression printString, ' as parameter'
-]
-
-{ #category : #actions }
-SExpression >> replaceBy: otherExpression [
-	self subclassResponsibility 
-]
-
-{ #category : #actions }
-SExpression >> replaceExpression: expression by: newExpression [
-	"It replace the references to this expresion to the newExpresion"
-]
-
 { #category : #accessing }
 SExpression >> returnType [
 	^ returnType
@@ -208,7 +183,18 @@ SExpression >> returnType: anObject [
 	returnType := anObject
 ]
 
-{ #category : #mutation }
+{ #category : #'error handling' }
+SExpression >> serror: aString [
+	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
+	^ SError signal: aString
+]
+
+{ #category : #'as yet unclassified' }
+SExpression >> stmColor [
+  
+]
+
+{ #category : #querying }
 SExpression >> variablesWithId [
 	^ #()
 ]

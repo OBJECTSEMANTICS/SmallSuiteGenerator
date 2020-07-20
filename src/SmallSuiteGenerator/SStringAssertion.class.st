@@ -17,7 +17,7 @@ For example:
 Class {
 	#name : #SStringAssertion,
 	#superclass : #SAssertionMessage,
-	#category : #'SmallSuiteGenerator-AST'
+	#category : #'SmallSuiteGenerator-Core'
 }
 
 { #category : #'instance creation' }
@@ -35,7 +35,7 @@ SStringAssertion class >> stringAssertionsOf: assoc [
 	^ (aValue class allSelectorsBelow: Object)
 		detect: [ :aSelector | aSelector = #printOn: or: [ aSelector = #asString ] ]
 		ifFound: [ | fieldValue |
-			[ fieldValue := aValue perform: #printString.
+			[ fieldValue := aValue printString.
 			self new
 				selector: #assert:equals:;
 				args:
@@ -51,4 +51,9 @@ SStringAssertion class >> stringAssertionsOf: assoc [
 				do: [ Transcript
 						show: aValue class name , ' cant answer printString without error' ] ]
 		ifNone: [ nil ]
+]
+
+{ #category : #visitor }
+SStringAssertion >> accept: aSSVisitor [
+	^ aSSVisitor visitStringAssertionMessage: self.
 ]
