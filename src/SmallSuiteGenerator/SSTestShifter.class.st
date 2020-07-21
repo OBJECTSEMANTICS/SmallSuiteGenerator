@@ -511,7 +511,7 @@ SSTestShifter >> generateStatements [
   [ flag and: [ self length < self maxNumberOfStatements ] ] 
 		whileTrue: [ | array |
         array := #(#addMessage #addFieldAccessMessage) randomShuffle.
-        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [ false ] ] ifFound: [:selector |  | lastStm |
+        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] ifFound: [:selector |  | lastStm |
               lastStm := statements last ] ifNone: [ counter := counter + 1.
               counter > self maxNumberOfStatements ifTrue: [ flag := false.
                     self serror: 'Not able to generate statements' ] ] ]
@@ -730,7 +730,7 @@ SSTestShifter >> pickAccessorsOf: aType [
 SSTestShifter >> pickAnObjectVariable [
 	| variables |
 	variables := self objectVariables.
-	variables ifEmpty: [ 
+	variables ifEmpty: [
 		self addFactoryMessage.
 		variables := self objectVariables ].
 	^ variables pickAny.
