@@ -635,7 +635,7 @@ STypeInfoTest >> testNoneAbstractClasses [
 		scalar: intSymbol with: #(50 1);
 		scalar: stringSymbol with: #('Ann').
 	self
-		assertCollection: (typeInfo noneAbstractClasses collect: #name) asArray
+		assertCollection: (typeInfo noneAbstractClasses collect: #nameAsSymbol) asArray
 		hasSameElements:( Array with: studentSymbol)
 ]
 

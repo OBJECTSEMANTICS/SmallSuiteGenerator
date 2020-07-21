@@ -21,13 +21,20 @@ SExporte2VW >> blackList [
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSAssertionTest [
-	^ {"SAssertionTest >> #testAssertString"}
+	^ {SAssertionTest >> #testAssertString.
+	SAssertionTest >> #testAssertComparison2.
+	SAssertionTest >> #testAssertComparison}
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSAssignment [
 	^ {SAssignment >> #mutantColor .
 	SAssignment >> #stmColor }
+]
+
+{ #category : #'bl-tests' }
+SExporte2VW >> blackListSChangeTest [
+	^ {SChangeTest >> #testSelectorChange}
 ]
 
 { #category : #'bl-tests' }
@@ -198,12 +205,12 @@ SSTestCase >> #tearDown"}
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
 	^ {"STestCaseFactory >> #createConfigurationMethods ."
-"STestCaseFactory >> #export:with: ."
 "STestCaseFactory >> #exportFitnessLog ."
-"STestCaseFactory >> #exportTests ."
 "STestCaseFactory >> #moveClass: ."
 "STestCaseFactory >> #tearDown ."
 "STestCaseFactory class >> #from:"
+STestCaseFactory >> #export:with: .
+STestCaseFactory >> #exportTests .
 STestCaseFactory >> #fitnessResultAsDictionary .
 STestCaseFactory >> #generationEvolutionCanvas .
 STestCaseFactory >> #gtInspectorCanvasIn: .
@@ -278,16 +285,17 @@ STypeInfoTest >> #testAsTypeInfoSFooWithNil.
 STypeInfoTest >> #testAsTypeInfoSTeacherOnClass.
 STypeInfoTest >> #testAsTypeInfoSTeacherOnPackagesMatching.
 STypeInfoTest >> #testFactoryMessages.
+"STypeInfoTest >> #testFromString.
 STypeInfoTest >> #testToStringComplexScalar.
-STypeInfoTest >> #testToString.
-STypeInfoTest >> #testFromString"}
+STypeInfoTest >> #testToString}
 ]
 
 { #category : #'bl-utility' }
 SExporte2VW >> blackListSUtilityTypeInfo [
 	^ {SUtilityTypeInfo >> #typeInfoSFoo1.
 SUtilityTypeInfo >> #typeInfoSFoo3.
-SUtilityTypeInfo >> #typeInfoSFooOnPackage2}
+SUtilityTypeInfo >> #typeInfoSFooOnPackage2.
+SUtilityTypeInfo >> #typeInfoSFoo100 }
 ]
 
 { #category : #'bl-smallTypeColl' }

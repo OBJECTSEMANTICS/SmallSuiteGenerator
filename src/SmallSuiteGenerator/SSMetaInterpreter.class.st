@@ -33,7 +33,7 @@ SSMetaInterpreter >> initialize [
 	super initialize.
 	context := Dictionary new.
 	type := Dictionary new.
-	context at:'self' put: TestCase new.
+	context at:'self' put: SPlatform testCaseClass new.
 ]
 
 { #category : #initialization }
@@ -42,7 +42,7 @@ SSMetaInterpreter >> visitAbstractMessage: aMessage [
   object := aMessage receiver accept: self.
   objArgs := aMessage args collect: [:arg |  arg accept: self ].
   result := object perform: aMessage selector withArguments: objArgs asArray.
-  aMessage returnType: result class name.
+  aMessage returnType: result class nameAsSymbol.
   ^ result.
 ]
 
@@ -50,7 +50,7 @@ SSMetaInterpreter >> visitAbstractMessage: aMessage [
 SSMetaInterpreter >> visitAssignment: anAssignmnet [
 	|result returnType|
 	result := anAssignmnet value accept: self.
-	returnType := result class name.
+	returnType := result class nameAsSymbol.
 	context at: anAssignmnet variable fullName put: result.
 	anAssignmnet variable returnType: returnType.
 	anAssignmnet returnType: returnType.

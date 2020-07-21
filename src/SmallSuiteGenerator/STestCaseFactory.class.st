@@ -116,7 +116,7 @@ STestCaseFactory >> exportTests [
 	engine population
 		doWithIndex: [ :test :index | 
 			test lastMessage: lastMessage.
-			self export: test with: ('test{1}' format: {index}) ].
+			self export: test with: ('test', index asString) ].
 	self createConfigurationMethods
 ]
 
