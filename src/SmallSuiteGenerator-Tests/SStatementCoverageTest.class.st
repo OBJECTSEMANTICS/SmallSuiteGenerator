@@ -13,11 +13,10 @@ SStatementCoverageTest >> fitnessClass [
 SStatementCoverageTest >> testCoverageClassSEvent [
 	| testCase valueFitness targetClass |
 	targetClass := #SEvent fullClassNameSymbol.
-	testCase := SSTestCase with: utility typeInfoSEvent2.
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSEvent2
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
 	fitness compute: (Array with: testCase).
@@ -30,11 +29,10 @@ SStatementCoverageTest >> testCoverageClassSEvent [
 SStatementCoverageTest >> testCoverageClassSFoo [
 	| testCase valueFitness targetClass |
 	targetClass := #SFoo fullClassNameSymbol.
-	testCase := SSTestCase with: utility typeInfoSFoo4.
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSFoo4
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
 	fitness compute: (Array with: testCase).
@@ -95,12 +93,10 @@ SStatementCoverageTest >> testCoverageOnClassSStudent [
 SStatementCoverageTest >> testCoverageOnPackagesSEvent [
 	| testCase valueFitness targetClass |
 	targetClass := #SEvent fullClassNameSymbol.
-	testCase := SSTestCase
-		with: utility typeInfoSEventOnPackage1." (STON fromString: utility typeInfoStringSEvent)."
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSEventOnPackage1
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
 	fitness compute: (Array with: testCase).
@@ -113,12 +109,10 @@ SStatementCoverageTest >> testCoverageOnPackagesSEvent [
 SStatementCoverageTest >> testCoverageOnPackagesSFoo [
 	| testCase valueFitness targetClass |
 	targetClass := #SFoo fullClassNameSymbol.
-	testCase := SSTestCase
-		with: utility typeInfoSFooOnPackage2. "(STON fromString: utility typeInfoStringSFoo2)."
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSFooOnPackage2
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
 	fitness compute: (Array with: testCase).
@@ -131,12 +125,10 @@ SStatementCoverageTest >> testCoverageOnPackagesSFoo [
 SStatementCoverageTest >> testCoverageOnPackagesSSTeacher [
 	| testCase targetClass |
 	targetClass := #SSTeacher fullClassNameSymbol.
-	testCase := SSTestCase
-		with: utility typeInfoSSTeacherOnPackage2.	"(STON fromString: utility typeInfoStringSSTeacher2)."
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSSTeacherOnPackage2
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
 	fitness compute: (Array with: testCase).
@@ -148,12 +140,10 @@ SStatementCoverageTest >> testCoverageOnPackagesSSTeacher [
 SStatementCoverageTest >> testCoverageOnPackagesSStack [
 	| testCase valueFitness targetClass |
 	targetClass := #SStack fullClassNameSymbol.
-	testCase := SSTestCase
-		with: utility typeInfoSStackOnPackage1. "(STON fromString: utility typeInfoStringSStack2)"
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSStackOnPackage1
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	testCase inspect.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
@@ -167,12 +157,10 @@ SStatementCoverageTest >> testCoverageOnPackagesSStack [
 SStatementCoverageTest >> testCoverageOnPackagesSStudent [
 	| testCase valueFitness targetClass |
 	targetClass := #SStudent fullClassNameSymbol.
-	testCase := SSTestCase
-		with: utility typeInfoSStudentOnPackage1."(STON fromString: utility typeInfoStringSStudent1)."
-	testCase
-		targetClassName: targetClass;
-		addFactoryMessage: targetClass;
-		generateStatements: 19.
+	testCase := self
+		testCase: utility typeInfoSStudentOnPackage1
+		withNumStatements: 20
+		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness targetClass: targetClass.
 	fitness compute: (Array with: testCase).

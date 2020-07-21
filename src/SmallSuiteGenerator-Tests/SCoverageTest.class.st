@@ -45,6 +45,7 @@ SCoverageTest >> testCase: typeInfo withNumStatements: aNumber andTargetClassNam
 	^ (SSTestCase with: typeInfo)
 		numMaxStatements: aNumber;
 		targetClassName: symbol;
+		addFactoryMessage: symbol;
 			generateStatements
 ]
 

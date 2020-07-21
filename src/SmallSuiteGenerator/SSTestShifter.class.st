@@ -155,7 +155,10 @@ SSTestShifter >> addFieldAccessMessage: selector from: returnType [
 	accessors := self pickAccessorsOf: returnType.
 	accessor := accessors
 		detect: [ :acc | acc selector = selector ]
-		ifNone: [ self serror: ('None field access message of selector: {1} matches with: {2}' format:{ selector . returnType})].
+		ifNone: [ self serror: 'None field access message of selector: ',
+			selector asString,
+			' matches with: ',
+			returnType asString ].
 	receiver := self pickOrCreateObjectVariableOf: returnType.
 	^ self addFieldAccessMessage: accessor withReceiver: receiver
 ]
@@ -190,13 +193,19 @@ SSTestShifter >> addMessage [
 
 { #category : #'building-actions' }
 SSTestShifter >> addMessage: selector from: receiverType [
-	| receiver method methods|
-	methods := (self pickMessagesOf: receiverType) , (typeInfo factoryMessagesFrom: receiverType).
-	method := methods 
+	| receiver method methods |
+	methods := (self pickMessagesOf: receiverType)
+		, (typeInfo factoryMessagesFrom: receiverType).
+	method := methods
 		detect: [ :aMessage | aMessage selector = selector ]
-		ifNone: [ self serror: ('None message of selector: {1} matches with: {2}' format:{ selector . receiverType}) ].
+		ifNone: [ self
+				serror:
+					'None message of selector: ', 
+					selector asString,
+					' matches with: ', 
+					receiverType asString ].
 	receiver := self pickOrCreateObjectVariableOf: receiverType.
-	^ self addMessage: method withReceiver: receiver.
+	^ self addMessage: method withReceiver: receiver
 ]
 
 { #category : #'building-actions' }
@@ -510,8 +519,10 @@ SSTestShifter >> generateStatements [
   self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
   [ flag and: [ self length < self maxNumberOfStatements ] ] 
 		whileTrue: [ | array |
-        array := #(#addMessage #addFieldAccessMessage) randomShuffle.
-        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [ false ] ] ifFound: [:selector |  | lastStm |
+        array :=  (OrderedCollection 
+						with: #addMessage 
+						with:  #addFieldAccessMessage) randomShuffle.
+        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] ifFound: [:selector |  | lastStm |
               lastStm := statements last ] ifNone: [ counter := counter + 1.
               counter > self maxNumberOfStatements ifTrue: [ flag := false.
                     self serror: 'Not able to generate statements' ] ] ]
@@ -730,7 +741,7 @@ SSTestShifter >> pickAccessorsOf: aType [
 SSTestShifter >> pickAnObjectVariable [
 	| variables |
 	variables := self objectVariables.
-	variables ifEmpty: [ 
+	variables ifEmpty: [
 		self addFactoryMessage.
 		variables := self objectVariables ].
 	^ variables pickAny.
@@ -780,7 +791,7 @@ SSTestShifter >> randomLiteralClassName [
 	|scalars|
 	scalars := typeInfo scalars keys.
 	scalars ifEmpty: [ self serror: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ].
-	^ scalars pickAny.
+	^ scalars asArray pickAny.
 ]
 
 { #category : #'mutation-remove' }

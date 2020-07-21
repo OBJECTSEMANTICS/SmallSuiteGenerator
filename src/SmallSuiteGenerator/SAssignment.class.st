@@ -96,11 +96,6 @@ SAssignment >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ self value isThereEnoughArgumentsToBuild: aTestCase
 ]
 
-{ #category : #'as yet unclassified' }
-SAssignment >> mutantColor [
-	^ self value mutantColor
-]
-
 { #category : #querying }
 SAssignment >> pickUpReferences: aExpression [
 	^ value pickUpReferences: aExpression
@@ -114,11 +109,6 @@ SAssignment >> reference [
 { #category : #querying }
 SAssignment >> referenceTo: aClassName [
 	^ value referenceTo: aClassName
-]
-
-{ #category : #'as yet unclassified' }
-SAssignment >> stmColor [
-  ^ self value stmColor
 ]
 
 { #category : #evaluating }

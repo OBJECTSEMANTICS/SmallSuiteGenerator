@@ -34,13 +34,13 @@ SmallTypeCollector >> collectTypeFrom: aClass [
 				extractInterfacesFrom: method
 				addTo: collector].
 	typeInfo := STypeClassInfo newFrom: aClass name.
-	aClass methods do:[ :method | 
+	aClass methodDictValues do:[ :method | 
 			collector localTypingResults at: method ifPresent:[ :tmpTypes |
 				methodInfo := self methodInfoIn: method from: tmpTypes.
 				typeInfo addMethod: methodInfo.
 			]	
 		].
-	aClass class methods do:[ :method | 
+	aClass class methodDictValues do:[ :method | 
 			collector localTypingResults at: method ifPresent:[ :tmpTypes |		
 				methodInfo := self methodInfoIn: method from: tmpTypes.
 				typeInfo addClassMethod: methodInfo.		

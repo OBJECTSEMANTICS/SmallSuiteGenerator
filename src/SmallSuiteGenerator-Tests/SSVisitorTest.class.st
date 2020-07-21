@@ -66,7 +66,7 @@ SSVisitorTest >> testRunWithoutAsssertions [
 					 _var2 := Point x: _var0 y: _var1.
 					 _var3 := Point x: _var1 y: _var0.
 					 _var4 := _var2 x.
-					 _var5 := _var2 closeTo: _var3.').
+					 _var5 := _var2 > _var3.').
 	result := test runWithoutAssertions.
 	self assert: (result at:'_var0') equals: 1.
 	self assert: (result at:'_var1') equals: 0.

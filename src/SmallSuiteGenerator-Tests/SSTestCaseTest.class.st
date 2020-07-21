@@ -38,7 +38,7 @@ SSTestCaseTest >> testCopy [
 	self assert: testCase equals: otherTestCase.
 	self
 		assert: testCase targetClassesName
-		equals: #SFoo.
+		equals: #SFoo fullClassNameSymbol.
 	testCase addLiteral: #ByteString fullClassNameSymbol.
 	otherTestCase addMessage: #returnFloat from: sfooSymbol.
 	otherTestCase addMessage: #return: from: sfooSymbol.

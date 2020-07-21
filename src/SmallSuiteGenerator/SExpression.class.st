@@ -137,12 +137,6 @@ SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ true
 ]
 
-{ #category : #'as yet unclassified' }
-SExpression >> mutantColor [
-  ^ self mutated ifTrue: [ Color r: 0.9726295210166178 g: 0.0 b: 0.0
-	"Color r: 0.7038123167155426 g: 0.3841642228739003 b: 0.4310850439882698" "Color r: 0.40762463343108507 g: 0.0039100684261974585 b: 0.20234604105571846" ] ifFalse: [ Color gray ]
-]
-
 { #category : #accessing }
 SExpression >> parent [
 	^ parent
@@ -187,11 +181,6 @@ SExpression >> returnType: anObject [
 SExpression >> serror: aString [
 	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
 	^ SError signal: aString
-]
-
-{ #category : #'as yet unclassified' }
-SExpression >> stmColor [
-  
 ]
 
 { #category : #querying }

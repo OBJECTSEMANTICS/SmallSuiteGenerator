@@ -440,7 +440,7 @@ SSTestShifterTest >> testAddTargetClassName [
 { #category : #tests }
 SSTestShifterTest >> testNewFactoryMessageUsingAnd [
 	| testCase factory targetClass method typeInfo|
-	targetClass := 'SEvent' fullClassName.
+	targetClass := 'SEvent' fullClassNameSymbol.
 	typeInfo := utility typeInfoSEvent1.
 	testCase := SSTestCase with: typeInfo.
 	

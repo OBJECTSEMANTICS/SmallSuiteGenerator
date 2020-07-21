@@ -9,7 +9,7 @@ SExporte2VW class >> export [
 	^ self new export
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'black-list' }
 SExporte2VW >> blackList [
 	| result |
 	result := OrderedCollection new.
@@ -19,53 +19,55 @@ SExporte2VW >> blackList [
 	^ result 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSAssertionTest [
-	^ {SAssertionTest >> #testAssertString}
+	^ {SAssertionTest >> #testAssertString.
+	SAssertionTest >> #testAssertComparison2.
+	SAssertionTest >> #testAssertComparison}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSAssignment [
 	^ {SAssignment >> #mutantColor .
 	SAssignment >> #stmColor }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSChangeTest [
-	^ {SChangeTest >> #testChangeStatementOfFactoryMessageWithMoreThanOneLiteral}
+	^ {SChangeTest >> #testSelectorChange}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSClassInfoTest [
 	^ {SClassInfoTest >> #testToString .
 	SClassInfoTest >> #testFromString}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSError [
 	^ {SError >> #signal:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSExpression [
 	^ {SExpression >> #mutantColor .
 	SExpression >> #stmColor }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSFactoryMessage [
 	^ {SFactoryMessage >> #stmColor }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSFieldAccessMessage [
 	^ {SFieldAccessMessage >> #stmColor }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-ga' }
 SExporte2VW >> blackListSGAEngine [
 	^ {"SGAEngine >> #exportFitnessLog ."
-SGAEngine >> #updateTypeInfoWith:. "VisualizationPackage"
+"SGAEngine >> #updateTypeInfoWith:." "VisualizationPackage"
 SGAEngine >> #addDescriptiveTextOn:ofColor:and: .
 SGAEngine >> #addHighlightMethodEvent:on:ofColor:.
 SGAEngine >> #addHighlightTestCaseEvent:on:ofColor:.
@@ -92,65 +94,60 @@ SGAEngine >> #summaryMethodsOfTargetClass:.
 SGAEngine >> #testCaseShape:ofColor:with:highlight:scale:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-examples' }
 SExporte2VW >> blackListSGAEngineExample [
 	^ {SGAEngineExample >> #runOnClass:withBlock:andFitness: .
 	SGAEngineExample >> #runOnPackagesMatching:withBlock:andFitness:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSGAEngineTest [
 	^ {SGAEngineTest >> #profilerOf:.
 SGAEngineTest >> #tearDown}
 ]
 
-{ #category : #'as yet unclassified' }
-SExporte2VW >> blackListSInsertTest [
-	^ {SInsertTest >> #testInsertStatementOfSelectorRandomMessageInLiteral}
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSInspectorAssertion [
 	^ {SInspectorAssertion class >> #inspectorAssertionOf:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSLiteral [
 	^ {SLiteral >> #stmColor }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSMessage [
 	^ {SMessage >> #stmColor }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSMethodInfoTest [
 	^ {SMethodInfoTest >> #testToString.
 	SMethodInfoTest >> #testFromSton}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSMultiTypeInfoTest [
 	^ {SMultiTypeInfoTest >> #testToString.
 	SMultiTypeInfoTest >> #testFromSton}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-initialization' }
 SExporte2VW >> blackListSNumericParameterization [
 	^ {SNumericParameterization >> #newInstancesM:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSObject [
 	^ {"SObject >> #classOf:."
 "SObject >> #findClass:."
 SObject >> #fullNameOfClass:.
-SObject >> #fullSymbolOf:.
-SObject >> #initialize}
+SObject >> #fullSymbolOf:".
+SObject >> #initialize"}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-builder' }
 SExporte2VW >> blackListSPlatformPharo [
 	^ {SPlatformPharo class >> #classLogger.
 	SPlatformPharo class >> #implementationType .
@@ -158,7 +155,7 @@ SExporte2VW >> blackListSPlatformPharo [
 	SPlatformPharo class >> #testCaseClass }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-builder' }
 SExporte2VW >> blackListSPlatformVisualWorks [
 	^ {"SPlatformVisualWorks class >> #classConfigurationName."
 "SPlatformVisualWorks class >> #createTestCaseClass:inPackage:."
@@ -167,29 +164,29 @@ SExporte2VW >> blackListSPlatformVisualWorks [
 "SPlatformVisualWorks class >> #testCaseClass"}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-utility' }
 SExporte2VW >> blackListSReport [
 	^ {SReport class >> #exportData:onCSV:usingFilter:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-utility' }
 SExporte2VW >> blackListSReportSGALog [
 	^ {SReportSGALog class >> #exportResumeOf:onCSV: .
 	SReportSGALog >> #generateReportForDifferencesBtwGenerations}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-utility' }
 SExporte2VW >> blackListSReportTypeInfo [
 	^ {SReportTypeInfo class >> #writeReport:ofCaseStudy: .
 	SReportTypeInfo class >> #writeReport:ofFrequency:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-initialization' }
 SExporte2VW >> blackListSSelectionParameterization [
 	^ {SSelectionParameterization class >> #setting:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-scenario' }
 SExporte2VW >> blackListSStack [
 	^ {"SStack >> #+."
 "SStack >> #addFirst:."
@@ -199,21 +196,21 @@ SExporte2VW >> blackListSStack [
 "SStack >> #removeLast"}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSTestCase [
 	^ {"SSTestCase >> #setUp .
 SSTestCase >> #tearDown"}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
-	^ {STestCaseFactory >> #createConfigurationMethods .
-STestCaseFactory >> #export:with: .
+	^ {"STestCaseFactory >> #createConfigurationMethods ."
 "STestCaseFactory >> #exportFitnessLog ."
-STestCaseFactory >> #exportTests .
 "STestCaseFactory >> #moveClass: ."
-STestCaseFactory >> #tearDown .
+"STestCaseFactory >> #tearDown ."
 "STestCaseFactory class >> #from:"
+STestCaseFactory >> #export:with: .
+STestCaseFactory >> #exportTests .
 STestCaseFactory >> #fitnessResultAsDictionary .
 STestCaseFactory >> #generationEvolutionCanvas .
 STestCaseFactory >> #gtInspectorCanvasIn: .
@@ -225,7 +222,7 @@ STestCaseFactory class >> #lightColors .
 STestCaseFactory >> #classesForRegex: }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-examples' }
 SExporte2VW >> blackListSTestCaseFactoryExample [
 	^ {STestCaseFactoryExample >> #clean .
 STestCaseFactoryExample >> #exampleEmptyBlockOnPackages .
@@ -239,52 +236,47 @@ STestCaseFactoryExample >> #exampleWithWrongClassToRun .
 STestCaseFactoryExample >> #exampleWithWrongRegexToRun}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactoryVisualWorks [
 	^ {"STestCaseFactoryVisualWorks >> #cleanInstrumentation."
 "STestCaseFactoryVisualWorks >> #initializeProfiler."
 "STestCaseFactoryVisualWorks >> #uninstall"}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSTestCaseTest [
 	^ {SSTestCaseTest >> #typeInfo}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-core' }
 SExporte2VW >> blackListSTestShifter [
 	^ {SSTestShifter>> #canAddStatement.
-	SSTestShifter>>#analyze.
-	SSTestShifter>>#typeCheck.
-	SSTestShifter>>#runWithoutAssertions.
-	SSTestShifter>>#run.
-	SSTestShifter>>#setUp.
-	SSTestShifter>>#tearDown}
+	"SSTestShifter>>#analyze."
+	"SSTestShifter>>#runWithoutAssertions."
+	"SSTestShifter>>#run."
+	"SSTestShifter>>#setUp.
+	SSTestShifter>>#tearDown"}
 ]
 
-{ #category : #'as yet unclassified' }
-SExporte2VW >> blackListSTestShifterTest [
-	^ {SSTestShifterTest >> #testNewFieldAccessMessageOfTypeBefore}
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-info' }
 SExporte2VW >> blackListSTypeClassInfo [
 	^ {STypeClassInfo >> #differenceWith:usingSelector:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-info' }
 SExporte2VW >> blackListSTypeInfo [
 	^ {"STypeInfo >> #asTypeInfo:methodsBlacklist:."
 STypeInfo >> #completeTypeInfo.
-STypeInfo >> #isAbstractClass:.
+"STypeInfo >> #isAbstractClass:."
 STypeInfo >> #updateArgsOf: .
-STypeInfo >> #deleteBlackListMethods}
+STypeInfo >> #deleteBlackListMethods.
+STypeInfo >> #blackList .
+STypeInfo >> #blackList: }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-tests' }
 SExporte2VW >> blackListSTypeInfoTest [
-	^ {STypeInfoTest >> #nameOf:.
-STypeInfoTest >> #testAsTypeInfoScalars.
+	^ {"STypeInfoTest >> #testAsTypeInfoScalars.
 STypeInfoTest >> #testAsTypeInfoSConferenceOnPackagesMatching.
 STypeInfoTest >> #testAsTypeInfoSEventOnPackagesMatching.
 STypeInfoTest >> #testAsTypeInfoSFoo.
@@ -293,19 +285,20 @@ STypeInfoTest >> #testAsTypeInfoSFooWithNil.
 STypeInfoTest >> #testAsTypeInfoSTeacherOnClass.
 STypeInfoTest >> #testAsTypeInfoSTeacherOnPackagesMatching.
 STypeInfoTest >> #testFactoryMessages.
+"STypeInfoTest >> #testFromString.
 STypeInfoTest >> #testToStringComplexScalar.
-STypeInfoTest >> #testToString.
-STypeInfoTest >> #testFromString}
+STypeInfoTest >> #testToString}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-utility' }
 SExporte2VW >> blackListSUtilityTypeInfo [
 	^ {SUtilityTypeInfo >> #typeInfoSFoo1.
 SUtilityTypeInfo >> #typeInfoSFoo3.
-SUtilityTypeInfo >> #typeInfoSFooOnPackage2}
+SUtilityTypeInfo >> #typeInfoSFooOnPackage2.
+SUtilityTypeInfo >> #typeInfoSFoo100 }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'bl-smallTypeColl' }
 SExporte2VW >> blackListSmallTypeCollector [
 	^ {"SmallTypeCollector >> #blackList."
 "SmallTypeCollector >> #classesOf:."
@@ -317,7 +310,7 @@ SmallTypeCollector >> #methodInfoIn:from:.
 SmallTypeCollector >> #typeFor:}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 SExporte2VW >> export [ 
 	Pharo2VW exporter
 	directory: FileSystem disk workingDirectory;
@@ -328,7 +321,7 @@ SExporte2VW >> export [
 	export.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SExporte2VW >> packages [ 
 	^ #('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2' 'SmallSuiteGenerator-Tests')
 ]
