@@ -117,12 +117,6 @@ SAbstractMessage >> copy [
 	^ copy
 ]
 
-{ #category : #actions }
-SAbstractMessage >> fix [
-	receiver fix.
-	args do: [ :arg | arg fix]
-]
-
 { #category : #comparing }
 SAbstractMessage >> hash [
   ^super hash bitXor: (receiver hash bitXor: (selector hash bitXor: args hash))

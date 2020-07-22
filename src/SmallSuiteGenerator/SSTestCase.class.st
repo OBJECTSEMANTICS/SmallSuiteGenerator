@@ -22,11 +22,6 @@ Class {
 }
 
 { #category : #'instance creation' }
-SSTestCase class >> defaultPrinterClass [
-	^ SPlatform printerClass
-]
-
-{ #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
   | testCase |
   testCase := self new.
@@ -257,11 +252,6 @@ SSTestCase >> printSummaryFitnessByClass [
 			stream
 				nextPutAll: '"';
 				nextPutAll: (String with: Character cr) ]
-]
-
-{ #category : #printing }
-SSTestCase >> printerClass [
-	^ self class defaultPrinterClass.
 ]
 
 { #category : #accessing }

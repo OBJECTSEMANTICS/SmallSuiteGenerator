@@ -17,7 +17,6 @@ Class {
 		'setUpMethod',
 		'tearDownMethod',
 		'lastMessage',
-		'asDict',
 		'fitnessSeed',
 		'initialSeed',
 		'typeInfoSeed',

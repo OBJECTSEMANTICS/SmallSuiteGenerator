@@ -127,7 +127,9 @@ SPlatform class >> printerClass [
 
 { #category : #accessing }
 SPlatform class >> printerClass: aClass [ 
-	printerClass := aClass
+	printerClass := aClass.
+	SSTestShifter class compile: 
+		'defaultPrinterClass', String cr,'	^ ', self printerClass printString
 ]
 
 { #category : #accessing }

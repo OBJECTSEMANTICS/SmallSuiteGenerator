@@ -31,9 +31,14 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #settings }
 SSTestShifter class >> defaultInterpreterClass [
 	^ SSMetaInterpreter
+]
+
+{ #category : #settings }
+SSTestShifter class >> defaultPrinterClass [
+	^ SSStandardPrinter
 ]
 
 { #category : #'mutation-change' }
@@ -299,7 +304,7 @@ SSTestShifter >> buildArgs: argTypes [
 
 { #category : #querying }
 SSTestShifter >> canAddStatement [
-	SPlatform printerClass hasLimit 
+	self printerClass hasLimit 
 		ifTrue: [
 			^ ((self length + 3) < CompiledMethod fullFrameSize)].
 	^ true
@@ -479,15 +484,6 @@ SSTestShifter >> emptyCopy [
 	^ copy
 ]
 
-{ #category : #util }
-SSTestShifter >> fixAssertions [
-	SPlatform printerClass isDictionary ifTrue: [ 
-		assertions do: [ :ass | 
-			ass args do: [ :arg |
-				arg fix
-			 ] ] ]
-]
-
 { #category : #'building-actions' }
 SSTestShifter >> generateAssertions [
 	^ self
@@ -508,24 +504,30 @@ SSTestShifter >> generateAssertions: classAssertions [
 	executionContext := self analyze.
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ].
-	self fixAssertions 
 ]
 
 { #category : #'building-actions' }
 SSTestShifter >> generateStatements [
-  | flag counter |
-  flag := true.
-  counter := 0.
-  self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
-  [ flag and: [ self length < self maxNumberOfStatements ] ] 
+	| flag counter |
+	flag := true.
+	counter := 0.
+	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
+	[ flag and: [ self length < self maxNumberOfStatements ] ] 
 		whileTrue: [ | array |
-        array :=  (OrderedCollection 
+			array :=  (OrderedCollection 
 						with: #addMessage 
 						with:  #addFieldAccessMessage) randomShuffle.
-        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] ifFound: [:selector |  | lastStm |
-              lastStm := statements last ] ifNone: [ counter := counter + 1.
-              counter > self maxNumberOfStatements ifTrue: [ flag := false.
-                    self serror: 'Not able to generate statements' ] ] ]
+     	   array
+				detect: [:selector |  
+					[ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] 
+				ifNone: [ 
+					counter := counter + 1.
+               counter > self maxNumberOfStatements 
+						ifTrue: [ 
+							flag := false.
+       	            self serror: 'Not able to generate statements' ] 
+				] 
+		]
 ]
 
 { #category : #'building-actions' }
@@ -533,12 +535,6 @@ SSTestShifter >> generateStatements: anInteger [
 	self maxNumberOfStatements: anInteger.
 	self generateStatements.
 	
-]
-
-{ #category : #parsing }
-SSTestShifter >> getStringOf: stm [
-	stm isString ifTrue: [ ^ stm ].
-	^ stm printString 
 ]
 
 { #category : #actions }
@@ -784,6 +780,11 @@ SSTestShifter >> printFunctionByClassName: dict on: stream [
 { #category : #printing }
 SSTestShifter >> printStatements [
 	^ statements collect: #printString
+]
+
+{ #category : #printing }
+SSTestShifter >> printerClass [
+	^ self class defaultPrinterClass.
 ]
 
 { #category : #querying }
