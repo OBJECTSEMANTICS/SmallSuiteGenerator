@@ -7,6 +7,17 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #testing }
+SSStandardPrinter class >> hasLimit [
+	^ true	
+	
+]
+
+{ #category : #testing }
+SSStandardPrinter class >> isDictionary [
+	^ false
+]
+
 { #category : #'instance creation' }
 SSStandardPrinter class >> on: aStream [
 	^ self new stream: aStream; yourself.

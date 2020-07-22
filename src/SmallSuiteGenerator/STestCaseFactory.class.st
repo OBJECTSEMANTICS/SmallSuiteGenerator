@@ -20,7 +20,6 @@ Class {
 		'asDict',
 		'fitnessSeed',
 		'initialSeed',
-		'initialAsDict',
 		'typeInfoSeed',
 		'typeInfoOrigin',
 		'firstExecution',
@@ -31,12 +30,6 @@ Class {
 	],
 	#category : #'SmallSuiteGenerator-Builder'
 }
-
-{ #category : #actions }
-STestCaseFactory >> asDict: aBoolean [
-	initialAsDict := aBoolean.
-	SPlatform asDict: aBoolean
-]
 
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
@@ -95,15 +88,16 @@ STestCaseFactory >> engineDefault [
 
 { #category : #actions }
 STestCaseFactory >> export: aTestCase with: aSelector [
+	| carReturn |
+	carReturn := String cr.
 	[
 	aTestCase generateAssertions.
 	self generatedClass
 		compile:
-			(aSelector, String cr, aTestCase printDescriptiveComment,
-			String cr, aTestCase printStringWithAssertions) ]
+			(aSelector, carReturn, aTestCase printDescriptiveComment,
+			carReturn, aTestCase printStringWithAssertions) ]
 		on: Error
-		do: [ | carReturn |
-			carReturn := String cr.
+		do: [ 
 			self generatedClass
 				compile:
 					aSelector , carReturn , 'self should:['
@@ -183,11 +177,6 @@ STestCaseFactory >> getClassOf: aString [
 ]
 
 { #category : #accessing }
-STestCaseFactory >> initialAsDict [
-	^ initialAsDict 
-]
-
-{ #category : #accessing }
 STestCaseFactory >> initialSeed [
 	^ initialSeed 
 ]
@@ -203,7 +192,6 @@ STestCaseFactory >> initialize [
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
 	initialSeed := 100.
-	initialAsDict := false.
 ]
 
 { #category : #actions }
@@ -249,6 +237,11 @@ STestCaseFactory >> outputPackageName: anObject [
 { #category : #configuration }
 STestCaseFactory >> populationSize: int [
 	engine populationSize: int
+]
+
+{ #category : #actions }
+STestCaseFactory >> printerClass: aClass [
+	SPlatform printerClass: aClass 
 ]
 
 { #category : #accessing }
@@ -346,7 +339,7 @@ STestCaseFactory >> targetPackageRegex: anObject [
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
-	SPlatform asDict: false;
+	SPlatform printerClass: nil;
 		logClass: nil;
 		resetRandomGenerator.
 	SmallTypeCollector resetClassDict

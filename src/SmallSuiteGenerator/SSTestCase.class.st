@@ -23,7 +23,7 @@ Class {
 
 { #category : #'instance creation' }
 SSTestCase class >> defaultPrinterClass [
-	^ SSStandardPrinter
+	^ SPlatform printerClass
 ]
 
 { #category : #'instance creation' }

@@ -67,7 +67,8 @@ SExporte2VW >> blackListSFieldAccessMessage [
 { #category : #'bl-ga' }
 SExporte2VW >> blackListSGAEngine [
 	^ {"SGAEngine >> #exportFitnessLog ."
-"SGAEngine >> #updateTypeInfoWith:." "VisualizationPackage"
+ "VisualizationPackage"
+SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"
 SGAEngine >> #addDescriptiveTextOn:ofColor:and: .
 SGAEngine >> #addHighlightMethodEvent:on:ofColor:.
 SGAEngine >> #addHighlightTestCaseEvent:on:ofColor:.
@@ -207,8 +208,8 @@ SExporte2VW >> blackListSTestCaseFactory [
 	^ {"STestCaseFactory >> #createConfigurationMethods ."
 "STestCaseFactory >> #exportFitnessLog ."
 "STestCaseFactory >> #moveClass: ."
-"STestCaseFactory >> #tearDown ."
 "STestCaseFactory class >> #from:"
+STestCaseFactory >> #tearDown .
 STestCaseFactory >> #export:with: .
 STestCaseFactory >> #exportTests .
 STestCaseFactory >> #fitnessResultAsDictionary .
@@ -267,7 +268,6 @@ SExporte2VW >> blackListSTypeClassInfo [
 SExporte2VW >> blackListSTypeInfo [
 	^ {"STypeInfo >> #asTypeInfo:methodsBlacklist:."
 STypeInfo >> #completeTypeInfo.
-"STypeInfo >> #isAbstractClass:."
 STypeInfo >> #updateArgsOf: .
 STypeInfo >> #deleteBlackListMethods.
 STypeInfo >> #blackList .

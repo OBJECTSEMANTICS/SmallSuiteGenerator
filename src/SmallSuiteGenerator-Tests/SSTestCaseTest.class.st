@@ -103,7 +103,7 @@ SSTestCaseTest >> testFieldAccessMessage [
 		assertCollection: (testCase statements collect: #printString)
 		hasSameElements: (Array 
 									with: '_var0 := 5'
-									with: '_var1 := ', 'SFoo' fullClassName,' score: _var0 '
+									with: '_var1 := ', sfooSymbol asString,' score: _var0 '
 									with: '_var2 := _var1 score')
 ]
 

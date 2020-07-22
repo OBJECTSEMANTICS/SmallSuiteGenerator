@@ -299,10 +299,10 @@ SSTestShifter >> buildArgs: argTypes [
 
 { #category : #querying }
 SSTestShifter >> canAddStatement [
-	SPlatform asDict 
-		ifFalse: [
-			^ ((self length + 3) < CompiledMethod fullFrameSize)
-		] ifTrue: [ ^ true ]
+	SPlatform printerClass hasLimit 
+		ifTrue: [
+			^ ((self length + 3) < CompiledMethod fullFrameSize)].
+	^ true
 ]
 
 { #category : #'mutation-change' }
@@ -481,7 +481,7 @@ SSTestShifter >> emptyCopy [
 
 { #category : #util }
 SSTestShifter >> fixAssertions [
-	SPlatform asDict ifTrue: [ 
+	SPlatform printerClass isDictionary ifTrue: [ 
 		assertions do: [ :ass | 
 			ass args do: [ :arg |
 				arg fix

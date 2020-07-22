@@ -7,6 +7,16 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
+{ #category : #testing }
+SSDictionaryBasedPrinter class >> hasLimit [
+	^ false
+]
+
+{ #category : #testing }
+SSDictionaryBasedPrinter class >> isDictionary [
+	^ true
+]
+
 { #category : #'instance creation' }
 SSDictionaryBasedPrinter class >> printTempVariables: aTestCase on: aStream [
 	aStream tab; nextPut:$|; space.

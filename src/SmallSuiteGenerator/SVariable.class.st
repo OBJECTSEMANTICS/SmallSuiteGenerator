@@ -107,7 +107,9 @@ SVariable >> initialize [
 
 { #category : #accessing }
 SVariable >> key [
-	SPlatform asDict ifTrue: [ ^ id + 1 ] ifFalse: [ ^ self printString asSymbol ]
+	SPlatform printerClass isDictionary 
+		ifTrue: [ ^ id + 1 ] 
+		ifFalse: [ ^ self printString asSymbol ]
 
 ]
 

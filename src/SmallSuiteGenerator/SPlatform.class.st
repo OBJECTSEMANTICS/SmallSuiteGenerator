@@ -12,23 +12,12 @@ Class {
 		'seed',
 		'configurationClass',
 		'logName',
-		'asDict',
+		'printerClass',
 		'logClass',
 		'vizClass'
 	],
 	#category : #'SmallSuiteGenerator-Builder'
 }
-
-{ #category : #accessing }
-SPlatform class >> asDict [
-	asDict ifNil: [ asDict := false ].
-	^ asDict 
-]
-
-{ #category : #accessing }
-SPlatform class >> asDict: aBoolean [
-	asDict := aBoolean
-]
 
 { #category : #accessing }
 SPlatform class >> classConfigurationName [
@@ -128,6 +117,17 @@ SPlatform class >> lookUpClass: aClassName [
 { #category : #'instance creation' }
 SPlatform class >> newRandomGenerator [
 	^ SRandom seed: self seed
+]
+
+{ #category : #accessing }
+SPlatform class >> printerClass [
+	printerClass ifNil: [ printerClass := SSStandardPrinter ].
+	^ printerClass 
+]
+
+{ #category : #accessing }
+SPlatform class >> printerClass: aClass [ 
+	printerClass := aClass
 ]
 
 { #category : #accessing }
