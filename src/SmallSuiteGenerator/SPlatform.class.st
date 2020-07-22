@@ -11,10 +11,7 @@ Class {
 		'randomGenerator',
 		'seed',
 		'configurationClass',
-		'logName',
-		'printerClass',
-		'logClass',
-		'vizClass'
+		'logName'
 	],
 	#category : #'SmallSuiteGenerator-Builder'
 }
@@ -88,17 +85,6 @@ SPlatform class >> levelToPrint [
 	^ level
 ]
 
-{ #category : #settings }
-SPlatform class >> logClass [
-	logClass ifNil: [ logClass := SGANullLog ].
-	^ logClass
-]
-
-{ #category : #accessing }
-SPlatform class >> logClass: aClass [
-	logClass := aClass
-]
-
 { #category : #accessing }
 SPlatform class >> logName [ 
 	^ logName ifNil: [ self defaultLogName  ]
@@ -117,19 +103,6 @@ SPlatform class >> lookUpClass: aClassName [
 { #category : #'instance creation' }
 SPlatform class >> newRandomGenerator [
 	^ SRandom seed: self seed
-]
-
-{ #category : #accessing }
-SPlatform class >> printerClass [
-	printerClass ifNil: [ printerClass := SSStandardPrinter ].
-	^ printerClass 
-]
-
-{ #category : #accessing }
-SPlatform class >> printerClass: aClass [ 
-	printerClass := aClass.
-	SSTestShifter class compile: 
-		'defaultPrinterClass', String cr,'	^ ', self printerClass printString
 ]
 
 { #category : #accessing }
@@ -183,15 +156,4 @@ SPlatform class >> seed: aNumber [
 { #category : #tests }
 SPlatform class >> testCaseClass [
 	^ self configurationClass testCaseClass
-]
-
-{ #category : #settings }
-SPlatform class >> vizClass [
-	vizClass ifNil: [ vizClass := SGANullViz ].
-	^ vizClass
-]
-
-{ #category : #accessing }
-SPlatform class >> vizClass: aClass [
-	vizClass := aClass
 ]

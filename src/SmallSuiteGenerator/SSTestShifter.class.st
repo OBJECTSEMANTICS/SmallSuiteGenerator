@@ -37,6 +37,11 @@ SSTestShifter class >> defaultInterpreterClass [
 ]
 
 { #category : #settings }
+SSTestShifter class >> defaultMethodsClass [
+	^ SSCustomMethods
+]
+
+{ #category : #settings }
 SSTestShifter class >> defaultPrinterClass [
 	^ SSStandardPrinter
 ]
@@ -622,6 +627,11 @@ SSTestShifter >> maxNumberOfStatements: anObject [
 	maxNumberOfStatements := anObject
 ]
 
+{ #category : #accessing }
+SSTestShifter >> methodsClass [
+	^ self class defaultMethodsClass
+]
+
 { #category : #'instance creation' }
 SSTestShifter >> newAssignment: anExpression [
 	^ SAssignment
@@ -842,28 +852,31 @@ SSTestShifter >> repairIds [
 
 { #category : #action }
 SSTestShifter >> run [
+	^ self methodsClass 
+		on: self 
+		execute: [ :testCase |
+			testCase runWith: testCase statements, testCase assertions. ]
+]
+
+{ #category : #action }
+SSTestShifter >> runWith: aCollection [
   " we use a meta interpreter to use smalltalk and interpret our AST"
- 	|interpreter|
+	|interpreter|
 	interpreter := self interpreterClass new.
 	
-   [ interpreter visitStatements: self statements, self assertions;
+   [ interpreter visitStatements: aCollection;
 						clean.
 		hasErrors := false.
-		interpreter context.
+		^ interpreter context.
   	] on:Error do:[ hasErrors:= true. Dictionary new].
 ]
 
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
-  " we use a meta interpreter to use smalltalk and interpret our AST"
-	|interpreter|
-	interpreter := self interpreterClass new.
-	
-   [ interpreter visitStatements: self statements;
-						clean.
-		hasErrors := false.
-		^ interpreter context.
-  	] on:Error do:[ hasErrors:= true. Dictionary new].
+	^ self methodsClass 
+		on: self 
+		execute: [ :testCase |
+			testCase runWith: testCase statements. ]
 ]
 
 { #category : #accessing }

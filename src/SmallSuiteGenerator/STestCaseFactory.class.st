@@ -30,6 +30,11 @@ Class {
 	#category : #'SmallSuiteGenerator-Builder'
 }
 
+{ #category : #settings }
+STestCaseFactory class >> vizClass [
+	^ SGAViz
+]
+
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
 	self assert: typeInfo isNil not description: 'Please provide type information of the target project'.
@@ -46,11 +51,8 @@ STestCaseFactory >> classesForRegex: regexExpressions [
 ]
 
 { #category : #actions }
-STestCaseFactory >> createConfigurationMethods [
-	| class |
-	class := self generatedClass.
-	setUpMethod ifNotNil: [ class compile: setUpMethod  ].
-	tearDownMethod ifNotNil: [ class compile: tearDownMethod ]
+STestCaseFactory >> compile: aString classified: category [
+	^ self generatedClass compile: aString classified: category
 ]
 
 { #category : #actions }
@@ -85,32 +87,36 @@ STestCaseFactory >> engineDefault [
 		yourself.
 ]
 
-{ #category : #actions }
+{ #category : #export }
 STestCaseFactory >> export: aTestCase with: aSelector [
 	| carReturn |
 	carReturn := String cr.
 	[
 	aTestCase generateAssertions.
-	self generatedClass
-		compile:
+	self compile:
 			(aSelector, carReturn, aTestCase printDescriptiveComment,
-			carReturn, aTestCase printStringWithAssertions) ]
+			carReturn, aTestCase printStringWithAssertions)
+		  classified: 'tests' ]
 		on: Error
-		do: [ 
-			self generatedClass
-				compile:
+		do: [ self compile:
 					aSelector , carReturn , 'self should:['
 						, aTestCase printStringWithAssertions , carReturn
-						, '] raise:Error.' , carReturn ]
+						, '] raise:Error.' , carReturn
+					classified: 'tests' ]
 ]
 
-{ #category : #actions }
+{ #category : #export }
+STestCaseFactory >> exportSettingMethods [
+	SSTestShifter defaultMethodsClass exportMethodsFor: self
+]
+
+{ #category : #export }
 STestCaseFactory >> exportTests [
 	engine population
 		doWithIndex: [ :test :index | 
 			test lastMessage: lastMessage.
 			self export: test with: ('test', index asString) ].
-	self createConfigurationMethods
+	self exportSettingMethods
 ]
 
 { #category : #accessing }
@@ -140,13 +146,13 @@ STestCaseFactory >> fitnessSeedCalculated: number [
 
 { #category : #accessing }
 STestCaseFactory >> generateLogs [
-	SPlatform logClass: SGALog
+	self logClass: SGALog
 ]
 
 { #category : #accessing }
 STestCaseFactory >> generateViews [
-	SPlatform vizClass: SGAViz;
-		logClass: SGALog 
+	self vizClass: SGAViz;
+		logClass: SGALog
 ]
 
 { #category : #actions }
@@ -184,7 +190,8 @@ STestCaseFactory >> initialSeed [
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
-	SPlatform vizClass: nil.
+	self resetVizClass;
+		resetSettingMethodClass.
 	fitness := SMethodCoverage new.
 	numberOfIterations := 20.
 	engine := self engineDefault.
@@ -205,6 +212,12 @@ STestCaseFactory >> lastMessage: aMessage [
 	lastMessage := aMessage.
 	engine lastMessage: aMessage
 	
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> logClass: aClass [
+	SGAEngine class compile: 
+		'logClass', String cr,'	^ ', aClass printString
 ]
 
 { #category : #accessing }
@@ -238,15 +251,39 @@ STestCaseFactory >> populationSize: int [
 	engine populationSize: int
 ]
 
-{ #category : #actions }
+{ #category : #'set strategies' }
 STestCaseFactory >> printerClass: aClass [
-	SPlatform printerClass: aClass 
+	SSTestShifter class compile: 
+		'defaultPrinterClass', String cr,'	^ ', aClass printString
 ]
 
 { #category : #accessing }
 STestCaseFactory >> reportClass [
 	reportClass ifNil: [ reportClass := SReportSTestCaseFactory on: self ].
 	^ reportClass 
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetLogClass [
+	self logClass: SGANullLog
+
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetPrinterClass [
+	self printerClass: SSStandardPrinter
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetSettingMethodClass [
+	self settingMethodClass: SSNullMethods
+
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetVizClass [
+	self vizClass: SGANullViz
+
 ]
 
 { #category : #actions }
@@ -282,7 +319,7 @@ STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
 	engine selectionStrategyTestCase: aSelectionStrategy 
 ]
 
-{ #category : #actions }
+{ #category : #running }
 STestCaseFactory >> setUp [
 	
 	self initializeProfiler.
@@ -301,10 +338,17 @@ ifFalse: [ engine fitness profiler: profiler.
 	engine numberOfGenerations: numberOfIterations ]
 ]
 
-{ #category : #actions }
-STestCaseFactory >> setUpMethod: anObject [
-	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
-	setUpMethod := anObject
+{ #category : #'set strategies' }
+STestCaseFactory >> setUpMethod: aString [
+	(aString isNotNil and: [aString isNotEmpty]) ifFalse: [ ^ self ].
+	SSCustomMethods compile: aString.
+	self settingMethodClass: SSCustomMethods.
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> settingMethodClass: aClass [
+	SSTestShifter class compile: 
+		'defaultMethodsClass', String cr,'	^ ', aClass printString
 ]
 
 { #category : #configuration }
@@ -334,20 +378,21 @@ STestCaseFactory >> targetPackageRegex: anObject [
 	engine packageRegex: anObject 
 ]
 
-{ #category : #actions }
+{ #category : #running }
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
-	SPlatform printerClass: nil;
-		logClass: nil;
-		resetRandomGenerator.
+	self resetPrinterClass;
+		resetLogClass.
+	SPlatform resetRandomGenerator.
 	SmallTypeCollector resetClassDict
 ]
 
-{ #category : #actions }
-STestCaseFactory >> tearDownMethod: anObject [
-	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
-	tearDownMethod := anObject
+{ #category : #'set strategies' }
+STestCaseFactory >> tearDownMethod: aString [
+	(aString isNotNil and: [aString isNotEmpty]) ifFalse: [ ^ self ].
+	SSCustomMethods compile: aString.
+	self settingMethodClass: SSCustomMethods.
 ]
 
 { #category : #accessing }
@@ -373,4 +418,10 @@ STestCaseFactory >> typeInfoSeed [
 
 { #category : #actions }
 STestCaseFactory >> uninstall [
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> vizClass: aClass [
+	STestCaseFactory class compile: 
+		'vizClass', String cr,'	^ ', aClass printString
 ]

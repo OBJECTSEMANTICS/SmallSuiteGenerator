@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'dictionaryName'
 	],
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Strategies'
 }
 
 { #category : #testing }

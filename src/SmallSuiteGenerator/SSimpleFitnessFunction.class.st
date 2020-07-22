@@ -54,7 +54,7 @@ SSimpleFitnessFunction >> run: testCaseCollection [
 			testCase length > 0 ifTrue: [
 				profiler cleanBlocksOfMethods.
 				testCase runWithoutAssertions.
-				SPlatform logClass summaryExecutionMethodsOf: testCase with: profiler.
+				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
 				"testCase summaryExecutionMethods: profiler summaryExecutionMethods."
 				"self abstractDataOn: testCase."
 				self fitnessOf: testCase withKey: string. ]
