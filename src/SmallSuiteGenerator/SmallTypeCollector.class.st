@@ -56,6 +56,7 @@ SmallTypeCollector >> methodInfoIn: aCompiledMethod from: tempTypes [
 	methodTypeInfo 
 		selector: aCompiledMethod selector;
 		isQuick: aCompiledMethod isQuick;
+		isAbstract: aCompiledMethod isAbstract;
 		scalars: Dictionary new;
 		isDeprecated: aCompiledMethod isDeprecated;
 		executions: 0.

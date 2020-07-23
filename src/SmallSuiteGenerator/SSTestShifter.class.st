@@ -28,6 +28,9 @@ Class {
 		'lastMessage',
 		'hasErrors'
 	],
+	#classVars : [
+		'Timer'
+	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
@@ -530,12 +533,12 @@ SSTestShifter >> getStringOf: stm [
 	^ stm printString 
 ]
 
-{ #category : #actions }
+{ #category : #accessing }
 SSTestShifter >> hasErrors [
 	^ hasErrors
 ]
 
-{ #category : #actions }
+{ #category : #action }
 SSTestShifter >> hasErrors: aBoolean [
 	hasErrors := aBoolean 
 ]
@@ -830,28 +833,38 @@ SSTestShifter >> repairIds [
 
 { #category : #action }
 SSTestShifter >> run [
+  ^ self runStatements: self statements.
+]
+
+{ #category : #action }
+SSTestShifter >> runStatements: aStatementCollection [
   " we use a meta interpreter to use smalltalk and interpret our AST"
- 	|interpreter|
+ 	|interpreter semaphore timeOut process result|
 	interpreter := self interpreterClass new.
+	hasErrors := true.
+	semaphore := Semaphore new.
+  
+	process := [
+			[interpreter visitStatements: aStatementCollection; clean.
+			hasErrors := false.
+			result := interpreter context.
+			semaphore signal.]
+				on:Error do:[ 
+					result := Dictionary new.
+					semaphore signal.]] fork.
+	timeOut := semaphore waitTimeoutMSecs: 1000.
+	timeOut ifTrue:[
+		process terminate.
+		result := Dictionary new.
+		self halt.].
+	^ result.
 	
-   [ interpreter visitStatements: self statements, self assertions;
-						clean.
-		hasErrors := false.
-		interpreter context.
-  	] on:Error do:[ hasErrors:= true. Dictionary new].
+	
 ]
 
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
-  " we use a meta interpreter to use smalltalk and interpret our AST"
-	|interpreter|
-	interpreter := self interpreterClass new.
-	
-   [ interpreter visitStatements: self statements;
-						clean.
-		hasErrors := false.
-		^ interpreter context.
-  	] on:Error do:[ hasErrors:= true. Dictionary new].
+ 	^ self runStatements: self statements, self assertions.
 ]
 
 { #category : #accessing }

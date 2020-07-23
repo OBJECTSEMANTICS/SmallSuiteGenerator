@@ -22,7 +22,8 @@ Class {
 		'receiver',
 		'scalars',
 		'executions',
-		'hasProfiler'
+		'hasProfiler',
+		'abstract'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -93,16 +94,17 @@ STypeMethodInfo >> argTypes: anObject [
 
 { #category : #converting }
 STypeMethodInfo >> asMethodInfo: typeCollMethod [
-	^ self class new
+	 self
 		selector: typeCollMethod selector;
 		receiver: (self transform: typeCollMethod receiverType);
 		returnType: (self transform: typeCollMethod returnType);
 		argTypes: (self transformArgs: typeCollMethod argTypes);
 		isQuick: typeCollMethod isQuick;
+		isAbstract: typeCollMethod isAbstract;
 		scalars: typeCollMethod dictLiterals;
 		isDeprecated: typeCollMethod isDeprecated;
 		executions: typeCollMethod numberOfExecutions;
-		hasProfiler: typeCollMethod wasExecuted 
+		hasProfiler: typeCollMethod wasExecuted.
 ]
 
 { #category : #copying }
@@ -113,6 +115,7 @@ STypeMethodInfo >> copy [
 		selector: selector;
 		isQuick: isQuick;
 		isDeprecated: isDeprecated;
+		isAbstract: abstract;
 		returnType: returnType copy;
 		argTypes: argTypes copy;
 		scalars: scalars copy;
@@ -180,6 +183,16 @@ STypeMethodInfo >> initialize [
 	isDeprecated := false.
 	scalars := Dictionary new.
 	hasProfiler := true
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> isAbstract [
+	^ abstract.
+]
+
+{ #category : #accessing }
+STypeMethodInfo >> isAbstract: aBoolean [
+	abstract := aBoolean.
 ]
 
 { #category : #accessing }

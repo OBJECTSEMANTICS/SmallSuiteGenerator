@@ -229,6 +229,11 @@ STypeClassInfo >> instanceMethodsFor: aSpyClass [
 	^ instanceMethods
 ]
 
+{ #category : #accesing }
+STypeClassInfo >> isAbstract [
+	^ self allMethods anySatisfy: [ :mtd | mtd isAbstract].
+]
+
 { #category : #actions }
 STypeClassInfo >> joinWith: otherTypeClass [
 	otherTypeClass methodTypes do: [ :aMethod | 
@@ -245,8 +250,9 @@ STypeClassInfo >> messages [
 STypeClassInfo >> messagesAndAccessMessages [
 	^ methodTypes values
 		select: [ :methType | 
-			methType isDeprecated not
-				 and: [ methType returnType isNil not ] ]
+				methType isDeprecated not 
+				and:[ methType isAbstract not
+				and:[ methType returnType isNil not ]]].
 ]
 
 { #category : #'accessing - read only' }

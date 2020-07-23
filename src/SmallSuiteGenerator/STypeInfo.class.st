@@ -60,6 +60,20 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 	self joinScalars: aTypeClassInfo scalars
 ]
 
+{ #category : #accessing }
+STypeInfo >> allParentClassesInfoFrom: aClassName [
+	|smalltalkClass result|
+	smalltalkClass := Smalltalk at: aClassName.
+	result := OrderedCollection new.
+	result add: (self classAt: aClassName).
+	smalltalkClass withAllSuperclassesDo:[:class|
+		|info|
+		info :=self classAt: class name ifNone:[nil].
+		info ifNotNil: [ result add: info. ]].
+	^ result.
+	 
+]
+
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector [
 	self cleanBlockClosuresOf: aTypeCollector.
@@ -220,9 +234,7 @@ STypeInfo >> initializeBlackList [
 
 { #category : #accessing }
 STypeInfo >> isAbstractClass: symbol [
-	| aClass |
-	aClass := self classes at: symbol.
-	^  (aClass methods select: #isAbstract) isNotEmpty
+	^ (self classAt: symbol) isAbstract.
 ]
 
 { #category : #accessing }
@@ -254,23 +266,20 @@ STypeInfo >> joinWith: otherTypeInfo [
 
 { #category : #accessing }
 STypeInfo >> messagesFrom: aClassName [
-	^ types
-		flatCollect: [ :aClassType | 
-			aClassType messages
-				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
+	|classInfos|
+	classInfos := self allParentClassesInfoFrom: aClassName.
+	^ classInfos flatCollect:[:classInfo| classInfo messages].
 ]
 
 { #category : #lookup }
 STypeInfo >> methodType: aSelector from: aClassName [
-	types
-		do: [ :aTypeClassInfo | 
-			aTypeClassInfo messagesAndAccessMessages
-				detect: [ :aMessage | 
-					(aMessage isFromReceiver: aClassName)
-						and: [ aMessage selector = aSelector ] ]
-				ifFound: [ :aMessage | ^ aMessage ]
-				ifNone: [ false ] ].
-	^ self error: 'MethodType of selector: ', aSelector , ' is not found in class: ' , aClassName
+	|messages|
+	messages := self messagesFrom: aClassName.
+	^ messages 
+		detect:[ :methodInfo | methodInfo selector = aSelector] 
+		ifNone:[ 
+			self error: 
+			('MethodType of selector: {0} is not found in class: {1}' format:{aSelector. aClassName}) ].
 ]
 
 { #category : #accessing }
