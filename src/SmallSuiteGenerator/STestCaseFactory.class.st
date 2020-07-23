@@ -17,10 +17,8 @@ Class {
 		'setUpMethod',
 		'tearDownMethod',
 		'lastMessage',
-		'asDict',
 		'fitnessSeed',
 		'initialSeed',
-		'initialAsDict',
 		'typeInfoSeed',
 		'typeInfoOrigin',
 		'firstExecution',
@@ -32,73 +30,9 @@ Class {
 	#category : #'SmallSuiteGenerator-Builder'
 }
 
-{ #category : #'settings-colors' }
-STestCaseFactory class >> darkColors [
-	^ Dictionary new 
-		at: 'background' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
-		at: 'backgroundHigherFitnessTestCase' put:  (Color fromHexString: '1B8D8D' "'0B6969'""'1E7676'");
-		at: 'scaleLighter' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
-		at: 'scaleDarker' put: (Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253);
-		at: 'baseBar' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
-		at: 'forwardBar' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
-		at: 'backwardBar' put: (Color r: 1 g: 0 b: 0.25098039215686274);
-		at: 'edge' put: (Color r: 0.7647058823529411 g: 0.803921568627451 b: 0.788235294117647);
-		at: 'classCoverage' put: (Color r: 0.5098039215686274 g: 0.7803921568627451 b: 0.9607843137254902);
-		at: 'methodCoverage' put: (Color r: 0.9607843137254902 g: 0.5098039215686274 b: 0.7215686274509804);
-		at: 'statementCoverage' put: (Color r: 0.5098039215686274 g: 0.9607843137254902 b: 0.7725490196078432);
-		at: 'highlightTestCase' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
-		at: 'highlightMethod' put: Color cyan;
-		at: 'fontMethodBox' put: Color white;
-		at: 'border' put: Color white;
-		at: 'axis' put: Color white;
-		at: 'fittestCoverage' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'averageCoverage' put: (Color r: 0.5063538611925709 g: 0.5259042033235581 b: 0.8357771260997068);
-		at: 'lowestCoverage' put: (Color pink);
-		at: 'seedCoverage' put: (Color r: 0.9530791788856305 g: 0.5102639296187683 b: 0.43499511241446726);
-		at: 'font' put: Color white;
-		at: 'rangeMethodColor' put:
-			(#('83142C' 'AF0404' 'BB1542' 'ED3833' 'EB5F5D' 'F3826F' 'FFBA92' 'F0DAB1' 'FFF8CD' 'F7FF56' 'DCFFCC' 'DDF796' 'C3F584' 'A3F7BF' '6bffb8' '42E6A4' '4DD599' '71A95A' '007944' '00818A' '216583' '366ED8' '64C4ED' '5EDFFF' 'B2FCFF' 'FFEDFF' 'C6CBEF' '8186D5' '494CA2' '560764' '930077' 'D527B7' 'FF78AE' 'FFA0D2' ) collect: [:c | Color fromHexString: c ]);
-		yourself.
-]
-
-{ #category : #'settings-colors' }
-STestCaseFactory class >> lightColors [
-	^ Dictionary new 
-		at: 'background' put: Color white;
-		"at: 'backgroundTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);"
-		at: 'backgroundTestCase' put: (Color fromHexString: 'ebecf0');
-		"at: 'backgroundHigherFitnessTestCase' put: (Color fromHexString: '1B8D8D' '0B6969' '1E7676');"
-		at: 'borderTestCase' put: (Color r: 0.1607843137254902 g: 0.3686274509803922 b: 0.4470588235294118);
-		at: 'scaleLighter' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'scaleDarker' put: (Color r: 0 g: 0 b: 0 alpha: 0.1)"(Color r: 0.30980392156862746 g: 0.6235294117647059 b: 0.49019607843137253)";
-		at: 'baseBar' put: Color white;
-		at: 'forwardBar' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
-		at: 'backwardBar' put: (Color r: 1 g: 0 b: 0.25098039215686274);
-		at: 'edge' put: (Color r: 0.611764705882353 g: 0.6431372549019608 b: 0.6274509803921569);
-		at: 'classCoverage' put: (Color r: 0.05 g: 0.75 b: 0.91);
-		at: 'methodCoverage' put: (Color r:0.88 g:0.26 b:0.5);
-		at: 'statementCoverage' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'highlightTestCase' put: (Color r: 0.13725490196078433 g: 0.7215686274509804 b: 0.7725490196078432 alpha: 0.8);
-		at: 'highlightMethod' put: Color cyan"(Color r: 111/255 g: 1 b: 233/255)";
-		"at: 'fontMethodBox' put: Color white;"
-		at: 'fontMethodBox' put: Color black;
-		at: 'border' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		at: 'axis' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		at: 'fittestCoverage' put: (Color r: 0 g: 1 b: 0.67);
-		at: 'averageCoverage' put: (Color r: 0.5063538611925709 g: 0.5259042033235581 b: 0.8357771260997068);
-		at: 'lowestCoverage' put: (Color pink);
-		at: 'seedCoverage' put: (Color r: 0.9530791788856305 g: 0.5102639296187683 b: 0.43499511241446726);
-		at: 'font' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
-		at: 'rangeMethodColor' put:
-			(#('83142C' 'AF0404' 'BB1542' 'ED3833' 'EB5F5D' 'F3826F' 'FFBA92' 'F0DAB1' 'FFF8CD' 'F7FF56' 'DCFFCC' 'DDF796' 'C3F584' 'A3F7BF' '6bffb8' '42E6A4' '4DD599' '71A95A' '007944' '00818A' '216583' '366ED8' '64C4ED' '5EDFFF' 'B2FCFF' 'FFEDFF' 'C6CBEF' '8186D5' '494CA2' '560764' '930077' 'D527B7' 'FF78AE' 'FFA0D2' ) collect: [:c | Color fromHexString: c ]);
-		yourself.
-]
-
-{ #category : #actions }
-STestCaseFactory >> asDict: aBoolean [
-	initialAsDict := aBoolean.
-	SPlatform asDict: aBoolean
+{ #category : #settings }
+STestCaseFactory class >> vizClass [
+	^ SGAViz
 ]
 
 { #category : #actions }
@@ -117,11 +51,8 @@ STestCaseFactory >> classesForRegex: regexExpressions [
 ]
 
 { #category : #actions }
-STestCaseFactory >> createConfigurationMethods [
-	| class |
-	class := self generatedClass.
-	setUpMethod ifNotNil: [ class compile: setUpMethod  ].
-	tearDownMethod ifNotNil: [ class compile: tearDownMethod ]
+STestCaseFactory >> compile: aString classified: category [
+	^ self generatedClass compile: aString classified: category
 ]
 
 { #category : #actions }
@@ -156,34 +87,36 @@ STestCaseFactory >> engineDefault [
 		yourself.
 ]
 
-{ #category : #actions }
+{ #category : #export }
 STestCaseFactory >> export: aTestCase with: aSelector [
+	| carReturn |
+	carReturn := String cr.
 	[
 	aTestCase generateAssertions.
-	self generatedClass
-		compile:
-			(aSelector, String lf, aTestCase printDescriptiveComment,
-			String lf, aTestCase printStringWithAssertions) ]
+	self compile:
+			(aSelector, carReturn, aTestCase printDescriptiveComment,
+			carReturn, aTestCase printStringWithAssertions)
+		  classified: 'tests' ]
 		on: Error
-		do: [ | carReturn |
-			carReturn := String with: Character cr.
-			self generatedClass
-				compile:
+		do: [ self compile:
 					aSelector , carReturn , 'self should:['
 						, aTestCase printStringWithAssertions , carReturn
-						, '] raise:Error.' , carReturn ]
+						, '] raise:Error.' , carReturn
+					classified: 'tests' ]
 ]
 
-{ #category : #actions }
+{ #category : #export }
+STestCaseFactory >> exportSettingMethods [
+	SSTestShifter defaultMethodsClass exportMethodsFor: self
+]
+
+{ #category : #export }
 STestCaseFactory >> exportTests [
-	| index |
-	index := 1.
 	engine population
-		do: [ :test | 
+		doWithIndex: [ :test :index | 
 			test lastMessage: lastMessage.
-			self export: test with: ('test{1}' format: {index}).
-			index := index + 1 ].
-	self createConfigurationMethods
+			self export: test with: ('test', index asString) ].
+	self exportSettingMethods
 ]
 
 { #category : #accessing }
@@ -213,13 +146,13 @@ STestCaseFactory >> fitnessSeedCalculated: number [
 
 { #category : #accessing }
 STestCaseFactory >> generateLogs [
-	SPlatform logClass: SGALog
+	self logClass: SGALog
 ]
 
 { #category : #accessing }
 STestCaseFactory >> generateViews [
-	SPlatform vizClass: SGAViz;
-		logClass: SGALog 
+	self vizClass: SGAViz;
+		logClass: SGALog
 ]
 
 { #category : #actions }
@@ -249,11 +182,6 @@ STestCaseFactory >> getClassOf: aString [
 ]
 
 { #category : #accessing }
-STestCaseFactory >> initialAsDict [
-	^ initialAsDict 
-]
-
-{ #category : #accessing }
 STestCaseFactory >> initialSeed [
 	^ initialSeed 
 ]
@@ -262,14 +190,14 @@ STestCaseFactory >> initialSeed [
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
-	SPlatform vizClass: nil.
+	self resetVizClass;
+		resetSettingMethodClass.
 	fitness := SMethodCoverage new.
 	numberOfIterations := 20.
 	engine := self engineDefault.
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
 	initialSeed := 100.
-	initialAsDict := false.
 ]
 
 { #category : #actions }
@@ -284,6 +212,12 @@ STestCaseFactory >> lastMessage: aMessage [
 	lastMessage := aMessage.
 	engine lastMessage: aMessage
 	
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> logClass: aClass [
+	SGAEngine class compile: 
+		'logClass', String cr,'	^ ', aClass printString
 ]
 
 { #category : #accessing }
@@ -317,10 +251,39 @@ STestCaseFactory >> populationSize: int [
 	engine populationSize: int
 ]
 
+{ #category : #'set strategies' }
+STestCaseFactory >> printerClass: aClass [
+	SSTestShifter class compile: 
+		'defaultPrinterClass', String cr,'	^ ', aClass printString
+]
+
 { #category : #accessing }
 STestCaseFactory >> reportClass [
 	reportClass ifNil: [ reportClass := SReportSTestCaseFactory on: self ].
 	^ reportClass 
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetLogClass [
+	self logClass: SGANullLog
+
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetPrinterClass [
+	self printerClass: SSStandardPrinter
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetSettingMethodClass [
+	self settingMethodClass: SSNullMethods
+
+]
+
+{ #category : #'reset strategies' }
+STestCaseFactory >> resetVizClass [
+	self vizClass: SGANullViz
+
 ]
 
 { #category : #actions }
@@ -356,7 +319,7 @@ STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
 	engine selectionStrategyTestCase: aSelectionStrategy 
 ]
 
-{ #category : #actions }
+{ #category : #running }
 STestCaseFactory >> setUp [
 	
 	self initializeProfiler.
@@ -375,10 +338,17 @@ ifFalse: [ engine fitness profiler: profiler.
 	engine numberOfGenerations: numberOfIterations ]
 ]
 
-{ #category : #actions }
-STestCaseFactory >> setUpMethod: anObject [
-	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
-	setUpMethod := anObject
+{ #category : #'set strategies' }
+STestCaseFactory >> setUpMethod: aString [
+	(aString isNotNil and: [aString isNotEmpty]) ifFalse: [ ^ self ].
+	SSCustomMethods compile: aString.
+	self settingMethodClass: SSCustomMethods.
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> settingMethodClass: aClass [
+	SSTestShifter class compile: 
+		'defaultMethodsClass', String cr,'	^ ', aClass printString
 ]
 
 { #category : #configuration }
@@ -408,20 +378,21 @@ STestCaseFactory >> targetPackageRegex: anObject [
 	engine packageRegex: anObject 
 ]
 
-{ #category : #actions }
+{ #category : #running }
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
-	SPlatform asDict: false;
-		logClass: nil;
-		resetRandomGenerator.
+	self resetPrinterClass;
+		resetLogClass.
+	SPlatform resetRandomGenerator.
 	SmallTypeCollector resetClassDict
 ]
 
-{ #category : #actions }
-STestCaseFactory >> tearDownMethod: anObject [
-	(anObject isNotNil and: [anObject isNotEmpty]) ifFalse: [ ^ self ].
-	tearDownMethod := anObject
+{ #category : #'set strategies' }
+STestCaseFactory >> tearDownMethod: aString [
+	(aString isNotNil and: [aString isNotEmpty]) ifFalse: [ ^ self ].
+	SSCustomMethods compile: aString.
+	self settingMethodClass: SSCustomMethods.
 ]
 
 { #category : #accessing }
@@ -447,4 +418,10 @@ STestCaseFactory >> typeInfoSeed [
 
 { #category : #actions }
 STestCaseFactory >> uninstall [
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> vizClass: aClass [
+	STestCaseFactory class compile: 
+		'vizClass', String cr,'	^ ', aClass printString
 ]

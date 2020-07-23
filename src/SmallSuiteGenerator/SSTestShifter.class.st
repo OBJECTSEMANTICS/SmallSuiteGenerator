@@ -28,15 +28,22 @@ Class {
 		'lastMessage',
 		'hasErrors'
 	],
-	#classVars : [
-		'Timer'
-	],
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #settings }
 SSTestShifter class >> defaultInterpreterClass [
 	^ SSMetaInterpreter
+]
+
+{ #category : #settings }
+SSTestShifter class >> defaultMethodsClass [
+	^ SSCustomMethods
+]
+
+{ #category : #settings }
+SSTestShifter class >> defaultPrinterClass [
+	^ SSStandardPrinter
 ]
 
 { #category : #'mutation-change' }
@@ -158,7 +165,10 @@ SSTestShifter >> addFieldAccessMessage: selector from: returnType [
 	accessors := self pickAccessorsOf: returnType.
 	accessor := accessors
 		detect: [ :acc | acc selector = selector ]
-		ifNone: [ self serror: ('None field access message of selector: {1} matches with: {2}' format:{ selector . returnType})].
+		ifNone: [ self serror: 'None field access message of selector: ',
+			selector asString,
+			' matches with: ',
+			returnType asString ].
 	receiver := self pickOrCreateObjectVariableOf: returnType.
 	^ self addFieldAccessMessage: accessor withReceiver: receiver
 ]
@@ -193,13 +203,19 @@ SSTestShifter >> addMessage [
 
 { #category : #'building-actions' }
 SSTestShifter >> addMessage: selector from: receiverType [
-	| receiver method methods|
-	methods := (self pickMessagesOf: receiverType) , (typeInfo factoryMessagesFrom: receiverType).
-	method := methods 
+	| receiver method methods |
+	methods := (self pickMessagesOf: receiverType)
+		, (typeInfo factoryMessagesFrom: receiverType).
+	method := methods
 		detect: [ :aMessage | aMessage selector = selector ]
-		ifNone: [ self serror: ('None message of selector: {1} matches with: {2}' format:{ selector . receiverType}) ].
+		ifNone: [ self
+				serror:
+					'None message of selector: ', 
+					selector asString,
+					' matches with: ', 
+					receiverType asString ].
 	receiver := self pickOrCreateObjectVariableOf: receiverType.
-	^ self addMessage: method withReceiver: receiver.
+	^ self addMessage: method withReceiver: receiver
 ]
 
 { #category : #'building-actions' }
@@ -293,10 +309,10 @@ SSTestShifter >> buildArgs: argTypes [
 
 { #category : #querying }
 SSTestShifter >> canAddStatement [
-	SPlatform asDict 
-		ifFalse: [
-			^ ((self length + 3) < CompiledMethod fullFrameSize)
-		] ifTrue: [ ^ true ]
+	self printerClass hasLimit 
+		ifTrue: [
+			^ ((self length + 3) < CompiledMethod fullFrameSize)].
+	^ true
 ]
 
 { #category : #'mutation-change' }
@@ -473,15 +489,6 @@ SSTestShifter >> emptyCopy [
 	^ copy
 ]
 
-{ #category : #util }
-SSTestShifter >> fixAssertions [
-	SPlatform asDict ifTrue: [ 
-		assertions do: [ :ass | 
-			ass args do: [ :arg |
-				arg fix
-			 ] ] ]
-]
-
 { #category : #'building-actions' }
 SSTestShifter >> generateAssertions [
 	^ self
@@ -502,22 +509,30 @@ SSTestShifter >> generateAssertions: classAssertions [
 	executionContext := self analyze.
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ].
-	self fixAssertions 
 ]
 
 { #category : #'building-actions' }
 SSTestShifter >> generateStatements [
-  | flag counter |
-  flag := true.
-  counter := 0.
-  self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
-  [ flag and: [ self length < self maxNumberOfStatements ] ] 
+	| flag counter |
+	flag := true.
+	counter := 0.
+	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
+	[ flag and: [ self length < self maxNumberOfStatements ] ] 
 		whileTrue: [ | array |
-        array := #(#addMessage #addFieldAccessMessage) randomShuffle.
-        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [ false ] ] ifFound: [:selector |  | lastStm |
-              lastStm := statements last ] ifNone: [ counter := counter + 1.
-              counter > self maxNumberOfStatements ifTrue: [ flag := false.
-                    self serror: 'Not able to generate statements' ] ] ]
+			array :=  (OrderedCollection 
+						with: #addMessage 
+						with:  #addFieldAccessMessage) randomShuffle.
+     	   array
+				detect: [:selector |  
+					[ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] 
+				ifNone: [ 
+					counter := counter + 1.
+               counter > self maxNumberOfStatements 
+						ifTrue: [ 
+							flag := false.
+       	            self serror: 'Not able to generate statements' ] 
+				] 
+		]
 ]
 
 { #category : #'building-actions' }
@@ -525,12 +540,6 @@ SSTestShifter >> generateStatements: anInteger [
 	self maxNumberOfStatements: anInteger.
 	self generateStatements.
 	
-]
-
-{ #category : #parsing }
-SSTestShifter >> getStringOf: stm [
-	stm isString ifTrue: [ ^ stm ].
-	^ stm printString 
 ]
 
 { #category : #accessing }
@@ -616,6 +625,11 @@ SSTestShifter >> maxNumberOfStatements [
 { #category : #accessing }
 SSTestShifter >> maxNumberOfStatements: anObject [
 	maxNumberOfStatements := anObject
+]
+
+{ #category : #accessing }
+SSTestShifter >> methodsClass [
+	^ self class defaultMethodsClass
 ]
 
 { #category : #'instance creation' }
@@ -733,7 +747,7 @@ SSTestShifter >> pickAccessorsOf: aType [
 SSTestShifter >> pickAnObjectVariable [
 	| variables |
 	variables := self objectVariables.
-	variables ifEmpty: [ 
+	variables ifEmpty: [
 		self addFactoryMessage.
 		variables := self objectVariables ].
 	^ variables pickAny.
@@ -778,12 +792,17 @@ SSTestShifter >> printStatements [
 	^ statements collect: #printString
 ]
 
+{ #category : #printing }
+SSTestShifter >> printerClass [
+	^ self class defaultPrinterClass.
+]
+
 { #category : #querying }
 SSTestShifter >> randomLiteralClassName [
 	|scalars|
 	scalars := typeInfo scalars keys.
 	scalars ifEmpty: [ self serror: 'TypeInfo does not have scalars. Set scalars on typeInfo.' ].
-	^ scalars pickAny.
+	^ scalars asArray pickAny.
 ]
 
 { #category : #'mutation-remove' }
@@ -860,6 +879,19 @@ SSTestShifter >> runStatements: aStatementCollection [
 	^ result.
 	
 	
+]
+
+{ #category : #action }
+SSTestShifter >> runWith: aCollection [
+  " we use a meta interpreter to use smalltalk and interpret our AST"
+	|interpreter|
+	interpreter := self interpreterClass new.
+	
+   [ interpreter visitStatements: aCollection;
+						clean.
+		hasErrors := false.
+		^ interpreter context.
+  	] on:Error do:[ hasErrors:= true. Dictionary new].
 ]
 
 { #category : #action }

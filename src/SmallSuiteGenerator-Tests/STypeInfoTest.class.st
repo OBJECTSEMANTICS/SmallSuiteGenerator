@@ -5,11 +5,6 @@ Class {
 }
 
 { #category : #tests }
-STypeInfoTest >> nameOf: aClass [
-	^ aClass name
-]
-
-{ #category : #tests }
 STypeInfoTest >> testAccesssMessagesFrom [
 	| typeInfo sfooSymbol stringSymbol intSymbol |
 	sfooSymbol := #SFoo fullClassNameSymbol.
@@ -36,17 +31,17 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
-	messages := typeInfo messagesFrom: (self nameOf: SConference).
+	messages := typeInfo messagesFrom: SConference nameAsSymbol.
 	self
 		assertCollection: (messages collect: #selector)
 		hasSameElements: #(#initialize #price:).
 	self
 		assert:
 			((messages flatCollect: [ :aMessage | aMessage receiver types ])
-				allSatisfy: [ :aType | aType = (self nameOf: SConference) ]).
-	self assert: ((typeInfo messagesFrom: (self nameOf: SEvent)) allSatisfy: #isUnary).
-	self assert: (typeInfo messagesFrom: (self nameOf: SParty)) isEmpty.
-	messages := typeInfo factoryMessagesFrom: (self nameOf:  SConference).
+				allSatisfy: [ :aType | aType = SConference nameAsSymbol ]).
+	self assert: ((typeInfo messagesFrom: SEvent nameAsSymbol) allSatisfy: #isUnary).
+	self assert: (typeInfo messagesFrom: SParty nameAsSymbol) isEmpty.
+	messages := typeInfo factoryMessagesFrom: SConference nameAsSymbol.
 	self
 		assertCollection: (messages collect: #selector)
 		hasSameElements: #(#price:)
@@ -55,12 +50,12 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty classNameByteString classNameSmallInteger classNameSStudent |
-	classNameSEvent := self nameOf: SEvent.
-	classNameSConference := self nameOf: SConference.
-	classNameSParty := self nameOf: SParty.
-	classNameByteString := self nameOf: ByteString.
-	classNameSmallInteger := self nameOf: SmallInteger.
-	classNameSStudent := self nameOf: SStudent.
+	classNameSEvent := SEvent nameAsSymbol.
+	classNameSConference := SConference nameAsSymbol.
+	classNameSParty := SParty nameAsSymbol.
+	classNameByteString := ByteString nameAsSymbol.
+	classNameSmallInteger := SmallInteger nameAsSymbol.
+	classNameSStudent := SStudent nameAsSymbol.
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ | aConference aPerson |
 			aConference := SConference new offerPrice: 95.
@@ -92,7 +87,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		detect: [ :aMessage | aMessage selector = #canRegister: ].
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: (Array with: (self nameOf: False)).
+		hasSameElements: (Array with: False nameAsSymbol).
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: (Array with: classNameSStudent).
@@ -103,23 +98,23 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		assertCollection: typeInfo scalars keys
 		hasSameElements:
 			(Array
-				with: (self nameOf: (SUndefinedObject basicNew) class)
+				with: (SUndefinedObject basicNew) class nameAsSymbol
 				with: classNameSStudent
 				with: classNameSmallInteger
-				with: (self nameOf: False)
+				with: False nameAsSymbol
 				with: classNameByteString
-				with: (self nameOf: 2.3 class))
+				with: 2.3 class nameAsSymbol)
 ]
 
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFoo [
 	| profile typeInfo methodInfo classNameSFoo classNameOrderedCollection classNameSmallFloat64 classNameByteString classNameSmallInteger classNameDictionary |
-	classNameSFoo := self nameOf: SFoo.
-	classNameOrderedCollection := self nameOf: OrderedCollection.
-	classNameSmallFloat64 := self nameOf: SmallFloat64.
-	classNameByteString := self nameOf: ByteString.
-	classNameSmallInteger := self nameOf: SmallInteger.
-	classNameDictionary := self nameOf: Dictionary.
+	classNameSFoo := SFoo nameAsSymbol.
+	classNameOrderedCollection := OrderedCollection nameAsSymbol.
+	classNameSmallFloat64 := SmallFloat64 nameAsSymbol.
+	classNameByteString := ByteString nameAsSymbol.
+	classNameSmallInteger := SmallInteger nameAsSymbol.
+	classNameDictionary := Dictionary nameAsSymbol.
 	profile := self aSTypeCollectorClass
 		profile: [ SFoo new
 				return: Dictionary new;
@@ -189,7 +184,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	| profile typeInfo methodInfo classNameSFoo |
-	classNameSFoo := self nameOf: SFoo.
+	classNameSFoo := SFoo  nameAsSymbol.
 	profile := self aSTypeCollectorClass
 		profile: [ SFoo new return: OrderedCollection ]
 		forClassNamed: classNameSFoo.
@@ -205,10 +200,10 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 	methodInfo := typeInfo methodType: #return: from: classNameSFoo.
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: (Array with: (self nameOf: OrderedCollection class)).
+		hasSameElements: (Array with: OrderedCollection class nameAsSymbol).
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: (Array with: (self nameOf: OrderedCollection class)).
+		hasSameElements: (Array with: OrderedCollection class nameAsSymbol).
 	self
 		assertCollection: ((typeInfo messagesFrom: classNameSFoo) collect: #selector)
 		hasSameElements: #(#returnFloat #returnCollection #initialize #returnNum #returnString #return:)
@@ -217,7 +212,7 @@ STypeInfoTest >> testAsTypeInfoSFooOnClass [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSFooWithNil [
 	| profile typeInfo methodInfo classNameSFoo |
-	classNameSFoo := self nameOf: SFoo.
+	classNameSFoo := SFoo nameAsSymbol.
 	profile := self aSTypeCollectorClass
 		profile: [ SFoo new return: nil ]
 		forClassNamed: classNameSFoo.
@@ -233,10 +228,10 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 	methodInfo := typeInfo methodType: #return: from: classNameSFoo.
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: (Array with: (self nameOf: UndefinedObject)).
+		hasSameElements: (Array with: UndefinedObject nameAsSymbol).
 	self
 		assertCollection: methodInfo allArgTypes
-		hasSameElements: (Array with: (self nameOf: UndefinedObject)).
+		hasSameElements: (Array with: UndefinedObject nameAsSymbol).
 	self
 		assertCollection: ((typeInfo messagesFrom: classNameSFoo) collect: #selector)
 		hasSameElements: #(#returnFloat #returnCollection #initialize #returnNum #returnString #return:)
@@ -245,7 +240,7 @@ STypeInfoTest >> testAsTypeInfoSFooWithNil [
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSTeacherOnClass [
 	| typeInfo classNameSTeacher |
-	classNameSTeacher := self nameOf: SSTeacher.
+	classNameSTeacher := SSTeacher nameAsSymbol.
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
@@ -282,20 +277,20 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
 		assertCollection:
-			((typeInfo types at: (self nameOf: SSTeacher)) methodTypes values
+			((typeInfo types at: SSTeacher nameAsSymbol) methodTypes values
 				collect: #selector)
 		hasSameElements: #(#idTeacher #initialize #nickname #yearsWorkExperience).
 	self
 		assertCollection:
-			((typeInfo factoryMessagesFrom: (self nameOf: SSTeacher))
+			((typeInfo factoryMessagesFrom: SSTeacher nameAsSymbol)
 				collect: #selector)
 		hasSameElements: #(#name:with:).
 	self
-		assertCollection: ((typeInfo messagesFrom: (self nameOf: SSTeacher)) collect: #selector)
+		assertCollection: ((typeInfo messagesFrom: SSTeacher nameAsSymbol) collect: #selector)
 		hasSameElements: #(#initialize #nickname #id: #nickname: #name:).
 	self
 		assertCollection:
-			((typeInfo accessMessagesFrom: (self nameOf: SSTeacher))
+			((typeInfo accessMessagesFrom: SSTeacher nameAsSymbol)
 				collect: #selector)
 		hasSameElements: #(#idTeacher #yearsWorkExperience #name #id)
 ]
@@ -320,11 +315,11 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
 			(Array
-				with: (self nameOf: (SUndefinedObject basicNew) class) -> #(nil)
-				with: (self nameOf: SmallInteger) -> #(0 4)
-				with: (self nameOf: OrderedCollection) -> (Array with: OrderedCollection new)
-				with: (self nameOf: ByteString) -> #('Hello')
-				with: (self nameOf: 2.3 class) -> #(2.3))
+				with: (SUndefinedObject basicNew) class nameAsSymbol -> #(nil)
+				with: SmallInteger nameAsSymbol -> #(0 4)
+				with: OrderedCollection nameAsSymbol -> (Array with: OrderedCollection new)
+				with: ByteString nameAsSymbol -> #('Hello')
+				with: 2.3 class nameAsSymbol -> #(2.3))
 ]
 
 { #category : #tests }
@@ -403,7 +398,7 @@ STypeInfoTest >> testEquals [
 { #category : #tests }
 STypeInfoTest >> testFactoryMessages [
 	| typeInfo classNameStudent studentSymbol confSymbol |
-	classNameStudent := self nameOf: SStudent.
+	classNameStudent := SStudent nameAsSymbol.
 	studentSymbol :=#SStudent fullClassNameSymbol.
 	confSymbol := #SConference fullClassNameSymbol.
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
@@ -640,7 +635,7 @@ STypeInfoTest >> testNoneAbstractClasses [
 		scalar: intSymbol with: #(50 1);
 		scalar: stringSymbol with: #('Ann').
 	self
-		assertCollection: (typeInfo noneAbstractClasses collect: #name) asArray
+		assertCollection: (typeInfo noneAbstractClasses collect: #nameAsSymbol) asArray
 		hasSameElements:( Array with: studentSymbol)
 ]
 

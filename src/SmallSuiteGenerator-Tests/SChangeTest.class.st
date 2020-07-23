@@ -10,8 +10,8 @@ SChangeTest >> testArgumentChange [
 	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo100.
 	testCase targetClassName: targetClass;
-		addLiteral:#ByteString;
-		addLiteral:#ByteString;
+		addLiteral: #ByteString fullClassNameSymbol;
+		addLiteral:#ByteString fullClassNameSymbol;
 		addFactoryMessage: targetClass;
 		addFactoryMessage: targetClass;
 		addMessage: #return: from: targetClass.
@@ -137,7 +137,7 @@ SChangeTest >> testSelectorChange [
 	targetClass := 'SFoo' fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo100.
 	testCase targetClassName: targetClass;
-		addLiteral: #SmallFloat64;
+		addLiteral: #SmallFloat64 fullClassNameSymbol;
 		addFactoryMessage: targetClass;
 		addFactoryMessage: targetClass;
 		addMessage: #return: from: targetClass.

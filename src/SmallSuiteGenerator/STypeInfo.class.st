@@ -76,15 +76,22 @@ STypeInfo >> allParentClassesInfoFrom: aClassName [
 
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector [
+	|aBlackList|
+	aBlackList := self blackList.
 	self cleanBlockClosuresOf: aTypeCollector.
 	aTypeCollector allClasses
 		do: [ :aSpyClass | 
-			blackList select: [ :aMethod | aMethod origin name == aSpyClass className ] 
+			aBlackList select: [ :aMethod | aMethod fullClassName == aSpyClass className ] 
 				thenDo: [:aMethod | aSpyClass removeMethod: aMethod ].
 			(aSpyClass className endsWith: 'BlockClosure')
 				ifFalse: [ self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
 	self joinScalars: aTypeCollector scalars copy.
 	^ self
+]
+
+{ #category : #accessing }
+STypeInfo >> blackList [
+	^ blackList
 ]
 
 { #category : #accessing }
@@ -138,11 +145,13 @@ STypeInfo >> cleanBlockClosuresOf: aTypeCollector [
 
 { #category : #adding }
 STypeInfo >> completeTypeInfo [
+	|aBlackList|
+	aBlackList := self blackList.
 	self types keysDo: [:aClass | |classInfo realClassInfo|
 	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
 	realClassInfo := self types at: aClass.
 	classInfo methodTypes keysAndValuesDo: [ :key :value |
-		((self isInBlackListClass: aClass with: key) not and: [ key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ] ]) 
+		((self isMethodWith: key and: aClass in: aBlackList) not and: [ key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ] ]) 
 		ifTrue: [
 			realClassInfo methodTypes 
 			at: key
@@ -183,13 +192,13 @@ STypeInfo >> defaultFactoryMessageFrom: aClassName [
 { #category : #converting }
 STypeInfo >> deleteBlackListMethods [
 
-	blackList do: [:compMethod |
+	self blackList do: [:compMethod |
 		|aClass selector|
 		selector := #methodTypes.
-		compMethod origin isMeta ifTrue: [ 
+		aClass := compMethod mclass.
+		aClass isMeta ifTrue: [ 
 			selector := #classMethodTypes.
-			aClass := compMethod origin instanceSide ]
-		ifFalse: [ aClass := compMethod origin ].
+			aClass := aClass instanceSide ].
 		self types at: aClass name asSymbol
 			ifPresent: [:classInfo | 
 				(classInfo perform: selector)
@@ -229,7 +238,7 @@ STypeInfo >> initialize [
 
 { #category : #initialization }
 STypeInfo >> initializeBlackList [
-	blackList ifNil: [ blackList := OrderedCollection new ]
+	blackList ifNil: [ blackList := Array new ]
 ]
 
 { #category : #accessing }
@@ -238,8 +247,9 @@ STypeInfo >> isAbstractClass: symbol [
 ]
 
 { #category : #accessing }
-STypeInfo >> isInBlackListClass: aClass with: selector [ 
-	^ (blackList anySatisfy: [:each | (each origin name = aClass) & (each selector = selector) ]) 
+STypeInfo >> isMethodWith: selector and: aClass in: aBlackList [
+	^ aBlackList
+		anySatisfy: [ :each | each fullClassName = aClass and:[ each selector = selector]]
 ]
 
 { #category : #'error handling' }

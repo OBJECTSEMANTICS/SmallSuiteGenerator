@@ -23,7 +23,7 @@ SInspectorAssertion class >> for: anExecutionContext [
 
 { #category : #'instance creation' }
 SInspectorAssertion class >> inspectorAssertionOf: assoc [
-	^ (assoc value class methods select: #isReturnField)
+	^ (assoc value class methodDictValues select: #isReturnField)
 		collect:
 			[ :compiledMethod | 
 			self inspectorAssertionOf: assoc and: compiledMethod ]

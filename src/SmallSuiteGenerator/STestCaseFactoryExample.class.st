@@ -9,26 +9,24 @@ Class {
 
 { #category : #accessing }
 STestCaseFactoryExample >> clean [
-	Spy2 clean.
-S2Profiler remove.
+	
 ]
 
 { #category : #'examples - onPackages' }
 STestCaseFactoryExample >> exampleEmptyBlockOnPackages [
-	|facade|
+	|facade typeInfo|
 	self clean.
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
+				profile: [  ]
+				inPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	facade := SPlatform classTestCaseFactory.
 	^ facade new
-		typeInfo:
-			(SSTypeCollector
-				profile: [  ]
-				onPackagesMatching: 'SmallSuiteGenerator-Scenario');
+		typeInfo: typeInfo;
 		fitness: SMethodCoverage new;
 		targetClassName: #SFoo;
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -37,14 +35,14 @@ STestCaseFactoryExample >> exampleSSTeacherOnClass [
 	| typeInfo facade|
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onClass: SSTeacher.
+		forClassNamed: #SSTeacher).
 	^ facade new
 		typeInfo: typeInfo;
 		fitness: SMethodCoverage new;
@@ -52,7 +50,6 @@ STestCaseFactoryExample >> exampleSSTeacherOnClass [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -61,14 +58,14 @@ STestCaseFactoryExample >> exampleSSTeacherOnPackages [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SSTeacher name: 'Ann' with: 34)
 				name;
 				nickname;
 				yearsWorkExperience;
 				idTeacher;
 				id ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		inPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	^ facade new
 		typeInfo: typeInfo;
 		fitness:
@@ -79,7 +76,6 @@ STestCaseFactoryExample >> exampleSSTeacherOnPackages [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -88,12 +84,12 @@ STestCaseFactoryExample >> exampleSStackOnClass [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SStack newStackWith: #(1 5 3 2))
 				pop;
 				top;
 				push: 4 ]
-		onClass: SStack.
+		forClassNamed: #SStack).
 	^ facade new
 		typeInfo: typeInfo;
 		fitness:
@@ -104,7 +100,6 @@ STestCaseFactoryExample >> exampleSStackOnClass [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -113,12 +108,12 @@ STestCaseFactoryExample >> exampleSStackOnPackages [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SStack newStackWith: #(1 5 3 2))
 				pop;
 				top;
 				push: 4 ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		inPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	^ facade new
 		typeInfo: typeInfo;
 		fitness: SStatementCoverage new;
@@ -126,7 +121,6 @@ STestCaseFactoryExample >> exampleSStackOnPackages [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -135,13 +129,13 @@ STestCaseFactoryExample >> exampleSStudentOnClass [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]
-		onClass: SStudent.
+		forClassNamed: #SStudent).
 	^ facade new
 		typeInfo: typeInfo;
 		fitness: SStatementCoverage new;
@@ -149,7 +143,6 @@ STestCaseFactoryExample >> exampleSStudentOnClass [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -158,13 +151,13 @@ STestCaseFactoryExample >> exampleWithSubclassToRun [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario2'.
+		inPackagesMatching: 'SmallSuiteGenerator-Scenario2').
 	^ facade new
 		typeInfo: typeInfo;
 		fitness:
@@ -175,7 +168,6 @@ STestCaseFactoryExample >> exampleWithSubclassToRun [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario2';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -184,13 +176,13 @@ STestCaseFactoryExample >> exampleWithWrongClassToRun [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent;
 				scoreStudent: 45;
 				scoreStudent ]
-		onClass: SFoo.
+		forClassNamed: #SFoo).
 	^ facade new
 		typeInfo: typeInfo;
 		fitness: SStatementCoverage new;
@@ -198,7 +190,6 @@ STestCaseFactoryExample >> exampleWithWrongClassToRun [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario2';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]
 
@@ -207,11 +198,11 @@ STestCaseFactoryExample >> exampleWithWrongRegexToRun [
 	| typeInfo facade |
 	self clean.
 	facade := SPlatform classTestCaseFactory.
-	typeInfo := SSTypeCollector
+	typeInfo := STypeInfo asTypeInfo: (SSTypeCollector
 		profile: [ (SStudent name: 'Ann' with: 34)
 				nickname;
 				idStudent ]
-		onPackagesMatching: 'SmallSuiteGenerator-Scenario'.
+		inPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	^ facade new
 		typeInfo: typeInfo;
 		fitness:
@@ -222,6 +213,5 @@ STestCaseFactoryExample >> exampleWithWrongRegexToRun [
 		targetPackageRegex: 'SmallSuiteGenerator-Scenario';
 		outputPackageName: 'SmallSuiteGenerator-Tests-Generated';
 		createTestCases;
-		visualize;
 		yourself
 ]

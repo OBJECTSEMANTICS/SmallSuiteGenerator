@@ -53,6 +53,11 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #'API-accessing' }
+SGAEngine class >> logClass [
+	^ SGANullLog
+]
+
 { #category : #updating }
 SGAEngine >> assignTypeToArgumentsOf: argType [
   ^ argType types 
@@ -258,7 +263,7 @@ SGAEngine >> initializePopulation [
    population := self order: population.
    initialPopulation := population.
 	self updateTypeInfoWith: population.
-	logs add: (SPlatform logClass logOf: self inGeneration: 0 inTime: t)
+	logs add: (self logClass logOf: self inGeneration: 0 inTime: t)
 ]
 
 { #category : #initialization }
@@ -287,10 +292,15 @@ SGAEngine >> lastMessage: anObject [
 	
 ]
 
+{ #category : #accessing }
+SGAEngine >> logClass [
+	^ self class logClass
+]
+
 { #category : #actions }
 SGAEngine >> logInGeneration: iteration withTime: t [
 
-  ^ SPlatform logClass logOf: self inGeneration: iteration inTime: t
+  ^ self logClass logOf: self inGeneration: iteration inTime: t
 ]
 
 { #category : #accessing }
