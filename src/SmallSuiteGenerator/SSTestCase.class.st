@@ -14,17 +14,10 @@ Class {
 		'selectionStrategy',
 		'parents',
 		'children',
-		'setUpAction',
-		'tearDownAction',
 		'properties'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
-
-{ #category : #'instance creation' }
-SSTestCase class >> defaultPrinterClass [
-	^ SSStandardPrinter
-]
 
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
@@ -178,8 +171,6 @@ SSTestCase >> initialize [
 	fitness := Dictionary new.
 	fitnessByClass := Dictionary new.
 	selectionStrategy := SGARouletteSelection new.
-	setUpAction := [  :t :p | ].
-	tearDownAction := [  :t :p | ].
 	properties := Dictionary new.
 ]
 
@@ -259,11 +250,6 @@ SSTestCase >> printSummaryFitnessByClass [
 				nextPutAll: (String with: Character cr) ]
 ]
 
-{ #category : #printing }
-SSTestCase >> printerClass [
-	^ self class defaultPrinterClass.
-]
-
 { #category : #accessing }
 SSTestCase >> properties [
 	^ self.
@@ -300,11 +286,6 @@ SSTestCase >> setFitnessByClass: aDictionary [
 	fitnessByClass := aDictionary copy
 ]
 
-{ #category : #running }
-SSTestCase >> setUp [
-	setUpAction value: self value: self properties.
-]
-
 { #category : #printing }
 SSTestCase >> storeOn: aStream [
 ]
@@ -327,11 +308,6 @@ SSTestCase >> summaryTargetClass [
 { #category : #accessing }
 SSTestCase >> summaryTargetClass: anObject [
 	summaryTargetClass := anObject 
-]
-
-{ #category : #running }
-SSTestCase >> tearDown [ 
-	tearDownAction value: self value: self properties.
 ]
 
 { #category : #util }

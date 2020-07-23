@@ -11,24 +11,10 @@ Class {
 		'randomGenerator',
 		'seed',
 		'configurationClass',
-		'logName',
-		'asDict',
-		'logClass',
-		'vizClass'
+		'logName'
 	],
 	#category : #'SmallSuiteGenerator-Builder'
 }
-
-{ #category : #accessing }
-SPlatform class >> asDict [
-	asDict ifNil: [ asDict := false ].
-	^ asDict 
-]
-
-{ #category : #accessing }
-SPlatform class >> asDict: aBoolean [
-	asDict := aBoolean
-]
 
 { #category : #accessing }
 SPlatform class >> classConfigurationName [
@@ -97,17 +83,6 @@ SPlatform class >> initLevelToPrint [
 { #category : #accessing }
 SPlatform class >> levelToPrint [
 	^ level
-]
-
-{ #category : #settings }
-SPlatform class >> logClass [
-	logClass ifNil: [ logClass := SGANullLog ].
-	^ logClass
-]
-
-{ #category : #accessing }
-SPlatform class >> logClass: aClass [
-	logClass := aClass
 ]
 
 { #category : #accessing }
@@ -181,15 +156,4 @@ SPlatform class >> seed: aNumber [
 { #category : #tests }
 SPlatform class >> testCaseClass [
 	^ self configurationClass testCaseClass
-]
-
-{ #category : #settings }
-SPlatform class >> vizClass [
-	vizClass ifNil: [ vizClass := SGANullViz ].
-	^ vizClass
-]
-
-{ #category : #accessing }
-SPlatform class >> vizClass: aClass [
-	vizClass := aClass
 ]

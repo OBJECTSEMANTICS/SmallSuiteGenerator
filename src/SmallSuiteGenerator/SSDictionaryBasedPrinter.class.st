@@ -4,15 +4,25 @@ Class {
 	#instVars : [
 		'dictionaryName'
 	],
-	#category : #'SmallSuiteGenerator-Core'
+	#category : #'SmallSuiteGenerator-Strategies'
 }
+
+{ #category : #testing }
+SSDictionaryBasedPrinter class >> hasLimit [
+	^ false
+]
+
+{ #category : #testing }
+SSDictionaryBasedPrinter class >> isDictionary [
+	^ true
+]
 
 { #category : #'instance creation' }
 SSDictionaryBasedPrinter class >> printTempVariables: aTestCase on: aStream [
 	aStream tab; nextPut:$|; space.
 	aStream nextPutAll:'var'.
 	aStream space; nextPut:$|;cr.
-	aStream tab; nextPutAll:'var := Dictionary new.'.
+	aStream tab; nextPutAll:'var := Dictionary new.'; cr.
 ]
 
 { #category : #accessing }

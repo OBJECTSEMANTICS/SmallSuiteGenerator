@@ -31,9 +31,19 @@ Class {
 	#category : #'SmallSuiteGenerator-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #settings }
 SSTestShifter class >> defaultInterpreterClass [
 	^ SSMetaInterpreter
+]
+
+{ #category : #settings }
+SSTestShifter class >> defaultMethodsClass [
+	^ SSCustomMethods
+]
+
+{ #category : #settings }
+SSTestShifter class >> defaultPrinterClass [
+	^ SSStandardPrinter
 ]
 
 { #category : #'mutation-change' }
@@ -299,10 +309,10 @@ SSTestShifter >> buildArgs: argTypes [
 
 { #category : #querying }
 SSTestShifter >> canAddStatement [
-	SPlatform asDict 
-		ifFalse: [
-			^ ((self length + 3) < CompiledMethod fullFrameSize)
-		] ifTrue: [ ^ true ]
+	self printerClass hasLimit 
+		ifTrue: [
+			^ ((self length + 3) < CompiledMethod fullFrameSize)].
+	^ true
 ]
 
 { #category : #'mutation-change' }
@@ -479,15 +489,6 @@ SSTestShifter >> emptyCopy [
 	^ copy
 ]
 
-{ #category : #util }
-SSTestShifter >> fixAssertions [
-	SPlatform asDict ifTrue: [ 
-		assertions do: [ :ass | 
-			ass args do: [ :arg |
-				arg fix
-			 ] ] ]
-]
-
 { #category : #'building-actions' }
 SSTestShifter >> generateAssertions [
 	^ self
@@ -508,24 +509,30 @@ SSTestShifter >> generateAssertions: classAssertions [
 	executionContext := self analyze.
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ].
-	self fixAssertions 
 ]
 
 { #category : #'building-actions' }
 SSTestShifter >> generateStatements [
-  | flag counter |
-  flag := true.
-  counter := 0.
-  self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
-  [ flag and: [ self length < self maxNumberOfStatements ] ] 
+	| flag counter |
+	flag := true.
+	counter := 0.
+	self assert: typeInfo types isNotEmpty description: 'TypeInfo does not contain info at all.'.
+	[ flag and: [ self length < self maxNumberOfStatements ] ] 
 		whileTrue: [ | array |
-        array :=  (OrderedCollection 
+			array :=  (OrderedCollection 
 						with: #addMessage 
 						with:  #addFieldAccessMessage) randomShuffle.
-        array detect: [:selector |  [ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] ifFound: [:selector |  | lastStm |
-              lastStm := statements last ] ifNone: [ counter := counter + 1.
-              counter > self maxNumberOfStatements ifTrue: [ flag := false.
-                    self serror: 'Not able to generate statements' ] ] ]
+     	   array
+				detect: [:selector |  
+					[ (self perform: selector) isNotNil ] on: SError do: [:e | false ] ] 
+				ifNone: [ 
+					counter := counter + 1.
+               counter > self maxNumberOfStatements 
+						ifTrue: [ 
+							flag := false.
+       	            self serror: 'Not able to generate statements' ] 
+				] 
+		]
 ]
 
 { #category : #'building-actions' }
@@ -533,12 +540,6 @@ SSTestShifter >> generateStatements: anInteger [
 	self maxNumberOfStatements: anInteger.
 	self generateStatements.
 	
-]
-
-{ #category : #parsing }
-SSTestShifter >> getStringOf: stm [
-	stm isString ifTrue: [ ^ stm ].
-	^ stm printString 
 ]
 
 { #category : #actions }
@@ -624,6 +625,11 @@ SSTestShifter >> maxNumberOfStatements [
 { #category : #accessing }
 SSTestShifter >> maxNumberOfStatements: anObject [
 	maxNumberOfStatements := anObject
+]
+
+{ #category : #accessing }
+SSTestShifter >> methodsClass [
+	^ self class defaultMethodsClass
 ]
 
 { #category : #'instance creation' }
@@ -786,6 +792,11 @@ SSTestShifter >> printStatements [
 	^ statements collect: #printString
 ]
 
+{ #category : #printing }
+SSTestShifter >> printerClass [
+	^ self class defaultPrinterClass.
+]
+
 { #category : #querying }
 SSTestShifter >> randomLiteralClassName [
 	|scalars|
@@ -841,28 +852,31 @@ SSTestShifter >> repairIds [
 
 { #category : #action }
 SSTestShifter >> run [
+	^ self methodsClass 
+		on: self 
+		execute: [ :testCase |
+			testCase runWith: testCase statements, testCase assertions. ]
+]
+
+{ #category : #action }
+SSTestShifter >> runWith: aCollection [
   " we use a meta interpreter to use smalltalk and interpret our AST"
- 	|interpreter|
+	|interpreter|
 	interpreter := self interpreterClass new.
 	
-   [ interpreter visitStatements: self statements, self assertions;
+   [ interpreter visitStatements: aCollection;
 						clean.
 		hasErrors := false.
-		interpreter context.
+		^ interpreter context.
   	] on:Error do:[ hasErrors:= true. Dictionary new].
 ]
 
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
-  " we use a meta interpreter to use smalltalk and interpret our AST"
-	|interpreter|
-	interpreter := self interpreterClass new.
-	
-   [ interpreter visitStatements: self statements;
-						clean.
-		hasErrors := false.
-		^ interpreter context.
-  	] on:Error do:[ hasErrors:= true. Dictionary new].
+	^ self methodsClass 
+		on: self 
+		execute: [ :testCase |
+			testCase runWith: testCase statements. ]
 ]
 
 { #category : #accessing }

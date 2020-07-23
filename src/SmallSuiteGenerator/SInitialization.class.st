@@ -18,7 +18,6 @@ SInitialization >> copy: testCaseFactory [
 		targetClassName: testCaseFactory targetClassName;
 		targetPackageRegex: testCaseFactory targetPackageRegex;
 		outputPackageName: testCaseFactory outputPackageName;
-		asDict: testCaseFactory initialAsDict;
 		seed: testCaseFactory initialSeed;
 		fitnessSeedCalculated: testCaseFactory fitnessSeed;
 		numberOfGenerations: testCaseFactory numberOfGenerations;

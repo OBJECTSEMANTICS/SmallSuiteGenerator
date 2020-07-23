@@ -82,12 +82,6 @@ SVariable >> copy [
 	^ copy
 ]
 
-{ #category : #actions }
-SVariable >> fix [
-	"self id: (varName allButFirst: 4) asInteger.
-	self varName:  '_var'."
-]
-
 { #category : #accessing }
 SVariable >> fullName [
   self id ifNil:[ ^ self varName].
@@ -107,8 +101,9 @@ SVariable >> initialize [
 
 { #category : #accessing }
 SVariable >> key [
-	SPlatform asDict ifTrue: [ ^ id + 1 ] ifFalse: [ ^ self printString asSymbol ]
-
+   self printerClass isDictionary 
+		ifTrue: [ ^id + 1 ] 
+		ifFalse: [ ^self printString asSymbol ]
 ]
 
 { #category : #querying }
@@ -116,6 +111,11 @@ SVariable >> pickUpReferences: anExpression [
 	^ self = anExpression reference
 		ifFalse: [ #() ]
 		ifTrue: [ (Array with: self) ]
+]
+
+{ #category : #accessing }
+SVariable >> printerClass [
+  ^ SSTestCase defaultPrinterClass
 ]
 
 { #category : #querying }

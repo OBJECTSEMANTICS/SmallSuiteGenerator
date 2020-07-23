@@ -86,10 +86,6 @@ SExpression >> copy [
 		parent: self         
 ]
 
-{ #category : #actions }
-SExpression >> fix [
-]
-
 { #category : #comparing }
 SExpression >> hash [
 	^ self id hash bitXor: self returnType hash
