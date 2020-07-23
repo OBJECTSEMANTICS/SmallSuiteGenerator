@@ -852,7 +852,10 @@ SSTestShifter >> repairIds [
 
 { #category : #action }
 SSTestShifter >> run [
-  ^ self runStatements: self statements.
+	^ self methodsClass 
+		on: self 
+		execute: [ :testCase |
+			testCase runStatements: testCase statements. ]
 ]
 
 { #category : #action }
@@ -882,21 +885,11 @@ SSTestShifter >> runStatements: aStatementCollection [
 ]
 
 { #category : #action }
-SSTestShifter >> runWith: aCollection [
-  " we use a meta interpreter to use smalltalk and interpret our AST"
-	|interpreter|
-	interpreter := self interpreterClass new.
-	
-   [ interpreter visitStatements: aCollection;
-						clean.
-		hasErrors := false.
-		^ interpreter context.
-  	] on:Error do:[ hasErrors:= true. Dictionary new].
-]
-
-{ #category : #action }
 SSTestShifter >> runWithoutAssertions [
- 	^ self runStatements: self statements, self assertions.
+	^ self methodsClass 
+		on: self 
+		execute: [ :testCase |
+			testCase runStatements: testCase statements, testCase assertions. ]
 ]
 
 { #category : #accessing }
