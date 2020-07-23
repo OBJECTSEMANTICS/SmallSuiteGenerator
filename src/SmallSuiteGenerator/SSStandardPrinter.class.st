@@ -82,8 +82,18 @@ SSStandardPrinter >> visitLiteral: aLiteral [
 ]
 
 { #category : #'visiting-core' }
+SSStandardPrinter >> visitMessageNode: aMessageNode [
+	stream nextPutAll: aMessageNode sourceCode
+]
+
+{ #category : #'visiting-core' }
 SSStandardPrinter >> visitSelf: aSelf [
 	stream nextPutAll:'self'
+]
+
+{ #category : #'visiting-core' }
+SSStandardPrinter >> visitSequenceNode: aSequenceNode [
+	self visitStatements: aSequenceNode statements
 ]
 
 { #category : #'visiting-core' }

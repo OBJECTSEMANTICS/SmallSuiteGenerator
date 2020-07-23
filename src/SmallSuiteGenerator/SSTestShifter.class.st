@@ -275,6 +275,17 @@ SSTestShifter >> analyze [
   ^ self runWithoutAssertions.
 ]
 
+{ #category : #action }
+SSTestShifter >> analyze: aSmalltalkContext [
+	"it takes an snapshot of the thisContext object"
+	| sContext |
+	sContext := SSExecutionContext new.
+	aSmalltalkContext tempNames
+		doWithIndex:
+			[ :varName :index | sContext at: varName put: (aSmalltalkContext namedTempAt: index) ].
+	^ sContext
+]
+
 { #category : #accessing }
 SSTestShifter >> assertions [
 	^ assertions
@@ -489,6 +500,25 @@ SSTestShifter >> emptyCopy [
 	^ copy
 ]
 
+{ #category : #action }
+SSTestShifter >> evaluate [
+	self class compile: 
+		'performTest', 
+		String cr, 
+		self printStringWithAssertions , 
+		String cr, 
+		'^ self analyze: thisContext'.
+	^ self performTest
+	
+]
+
+{ #category : #action }
+SSTestShifter >> execute: aBlock [
+	^ self methodsClass 
+		on: self 
+		execute: aBlock
+]
+
 { #category : #'building-actions' }
 SSTestShifter >> generateAssertions [
 	^ self
@@ -506,7 +536,7 @@ SSTestShifter >> generateAssertions: classAssertions [
 	"
 
 	| executionContext |
-	executionContext := self analyze.
+	executionContext := self execute: [:testCase | testCase evaluate].
 	assertions := classAssertions
 		flatCollect: [ :assertion | assertion for: executionContext ].
 ]
@@ -739,6 +769,10 @@ SSTestShifter >> objectVariables [
 ]
 
 { #category : #querying }
+SSTestShifter >> performTest [
+]
+
+{ #category : #querying }
 SSTestShifter >> pickAccessorsOf: aType [
 	^ typeInfo accessMessagesFrom: aType
 ]
@@ -852,9 +886,7 @@ SSTestShifter >> repairIds [
 
 { #category : #action }
 SSTestShifter >> run [
-	^ self methodsClass 
-		on: self 
-		execute: [ :testCase |
+	^ self execute: [ :testCase |
 			testCase runStatements: testCase statements. ]
 ]
 
@@ -886,9 +918,7 @@ SSTestShifter >> runStatements: aStatementCollection [
 
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
-	^ self methodsClass 
-		on: self 
-		execute: [ :testCase |
+	^ self execute: [ :testCase |
 			testCase runStatements: testCase statements, testCase assertions. ]
 ]
 

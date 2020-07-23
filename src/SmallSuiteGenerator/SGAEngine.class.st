@@ -235,7 +235,8 @@ SGAEngine >> initialize [
   elitismRate := 0.1.
   numberOfStatements := 10.
   stopIterations := 30.
-	totalExecutionGA := 0.
+  totalExecutionGA := 0.
+  lastMessage := #().
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]

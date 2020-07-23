@@ -32,7 +32,7 @@ Class {
 
 { #category : #settings }
 STestCaseFactory class >> vizClass [
-	^ SGAViz
+	^ SGANullViz
 ]
 
 { #category : #actions }
@@ -113,7 +113,7 @@ STestCaseFactory >> exportSettingMethods [
 { #category : #export }
 STestCaseFactory >> exportTests [
 	engine population
-		doWithIndex: [ :test :index | 
+		doWithIndex: [ :test :index |
 			test lastMessage: lastMessage.
 			self export: test with: ('test', index asString) ].
 	self exportSettingMethods
@@ -190,6 +190,7 @@ STestCaseFactory >> initialSeed [
 STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
+	SSCustomMethods removeMethods.
 	self resetVizClass;
 		resetSettingMethodClass.
 	fitness := SMethodCoverage new.
@@ -198,6 +199,7 @@ STestCaseFactory >> initialize [
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
 	initialSeed := 100.
+	lastMessage := #()
 ]
 
 { #category : #actions }
@@ -208,9 +210,9 @@ STestCaseFactory >> initializeProfiler [
 
 { #category : #actions }
 STestCaseFactory >> lastMessage: aMessage [
-	(aMessage isNotNil and: [aMessage isNotEmpty]) ifFalse: [ ^ self ].
-	lastMessage := aMessage.
-	engine lastMessage: aMessage
+	(aMessage isNotNil) ifFalse: [ ^ self ].
+	lastMessage := (Array with: aMessage).
+	engine lastMessage: lastMessage
 	
 ]
 

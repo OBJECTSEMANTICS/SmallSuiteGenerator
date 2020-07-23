@@ -195,6 +195,24 @@ SSTestCase >> parents [
 	^ parents
 ]
 
+{ #category : #'as yet unclassified' }
+SSTestCase >> performTest [
+	| _var0 _var1 _var2 _var3 _var4 _var5 _var6 _var7 _var8 _var9  |
+	_var0 := SFoo new.
+	_var1 := ((OrderedCollection new)).
+	_var2 := _var0 return: _var1 .
+	_var3 := _var0 return: _var2 .
+	_var4 := _var0 score.
+	_var5 := _var0 returnString.
+	_var6 := _var0 returnFloat.
+	_var7 := _var0 returnString.
+	_var8 := _var0 score.
+	_var9 := _var0 initialize.
+	Transcript show: 'Example'.
+
+^ self analyze: thisContext
+]
+
 { #category : #printing }
 SSTestCase >> printOn: aStream [
 	self accept: (self printerClass on: aStream).
@@ -210,7 +228,7 @@ SSTestCase >> printStringWithAssertions [
 	^ String streamContents: [ :stream | 
 		self printerClass printTempVariables: self on: stream.
 		(self printerClass on: stream) 
-			visitStatements: self statements, self assertions.
+			visitStatements: self statements, self lastMessage,self assertions.
 		].
 ]
 

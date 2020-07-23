@@ -4,19 +4,12 @@ Class {
 	#category : #'SmallSuiteGenerator-Strategies'
 }
 
-{ #category : #'as yet unclassified' }
-SSCustomMethods class >> setUp [
-    ^ self
-]
-
-{ #category : #'as yet unclassified' }
-SSCustomMethods class >> tearDown [
-    ^ self
-]
-
-{ #category : #'as yet unclassified' }
-SSCustomMethods >> setUp [
-    ^ self
+{ #category : #removing }
+SSCustomMethods class >> removeMethods [ 
+	[ self removeSelector: #setUp.
+	self removeSelector: #tearDown.]
+	on: Error 
+	do: [  ]
 ]
 
 { #category : #'as yet unclassified' }
