@@ -83,7 +83,7 @@ SSStandardPrinter >> visitLiteral: aLiteral [
 
 { #category : #'visiting-core' }
 SSStandardPrinter >> visitMessageNode: aMessageNode [
-	stream nextPutAll: aMessageNode sourceCode
+	stream nextPutAll: aMessageNode formattedCode
 ]
 
 { #category : #'visiting-core' }

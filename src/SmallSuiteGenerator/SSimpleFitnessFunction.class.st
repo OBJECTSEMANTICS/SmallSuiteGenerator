@@ -53,7 +53,7 @@ SSimpleFitnessFunction >> run: testCaseCollection [
 		do: [ :testCase | 
 			testCase length > 0 ifTrue: [
 				profiler cleanBlocksOfMethods.
-				testCase runWithoutAssertions.
+				testCase "runWithoutAssertions"runWithoutAssertionsAndLastStatement.
 				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
 				"testCase summaryExecutionMethods: profiler summaryExecutionMethods."
 				"self abstractDataOn: testCase."
@@ -67,7 +67,7 @@ SSimpleFitnessFunction >> runPopulation: testCaseCollection [
 	profiler cleanBlocksOfMethods.
 	testCaseCollection
 		do: [ :testCase | 
-			testCase length > 0 ifTrue: [ testCase runWithoutAssertions ] ].
+			testCase length > 0 ifTrue: [ testCase "runWithoutAssertions"runWithoutAssertionsAndLastStatement ] ].
 	^ profiler summaryMethodsOf: targetClass  
 ]
 

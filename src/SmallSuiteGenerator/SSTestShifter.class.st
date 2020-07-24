@@ -229,7 +229,7 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 SSTestShifter >> addStatement: anExpression [
 	self canAddStatement ifFalse:[^self]. 
 	statements add: anExpression.
-	self run.
+	self "run"runWithoutAssertionsAndLastStatement.
 	
 ]
 
@@ -273,17 +273,6 @@ SSTestShifter >> analyze [
   " we use a meta interpreter to use smalltalk and interpret our AST"
 
   ^ self runWithoutAssertions.
-]
-
-{ #category : #action }
-SSTestShifter >> analyze: aSmalltalkContext [
-	"it takes an snapshot of the thisContext object"
-	| sContext |
-	sContext := SSExecutionContext new.
-	aSmalltalkContext tempNames
-		doWithIndex:
-			[ :varName :index | sContext at: varName put: (aSmalltalkContext namedTempAt: index) ].
-	^ sContext
 ]
 
 { #category : #accessing }
@@ -501,18 +490,6 @@ SSTestShifter >> emptyCopy [
 ]
 
 { #category : #action }
-SSTestShifter >> evaluate [
-	self class compile: 
-		'performTest', 
-		String cr, 
-		self printStringWithAssertions , 
-		String cr, 
-		'^ self analyze: thisContext'.
-	^ self performTest
-	
-]
-
-{ #category : #action }
 SSTestShifter >> execute: aBlock [
 	^ self methodsClass 
 		on: self 
@@ -536,9 +513,9 @@ SSTestShifter >> generateAssertions: classAssertions [
 	"
 
 	| executionContext |
-	executionContext := self execute: [:testCase | testCase evaluate].
+	executionContext := self execute: [:testCase | testCase analyze].
 	assertions := classAssertions
-		flatCollect: [ :assertion | assertion for: executionContext ].
+		flatCollect: [ :assertion | assertion for: executionContext ]. 
 ]
 
 { #category : #'building-actions' }
@@ -769,10 +746,6 @@ SSTestShifter >> objectVariables [
 ]
 
 { #category : #querying }
-SSTestShifter >> performTest [
-]
-
-{ #category : #querying }
 SSTestShifter >> pickAccessorsOf: aType [
 	^ typeInfo accessMessagesFrom: aType
 ]
@@ -887,7 +860,7 @@ SSTestShifter >> repairIds [
 { #category : #action }
 SSTestShifter >> run [
 	^ self execute: [ :testCase |
-			testCase runStatements: testCase statements. ]
+			testCase runStatements: testCase statements", testCase assertions." ]
 ]
 
 { #category : #action }
@@ -919,7 +892,13 @@ SSTestShifter >> runStatements: aStatementCollection [
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
 	^ self execute: [ :testCase |
-			testCase runStatements: testCase statements, testCase assertions. ]
+			testCase runStatements: testCase statements, testCase lastMessage. ]
+]
+
+{ #category : #action }
+SSTestShifter >> runWithoutAssertionsAndLastStatement [
+	^ self execute: [ :testCase |
+			testCase runStatements: testCase statements. ]
 ]
 
 { #category : #accessing }

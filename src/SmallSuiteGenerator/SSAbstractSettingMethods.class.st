@@ -55,7 +55,7 @@ SSAbstractSettingMethods >> factory: aFactory [
 SSAbstractSettingMethods >> run [ 
 	|context|
 	self setUp.
-	context := executeBlock value: testCase.
+	context := executeBlock value: testCase. 
 	self tearDown.
 	^ context
 ]
