@@ -38,12 +38,26 @@ SSTestShifter class >> defaultInterpreterClass [
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-	^ SSCustomMethods
+	^ SSAbstractSettingMethods
 ]
 
 { #category : #settings }
 SSTestShifter class >> defaultPrinterClass [
 	^ SSStandardPrinter
+]
+
+{ #category : #settings }
+SSTestShifter class >> limitToWait [
+	^ 1000
+]
+
+{ #category : #settings }
+SSTestShifter class >> resetToDefaults [
+	{ #defaultInterpreterClass -> SSMetaInterpreter . 
+	#defaultMethodsClass -> SSAbstractSettingMethods . 
+	#defaultPrinterClass -> SSStandardPrinter .
+	#limitToWait -> 1000 } do: [ :val |
+		self class compile: val key asString, String cr, '	^ ', val value printString ]
 ]
 
 { #category : #'mutation-change' }

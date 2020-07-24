@@ -198,8 +198,13 @@ SExporte2VW >> blackListSReportTypeInfo [
 ]
 
 { #category : #'bl-strategies' }
-SExporte2VW >> blackListSSCustomMethods [
-	^ { SSAbstractSettingMethods >> #exportMethods  }
+SExporte2VW >> blackListSSAbstractSettingMethods [
+	^ { SSAbstractSettingMethods >> #exportMethod:  }
+]
+
+{ #category : #'bl-strategies' }
+SExporte2VW >> blackListSSMetaInterpreter [
+	^ { SSMetaInterpreter >> #visitMessageNode:  }
 ]
 
 { #category : #'bl-initialization' }

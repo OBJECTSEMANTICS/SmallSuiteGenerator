@@ -58,6 +58,12 @@ SGAEngine class >> logClass [
 	^ SGANullLog
 ]
 
+{ #category : #'API-accessing' }
+SGAEngine class >> resetToDefaults [
+	{ #logClass -> SGANullLog } do: [ :val |
+		self class compile: val key asString, String cr, '	^ ', val value printString ]
+]
+
 { #category : #updating }
 SGAEngine >> assignTypeToArgumentsOf: argType [
   ^ argType types 

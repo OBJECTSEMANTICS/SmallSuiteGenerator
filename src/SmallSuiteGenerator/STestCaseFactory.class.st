@@ -31,6 +31,12 @@ Class {
 }
 
 { #category : #settings }
+STestCaseFactory class >> resetToDefaults [
+	{ #vizClass -> SGANullViz } do: [ :val |
+		STestCaseFactory class compile: val key asString, String cr, '	^ ', val value printString ]
+]
+
+{ #category : #settings }
 STestCaseFactory class >> vizClass [
 	^ SGANullViz
 ]
@@ -191,8 +197,9 @@ STestCaseFactory >> initialize [
 	SPlatform resetRandomGenerator.
 	super initialize.
 	SSCustomMethods removeMethods.
-	self resetVizClass;
-		resetSettingMethodClass.
+	self class resetToDefaults.
+	SSTestShifter resetToDefaults.
+	SGAEngine resetToDefaults.
 	fitness := SMethodCoverage new.
 	numberOfIterations := 20.
 	engine := self engineDefault.
@@ -214,6 +221,12 @@ STestCaseFactory >> lastMessage: aMessage [
 	lastMessage := (Array with: aMessage).
 	engine lastMessage: lastMessage
 	
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> limitToWait: anInteger [
+	SSTestShifter class compile: 
+		'limitToWait', String cr,'	^ ', anInteger printString
 ]
 
 { #category : #'set strategies' }
@@ -263,29 +276,6 @@ STestCaseFactory >> printerClass: aClass [
 STestCaseFactory >> reportClass [
 	reportClass ifNil: [ reportClass := SReportSTestCaseFactory on: self ].
 	^ reportClass 
-]
-
-{ #category : #'reset strategies' }
-STestCaseFactory >> resetLogClass [
-	self logClass: SGANullLog
-
-]
-
-{ #category : #'reset strategies' }
-STestCaseFactory >> resetPrinterClass [
-	self printerClass: SSStandardPrinter
-]
-
-{ #category : #'reset strategies' }
-STestCaseFactory >> resetSettingMethodClass [
-	self settingMethodClass: SSNullMethods
-
-]
-
-{ #category : #'reset strategies' }
-STestCaseFactory >> resetVizClass [
-	self vizClass: SGANullViz
-
 ]
 
 { #category : #actions }
@@ -384,8 +374,7 @@ STestCaseFactory >> targetPackageRegex: anObject [
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
-	self resetPrinterClass;
-		resetLogClass.
+	SSTestShifter resetToDefaults.
 	SPlatform resetRandomGenerator.
 	SmallTypeCollector resetClassDict
 ]
