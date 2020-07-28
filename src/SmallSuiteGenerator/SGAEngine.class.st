@@ -58,6 +58,12 @@ SGAEngine class >> logClass [
 	^ SGANullLog
 ]
 
+{ #category : #'API-accessing' }
+SGAEngine class >> resetToDefaults [
+	{ #logClass -> SGANullLog } do: [ :val |
+		self class compile: val key asString, String cr, '	^ ', val value printString ]
+]
+
 { #category : #updating }
 SGAEngine >> assignTypeToArgumentsOf: argType [
   ^ argType types 
@@ -235,7 +241,8 @@ SGAEngine >> initialize [
   elitismRate := 0.1.
   numberOfStatements := 10.
   stopIterations := 30.
-	totalExecutionGA := 0.
+  totalExecutionGA := 0.
+  lastMessage := #().
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -542,7 +549,7 @@ SGAEngine >> updateHierarchyData: parents of: testCase [
 SGAEngine >> updateTypeInfoWith: aPopulation [
   fitness profiler uninstallClass: targetClassName.
   self profilerForTargetClass.
-  aPopulation do: [:aTestCase |  aTestCase runWithoutAssertions ].
+  aPopulation do: [:aTestCase |  aTestCase "runWithoutAssertions"runWithoutAssertionsAndLastStatement ].
   self mergeTypeInfo: self typeInfoProfilerAsTypeInfo.
   self uninstall.
   fitness profiler updateClass: ((self initializeProfiler packages at: 1) classes at: targetClassName).

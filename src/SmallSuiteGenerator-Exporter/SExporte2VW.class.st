@@ -92,7 +92,16 @@ SGAEngine >> #scaleColorBlock:.
 SGAEngine >> #setPositions:using: .
 SGAEngine >> #sparkCircleGroupOfColor:andSize:.
 SGAEngine >> #summaryMethodsOfTargetClass:.
-SGAEngine >> #testCaseShape:ofColor:with:highlight:scale:}
+SGAEngine >> #testCaseShape:ofColor:with:highlight:scale:.
+SGAEngine >> #rsBorderWithColorBox:.
+SGAEngine >> #createTopCenterRSLocationOn:with:.
+SGAEngine >> #rshighlightableWith:.
+SGAEngine >> #rsLabelWith:.
+SGAEngine >> #createTopRightRSLocationWith:.
+SGAEngine >> #createRSLabelWith:and:.
+SGAEngine >> #createTopLeftRSLocation.
+SGAEngine >> #createTopCenterRSLocationWith:.
+SGAEngine >> #generationDictionaryWith:}
 ]
 
 { #category : #'bl-examples' }
@@ -105,6 +114,12 @@ SExporte2VW >> blackListSGAEngineExample [
 SExporte2VW >> blackListSGAEngineTest [
 	^ {SGAEngineTest >> #profilerOf:.
 SGAEngineTest >> #tearDown}
+]
+
+{ #category : #'bl-tests' }
+SExporte2VW >> blackListSInsertTest [
+	^ {SInsertTest >> #testCopyWithANewMethodCallToAnArgumentOfTheTargetClass.
+	SInsertTest >> #testCopyWithANewMethodCallToAnyValue}
 ]
 
 { #category : #'bl-core' }
@@ -182,6 +197,16 @@ SExporte2VW >> blackListSReportTypeInfo [
 	SReportTypeInfo class >> #writeReport:ofFrequency:}
 ]
 
+{ #category : #'bl-strategies' }
+SExporte2VW >> blackListSSAbstractSettingMethods [
+	^ { SSAbstractSettingMethods >> #exportMethod:  }
+]
+
+{ #category : #'bl-strategies' }
+SExporte2VW >> blackListSSMetaInterpreter [
+	^ { SSMetaInterpreter >> #visitMessageNode:  }
+]
+
 { #category : #'bl-initialization' }
 SExporte2VW >> blackListSSelectionParameterization [
 	^ {SSelectionParameterization class >> #setting:}
@@ -209,8 +234,8 @@ SExporte2VW >> blackListSTestCaseFactory [
 "STestCaseFactory >> #exportFitnessLog ."
 "STestCaseFactory >> #moveClass: ."
 "STestCaseFactory class >> #from:"
-STestCaseFactory >> #tearDown .
-STestCaseFactory >> #export:with: .
+STestCaseFactory >> #tearDown ."
+STestCaseFactory >> #export:with: ."
 STestCaseFactory >> #exportTests .
 STestCaseFactory >> #fitnessResultAsDictionary .
 STestCaseFactory >> #generationEvolutionCanvas .
@@ -287,7 +312,8 @@ STypeInfoTest >> #testAsTypeInfoSTeacherOnPackagesMatching.
 STypeInfoTest >> #testFactoryMessages.
 "STypeInfoTest >> #testFromString.
 STypeInfoTest >> #testToStringComplexScalar.
-STypeInfoTest >> #testToString}
+STypeInfoTest >> #testToString.
+STypeInfoTest >> #testAsTypeInfoSFoo}
 ]
 
 { #category : #'bl-utility' }

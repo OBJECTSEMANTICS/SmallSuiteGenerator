@@ -64,8 +64,20 @@ SSMetaInterpreter >> visitLiteral: aLiteral [
 ]
 
 { #category : #initialization }
+SSMetaInterpreter >> visitMessageNode: aMessageNode [
+	aMessageNode asDoit generateWithSource valueWithReceiver: nil arguments: #().
+
+
+]
+
+{ #category : #initialization }
 SSMetaInterpreter >> visitSelf: aSelf [
 	^ context at: 'self'.
+]
+
+{ #category : #initialization }
+SSMetaInterpreter >> visitSequenceNode: aSequenceNode [
+	self visitStatements: aSequenceNode statements
 ]
 
 { #category : #initialization }

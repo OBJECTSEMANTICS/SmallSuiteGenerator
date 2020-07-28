@@ -17,7 +17,8 @@ Class {
 		'classes',
 		'noneAbstractClasses',
 		'scalars',
-		'blackList'
+		'blackList',
+		'cacheMessagesFrom'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -65,7 +66,6 @@ STypeInfo >> allParentClassesInfoFrom: aClassName [
 	|smalltalkClass result|
 	smalltalkClass := Smalltalk at: aClassName.
 	result := OrderedCollection new.
-	result add: (self classAt: aClassName).
 	smalltalkClass withAllSuperclassesDo:[:class|
 		|info|
 		info :=self classAt: class name ifNone:[nil].
@@ -233,6 +233,7 @@ STypeInfo >> initialize [
 	super initialize.
 	types := Dictionary new.
 	scalars := Dictionary new.
+	cacheMessagesFrom :=Dictionary new.
 	self initializeBlackList
 ]
 
@@ -269,6 +270,7 @@ STypeInfo >> joinScalars: aDict [
 
 { #category : #actions }
 STypeInfo >> joinWith: otherTypeInfo [
+	cacheMessagesFrom := Dictionary new.
 	otherTypeInfo types
 		do: [ :aTypeClass | self addClassInfo: aTypeClass ].
 		self joinScalars: otherTypeInfo scalars
@@ -276,9 +278,13 @@ STypeInfo >> joinWith: otherTypeInfo [
 
 { #category : #accessing }
 STypeInfo >> messagesFrom: aClassName [
-	|classInfos|
-	classInfos := self allParentClassesInfoFrom: aClassName.
-	^ classInfos flatCollect:[:classInfo| classInfo messages].
+	^ cacheMessagesFrom 
+		at: aClassName 
+		ifAbsentPut: [ |classInfos|
+			classInfos := self allParentClassesInfoFrom: aClassName.
+			classInfos := classInfos flatCollect:
+				[:classInfo| classInfo messages].
+			classInfos].
 ]
 
 { #category : #lookup }
@@ -289,7 +295,7 @@ STypeInfo >> methodType: aSelector from: aClassName [
 		detect:[ :methodInfo | methodInfo selector = aSelector] 
 		ifNone:[ 
 			self error: 
-			('MethodType of selector: {0} is not found in class: {1}' format:{aSelector. aClassName}) ].
+			('MethodType of selector: {1} is not found in class: {2}' format:{aSelector. aClassName}) ].
 ]
 
 { #category : #accessing }

@@ -31,12 +31,19 @@ SSAbstractSettingMethods >> executeBlock: aBlock [
 ]
 
 { #category : #accessing }
+SSAbstractSettingMethods >> exportMethod: aSelector [
+	[|method|
+	method := (self class >> aSelector) sourceCode.
+	factory compile: method classified: 'running'.]
+	on: Error 
+	do: [  ]
+	
+]
+
+{ #category : #accessing }
 SSAbstractSettingMethods >> exportMethods [
-	|setUpString tearDownString|
-	setUpString := (self class >> #setUp) sourceCode.
-	tearDownString := (self class >> #tearDown) sourceCode.
-	factory compile: setUpString classified: 'running'.
-	factory compile: tearDownString classified: 'running'.
+	self exportMethod: #setUp.
+	self exportMethod: #tearDown.
 ]
 
 { #category : #accessing }
@@ -48,7 +55,7 @@ SSAbstractSettingMethods >> factory: aFactory [
 SSAbstractSettingMethods >> run [ 
 	|context|
 	self setUp.
-	context := executeBlock value: testCase.
+	context := executeBlock value: testCase. 
 	self tearDown.
 	^ context
 ]

@@ -12,7 +12,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Scenario'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SSPerson class >> name: aString [ 
 	| inst |
 	inst := self new
@@ -22,7 +22,7 @@ SSPerson class >> name: aString [
 	^ inst
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SSPerson class >> name: aString with: aNumber [
 	| inst |
 	inst := self new name: aString; id: aNumber; nickname: aString.
@@ -40,7 +40,7 @@ SSPerson >> canRegister: aConference [
 		> (aConference price * 0.05)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SSPerson >> fullIdentifier [
 	^ name , '_' , nickname , '_' , id printString
 ]

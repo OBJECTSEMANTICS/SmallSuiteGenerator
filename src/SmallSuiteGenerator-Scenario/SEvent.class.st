@@ -15,7 +15,7 @@ Class {
 	#category : #'SmallSuiteGenerator-Scenario'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 SEvent class >> price: aNumber [
 	^ self new price: aNumber
 ]
@@ -46,7 +46,7 @@ SEvent >> price [
 	^ price - ((discount * price)/100)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 SEvent >> price: aNumber [
 	price := aNumber
 ]

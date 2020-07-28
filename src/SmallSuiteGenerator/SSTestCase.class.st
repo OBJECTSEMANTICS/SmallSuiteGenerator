@@ -172,6 +172,7 @@ SSTestCase >> initialize [
 	fitnessByClass := Dictionary new.
 	selectionStrategy := SGARouletteSelection new.
 	properties := Dictionary new.
+	lastMessage := #()
 ]
 
 { #category : #util }
@@ -210,7 +211,7 @@ SSTestCase >> printStringWithAssertions [
 	^ String streamContents: [ :stream | 
 		self printerClass printTempVariables: self on: stream.
 		(self printerClass on: stream) 
-			visitStatements: self statements, self assertions.
+			visitStatements: self statements, self lastMessage,self assertions.
 		].
 ]
 

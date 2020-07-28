@@ -38,12 +38,26 @@ SSTestShifter class >> defaultInterpreterClass [
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-	^ SSCustomMethods
+	^ SSAbstractSettingMethods
 ]
 
 { #category : #settings }
 SSTestShifter class >> defaultPrinterClass [
 	^ SSStandardPrinter
+]
+
+{ #category : #settings }
+SSTestShifter class >> limitToWait [
+	^ 1000
+]
+
+{ #category : #settings }
+SSTestShifter class >> resetToDefaults [
+	{ #defaultInterpreterClass -> SSMetaInterpreter . 
+	#defaultMethodsClass -> SSAbstractSettingMethods . 
+	#defaultPrinterClass -> SSStandardPrinter .
+	#limitToWait -> 1000 } do: [ :val |
+		self class compile: val key asString, String cr, '	^ ', val value printString ]
 ]
 
 { #category : #'mutation-change' }
@@ -229,7 +243,7 @@ SSTestShifter >> addMessage: method withReceiver: receiver [
 SSTestShifter >> addStatement: anExpression [
 	self canAddStatement ifFalse:[^self]. 
 	statements add: anExpression.
-	self run.
+	self "run"runWithoutAssertionsAndLastStatement.
 	
 ]
 
@@ -489,6 +503,13 @@ SSTestShifter >> emptyCopy [
 	^ copy
 ]
 
+{ #category : #action }
+SSTestShifter >> execute: aBlock [
+	^ self methodsClass 
+		on: self 
+		execute: aBlock
+]
+
 { #category : #'building-actions' }
 SSTestShifter >> generateAssertions [
 	^ self
@@ -506,9 +527,9 @@ SSTestShifter >> generateAssertions: classAssertions [
 	"
 
 	| executionContext |
-	executionContext := self analyze.
+	executionContext := self execute: [:testCase | testCase analyze].
 	assertions := classAssertions
-		flatCollect: [ :assertion | assertion for: executionContext ].
+		flatCollect: [ :assertion | assertion for: executionContext ]. 
 ]
 
 { #category : #'building-actions' }
@@ -647,9 +668,10 @@ SSTestShifter >> newAssignment: anExpression [
 { #category : #'instance creation' }
 SSTestShifter >> newFactoryMessage: aClassName [
 	| methods|
-	typeInfo
+	(typeInfo
 		classAt: aClassName
-		ifNone: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is not found in typeInfo.' ].
+		ifNone: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is not found in typeInfo.' ]) 
+		isAbstract ifTrue: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is abstract.'].
 	methods := typeInfo factoryMessagesFrom: aClassName.
 	^ methods
 		ifEmpty: [ SFactoryMessage default: aClassName ]
@@ -852,7 +874,8 @@ SSTestShifter >> repairIds [
 
 { #category : #action }
 SSTestShifter >> run [
-  ^ self runStatements: self statements.
+	^ self execute: [ :testCase |
+			testCase runStatements: testCase statements", testCase assertions." ]
 ]
 
 { #category : #action }
@@ -882,21 +905,15 @@ SSTestShifter >> runStatements: aStatementCollection [
 ]
 
 { #category : #action }
-SSTestShifter >> runWith: aCollection [
-  " we use a meta interpreter to use smalltalk and interpret our AST"
-	|interpreter|
-	interpreter := self interpreterClass new.
-	
-   [ interpreter visitStatements: aCollection;
-						clean.
-		hasErrors := false.
-		^ interpreter context.
-  	] on:Error do:[ hasErrors:= true. Dictionary new].
+SSTestShifter >> runWithoutAssertions [
+	^ self execute: [ :testCase |
+			testCase runStatements: testCase statements, testCase lastMessage. ]
 ]
 
 { #category : #action }
-SSTestShifter >> runWithoutAssertions [
- 	^ self runStatements: self statements, self assertions.
+SSTestShifter >> runWithoutAssertionsAndLastStatement [
+	^ self execute: [ :testCase |
+			testCase runStatements: testCase statements. ]
 ]
 
 { #category : #accessing }

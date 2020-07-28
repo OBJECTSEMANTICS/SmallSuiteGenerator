@@ -34,13 +34,15 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 	messages := typeInfo messagesFrom: SConference nameAsSymbol.
 	self
 		assertCollection: (messages collect: #selector)
-		hasSameElements: #(#initialize #price:).
+		hasSameElements: #(#initialize #price: #price).
 	self
 		assert:
 			((messages flatCollect: [ :aMessage | aMessage receiver types ])
-				allSatisfy: [ :aType | aType = SConference nameAsSymbol ]).
-	self assert: ((typeInfo messagesFrom: SEvent nameAsSymbol) allSatisfy: #isUnary).
-	self assert: (typeInfo messagesFrom: SParty nameAsSymbol) isEmpty.
+				allSatisfy: [ :aType | (aType = SConference nameAsSymbol) or: [ aType = SEvent nameAsSymbol ] ]).
+	self assertCollection: ((typeInfo messagesFrom: SEvent nameAsSymbol) collect: #selector)
+		hasSameElements: #(#initialize #price: #price).
+	self assertCollection: ((typeInfo messagesFrom: SParty nameAsSymbol)  collect: #selector)
+		hasSameElements: #(#initialize #price: #price).
 	messages := typeInfo factoryMessagesFrom: SConference nameAsSymbol.
 	self
 		assertCollection: (messages collect: #selector)
@@ -82,7 +84,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	self
 		assert:
 			((messages flatCollect: [ :aMessage | aMessage receiver types ])
-				allSatisfy: [ :aType | aType = classNameSConference ]).
+				allSatisfy: [ :aType | aType = classNameSConference or: [ aType = classNameSEvent ] ]).
 	methodInfo := messages
 		detect: [ :aMessage | aMessage selector = #canRegister: ].
 	self
@@ -287,7 +289,7 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 		hasSameElements: #(#name:with:).
 	self
 		assertCollection: ((typeInfo messagesFrom: SSTeacher nameAsSymbol) collect: #selector)
-		hasSameElements: #(#initialize #nickname #id: #nickname: #name:).
+		hasSameElements: #(#initialize #nickname #identifier #fullIdentifier #id: #nickname: #name:).
 	self
 		assertCollection:
 			((typeInfo accessMessagesFrom: SSTeacher nameAsSymbol)

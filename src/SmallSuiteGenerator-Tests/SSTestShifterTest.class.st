@@ -141,8 +141,6 @@ SSTestShifterTest >> testAddFactoryMessageWithAbstractClasses [
 SSTestShifterTest >> testAddFieldAccessMessage [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoSSTeacher2.
-	self should: [ testCase addFieldAccessMessage ] raise: SError.
-	testCase targetClassName: #SSTeacher fullClassNameSymbol.
 	self
 		assert: testCase addFieldAccessMessage printString
 		equals: '_var1 := _var0 idTeacher'.
@@ -153,10 +151,6 @@ SSTestShifterTest >> testAddFieldAccessMessageFrom [
 	| testCase targetClass |
 	targetClass := #SFoo fullClassNameSymbol.
 	testCase := SSTestCase with: utility typeInfoSFoo3.
-	self
-		should: [ testCase addFieldAccessMessage: #score from: targetClass ]
-		raise: SError.
-	testCase targetClassName: targetClass.
 	self
 		assert: (testCase addFieldAccessMessage: #score from: targetClass) printString
 		equals: '_var2 := _var1 score'
@@ -328,9 +322,6 @@ SSTestShifterTest >> testAddMessageFromDifferentReceiver [
 	testCase := (SSTestCase
 		with: utility typeInfoOnPackage1)
 		targetClassName: eventSymbol.
-	self
-		should: [ testCase addMessage: #canRegister: from: eventSymbol ]
-		raise: SError.
 	testCase targetClassName: confSymbol.
 	testCase addMessage: #canRegister: from: confSymbol.
 	self
@@ -397,7 +388,7 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 	| testCase targetClass |
 	targetClass := #SStack fullClassNameSymbol.
 	testCase := SSTestCase
-		with: utility typeInfoSStackOnPackage2."(STON fromString: utility typeInfoStringSStack1)".
+		with: utility typeInfoSStackOnPackage2.
 	testCase
 		targetClassName: targetClass;
 		addMessage: #push: from: targetClass.
@@ -504,10 +495,7 @@ SSTestShifterTest >> testPickFactoryMessagesFrom [
 	| testCase targetClass |
 	targetClass := #SConference fullClassNameSymbol.
 	testCase := SSTestCase new.
-	testCase typeInfo: utility typeInfoOnPackage2 .
-	self
-		should: [ testCase addMessage: #price: from: #SEvent fullClassNameSymbol ]
-		raise: SError.
+	testCase typeInfo: utility typeInfoOnPackage2.
 	testCase targetClassName: targetClass.
 	testCase addFactoryMessage: targetClass usingSelector: #price:.
 	self
@@ -521,7 +509,8 @@ SSTestShifterTest >> testPickMessagesOf [
 	| testCase |
 	testCase := SSTestCase with: utility typeInfoOnPackage2.
 	self
-		assert: ((testCase pickMessagesOf: #SEvent fullClassNameSymbol) collect: #selector) isEmpty.
+		assertCollection: ((testCase pickMessagesOf: #SEvent fullClassNameSymbol) collect: #selector)
+		hasSameElements: #(#price:).
 	self
 		assertCollection: ((testCase pickMessagesOf: #SConference fullClassNameSymbol) collect: #selector)
 		hasSameElements: #(#price: #initialize).

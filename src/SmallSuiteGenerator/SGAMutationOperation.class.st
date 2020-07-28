@@ -26,7 +26,7 @@ SGAMutationOperation >> doMutate: aTestCase [
 	self next <= mutationRate
 		ifTrue: [  result := aTestCase insertStatement.].
 	result repairIds.
-	result run.
+	result "run"runWithoutAssertionsAndLastStatement.
 	^ result.
 ]
 

@@ -182,7 +182,8 @@ STypeMethodInfo >> initialize [
 	receiver := SMultiTypeInfo new.
 	isDeprecated := false.
 	scalars := Dictionary new.
-	hasProfiler := true
+	hasProfiler := true.
+	abstract := false
 ]
 
 { #category : #accessing }

@@ -132,7 +132,8 @@ SSTestCaseTest >> testPickMessagesOf [
 	| testCase |
 	testCase := SSTestCase new.
 	testCase typeInfo: utility typeInfoOnPackage1 .
-	self assert: (testCase pickMessagesOf: #SEvent fullClassNameSymbol) isEmpty.
+	self assertCollection: ((testCase pickMessagesOf: #SEvent fullClassNameSymbol) collect: #selector)
+		hasSameElements: #(#canRegister: #price).
 	self
 		assertCollection: ((testCase pickMessagesOf: #SConference fullClassNameSymbol) collect: #selector)
 		hasSameElements: #(#initialize #offerPrice: #canRegister: #price)
