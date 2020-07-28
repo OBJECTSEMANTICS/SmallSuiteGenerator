@@ -668,9 +668,10 @@ SSTestShifter >> newAssignment: anExpression [
 { #category : #'instance creation' }
 SSTestShifter >> newFactoryMessage: aClassName [
 	| methods|
-	typeInfo
+	(typeInfo
 		classAt: aClassName
-		ifNone: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is not found in typeInfo.' ].
+		ifNone: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is not found in typeInfo.' ]) 
+		isAbstract ifTrue: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is abstract.'].
 	methods := typeInfo factoryMessagesFrom: aClassName.
 	^ methods
 		ifEmpty: [ SFactoryMessage default: aClassName ]

@@ -13,7 +13,8 @@ Class {
 		'typeName',
 		'methodTypes',
 		'classMethodTypes',
-		'scalars'
+		'scalars',
+		'abstract'
 	],
 	#classInstVars : [
 		'classMethodTypes'
@@ -231,7 +232,11 @@ STypeClassInfo >> instanceMethodsFor: aSpyClass [
 
 { #category : #accesing }
 STypeClassInfo >> isAbstract [
-	^ self allMethods anySatisfy: [ :mtd | mtd isAbstract].
+	abstract ifNil: [ |aClass|
+		aClass := typeName asClass.
+		abstract := (aClass methods anySatisfy: [:m | m isAbstract]) 
+	or: [ aClass class methods anySatisfy: [:m | m isAbstract] ] ].
+	^ abstract
 ]
 
 { #category : #actions }
