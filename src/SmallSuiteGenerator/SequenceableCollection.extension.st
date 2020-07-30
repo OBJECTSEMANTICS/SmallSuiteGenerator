@@ -2,7 +2,9 @@ Extension { #name : #SequenceableCollection }
 
 { #category : #'*SmallSuiteGenerator' }
 SequenceableCollection >> pickAny [
-	^ self at: (SPlatform randomGenerator nextInt: self size)
+	[^ self at: (SPlatform randomGenerator nextInt: self size)]
+	on: Error
+	do: [ SError signal: 'Pick any error' ]
 ]
 
 { #category : #'*SmallSuiteGenerator' }

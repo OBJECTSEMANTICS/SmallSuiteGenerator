@@ -250,12 +250,11 @@ SSTestShifter >> addStatement: anExpression [
 { #category : #'building-actions' }
 SSTestShifter >> addStatementWithReturnType: aMultiTypeInfo [
 	
-	aMultiTypeInfo types safelyPickAny:[ :type |
-		(self typeInfo isScalar: type) 
-			ifTrue:[ self addLiteral: type.] 
-			ifFalse:[ self addFactoryMessage: type.].	
-	] ifNone:[ self serror:'we could not build the argument needed'].
-	
+	[ (self typeInfo isScalar: aMultiTypeInfo) 
+			ifTrue:[ self addLiteral: aMultiTypeInfo.] 
+			ifFalse:[ self addFactoryMessage: aMultiTypeInfo.]. ]
+	on: SError 
+	do: [ self serror:'we could not build the argument needed']
 ]
 
 { #category : #'building-actions' }
@@ -310,11 +309,14 @@ SSTestShifter >> assignedIds [
 { #category : #'building-actions' }
 SSTestShifter >> buildArgs: argTypes [
 	^ argTypes collect:[ :type|
-		|vars|
-		vars := self variablesWithReturnType: type.
-		vars ifEmpty: [ 
-			self addStatementWithReturnType: type.
-			vars := self variablesWithReturnType: type].
+		|arg vars validArgs|
+		validArgs := type cleanTypesIn: self typeInfo.
+		validArgs ifEmpty: [self serror: 'Types required not exist in typeInfo'].
+		arg := validArgs pickAny.
+		vars := self variablesWithReturnType: arg .
+		(vars isEmpty or: [self next < 0.3]) ifTrue: [ 
+			self addStatementWithReturnType: arg.
+			vars := self variablesWithReturnType: arg].
 		vars pickAny].
 	
 	
@@ -1014,8 +1016,8 @@ SSTestShifter >> validReferences [
 ]
 
 { #category : #querying }
-SSTestShifter >> variablesWithReturnType: aMultipleTypeInfo [
+SSTestShifter >> variablesWithReturnType: type [
   ^self statements 
-			select: [:stm |  aMultipleTypeInfo types anySatisfy: [:type |  stm returnType = type ] ] 
+			select: [:stm | stm returnType = type ] 
 			thenCollect: [:stm |  stm variable ]
 ]

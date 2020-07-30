@@ -63,8 +63,6 @@ STypeClassInfo >> accessMessages [
 
 { #category : #adding }
 STypeClassInfo >> addClassMethod: methodTypeInfo [
-	"methodTypeInfo typeInfo: typeInfo."
-
 	classMethodTypes
 		at: methodTypeInfo selector
 		ifPresent: [ :methInfo | methInfo joinWith: methodTypeInfo ]
@@ -283,6 +281,12 @@ STypeClassInfo >> remainingOrAllMethods: aSymbol [
 { #category : #'accessing - read only' }
 STypeClassInfo >> reportFrequencyByFilter: aSelector [
 	^ (self filteredMethodsBy: aSelector) size
+]
+
+{ #category : #actions }
+STypeClassInfo >> resetMethods [
+	self methodTypes do: [ :m | m resetArgs ].
+	self classMethodTypes do: [ :m | m resetArgs ].
 ]
 
 { #category : #accessing }

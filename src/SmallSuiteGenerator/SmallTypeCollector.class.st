@@ -23,29 +23,26 @@ SmallTypeCollector class >> resetClassDict [
 
 { #category : #action }
 SmallTypeCollector >> collectTypeFrom: aClass [
-	|collector extractor typeInfo methodInfo|
+	|collector typeInfo methodInfo aBlock|
 	aClass isMeta ifTrue:[ ^ nil.].
-	collector := TypeCollector new.
-	collector onClass: aClass.
-	extractor := collector newExtractor.
-	aClass selectorsAndMethodsDo: [ :selector :method |
-		collector currentExtractedMethod: method. 
+	typeInfo := STypeClassInfo newFrom: aClass name.
+	aBlock := [ :coll :cls :symbol | |extractor|
+		coll onClass: cls.
+		extractor := coll newExtractor.
+		cls selectorsAndMethodsDo: [ :selector :method |
+		coll currentExtractedMethod: method. 
 			extractor
 				extractInterfacesFrom: method
-				addTo: collector].
-	typeInfo := STypeClassInfo newFrom: aClass name.
-	aClass methodDictValues do:[ :method | 
-			collector localTypingResults at: method ifPresent:[ :tmpTypes |
+				addTo: coll].
+		cls methodDictValues do:[ :method | 
+			coll localTypingResults at: method ifPresent:[ :tmpTypes |
 				methodInfo := self methodInfoIn: method from: tmpTypes.
-				typeInfo addMethod: methodInfo.
-			]	
-		].
-	aClass class methodDictValues do:[ :method | 
-			collector localTypingResults at: method ifPresent:[ :tmpTypes |		
-				methodInfo := self methodInfoIn: method from: tmpTypes.
-				typeInfo addClassMethod: methodInfo.		
-			]
-		].
+				typeInfo perform: symbol with: methodInfo.
+			] ] ].
+	collector := TypeCollector new.
+	aBlock cull: collector cull: aClass cull: #addMethod:.
+	collector := TypeCollector new.
+	aBlock cull: collector cull: aClass class cull: #addClassMethod:.
 	^ typeInfo.
 ]
 
@@ -68,8 +65,8 @@ SmallTypeCollector >> methodInfoIn: aCompiledMethod from: tempTypes [
 			((types size = 1) and:[types first = Object]) ifTrue:[ "name type"
 					argType type: (self typeFor:argName).
 				] ifFalse:[
-					types do:[ :argClass | argClass isMeta ifFalse: [ argType type: argClass name asSymbol ] ].				
-				].
+					types do:[ :argClass | argClass isMeta ifFalse: [ argType type: argClass name asSymbol ] ] ].
+			#(#Object #SUndefinedObject) do: [:each | [argType types remove: each]on: Error do: [  ] ]. 
 			argTypes add: argType.
 		].
 	returnType := SMultiTypeInfo new.
