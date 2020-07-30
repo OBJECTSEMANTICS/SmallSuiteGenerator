@@ -186,7 +186,7 @@ SRemoveTest >> testRemoveReceiverFieldAccessMessage2 [
 		hasSameElements: { '_var0 := 7.3' .
 								'_var1 := ', targetClass asString,' score: _var0 ' .
 								'_var2 := ', targetClass asString,' score: _var0 ' .
-								'_var3 := _var2 score'}.
+								'_var3 := _var1 score'}.
 	newTestCase := testCase removeStatementAt: 3.
 	newTestCase repairIds.
 	self

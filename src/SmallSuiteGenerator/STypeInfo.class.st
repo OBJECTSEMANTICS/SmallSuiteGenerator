@@ -110,6 +110,11 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 	^ types at: aClassName ifAbsent: aBlock
 ]
 
+{ #category : #accessing }
+STypeInfo >> classAt: aClassName ifPresent: aBlock [
+	^ types at: aClassName ifPresent: aBlock ifAbsent: [  ]
+]
+
 { #category : #lookup }
 STypeInfo >> classMethodType: aSelector from: aClassName [
 	aSelector = #new
@@ -258,7 +263,7 @@ STypeInfo >> intersect: typeList [
 	result := OrderedCollection new. 
 	typeList do: [ :type | (self isScalar: type) 
 									ifTrue: [ result add: type ]
-									ifFalse: [ self classAt: type ifNone: [  ] ] ].
+									ifFalse: [ self classAt: type ifPresent: [ result add: type ] ] ].
 	^ result
 ]
 

@@ -310,7 +310,7 @@ SSTestShifterTest >> testAddMessageFrom [
 		equals: '_var3 := _var1 returnNum'.
 	self
 		assert:
-			(#('_var4 := _var1 score: _var0' '_var4 := _var1 score: _var3 ' '_var5 := _var1 score: _var3' '_var5 := _var1 score: _var4')
+			(#('_var4 := _var1 score: _var0 ' '_var4 := _var1 score: _var3 ' '_var5 := _var1 score: _var3' '_var5 := _var1 score: _var4')
 				includes: (testCase addMessage: #score: from: targetClass) printString)
 ]
 
@@ -353,7 +353,7 @@ SSTestShifterTest >> testAddMessageWithReceiver [
 			(testCase
 				addMessage: (typeInfo messagesFrom: targetClass) first
 				withReceiver: receiver) printString
-		equals: '_var1 := _var0 return: _var0 '
+		equals: '_var2 := _var0 return: _var1 '
 ]
 
 { #category : #tests }

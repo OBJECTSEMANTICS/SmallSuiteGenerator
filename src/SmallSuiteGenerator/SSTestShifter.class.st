@@ -317,7 +317,7 @@ SSTestShifter >> buildArgs: argTypes [
 		(vars isEmpty or: [self next < 0.3]) ifTrue: [ 
 			self addStatementWithReturnType: arg.
 			vars := self variablesWithReturnType: arg].
-		vars pickAny].
+		vars pickAny]. 
 	
 	
 

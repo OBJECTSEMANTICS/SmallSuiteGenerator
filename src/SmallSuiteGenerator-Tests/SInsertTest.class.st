@@ -29,7 +29,7 @@ SInsertTest >> testCopyWithANewMethodCallToAnArgumentOfTheTargetClass [
 			{  '_var0 := ', targetClass asString,' new' .
 				'_var1 := ' , studentClass asString, ' new' .
 				'_var2 := ' , studentClass asString, ' new' .
-				'_var3 := _var0 return: _var1 '}.
+				'_var3 := _var0 return: _var2 '}.
 	newTestCase := testCase copyWithANewMethodCallToAnArgumentOfTheTargetClass.
 	newTestCase repairIds.
 	self
@@ -38,8 +38,8 @@ SInsertTest >> testCopyWithANewMethodCallToAnArgumentOfTheTargetClass [
 			{  '_var0 := ', targetClass asString,' new' .
 				'_var1 := ' , studentClass asString, ' new' .
 				'_var2 := ' , studentClass asString, ' new' .
-				'_var3 := _var1 initialize' .
-				'_var4 := _var0 return: _var1 '}.
+				'_var3 := _var0 return: _var1 ' .
+				'_var4 := _var0 return: _var2 '}.
 ]
 
 { #category : #'mutation-insert' }
@@ -61,7 +61,7 @@ SInsertTest >> testCopyWithANewMethodCallToAnyValue [
 			{  '_var0 := ', targetClass asString,' new' .
 				'_var1 := ' , studentClass asString, ' new' .
 				'_var2 := ' , studentClass asString, ' new' .
-				'_var3 := _var0 return: _var1 '}.
+				'_var3 := _var0 return: _var2 '}.
 	newTestCase := testCase copyWithANewMethodCallToAnyValue.
 	newTestCase repairIds.
 	self
@@ -70,8 +70,9 @@ SInsertTest >> testCopyWithANewMethodCallToAnyValue [
 			{  '_var0 := ', targetClass asString,' new' .
 				'_var1 := ' , studentClass asString, ' new' .
 				'_var2 := ' , studentClass asString, ' new' .
-				'_var3 := _var2 initialize' .
-				'_var4 := _var0 return: _var1 '}.
+				'_var3 := 2' .
+				'_var4 := _var1 scoreStudent: _var3 ' .
+				'_var5 := _var0 return: _var2 '}.
 ]
 
 { #category : #'mutation-insert' }
@@ -98,6 +99,7 @@ SInsertTest >> testCopyWithANewMethodCallToTargetClass [
 		hasSameElements:
 			{  '_var0 := ', targetClass asString,' new' .
 				'_var1 := ' , studentClass asString, ' new' .
-				'_var2 := _var0 initialize' .
-				'_var3 := _var0 return: _var1 '}.
+				'_var2 := _var0 return: _var1 ' .
+				'_var3 := ' , studentClass asString, ' new' .
+				'_var4 := _var0 return: _var3 '}.
 ]
