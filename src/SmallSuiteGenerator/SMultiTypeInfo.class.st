@@ -9,6 +9,7 @@ Class {
 	#superclass : #STypeObjectInfo,
 	#instVars : [
 		'types',
+		'cleanTypes',
 		'mustBeFixed'
 	],
 	#category : #'SmallSuiteGenerator-Info'
@@ -22,6 +23,17 @@ SMultiTypeInfo class >> new: aType [
 { #category : #comparing }
 SMultiTypeInfo >> = other [
 	^ self class = other class and: [ self types = other types ]
+]
+
+{ #category : #accessing }
+SMultiTypeInfo >> cleanTypes: anObject [
+	cleanTypes := anObject 
+]
+
+{ #category : #accessing }
+SMultiTypeInfo >> cleanTypesIn: aTypeInfo [
+	cleanTypes ifNil: [ cleanTypes := aTypeInfo intersect: self types ].
+	^ cleanTypes
 ]
 
 { #category : #accessing }
@@ -110,6 +122,11 @@ SMultiTypeInfo >> joinWith: otherTypeReturn [
 { #category : #accessing }
 SMultiTypeInfo >> mustBeFixed [ 
 	^ mustBeFixed
+]
+
+{ #category : #actions }
+SMultiTypeInfo >> resetTypes [
+	self cleanTypes: nil
 ]
 
 { #category : #'ston persistence' }

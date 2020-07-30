@@ -458,6 +458,11 @@ STypeMethodInfo >> receiver: anObject [
 	receiver := anObject
 ]
 
+{ #category : #actions }
+STypeMethodInfo >> resetArgs [
+	self argTypes do: [ :arg | arg resetTypes ]
+]
+
 { #category : #accessing }
 STypeMethodInfo >> returnType [
 	^ returnType

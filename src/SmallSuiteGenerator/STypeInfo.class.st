@@ -110,6 +110,11 @@ STypeInfo >> classAt: aClassName ifNone: aBlock [
 	^ types at: aClassName ifAbsent: aBlock
 ]
 
+{ #category : #accessing }
+STypeInfo >> classAt: aClassName ifPresent: aBlock [
+	^ types at: aClassName ifPresent: aBlock ifAbsent: [  ]
+]
+
 { #category : #lookup }
 STypeInfo >> classMethodType: aSelector from: aClassName [
 	aSelector = #new
@@ -145,22 +150,32 @@ STypeInfo >> cleanBlockClosuresOf: aTypeCollector [
 
 { #category : #adding }
 STypeInfo >> completeTypeInfo [
-	|aBlackList|
+	|aBlackList aBlock|
 	aBlackList := self blackList.
-	self types keysDo: [:aClass | |classInfo realClassInfo|
-	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
-	realClassInfo := self types at: aClass.
-	classInfo methodTypes keysAndValuesDo: [ :key :value |
-		((self isMethodWith: key and: aClass in: aBlackList) not and: [ key isUnary not and: [ value argTypes allSatisfy: [ :arg | arg types notEmpty ] ] ]) 
+	aBlock := [ :keyAndvalue :clsAndrealCls :symbol  | |key value cls|
+		key :=  keyAndvalue first.
+		value := keyAndvalue second.
+		cls := clsAndrealCls first."
+		key = #example ifTrue: [ self halt ]."
+		((self isMethodWith: key and: cls in: aBlackList) not "and: [ key isUnary not" and: [
+				value argTypes allSatisfy: [ :arg | arg types notEmpty ] ] "]") 
 		ifTrue: [
-			realClassInfo methodTypes 
+			(clsAndrealCls second perform: symbol) 
 			at: key
 			ifAbsentPut: [ 
 				self updateArgsOf: value.
 				value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
-				value receiver type: aClass.
+				value receiver type: cls.
 				value hasProfiler: false.
-				value executions: 0.5 ] ] ] ]
+				value executions: 0.5 ] ] ].
+	self types keysDo: [:aClass | |classInfo realClassInfo|
+	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
+	realClassInfo := self types at: aClass.
+	classInfo methodTypes keysAndValuesDo: [ :key :value |
+		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #methodTypes.].
+	classInfo classMethodTypes keysAndValuesDo: [ :key :value |
+		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #classMethodTypes.] ].
+	self reset
 ]
 
 { #category : #copying }
@@ -242,6 +257,16 @@ STypeInfo >> initializeBlackList [
 	blackList ifNil: [ blackList := Array new ]
 ]
 
+{ #category : #'error handling' }
+STypeInfo >> intersect: typeList [ 
+	|result|
+	result := OrderedCollection new. 
+	typeList do: [ :type | (self isScalar: type) 
+									ifTrue: [ result add: type ]
+									ifFalse: [ self classAt: type ifPresent: [ result add: type ] ] ].
+	^ result
+]
+
 { #category : #accessing }
 STypeInfo >> isAbstractClass: symbol [
 	^ (self classAt: symbol) isAbstract.
@@ -250,7 +275,7 @@ STypeInfo >> isAbstractClass: symbol [
 { #category : #accessing }
 STypeInfo >> isMethodWith: selector and: aClass in: aBlackList [
 	^ aBlackList
-		anySatisfy: [ :each | each fullClassName = aClass and:[ each selector = selector]]
+		anySatisfy: [ :each | each mclass = aClass and:[ each selector = selector]]
 ]
 
 { #category : #'error handling' }
@@ -273,7 +298,8 @@ STypeInfo >> joinWith: otherTypeInfo [
 	cacheMessagesFrom := Dictionary new.
 	otherTypeInfo types
 		do: [ :aTypeClass | self addClassInfo: aTypeClass ].
-		self joinScalars: otherTypeInfo scalars
+		self joinScalars: otherTypeInfo scalars.
+	self reset.
 ]
 
 { #category : #accessing }
@@ -320,6 +346,12 @@ STypeInfo >> reportFrequencyByFilter [
 						inject: 0
 						into: [ :sum :type | sum + (type reportFrequencyByFilter: aSelector) ]) ].
 	^ report
+]
+
+{ #category : #actions }
+STypeInfo >> reset [
+	types valuesDo: [ :type | type resetMethods ]
+	
 ]
 
 { #category : #actions }
