@@ -155,12 +155,6 @@ STestCaseFactory >> generateLogs [
 	self logClass: SGALog
 ]
 
-{ #category : #accessing }
-STestCaseFactory >> generateViews [
-	self vizClass: SGAViz;
-		logClass: SGALog
-]
-
 { #category : #actions }
 STestCaseFactory >> generatedClass [
 	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').

@@ -68,40 +68,7 @@ SExporte2VW >> blackListSFieldAccessMessage [
 SExporte2VW >> blackListSGAEngine [
 	^ {"SGAEngine >> #exportFitnessLog ."
  "VisualizationPackage"
-SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"
-SGAEngine >> #addDescriptiveTextOn:ofColor:and: .
-SGAEngine >> #addHighlightMethodEvent:on:ofColor:.
-SGAEngine >> #addHighlightTestCaseEvent:on:ofColor:.
-SGAEngine >> #addLegend:on:withFontColor:and:.
-SGAEngine >> #addLegendOn:with:.
-SGAEngine >> #addSurvivorTestCase:on:using:and:.
-SGAEngine >> #addTickX:withScale:color:y:and: .
-SGAEngine >> #addTickY:withScale:xMax:ofColor:andPositions: .
-SGAEngine >> #borderOfSize:andColor: .
-SGAEngine >> #contributionShapeOfHeight:color:and:.
-SGAEngine >> #evolutionPoints:withScale: .
-SGAEngine >> #evolutionShapeWith:ofColor:size: .
-SGAEngine >> #generationVisualization:ofColor: .
-SGAEngine >> #infoMethodShapesOn:ofColor:highlight: .
-SGAEngine >> #isCoverage:ofSummaryMethod:in:newOrHigher: .
-SGAEngine >> #methodColorDictionary: .
-SGAEngine >> #methodShape:withGradientFrom:to: .
-SGAEngine >> #methodShapeGroup:with:highlight:scale: .
-SGAEngine >> #progressBarFrom:to:ofColor:.
-SGAEngine >> #scaleColorBlock:.
-SGAEngine >> #setPositions:using: .
-SGAEngine >> #sparkCircleGroupOfColor:andSize:.
-SGAEngine >> #summaryMethodsOfTargetClass:.
-SGAEngine >> #testCaseShape:ofColor:with:highlight:scale:.
-SGAEngine >> #rsBorderWithColorBox:.
-SGAEngine >> #createTopCenterRSLocationOn:with:.
-SGAEngine >> #rshighlightableWith:.
-SGAEngine >> #rsLabelWith:.
-SGAEngine >> #createTopRightRSLocationWith:.
-SGAEngine >> #createRSLabelWith:and:.
-SGAEngine >> #createTopLeftRSLocation.
-SGAEngine >> #createTopCenterRSLocationWith:.
-SGAEngine >> #generationDictionaryWith:}
+SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"}
 ]
 
 { #category : #'bl-examples' }
@@ -114,6 +81,52 @@ SExporte2VW >> blackListSGAEngineExample [
 SExporte2VW >> blackListSGAEngineTest [
 	^ {SGAEngineTest >> #profilerOf:.
 SGAEngineTest >> #tearDown}
+]
+
+{ #category : #'bl-ga' }
+SExporte2VW >> blackListSGAViz [
+	^ {
+SGAViz >> #addDescriptiveTextOn:ofColor:and: .
+SGAViz >> #addHighlightMethodEvent:on:ofColor:.
+SGAViz >> #addHighlightTestCaseEvent:on:ofColor:.
+SGAViz >> #addLegend:on:withFontColor:and:.
+SGAViz >> #addLegendOn:with:.
+SGAViz >> #addSurvivorTestCase:on:using:and:.
+SGAViz >> #addTickX:withScale:color:y:and: .
+SGAViz >> #addTickY:withScale:xMax:ofColor:andPositions: .
+SGAViz >> #borderOfSize:andColor: .
+SGAViz >> #contributionShapeOfHeight:color:and:.
+SGAViz >> #createRSLabelWith:and:.
+SGAViz >> #createTopCenterRSLocationOn:with:.
+SGAViz >> #createTopCenterRSLocationWith:.
+SGAViz >> #createTopLeftRSLocation.
+SGAViz >> #createTopRightRSLocationWith:.
+SGAViz >> #evolutionPoints:withScale: .
+SGAViz >> #evolutionShapeWith:ofColor:size: .
+SGAViz >> #fitnessOf: .
+SGAViz >> #fitnessResultAsDictionary.
+SGAViz >> #generationDictionaryWith:.
+SGAViz >> #generationEvolutionCanvas.
+SGAViz >> #generationVisualization:ofColor: .
+SGAViz >> #infoMethodShapesOn:ofColor:highlight: .
+SGAViz >> #isCoverage:ofSummaryMethod:in:newOrHigher: .
+SGAViz >> #methodColorDictionary: .
+SGAViz >> #methodShape:withGradientFrom:to: .
+SGAViz >> #methodShapeGroup:with:highlight:scale: .
+SGAViz >> #progressBarFrom:to:ofColor:.
+SGAViz >> #rsBorderWithColorBox:.
+SGAViz >> #rshighlightableWith:.
+SGAViz >> #rsLabelWith:.
+SGAViz >> #scaleColorBlock:.
+SGAViz >> #setPositions:using: .
+SGAViz >> #sparkCircleGroupOfColor:andSize:.
+SGAViz >> #stringTargetClassInPackage.
+SGAViz >> #summaryMethodsOfTargetClass:.
+SGAViz >> #testCaseShape:ofColor:with:highlight:scale:.
+SGAViz >> #generationDictionaryWith: .
+SGAViz >> #visualizeEvolutionFitness.
+SGAViz class >> #darkColors .
+SGAViz class >> #lightColors .}
 ]
 
 { #category : #'bl-tests' }
@@ -237,14 +250,9 @@ SExporte2VW >> blackListSTestCaseFactory [
 STestCaseFactory >> #tearDown ."
 STestCaseFactory >> #export:with: ."
 STestCaseFactory >> #exportTests .
-STestCaseFactory >> #fitnessResultAsDictionary .
-STestCaseFactory >> #generationEvolutionCanvas .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
-STestCaseFactory >> #visualizeEvolutionFitness .
 STestCaseFactory >> #generatedClass .
-STestCaseFactory class >> #darkColors .
-STestCaseFactory class >> #lightColors .
 STestCaseFactory >> #classesForRegex: }
 ]
 

@@ -335,6 +335,11 @@ SGAEngine >> mutationRate: aFloat [
 ]
 
 { #category : #accessing }
+SGAEngine >> numberOfGenerations [
+	^ numberOfGenerations
+]
+
+{ #category : #accessing }
 SGAEngine >> numberOfGenerations: anInteger [
 	"Set the number of generation the genetic algorithm has to run"
 	numberOfGenerations := anInteger
