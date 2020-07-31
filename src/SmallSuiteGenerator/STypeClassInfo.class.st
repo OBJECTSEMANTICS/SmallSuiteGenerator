@@ -56,6 +56,11 @@ STypeClassInfo >> = other [
 						and: [ classMethodTypes = other classMethodTypes ] ] ]
 ]
 
+{ #category : #accesing }
+STypeClassInfo >> abstract: aBoolean [
+	abstract := aBoolean 
+]
+
 { #category : #private }
 STypeClassInfo >> accessMessages [
 	^ self messagesAndAccessMessages select: #isQuick
@@ -150,6 +155,7 @@ STypeClassInfo >> copy [
 	classMethodTypes
 		do: [ :classMethodType | copy addClassMethod: classMethodType copy ].
 	copy typeName: typeName.
+	copy abstract: self isAbstract.
 	^ copy
 ]
 

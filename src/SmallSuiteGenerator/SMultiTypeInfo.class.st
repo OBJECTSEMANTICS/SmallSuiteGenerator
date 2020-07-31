@@ -124,6 +124,11 @@ SMultiTypeInfo >> mustBeFixed [
 	^ mustBeFixed
 ]
 
+{ #category : #accessing }
+SMultiTypeInfo >> removeType: aType [
+	types remove: aType ifAbsent: [  ]
+]
+
 { #category : #actions }
 SMultiTypeInfo >> resetTypes [
 	self cleanTypes: nil
