@@ -257,13 +257,20 @@ STypeInfo >> initializeBlackList [
 	blackList ifNil: [ blackList := Array new ]
 ]
 
+{ #category : #initialization }
+STypeInfo >> initializeIsAbstract [
+	self types valuesDo: [ :e | e isAbstract ]
+]
+
 { #category : #'error handling' }
 STypeInfo >> intersect: typeList [ 
 	|result|
 	result := OrderedCollection new. 
 	typeList do: [ :type | (self isScalar: type) 
 									ifTrue: [ result add: type ]
-									ifFalse: [ self classAt: type ifPresent: [ result add: type ] ] ].
+									ifFalse: [
+										self classAt: type 
+										ifPresent: [ :cls | cls isAbstract ifFalse: [  result add: type ] ] ] ].
 	^ result
 ]
 
@@ -388,6 +395,9 @@ STypeInfo >> updateArgsOf: aMethod [
 	includeTypes ifFalse: [ 
 		argType types do: [ :type | 
 			self scalars keys 
+				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
+				thenDo: [ :scalar | argType type: scalar ].
+			self types keys 
 				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
 				thenDo: [ :scalar | argType type: scalar ] ] ] ].
 	"updateArgsOf: aMethod 

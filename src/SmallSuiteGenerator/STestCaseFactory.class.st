@@ -387,8 +387,9 @@ STestCaseFactory >> typeInfo [
 
 { #category : #accessing }
 STestCaseFactory >> typeInfo: aTypeInfo [
+	aTypeInfo initializeIsAbstract.
 	typeInfoOrigin := aTypeInfo copy.
-	typeInfo := aTypeInfo
+	typeInfo := aTypeInfo.
 ]
 
 { #category : #accessing }

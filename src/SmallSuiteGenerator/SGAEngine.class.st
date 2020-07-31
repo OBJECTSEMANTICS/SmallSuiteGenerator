@@ -552,11 +552,12 @@ SGAEngine >> updateHierarchyData: parents of: testCase [
 
 { #category : #updating }
 SGAEngine >> updateTypeInfoWith: aPopulation [
-  fitness profiler uninstallClass: targetClassName.
-  self profilerForTargetClass.
-  aPopulation do: [:aTestCase |  aTestCase "runWithoutAssertions"runWithoutAssertionsAndLastStatement ].
-  self mergeTypeInfo: self typeInfoProfilerAsTypeInfo.
-  self uninstall.
-  fitness profiler updateClass: ((self initializeProfiler packages at: 1) classes at: targetClassName).
-  fitness profiler deleteCache
+   fitness profiler uninstallClass: targetClassName.
+   self profilerForTargetClass.
+   aPopulation do: [:aTestCase | aTestCase runWithoutAssertionsAndLastStatement ].
+   self mergeTypeInfo: self typeInfoProfilerAsTypeInfo.
+   self uninstall.
+   fitness profiler updateClass: ((self initializeProfiler packages at: 1) classes at: targetClassName).
+   fitness profiler deleteCache.
+	self typeInfo reset.
 ]

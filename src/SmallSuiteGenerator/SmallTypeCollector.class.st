@@ -66,7 +66,7 @@ SmallTypeCollector >> methodInfoIn: aCompiledMethod from: tempTypes [
 					argType type: (self typeFor:argName).
 				] ifFalse:[
 					types do:[ :argClass | argClass isMeta ifFalse: [ argType type: argClass name asSymbol ] ] ].
-			#(#Object #SUndefinedObject) do: [:each | [argType types remove: each]on: Error do: [  ] ]. 
+			#(#Object #SUndefinedObject) do: [:each | argType removeType: each ]. 
 			argTypes add: argType.
 		].
 	returnType := SMultiTypeInfo new.
