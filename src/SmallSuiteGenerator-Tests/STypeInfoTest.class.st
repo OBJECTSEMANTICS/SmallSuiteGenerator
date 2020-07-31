@@ -163,9 +163,6 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 	self
 		assert: (typeInfo methodType: #returnNum from: classNameSFoo) returnType type
 		equals: classNameSmallInteger.
-	self
-		assert: (typeInfo methodType: #score from: classNameSFoo) returnType type
-		equals: classNameSmallInteger.
 	methodInfo := typeInfo methodType: #score: from: classNameSFoo.
 	self assert: methodInfo returnType type equals: classNameSFoo.
 	self
@@ -317,10 +314,10 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
 			(Array
-				with: (SUndefinedObject basicNew) class nameAsSymbol -> #(nil)
+				with: (SUndefinedObject basicNew) class nameAsSymbol -> (Array new: 18)
 				with: SmallInteger nameAsSymbol -> #(0 4)
 				with: OrderedCollection nameAsSymbol -> (Array with: OrderedCollection new)
-				with: ByteString nameAsSymbol -> #('Hello')
+				with: ByteString nameAsSymbol -> #('' 'Hello')
 				with: 2.3 class nameAsSymbol -> #(2.3))
 ]
 
@@ -515,7 +512,7 @@ STypeInfoTest >> testJoinWith [
 							(Array
 								with: #return: -> (Array with: sfooSymbol with: collSymbol with: (Array with: collSymbol) with: false)
 								with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false)
-								with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: true))
+								with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: false))
 						with: (Array with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false))).
 	otherTypeInfo := STypeInfo new
 		type:
@@ -712,7 +709,7 @@ STypeInfoTest >> testToStringComplexScalar [
 { #category : #tests }
 STypeInfoTest >> testType [
 	| typeInfo methodInfo sfooSymbol collSymbol intSymbol stringSymbol floatSymbol |
-	sfooSymbol := #SFoo fullClassNameSymbol. 
+	sfooSymbol := #SFoo fullClassNameSymbol.
 	collSymbol := #OrderedCollection fullClassNameSymbol. 
 	intSymbol := #SmallInteger fullClassNameSymbol. 
 	stringSymbol := #ByteString fullClassNameSymbol.
@@ -728,7 +725,7 @@ STypeInfoTest >> testType [
 								with: #returnString -> (Array with: sfooSymbol with: stringSymbol with: #() with: false)
 								with: #return: -> (Array with: sfooSymbol with: collSymbol with: (Array with: collSymbol) with: false)
 								with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false)
-								with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: true))
+								with: #score -> (Array with: sfooSymbol with: intSymbol with: #() with: false))
 						with: (Array with: #score: -> (Array with: sfooSymbol with: sfooSymbol with: (Array with: intSymbol) with: false))).
 	self assert: (typeInfo types at: sfooSymbol) methodTypes size equals: 5.
 	self
