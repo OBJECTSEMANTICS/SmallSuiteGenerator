@@ -41,10 +41,10 @@ STestCaseFactory >> gtInspectorCanvasIn: composite [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 STestCaseFactory >> gtInspectorViewIn: composite [
-	<gtInspectorPresentationOrder: -10>
+	"<gtInspectorPresentationOrder: -10>
 	composite roassal3
 		title: 'Evolution';
-		initializeCanvas: [ self visualizeEvolutionFitness ]
+		initializeCanvas: [ self visualizeEvolutionFitness ]"
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
