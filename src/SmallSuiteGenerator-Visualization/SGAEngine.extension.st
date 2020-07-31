@@ -302,18 +302,18 @@ SGAEngine >> generationVisualization: fitnessSeed ofColor: dictColor [
 	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor size: widthShape @height negated.
 	height := (Array with: contributionShape height with: height with: evolutionShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (numberOfGenerations + 1)  ] ] thenCollect: #height) max).
 	"addition of contributionShape border"
-	border := self borderOfSize: contributionShape width @ height andColor: (dictColor at: 'border').
+	border := self borderOfSize: contributionShape width @ (height+ 20) andColor: (dictColor at: 'border').
 	border translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.
 	canvas addShape: border.
 	"addition of infoMethodShape border"
-	border := self borderOfSize: (infoMethodShape width + (barGroup width * 1.3)) @ height andColor: (dictColor at: 'border').
+	border := self borderOfSize: (infoMethodShape width + (barGroup width * 1.3)) @ (height + 20) andColor: (dictColor at: 'border').
 	RSLocation new middle offset: 120@0; move: border on: canvas shapes. 
 	canvas addShape: border.
 	"add evolutionShape on canvas"
-	RSLocation new top right offset: ((evolutionShape width * 1.1)@0); move: evolutionShape on: canvas shapes.
+	evolutionShape translateTo: (barGroup encompassingRectangle topRight x + 500) @ (contributionShape position y + 25).
 	canvas addShape: evolutionShape.
 	"border of evolutionShape"
-	border := self borderOfSize: ((widthShape * 1.1) @ height) andColor: (dictColor at: 'border').
+	border := self borderOfSize: ((widthShape * 1.1) @ (height + 20)) andColor: (dictColor at: 'border').
 	RSLocation new top right offset: 0@5 negated; move: border on: canvas shapes.
 	canvas addShape: border.
 	"add descriptive text on canvas"
@@ -500,21 +500,24 @@ SGAEngine >> sparkCircleGroupOfColor: dictColor andSize: size [
 			objects: log;
 			container: group;
 			slices: (Array 
-				with: [:model | | numClasses difference |
+				with: [:model | | numClasses difference previous |
 					numClasses := ((block value: model ) collect: [ :assoc | (assoc key splitOn: ' ') first ]) asSet size.
-					difference := numClasses - (dictPrevData at: 'classCoverage').
+					previous := dictPrevData at: 'classCoverage'.
+					difference := numClasses - previous.
 					dictPrevData at: 'classCoverage' put: numClasses.
-					difference / totalClasses ] 
-				with: [:model | | numberMethods difference |
+					[difference / previous] on: ZeroDivide do: [ difference / totalClasses ] ] 
+				with: [:model | | numberMethods difference previous |
 					numberMethods := (block value: model) size.
-					difference := numberMethods - (dictPrevData at: 'methodCoverage').
+					previous := dictPrevData at: 'methodCoverage'.
+					difference := numberMethods - previous.
 					dictPrevData at: 'methodCoverage' put: numberMethods.
-					difference / totalMethods]
-				with: [:model | | coverage difference |
+					[ difference / previous] on: ZeroDivide do: [difference / totalMethods ]]
+				with: [:model | | coverage difference previous |
 					coverage := model fitness values first.
-					difference := coverage - (dictPrevData at: 'branchCoverage').
+					previous := dictPrevData at: 'branchCoverage'.
+					difference := coverage - previous.
 					dictPrevData at: 'branchCoverage' put: coverage.
-					difference / 100  ]);
+					[ difference / previous ] on: ZeroDivide do: [ difference / 100 ]]);
 		sliceColor: [ :shape | (dictColor at: shape index) value ].
 		spark scaleTo: size.
 		spark build.
