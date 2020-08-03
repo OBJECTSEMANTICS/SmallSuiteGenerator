@@ -4,6 +4,24 @@ TestRunner is a tool to run multiple tests and check the coverage
 
 ## Installation
 
-You must follow the Fuzzy Tester installation tutorial.
+### From Github
 
-Wait a few seconds and a new icon will appear in your menu toolbar and the tools option in menu bar.
+You must download the files:
+
+* [TestRunner.pcl](https://raw.githubusercontent.com/OBJECTSEMANTICS/SmallSuiteGenerator/master/VW7.x/TestRunner.pcl)
+* [TestRunner.pst](https://raw.githubusercontent.com/OBJECTSEMANTICS/SmallSuiteGenerator/master/VW7.x/TestRunner.pst)
+
+
+Once you have the files on your computer run the following command:
+
+
+```Smalltalk
+|pathParcel|
+pathParcel := 'Path\Of\TestRunner.pcl'
+Parcel loadParcelFrom: pathParcel.
+```
+
+### From Folder
+
+- Download folder [VW7.x](https://github.com/OBJECTSEMANTICS/SmallSuiteGenerator/tree/master/VW7.x) from github with all parcels.
+- Load parcel: TestRunner.pcl
