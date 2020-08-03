@@ -8,9 +8,8 @@ Class {
 }
 
 { #category : #actions }
-SMethodCoverage >> fitnessOf: testCase withKey: string [
-	testCase fitness at:string put: profiler methodCoverage.
-	testCase fitnessByClass at: string put: profiler methodCoverage1
+SMethodCoverage >> fitnessByClass [
+	^ profiler methodCoverage1.
 ]
 
 { #category : #accesing }

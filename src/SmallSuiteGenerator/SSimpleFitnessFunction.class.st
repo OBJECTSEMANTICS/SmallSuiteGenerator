@@ -13,7 +13,9 @@ Class {
 	#name : #SSimpleFitnessFunction,
 	#superclass : #SFitnessFunction,
 	#instVars : [
-		'profiler'
+		'profiler',
+		'superclasses',
+		'n'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -26,13 +28,46 @@ SSimpleFitnessFunction >> compute: testCaseCollection [
 ]
 
 { #category : #actions }
+SSimpleFitnessFunction >> computeCoverageWith: assoc [
+	| sum |
+	sum := [assoc at: targetClass] on: Error do: [0].
+	sum := superclasses
+		inject: sum 
+		into: [ :v :e | |val|
+			val := [ assoc at: e ] on: Error do: [0].
+			v + val ].
+	^ sum / (n + 1)
+]
+
+{ #category : #accessing }
+SSimpleFitnessFunction >> consideringNSuperclasses: anInteger [
+	n := anInteger.
+	self updateSuperclasses.
+]
+
+{ #category : #actions }
+SSimpleFitnessFunction >> fitnessByClass [
+	self subclassResponsibility
+]
+
+{ #category : #actions }
 SSimpleFitnessFunction >> fitnessOf: testCase withKey: string [
-	self subclassResponsibility 
+	| assoc |
+	assoc := self fitnessByClass.
+	testCase fitnessByClass at: string put: assoc.
+	testCase fitness at: string put: (self computeCoverageWith: assoc).
 ]
 
 { #category : #accesing }
 SSimpleFitnessFunction >> functionName [
 	^ self subclassResponsibility
+]
+
+{ #category : #initialization }
+SSimpleFitnessFunction >> initialize [
+	super initialize.
+	n := 0.
+	superclasses := #().
 ]
 
 { #category : #accesing }
@@ -82,4 +117,12 @@ SSimpleFitnessFunction >> tearDown [
 { #category : #accessing }
 SSimpleFitnessFunction >> typeInfo: anObject [ 
 	profiler typeInfo: anObject
+]
+
+{ #category : #accessing }
+SSimpleFitnessFunction >> updateSuperclasses [
+	superclasses := self aClass allSuperclasses collect: [:e | e name].
+	n := (n min: superclasses size - 2). "avoid add Object and ProtoObject in superclasses"
+	superclasses := (superclasses first: n) 
+	
 ]

@@ -10,13 +10,21 @@ Class {
 	#superclass : #SGAObject,
 	#instVars : [
 		'tagetPackagesRegex',
-		'targetClass'
+		'targetClass',
+		'aClass'
 	],
 	#classInstVars : [
 		'operator'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
+
+{ #category : #accessing }
+SFitnessFunction >> aClass [
+	aClass ifNotNil: [ ^ aClass ].
+	aClass := self class environment at: targetClass.
+	^ aClass
+]
 
 { #category : #actions }
 SFitnessFunction >> compute: testCaseCollection [

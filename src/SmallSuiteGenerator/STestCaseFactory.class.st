@@ -22,7 +22,8 @@ Class {
 		'typeInfoSeed',
 		'typeInfoOrigin',
 		'firstExecution',
-		'generatedClass'
+		'generatedClass',
+		'nsuperclasses'
 	],
 	#classInstVars : [
 		'instance'
@@ -122,7 +123,8 @@ STestCaseFactory >> exportTests [
 		doWithIndex: [ :test :index |
 			test lastMessage: lastMessage.
 			self export: test with: ('test', index asString) ].
-	self exportSettingMethods
+	self exportSettingMethods.
+	self openOnGeneratedClass
 ]
 
 { #category : #accessing }
@@ -200,6 +202,7 @@ STestCaseFactory >> initialize [
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
 	initialSeed := 100.
+	nsuperclasses := 0.
 	lastMessage := #()
 ]
 
@@ -229,6 +232,12 @@ STestCaseFactory >> logClass: aClass [
 		'logClass', String cr,'	^ ', aClass printString
 ]
 
+{ #category : #initialization }
+STestCaseFactory >> nsuperclasses: aNumber [
+
+	nsuperclasses := aNumber.
+]
+
 { #category : #accessing }
 STestCaseFactory >> numberOfGenerations [
 	^ numberOfIterations
@@ -243,6 +252,11 @@ STestCaseFactory >> numberOfGenerations: aNumber [
 { #category : #configuration }
 STestCaseFactory >> numberOfStatements: aInt [
 	engine numberOfStatements: aInt
+]
+
+{ #category : #export }
+STestCaseFactory >> openOnGeneratedClass [
+	Smalltalk tools browser openOnClass: self generatedClass
 ]
 
 { #category : #accessing }
@@ -292,7 +306,9 @@ STestCaseFactory >> seed: aNumber [
 
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
-	fitnessSeed := (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
+	|copy|
+	copy := self fitness copy profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex).
+	fitnessSeed := copy computeCoverageWith: (copy fitnessByClass)
 ]
 
 { #category : #actions }
@@ -313,7 +329,8 @@ STestCaseFactory >> setUp [
 	SPlatform resetRandomGenerator.
 	fitness profiler: profiler;
 		typeInfo: typeInfo;
-		targetClass: self targetClassName.
+		targetClass: self targetClassName;
+		consideringNSuperclasses: nsuperclasses.
 	engine fitness: fitness;
 		numberOfGenerations: numberOfIterations;
 		typeInfo: self typeInfo;
