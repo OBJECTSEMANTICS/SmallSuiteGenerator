@@ -11,13 +11,3 @@ SSCustomMethods class >> removeMethods [
 	on: Error 
 	do: [  ]
 ]
-
-{ #category : #'as yet unclassified' }
-SSCustomMethods >> setUp [
-    ^ self
-]
-
-{ #category : #'as yet unclassified' }
-SSCustomMethods >> tearDown [
-    ^ self
-]

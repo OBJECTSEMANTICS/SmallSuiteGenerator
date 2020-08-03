@@ -122,7 +122,8 @@ STestCaseFactory >> exportTests [
 		doWithIndex: [ :test :index |
 			test lastMessage: lastMessage.
 			self export: test with: ('test', index asString) ].
-	self exportSettingMethods
+	self exportSettingMethods.
+	self openOnGeneratedClass
 ]
 
 { #category : #accessing }
@@ -243,6 +244,11 @@ STestCaseFactory >> numberOfGenerations: aNumber [
 { #category : #configuration }
 STestCaseFactory >> numberOfStatements: aInt [
 	engine numberOfStatements: aInt
+]
+
+{ #category : #export }
+STestCaseFactory >> openOnGeneratedClass [
+	Smalltalk tools browser openOnClass: self generatedClass
 ]
 
 { #category : #accessing }

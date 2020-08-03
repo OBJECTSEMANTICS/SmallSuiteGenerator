@@ -83,8 +83,7 @@ STypeInfo >> asTypeInfo: aTypeCollector [
 		do: [ :aSpyClass | 
 			aBlackList select: [ :aMethod | aMethod fullClassName == aSpyClass className ] 
 				thenDo: [:aMethod | aSpyClass removeMethod: aMethod ].
-			(aSpyClass className endsWith: 'BlockClosure')
-				ifFalse: [ self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ] ].
+			self addClassInfo: (STypeClassInfo asClassInfo: aSpyClass) ].
 	self joinScalars: aTypeCollector scalars copy.
 	^ self
 ]
