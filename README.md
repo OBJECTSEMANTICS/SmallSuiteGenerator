@@ -98,3 +98,7 @@ asDict: true.
 ## Install SpyLite
 
 See documentation in [Install SpyLite](Parcels8.3/INSTALL_SPYLITE.md)
+
+## Install TestRunner
+
+See documentation in [Install TestRunner](VW7.x/TestRunner.md)
