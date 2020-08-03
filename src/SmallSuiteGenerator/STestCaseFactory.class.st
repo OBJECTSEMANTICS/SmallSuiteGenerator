@@ -22,7 +22,8 @@ Class {
 		'typeInfoSeed',
 		'typeInfoOrigin',
 		'firstExecution',
-		'generatedClass'
+		'generatedClass',
+		'nsuperclasses'
 	],
 	#classInstVars : [
 		'instance'
@@ -201,6 +202,7 @@ STestCaseFactory >> initialize [
 	fitnessSeed := 0.
 	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
 	initialSeed := 100.
+	nsuperclasses := 0.
 	lastMessage := #()
 ]
 
@@ -228,6 +230,12 @@ STestCaseFactory >> limitToWait: anInteger [
 STestCaseFactory >> logClass: aClass [
 	SGAEngine class compile: 
 		'logClass', String cr,'	^ ', aClass printString
+]
+
+{ #category : #initialization }
+STestCaseFactory >> nsuperclasses: aNumber [
+
+	nsuperclasses := aNumber.
 ]
 
 { #category : #accessing }
@@ -298,7 +306,9 @@ STestCaseFactory >> seed: aNumber [
 
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
-	fitnessSeed := (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex) statementCoverageFor: targetClassName.
+	|copy|
+	copy := self fitness copy profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex).
+	fitnessSeed := copy computeCoverageWith: (copy fitnessByClass)
 ]
 
 { #category : #actions }
@@ -319,7 +329,8 @@ STestCaseFactory >> setUp [
 	SPlatform resetRandomGenerator.
 	fitness profiler: profiler;
 		typeInfo: typeInfo;
-		targetClass: self targetClassName.
+		targetClass: self targetClassName;
+		consideringNSuperclasses: nsuperclasses.
 	engine fitness: fitness;
 		numberOfGenerations: numberOfIterations;
 		typeInfo: self typeInfo;

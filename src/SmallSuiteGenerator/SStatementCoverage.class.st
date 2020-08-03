@@ -10,14 +10,8 @@ Class {
 }
 
 { #category : #actions }
-SStatementCoverage >> computeFitness [
-	^ profiler statementCoverage
-]
-
-{ #category : #actions }
-SStatementCoverage >> fitnessOf: testCase withKey: string [
-	testCase fitness at: string put: (profiler statementCoverageFor: targetClass ).
-	testCase fitnessByClass at: string put: profiler statementCoverage1
+SStatementCoverage >> fitnessByClass [
+	^ profiler statementCoverage1.
 ]
 
 { #category : #accesing }
