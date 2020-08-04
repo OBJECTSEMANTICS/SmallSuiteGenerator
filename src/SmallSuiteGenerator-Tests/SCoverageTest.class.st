@@ -21,7 +21,6 @@ SCoverageTest >> fitnessOf: aTestCase [
 
 { #category : #running }
 SCoverageTest >> installOn: aPackageName [
-	fitness tagetPackagesRegex: aPackageName.
 	profiler := self aSLProfilerCoverage profilerForPackagesMatching: aPackageName.
 	fitness profiler: profiler.
 	profiler uninstall.
