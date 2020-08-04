@@ -16,13 +16,3 @@ SMethodCoverage >> fitnessByClass [
 SMethodCoverage >> functionName [
 	^ 'method-coverage'
 ]
-
-{ #category : #actions }
-SMethodCoverage >> setUp [
-
-]
-
-{ #category : #actions }
-SMethodCoverage >> tearDown [
-	
-]
