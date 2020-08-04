@@ -9,6 +9,12 @@ Class {
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 
+{ #category : #tests }
+SCoverageTest >> computeFitnessOf: testCase [
+	fitness compute: (Array with: testCase).
+	^ self fitnessOf: testCase.
+]
+
 { #category : #running }
 SCoverageTest >> fitnessClass [
 	^ self subclassResponsibility.

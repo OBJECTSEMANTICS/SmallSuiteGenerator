@@ -19,10 +19,9 @@ SStatementCoverageTest >> testCoverageClassSEvent [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ]).	"75.0 = (6/8) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ])	"75.0 = (6/8) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -35,10 +34,9 @@ SStatementCoverageTest >> testCoverageClassSFoo [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 71.43 ]).	"71.43 = (10/14) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 71.43 ])	"71.43 = (10/14) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -51,10 +49,9 @@ SStatementCoverageTest >> testCoverageOnClassSSTeacher [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ]).	"75.0 = (6/8) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ])	"75.0 = (6/8) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -67,10 +64,9 @@ SStatementCoverageTest >> testCoverageOnClassSStack [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 80.0 ]).	"73.68 = (14/19) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 73.68 ])	"73.68 = (14/19) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -83,10 +79,9 @@ SStatementCoverageTest >> testCoverageOnClassSStudent [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ]).	"75.0 = (6/8) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ])	"75.0 = (6/8) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -99,10 +94,9 @@ SStatementCoverageTest >> testCoverageOnPackagesSEvent [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ]).
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ])
 ]
 
 { #category : #tests }
@@ -115,15 +109,14 @@ SStatementCoverageTest >> testCoverageOnPackagesSFoo [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 71.43 ]).	"71.43 = (10/14) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 71.43 ])	"71.43 = (10/14) * 100 round: 2"
 ]
 
 { #category : #tests }
 SStatementCoverageTest >> testCoverageOnPackagesSSTeacher [
-	| testCase targetClass |
+	| testCase targetClass valueFitness |
 	targetClass := #SSTeacher fullClassNameSymbol.
 	testCase := self
 		testCase: utility typeInfoSSTeacherOnPackage2
@@ -131,9 +124,9 @@ SStatementCoverageTest >> testCoverageOnPackagesSSTeacher [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
 	self uninstall.
-	self assert: (self fitnessOf: testCase) <= 75.0
+	self assert: valueFitness <= 75.0
 ]
 
 { #category : #tests }
@@ -144,13 +137,12 @@ SStatementCoverageTest >> testCoverageOnPackagesSStack [
 		testCase: utility typeInfoSStackOnPackage1
 		withNumStatements: 20
 		andTargetClassName: targetClass.
-	testCase inspect.
+	"testCase inspect."
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 73.68 ]).	"73.68 = (14/19) * 100 round: 2"
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 73.68 ])	"73.68 = (14/19) * 100 round: 2"
 ]
 
 { #category : #tests }
@@ -163,8 +155,7 @@ SStatementCoverageTest >> testCoverageOnPackagesSStudent [
 		andTargetClassName: targetClass.
 	self installOn: 'SmallSuiteGenerator-Scenario2'.
 	fitness targetClass: targetClass.
-	fitness compute: (Array with: testCase).
+	valueFitness := self computeFitnessOf: testCase.
+	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ]).
 	self uninstall.
-	valueFitness := self fitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 75.0 ])
 ]
