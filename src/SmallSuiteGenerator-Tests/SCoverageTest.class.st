@@ -9,6 +9,12 @@ Class {
 	#category : #'SmallSuiteGenerator-Tests-GA'
 }
 
+{ #category : #tests }
+SCoverageTest >> computeFitnessOf: testCase [
+	fitness compute: (Array with: testCase).
+	^ self fitnessOf: testCase.
+]
+
 { #category : #running }
 SCoverageTest >> fitnessClass [
 	^ self subclassResponsibility.
@@ -21,7 +27,6 @@ SCoverageTest >> fitnessOf: aTestCase [
 
 { #category : #running }
 SCoverageTest >> installOn: aPackageName [
-	fitness tagetPackagesRegex: aPackageName.
 	profiler := self aSLProfilerCoverage profilerForPackagesMatching: aPackageName.
 	fitness profiler: profiler.
 	profiler uninstall.

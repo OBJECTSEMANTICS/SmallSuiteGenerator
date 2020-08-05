@@ -87,16 +87,6 @@ SSTestCase >> children [
 	^ children
 ]
 
-{ #category : #actions }
-SSTestCase >> computeFitness: fitnessClass [
-
-	| valueFitness |
-	valueFitness := fitnessClass computeFitness: self.
-	[ fitness addAll: valueFitness ]
-		on: MessageNotUnderstood
-		do: [ fitness add: valueFitness ]
-]
-
 { #category : #copying }
 SSTestCase >> copy [
 	| copy |

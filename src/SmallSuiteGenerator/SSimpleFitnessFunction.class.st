@@ -13,19 +13,12 @@ Class {
 	#name : #SSimpleFitnessFunction,
 	#superclass : #SFitnessFunction,
 	#instVars : [
-		'profiler',
+		'weight',
 		'superclasses',
 		'n'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
-
-{ #category : #actions }
-SSimpleFitnessFunction >> compute: testCaseCollection [
-	self setUp.
-	self run: testCaseCollection.
-	self tearDown.
-]
 
 { #category : #actions }
 SSimpleFitnessFunction >> computeCoverageWith: assoc [
@@ -37,6 +30,13 @@ SSimpleFitnessFunction >> computeCoverageWith: assoc [
 			val := [ assoc at: e ] on: Error do: [0].
 			v + val ].
 	^ sum / (n + 1)
+]
+
+{ #category : #actions }
+SSimpleFitnessFunction >> computeFitness [
+	| assoc |
+	assoc := self fitnessByClass.
+	^ Array with: assoc with: (self computeCoverageWith: assoc).
 ]
 
 { #category : #accessing }
@@ -51,72 +51,32 @@ SSimpleFitnessFunction >> fitnessByClass [
 ]
 
 { #category : #actions }
-SSimpleFitnessFunction >> fitnessOf: testCase withKey: string [
-	| assoc |
-	assoc := self fitnessByClass.
-	testCase fitnessByClass at: string put: assoc.
-	testCase fitness at: string put: (self computeCoverageWith: assoc).
-]
-
-{ #category : #accesing }
-SSimpleFitnessFunction >> functionName [
-	^ self subclassResponsibility
+SSimpleFitnessFunction >> fitnessOf: testCase [
+	| fitness |
+	fitness := self computeFitness.
+	testCase fitnessByClass at: self functionName put: fitness first.
+	testCase fitness at: self functionName put: fitness second.
 ]
 
 { #category : #initialization }
 SSimpleFitnessFunction >> initialize [
 	super initialize.
+	weight := 1.0.
 	n := 0.
 	superclasses := #().
 ]
 
-{ #category : #accesing }
-SSimpleFitnessFunction >> profiler [
-	^ profiler 
-]
-
-{ #category : #accesing }
-SSimpleFitnessFunction >> profiler: aProfiler [
-	profiler := aProfiler.
-]
-
 { #category : #actions }
 SSimpleFitnessFunction >> run: testCaseCollection [
-	| string |
-	string := self functionName.
 	testCaseCollection
 		do: [ :testCase | 
 			testCase length > 0 ifTrue: [
 				profiler cleanBlocksOfMethods.
-				testCase "runWithoutAssertions"runWithoutAssertionsAndLastStatement.
+				testCase runWithoutAssertionsAndLastStatement.
 				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
-				"testCase summaryExecutionMethods: profiler summaryExecutionMethods."
-				"self abstractDataOn: testCase."
-				self fitnessOf: testCase withKey: string. ]
-			ifFalse: [ testCase fitness at: string put: 0 ] ]
+				self fitnessOf: testCase. ]
+			ifFalse: [ testCase fitness at: self functionName put: 0 ] ]
 	
-]
-
-{ #category : #actions }
-SSimpleFitnessFunction >> runPopulation: testCaseCollection [
-	profiler cleanBlocksOfMethods.
-	testCaseCollection
-		do: [ :testCase | 
-			testCase length > 0 ifTrue: [ testCase "runWithoutAssertions"runWithoutAssertionsAndLastStatement ] ].
-	^ profiler summaryMethodsOf: targetClass  
-]
-
-{ #category : #actions }
-SSimpleFitnessFunction >> setUp [
-]
-
-{ #category : #actions }
-SSimpleFitnessFunction >> tearDown [
-]
-
-{ #category : #accessing }
-SSimpleFitnessFunction >> typeInfo: anObject [ 
-	profiler typeInfo: anObject
 ]
 
 { #category : #accessing }
@@ -125,4 +85,14 @@ SSimpleFitnessFunction >> updateSuperclasses [
 	n := (n min: superclasses size - 2). "avoid add Object and ProtoObject in superclasses"
 	superclasses := (superclasses first: n) 
 	
+]
+
+{ #category : #accesing }
+SSimpleFitnessFunction >> weight [
+	^ weight
+]
+
+{ #category : #accesing }
+SSimpleFitnessFunction >> weight: aFloat [
+	weight := aFloat.
 ]

@@ -308,7 +308,7 @@ STestCaseFactory >> seed: aNumber [
 STestCaseFactory >> seedBlock: aBlock [ 	
 	|copy|
 	copy := self fitness copy profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex).
-	fitnessSeed := copy computeCoverageWith: (copy fitnessByClass)
+	fitnessSeed := copy computeFitness.
 ]
 
 { #category : #actions }

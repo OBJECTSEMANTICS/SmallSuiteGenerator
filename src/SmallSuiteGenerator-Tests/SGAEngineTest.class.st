@@ -57,8 +57,7 @@ SGAEngineTest >> testRunOnPackagesMatchingSFoo [
 	typeInfo := utility typeInfoSFooOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
-	functionFitness tagetPackagesRegex: targetPackageRegex;
-	 targetClass: targetClass;
+	functionFitness targetClass: targetClass;
 	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
@@ -86,8 +85,7 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingMethodCoverage [
 	typeInfo := utility typeInfoSSTeacherOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SMethodCoverage new profiler: profiler.
-	functionFitness tagetPackagesRegex: targetPackageRegex;
-	 targetClass: targetClass;
+	functionFitness targetClass: targetClass;
 	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
@@ -113,9 +111,8 @@ SGAEngineTest >> testRunOnPackagesSSTeacherUsingStatementCoverage [
 	typeInfo := utility typeInfoSSTeacherOnPackage1.
 	self profilerOf: targetPackageRegex.
 	functionFitness := SStatementCoverage new profiler: profiler.
-	functionFitness tagetPackagesRegex: targetPackageRegex.
-	functionFitness targetClass: targetClass.
-	functionFitness typeInfo: typeInfo.
+	functionFitness targetClass: targetClass;
+	 typeInfo: typeInfo.
 	engine
 		targetPackageRegex: targetPackageRegex;
 		typeInfo: typeInfo;

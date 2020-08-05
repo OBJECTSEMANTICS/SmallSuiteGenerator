@@ -18,13 +18,3 @@ SStatementCoverage >> fitnessByClass [
 SStatementCoverage >> functionName [
 	^ 'block-coverage'
 ]
-
-{ #category : #actions }
-SStatementCoverage >> setUp [
-	
-]
-
-{ #category : #actions }
-SStatementCoverage >> tearDown [
-	
-]
