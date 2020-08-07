@@ -39,7 +39,7 @@ STestCaseFactory class >> resetToDefaults [
 
 { #category : #settings }
 STestCaseFactory class >> vizClass [
-	^ SGANullViz
+	^ SGAViz
 ]
 
 { #category : #actions }
@@ -308,7 +308,7 @@ STestCaseFactory >> seed: aNumber [
 STestCaseFactory >> seedBlock: aBlock [ 	
 	|copy|
 	copy := self fitness copy profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex).
-	fitnessSeed := copy computeFitness.
+	fitnessSeed := copy computeFitness first.
 ]
 
 { #category : #actions }

@@ -36,7 +36,7 @@ SSimpleFitnessFunction >> computeCoverageWith: assoc [
 SSimpleFitnessFunction >> computeFitness [
 	| assoc |
 	assoc := self fitnessByClass.
-	^ Array with: assoc with: (self computeCoverageWith: assoc).
+	^ Array with: (self computeCoverageWith: assoc) with: assoc.
 ]
 
 { #category : #accessing }
@@ -54,8 +54,9 @@ SSimpleFitnessFunction >> fitnessByClass [
 SSimpleFitnessFunction >> fitnessOf: testCase [
 	| fitness |
 	fitness := self computeFitness.
-	testCase fitnessByClass at: self functionName put: fitness first.
-	testCase fitness at: self functionName put: fitness second.
+	
+	testCase fitness at: self functionName put: fitness first.
+	testCase fitnessByClass at: self functionName put: fitness second.
 ]
 
 { #category : #initialization }
