@@ -34,8 +34,8 @@ SMultiFitnessFunction >> add: aFitness weight: aFloat [
 SMultiFitnessFunction >> computeFitness [
 	| fitness |
 	fitness := (functionList collect: [ :each | 
-		(each computeFitness second) * each weight ]) sum.
-	^ fitness
+		(each computeFitness first) * each weight ]) sum.
+	^ Array with: fitness
 ]
 
 { #category : #accessing }
