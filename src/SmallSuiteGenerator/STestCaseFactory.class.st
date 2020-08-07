@@ -39,7 +39,7 @@ STestCaseFactory class >> resetToDefaults [
 
 { #category : #settings }
 STestCaseFactory class >> vizClass [
-	^ SGANullViz
+	^ SGAViz
 ]
 
 { #category : #actions }

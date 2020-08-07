@@ -28,7 +28,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 				with: [ spec repository: 'github://jecisc/TinyLogger:v1.x.x/src' ].
 			spec
 				baseline: 'Pharo2VW'
-				with: [ spec repository: 'github://ObjectProfile/Pharo2VW:master/src' ].
+				with: [ spec repository: 'github://lin777/Pharo2VW:FixLoad/src' ].
 			spec
 				package: 'SmallSuiteGenerator'
 					with: [ spec requires: #('RoelTyper' 'SpyLite' 'MuTalk' 'NeoCSV' 'TinyLogger') ];
