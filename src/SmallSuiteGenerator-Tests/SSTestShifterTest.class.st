@@ -358,10 +358,12 @@ SSTestShifterTest >> testAddMessageWithReceiver [
 
 { #category : #tests }
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
+	" This feature is not covered yet
+	
 	| testCase targetClass |
 	targetClass := #SFoo fullClassNameSymbol.
 	testCase := SSTestCase
-		with: utility typeInfoSFooOnPackage3."(STON fromString: utility typeInfoStringSFoo6)."
+		with: utility typeInfoSFooOnPackage3.
 	testCase
 		targetClassName: targetClass;
 		addMessage: #return: from: targetClass.
@@ -380,11 +382,13 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSFoo [
 				add: '_var7 := ((OrderedCollection new) add: _var6; yourself).';
 				add: '_var8 := ((Dictionary new) add: (1->_var5); add: (2->_var7); yourself).';
 				add: '_var9 := _var0 return: _var8.';
-				yourself)
+				yourself)"
 ]
 
 { #category : #tests }
 SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
+	"This feature is not covered yet
+	
 	| testCase targetClass |
 	targetClass := #SStack fullClassNameSymbol.
 	testCase := SSTestCase
@@ -412,7 +416,7 @@ SSTestShifterTest >> testAddMessageWithTwoDeepScalarSStack [
 								add: '_var1 := ' , (SStudent name: 'Mery' with: 5) storeString , ' ';
 								add: '_var2 := ((OrderedCollection new) add: _var1; yourself)';
 								add: '_var3 := _var0 push: _var2 ';
-								yourself)))
+								yourself)))"
 ]
 
 { #category : #tests }

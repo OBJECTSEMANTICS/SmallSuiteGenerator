@@ -6,6 +6,50 @@ Object >> aVariableNodeClass [
 ]
 
 { #category : #'*SmallSuiteGenerator' }
+Object class >> compileClassMethod: aString forClass: aClass [ 
+	aClass class compile: aString
+]
+
+{ #category : #'*SmallSuiteGenerator' }
+Object class >> crateTestCaseConfig [
+	|aClass|
+	aClass := self getClassOf: ('GA' , self name , 'Test').
+	self createMainMethodsFor: aClass.
+	^ aClass
+]
+
+{ #category : #'*SmallSuiteGenerator' }
+Object class >> crateTestCaseConfigWithName: aString [
+	|aClass|
+	aClass := self getClassOf: aString.
+	self createMainMethodsFor: aClass.
+	^ aClass
+]
+
+{ #category : #'*SmallSuiteGenerator' }
+Object class >> createMainMethodsFor: aClass [
+	|cr|
+	cr := String cr.
+	self compileClassMethod: 'aClass', cr, '^ ',self name 
+		forClass: aClass.
+	self compileClassMethod: 'targetPackageRegex', cr, '^ ', self package name asString printString 
+		forClass: aClass.
+	
+]
+
+{ #category : #'*SmallSuiteGenerator' }
+Object class >> getClassOf: aString [
+	| aClassName class |
+	aClassName := aString asSymbol.
+	class := SPlatform lookUpClass: aClassName.
+	class
+		ifNil: [ class := SPlatform
+				createTestCaseClass: aClassName
+				inPackage: SPlatform testCaseClass outputPackageName].
+	^ class
+]
+
+{ #category : #'*SmallSuiteGenerator' }
 Object >> mutateToChange [
 	^ self
 ]

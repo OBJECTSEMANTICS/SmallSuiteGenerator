@@ -95,5 +95,5 @@ SPlatformPharo class >> saveOnLog: string [
 
 { #category : #tests }
 SPlatformPharo class >> testCaseClass [
-	^ "TestCase"SConfigTestCase
+	^ SConfigGenerationTestCase
 ]
