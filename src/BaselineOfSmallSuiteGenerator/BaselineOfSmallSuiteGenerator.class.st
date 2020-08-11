@@ -43,5 +43,5 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 			spec 
 				group: 'default' with: #('SmallSuiteGenerator-Tests');
 				group: 'All' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Visualization');
-				group: 'exporter' with: #('SmallSuiteGenerator-Exporter') ]
+				group: 'Exporter' with: #('SmallSuiteGenerator-Tests' 'SmallSuiteGenerator-Exporter') ]
 ]
