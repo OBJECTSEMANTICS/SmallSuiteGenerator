@@ -33,8 +33,8 @@ SExporte2VW >> blackListSAssertionTest [
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSAssignment [
-	^ {SAssignment >> #mutantColor .
-	SAssignment >> #stmColor }
+	^ {"SAssignment >> #mutantColor .
+	SAssignment >> #stmColor" }
 ]
 
 { #category : #'bl-tests' }
@@ -55,18 +55,18 @@ SExporte2VW >> blackListSError [
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSExpression [
-	^ {SExpression >> #mutantColor .
-	SExpression >> #stmColor }
+	^ {"SExpression >> #mutantColor .
+	SExpression >> #stmColor" }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSFactoryMessage [
-	^ {SFactoryMessage >> #stmColor }
+	^ {"SFactoryMessage >> #stmColor" }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSFieldAccessMessage [
-	^ {SFieldAccessMessage >> #stmColor }
+	^ {"SFieldAccessMessage >> #stmColor" }
 ]
 
 { #category : #'bl-ga' }
@@ -89,7 +89,7 @@ SGAEngineTest >> #tearDown}
 { #category : #'bl-ga' }
 SExporte2VW >> blackListSGAViz [
 	^ {
-SGAViz >> #addDescriptiveTextOn:ofColor:and: .
+"SGAViz >> #addDescriptiveTextOn:ofColor:and: .
 SGAViz >> #addHighlightMethodEvent:on:ofColor:.
 SGAViz >> #addHighlightTestCaseEvent:on:ofColor:.
 SGAViz >> #addLegend:on:withFontColor:and:.
@@ -128,8 +128,8 @@ SGAViz >> #summaryMethodsOfTargetClass:.
 SGAViz >> #testCaseShape:ofColor:with:highlight:scale:.
 SGAViz >> #generationDictionaryWith: .
 SGAViz >> #visualizeEvolutionFitness.
-SGAViz class >> #darkColors .
-SGAViz class >> #lightColors .}
+SGAViz class >> #darkColors.
+SGAViz class >> #lightColors."}
 ]
 
 { #category : #'bl-tests' }
@@ -145,12 +145,12 @@ SExporte2VW >> blackListSInspectorAssertion [
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSLiteral [
-	^ {SLiteral >> #stmColor }
+	^ {"SLiteral >> #stmColor" }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSMessage [
-	^ {SMessage >> #stmColor }
+	^ {"SMessage >> #stmColor" }
 ]
 
 { #category : #'bl-tests' }
@@ -244,12 +244,12 @@ SSTestCase >> #tearDown"}
 
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
-	^ {STestCaseFactory >> #tearDown .
+	^ {"STestCaseFactory >> #tearDown .
 STestCaseFactory >> #exportTests .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
 STestCaseFactory >> #generatedClass .
-STestCaseFactory >> #classesForRegex: }
+STestCaseFactory >> #classesForRegex:" }
 ]
 
 { #category : #'bl-examples' }

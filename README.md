@@ -20,6 +20,7 @@ Metacello new
  repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
  load.
 ```
+
 To install the version that presents graphic results of evolution coverage, execute the following code:
 
 ```Smalltalk
@@ -27,6 +28,15 @@ Metacello new
  baseline:'SmallSuiteGenerator';
  repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
  load: #('All').
+```
+
+To install the version that allows SmallSuiteGenerator to be exported to VisualWorks, run the following code:
+
+```Smalltalk
+Metacello new
+ baseline:'SmallSuiteGenerator';
+ repository: 'github://OBJECTSEMANTICS/SmallSuiteGenerator:master/src';
+ load: #('Exporter').
 ```
 
 ### VisualWorks
