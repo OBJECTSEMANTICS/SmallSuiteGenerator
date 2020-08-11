@@ -31,6 +31,38 @@ Class {
 	#category : #'SmallSuiteGenerator-Builder'
 }
 
+{ #category : #'instance creation' }
+STestCaseFactory class >> from: configClass [
+	| aTypeInfo printerClass lastStm parser|
+	aTypeInfo := configClass typeInfoValue copy.
+	aTypeInfo blackList: configClass decodeBlackList.
+	printerClass := configClass asDict 
+		ifTrue: [ SSDictionaryBasedPrinter ] 
+		ifFalse: [ SSStandardPrinter ].
+	lastStm := configClass lastMessage asString.
+	(lastStm notNil and: [ lastStm isNotEmpty ]) ifTrue: [
+		parser := RBParser parseExpression: configClass lastMessage asString]
+	ifFalse: [parser:= nil].
+
+	^(self new) 
+		generatedClass: configClass;
+		fitness: configClass fitnessValue; 
+		targetClassName: configClass aClass nameAsSymbol; 
+		targetPackageRegex: configClass targetPackageRegex; 
+		outputPackageName: configClass outputPackageName; 
+		numberOfGenerations: configClass numberOfGenerations; 
+		numberOfStatements: configClass numberOfStatements; 
+		populationSize: configClass populationSize;
+		setUpMethod: configClass setUpMethod asString; 
+		tearDownMethod: configClass tearDownMethod asString; 
+		limitToWait: configClass limitToWait;
+		lastMessage: parser; 
+		typeInfo: aTypeInfo;
+		printerClass: printerClass;
+		stopIterations: configClass stopIterations;
+		yourself
+]
+
 { #category : #settings }
 STestCaseFactory class >> resetToDefaults [
 	{ #vizClass -> SGANullViz } do: [ :val |
