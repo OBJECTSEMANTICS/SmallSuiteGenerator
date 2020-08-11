@@ -1,3 +1,8 @@
+"
+SExporte2VW
+-----------
+I am the class to export SmallSuiteGenerator from Pharo to VisualWorks
+"
 Class {
 	#name : #SExporte2VW,
 	#superclass : #Object,
@@ -66,9 +71,7 @@ SExporte2VW >> blackListSFieldAccessMessage [
 
 { #category : #'bl-ga' }
 SExporte2VW >> blackListSGAEngine [
-	^ {"SGAEngine >> #exportFitnessLog ."
- "VisualizationPackage"
-SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"}
+	^ {SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"}
 ]
 
 { #category : #'bl-examples' }
@@ -169,11 +172,9 @@ SExporte2VW >> blackListSNumericParameterization [
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSObject [
-	^ {"SObject >> #classOf:."
-"SObject >> #findClass:."
+	^ {
 SObject >> #fullNameOfClass:.
-SObject >> #fullSymbolOf:".
-SObject >> #initialize"}
+SObject >> #fullSymbolOf:}
 ]
 
 { #category : #'bl-builder' }
@@ -243,12 +244,7 @@ SSTestCase >> #tearDown"}
 
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
-	^ {"STestCaseFactory >> #createConfigurationMethods ."
-"STestCaseFactory >> #exportFitnessLog ."
-"STestCaseFactory >> #moveClass: ."
-"STestCaseFactory class >> #from:"
-STestCaseFactory >> #tearDown ."
-STestCaseFactory >> #export:with: ."
+	^ {STestCaseFactory >> #tearDown .
 STestCaseFactory >> #exportTests .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
@@ -284,12 +280,7 @@ SExporte2VW >> blackListSTestCaseTest [
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSTestShifter [
-	^ {SSTestShifter>> #canAddStatement.
-	"SSTestShifter>>#analyze."
-	"SSTestShifter>>#runWithoutAssertions."
-	"SSTestShifter>>#run."
-	"SSTestShifter>>#setUp.
-	SSTestShifter>>#tearDown"}
+	^ {SSTestShifter>> #canAddStatement.}
 ]
 
 { #category : #'bl-info' }
@@ -299,8 +290,7 @@ SExporte2VW >> blackListSTypeClassInfo [
 
 { #category : #'bl-info' }
 SExporte2VW >> blackListSTypeInfo [
-	^ {"STypeInfo >> #asTypeInfo:methodsBlacklist:."
-STypeInfo >> #completeTypeInfo.
+	^ {STypeInfo >> #completeTypeInfo.
 STypeInfo >> #updateArgsOf: .
 STypeInfo >> #deleteBlackListMethods.
 STypeInfo >> #blackList .
@@ -309,16 +299,7 @@ STypeInfo >> #blackList: }
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSTypeInfoTest [
-	^ {"STypeInfoTest >> #testAsTypeInfoScalars.
-STypeInfoTest >> #testAsTypeInfoSConferenceOnPackagesMatching.
-STypeInfoTest >> #testAsTypeInfoSEventOnPackagesMatching.
-STypeInfoTest >> #testAsTypeInfoSFoo.
-STypeInfoTest >> #testAsTypeInfoSFooOnClass.
-STypeInfoTest >> #testAsTypeInfoSFooWithNil.
-STypeInfoTest >> #testAsTypeInfoSTeacherOnClass.
-STypeInfoTest >> #testAsTypeInfoSTeacherOnPackagesMatching.
-STypeInfoTest >> #testFactoryMessages.
-"STypeInfoTest >> #testFromString.
+	^ {STypeInfoTest >> #testFromString.
 STypeInfoTest >> #testToStringComplexScalar.
 STypeInfoTest >> #testToString.
 STypeInfoTest >> #testAsTypeInfoSFoo}
@@ -334,12 +315,7 @@ SUtilityTypeInfo >> #typeInfoSFoo100 }
 
 { #category : #'bl-smallTypeColl' }
 SExporte2VW >> blackListSmallTypeCollector [
-	^ {"SmallTypeCollector >> #blackList."
-"SmallTypeCollector >> #classesOf:."
-"SmallTypeCollector >> #cleanArgName:."
-"SmallTypeCollector >> #collectArgTypesOf:."
-SmallTypeCollector >> #collectTypeFrom:.
-"SmallTypeCollector >> #methodInfoIn:."
+	^ {SmallTypeCollector >> #collectTypeFrom:.
 SmallTypeCollector >> #methodInfoIn:from:.
 SmallTypeCollector >> #typeFor:}
 ]
