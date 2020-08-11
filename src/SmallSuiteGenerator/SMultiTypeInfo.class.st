@@ -32,7 +32,8 @@ SMultiTypeInfo >> cleanTypes: anObject [
 
 { #category : #accessing }
 SMultiTypeInfo >> cleanTypesIn: aTypeInfo [
-	cleanTypes ifNil: [ cleanTypes := aTypeInfo intersect: self types ].
+	cleanTypes ifNotNil: [ ^ cleanTypes ].
+	cleanTypes := aTypeInfo intersect: self types.
 	^ cleanTypes
 ]
 
