@@ -289,12 +289,6 @@ STypeClassInfo >> reportFrequencyByFilter: aSelector [
 	^ (self filteredMethodsBy: aSelector) size
 ]
 
-{ #category : #actions }
-STypeClassInfo >> resetMethods [
-	self methodTypes do: [ :m | m resetArgs ].
-	self classMethodTypes do: [ :m | m resetArgs ].
-]
-
 { #category : #accessing }
 STypeClassInfo >> scalars [ 
 	^ scalars 

@@ -147,6 +147,15 @@ STypeInfo >> cleanBlockClosuresOf: aTypeCollector [
 	do: [].
 ]
 
+{ #category : #actions }
+STypeInfo >> collectSubclassesOf: type [
+	[(#(#Object #Metaclass #Class #ProtoObject #Behavior #ClassDescription) includes: type)
+		ifTrue: [ ^ Array with: type ]
+		ifFalse: [ ^ Array with: type withAll: (type asClass allSubclasses collect: #name) ]]
+	on: Error
+	do: [ ^ Array with: type ]
+]
+
 { #category : #adding }
 STypeInfo >> completeTypeInfo [
 	|aBlackList aBlock|
@@ -154,15 +163,13 @@ STypeInfo >> completeTypeInfo [
 	aBlock := [ :keyAndvalue :clsAndrealCls :symbol  | |key value cls|
 		key :=  keyAndvalue first.
 		value := keyAndvalue second.
-		cls := clsAndrealCls first."
-		key = #example ifTrue: [ self halt ]."
+		cls := clsAndrealCls first.
 		((self isMethodWith: key and: cls in: aBlackList) not "and: [ key isUnary not" and: [
 				value argTypes allSatisfy: [ :arg | arg types notEmpty ] ] "]") 
 		ifTrue: [
 			(clsAndrealCls second perform: symbol) 
 			at: key
 			ifAbsentPut: [ 
-				self updateArgsOf: value.
 				value returnType types ifEmpty: [value returnType type: #SUndefinedObject].
 				value receiver type: cls.
 				value hasProfiler: false.
@@ -174,7 +181,7 @@ STypeInfo >> completeTypeInfo [
 		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #methodTypes.].
 	classInfo classMethodTypes keysAndValuesDo: [ :key :value |
 		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #classMethodTypes.] ].
-	self reset
+	
 ]
 
 { #category : #copying }
@@ -264,13 +271,15 @@ STypeInfo >> initializeIsAbstract [
 { #category : #'error handling' }
 STypeInfo >> intersect: typeList [ 
 	|result|
-	result := OrderedCollection new. 
-	typeList do: [ :type | (self isScalar: type) 
-									ifTrue: [ result add: type ]
+	result := Set new. 
+	typeList do: [ :type | | allTypes |
+		allTypes := self collectSubclassesOf: type.
+		allTypes do: [:t | (self isScalar: t) 
+									ifTrue: [ result add: t ]
 									ifFalse: [
 										self classAt: type 
-										ifPresent: [ :cls | cls isAbstract ifFalse: [  result add: type ] ] ] ].
-	^ result
+										ifPresent: [ :cls | cls isAbstract ifFalse: [  result add: t ] ] ] ] ].
+	^ result asOrderedCollection
 ]
 
 { #category : #accessing }
@@ -305,7 +314,6 @@ STypeInfo >> joinWith: otherTypeInfo [
 	otherTypeInfo types
 		do: [ :aTypeClass | self addClassInfo: aTypeClass ].
 		self joinScalars: otherTypeInfo scalars.
-	self reset.
 ]
 
 { #category : #accessing }
@@ -355,12 +363,6 @@ STypeInfo >> reportFrequencyByFilter [
 ]
 
 { #category : #actions }
-STypeInfo >> reset [
-	types valuesDo: [ :type | type resetMethods ]
-	
-]
-
-{ #category : #actions }
 STypeInfo >> scalar: aClassName with: aValue [
 	scalars at: aClassName put: aValue asSet asArray
 ]
@@ -384,30 +386,4 @@ STypeInfo >> type: aAssoc [
 { #category : #accessing }
 STypeInfo >> types [ 
 	^ types
-]
-
-{ #category : #lookup }
-STypeInfo >> updateArgsOf: aMethod [ 
-	aMethod argTypes do: [ :argType |
-	| includeTypes |
-	includeTypes := argType types anySatisfy: [ :type | self scalars keys includes: type ].
-	includeTypes ifFalse: [ 
-		argType types do: [ :type | 
-			self scalars keys 
-				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
-				thenDo: [ :scalar | argType type: scalar ].
-			self types keys 
-				select: [ :scalar | (type asClass allSubclasses collect: #name) includes: scalar ] 
-				thenDo: [ :scalar | argType type: scalar ] ] ] ].
-	"updateArgsOf: aMethod 
-	aMethod argTypes do: [ :argType |
-	| includeTypes |
-	includeTypes := argType types anySatisfy: [ :type | self scalars keys includes: type ].
-	includeTypes ifFalse: [ 
-		argType types do: [ :type |
-			(type substrings: '.') last = 'Object' ifFalse: [
-			self scalars keys 
-				select: [ :scalar | ((self classOf: type asString) first allSubclasses 
-					collect: [:e | e fullName asSymbol]) includes: scalar ] 
-				thenDo: [ :scalar | argType type: scalar ] ] ] ]]"
 ]
