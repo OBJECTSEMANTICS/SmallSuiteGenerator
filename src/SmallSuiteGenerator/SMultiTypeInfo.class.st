@@ -115,7 +115,9 @@ SMultiTypeInfo >> isBlockSymbol [
 SMultiTypeInfo >> joinWith: otherTypeReturn [
 	| hasOneType |
 	hasOneType := self hasOnlyOneType.	
-	otherTypeReturn types do: [ :aType | self type: aType ].
+	(otherTypeReturn types difference: self types) do: [ :aType | 
+		self type: aType.
+		self resetTypes. ].
 	types size > 1 ifTrue: [ types remove: #SUndefinedObject ifAbsent: [ ] ].
 	mustBeFixed := hasOneType and: [ types size > 1 ]
 ]

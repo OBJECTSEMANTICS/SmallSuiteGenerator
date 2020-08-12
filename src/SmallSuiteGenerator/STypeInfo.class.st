@@ -181,7 +181,7 @@ STypeInfo >> completeTypeInfo [
 		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #methodTypes.].
 	classInfo classMethodTypes keysAndValuesDo: [ :key :value |
 		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #classMethodTypes.] ].
-	self reset
+	
 ]
 
 { #category : #copying }
@@ -314,7 +314,6 @@ STypeInfo >> joinWith: otherTypeInfo [
 	otherTypeInfo types
 		do: [ :aTypeClass | self addClassInfo: aTypeClass ].
 		self joinScalars: otherTypeInfo scalars.
-	self reset.
 ]
 
 { #category : #accessing }
@@ -361,12 +360,6 @@ STypeInfo >> reportFrequencyByFilter [
 						inject: 0
 						into: [ :sum :type | sum + (type reportFrequencyByFilter: aSelector) ]) ].
 	^ report
-]
-
-{ #category : #actions }
-STypeInfo >> reset [
-	types valuesDo: [ :type | type resetMethods ]
-	
 ]
 
 { #category : #actions }

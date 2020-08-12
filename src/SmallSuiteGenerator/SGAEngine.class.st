@@ -559,5 +559,4 @@ SGAEngine >> updateTypeInfoWith: aPopulation [
    self uninstall.
    fitness profiler updateClass: ((self initializeProfiler packages at: 1) classes at: targetClassName).
    fitness profiler deleteCache.
-	self typeInfo reset.
 ]
