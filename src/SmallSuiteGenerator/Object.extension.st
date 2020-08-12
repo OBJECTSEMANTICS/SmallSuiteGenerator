@@ -72,23 +72,22 @@ Object >> smallStoreString [
 Object >> storeOn: aStream [
 	"Append to the argument aStream a sequence of characters that is an 
 	expression whose evaluation creates an object similar to the receiver."
-
 	SPlatform reduceLevel.
 	aStream nextPut: $(.
 	self class isVariable
 		ifTrue: [ aStream
-				nextPutAll: '(' , self class name , ' basicNew: ';
+				nextPutAll: '(' , self class name , ' new: ';
 				store: self basicSize;
 				nextPutAll: ') ' ]
-		ifFalse: [ aStream nextPutAll: self class name , ' basicNew' ].
+		ifFalse: [ aStream nextPutAll: self class name , ' new' ].
 	SPlatform levelToPrint < 0
 		ifFalse: [ 1 to: self class instSize do: [ :i | 
 				aStream
 					nextPutAll: ' instVarAt: ';
 					store: i;
-					nextPutAll: ' put: ';
+					nextPutAll: ' put: (';
 					store: (self instVarAt: i);
-					nextPut: $; ].
+					nextPutAll: ');' ].
 			1 to: self basicSize do: [ :i | 
 				aStream
 					nextPutAll: ' basicAt: ';

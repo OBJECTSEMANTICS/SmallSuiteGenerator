@@ -78,7 +78,8 @@ SSStandardPrinter >> visitLiteral: aLiteral [
 	val := aLiteral value.
 	(val isNumber or:[ val isBlock])
 		ifTrue: [ val printOn: stream.]
-		ifFalse: [val storeOn: stream.].
+		ifFalse: [ SPlatform initLevelToPrint.
+			val storeOn: stream.].
 ]
 
 { #category : #'visiting-core' }
