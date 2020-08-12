@@ -161,7 +161,7 @@ STestCaseFactory >> exportTests [
 
 { #category : #accessing }
 STestCaseFactory >> firstExecution [
-	^ firstExecution ifNil: [ firstExecution := true ] ifNotNil: [ false ]
+	^ firstExecution ifNil: [ firstExecution := true ] ifNotNil: [ firstExecution := false ]
 ]
 
 { #category : #configuration }
@@ -339,7 +339,10 @@ STestCaseFactory >> seed: aNumber [
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
 	|copy|
-	copy := self fitness copy profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex).
+	copy := generatedClass fitnessValue profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex);
+		typeInfo: typeInfo;
+		targetClass: self targetClassName;
+		consideringNSuperclasses: nsuperclasses.
 	fitnessSeed := copy computeFitness first.
 ]
 
