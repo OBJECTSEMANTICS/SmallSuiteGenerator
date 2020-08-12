@@ -743,7 +743,7 @@ SUtilityTypeInfo >> typeInfoSFooOnPackage1 [
 									with: (Array with: intSymbol)
 									with: false)));
 		type:
-			(self fullSymbolOf: #SSPerson)
+			(#SSPerson fullClassNameSymbol)
 				->
 					(Array
 						with:

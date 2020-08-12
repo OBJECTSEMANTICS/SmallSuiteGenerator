@@ -264,13 +264,15 @@ SGAEngine >> initializeMutationOperator [
 SGAEngine >> initializePopulation [
 	| t |
 	t := Time now asSeconds.
-   population := self createRandomPopulation.
-   SExpression resetId.
-   self computeFitness.
-   population := self order: population.
-   initialPopulation := population.
-	self updateTypeInfoWith: population.
-	logs add: (self logClass logOf: self inGeneration: 0 inTime: t)
+	population ifNil: [
+	   population := self createRandomPopulation.
+ 	   SExpression resetId.
+  		self computeFitness.
+   		population := self order: population.
+   		initialPopulation := population.
+		self updateTypeInfoWith: population.
+		logs add: (self logClass logOf: self inGeneration: 0 inTime: t).
+	]
 ]
 
 { #category : #initialization }

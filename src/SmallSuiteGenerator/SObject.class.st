@@ -20,26 +20,16 @@ SObject class >> new [
 	^super new initialize
 ]
 
-{ #category : #'as yet unclassified' }
-SObject >> fullNameOfClass: aString [
-	^ aString
-]
-
-{ #category : #'as yet unclassified' }
-SObject >> fullSymbolOf: aSymbol [
-	^ aSymbol
-]
-
 { #category : #initialization }
 SObject >> initialize [
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #random }
 SObject >> next [
   ^ self random next
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #random }
 SObject >> random [
   ^ SPlatform randomGenerator
 ]

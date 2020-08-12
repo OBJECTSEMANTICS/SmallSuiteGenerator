@@ -9,21 +9,16 @@ Class {
 		'engine',
 		'typeInfo',
 		'targetClassName',
-		'targetPackageRegex',
-		'outputPackageName',
 		'fitness',
 		'numberOfIterations',
 		'profiler',
-		'setUpMethod',
-		'tearDownMethod',
 		'lastMessage',
 		'fitnessSeed',
 		'initialSeed',
 		'typeInfoSeed',
 		'typeInfoOrigin',
 		'firstExecution',
-		'generatedClass',
-		'nsuperclasses'
+		'generatedClass'
 	],
 	#classInstVars : [
 		'instance'
@@ -77,16 +72,7 @@ STestCaseFactory class >> vizClass [
 { #category : #actions }
 STestCaseFactory >> checkInvariants [
 	self assert: typeInfo isNil not description: 'Please provide type information of the target project'.
-	self assert: targetPackageRegex isNil not description: 'Please provide a regex that match the packages under analysis'
-]
-
-{ #category : #accessing }
-STestCaseFactory >> classesForRegex: regexExpressions [
-	^ (regexExpressions
-		flatCollect: [ :regex | 
-			RPackage organizer packages
-				select: [ :p | regex match: p name printString ] ]) asSet
-		flatCollect: #definedClasses
+	self assert: self targetPackageRegex isNil not description: 'Please provide a regex that match the packages under analysis'
 ]
 
 { #category : #actions }
@@ -191,8 +177,8 @@ STestCaseFactory >> generateLogs [
 
 { #category : #actions }
 STestCaseFactory >> generatedClass [
-	generatedClass ifNil: [ generatedClass := self getClassOf: ('GA' , self targetClassName , 'Test').
-		"Move class to package"].
+	generatedClass ifNotNil: [ ^ generatedClass ]. 
+	generatedClass := self targetClassName asClass createTestCaseConfig.
 	^ generatedClass
 	
 ]
@@ -202,19 +188,6 @@ STestCaseFactory >> generatedClass: anObject [
 	generatedClass := anObject
 ]
 
-{ #category : #actions }
-STestCaseFactory >> getClassOf: aString [
-	| aClassName class |
-	aClassName := aString asSymbol.
-	class := SPlatform lookUpClass: aClassName.
-	class
-		ifNil: [ class := SPlatform
-				createTestCaseClass: aClassName
-				inPackage: self outputPackageName].
-	^ class
-
-]
-
 { #category : #accessing }
 STestCaseFactory >> initialSeed [
 	^ initialSeed 
@@ -222,20 +195,13 @@ STestCaseFactory >> initialSeed [
 
 { #category : #initialization }
 STestCaseFactory >> initialize [
-	SPlatform resetRandomGenerator.
-	super initialize.
-	SSCustomMethods removeMethods.
-	self class resetToDefaults.
-	SSTestShifter resetToDefaults.
-	SGAEngine resetToDefaults.
-	fitness := SMethodCoverage new.
-	numberOfIterations := 20.
-	engine := self engineDefault.
-	fitnessSeed := 0.
-	outputPackageName := 'SmallSuiteGenerator-Tests-Generated'.
-	initialSeed := 100.
-	nsuperclasses := 0.
-	lastMessage := #()
+  self resetToDefaults.
+  fitness := SMethodCoverage new.
+  numberOfIterations := 20.
+  engine := self engineDefault.
+  fitnessSeed := 0.
+  initialSeed := 100.
+  lastMessage := #()
 ]
 
 { #category : #actions }
@@ -265,9 +231,13 @@ STestCaseFactory >> logClass: aClass [
 ]
 
 { #category : #initialization }
-STestCaseFactory >> nsuperclasses: aNumber [
+STestCaseFactory >> nsuperclasses [
+	^ self generatedClass nsuperclasses
+]
 
-	nsuperclasses := aNumber.
+{ #category : #initialization }
+STestCaseFactory >> nsuperclasses: aNumber [
+	self generatedClass: aNumber.
 ]
 
 { #category : #accessing }
@@ -293,12 +263,12 @@ STestCaseFactory >> openOnGeneratedClass [
 
 { #category : #accessing }
 STestCaseFactory >> outputPackageName [
-	^ outputPackageName
+	^ self generatedClass outputPackageName
 ]
 
 { #category : #accessing }
 STestCaseFactory >> outputPackageName: anObject [
-	outputPackageName := anObject
+	self generatedClass outputPackageName: anObject
 ]
 
 { #category : #configuration }
@@ -316,6 +286,16 @@ STestCaseFactory >> printerClass: aClass [
 STestCaseFactory >> reportClass [
 	reportClass ifNil: [ reportClass := SReportSTestCaseFactory on: self ].
 	^ reportClass 
+]
+
+{ #category : #initialization }
+STestCaseFactory >> resetToDefaults [
+  super initialize.
+  SPlatform resetRandomGenerator.
+  SSCustomMethods removeMethods.
+  self class resetToDefaults.
+  SSTestShifter resetToDefaults.
+  SGAEngine resetToDefaults
 ]
 
 { #category : #actions }
@@ -339,10 +319,13 @@ STestCaseFactory >> seed: aNumber [
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
 	|copy|
-	copy := generatedClass fitnessValue profiler: (self aSLProfilerCoverage profile: aBlock inPackagesMatching:targetPackageRegex);
+	copy := generatedClass fitnessValue profiler: 
+	(self aSLProfilerCoverage 
+			profile: aBlock 
+			inPackagesMatching: self targetPackageRegex);
 		typeInfo: typeInfo;
 		targetClass: self targetClassName;
-		consideringNSuperclasses: nsuperclasses.
+		consideringNSuperclasses: self nsuperclasses.
 	fitnessSeed := copy computeFitness first.
 ]
 
@@ -365,14 +348,15 @@ STestCaseFactory >> setUp [
 	fitness profiler: profiler;
 		typeInfo: typeInfo;
 		targetClass: self targetClassName;
-		consideringNSuperclasses: nsuperclasses.
+		consideringNSuperclasses: self nsuperclasses.
 	engine fitness: fitness;
 		numberOfGenerations: numberOfIterations;
 		typeInfo: self typeInfo;
 		targetClassName: self targetClassName;
-		targetPackageRegex: targetPackageRegex.
+		targetPackageRegex: self targetPackageRegex.
 	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy]
-ifFalse: [ engine fitness profiler: profiler.
+ifFalse: [ profiler typeInfo: typeInfo.
+	engine fitness profiler: profiler.
 	engine numberOfGenerations: numberOfIterations ]
 ]
 
@@ -407,13 +391,12 @@ STestCaseFactory >> targetClassName: aSymbol [
 
 { #category : #accessing }
 STestCaseFactory >> targetPackageRegex [
-	^ targetPackageRegex
+	^ self generatedClass targetPackageRegex
 ]
 
 { #category : #accessing }
 STestCaseFactory >> targetPackageRegex: anObject [
-	targetPackageRegex := anObject.
-	engine packageRegex: anObject 
+	self generatedClass targetPackageRegex: anObject
 ]
 
 { #category : #running }
@@ -422,7 +405,7 @@ STestCaseFactory >> tearDown [
 	self exportTests.
 	SSTestShifter resetToDefaults.
 	SPlatform resetRandomGenerator.
-	SmallTypeCollector resetClassDict
+	SmallTypeCollector resetClassDict.
 ]
 
 { #category : #'set strategies' }

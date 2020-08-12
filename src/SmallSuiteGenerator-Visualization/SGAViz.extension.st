@@ -396,7 +396,7 @@ SGAViz >> generationVisualization: fitnessSeed ofColor: dictColor [
 	self addHighlightMethodEvent: highlightMethod on: canvas ofColor: (dictColor at: 'highlightMethod').
 	widthShape := 800.
 	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor size: widthShape @height negated.
-	height := (Array with: contributionShape height with: height with: evolutionShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine numberOfGenerations + 1)  ] ] thenCollect: #height) max).
+	height := (Array with: contributionShape height with: height with: evolutionShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine logs size)  ] ] thenCollect: #height) max).
 	"addition of contributionShape border"
 	border := self borderOfSize: contributionShape width @ (height + 20) andColor: (dictColor at: 'border').
 	border translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.

@@ -170,9 +170,7 @@ SExporte2VW >> blackListSNumericParameterization [
 { #category : #'bl-core' }
 SExporte2VW >> blackListSObject [
 	^ {"SObject >> #classOf:."
-"SObject >> #findClass:."
-SObject >> #fullNameOfClass:.
-SObject >> #fullSymbolOf:".
+"SObject >> #findClass:."".
 SObject >> #initialize"}
 ]
 
@@ -243,17 +241,14 @@ SSTestCase >> #tearDown"}
 
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
-	^ {"STestCaseFactory >> #createConfigurationMethods ."
-"STestCaseFactory >> #exportFitnessLog ."
-"STestCaseFactory >> #moveClass: ."
+	^ { "STestCaseFactory >> #exportFitnessLog ."
 "STestCaseFactory class >> #from:"
 STestCaseFactory >> #tearDown ."
 STestCaseFactory >> #export:with: ."
 STestCaseFactory >> #exportTests .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
-STestCaseFactory >> #generatedClass .
-STestCaseFactory >> #classesForRegex: }
+STestCaseFactory >> #generatedClass}
 ]
 
 { #category : #'bl-examples' }

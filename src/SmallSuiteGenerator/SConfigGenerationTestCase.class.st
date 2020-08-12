@@ -218,6 +218,7 @@ SConfigGenerationTestCase class >> outputPackageName [
 
 { #category : #setter }
 SConfigGenerationTestCase class >> outputPackageName: aString [
+	self category: aString.
 	self compileMethod: #outputPackageName withReturn: aString storeString
 ]
 
