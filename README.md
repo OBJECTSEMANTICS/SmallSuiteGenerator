@@ -39,7 +39,7 @@ There are two ways to do the automatic generation of tests, in the first way we 
 
 ### 2.1. Generate tests from a configuration class
 
-- Define configuration class. To do this, you must create the configuration class for the class you want to generate tests, to do this, execute the following command with the class you want, in this case we will create the configuration class for "SSTeacher" class.
+1. Define configuration class. To do this, you must create the configuration class for the class you want to generate tests, to do this, execute the following command with the class you want, in this case we will create the configuration class for "SSTeacher" class.
 
 ``` Smalltalk
 SSTeacher createTestCaseConfig
@@ -53,7 +53,7 @@ In case you prefer to generate a configuration class with a predefined name, you
 SSTeacher createTestCaseConfigWithName: 'SSTeacherTest'
 ```
 
-- Change the default settings to your preference. Here are the most common settings that can be modified:
+2. Change the default settings to your preference. Here are the most common settings that can be modified:
 
 * `targetPackagesRegex`: Regular expression of the package where the class is found.
 ``` Smalltalk
@@ -92,7 +92,7 @@ GASSTeacherTest fitness: #statement
 GASSTeacherTest stopIterations: 5
 ```
 
-- Define the typeInfo. The first step is to define the code block that will be instrumented to get the typeInfo. Define package's regular expression pattern also.
+3. Define the typeInfo. The first step is to define the code block that will be instrumented to get the typeInfo. Define package's regular expression pattern also.
 
 ``` Smalltalk
 | typeInfo aBlock |
@@ -117,7 +117,7 @@ the third step is to reference the typeInfo by means of its key in the configura
 ``` Smalltalk
 GASSTeacherTest typeInfo: 'steacher'
 ```
-- Generate tests. Generate tests. Below is an example of how to generate tests from a configuration class.
+4. Generate tests. Generate tests. Below is an example of how to generate tests from a configuration class.
 
 ``` Smalltalk
 (STestCaseFactoryPharo from: GASSTeacherTest )
