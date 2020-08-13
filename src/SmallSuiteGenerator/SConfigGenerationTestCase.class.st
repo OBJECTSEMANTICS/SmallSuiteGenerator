@@ -62,7 +62,7 @@ SConfigGenerationTestCase class >> crossoverOperator [
 { #category : #setter }
 SConfigGenerationTestCase class >> crossoverOperator: aClass [
 
-	self compileMethod: #crossoverOperator withReturn: aClass printString
+	self compileMethod: #crossoverOperator withReturn: aClass storeString
 ]
 
 { #category : #settings }
@@ -74,7 +74,7 @@ SConfigGenerationTestCase class >> crossoverStrategy [
 { #category : #setter }
 SConfigGenerationTestCase class >> crossoverStrategy: aClass [
 
-	self compileMethod: #crossoverStrategy withReturn: aClass printString
+	self compileMethod: #crossoverStrategy withReturn: aClass storeString
 ]
 
 { #category : #settings }
@@ -288,7 +288,7 @@ SConfigGenerationTestCase class >> selectionStrategy [
 { #category : #setter }
 SConfigGenerationTestCase class >> selectionStrategy: aClass [
 
-	self compileMethod: #selectionStrategy withReturn: aClass printString
+	self compileMethod: #selectionStrategy withReturn: aClass storeString
 ]
 
 { #category : #settings }
@@ -299,7 +299,7 @@ SConfigGenerationTestCase class >> selectionStrategyTestCase [
 { #category : #setter }
 SConfigGenerationTestCase class >> selectionStrategyTestCase: aClass [
 
-	self compileMethod: #selectionStrategyTestCase withReturn: aClass printString
+	self compileMethod: #selectionStrategyTestCase withReturn: aClass storeString
 ]
 
 { #category : #settings }
