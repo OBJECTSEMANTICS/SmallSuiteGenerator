@@ -319,7 +319,7 @@ STestCaseFactory >> seed: aNumber [
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
 	|copy|
-	copy := generatedClass fitnessValue profiler: 
+	copy := self generatedClass fitnessValue profiler: 
 	(self aSLProfilerCoverage 
 			profile: aBlock 
 			inPackagesMatching: self targetPackageRegex);
