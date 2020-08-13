@@ -1,6 +1,6 @@
 Extension { #name : #RSGroup }
 
-{ #category : #'*SmallSuiteGenerator' }
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 RSGroup >> addShape: shape [
 	^ self add: shape
 ]
