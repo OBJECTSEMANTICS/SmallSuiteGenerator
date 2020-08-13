@@ -14,6 +14,12 @@ SConfigGenerationTestCase class >> aClass [
 	self subclassResponsibility 
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> aClass: aClass [
+
+	self compileMethod: #aClass withReturn: aClass printString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> addTypeInfo: aTypeInfo withKey: aString [
 
@@ -25,10 +31,26 @@ SConfigGenerationTestCase class >> asDict [
 	^ false
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> asDict: aBoolean [
+	self compileMethod: #asDict withReturn: aBoolean asString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> blackList [
 
 	^ #()
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> blackList: aColl [
+
+	self compileMethod: #blackList withReturn: (self encodeBlackList: aColl) storeString
+]
+
+{ #category : #settings }
+SConfigGenerationTestCase class >> compileMethod: aSymbol withReturn: aString [
+	self class compile: aSymbol asString, String cr, '	^ ', aString classified: 'settings'
 ]
 
 { #category : #settings }
@@ -36,12 +58,11 @@ SConfigGenerationTestCase class >> decodeBlackList [
 	|result|
 	result := OrderedCollection new.
 	self blackList do: [:e | |class finded|
-		finded := (e at:1) asClass.
-		finded isNotEmpty ifTrue: [
-			class := finded first.
+			[class := (e at:1) asClass.
 			(e at: 3) ifTrue: [class := class class].
-			result add: (class compiledMethodAt: (e at: 2))
-		]
+			result add: (class compiledMethodAt: (e at: 2))]
+			on: Error 
+			do: [  ]
 	 ].
 	 ^ result
 ]
@@ -54,6 +75,14 @@ SConfigGenerationTestCase class >> defaultTypeInfo [
 ]
 
 { #category : #settings }
+SConfigGenerationTestCase class >> encodeBlackList: aColl [
+	^ aColl collect: [ :compM | Array 
+		with: compM origin instanceSide name 
+		with: compM selector 
+		with: compM origin isMeta ]
+]
+
+{ #category : #settings }
 SConfigGenerationTestCase class >> factory [
 	^ STestCaseFactoryPharo from: self 
 ]
@@ -62,6 +91,13 @@ SConfigGenerationTestCase class >> factory [
 SConfigGenerationTestCase class >> fitness [
 
 	^ #statement
+	"^ Array with: SStatementCoverage with: #new"
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> fitness: aSymbol [
+
+	self compileMethod: #fitness withReturn: aSymbol printString
 ]
 
 { #category : #settings }
@@ -92,9 +128,20 @@ SConfigGenerationTestCase class >> lastMessage [
 	^ ''
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> lastMessage: aString [
+
+	self compileMethod: #lastMessage withReturn: aString storeString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> limitToWait [
 	^ 1000
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> limitToWait: aNumber [
+	self compileMethod: #limitToWait withReturn: aNumber asString
 ]
 
 { #category : #settings }
@@ -103,9 +150,21 @@ SConfigGenerationTestCase class >> logClass [
 	^ SGANullLog 
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> logClass: aClass [
+
+	self compileMethod: #logClass withReturn: aClass printString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> logs [
 	^ false
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> logs: aBoolean [ 
+
+	self compileMethod: #logs withReturn: aBoolean printString
 ]
 
 { #category : #settings }
@@ -114,9 +173,20 @@ SConfigGenerationTestCase class >> methodClass [
 	^ SSNullMethods
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> methodClass: aClass [
+
+	self compileMethod: #methodClass withReturn: aClass printString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> nsuperclasses [
 	^ 0
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> nsuperclasses: aNumber [
+	self compileMethod: #nsuperclasses withReturn: aNumber printString
 ]
 
 { #category : #settings }
@@ -124,9 +194,20 @@ SConfigGenerationTestCase class >> numberOfGenerations [
 	^ 5
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> numberOfGenerations: aNumber [
+	self compileMethod: #numberOfGenerations withReturn: aNumber printString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> numberOfStatements [
 	^ 30
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> numberOfStatements: aNumber [
+	self compileMethod: #numberOfStatements withReturn: aNumber printString
+	
 ]
 
 { #category : #settings }
@@ -135,9 +216,21 @@ SConfigGenerationTestCase class >> outputPackageName [
 	^ 'GeneratedTests'
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> outputPackageName: aString [
+	self category: aString.
+	self compileMethod: #outputPackageName withReturn: aString storeString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> populationSize [
 	^ 30
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> populationSize: aNumber [
+	self compileMethod: #populationSize withReturn: aNumber printString
+	
 ]
 
 { #category : #settings }
@@ -146,10 +239,22 @@ SConfigGenerationTestCase class >> printerClass [
 	^ SSDictionaryBasedPrinter
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> printerClass: aClass [
+
+	self compileMethod: #printerClass withReturn: aClass printString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> setUpMethod [
 
 	^ ''
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> setUpMethod: aString [
+
+	self compileMethod: #setUpMethod withReturn: aString storeString
 ]
 
 { #category : #settings }
@@ -158,9 +263,21 @@ SConfigGenerationTestCase class >> stopIterations [
 	^ 10
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> stopIterations: aNumber [
+
+	self compileMethod: #stopIterations withReturn: aNumber storeString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> targetPackageRegex [
 	self subclassResponsibility
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> targetPackageRegex: aString [
+
+	self compileMethod: #targetPackageRegex withReturn: aString storeString
 ]
 
 { #category : #settings }
@@ -169,10 +286,22 @@ SConfigGenerationTestCase class >> tearDownMethod [
 	^ ''
 ]
 
+{ #category : #setter }
+SConfigGenerationTestCase class >> tearDownMethod: aString [
+
+	self compileMethod: #tearDownMethod withReturn: aString storeString
+]
+
 { #category : #settings }
 SConfigGenerationTestCase class >> typeInfo [
 
-	^ 'Default'
+	^ 'Default' 
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> typeInfo: aString [
+
+	self compileMethod: #typeInfo withReturn: aString storeString
 ]
 
 { #category : #settings }
@@ -198,4 +327,10 @@ SConfigGenerationTestCase class >> typeInfos [
 SConfigGenerationTestCase class >> vizClass [
 
 	^ SGANullViz 
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> vizClass: aClass [
+
+	self compileMethod: #vizClass withReturn: aClass printString
 ]

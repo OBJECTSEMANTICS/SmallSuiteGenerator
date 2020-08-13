@@ -172,9 +172,7 @@ SExporte2VW >> blackListSNumericParameterization [
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSObject [
-	^ {
-SObject >> #fullNameOfClass:.
-SObject >> #fullSymbolOf:}
+	^ {}
 ]
 
 { #category : #'bl-builder' }
