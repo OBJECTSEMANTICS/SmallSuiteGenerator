@@ -45,7 +45,7 @@ Class {
 		'typeInfoProfiler',
 		'targetPackageRegex',
 		'elitismRate',
-		'crossoverRate',
+		'crossoverStrategy',
 		'stopIterations',
 		'totalExecutionGA',
 		'selectionStrategyTestCase'
@@ -137,7 +137,7 @@ SGAEngine >> createNewPopulation [
         	p2 := selectedIndividuals second.
 		  	p1copy := self similarChild: p1 with: newNumber + 1.
 		  	p2copy := self similarChild: p2 with: newNumber + 2.
-        self shouldCrossOver 
+         (crossoverStrategy shouldCrossOver: p1 with: p2) 
 				ifTrue: [ 
 					children := crossoverOperator crossover: p1 with: p2.
 					o1 := self updateHierarchyData: { p1 . p2 } of: (children first idPopulation: newNumber + 3).
@@ -184,14 +184,9 @@ SGAEngine >> crossoverOperator: aCrossoverOperator [
 	crossoverOperator := aCrossoverOperator
 ]
 
-{ #category : #rating }
-SGAEngine >> crossoverRate [
-	^ crossoverRate
-]
-
-{ #category : #rating }
-SGAEngine >> crossoverRate: aNumber [
-	selectionStrategy crossoverRate: aNumber
+{ #category : #accessing }
+SGAEngine >> crossoverStrategy: aCrossoverStrategy [
+	crossoverStrategy := aCrossoverStrategy.
 ]
 
 { #category : #actions }
@@ -204,7 +199,7 @@ SGAEngine >> doSelection [
 SGAEngine >> eliteOfCurrentPopulation [
 	| endIndex index popSize |
 	popSize := population size.
-	endIndex := ((popSize * elitismRate * 0.01) round: 0) asInteger.
+	endIndex := ((popSize * elitismRate "* 0.01") round: 0) asInteger.
 	(popSize > 0 and: [ endIndex == 0 ]) ifTrue: [ endIndex := 1 ].
 	index := 0.
 	endIndex >= 1 ifTrue: [ ^ (((population copyFrom: 1 to: endIndex) collect: [:testCase |
@@ -237,7 +232,7 @@ SGAEngine >> initialize [
   populationSize := 30.
   numberOfGenerations := 100.
   selectionStrategy := SGARandomSelection new.
-  crossoverRate := 0.8.
+  crossoverStrategy := SGACrossoverRate new.
   elitismRate := 0.1.
   numberOfStatements := 10.
   stopIterations := 30.
@@ -448,12 +443,6 @@ SGAEngine >> selectionStrategyTestCase: aSelectionStrategy [
 	selectionStrategyTestCase := aSelectionStrategy 
 ]
 
-{ #category : #testing }
-SGAEngine >> shouldCrossOver [
-
-	^ self next < self crossoverRate
-]
-
 { #category : #actions }
 SGAEngine >> similarChild: testCase with: idPopulation [
 
@@ -504,12 +493,6 @@ SGAEngine >> targetPackageRegex: aString [
 SGAEngine >> totalExecutionGA [
 
 	^ totalExecutionGA 
-]
-
-{ #category : #accessing }
-SGAEngine >> tournamentSize: aNumber [
-
-	selectionStrategy tournamentSize: aNumber
 ]
 
 { #category : #accessing }

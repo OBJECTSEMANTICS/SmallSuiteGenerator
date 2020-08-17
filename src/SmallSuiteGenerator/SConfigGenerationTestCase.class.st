@@ -54,6 +54,30 @@ SConfigGenerationTestCase class >> compileMethod: aSymbol withReturn: aString [
 ]
 
 { #category : #settings }
+SConfigGenerationTestCase class >> crossoverOperator [
+
+	^ SGACrossoverOperation new
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> crossoverOperator: aClass [
+
+	self compileMethod: #crossoverOperator withReturn: aClass storeString
+]
+
+{ #category : #settings }
+SConfigGenerationTestCase class >> crossoverStrategy [
+
+	^ SGACrossoverRate new
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> crossoverStrategy: aClass [
+
+	self compileMethod: #crossoverStrategy withReturn: aClass storeString
+]
+
+{ #category : #settings }
 SConfigGenerationTestCase class >> decodeBlackList [
 	|result|
 	result := OrderedCollection new.
@@ -72,6 +96,17 @@ SConfigGenerationTestCase class >> defaultTypeInfo [
 	defaultTypeInfo ifNil: [defaultTypeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: []
 						inPackagesMatching: self targetPackageRegex)].
 	^ defaultTypeInfo
+]
+
+{ #category : #settings }
+SConfigGenerationTestCase class >> elitismRate [
+	^ 0.1
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> elitismRate: aNumber [
+
+	self compileMethod: #elitismRate withReturn: aNumber storeString
 ]
 
 { #category : #settings }
@@ -243,6 +278,28 @@ SConfigGenerationTestCase class >> printerClass [
 SConfigGenerationTestCase class >> printerClass: aClass [
 
 	self compileMethod: #printerClass withReturn: aClass printString
+]
+
+{ #category : #settings }
+SConfigGenerationTestCase class >> selectionStrategy [
+	^ SGARandomSelection new
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> selectionStrategy: aClass [
+
+	self compileMethod: #selectionStrategy withReturn: aClass storeString
+]
+
+{ #category : #settings }
+SConfigGenerationTestCase class >> selectionStrategyTestCase [
+	^ SGARouletteSelection new
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> selectionStrategyTestCase: aClass [
+
+	self compileMethod: #selectionStrategyTestCase withReturn: aClass storeString
 ]
 
 { #category : #settings }

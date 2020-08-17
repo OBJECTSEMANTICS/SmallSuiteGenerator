@@ -19,7 +19,7 @@ SInitialization >> copy: testCaseFactory [
 		targetPackageRegex: testCaseFactory targetPackageRegex;
 		outputPackageName: testCaseFactory outputPackageName;
 		seed: testCaseFactory initialSeed;
-		fitnessSeedCalculated: testCaseFactory fitnessSeed;
+		fitnessSeed: testCaseFactory fitnessSeed;
 		numberOfGenerations: testCaseFactory numberOfGenerations;
 		numberOfStatements: testCaseFactory engine numberOfStatements;
 		populationSize: testCaseFactory engine populationSize;

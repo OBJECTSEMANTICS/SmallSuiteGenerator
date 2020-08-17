@@ -42,19 +42,15 @@ STestCaseFactory class >> from: configClass [
 	^(self new) 
 		generatedClass: configClass;
 		fitness: configClass fitnessValue; 
-		targetClassName: configClass aClass nameAsSymbol; 
-		targetPackageRegex: configClass targetPackageRegex; 
-		outputPackageName: configClass outputPackageName; 
+		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
-		numberOfStatements: configClass numberOfStatements; 
-		populationSize: configClass populationSize;
 		setUpMethod: configClass setUpMethod asString; 
 		tearDownMethod: configClass tearDownMethod asString; 
 		limitToWait: configClass limitToWait;
 		lastMessage: parser; 
 		typeInfo: aTypeInfo;
 		printerClass: printerClass;
-		stopIterations: configClass stopIterations;
+		
 		yourself
 ]
 
@@ -88,14 +84,19 @@ STestCaseFactory >> createTestCases [
 	self tearDown.
 ]
 
-{ #category : #accessing }
-STestCaseFactory >> crossoverRate: aNumber [
-	engine crossoverRate: aNumber
+{ #category : #actions }
+STestCaseFactory >> crossoverOperator: aCrossoverOperator [
+	self generatedClass crossoverStrategy: aCrossoverOperator
+]
+
+{ #category : #actions }
+STestCaseFactory >> crossoverStrategy: aCrossoverStrategy [
+	self generatedClass crossoverStrategy: aCrossoverStrategy
 ]
 
 { #category : #accessing }
 STestCaseFactory >> elitismRate: aNumber [
-	engine elitismRate: aNumber
+	self generatedClass elitismRate: aNumber.
 ]
 
 { #category : #accessing }
@@ -166,7 +167,7 @@ STestCaseFactory >> fitnessSeed [
 ]
 
 { #category : #accessing }
-STestCaseFactory >> fitnessSeedCalculated: number [ 
+STestCaseFactory >> fitnessSeed: number [ 
 	fitnessSeed := number
 ]
 
@@ -231,13 +232,8 @@ STestCaseFactory >> logClass: aClass [
 ]
 
 { #category : #initialization }
-STestCaseFactory >> nsuperclasses [
-	^ self generatedClass nsuperclasses
-]
-
-{ #category : #initialization }
 STestCaseFactory >> nsuperclasses: aNumber [
-	self generatedClass: aNumber.
+	self generatedClass nsuperclasses: aNumber.
 ]
 
 { #category : #accessing }
@@ -252,8 +248,8 @@ STestCaseFactory >> numberOfGenerations: aNumber [
 ]
 
 { #category : #configuration }
-STestCaseFactory >> numberOfStatements: aInt [
-	engine numberOfStatements: aInt
+STestCaseFactory >> numberOfStatements: anInteger [
+	self generatedClass numberOfStatements: anInteger
 ]
 
 { #category : #export }
@@ -272,8 +268,8 @@ STestCaseFactory >> outputPackageName: anObject [
 ]
 
 { #category : #configuration }
-STestCaseFactory >> populationSize: int [
-	engine populationSize: int
+STestCaseFactory >> populationSize: anInteger [
+	self generatedClass populationSize: anInteger.
 ]
 
 { #category : #'set strategies' }
@@ -325,39 +321,52 @@ STestCaseFactory >> seedBlock: aBlock [
 			inPackagesMatching: self targetPackageRegex);
 		typeInfo: typeInfo;
 		targetClass: self targetClassName;
-		consideringNSuperclasses: self nsuperclasses.
+		consideringNSuperclasses: self generatedClass nsuperclasses.
 	fitnessSeed := copy computeFitness first.
 ]
 
 { #category : #actions }
 STestCaseFactory >> selectionStrategy: aSelectionStrategy [
-	engine selectionStrategy: aSelectionStrategy 
+	self generatedClass selectionStrategy: aSelectionStrategy
 ]
 
 { #category : #actions }
 STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
-	engine selectionStrategyTestCase: aSelectionStrategy 
+	self generatedClass selectionStrategyTestCase: aSelectionStrategy
 ]
 
 { #category : #running }
 STestCaseFactory >> setUp [
-	
-	self initializeProfiler.
-	self firstExecution ifTrue: [
-	SPlatform resetRandomGenerator.
-	fitness profiler: profiler;
-		typeInfo: typeInfo;
-		targetClass: self targetClassName;
-		consideringNSuperclasses: self nsuperclasses.
-	engine fitness: fitness;
-		numberOfGenerations: numberOfIterations;
-		typeInfo: self typeInfo;
-		targetClassName: self targetClassName;
-		targetPackageRegex: self targetPackageRegex.
-	typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy]
-ifFalse: [ profiler typeInfo: typeInfo.
-	engine fitness profiler: profiler.
-	engine numberOfGenerations: numberOfIterations ]
+  self initializeProfiler.
+  self firstExecution ifTrue: [ SPlatform resetRandomGenerator.
+        fitness
+           profiler: profiler;
+           typeInfo: typeInfo;
+           targetClass: self targetClassName;
+           consideringNSuperclasses: self generatedClass nsuperclasses.
+        self setUpEngine.
+        typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy ] ifFalse: [ profiler typeInfo: typeInfo.
+        engine fitness profiler: profiler.
+        engine numberOfGenerations: numberOfIterations ]
+]
+
+{ #category : #running }
+STestCaseFactory >> setUpEngine [
+  engine
+     fitness: fitness;
+     numberOfGenerations: numberOfIterations;
+     typeInfo: self typeInfo;
+     targetClassName: self targetClassName;
+     targetPackageRegex: self targetPackageRegex;
+	  elitismRate: self generatedClass elitismRate;
+	  numberOfStatements: self generatedClass numberOfStatements;
+	  populationSize: self generatedClass populationSize;
+	  stopIterations: self generatedClass stopIterations;
+	  numberOfGenerations: self generatedClass numberOfGenerations;
+	  selectionStrategy: self generatedClass selectionStrategy;
+	  selectionStrategyTestCase: self generatedClass selectionStrategyTestCase;
+	  crossoverStrategy: self generatedClass crossoverStrategy;
+	  crossoverOperator: self generatedClass crossoverOperator
 ]
 
 { #category : #'set strategies' }
@@ -375,7 +384,7 @@ STestCaseFactory >> settingMethodClass: aClass [
 
 { #category : #configuration }
 STestCaseFactory >> stopIterations: anInteger [
-	engine stopIterations: anInteger
+	self generatedClass stopIterations: anInteger.
 ]
 
 { #category : #accessing }
