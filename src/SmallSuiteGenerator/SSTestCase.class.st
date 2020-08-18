@@ -14,7 +14,8 @@ Class {
 		'selectionStrategy',
 		'parents',
 		'children',
-		'properties'
+		'properties',
+		'summaryExecutedBlocks'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -109,6 +110,34 @@ SSTestCase >> deepCopy [
   ^ copy
 ]
 
+{ #category : #comparing }
+SSTestCase >> differenceWith: aTestCase [
+	| test1 test2 keys result |
+	result := 0.
+	test1 := self summaryExecutedBlocks.
+	test2 := aTestCase summaryExecutedBlocks.
+	keys := (test1 keys union: test2 keys).
+	keys do: [ :key | | val1 val2 sum |
+		[sum := 0.
+		val1 := test1 at: key ifAbsent: [].
+		val2 := test2 at: key ifAbsent: [].
+		val1 with: val2 do: [ :block1 :block2 |
+			(block1 wasExecuted = block2 wasExecuted) ifTrue: [ sum := sum + 1 ].
+		].
+		result := result + (1 - (sum / val1 size))]
+		on: Error
+		do: [ { val1 . val2 } select: [ :e | e isNotNil ] 
+			thenDo: [ :e | sum := 1 - ((e select: [ :b | b wasExecuted not ]) size / e size).
+				result := result + sum ] ]			
+	].
+	^ result / keys size
+]
+
+{ #category : #comparing }
+SSTestCase >> differenceWithAll: aColl [
+	^ aColl collect: [ :aTestCase | self differenceWith: aTestCase ]
+]
+
 { #category : #accessing }
 SSTestCase >> fitness [ 	
 	^ fitness
@@ -159,6 +188,7 @@ SSTestCase >> initialize [
    summaryExecutionMethods := OrderedCollection new.
 	hasErrors := false.
 	fitness := Dictionary new.
+	summaryExecutedBlocks := Dictionary new.
 	fitnessByClass := Dictionary new.
 	selectionStrategy := SGARouletteSelection new.
 	properties := Dictionary new.
@@ -279,6 +309,16 @@ SSTestCase >> setFitnessByClass: aDictionary [
 
 { #category : #printing }
 SSTestCase >> storeOn: aStream [
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryExecutedBlocks [
+	^ summaryExecutedBlocks
+]
+
+{ #category : #accessing }
+SSTestCase >> summaryExecutedBlocks: aSummaryExecutedBlocks [ 
+	summaryExecutedBlocks := aSummaryExecutedBlocks 
 ]
 
 { #category : #accessing }

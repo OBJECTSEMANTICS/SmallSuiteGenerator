@@ -352,7 +352,8 @@ SGAEngine >> numberOfStatements: anInteger [
 { #category : #sorting }
 SGAEngine >> order: aCollection [
 
-	^ aCollection sort: [ :stm1 :stm2 | stm1 isBetterThan: stm2 using: fitness functionName ]
+	^ aCollection sort: [ :stm1 :stm2 | 
+		stm1 isBetterThan: stm2 using: fitness functionName ]
 ]
 
 { #category : #accessing }

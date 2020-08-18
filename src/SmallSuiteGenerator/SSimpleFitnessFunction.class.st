@@ -74,6 +74,9 @@ SSimpleFitnessFunction >> run: testCaseCollection [
 			testCase length > 0 ifTrue: [
 				profiler cleanBlocksOfMethods.
 				testCase runWithoutAssertionsAndLastStatement.
+				testCase summaryExecutedBlocks: 
+					(profiler collectExecutedMethodsOfClasses: 
+						(Array with: targetClass withAll: superclasses)).
 				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
 				self fitnessOf: testCase. ]
 			ifFalse: [ testCase fitness at: self functionName put: 0 ] ]
