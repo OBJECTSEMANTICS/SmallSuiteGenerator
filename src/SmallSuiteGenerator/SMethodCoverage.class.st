@@ -3,7 +3,7 @@ SMethodCoverage is responsible for calculating the method coverage in each testC
 "
 Class {
 	#name : #SMethodCoverage,
-	#superclass : #SSimpleFitnessFunction,
+	#superclass : #SIndependentFitnessFunction,
 	#category : #'SmallSuiteGenerator-GA'
 }
 

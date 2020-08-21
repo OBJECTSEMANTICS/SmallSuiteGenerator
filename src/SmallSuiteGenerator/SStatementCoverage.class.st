@@ -5,7 +5,7 @@ It calculates how many statements were executed in each class defined of the tes
 "
 Class {
 	#name : #SStatementCoverage,
-	#superclass : #SSimpleFitnessFunction,
+	#superclass : #SIndependentFitnessFunction,
 	#category : #'SmallSuiteGenerator-GA'
 }
 

@@ -314,7 +314,7 @@ STestCaseFactory >> seed: aNumber [
 
 { #category : #configuration }
 STestCaseFactory >> seedBlock: aBlock [ 	
-	|copy|
+	[|copy|
 	copy := self generatedClass fitnessValue profiler: 
 	(self aSLProfilerCoverage 
 			profile: aBlock 
@@ -322,7 +322,7 @@ STestCaseFactory >> seedBlock: aBlock [
 		typeInfo: typeInfo;
 		targetClass: self targetClassName;
 		consideringNSuperclasses: self generatedClass nsuperclasses.
-	fitnessSeed := copy computeFitness first.
+	fitnessSeed := copy computeFitness first.] on: Error do: [ fitnessSeed := 0 ]
 ]
 
 { #category : #actions }

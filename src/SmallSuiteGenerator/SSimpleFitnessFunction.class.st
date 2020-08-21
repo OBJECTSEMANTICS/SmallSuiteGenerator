@@ -46,11 +46,6 @@ SSimpleFitnessFunction >> consideringNSuperclasses: anInteger [
 ]
 
 { #category : #actions }
-SSimpleFitnessFunction >> fitnessByClass [
-	self subclassResponsibility
-]
-
-{ #category : #actions }
 SSimpleFitnessFunction >> fitnessOf: testCase [
 	| fitness |
 	fitness := self computeFitness.
@@ -65,22 +60,6 @@ SSimpleFitnessFunction >> initialize [
 	weight := 1.0.
 	n := 0.
 	superclasses := #().
-]
-
-{ #category : #actions }
-SSimpleFitnessFunction >> run: testCaseCollection [
-	testCaseCollection
-		do: [ :testCase | 
-			testCase length > 0 ifTrue: [
-				profiler cleanBlocksOfMethods.
-				testCase runWithoutAssertionsAndLastStatement.
-				testCase summaryExecutedBlocks: 
-					(profiler collectExecutedMethodsOfClasses: 
-						(Array with: targetClass withAll: superclasses)).
-				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
-				self fitnessOf: testCase. ]
-			ifFalse: [ testCase fitness at: self functionName put: 0 ] ]
-	
 ]
 
 { #category : #accessing }

@@ -48,7 +48,8 @@ Class {
 		'crossoverStrategy',
 		'stopIterations',
 		'totalExecutionGA',
-		'selectionStrategyTestCase'
+		'selectionStrategyTestCase',
+		'fitnessAdapter'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -119,7 +120,8 @@ SGAEngine >> collectNameOfAllSubclassesOf: type includesOn: scalar [
 { #category : #actions }
 SGAEngine >> computeFitness [
 
-	fitness compute: population.
+	"fitness compute: population."
+	fitnessAdapter compute: population.
 ]
 
 { #category : #creating }
@@ -146,8 +148,9 @@ SGAEngine >> createNewPopulation [
 					o1 := (p1copy deepCopy) idPopulation: newNumber + 3; addParent: p1.
               	o2 := (p2copy deepCopy) idPopulation: newNumber + 4; addParent: p2 ].
         om1 := self mutateAndUpdate: o1.
-        om2 := self mutateAndUpdate: o2.
-        fitness compute: (Array with: om1 with: om2).
+        om2 := self mutateAndUpdate: o2."
+        fitness compute: (Array with: om1 with: om2)."
+		  fitnessAdapter compute: (Array with: om1 with: om2).
 		  options := Array with: om1 with: om2 with: p1copy with: p2copy.
         selectedOptions := (self selectTwoBestOf: options excludingAll: newPopulation) select: [ :option | (option fitness at: fitness functionName) >= lastLowestFitness ].
 		  selectedOptions := selectedOptions first: (selectedOptions size min: currentPopulationSize - newPopulation size).
@@ -222,7 +225,8 @@ SGAEngine >> fitness [
 { #category : #accessing }
 SGAEngine >> fitness: aFitness [
 	fitness := aFitness.
-	selectionStrategy fitness: aFitness
+	fitnessAdapter := SFitnessAdapter withFitness: fitness on: self.
+	selectionStrategy fitness: aFitness.
 ]
 
 { #category : #initialization }

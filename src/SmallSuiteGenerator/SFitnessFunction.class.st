@@ -71,6 +71,18 @@ SFitnessFunction >> run: testCaseCollection [
 ]
 
 { #category : #actions }
+SFitnessFunction >> run: testCaseCollection comparingWithAll: aColl [
+	testCaseCollection
+		do: [ :testCase | 
+			testCase length > 0 ifTrue: [
+				profiler cleanBlocksOfMethods.
+				testCase runWithoutAssertionsAndLastStatement.
+				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler. ]
+			ifFalse: [ testCase fitness at: self functionName put: 0 ] ].
+	
+]
+
+{ #category : #actions }
 SFitnessFunction >> runPopulation: testCaseCollection [
 	profiler cleanBlocksOfMethods.
 	testCaseCollection

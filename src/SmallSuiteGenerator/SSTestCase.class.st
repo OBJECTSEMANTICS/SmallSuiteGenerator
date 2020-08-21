@@ -15,7 +15,7 @@ Class {
 		'parents',
 		'children',
 		'properties',
-		'summaryExecutedBlocks'
+		'summary'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -81,6 +81,11 @@ SSTestCase >> allParents: testCase on: collection using: associationSet [
 			collection add: tC.
 			self allParents: tC on: collection using: associationSet	
 		]
+]
+
+{ #category : #util }
+SSTestCase >> at: key putValue: value [
+	summary at: key put: value
 ]
 
 { #category : #accessing }
@@ -188,7 +193,7 @@ SSTestCase >> initialize [
    summaryExecutionMethods := OrderedCollection new.
 	hasErrors := false.
 	fitness := Dictionary new.
-	summaryExecutedBlocks := Dictionary new.
+	summary := Dictionary new.
 	fitnessByClass := Dictionary new.
 	selectionStrategy := SGARouletteSelection new.
 	properties := Dictionary new.
@@ -312,16 +317,6 @@ SSTestCase >> storeOn: aStream [
 ]
 
 { #category : #accessing }
-SSTestCase >> summaryExecutedBlocks [
-	^ summaryExecutedBlocks
-]
-
-{ #category : #accessing }
-SSTestCase >> summaryExecutedBlocks: aSummaryExecutedBlocks [ 
-	summaryExecutedBlocks := aSummaryExecutedBlocks 
-]
-
-{ #category : #accessing }
 SSTestCase >> summaryExecutionMethods [
 	^ summaryExecutionMethods
 ]
@@ -348,4 +343,14 @@ SSTestCase >> updateWith: anotherTestCase [
 	anotherTestCase parents do: [ :parent | 
 		parent removeChild: anotherTestCase.
 		self addParent:  parent ]
+]
+
+{ #category : #util }
+SSTestCase >> valueAt: key [ 
+	^ summary at: key ifAbsent: [ nil ]
+]
+
+{ #category : #util }
+SSTestCase >> valueAt: key ifAbsent: aBlock [
+	^ summary at: key ifAbsent: aBlock
 ]

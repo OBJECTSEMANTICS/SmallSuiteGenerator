@@ -1,5 +1,5 @@
 Class {
-	#name : #SCompateDifferenceTest,
+	#name : #SCompareDifferenceTest,
 	#superclass : #SExpressionTest,
 	#instVars : [
 		'fitness',
@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #displaying }
-SCompateDifferenceTest >> installOn: aPackageName [
+SCompareDifferenceTest >> installOn: aPackageName [
 	profiler := self aSLProfilerCoverage profilerForPackagesMatching: aPackageName.
 	fitness profiler: profiler.
 	profiler uninstall.
@@ -17,18 +17,18 @@ SCompateDifferenceTest >> installOn: aPackageName [
 ]
 
 { #category : #running }
-SCompateDifferenceTest >> setUp [ 
+SCompareDifferenceTest >> setUp [ 
 	super setUp.
 	fitness := SStatementCoverage new.
 ]
 
 { #category : #tests }
-SCompateDifferenceTest >> tearDown [
+SCompareDifferenceTest >> tearDown [
 	profiler uninstall
 ]
 
 { #category : #tests }
-SCompateDifferenceTest >> testDifferentBranchCoverage [
+SCompareDifferenceTest >> testDifferentBranchCoverage [
 	| tests |
 	self installOn: 'SpyLite-Scenario'.
 	fitness targetClass: #SLCounter fullClassNameSymbol.
@@ -49,7 +49,7 @@ SCompateDifferenceTest >> testDifferentBranchCoverage [
 ]
 
 { #category : #tests }
-SCompateDifferenceTest >> testSameBranchCoverage [
+SCompareDifferenceTest >> testSameBranchCoverage [
 	| tests |
 	self installOn: 'SpyLite-Scenario'.
 	fitness targetClass: #SLCounter fullClassNameSymbol.
@@ -69,7 +69,7 @@ SCompateDifferenceTest >> testSameBranchCoverage [
 ]
 
 { #category : #tests }
-SCompateDifferenceTest >> testSomeSimilarBranchCoverage [
+SCompareDifferenceTest >> testSomeSimilarBranchCoverage [
 	| tests |
 	self installOn: 'SpyLite-Scenario'.
 	fitness targetClass: #SLCounter fullClassNameSymbol.
@@ -90,7 +90,7 @@ SCompateDifferenceTest >> testSomeSimilarBranchCoverage [
 ]
 
 { #category : #tests }
-SCompateDifferenceTest >> testTotallyDifferentBranchCoverage [
+SCompareDifferenceTest >> testTotallyDifferentBranchCoverage [
 	| tests |
 	self installOn: 'SpyLite-Scenario'.
 	fitness targetClass: #SLCounter fullClassNameSymbol.
