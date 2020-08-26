@@ -75,7 +75,7 @@ GASSTeacherTest outputPackageName: 'Generated'
 ```
 * `numberOfGenerations`: Number of iterations that the genetic algorithm will perform.
 ``` Smalltalk
-GASSTeacherTest numberOfGenerations:: 10
+GASSTeacherTest numberOfGenerations: 10
 ```
 * `numberOfStatements`: Maximum number of statements that the generated tests will have (without counting those statements that are assertions).
 ``` Smalltalk
