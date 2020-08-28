@@ -237,7 +237,7 @@ SGAEngine >> initialize [
   numberOfStatements := 10.
   stopIterations := 30.
   totalExecutionGA := 0.
-  lastMessage := #().
+  lastMessage := SSGParser parseFrom: ( SPlatform rbParserClass parseExpression: '').
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]

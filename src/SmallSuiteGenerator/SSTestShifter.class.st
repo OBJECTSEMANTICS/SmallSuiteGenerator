@@ -638,6 +638,21 @@ SSTestShifter >> lastMessage: anObject [
 ]
 
 { #category : #accessing }
+SSTestShifter >> lastStatements [
+	lastMessage ifNil: [ ^ #() ].
+	^ lastMessage isSequence
+		ifTrue: [ lastMessage messages ]
+		ifFalse: [ Array with: lastMessage  ]
+]
+
+{ #category : #accessing }
+SSTestShifter >> lastTemporaries [
+	^ lastMessage isSequence
+		ifTrue: [ lastMessage temporaries ]
+		ifFalse: [ #() ]
+]
+
+{ #category : #accessing }
 SSTestShifter >> length [
   ^ statements size
 ]
@@ -911,7 +926,7 @@ SSTestShifter >> runStatements: aStatementCollection [
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
 	^ self execute: [ :testCase |
-			testCase runStatements: testCase statements, testCase lastMessage. ]
+			testCase runStatements: testCase statements, testCase lastStatements. ]
 ]
 
 { #category : #action }

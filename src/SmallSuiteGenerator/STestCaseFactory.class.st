@@ -28,17 +28,13 @@ Class {
 
 { #category : #'instance creation' }
 STestCaseFactory class >> from: configClass [
-	| aTypeInfo printerClass lastStm parser|
+	| aTypeInfo printerClass parser|
 	aTypeInfo := configClass typeInfoValue copy.
 	aTypeInfo blackList: configClass decodeBlackList.
 	printerClass := configClass asDict 
 		ifTrue: [ SSDictionaryBasedPrinter ] 
 		ifFalse: [ SSStandardPrinter ].
-	lastStm := configClass lastMessage asString.
-	(lastStm notNil and: [ lastStm isNotEmpty ]) ifTrue: [
-		parser := RBParser parseExpression: configClass lastMessage asString]
-	ifFalse: [parser:= nil].
-
+	parser := self parse: configClass lastMessage asString.
 	^(self new) 
 		generatedClass: configClass;
 		fitness: configClass fitnessValue; 
@@ -52,6 +48,13 @@ STestCaseFactory class >> from: configClass [
 		printerClass: printerClass;
 		
 		yourself
+]
+
+{ #category : #settings }
+STestCaseFactory class >> parse: aString [
+	^ [SSGParser parseFrom: (SPlatform rbParserClass parseExpression: aString)]
+	on: Error 
+	do: [ nil ]
 ]
 
 { #category : #settings }
@@ -213,10 +216,8 @@ STestCaseFactory >> initializeProfiler [
 
 { #category : #actions }
 STestCaseFactory >> lastMessage: aMessage [
-	(aMessage isNotNil) ifFalse: [ ^ self ].
-	lastMessage := (Array with: aMessage).
-	engine lastMessage: lastMessage
-	
+	lastMessage := aMessage.
+	engine lastMessage: lastMessage.
 ]
 
 { #category : #'set strategies' }

@@ -128,6 +128,11 @@ SExpression >> isPrimitive: anObject [
 		or: [ anObject isKindOf: String ]]
 ]
 
+{ #category : #testing }
+SExpression >> isSequence [
+	^ false.
+]
+
 { #category : #querying }
 SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ true
