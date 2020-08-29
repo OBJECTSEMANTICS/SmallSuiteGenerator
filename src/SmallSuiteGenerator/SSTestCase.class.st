@@ -162,7 +162,6 @@ SSTestCase >> initialize [
 	fitnessByClass := Dictionary new.
 	selectionStrategy := SGARouletteSelection new.
 	properties := Dictionary new.
-	lastMessage := #()
 ]
 
 { #category : #util }

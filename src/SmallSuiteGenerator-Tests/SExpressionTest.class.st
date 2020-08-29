@@ -11,7 +11,7 @@ Class {
 SExpressionTest >> parse: anExpresion [
 	| sequence |
 	sequence := SPlatform rbParserClass parseExpression: anExpresion.
-	^ SSGParser parseFrom: sequence 
+	^ (SSGParser parseFrom: sequence ) messages
 ]
 
 { #category : #running }
