@@ -1022,7 +1022,7 @@ SSTestShifter >> validReferences [
 	^ statements
 		detect: [ :stm | 
 			| variables |
-			variables := stm variablesWithId asSet.
+			variables := (SSVariablesCollector new visit: stm) variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
 				ifFalse: [self halt. true ]

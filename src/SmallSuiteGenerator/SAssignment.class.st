@@ -130,8 +130,3 @@ SAssignment >> variable [
 SAssignment >> variable: anObject [
 	variable := anObject
 ]
-
-{ #category : #querying }
-SAssignment >> variablesWithId [
-	^ variable variablesWithId, value variablesWithId
-]

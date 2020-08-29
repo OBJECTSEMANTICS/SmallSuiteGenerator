@@ -132,8 +132,3 @@ SVariable >> varName [
 SVariable >> varName: anObject [
 	varName := anObject
 ]
-
-{ #category : #querying }
-SVariable >> variablesWithId [
-	^ id ifNotNil: [ (Array with: self) ] ifNil: [ super variablesWithId ]
-]
