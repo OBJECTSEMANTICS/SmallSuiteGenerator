@@ -1,5 +1,5 @@
 Class {
-	#name : #SSVariablesCollector,
+	#name : #SSVariablesWithIdCollector,
 	#superclass : #SSVisitor,
 	#instVars : [
 		'variablesWithId'
@@ -8,22 +8,22 @@ Class {
 }
 
 { #category : #initialization }
-SSVariablesCollector >> initialize [
+SSVariablesWithIdCollector >> initialize [
 	super initialize.
 	variablesWithId := OrderedCollection new.
 ]
 
 { #category : #accessing }
-SSVariablesCollector >> variablesWithId [
+SSVariablesWithIdCollector >> variablesWithId [
 	^ variablesWithId
 ]
 
 { #category : #visiting }
-SSVariablesCollector >> visit: sNode [
+SSVariablesWithIdCollector >> visit: sNode [
 	sNode accept: self
 ]
 
 { #category : #'visiting-core' }
-SSVariablesCollector >> visitVariable: aVariable [
+SSVariablesWithIdCollector >> visitVariable: aVariable [
 	aVariable id ifNotNil: [ variablesWithId add: aVariable ]
 ]

@@ -148,11 +148,6 @@ SExpression >> parent: anObject [
 	parent := anObject
 ]
 
-{ #category : #querying }
-SExpression >> pickUpReferences: aExpression [
-	^ #()
-]
-
 { #category : #printing }
 SExpression >> printOn: aStream [
 	self accept: (SSStandardPrinter on: aStream)

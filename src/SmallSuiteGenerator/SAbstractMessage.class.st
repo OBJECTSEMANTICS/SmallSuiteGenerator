@@ -135,13 +135,7 @@ SAbstractMessage >> initialize [
 
 { #category : #querying }
 SAbstractMessage >> isThereEnoughArgumentsToBuild: aTestCase [
-	^ (SSVariablesCollector new visit: self) variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
-]
-
-{ #category : #querying }
-SAbstractMessage >> pickUpReferences: aExpression [
-	^ (receiver pickUpReferences: aExpression)
-		, (args flatCollect: [ :arg | arg pickUpReferences: aExpression ])
+	^ (SSVariablesWithIdCollector new visit: self) variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
 ]
 
 { #category : #accessing }

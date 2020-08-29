@@ -97,11 +97,6 @@ SAssignment >> isThereEnoughArgumentsToBuild: aTestCase [
 ]
 
 { #category : #querying }
-SAssignment >> pickUpReferences: aExpression [
-	^ value pickUpReferences: aExpression
-]
-
-{ #category : #querying }
 SAssignment >> reference [ 
 	^ variable
 ]

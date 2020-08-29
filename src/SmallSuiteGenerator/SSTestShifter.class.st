@@ -586,22 +586,6 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
 ]
 
-{ #category : #inserting }
-SSTestShifter >> insertAsParameter: expression after: aStatement [
-	(self random collectAtRandom: (statements
-		copyFrom: (statements indexOf: aStatement) + 1
-		to: self length))
-		do: [ :stm | [ | mutatedStm |
-			mutatedStm := stm replaceArgBy: expression.
-			(mutatedStm pickUpReferences: expression) ifNotEmpty: 
-				[ mutatedStm value mutated: true.].
-			 ^ mutatedStm ]
-				on: SError
-				do: [ :e |  ] ].
-	self
-		error: 'Cannot insert any parameter by: ' , expression printString
-]
-
 { #category : #'mutation-insert' }
 SSTestShifter >> insertStatement [
 	|alpha count testCase|
@@ -1022,7 +1006,7 @@ SSTestShifter >> validReferences [
 	^ statements
 		detect: [ :stm | 
 			| variables |
-			variables := (SSVariablesCollector new visit: stm) variablesWithId asSet.
+			variables := (SSVariablesWithIdCollector new visit: stm) variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
 				ifFalse: [self halt. true ]
