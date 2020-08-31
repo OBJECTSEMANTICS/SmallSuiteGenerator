@@ -38,7 +38,7 @@ SSTestShifter class >> defaultInterpreterClass [
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-	^ SSAbstractSettingMethods
+	^ SSNullMethods
 ]
 
 { #category : #settings }
@@ -54,7 +54,7 @@ SSTestShifter class >> limitToWait [
 { #category : #settings }
 SSTestShifter class >> resetToDefaults [
 	{ #defaultInterpreterClass -> SSMetaInterpreter . 
-	#defaultMethodsClass -> SSAbstractSettingMethods . 
+	#defaultMethodsClass -> SSNullMethods . 
 	#defaultPrinterClass -> SSStandardPrinter .
 	#limitToWait -> 1000 } do: [ :val |
 		self class compile: val key asString, String cr, '	^ ', val value printString ]
@@ -254,7 +254,7 @@ SSTestShifter >> addStatementWithReturnType: aMultiTypeInfo [
 			ifTrue:[ self addLiteral: aMultiTypeInfo.] 
 			ifFalse:[ self addFactoryMessage: aMultiTypeInfo.]. ]
 	on: SError 
-	do: [ self serror:'we could not build the argument needed']
+	do: [ :e | self serror:'we could not build the argument needed']
 ]
 
 { #category : #'building-actions' }

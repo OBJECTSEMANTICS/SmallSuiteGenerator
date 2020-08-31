@@ -40,8 +40,8 @@ STestCaseFactory class >> from: configClass [
 		fitness: configClass fitnessValue; 
 		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
-		setUpMethod: configClass setUpMethod asString; 
-		tearDownMethod: configClass tearDownMethod asString; 
+		setUpMethod: configClass setUpMethod; 
+		tearDownMethod: configClass tearDownMethod; 
 		limitToWait: configClass limitToWait;
 		lastMessage: parser; 
 		typeInfo: aTypeInfo;
@@ -372,7 +372,7 @@ STestCaseFactory >> setUpEngine [
 
 { #category : #'set strategies' }
 STestCaseFactory >> setUpMethod: aString [
-	(aString isNotNil and: [aString isNotEmpty]) ifFalse: [ ^ self ].
+	aString ifNil: [ ^ self ].
 	SSCustomMethods compile: aString.
 	self settingMethodClass: SSCustomMethods.
 ]
@@ -420,7 +420,7 @@ STestCaseFactory >> tearDown [
 
 { #category : #'set strategies' }
 STestCaseFactory >> tearDownMethod: aString [
-	(aString isNotNil and: [aString isNotEmpty]) ifFalse: [ ^ self ].
+	aString ifNil: [ ^ self ].
 	SSCustomMethods compile: aString.
 	self settingMethodClass: SSCustomMethods.
 ]

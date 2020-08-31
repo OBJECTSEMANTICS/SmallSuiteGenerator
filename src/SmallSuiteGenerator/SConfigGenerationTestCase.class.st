@@ -305,7 +305,7 @@ SConfigGenerationTestCase class >> selectionStrategyTestCase: aClass [
 { #category : #settings }
 SConfigGenerationTestCase class >> setUpMethod [
 
-	^ ''
+	^ nil
 ]
 
 { #category : #setter }
@@ -340,7 +340,7 @@ SConfigGenerationTestCase class >> targetPackageRegex: aString [
 { #category : #settings }
 SConfigGenerationTestCase class >> tearDownMethod [
 
-	^ ''
+	^ nil
 ]
 
 { #category : #setter }
