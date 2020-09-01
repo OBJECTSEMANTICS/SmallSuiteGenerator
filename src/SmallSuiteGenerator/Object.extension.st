@@ -40,6 +40,21 @@ Object class >> getClassOf: aString [
 ]
 
 { #category : #'*SmallSuiteGenerator' }
+Object >> isASimpleObject [
+	SPlatform initLevelToPrint.
+	String
+		streamContents: [ :s |
+			self storeOn: s.
+			SPlatform levelToPrint < 0
+				ifTrue: [ SError signal: 'error in storeString' ]
+				ifFalse: [ 
+					SPlatform levelToPrint >= 6
+						ifFalse: [ ^ false ] ].
+			SPlatform initLevelToPrint ].
+	^ true.
+]
+
+{ #category : #'*SmallSuiteGenerator' }
 Object >> mutateToChange [
 	^ self
 ]
