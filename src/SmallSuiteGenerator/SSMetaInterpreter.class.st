@@ -59,15 +59,20 @@ SSMetaInterpreter >> visitAssignment: anAssignmnet [
 ]
 
 { #category : #initialization }
-SSMetaInterpreter >> visitLiteral: aLiteral [
-	^ aLiteral value.
+SSMetaInterpreter >> visitCascade: aCascade [
+	| object objArgs result|
+	object := aCascade messages first receiver accept: self.
+	aCascade messages do: [ :msj | 
+		objArgs := msj args collect: [:arg |  arg accept: self ].
+  		result := object perform: msj selector withArguments: objArgs asArray.
+  		msj returnType: result class nameAsSymbol.
+	].
+   ^ result.
 ]
 
 { #category : #initialization }
-SSMetaInterpreter >> visitMessageNode: aMessageNode [
-	aMessageNode asDoit generateWithSource valueWithReceiver: nil arguments: #().
-
-
+SSMetaInterpreter >> visitLiteral: aLiteral [
+	^ aLiteral value.
 ]
 
 { #category : #initialization }

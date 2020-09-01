@@ -128,6 +128,11 @@ SExpression >> isPrimitive: anObject [
 		or: [ anObject isKindOf: String ]]
 ]
 
+{ #category : #testing }
+SExpression >> isSequence [
+	^ false.
+]
+
 { #category : #querying }
 SExpression >> isThereEnoughArgumentsToBuild: aTestCase [
 	^ true
@@ -141,11 +146,6 @@ SExpression >> parent [
 { #category : #accessing }
 SExpression >> parent: anObject [
 	parent := anObject
-]
-
-{ #category : #querying }
-SExpression >> pickUpReferences: aExpression [
-	^ #()
 ]
 
 { #category : #printing }
@@ -177,9 +177,4 @@ SExpression >> returnType: anObject [
 SExpression >> serror: aString [
 	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
 	^ SError signal: aString
-]
-
-{ #category : #querying }
-SExpression >> variablesWithId [
-	^ #()
 ]

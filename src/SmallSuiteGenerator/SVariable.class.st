@@ -106,13 +106,6 @@ SVariable >> key [
 		ifFalse: [ ^self printString asSymbol ]
 ]
 
-{ #category : #querying }
-SVariable >> pickUpReferences: anExpression [
-	^ self = anExpression reference
-		ifFalse: [ #() ]
-		ifTrue: [ (Array with: self) ]
-]
-
 { #category : #accessing }
 SVariable >> printerClass [
   ^ SSTestCase defaultPrinterClass
@@ -131,9 +124,4 @@ SVariable >> varName [
 { #category : #accessing }
 SVariable >> varName: anObject [
 	varName := anObject
-]
-
-{ #category : #querying }
-SVariable >> variablesWithId [
-	^ id ifNotNil: [ (Array with: self) ] ifNil: [ super variablesWithId ]
 ]

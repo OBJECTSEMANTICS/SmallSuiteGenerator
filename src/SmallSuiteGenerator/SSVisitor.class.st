@@ -24,6 +24,11 @@ SSVisitor >> visitAssignment: anAssignmnet [
 	
 ]
 
+{ #category : #'visiting-core' }
+SSVisitor >> visitCascade: aCascade [
+	aCascade messages do: [ :msj | msj accept: self ]
+]
+
 { #category : #'visiting-assertions' }
 SSVisitor >> visitComparisonAssertionMessage: aMessage [
 	^ self visitAssertionMessage: aMessage.

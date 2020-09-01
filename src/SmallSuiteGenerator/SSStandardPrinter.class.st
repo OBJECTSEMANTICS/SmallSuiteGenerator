@@ -25,10 +25,10 @@ SSStandardPrinter class >> on: aStream [
 
 { #category : #'instance creation' }
 SSStandardPrinter class >> printTempVariables: aTestCase on: aStream [
-	aStream tab;nextPut:$|; space.
+	aStream tab; nextPut:$|; space.
 	aTestCase assignedIds do:[:id| aStream nextPutAll:'_var'; nextPutAll: id asString; space.].
-	aStream space;nextPut:$|;cr.
-	
+	aTestCase lastTemporaries do: [ :tmp | aStream nextPutAll: tmp fullName asString; space. ].
+	aStream space; nextPut:$|; cr.
 ]
 
 { #category : #accessing }
@@ -73,6 +73,28 @@ SSStandardPrinter >> visitAssignment: anAssignmnet [
 ]
 
 { #category : #'visiting-core' }
+SSStandardPrinter >> visitCascade: aCascade [
+	
+	stream nextPut:$(.
+	aCascade messages first receiver accept: self.
+	stream nextPut:$); cr.
+	aCascade messages do: [ :msj |
+		stream tab.
+		msj selector isKeyword
+		ifTrue:[
+			msj selector keywords with: msj args do:[ :key : arg|
+				stream nextPutAll: key; space.
+				arg accept: self.
+				stream space. ].
+		] ifFalse:[
+			stream nextPutAll: msj selector.
+		]
+	] separatedBy: [ stream nextPut: $;; cr ].
+	
+	
+]
+
+{ #category : #'visiting-core' }
 SSStandardPrinter >> visitLiteral: aLiteral [
 	|val|
 	val := aLiteral value.
@@ -80,11 +102,6 @@ SSStandardPrinter >> visitLiteral: aLiteral [
 		ifTrue: [ val printOn: stream.]
 		ifFalse: [ SPlatform initLevelToPrint.
 			val storeOn: stream.].
-]
-
-{ #category : #'visiting-core' }
-SSStandardPrinter >> visitMessageNode: aMessageNode [
-	stream nextPutAll: aMessageNode formattedCode
 ]
 
 { #category : #'visiting-core' }

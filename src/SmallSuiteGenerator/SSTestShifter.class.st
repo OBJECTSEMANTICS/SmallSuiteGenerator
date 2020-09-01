@@ -38,7 +38,7 @@ SSTestShifter class >> defaultInterpreterClass [
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-	^ SSAbstractSettingMethods
+	^ SSNullMethods
 ]
 
 { #category : #settings }
@@ -54,7 +54,7 @@ SSTestShifter class >> limitToWait [
 { #category : #settings }
 SSTestShifter class >> resetToDefaults [
 	{ #defaultInterpreterClass -> SSMetaInterpreter . 
-	#defaultMethodsClass -> SSAbstractSettingMethods . 
+	#defaultMethodsClass -> SSNullMethods . 
 	#defaultPrinterClass -> SSStandardPrinter .
 	#limitToWait -> 1000 } do: [ :val |
 		self class compile: val key asString, String cr, '	^ ', val value printString ]
@@ -254,7 +254,7 @@ SSTestShifter >> addStatementWithReturnType: aMultiTypeInfo [
 			ifTrue:[ self addLiteral: aMultiTypeInfo.] 
 			ifFalse:[ self addFactoryMessage: aMultiTypeInfo.]. ]
 	on: SError 
-	do: [ self serror:'we could not build the argument needed']
+	do: [ :e | self serror:'we could not build the argument needed']
 ]
 
 { #category : #'building-actions' }
@@ -586,22 +586,6 @@ SSTestShifter >> initialize [
   maxNumberOfStatements := 10.
 ]
 
-{ #category : #inserting }
-SSTestShifter >> insertAsParameter: expression after: aStatement [
-	(self random collectAtRandom: (statements
-		copyFrom: (statements indexOf: aStatement) + 1
-		to: self length))
-		do: [ :stm | [ | mutatedStm |
-			mutatedStm := stm replaceArgBy: expression.
-			(mutatedStm pickUpReferences: expression) ifNotEmpty: 
-				[ mutatedStm value mutated: true.].
-			 ^ mutatedStm ]
-				on: SError
-				do: [ :e |  ] ].
-	self
-		error: 'Cannot insert any parameter by: ' , expression printString
-]
-
 { #category : #'mutation-insert' }
 SSTestShifter >> insertStatement [
 	|alpha count testCase|
@@ -635,6 +619,21 @@ SSTestShifter >> lastMessage [
 { #category : #accessing }
 SSTestShifter >> lastMessage: anObject [ 	
 	lastMessage := anObject 
+]
+
+{ #category : #accessing }
+SSTestShifter >> lastStatements [
+	lastMessage ifNil: [ ^ #() ].
+	^ lastMessage isSequence
+		ifTrue: [ lastMessage messages ]
+		ifFalse: [ Array with: lastMessage  ]
+]
+
+{ #category : #accessing }
+SSTestShifter >> lastTemporaries [
+	^ lastMessage isSequence
+		ifTrue: [ lastMessage temporaries ]
+		ifFalse: [ #() ]
 ]
 
 { #category : #accessing }
@@ -911,7 +910,7 @@ SSTestShifter >> runStatements: aStatementCollection [
 { #category : #action }
 SSTestShifter >> runWithoutAssertions [
 	^ self execute: [ :testCase |
-			testCase runStatements: testCase statements, testCase lastMessage. ]
+			testCase runStatements: testCase statements, testCase lastStatements. ]
 ]
 
 { #category : #action }
@@ -1007,7 +1006,7 @@ SSTestShifter >> validReferences [
 	^ statements
 		detect: [ :stm | 
 			| variables |
-			variables := stm variablesWithId asSet.
+			variables := (SSVariablesWithIdCollector new visit: stm) variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
 				ifFalse: [self halt. true ]
