@@ -204,7 +204,7 @@ STestCaseFactory >> initialize [
   numberOfIterations := 20.
   engine := self engineDefault.
   initialSeed := 100.
-  lastMessage := #()
+  lastMessage := SSGParser parseFrom: (SPlatform rbParserClass parseExpression: '')
 ]
 
 { #category : #actions }
