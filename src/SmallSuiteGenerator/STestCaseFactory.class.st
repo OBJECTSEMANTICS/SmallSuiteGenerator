@@ -203,7 +203,6 @@ STestCaseFactory >> initialize [
   fitness := SMethodCoverage new.
   numberOfIterations := 20.
   engine := self engineDefault.
-  fitnessSeed := 0.
   initialSeed := 100.
   lastMessage := #()
 ]

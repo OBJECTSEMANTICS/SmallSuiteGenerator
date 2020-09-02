@@ -23,10 +23,10 @@ Class {
 		'assertions',
 		'typeInfo',
 		'nextId',
-		'targetClassesName',
 		'maxNumberOfStatements',
 		'lastMessage',
-		'hasErrors'
+		'hasErrors',
+		'targetClassName'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -503,7 +503,7 @@ SSTestShifter >> copyWithARandomStatement [
 SSTestShifter >> emptyCopy [
 	| copy |
 	copy := self class with: typeInfo copy.
-	copy targetClassName: targetClassesName.
+	copy targetClassName: targetClassName.
 	^ copy
 ]
 
@@ -676,9 +676,10 @@ SSTestShifter >> newFactoryMessage: aClassName [
 		ifNone: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is not found in typeInfo.' ]) 
 		isAbstract ifTrue: [ self serror: 'Error to create factoryMessage of: ' , aClassName , ' because it is abstract.'].
 	methods := typeInfo factoryMessagesFrom: aClassName.
-	^ methods
-		ifEmpty: [ SFactoryMessage default: aClassName ]
-		ifNotEmpty: [  self  newFactoryMessage: methods pickAny from: aClassName].
+	methods ifNotEmpty: [ [ ^ self newFactoryMessage: methods pickAny from: aClassName ]
+		on: SError
+		do: [:e | ]].
+	^ SFactoryMessage default: aClassName
 ]
 
 { #category : #'instance creation' }
@@ -976,12 +977,12 @@ SSTestShifter >> targetClassIndexs [
 SSTestShifter >> targetClassName: aSymbol [
 	typeInfo types at: aSymbol 
 		ifAbsent: [ self serror: 'Class name: ', aSymbol, ' is not found in typeInfo' ].
-	targetClassesName := aSymbol.
+	targetClassName := aSymbol.
 ]
 
 { #category : #accessing }
 SSTestShifter >> targetClassesName [
-	^ targetClassesName
+	^ targetClassName
 ]
 
 { #category : #accessing }
