@@ -40,6 +40,22 @@ Object class >> getClassOf: aString [
 ]
 
 { #category : #'*SmallSuiteGenerator' }
+Object >> isASimpleObject [
+	| string |
+	SPlatform initLevelToPrint.
+	string := String
+		streamContents: [ :s |
+			self storeContainsOn: s.
+			SPlatform levelToPrint < 0
+				ifTrue: [ ^ false ] ].
+	SPlatform levelToPrint >= 6
+		ifTrue: [ 
+			^ ('*', self class name, '*' match: string) not ].
+	SPlatform initLevelToPrint.
+	^ false.
+]
+
+{ #category : #'*SmallSuiteGenerator' }
 Object >> mutateToChange [
 	^ self
 ]
@@ -56,6 +72,30 @@ Object >> smallStoreString [
 					[ "^ s nextPutAll: '(' , self class name , ' new ) '" SError signal: 'error in storeString' ].
 			SPlatform initLevelToPrint ].
 	^ string
+]
+
+{ #category : #'*SmallSuiteGenerator' }
+Object >> storeContainsOn: aStream [
+	"Append to the argument aStream a sequence of characters that is an 
+	expression whose evaluation creates an object similar to the receiver."
+	SPlatform reduceLevel.
+	aStream nextPut: $(.
+	SPlatform levelToPrint < 0
+		ifFalse: [ 1 to: self class instSize do: [ :i | 
+				aStream
+					nextPutAll: ' instVarAt: ';
+					store: i;
+					nextPutAll: ' put: (';
+					store: (self instVarAt: i);
+					nextPutAll: ');' ].
+			1 to: self basicSize do: [ :i | 
+				aStream
+					nextPutAll: ' basicAt: ';
+					store: i;
+					nextPutAll: ' put: ';
+					store: (self basicAt: i);
+					nextPut: $; ] ].
+	aStream nextPutAll: ' yourself)'
 ]
 
 { #category : #'*SmallSuiteGenerator' }
