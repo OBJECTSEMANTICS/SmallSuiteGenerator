@@ -304,8 +304,8 @@ STypeInfo >> joinScalars: aDict [
 		scalars
 			at: assoc key
 			ifPresent: [ :values | 
-			scalars at: assoc key put: (values union: assoc value) asArray ]
-			ifAbsentPut: [ assoc value asArray ] ]
+			scalars at: assoc key put: (self union: values with: assoc value) ]
+			ifAbsentPut: [ assoc value asOrderedCollection asSet asOrderedCollection ] ]
 ]
 
 { #category : #actions }
@@ -363,8 +363,8 @@ STypeInfo >> reportFrequencyByFilter [
 ]
 
 { #category : #actions }
-STypeInfo >> scalar: aClassName with: aValue [
-	scalars at: aClassName put: aValue asSet asArray
+STypeInfo >> scalar: aClassName with: aValue [ 
+	scalars at: aClassName put: aValue asSet asOrderedCollection
 ]
 
 { #category : #accessing }
@@ -375,7 +375,7 @@ STypeInfo >> scalars [
 { #category : #accessing }
 STypeInfo >> scalars: aDictionary [
 	aDictionary associationsDo: [ :assoc | 
-		self scalar: assoc key with: assoc value ]
+		self scalar: assoc key with: assoc value asOrderedCollection ]
 ]
 
 { #category : #'accessing structure variables' }
@@ -386,4 +386,12 @@ STypeInfo >> type: aAssoc [
 { #category : #accessing }
 STypeInfo >> types [ 
 	^ types
+]
+
+{ #category : #actions }
+STypeInfo >> union: aColl1 with: aColl2 [
+	
+	| set |
+	set := aColl1 asSet addAll: aColl2; yourself.
+	^ set asOrderedCollection
 ]

@@ -91,7 +91,7 @@ SSTestCase >> children [
 SSTestCase >> copy [
 	| copy |
 	copy := self class with: typeInfo copy.
-	copy targetClassName: targetClassesName.
+	copy targetClassName: targetClassName.
 	statements do: [ :stm | copy addStatement: stm copy ].
 	copy updateNextId.
 	^ copy

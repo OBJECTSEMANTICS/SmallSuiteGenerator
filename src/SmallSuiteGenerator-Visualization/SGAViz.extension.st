@@ -360,12 +360,11 @@ SGAViz >> generationDictionaryWith: offsets [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> generationEvolutionCanvas [
 	^ self 
-		generationVisualization: aTestCaseFactory fitnessSeed 
-		ofColor: self class lightColors 
+		generationVisualizationWithColor: self class lightColors 
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> generationVisualization: fitnessSeed ofColor: dictColor [
+SGAViz >> generationVisualizationWithColor: dictColor [
 	| canvas contributionShape infoMethodShape evolutionShape highlightTestCase highlightMethod ys border widthShape barGroup height |
 	canvas := RSCanvas new 
 		color: (dictColor at: 'background').
@@ -751,11 +750,12 @@ SGAViz >> visualizeEvolutionFitness [
 		d := RSLinePlot new x: (association value collect: #x) y: (association value collect: #y).
 		g addPlot: d.
 		legend text: association key withBoxColor: (g colors range at: index) ].
+	aTestCaseFactory fitnessSeed ifNotNil: [
 	d := RSLinePlot new x: y y: ((OrderedCollection ofSize: self engine logs size) atAllPut: aTestCaseFactory fitnessSeed).
 	g addPlot: d.
-	legend text: 'Fitness seed' withBoxColor: (g colors range at: 4).
+	legend text: 'Fitness seed' withBoxColor: (g colors range at: 4)].
 	g addDecoration: (RSVerticalTick new).
-	g addDecoration: (RSHorizontalTick new). 
+	g addDecoration: (RSHorizontalTick new).  
 	
 	g title: 'Fitness Evolution'.
 	g xlabel: 'Iterations'.
