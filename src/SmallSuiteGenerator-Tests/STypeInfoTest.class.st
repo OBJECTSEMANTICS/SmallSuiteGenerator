@@ -314,11 +314,11 @@ STypeInfoTest >> testAsTypeInfoScalars [
 		assertCollection: typeInfo scalars associations
 		hasSameElements:
 			(Array
-				with: (SUndefinedObject basicNew) class nameAsSymbol -> (Array new: 18)
-				with: SmallInteger nameAsSymbol -> #(0 4)
-				with: OrderedCollection nameAsSymbol -> (Array with: OrderedCollection new)
-				with: ByteString nameAsSymbol -> #('' 'Hello')
-				with: 2.3 class nameAsSymbol -> #(2.3))
+				with: (SUndefinedObject basicNew) class nameAsSymbol -> (OrderedCollection with: nil)
+				with: SmallInteger nameAsSymbol -> (OrderedCollection newFrom: #(0 4))
+				with: OrderedCollection nameAsSymbol -> (OrderedCollection with: OrderedCollection new)
+				with: ByteString nameAsSymbol -> (OrderedCollection newFrom: #('' 'Hello'))
+				with: 2.3 class nameAsSymbol -> (OrderedCollection newFrom: #(2.3)))
 ]
 
 { #category : #tests }
