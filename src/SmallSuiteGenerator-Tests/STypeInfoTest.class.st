@@ -51,7 +51,7 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
-	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty classNameByteString classNameSmallInteger classNameSStudent |
+	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty classNameByteString classNameSmallInteger classNameSStudent elementArray |
 	classNameSEvent := SEvent nameAsSymbol.
 	classNameSConference := SConference nameAsSymbol.
 	classNameSParty := SParty nameAsSymbol.
@@ -96,16 +96,18 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	self
 		assertCollection: methodInfo allReceivers
 		hasSameElements: (Array with: classNameSConference).
+	elementArray := OrderedCollection new
+		add: ((SUndefinedObject basicNew) class nameAsSymbol);
+		add: classNameSStudent;
+		add: classNameSmallInteger;
+		add: False nameAsSymbol;
+		add: classNameByteString;
+		add: 2.3 class nameAsSymbol;
+		add: classNameSConference;
+		yourself.
 	self
 		assertCollection: typeInfo scalars keys
-		hasSameElements:
-			(Array
-				with: (SUndefinedObject basicNew) class nameAsSymbol
-				with: classNameSStudent
-				with: classNameSmallInteger
-				with: False nameAsSymbol
-				with: classNameByteString
-				with: 2.3 class nameAsSymbol)
+		hasSameElements: elementArray
 ]
 
 { #category : #tests }
@@ -177,7 +179,8 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 				with: classNameDictionary
 				with: classNameByteString
 				with: classNameSmallInteger
-				with: classNameSmallFloat64)
+				with: classNameSmallFloat64
+				with: classNameSFoo)
 ]
 
 { #category : #tests }
@@ -296,13 +299,16 @@ STypeInfoTest >> testAsTypeInfoSTeacherOnPackagesMatching [
 
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoScalars [
-	| typeInfo |
+	| typeInfo a b |
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SConference price: 95 ]
 		onPackagesMatching: 'SmallSuiteGenerator-Scenario').
 	self
-		assertCollection: (typeInfo scalars values flatCollect: [ :val | val ])
-		hasSameElements: #(95 0 100 nil).
+		assertCollection: (typeInfo scalars values flatCollect: [ :val | 
+			(val isKindOf: SConference) 
+				ifTrue: [ ^ #SConference ]
+				ifFalse: [ ^ val ] ])
+		hasSameElements: (Array with: 95 with: 0 with: 100 with: nil with: (SConference price: 95)).
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ SFoo new
 				returnCollection;
@@ -318,7 +324,8 @@ STypeInfoTest >> testAsTypeInfoScalars [
 				with: SmallInteger nameAsSymbol -> #(0 4)
 				with: OrderedCollection nameAsSymbol -> (Array with: OrderedCollection new)
 				with: ByteString nameAsSymbol -> #('' 'Hello')
-				with: 2.3 class nameAsSymbol -> #(2.3))
+				with: 2.3 class nameAsSymbol -> #(2.3)
+				with: SFoo nameAsSymbol -> (Array with: (SFoo new)))
 ]
 
 { #category : #tests }
