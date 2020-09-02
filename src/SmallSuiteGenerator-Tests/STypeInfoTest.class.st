@@ -324,7 +324,7 @@ STypeInfoTest >> testAsTypeInfoScalars [
 				with: SmallInteger nameAsSymbol -> (OrderedCollection newFrom: #(0 4))
 				with: OrderedCollection nameAsSymbol -> (OrderedCollection with: OrderedCollection new)
 				with: ByteString nameAsSymbol -> (OrderedCollection newFrom: #('' 'Hello'))
-				with: 2.3 class nameAsSymbol -> (OrderedCollection newFrom: #(2.3)))
+				with: 2.3 class nameAsSymbol -> (OrderedCollection newFrom: #(2.3))
 				with: SFoo nameAsSymbol -> (OrderedCollection newFrom: (SFoo new)))
 ]
 
