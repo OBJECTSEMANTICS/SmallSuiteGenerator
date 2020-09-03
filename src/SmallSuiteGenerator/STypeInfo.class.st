@@ -265,7 +265,7 @@ STypeInfo >> initializeBlackList [
 
 { #category : #initialization }
 STypeInfo >> initializeIsAbstract [
-	self types valuesDo: [ :e | e isAbstract ]
+	self types values do: [ :e | e isAbstract ]
 ]
 
 { #category : #'error handling' }
