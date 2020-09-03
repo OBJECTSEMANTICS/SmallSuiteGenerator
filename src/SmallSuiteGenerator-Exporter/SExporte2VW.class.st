@@ -69,6 +69,11 @@ SExporte2VW >> blackListSFieldAccessMessage [
 	^ {"SFieldAccessMessage >> #stmColor" }
 ]
 
+{ #category : #'bl-core' }
+SExporte2VW >> blackListSFitnessFunction [
+	^ {SFitnessFunction >> #aClass }
+]
+
 { #category : #'bl-ga' }
 SExporte2VW >> blackListSGAEngine [
 	^ {SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"}
@@ -214,9 +219,19 @@ SExporte2VW >> blackListSSAbstractSettingMethods [
 	^ { SSAbstractSettingMethods >> #exportMethod:  }
 ]
 
+{ #category : #'bl-tests' }
+SExporte2VW >> blackListSSGParser [
+	^ {SSGParser  >> #visitAssignmentNode:.
+	SSGParser  >> #visitCascadeNode:.
+	SSGParser  >> #visitLiteralNode:.
+	SSGParser  >> #visitMessageNode:.
+	SSGParser  >> #visitSequenceNode:.
+	SSGParser  >> #visitVariableNode:}
+]
+
 { #category : #'bl-strategies' }
 SExporte2VW >> blackListSSMetaInterpreter [
-	^ { SSMetaInterpreter >> #visitMessageNode:  }
+	^ { "SSMetaInterpreter >> #visitMessageNode: " }
 ]
 
 { #category : #'bl-initialization' }
@@ -242,12 +257,13 @@ SSTestCase >> #tearDown"}
 
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
-	^ {"STestCaseFactory >> #tearDown .
-STestCaseFactory >> #exportTests .
+	^ {"STestCaseFactory >> #exportTests .
 STestCaseFactory >> #gtInspectorCanvasIn: .
 STestCaseFactory >> #gtInspectorViewIn: .
+STestCaseFactory >> #classesForRegex:"
 STestCaseFactory >> #generatedClass .
-STestCaseFactory >> #classesForRegex:" }
+STestCaseFactory >> #openOnGeneratedClass .
+STestCaseFactory >> #tearDown}
 ]
 
 { #category : #'bl-examples' }
@@ -283,13 +299,14 @@ SExporte2VW >> blackListSTestShifter [
 
 { #category : #'bl-info' }
 SExporte2VW >> blackListSTypeClassInfo [
-	^ {STypeClassInfo >> #differenceWith:usingSelector:}
+	^ {STypeClassInfo >> #differenceWith:usingSelector: .
+	STypeClassInfo >> #isAbstract}
 ]
 
 { #category : #'bl-info' }
 SExporte2VW >> blackListSTypeInfo [
-	^ {STypeInfo >> #completeTypeInfo.
-STypeInfo >> #updateArgsOf: .
+	^ {STypeInfo >> #completeTypeInfo."
+STypeInfo >> #updateArgsOf: ."
 STypeInfo >> #deleteBlackListMethods.
 STypeInfo >> #blackList .
 STypeInfo >> #blackList: }
