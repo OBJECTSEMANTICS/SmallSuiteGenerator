@@ -78,7 +78,7 @@ RSSparkCircle >> shapeFor: anObject index: index [
 		externalRadius: slice innerRadius + (slice externalRadius/10 * (externalRadius log)) + 1.
 	slice border: (RSBorder new width: width;
 		color: (width == 0.2 ifTrue: [ Color black] ifFalse: [ slice color muchDarker]));
-		popup.
+		popupText: ((value * 100) asFloat round: 2) printString, '%'.
 	^ slice
 ]
 

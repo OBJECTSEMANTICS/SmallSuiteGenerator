@@ -247,15 +247,18 @@ SGAEngine >> evolutionShapeWith: yPositions ofColor: dictColor size: size [
 		addShape: (RSPolyline new 
 			controlPoints: (points at: 'lowest'); 
 			color: (dictColor at: 'lowestCoverage');
-			width: 10; yourself);
+			width: 10; 
+			yourself);
 		addShape: (RSPolyline new 
 			controlPoints: (points at: 'average'); 
 			color: (dictColor at: 'averageCoverage');
-			width: 10; yourself);
+			width: 10;
+			yourself);
 		addShape: (RSPolyline new 
 			controlPoints: (points at: 'fittest'); 
 			color: (dictColor at: 'fittestCoverage');
-			width: 10; yourself).
+			width: 10;
+			yourself).
 	self addTickX: composite withScale: scale color: (dictColor at: 'font') y: yMax and: xMax @ size y.
 	self addTickY: composite withScale: scale xMax: xMax ofColor: (dictColor at: 'font') andPositions: yPositions.
 	^ composite adjustToChildren
