@@ -103,7 +103,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		add: False nameAsSymbol;
 		add: classNameByteString;
 		add: 2.3 class nameAsSymbol;
-		add: classNameSConference;
+		"add: classNameSConference;"
 		yourself.
 	self
 		assertCollection: typeInfo scalars keys
@@ -180,7 +180,7 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 				with: classNameByteString
 				with: classNameSmallInteger
 				with: classNameSmallFloat64
-				with: classNameSFoo)
+				"with: classNameSFoo")
 ]
 
 { #category : #tests }

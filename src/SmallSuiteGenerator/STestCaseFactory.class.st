@@ -37,7 +37,7 @@ STestCaseFactory class >> from: configClass [
 	parser := self parse: configClass lastMessage asString.
 	^(self new) 
 		generatedClass: configClass;
-		fitness: configClass fitnessValue; 
+		fitness: configClass "fitnessValue"; 
 		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
 		setUpMethod: configClass setUpMethod; 
@@ -46,7 +46,6 @@ STestCaseFactory class >> from: configClass [
 		lastMessage: parser; 
 		typeInfo: aTypeInfo;
 		printerClass: printerClass;
-		
 		yourself
 ]
 
@@ -110,7 +109,6 @@ STestCaseFactory >> engine [
 { #category : #accessing }
 STestCaseFactory >> engineDefault [
 	^ SGAEngine new
-		fitness: fitness;
 		numberOfStatements: 30;
 		numberOfGenerations: numberOfIterations;
 		yourself.
@@ -156,12 +154,14 @@ STestCaseFactory >> firstExecution [
 
 { #category : #configuration }
 STestCaseFactory >> fitness [
+	fitness ifNotNil: [ ^ fitness ].
+	fitness := self generatedClass fitnessValue.
 	^ fitness
 ]
 
 { #category : #configuration }
 STestCaseFactory >> fitness: aFitness [
-	fitness := aFitness
+	self generatedClass fitness: aFitness
 ]
 
 { #category : #accessing }
@@ -200,7 +200,6 @@ STestCaseFactory >> initialSeed [
 { #category : #initialization }
 STestCaseFactory >> initialize [
   self resetToDefaults.
-  fitness := SMethodCoverage new.
   numberOfIterations := 20.
   engine := self engineDefault.
   initialSeed := 100.
@@ -339,7 +338,7 @@ STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
 STestCaseFactory >> setUp [
   self initializeProfiler.
   self firstExecution ifTrue: [ SPlatform resetRandomGenerator.
-        fitness
+        self fitness
            profiler: profiler;
            typeInfo: typeInfo;
            targetClass: self targetClassName;
@@ -353,7 +352,7 @@ STestCaseFactory >> setUp [
 { #category : #running }
 STestCaseFactory >> setUpEngine [
   engine
-     fitness: fitness;
+     fitness: self fitness;
      numberOfGenerations: numberOfIterations;
      typeInfo: self typeInfo;
      targetClassName: self targetClassName;

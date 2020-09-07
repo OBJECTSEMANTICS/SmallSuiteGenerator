@@ -309,7 +309,8 @@ SExporte2VW >> blackListSTypeInfo [
 STypeInfo >> #updateArgsOf: ."
 STypeInfo >> #deleteBlackListMethods.
 STypeInfo >> #blackList .
-STypeInfo >> #blackList: }
+STypeInfo >> #blackList: .
+STypeInfo >> #allParentClassesInfoFrom: }
 ]
 
 { #category : #'bl-tests' }
