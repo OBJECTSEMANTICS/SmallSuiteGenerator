@@ -37,7 +37,7 @@ STestCaseFactory class >> from: configClass [
 	parser := self parse: configClass lastMessage asString.
 	^(self new) 
 		generatedClass: configClass;
-		fitness: configClass fitnessValue; 
+		fitness: configClass "fitnessValue"; 
 		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
 		setUpMethod: configClass setUpMethod; 
