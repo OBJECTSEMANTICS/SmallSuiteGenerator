@@ -374,7 +374,7 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	highlightMethod := RSHighlightable new 
 		highlightColor: (dictColor at: 'highlightMethod');
 		yourself.
-	infoMethodShape := self infoMethodShapesOn: canvas ofColor: dictColor highlight: (Array with: highlightTestCase with: highlightMethod).	
+	infoMethodShape := self infoMethodShapesOn: canvas ofColor: dictColor highlight: (Array with: highlightTestCase with: highlightMethod).
 	ys := infoMethodShape at: 3.
 	barGroup := infoMethodShape at: 2.
 	infoMethodShape := infoMethodShape at: 1.
@@ -450,7 +450,7 @@ SGAViz >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
 	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
 	shapes := generationGroup flatCollect: #yourself.
 	shapes collect: [ :s | s encompassingRectangle origin y ] 
-		thenDo: [:y | (ys includes: y) ifFalse: [ys add: y]].
+		thenDo: [:y | (ys anySatisfy: [:each | each asInteger = y asInteger]) ifFalse: [ys add: y]].
 	RSEdgeBuilder verticalBezier  
 		shapes: shapes;
 		canvas: canvas;

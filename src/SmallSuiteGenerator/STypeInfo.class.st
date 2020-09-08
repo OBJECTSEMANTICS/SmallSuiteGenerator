@@ -391,7 +391,9 @@ STypeInfo >> types [
 { #category : #actions }
 STypeInfo >> union: aColl1 with: aColl2 [
 	
-	| set |
+	[| set |
 	set := aColl1 asSet addAll: aColl2; yourself.
-	^ set asOrderedCollection
+	^ set asOrderedCollection]
+	on: Error
+	do: [ ^ aColl1  ]
 ]
