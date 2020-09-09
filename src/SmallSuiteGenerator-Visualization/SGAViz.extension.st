@@ -270,7 +270,7 @@ SGAViz >> evolutionPoints: ypositions withScale: scale [
 	(self logs collect: [:log | 
 		Array with: log lowestFit values first
 			with: log averageFit values first
-			with: (log fittestTestCase fitnessByClass values first at: self targetClassName)])
+			with: (log fittestTestCase fitnessByClass values first at: self targetClassName ifAbsent: [0])])
 		doWithIndex: [ :array  :index | | y |
 			y := ypositions at: index.
 			listLowest add: (scale scale: array first) @ y.

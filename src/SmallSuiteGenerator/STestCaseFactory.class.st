@@ -28,16 +28,13 @@ Class {
 
 { #category : #'instance creation' }
 STestCaseFactory class >> from: configClass [
-	| aTypeInfo printerClass parser|
+	| aTypeInfo parser|
 	aTypeInfo := configClass typeInfoValue copy.
 	aTypeInfo blackList: configClass decodeBlackList.
-	printerClass := configClass asDict 
-		ifTrue: [ SSDictionaryBasedPrinter ] 
-		ifFalse: [ SSStandardPrinter ].
 	parser := self parse: configClass lastMessage asString.
-	^(self new) 
+	^ (self new) 
 		generatedClass: configClass;
-		fitness: configClass "fitnessValue"; 
+		fitness: configClass; 
 		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
 		setUpMethod: configClass setUpMethod; 
@@ -45,7 +42,6 @@ STestCaseFactory class >> from: configClass [
 		limitToWait: configClass limitToWait;
 		lastMessage: parser; 
 		typeInfo: aTypeInfo;
-		printerClass: printerClass;
 		yourself
 ]
 
@@ -65,6 +61,11 @@ STestCaseFactory class >> resetToDefaults [
 { #category : #settings }
 STestCaseFactory class >> vizClass [
 	^ SGANullViz
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> asDict: aBoolean [
+	self generatedClass asDict: aBoolean.
 ]
 
 { #category : #actions }
@@ -271,12 +272,6 @@ STestCaseFactory >> populationSize: anInteger [
 	self generatedClass populationSize: anInteger.
 ]
 
-{ #category : #'set strategies' }
-STestCaseFactory >> printerClass: aClass [
-	SSTestShifter class compile: 
-		'defaultPrinterClass', String cr,'	^ ', aClass printString
-]
-
 { #category : #accessing }
 STestCaseFactory >> reportClass [
 	reportClass ifNil: [ reportClass := SReportSTestCaseFactory on: self ].
@@ -336,17 +331,22 @@ STestCaseFactory >> selectionStrategyTestCase: aSelectionStrategy [
 
 { #category : #running }
 STestCaseFactory >> setUp [
-  self initializeProfiler.
-  self firstExecution ifTrue: [ SPlatform resetRandomGenerator.
-        self fitness
-           profiler: profiler;
-           typeInfo: typeInfo;
-           targetClass: self targetClassName;
-           consideringNSuperclasses: self generatedClass nsuperclasses.
-        self setUpEngine.
-        typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy ] ifFalse: [ profiler typeInfo: typeInfo.
-        engine fitness profiler: profiler.
-        engine numberOfGenerations: numberOfIterations ]
+	self initializeProfiler.
+	self firstExecution ifTrue: [ 
+		SPlatform resetRandomGenerator.
+      	self fitness
+      		profiler: profiler;
+         typeInfo: typeInfo;
+         targetClass: self targetClassName;
+         consideringNSuperclasses: self generatedClass nsuperclasses.
+      self setUpEngine.
+      typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy.
+		self generatedClass compilePrinterClass.
+	] ifFalse: [ 
+		profiler typeInfo: typeInfo.
+      engine fitness profiler: profiler.
+      engine numberOfGenerations: numberOfIterations.
+	]
 ]
 
 { #category : #running }

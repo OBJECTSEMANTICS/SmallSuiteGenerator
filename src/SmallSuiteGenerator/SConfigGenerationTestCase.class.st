@@ -33,7 +33,8 @@ SConfigGenerationTestCase class >> asDict [
 
 { #category : #setter }
 SConfigGenerationTestCase class >> asDict: aBoolean [
-	self compileMethod: #asDict withReturn: aBoolean asString
+	self compileMethod: #asDict withReturn: aBoolean asString.
+	self compilePrinterClass.
 ]
 
 { #category : #settings }
@@ -51,6 +52,14 @@ SConfigGenerationTestCase class >> blackList: aColl [
 { #category : #settings }
 SConfigGenerationTestCase class >> compileMethod: aSymbol withReturn: aString [
 	self class compile: aSymbol asString, String cr, '	^ ', aString classified: 'settings'
+]
+
+{ #category : #settings }
+SConfigGenerationTestCase class >> compilePrinterClass [
+	| aClass |
+	aClass := self asDict ifTrue: [ SSDictionaryBasedPrinter ] ifFalse: [ SSStandardPrinter ].
+	SSTestShifter class compile: 
+		'defaultPrinterClass', String cr,'	^ ', aClass printString
 ]
 
 { #category : #settings }

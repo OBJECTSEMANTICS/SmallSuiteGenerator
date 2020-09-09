@@ -1,3 +1,15 @@
+"
+I am a class that prints the testCases in a standard way, that is, creating a variable for each statement.
+
+For example, a result obtained by this class would be like the following:
+
+	| _var0 _var1 _var2 _var3 |
+	_var0 := 0.
+	_var1 := SFoo score: _var0 .
+	_var2 := _var1 returnFloat.
+	_var3 := _var1 score.
+	self assert: _var0 equals: _var3 .
+"
 Class {
 	#name : #SSStandardPrinter,
 	#superclass : #SSVisitor,

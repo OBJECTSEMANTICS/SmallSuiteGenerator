@@ -1,3 +1,6 @@
+"
+SSVariablesWithIdCollector collect all references of variables in a sentence, with the objective of not having reference errors in the construction of the testCase.
+"
 Class {
 	#name : #SSVariablesWithIdCollector,
 	#superclass : #SSVisitor,

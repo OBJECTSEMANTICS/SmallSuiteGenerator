@@ -1,3 +1,6 @@
+"
+SSVisitor is an abstract visitor for SSG nodes
+"
 Class {
 	#name : #SSVisitor,
 	#superclass : #SObject,

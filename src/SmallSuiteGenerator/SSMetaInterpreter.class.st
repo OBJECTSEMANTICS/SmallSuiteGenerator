@@ -1,3 +1,6 @@
+"
+Visit all SSG node in a generated test evaluating their results, finally return a context with all the returnTypes of the variable assignments.
+"
 Class {
 	#name : #SSMetaInterpreter,
 	#superclass : #SSVisitor,

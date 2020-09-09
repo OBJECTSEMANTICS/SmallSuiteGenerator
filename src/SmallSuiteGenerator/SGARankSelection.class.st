@@ -1,5 +1,5 @@
 "
-SGARankSelectionModified is responsible for select testCases based of their rank
+SGARankSelection is responsible for select testCases based of their rank
 "
 Class {
 	#name : #SGARankSelection,

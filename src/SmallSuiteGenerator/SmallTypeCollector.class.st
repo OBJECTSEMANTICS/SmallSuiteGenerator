@@ -1,3 +1,13 @@
+"
+SmallTypeCollector is a class to obtain information about the parameters of those methods that do not have enough information.
+
+This information is obtained in two ways: using NEVENA techniques and using the type information provided by RoelfTyper.
+
+EXAMPLE OF USE
+---------------
+
+SmallTypeCollector new collectTypeFrom: aClass
+"
 Class {
 	#name : #SmallTypeCollector,
 	#superclass : #SObject,

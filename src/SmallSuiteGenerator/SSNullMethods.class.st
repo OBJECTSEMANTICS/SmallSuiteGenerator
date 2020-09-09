@@ -1,3 +1,6 @@
+"
+I am a class that defines the setUp and tearDown configuration methods as null.
+"
 Class {
 	#name : #SSNullMethods,
 	#superclass : #SSAbstractSettingMethods,

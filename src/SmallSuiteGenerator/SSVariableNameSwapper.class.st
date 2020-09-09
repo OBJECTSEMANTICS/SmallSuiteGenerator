@@ -1,3 +1,24 @@
+"
+Visit all SSG node in a generated test to fix order of assignments, for instance, given a testCase like this:
+
+'	_var99 := 1.
+	_var23 := 1.
+	_var2 := Point x: _var99 y: _var23.
+	_var33 := Point x: _var23 y: _var99.
+	_var4 := _var2 x.
+	_var5 := _var2 equals: _var33.
+'
+
+is transformed in this:
+
+'	_var0 := 1.
+	_var1 := 1.
+	_var2 := Point x: _var0 y: _var1 .
+	_var3 := Point x: _var1 y: _var0 .
+	_var4 := _var2 x.
+	_var5 := _var2 equals: _var3 .
+'
+"
 Class {
 	#name : #SSVariableNameSwapper,
 	#superclass : #SSVisitor,
