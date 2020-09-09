@@ -48,19 +48,19 @@ SSStandardPrinter >> stream: anObject [
 
 { #category : #'visiting-core' }
 SSStandardPrinter >> visitAbstractMessage: aMessage [
-	
+	| selector |
 	"this only propagate the visit"
-	
+	selector := aMessage selector.
 	aMessage receiver accept: self.
 	stream space.
-	aMessage selector isKeyword
+	(selector isKeyword or: [ selector isBinary ])
 		ifTrue:[
-			aMessage selector keywords with: aMessage args do:[ :key : arg|
+			selector keywords with: aMessage args do:[ :key : arg|
 				stream nextPutAll: key; space.
 				arg accept: self.
 				stream space. ].
 		] ifFalse:[
-			stream nextPutAll: aMessage selector.
+			stream nextPutAll: selector.
 		].
 ]
 
