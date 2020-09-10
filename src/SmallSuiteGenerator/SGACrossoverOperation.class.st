@@ -63,6 +63,7 @@ SGACrossoverOperation >> crossover: testCaseA with: testCaseB [
 { #category : #actions }
 SGACrossoverOperation >> offSpringOf: parentA and: parentB using: alpha [
   | sizeA sizeB offSpring limitA limitB|
+
   sizeA := parentA length.
   sizeB := parentB length.
   offSpring := SSTestCase with: parentA typeInfo copy.

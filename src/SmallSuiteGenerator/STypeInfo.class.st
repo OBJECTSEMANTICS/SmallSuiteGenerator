@@ -35,6 +35,7 @@ STypeInfo class >> asTypeInfo: aTypeCollector methodsBlacklist: aList [
 
 { #category : #comparing }
 STypeInfo >> = other [
+
 	^ self class = other class
 		and: [ types = other types
 				and: [ | otherScalars |
@@ -46,6 +47,7 @@ STypeInfo >> = other [
 
 { #category : #accessing }
 STypeInfo >> accessMessagesFrom: aClassName [
+
 	^ types
 		flatCollect: [ :aClassType | 
 			aClassType accessMessages
@@ -54,6 +56,7 @@ STypeInfo >> accessMessagesFrom: aClassName [
 
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
+
 	types
 		at: aTypeClassInfo typeName
 		ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
@@ -64,6 +67,7 @@ STypeInfo >> addClassInfo: aTypeClassInfo [
 { #category : #accessing }
 STypeInfo >> allParentClassesInfoFrom: aClassName [
 	|smalltalkClass result|
+	
 	smalltalkClass := Smalltalk at: aClassName.
 	result := OrderedCollection new.
 	smalltalkClass withAllSuperclassesDo:[:class|
@@ -77,6 +81,7 @@ STypeInfo >> allParentClassesInfoFrom: aClassName [
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector [
 	|aBlackList|
+	
 	aBlackList := self blackList.
 	self cleanBlockClosuresOf: aTypeCollector.
 	aTypeCollector allClasses

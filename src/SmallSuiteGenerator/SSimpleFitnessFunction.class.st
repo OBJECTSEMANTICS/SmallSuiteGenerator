@@ -23,6 +23,7 @@ Class {
 { #category : #actions }
 SSimpleFitnessFunction >> computeCoverageWith: assoc [
 	| sum |
+	
 	sum := [assoc at: targetClass] on: Error do: [0].
 	sum := superclasses
 		inject: sum 
@@ -35,32 +36,36 @@ SSimpleFitnessFunction >> computeCoverageWith: assoc [
 { #category : #actions }
 SSimpleFitnessFunction >> computeFitness [
 	| assoc |
+	
 	assoc := self fitnessByClass.
 	^ Array with: (self computeCoverageWith: assoc) with: assoc.
 ]
 
 { #category : #accessing }
 SSimpleFitnessFunction >> consideringNSuperclasses: anInteger [
+
 	n := anInteger.
 	self updateSuperclasses.
 ]
 
 { #category : #actions }
 SSimpleFitnessFunction >> fitnessByClass [
+
 	self subclassResponsibility
 ]
 
 { #category : #actions }
 SSimpleFitnessFunction >> fitnessOf: testCase [
 	| fitness |
-	fitness := self computeFitness.
 	
+	fitness := self computeFitness.
 	testCase fitness at: self functionName put: fitness first.
 	testCase fitnessByClass at: self functionName put: fitness second.
 ]
 
 { #category : #initialization }
 SSimpleFitnessFunction >> initialize [
+
 	super initialize.
 	weight := 1.0.
 	n := 0.
@@ -69,6 +74,7 @@ SSimpleFitnessFunction >> initialize [
 
 { #category : #actions }
 SSimpleFitnessFunction >> run: testCaseCollection [
+
 	testCaseCollection
 		do: [ :testCase | 
 			testCase length > 0 ifTrue: [
@@ -82,6 +88,7 @@ SSimpleFitnessFunction >> run: testCaseCollection [
 
 { #category : #accessing }
 SSimpleFitnessFunction >> updateSuperclasses [
+
 	superclasses := self aClass allSuperclasses collect: [:e | e name].
 	n := (n min: superclasses size - 2). "avoid add Object and ProtoObject in superclasses"
 	superclasses := (superclasses first: n) 
@@ -90,10 +97,12 @@ SSimpleFitnessFunction >> updateSuperclasses [
 
 { #category : #accesing }
 SSimpleFitnessFunction >> weight [
+
 	^ weight
 ]
 
 { #category : #accesing }
 SSimpleFitnessFunction >> weight: aFloat [
+
 	weight := aFloat.
 ]

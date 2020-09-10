@@ -16,6 +16,7 @@ Class {
 { #category : #'instance creation' }
 SMultiFitnessFunction class >> methodAndStatementCoverage [
 	| inst |
+	
 	inst := self new.
 	inst add: SMethodCoverage new weight: 0.6.
 	inst add: SStatementCoverage new weight: 0.4.
@@ -24,6 +25,7 @@ SMultiFitnessFunction class >> methodAndStatementCoverage [
 
 { #category : #accessing }
 SMultiFitnessFunction >> add: aFitness weight: aFloat [
+
 	aFitness weight: aFloat.
 	aFitness profiler: self profiler.
 	aFitness targetClass: targetClass.
@@ -33,6 +35,7 @@ SMultiFitnessFunction >> add: aFitness weight: aFloat [
 { #category : #accessing }
 SMultiFitnessFunction >> computeFitness [
 	| fitness |
+	
 	fitness := (functionList collect: [ :each | 
 		(each computeFitness first) * each weight ]) sum.
 	^ Array with: fitness
@@ -41,10 +44,13 @@ SMultiFitnessFunction >> computeFitness [
 { #category : #accessing }
 SMultiFitnessFunction >> computeMultiFitnessOf: aTestCase [
 	| fitness fitnessByClass |
+	
 	fitness := (functionList collect: [ :each | 
 		(aTestCase fitnessFor: each functionName) * each weight ]) sum.
 	fitnessByClass := Dictionary new.
-	functionList collect: [ :each | 
+	"functionList collect: [ :each | 
+		fitnessByClass sum: (aTestCase fitnessByClass at: each functionName) * each weight ]."
+	functionList do: [ :each | 
 		fitnessByClass sum: (aTestCase fitnessByClass at: each functionName) * each weight ].
 	aTestCase fitnessByClass at: self functionName put: fitnessByClass.
 	aTestCase fitness at: self functionName put: fitness.
@@ -52,11 +58,13 @@ SMultiFitnessFunction >> computeMultiFitnessOf: aTestCase [
 
 { #category : #accessing }
 SMultiFitnessFunction >> consideringNSuperclasses: anInteger [
+
 	functionList do: [ :func | func consideringNSuperclasses: anInteger ]
 ]
 
 { #category : #accessing }
 SMultiFitnessFunction >> fitnessOf: aTestCase [
+
 	functionList do: [ :func | func fitnessOf: aTestCase ].
 	self computeMultiFitnessOf: aTestCase.
 	
@@ -64,29 +72,34 @@ SMultiFitnessFunction >> fitnessOf: aTestCase [
 
 { #category : #accessing }
 SMultiFitnessFunction >> functionName [
+
 	^ 'multi-coverage'
 ]
 
 { #category : #initialization }
 SMultiFitnessFunction >> initialize [ 
+
 	super initialize.
 	functionList := Dictionary new.
 ]
 
 { #category : #accessing }
 SMultiFitnessFunction >> profiler: aProfiler [
+
 	profiler := aProfiler.
 	self updateFunctionList
 ]
 
 { #category : #accessing }
 SMultiFitnessFunction >> targetClass: anObject [
+
 	targetClass := anObject.
 	self updateFunctionList.
 ]
 
 { #category : #accessing }
 SMultiFitnessFunction >> updateFunctionList [
+
 	functionList do: [ :func |
 		func profiler: profiler.
 		func targetClass: targetClass.	

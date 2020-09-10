@@ -21,6 +21,7 @@ Class {
 
 { #category : #accessing }
 SFitnessFunction >> aClass [
+
 	aClass ifNotNil: [ ^ aClass ].
 	aClass := self class environment at: targetClass.
 	^ aClass
@@ -28,6 +29,7 @@ SFitnessFunction >> aClass [
 
 { #category : #actions }
 SFitnessFunction >> compute: testCaseCollection [
+
 	self setUp.
 	self run: testCaseCollection.
 	self tearDown.
@@ -35,6 +37,7 @@ SFitnessFunction >> compute: testCaseCollection [
 
 { #category : #actions }
 SFitnessFunction >> fitnessOf: aTestCase [ 
+
 	self subclassResponsibility 
 ]
 
@@ -45,21 +48,25 @@ SFitnessFunction >> fitnessOfBlock: aBlock [
 
 { #category : #accesing }
 SFitnessFunction >> functionName [
+
 	^ self subclassResponsibility
 ]
 
 { #category : #accesing }
 SFitnessFunction >> profiler [
+
 	^ profiler 
 ]
 
 { #category : #accesing }
 SFitnessFunction >> profiler: aProfiler [
+
 	profiler := aProfiler.
 ]
 
 { #category : #actions }
 SFitnessFunction >> run: testCaseCollection [
+
 	testCaseCollection
 		do: [ :testCase | 
 			testCase length > 0 ifTrue: [
@@ -72,6 +79,7 @@ SFitnessFunction >> run: testCaseCollection [
 
 { #category : #actions }
 SFitnessFunction >> runPopulation: testCaseCollection [
+
 	profiler cleanBlocksOfMethods.
 	testCaseCollection
 		do: [ :testCase | 
@@ -85,6 +93,7 @@ SFitnessFunction >> setUp [
 
 { #category : #accessing }
 SFitnessFunction >> targetClass: anObject [
+
 	targetClass := anObject
 ]
 
@@ -94,5 +103,6 @@ SFitnessFunction >> tearDown [
 
 { #category : #accessing }
 SFitnessFunction >> typeInfo: anObject [ 
+
 	profiler typeInfo: anObject
 ]

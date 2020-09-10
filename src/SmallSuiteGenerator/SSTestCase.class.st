@@ -21,14 +21,16 @@ Class {
 
 { #category : #'instance creation' }
 SSTestCase class >> with: aTypeInfo [
-  | testCase |
-  testCase := self new.
-  testCase typeInfo: aTypeInfo.
-  ^testCase
+	| testCase |
+
+	testCase := self new.
+	testCase typeInfo: aTypeInfo.
+	^ testCase
 ]
 
 { #category : #comparing }
 SSTestCase >> = another [
+
   ^ self class = another class 
 	and: [ statements = another statements 
 		and: [ fitness = another fitness 
@@ -38,27 +40,32 @@ SSTestCase >> = another [
 
 { #category : #visitor }
 SSTestCase >> accept: aVisitor [
+
 	aVisitor visitStatements: self statements.
 ]
 
 { #category : #accessing }
 SSTestCase >> addChild: aTestCase [
+
 	children add: aTestCase
 ]
 
 { #category : #accessing }
 SSTestCase >> addParent: aTestCase [
+
    parents add: aTestCase.
 	aTestCase addChild: self.
 ]
 
 { #category : #accessing }
 SSTestCase >> addParents: aCollection [
+
    aCollection do: [ :e | self addParent: e ]
 ]
 
 { #category : #accessing }
 SSTestCase >> allChildren [
+
 	^ (Set newFrom: children)
 	addAll: (children flatCollect: [ :tC | tC allChildren ]); yourself
 ]
@@ -66,6 +73,7 @@ SSTestCase >> allChildren [
 { #category : #accessing }
 SSTestCase >> allParents [
 	|  list |
+	
 	list := OrderedCollection new.
 	self allParents: self on: list using: Set new.
 	^ list
@@ -73,6 +81,7 @@ SSTestCase >> allParents [
 
 { #category : #accessing }
 SSTestCase >> allParents: testCase on: collection using: associationSet [
+
 	testCase parents 
 		reject: [ :tC | (associationSet includes: tC generationNumber -> tC idPopulation) ] 
 		thenDo:  [ :tC | 
@@ -84,12 +93,14 @@ SSTestCase >> allParents: testCase on: collection using: associationSet [
 
 { #category : #accessing }
 SSTestCase >> children [ 
+
 	^ children
 ]
 
 { #category : #copying }
 SSTestCase >> copy [
 	| copy |
+	
 	copy := self class with: typeInfo copy.
 	copy targetClassName: targetClassName.
 	statements do: [ :stm | copy addStatement: stm copy ].
@@ -99,58 +110,68 @@ SSTestCase >> copy [
 
 { #category : #copying }
 SSTestCase >> deepCopy [
-  | copy |
-  copy := self copy.
-  copy setFitness: self fitness.
-  copy setFitnessByClass: self fitnessByClass.
-  copy generationNumber: self generationNumber.
-  copy summaryExecutionMethods: self summaryExecutionMethods.
-  copy hasErrors: self hasErrors.
-  ^ copy
+	| copy |
+
+	copy := self copy.
+	copy setFitness: self fitness.
+	copy setFitnessByClass: self fitnessByClass.
+	copy generationNumber: self generationNumber.
+	copy summaryExecutionMethods: self summaryExecutionMethods.
+	copy hasErrors: self hasErrors.
+	^ copy
 ]
 
 { #category : #accessing }
 SSTestCase >> fitness [ 	
+	
 	^ fitness
 ]
 
 { #category : #accessing }
 SSTestCase >> fitnessByClass [
+
 	^ fitnessByClass 
 ]
 
 { #category : #actions }
 SSTestCase >> fitnessFor: functionName [ 
+
 	^ self fitness at: functionName
 ]
 
 { #category : #accessing }
 SSTestCase >> generationNumber [
+
 	^ generationNumber
 ]
 
 { #category : #accessing }
 SSTestCase >> generationNumber: anObject [
+
 	generationNumber := anObject
 ]
 
 { #category : #comparing }
 SSTestCase >> hash [
+
   ^ super hash bitXor: "(self number hash bitXor:" self statements hash")"
 ]
 
 { #category : #accessing }
 SSTestCase >> idPopulation [
+
 	^ idPopulation
 ]
 
 { #category : #accessing }
 SSTestCase >> idPopulation: anObject [
+
 	idPopulation := anObject
 ]
 
 { #category : #initialization }
 SSTestCase >> initialize [
+
    super initialize.
    generationNumber := 1.
    idPopulation := 1.
@@ -167,6 +188,7 @@ SSTestCase >> initialize [
 { #category : #util }
 SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
     |fitness1 fitness2|
+
     fitness1 := self fitness at: fitnessStrategy.
     fitness2 := testCase2 fitness at: fitnessStrategy.
     (fitness1 > fitness2) ifTrue:[ ^ true ].
@@ -182,21 +204,32 @@ SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
 
 { #category : #accessing }
 SSTestCase >> parents [
+
 	^ parents
 ]
 
 { #category : #printing }
+SSTestCase >> printDescriptiveComment [
+
+	^ self printSummaryFitness , (String with: Character cr)
+		, self printSummaryFitnessByClass
+]
+
+{ #category : #printing }
 SSTestCase >> printOn: aStream [
+
 	self accept: (self printerClass on: aStream).
 ]
 
 { #category : #printing }
 SSTestCase >> printString [
+
 	^ String streamContents: [ :stream | self printOn: stream].
 ]
 
 { #category : #printing }
 SSTestCase >> printStringWithAssertions [
+
 	^ String streamContents: [ :stream | 
 		self printerClass printTempVariables: self on: stream.
 		(self printerClass on: stream) 
@@ -206,6 +239,7 @@ SSTestCase >> printStringWithAssertions [
 
 { #category : #printing }
 SSTestCase >> printSummaryFitness [
+
 	^ String
 		streamContents: [ :stream | 
 			stream
@@ -224,6 +258,7 @@ SSTestCase >> printSummaryFitness [
 
 { #category : #printing }
 SSTestCase >> printSummaryFitnessByClass [
+
 	^ String
 		streamContents: [ :stream | 
 			stream
@@ -242,12 +277,14 @@ SSTestCase >> printSummaryFitnessByClass [
 
 { #category : #accessing }
 SSTestCase >> properties [
+
 	^ self.
 ]
 
 { #category : #accessing }
 SSTestCase >> removeChild: testCase [
 	| index |
+	
 	index := 0.
 	children detect: [:tC | index := index + 1.
 		(tC generationNumber == testCase generationNumber) and: [ tC idPopulation == testCase idPopulation ] ]
@@ -256,6 +293,7 @@ SSTestCase >> removeChild: testCase [
 
 { #category : #util }
 SSTestCase >> selectMethod: aCollection [ 
+
 	selectionStrategy ifNil: [  ^ aCollection  pickAny].
 	^ selectionStrategy selectJustOneOf: aCollection with: (aCollection collect: #executions).
 	
@@ -263,16 +301,19 @@ SSTestCase >> selectMethod: aCollection [
 
 { #category : #accessing }
 SSTestCase >> selectionStrategy: selectStrategy [
+
 	selectionStrategy := selectStrategy 
 ]
 
 { #category : #accessing }
 SSTestCase >> setFitness: aDictionary [ 
+
 	fitness := aDictionary copy
 ]
 
 { #category : #accessing }
 SSTestCase >> setFitnessByClass: aDictionary [ 
+
 	fitnessByClass := aDictionary copy
 ]
 
@@ -282,26 +323,31 @@ SSTestCase >> storeOn: aStream [
 
 { #category : #accessing }
 SSTestCase >> summaryExecutionMethods [
+
 	^ summaryExecutionMethods
 ]
 
 { #category : #accessing }
 SSTestCase >> summaryExecutionMethods: summaryExecutionMethod [ 
+
 	summaryExecutionMethods := summaryExecutionMethod 
 ]
 
 { #category : #accessing }
 SSTestCase >> summaryTargetClass [
+
 	^ summaryTargetClass
 ]
 
 { #category : #accessing }
 SSTestCase >> summaryTargetClass: anObject [
+
 	summaryTargetClass := anObject 
 ]
 
 { #category : #util }
 SSTestCase >> updateWith: anotherTestCase [
+
 	self generationNumber: anotherTestCase generationNumber.
 	self idPopulation: anotherTestCase idPopulation.
 	anotherTestCase parents do: [ :parent | 

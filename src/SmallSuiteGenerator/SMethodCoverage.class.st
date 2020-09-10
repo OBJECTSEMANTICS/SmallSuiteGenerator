@@ -9,10 +9,12 @@ Class {
 
 { #category : #actions }
 SMethodCoverage >> fitnessByClass [
+
 	^ profiler methodCoverage1.
 ]
 
 { #category : #accesing }
 SMethodCoverage >> functionName [
+
 	^ 'method-coverage'
 ]

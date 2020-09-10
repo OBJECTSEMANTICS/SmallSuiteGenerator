@@ -25,27 +25,27 @@ Class {
 
 { #category : #'instance creation' }
 SComparisonAssertion class >> comparisonAssertion: anExecutionContext with: array [
-			| varName1 varName2 val1 val2 |
-			varName1 := array first.
-			varName2 := array second.
-			val1 := anExecutionContext at: varName1.
-			val2 := anExecutionContext at: varName2.
-			val1 class = val2 class
-				ifTrue: [ (val1 class allSelectorsBelow: Object)
-						detect: [ :selector | selector = #= ]
-						ifFound: [ | selector |
-							selector := val1 = val2
-								ifTrue: [ #assert:equals: ]
-								ifFalse: [ #deny:equals: ].
-							^ self new
-										selector: selector;
-										args:
-											(Array
-												with: (SVariable nameOrId: varName1)
-												with: (SVariable nameOrId: varName2));
-										yourself ]
-							 ].
-						^ nil
+	| varName1 varName2 val1 val2 |
+	
+	varName1 := array first.
+	varName2 := array second.
+	val1 := anExecutionContext at: varName1.
+	val2 := anExecutionContext at: varName2.
+	val1 class = val2 class
+		ifTrue: [ (val1 class allSelectorsBelow: Object)
+			detect: [ :selector | selector = #= ]
+			ifFound: [ | selector |
+				selector := val1 = val2
+					ifTrue: [ #assert:equals: ]
+					ifFalse: [ #deny:equals: ].
+				^ self new
+					selector: selector;
+					args:
+						(Array
+							with: (SVariable nameOrId: varName1)
+							with: (SVariable nameOrId: varName2));
+							yourself ] ].
+	^ nil
 ]
 
 { #category : #'instance creation' }
@@ -67,5 +67,6 @@ SComparisonAssertion class >> for: anExecutionContext [
 
 { #category : #visitor }
 SComparisonAssertion >> accept: aSSVisitor [
+
 	^ aSSVisitor visitComparisonAssertionMessage: self.
 ]

@@ -12,6 +12,7 @@ Class {
 
 { #category : #initialization }
 SGATournamentSelection >> initialize [
+
 	super initialize .
 	tournamentSize := 5.
 ]
@@ -19,6 +20,7 @@ SGATournamentSelection >> initialize [
 { #category : #selection }
 SGATournamentSelection >> selectJustOneOf: aCollection with: probabilities [
 	| sample index |
+	
 	index := 0.
 	sample := (self random collectAtRandom: 
 		(probabilities collect: [:prob | 
@@ -32,8 +34,8 @@ SGATournamentSelection >> selectJustOneOf: aCollection with: probabilities [
 { #category : #selection }
 SGATournamentSelection >> selectOf: aCollection [
 	"Return the best testCases from tournamentSize testCase randomly chosen from the population"
-
 	| sample |
+	
 	sample := (self random collectAtRandom: aCollection)
 		first: (tournamentSize min: aCollection size).
 	sample := sample
@@ -43,5 +45,6 @@ SGATournamentSelection >> selectOf: aCollection [
 
 { #category : #accessing }
 SGATournamentSelection >> tournamentSize: anInteger [
+
 	tournamentSize := anInteger 
 ]

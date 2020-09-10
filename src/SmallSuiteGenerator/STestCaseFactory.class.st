@@ -29,9 +29,11 @@ Class {
 { #category : #'instance creation' }
 STestCaseFactory class >> from: configClass [
 	| aTypeInfo parser|
+	
 	aTypeInfo := configClass typeInfoValue copy.
 	aTypeInfo blackList: configClass decodeBlackList.
 	parser := self parse: configClass lastMessage asString.
+	
 	^ (self new) 
 		generatedClass: configClass;
 		fitness: configClass; 
@@ -47,20 +49,26 @@ STestCaseFactory class >> from: configClass [
 
 { #category : #settings }
 STestCaseFactory class >> parse: aString [
-	^ [SSGParser parseFrom: (SPlatform rbParserClass parseExpression: aString)]
+
+	^ [ SSGParser parseFrom: (SPlatform rbParserClass parseExpression: aString) ]
 	on: Error 
 	do: [ nil ]
 ]
 
 { #category : #settings }
 STestCaseFactory class >> resetToDefaults [
-	{ #vizClass -> SGANullViz } do: [ :val |
-		STestCaseFactory class compile: val key asString, String cr, '	^ ', val value printString ]
+	"reset visualization class to NullViz"
+
+	{ #vizClass -> SGANullViz } 
+		do: [ :val |
+			self class compile: 
+			('' join: { val key asString . String cr . '	^ ' . val value printString }	) ]
 ]
 
 { #category : #settings }
 STestCaseFactory class >> vizClass [
-	^ SGANullViz
+
+	^ SGAViz
 ]
 
 { #category : #'set strategies' }

@@ -16,7 +16,8 @@ Class {
 
 { #category : #'instance creation' }
 SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
-	^ SFieldAccessMessage new
+
+	^ self new
 		returnType: aMethod returnType type;
 		selector: aMethod selector;
 		receiver: aReceiver;
@@ -25,15 +26,18 @@ SFieldAccessMessage class >> newFromReceiver: aReceiver andMethod: aMethod [
 
 { #category : #visitor }
 SFieldAccessMessage >> accept: aSSVisitor [
+
 	^ aSSVisitor visitFieldAccessMessage: self.
 ]
 
 { #category : #actions }
 SFieldAccessMessage >> changeOn: aTestCase [
+
 	aTestCase addAlternativeFieldAccessMessage: self.
 ]
 
 { #category : #actions }
 SFieldAccessMessage >> insertOn: aTestCase [
+
 	^ aTestCase addFieldAccessMessage: self selector from: self receiver returnType.
 ]

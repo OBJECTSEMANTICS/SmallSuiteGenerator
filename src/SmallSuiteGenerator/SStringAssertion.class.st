@@ -22,6 +22,7 @@ Class {
 
 { #category : #'instance creation' }
 SStringAssertion class >> for: anExecutionContext [
+
 	^ (anExecutionContext associations
 		reject: [ :assoc | self isPrimitive: assoc value ])
 		collect: [ :assoc | self stringAssertionsOf: assoc ]
@@ -31,6 +32,7 @@ SStringAssertion class >> for: anExecutionContext [
 { #category : #'instance creation' }
 SStringAssertion class >> stringAssertionsOf: assoc [
 	| aValue |
+	
 	aValue := assoc value.
 	^ (aValue class allSelectorsBelow: Object)
 		detect: [ :aSelector | aSelector = #printOn: or: [ aSelector = #asString ] ]
@@ -55,5 +57,6 @@ SStringAssertion class >> stringAssertionsOf: assoc [
 
 { #category : #visitor }
 SStringAssertion >> accept: aSSVisitor [
+
 	^ aSSVisitor visitStringAssertionMessage: self.
 ]

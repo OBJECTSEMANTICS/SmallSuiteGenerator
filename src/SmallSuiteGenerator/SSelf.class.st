@@ -11,16 +11,19 @@ Class {
 
 { #category : #visitor }
 SSelf >> accept: aSSVisitor [
+
 	^ aSSVisitor visitSelf: self.
 ]
 
 { #category : #querying }
 SSelf >> containsVariable: aVariable [
+
 	^ false.
 ]
 
 { #category : #initialization }
 SSelf >> initialize [
+
 	super initialize.
 	varName := 'self'.
 ]

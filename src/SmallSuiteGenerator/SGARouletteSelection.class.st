@@ -10,6 +10,7 @@ Class {
 { #category : #creating }
 SGARouletteSelection >> createRouletteWith: probability [ 
 	| sum roulette |
+	
 	sum := probability sum.
 	roulette := probability collect: [ :e | e/sum ].
 	2 to: probability size do: [ :i | 
@@ -21,6 +22,7 @@ SGARouletteSelection >> createRouletteWith: probability [
 { #category : #selection }
 SGARouletteSelection >> selectJustOneOf: aCollection with: probabilities [
 	| roulette random |
+	
 	roulette := self createRouletteWith: probabilities.
 	random := self next.
 	roulette doWithIndex: [ :probability :index |
@@ -31,12 +33,14 @@ SGARouletteSelection >> selectJustOneOf: aCollection with: probabilities [
 
 { #category : #selection }
 SGARouletteSelection >> selectOf: aCollection [ 
+
 	^ self selectOf: aCollection with: (aCollection collect: [:testCase | self fitnessFor: testCase ])
 ]
 
 { #category : #selection }
 SGARouletteSelection >> selectOf: collection with: probability [
 	| roulette random newCollection collectionSize indexes index |
+	
 	roulette := self createRouletteWith: probability.
 	newCollection := OrderedCollection new.
 	collectionSize := collection size.

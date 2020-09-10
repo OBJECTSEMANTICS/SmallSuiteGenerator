@@ -28,11 +28,13 @@ SConfigGenerationTestCase class >> addTypeInfo: aTypeInfo withKey: aString [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> asDict [
+
 	^ false
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> asDict: aBoolean [
+
 	self compileMethod: #asDict withReturn: aBoolean asString.
 	self compilePrinterClass.
 ]
@@ -51,12 +53,16 @@ SConfigGenerationTestCase class >> blackList: aColl [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> compileMethod: aSymbol withReturn: aString [
-	self class compile: aSymbol asString, String cr, '	^ ', aString classified: 'settings'
+
+	self class 
+		compile: aSymbol asString, String cr, '	^ ', aString 
+		classified: 'settings'
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> compilePrinterClass [
 	| aClass |
+	
 	aClass := self asDict ifTrue: [ SSDictionaryBasedPrinter ] ifFalse: [ SSStandardPrinter ].
 	SSTestShifter class compile: 
 		'defaultPrinterClass', String cr,'	^ ', aClass printString
@@ -89,26 +95,30 @@ SConfigGenerationTestCase class >> crossoverStrategy: aClass [
 { #category : #settings }
 SConfigGenerationTestCase class >> decodeBlackList [
 	|result|
+	
 	result := OrderedCollection new.
-	self blackList do: [:e | |class finded|
-			[class := (e at:1) asClass.
-			(e at: 3) ifTrue: [class := class class].
-			result add: (class compiledMethodAt: (e at: 2))]
-			on: Error 
-			do: [  ]
+	self blackList do: [:e | | class |
+		[	class := (e at:1) asClass.
+			(e at: 3) ifTrue: [ class := class class ].
+			result add: (class compiledMethodAt: (e at: 2)) ]
+		on: Error 
+		do: [ nil ]
 	 ].
 	 ^ result
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> defaultTypeInfo [
-	defaultTypeInfo ifNil: [defaultTypeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: []
-						inPackagesMatching: self targetPackageRegex)].
+
+	defaultTypeInfo ifNil: [
+		defaultTypeInfo := STypeInfo 
+			asTypeInfo: (SSTypeCollector profile: [] inPackagesMatching: self targetPackageRegex)].
 	^ defaultTypeInfo
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> elitismRate [
+
 	^ 0.1
 ]
 
@@ -120,6 +130,7 @@ SConfigGenerationTestCase class >> elitismRate: aNumber [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> encodeBlackList: aColl [
+
 	^ aColl collect: [ :compM | Array 
 		with: compM origin instanceSide name 
 		with: compM selector 
@@ -128,6 +139,7 @@ SConfigGenerationTestCase class >> encodeBlackList: aColl [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> factory [
+
 	^ STestCaseFactoryPharo from: self 
 ]
 
@@ -135,7 +147,6 @@ SConfigGenerationTestCase class >> factory [
 SConfigGenerationTestCase class >> fitness [
 
 	^ #statement
-	"^ Array with: SStatementCoverage with: #new"
 ]
 
 { #category : #setter }
@@ -156,6 +167,8 @@ SConfigGenerationTestCase class >> fitnessDictionary [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> fitnessValue [
+	"returns the fitness value given a keyword"
+	
 	^ (self fitnessDictionary 
 		at: self fitness 
 		ifAbsent: [ self fitnessDictionary at: #statement ]) value
@@ -163,6 +176,7 @@ SConfigGenerationTestCase class >> fitnessValue [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> generateTests [
+
 	^ self factory createTestCases; yourself
 ]
 
@@ -180,11 +194,13 @@ SConfigGenerationTestCase class >> lastMessage: aString [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> limitToWait [
+
 	^ 1000
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> limitToWait: aNumber [
+
 	self compileMethod: #limitToWait withReturn: aNumber asString
 ]
 
@@ -202,6 +218,7 @@ SConfigGenerationTestCase class >> logClass: aClass [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> logs [
+
 	^ false
 ]
 
@@ -225,31 +242,37 @@ SConfigGenerationTestCase class >> methodClass: aClass [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> nsuperclasses [
+
 	^ 0
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> nsuperclasses: aNumber [
+
 	self compileMethod: #nsuperclasses withReturn: aNumber printString
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> numberOfGenerations [
+
 	^ 5
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> numberOfGenerations: aNumber [
+
 	self compileMethod: #numberOfGenerations withReturn: aNumber printString
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> numberOfStatements [
+
 	^ 30
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> numberOfStatements: aNumber [
+
 	self compileMethod: #numberOfStatements withReturn: aNumber printString
 	
 ]
@@ -262,17 +285,20 @@ SConfigGenerationTestCase class >> outputPackageName [
 
 { #category : #setter }
 SConfigGenerationTestCase class >> outputPackageName: aString [
+
 	self category: aString.
 	self compileMethod: #outputPackageName withReturn: aString storeString
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> populationSize [
+
 	^ 30
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> populationSize: aNumber [
+
 	self compileMethod: #populationSize withReturn: aNumber printString
 	
 ]
@@ -291,6 +317,7 @@ SConfigGenerationTestCase class >> printerClass: aClass [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> selectionStrategy [
+
 	^ SGARandomSelection new
 ]
 
@@ -302,6 +329,7 @@ SConfigGenerationTestCase class >> selectionStrategy: aClass [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> selectionStrategyTestCase [
+
 	^ SGARouletteSelection new
 ]
 
@@ -337,6 +365,7 @@ SConfigGenerationTestCase class >> stopIterations: aNumber [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> targetPackageRegex [
+
 	self subclassResponsibility
 ]
 
@@ -372,16 +401,18 @@ SConfigGenerationTestCase class >> typeInfo: aString [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> typeInfoValue [
-	[|value|
-	value := SConfigGenerationTestCase typeInfos at: self typeInfo.
-	value ifNil: [ SError signal: 'Default typeInfo'].
-	^ value]
+
+	[	|value|
+		value := SConfigGenerationTestCase typeInfos at: self typeInfo.
+		value ifNil: [ SError signal: 'Default typeInfo'].
+		^ value ]
 	on: Error
 	do: [ ^ self defaultTypeInfo ]
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> typeInfos [
+
 	typeInfos ifNotNil: [ ^ typeInfos ].
 	typeInfos := Dictionary new
 		at: 'Default' put: nil;

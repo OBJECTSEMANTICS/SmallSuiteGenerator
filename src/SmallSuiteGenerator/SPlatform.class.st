@@ -18,33 +18,39 @@ Class {
 
 { #category : #accessing }
 SPlatform class >> classConfigurationName [
+
 	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
 SPlatform class >> classTestCaseFactory [
+
 	^ self configurationClass classTestCaseFactory 
 ]
 
 { #category : #logging }
 SPlatform class >> cleanAllLogs [
+
 	self configurationClass cleanAllLogs 
 ]
 
 { #category : #logging }
 SPlatform class >> clearLog [
+
 	self configurationClass clearLog
 ]
 
 { #category : #accessing }
 SPlatform class >> configurationClass [
+	"answer the correct configurationClass according to Platform"
+
 	configurationClass ifNil: [  
 	configurationClass := self subclasses
 		detect: [ :aClass | 
 			[ Smalltalk at: aClass classConfigurationName.
 			true ]
-				on: Error
-				do: [ false ] ]
+			on: Error
+			do: [ false ] ]
 		ifNone: [ nil ].
 	configurationClass ifNil: [ self error: 'Error to look a configurationClass' ]].
 	^ configurationClass
@@ -52,93 +58,111 @@ SPlatform class >> configurationClass [
 
 { #category : #tests }
 SPlatform class >> createTestCaseClass: aClassName inPackage: aPackageName [
+
 	^ self configurationClass createTestCaseClass: aClassName inPackage: aPackageName 
 ]
 
 { #category : #accessing }
 SPlatform class >> defaultLogName [
+
 	^ 'SmallSuiteLogger.log'
 ]
 
 { #category : #accessing }
 SPlatform class >> defaultSeed [
+
 	^ 100
 ]
 
 { #category : #'instance creation' }
 SPlatform class >> fileLogger: fileName [
-	self configurationClass fileLogger: fileName
+
+	self configurationClass fileLogger: fileName.
 ]
 
 { #category : #accessing }
 SPlatform class >> implementationType [
+
 	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
 SPlatform class >> initLevelToPrint [ 	
-	level := 10
+	
+	level := 10.
 ]
 
 { #category : #accessing }
 SPlatform class >> levelToPrint [
+
 	^ level
 ]
 
 { #category : #accessing }
 SPlatform class >> logName [ 
-	^ logName ifNil: [ self defaultLogName  ]
+
+	^ logName ifNil: [ self defaultLogName ].
 ]
 
 { #category : #accessing }
 SPlatform class >> logName: string [
+
 	logName := string
 ]
 
 { #category : #accessing }
 SPlatform class >> lookUpClass: aClassName [
+
 	^ Smalltalk at: aClassName ifAbsent: [ nil ]
 ]
 
 { #category : #'instance creation' }
 SPlatform class >> newRandomGenerator [
+
 	^ SRandom seed: self seed
 ]
 
 { #category : #accessing }
 SPlatform class >> randomGenerator [
+
 	randomGenerator ifNil: [ randomGenerator := self newRandomGenerator ].
 	^ randomGenerator 
 ]
 
 { #category : #accessing }
 SPlatform class >> randomGenerator: sRandom [
+
 	randomGenerator := sRandom
 ]
 
 { #category : #settings }
 SPlatform class >> rbParserClass [
+
 	^ self configurationClass rbParserClass
 ]
 
 { #category : #actions }
 SPlatform class >> reduceLevel [
+
 	level ifNil: [ self initLevelToPrint  ].
-	level := level - 1
+	level := level - 1.
 ]
 
 { #category : #initialization }
 SPlatform class >> resetConfigurationClass [
+
 	configurationClass := nil
 ]
 
 { #category : #accessing }
 SPlatform class >> resetRandomGenerator [
+
 	self randomGenerator: self newRandomGenerator 
 ]
 
 { #category : #logging }
 SPlatform class >> saveOnLog: message [
+
 	self configurationClass saveOnLog: message
 ]
 
@@ -155,5 +179,6 @@ SPlatform class >> seed: aNumber [
 
 { #category : #tests }
 SPlatform class >> testCaseClass [
+
 	^ self configurationClass testCaseClass
 ]
