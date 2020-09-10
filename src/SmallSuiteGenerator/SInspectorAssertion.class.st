@@ -17,41 +17,44 @@ Class {
 
 { #category : #'instance creation' }
 SInspectorAssertion class >> for: anExecutionContext [
+
 	^ anExecutionContext associations
 		flatCollect: [ :assoc | self inspectorAssertionOf: assoc ]
 ]
 
 { #category : #'instance creation' }
 SInspectorAssertion class >> inspectorAssertionOf: assoc [
+
 	^ (assoc value class methodDictValues select: #isReturnField)
-		collect:
-			[ :compiledMethod | 
-			self inspectorAssertionOf: assoc and: compiledMethod ]
-		thenSelect: [ :assertion | 
+		collect: [ :compiledMethod | 
+			self inspectorAssertionOf: assoc and: compiledMethod 
+		] thenSelect: [ :assertion | 
 			assertion isNotNil
-			 ]
+		]
 ]
 
 { #category : #'instance creation' }
 SInspectorAssertion class >> inspectorAssertionOf: assoc and: compiledMethod [
 	|result|
+	
 	result := assoc value perform: compiledMethod selector.
 	^ (self isPrimitive: result)
 		ifFalse: [ nil ]
 		ifTrue: [ self new
-				selector: #assert:equals:;
-				args:
-					(Array
-						with:
-							(SMessage new
-								receiver: (SVariable nameOrId: assoc key);
-								selector: compiledMethod selector;
-								yourself)
-						with: (SLiteral new value: result));
-				yourself ]
+			selector: #assert:equals:;
+			args:
+				(Array
+					with:
+						(SMessage new
+							receiver: (SVariable nameOrId: assoc key);
+							selector: compiledMethod selector;
+							yourself)
+					with: (SLiteral new value: result));
+				yourself ].
 ]
 
 { #category : #visitor }
 SInspectorAssertion >> accept: aSSVisitor [
+
 	^ aSSVisitor visitInspectorAssertionMessage: self.
 ]

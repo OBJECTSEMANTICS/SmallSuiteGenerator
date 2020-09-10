@@ -18,6 +18,7 @@ Class {
 { #category : #actions }
 SGAMutationOperation >> doMutate: aTestCase [ 
 	|result |
+	
 	result := aTestCase.
 	self next <= mutationRate
 		ifTrue: [ result:= aTestCase removeStatement.].
@@ -32,14 +33,16 @@ SGAMutationOperation >> doMutate: aTestCase [
 
 { #category : #initialization }
 SGAMutationOperation >> initialize [
+
 	super initialize.
 	self mutationRate: (1 / 3) asFloat
 ]
 
 { #category : #actions }
 SGAMutationOperation >> mutate: aTestCase [
-	| newTestCase |
 	"Copy for mutation"
+	| newTestCase |
+	
 	[newTestCase := self doMutate: aTestCase.] 
 		on: SError 
 		do:[ :e| newTestCase := aTestCase copy.].
@@ -48,5 +51,6 @@ SGAMutationOperation >> mutate: aTestCase [
 
 { #category : #accessing }
 SGAMutationOperation >> mutationRate: aFloat [
+
 	mutationRate := aFloat
 ]

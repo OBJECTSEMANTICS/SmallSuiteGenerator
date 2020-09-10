@@ -12,26 +12,31 @@ Class {
 
 { #category : #visitor }
 SCascade >> accept: aSSVisitor [
+
 	^ aSSVisitor visitCascade: self.
 ]
 
 { #category : #initialization }
 SCascade >> addMessage: aMessage [ 
+
 	messages add: aMessage
 ]
 
 { #category : #initialization }
 SCascade >> initialize [
+
 	super initialize.
 	messages := OrderedCollection new
 ]
 
 { #category : #accessing }
 SCascade >> messages [
+
 	^ messages
 ]
 
 { #category : #accessing }
 SCascade >> messages: anObject [
+
 	messages := anObject
 ]

@@ -1,3 +1,6 @@
+"
+SGACrossoverRate is a technique where two individuals crossover if and only if the next random number is less than crossoverRate (by default 0.8)
+"
 Class {
 	#name : #SGACrossoverRate,
 	#superclass : #SGACrossover,

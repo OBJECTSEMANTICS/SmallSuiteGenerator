@@ -23,6 +23,7 @@ Class {
 { #category : #creation }
 SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 	| dict |
+	
 	(statements isEmpty or: [ aMethodTypeInfo argTypes isNil ])
 		ifTrue: [ ^ #() ].
 	dict := Dictionary new.
@@ -44,6 +45,7 @@ SAbstractMessage class >> args: aMethodTypeInfo with: statements [
 
 { #category : #creation }
 SAbstractMessage class >> receiver: receiver selector: aSelector args: aArgCollection [
+
 	^ self new
 			selector: aSelector;
 			receiver: receiver;
@@ -53,6 +55,7 @@ SAbstractMessage class >> receiver: receiver selector: aSelector args: aArgColle
 
 { #category : #comparing }
 SAbstractMessage >> = other [
+
 	^ super = other 
 		and: [ args = other args 
 			and: [ receiver = other receiver 
@@ -61,16 +64,19 @@ SAbstractMessage >> = other [
 
 { #category : #visitor }
 SAbstractMessage >> accept: aSSVisitor [
+
 	^ aSSVisitor visitAbstractMessage: self.
 ]
 
 { #category : #accessing }
 SAbstractMessage >> args [
+
 	^ args
 ]
 
 { #category : #accessing }
 SAbstractMessage >> args: anObject [
+
 	args := anObject
 ]
 
@@ -78,37 +84,29 @@ SAbstractMessage >> args: anObject [
 SAbstractMessage >> changeOn: aTestCase [
 	"nothing to change"
 	|val|
+	
 	val := self random next.
-	val <=0.3 
+	val <= 0.3 
 		ifTrue:[	
 			aTestCase addAlternativeReceiverFor: self. 
-		] ifFalse:[
+		] ifFalse: [
 			val <= 0.6 
-				ifTrue:[
-					aTestCase addAlternativeSelectorFor: self. 
-				] ifFalse:[
-					aTestCase addAlternativeArgsFor: self. 
-				]
-			]
-		
-	"
-	#(#addAlternativeReceiverFor: #addAlternativeSelectorFor: #addAlternativeArgsFor:) 
-		safelyPickAny: [ :aSelector | 
-			[ ^ aTestCase
-				perform: aSelector
-				with: self]
-		] ifNone:[self serror: 'Cannot change the statement ' , self printString]."
-	
+				ifTrue: [ aTestCase addAlternativeSelectorFor: self. ] 
+				ifFalse: [ aTestCase addAlternativeArgsFor: self. ]
+		]
 ]
 
 { #category : #querying }
 SAbstractMessage >> containsVariable: aVariable [
-	^ (self receiver containsVariable: aVariable) or:[ self args anySatisfy: [:arg| arg containsVariable: aVariable]].
+
+	^ (self receiver containsVariable: aVariable) or:
+		[ self args anySatisfy: [ :arg | arg containsVariable: aVariable ]].
 ]
 
 { #category : #copying }
 SAbstractMessage >> copy [
 	| copy |
+	
 	copy := super copy.
 	copy
 		args: args deepCopy;
@@ -119,7 +117,8 @@ SAbstractMessage >> copy [
 
 { #category : #comparing }
 SAbstractMessage >> hash [
-  ^super hash bitXor: (receiver hash bitXor: (selector hash bitXor: args hash))
+
+	^ super hash bitXor: (receiver hash bitXor: (selector hash bitXor: args hash))
 ]
 
 { #category : #accessing }
@@ -129,31 +128,40 @@ SAbstractMessage >> id [
 
 { #category : #initialization }
 SAbstractMessage >> initialize [
+
 	super initialize.
 	args := OrderedCollection new: 2
 ]
 
 { #category : #querying }
 SAbstractMessage >> isThereEnoughArgumentsToBuild: aTestCase [
-	^ (SSVariablesWithIdCollector new visit: self) variablesWithId allSatisfy: [ :var | (aTestCase containsVariable: var) or: (aTestCase containsVariableWithReturnType: var returnType)].
+
+	^ (SSVariablesWithIdCollector new visit: self) variablesWithId 
+		allSatisfy: [ :var | 
+			(aTestCase containsVariable: var) or: 
+			(aTestCase containsVariableWithReturnType: var returnType) ].
 ]
 
 { #category : #accessing }
 SAbstractMessage >> receiver [
+
 	^ receiver
 ]
 
 { #category : #accessing }
 SAbstractMessage >> receiver: anObject [
+
 	receiver := anObject
 ]
 
 { #category : #accessing }
 SAbstractMessage >> selector [
+
 	^ selector
 ]
 
 { #category : #accessing }
 SAbstractMessage >> selector: anObject [
+
 	selector := anObject
 ]

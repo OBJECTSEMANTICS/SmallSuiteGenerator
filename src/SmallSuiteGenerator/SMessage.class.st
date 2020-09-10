@@ -23,7 +23,8 @@ Class {
 
 { #category : #'instance creation' }
 SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatements: statements [
-	^ SMessage new
+
+	^ self new
 		returnType: (aMethod returnTypeFor: aReceiver);
 		selector: aMethod selector;
 		receiver: aReceiver;
@@ -33,15 +34,18 @@ SMessage class >> newFromReceiver: aReceiver method: aMethod andPreviousStatemen
 
 { #category : #visitor }
 SMessage >> accept: aSSVisitor [
+
 	^ aSSVisitor visitMessage: self.
 ]
 
 { #category : #action }
 SMessage >> insertOn: aTestCase [
+
 	^ aTestCase addMessage: self selector from: self receiver returnType.
 ]
 
 { #category : #testing }
 SMessage >> isMessage [
-	^ true.
+
+	^ true
 ]

@@ -12,6 +12,7 @@ Class {
 
 { #category : #accessing }
 SGASelection >> fitness: anObject [ 
+
 	fitness := anObject 
 ]
 

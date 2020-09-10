@@ -9,7 +9,9 @@ Class {
 
 { #category : #actions }
 STestCaseFactoryPharo >> initializeProfiler [
-	profiler := self aSLProfilerCoverage profilerForPackagesMatching: self targetPackageRegex.
+
+	profiler := self aSLProfilerCoverage 
+		profilerForPackagesMatching: self targetPackageRegex.
 	(profiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
 		displayingProgress: 'Instrumenting ' , self targetPackageRegex.
@@ -17,5 +19,6 @@ STestCaseFactoryPharo >> initializeProfiler [
 
 { #category : #actions }
 STestCaseFactoryPharo >> uninstall [
+
 	profiler uninstall
 ]

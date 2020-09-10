@@ -12,11 +12,13 @@ Class {
 
 { #category : #accessing }
 SGATruncatedSelection >> discarding: aNumber [
+
 	discarding := aNumber
 ]
 
 { #category : #initialization }
 SGATruncatedSelection >> initialize [ 
+
 	super initialize.
 	discarding := 5
 ]
@@ -30,6 +32,7 @@ SGATruncatedSelection >> selectJustOneOf: aCollection with: probabilities [
 { #category : #selection }
 SGATruncatedSelection >> selectOf: aCollection [
 	| newColl |
+	
 	newColl := (aCollection sort: [ :a :b | (self fitnessFor: a) > (self fitnessFor: b) ]).
 	(discarding < aCollection size)
 		ifTrue: [ newColl := newColl copyFrom: 1 to: (aCollection size - discarding) ].

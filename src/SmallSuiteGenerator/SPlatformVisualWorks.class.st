@@ -9,6 +9,7 @@ Class {
 
 { #category : #accessing }
 SPlatformVisualWorks class >> classTestCaseFactory [
+
 	^ STestCaseFactoryVisualWorks 
 ]
 

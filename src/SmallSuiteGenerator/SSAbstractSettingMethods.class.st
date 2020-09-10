@@ -1,3 +1,8 @@
+"
+I am an abstract class to define the configuration methods of the class where the tests are generated with GA.
+
+The configuration methods considered are: setUp and tearDown.
+"
 Class {
 	#name : #SSAbstractSettingMethods,
 	#superclass : #SObject,

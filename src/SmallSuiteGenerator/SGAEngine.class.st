@@ -55,17 +55,23 @@ Class {
 
 { #category : #'API-accessing' }
 SGAEngine class >> logClass [
-	^ SGANullLog
+
+	^ SGALog
 ]
 
 { #category : #'API-accessing' }
 SGAEngine class >> resetToDefaults [
-	{ #logClass -> SGANullLog } do: [ :val |
-		self class compile: val key asString, String cr, '	^ ', val value printString ]
+	"reset log class to NullLog"
+	
+	{ #logClass -> SGANullLog } 
+		do: [ :val |
+			self class compile: 
+			('' join: { val key asString . String cr . '	^ ' . val value printString}) ]
 ]
 
 { #category : #updating }
 SGAEngine >> assignTypeToArgumentsOf: argType [
+
   ^ argType types 
 		do: [ :type |
 			self scalarsKeysOfTypeInfo 
@@ -113,7 +119,7 @@ SGAEngine >> clean [
 { #category : #actions }
 SGAEngine >> collectNameOfAllSubclassesOf: type includesOn: scalar [
 
-  ^ (type class allSubclasses collect: #name) includes: scalar
+	^ (type class allSubclasses collect: #name) includes: scalar
 ]
 
 { #category : #actions }
@@ -124,8 +130,8 @@ SGAEngine >> computeFitness [
 
 { #category : #creating }
 SGAEngine >> createNewPopulation [
-
 	| newPopulation currentPopulationSize lastLowestFitness options newNumber |
+	
 	lastLowestFitness := logs last lowestFit at: fitness functionName.
 	currentPopulationSize := initialPopulation size.
    newPopulation := self eliteOfCurrentPopulation.
@@ -165,7 +171,7 @@ SGAEngine >> createNewPopulation [
 { #category : #creating }
 SGAEngine >> createRandomPopulation [
 
-  ^ (1 to: populationSize) collect: [:idPop |  | value test |
+	^ (1 to: populationSize) collect: [:idPop |  | value test |
         value := self next * numberOfStatements + 1.
         test := SSTestCase with: typeInfo.
         test
@@ -181,16 +187,19 @@ SGAEngine >> createRandomPopulation [
 
 { #category : #accessing }
 SGAEngine >> crossoverOperator: aCrossoverOperator [
+
 	crossoverOperator := aCrossoverOperator
 ]
 
 { #category : #accessing }
 SGAEngine >> crossoverStrategy: aCrossoverStrategy [
+
 	crossoverStrategy := aCrossoverStrategy.
 ]
 
 { #category : #actions }
 SGAEngine >> doSelection [
+
 	self createNewPopulation.
 	initialPopulation := population.
 ]
@@ -198,6 +207,7 @@ SGAEngine >> doSelection [
 { #category : #actions }
 SGAEngine >> eliteOfCurrentPopulation [
 	| endIndex index popSize |
+	
 	popSize := population size.
 	endIndex := ((popSize * elitismRate "* 0.01") round: 0) asInteger.
 	(popSize > 0 and: [ endIndex == 0 ]) ifTrue: [ endIndex := 1 ].
@@ -211,22 +221,26 @@ SGAEngine >> eliteOfCurrentPopulation [
 
 { #category : #rating }
 SGAEngine >> elitismRate: aNumber [
+
 	elitismRate := aNumber
 ]
 
 { #category : #accessing }
 SGAEngine >> fitness [
+
 	^ fitness
 ]
 
 { #category : #accessing }
 SGAEngine >> fitness: aFitness [
+
 	fitness := aFitness.
 	selectionStrategy fitness: aFitness
 ]
 
 { #category : #initialization }
 SGAEngine >> initialize [
+
   super initialize.
   logs := OrderedCollection new.
   populationSize := 30.
@@ -258,6 +272,7 @@ SGAEngine >> initializeMutationOperator [
 { #category : #initialization }
 SGAEngine >> initializePopulation [
 	| t |
+	
 	t := Time now asSeconds.
 	population ifNil: [
 	   population := self createRandomPopulation.
@@ -273,6 +288,7 @@ SGAEngine >> initializePopulation [
 { #category : #initialization }
 SGAEngine >> initializeProfiler [
 	| aProfiler |
+	
 	aProfiler := self aSLProfilerCoverage profilerForClass: targetClassName.
 	(aProfiler allMethods select: #isNotMethodExtension)
 		do: #installGhosts
@@ -282,22 +298,26 @@ SGAEngine >> initializeProfiler [
 
 { #category : #actions }
 SGAEngine >> lastBestFitness [
+
 	^ logs last fittestTestCase fitnessFor: fitness functionName
 ]
 
 { #category : #actions }
 SGAEngine >> lastGenerationNumber [
+
 	^ logs last generationNumber
 ]
 
 { #category : #accessing }
 SGAEngine >> lastMessage: anObject [
+
 	lastMessage := anObject 
 	
 ]
 
 { #category : #accessing }
 SGAEngine >> logClass [
+
 	^ self class logClass
 ]
 
@@ -309,6 +329,7 @@ SGAEngine >> logInGeneration: iteration withTime: t [
 
 { #category : #accessing }
 SGAEngine >> logs [
+
 	^ logs
 ]
 
@@ -321,6 +342,7 @@ SGAEngine >> mergeTypeInfo: otherTypeInfo [
 { #category : #actions }
 SGAEngine >> mutateAndUpdate: aTestCase [
 	| newTestCase |
+	
 	newTestCase := mutationOperator mutate: aTestCase.
    newTestCase updateWith: aTestCase.
 	^ newTestCase 
@@ -328,17 +350,20 @@ SGAEngine >> mutateAndUpdate: aTestCase [
 
 { #category : #actions }
 SGAEngine >> mutationRate: aFloat [
+
 	mutationOperator mutationRate: aFloat
 ]
 
 { #category : #accessing }
 SGAEngine >> numberOfGenerations [
+
 	^ numberOfGenerations
 ]
 
 { #category : #accessing }
 SGAEngine >> numberOfGenerations: anInteger [
 	"Set the number of generation the genetic algorithm has to run"
+	
 	numberOfGenerations := anInteger
 ]
 
@@ -346,6 +371,7 @@ SGAEngine >> numberOfGenerations: anInteger [
 SGAEngine >> numberOfStatements: anInteger [
 	"Set the number of statements the initial population should have.
 	Ideally, a small number, such as 3, is convenient. The evolution makes the individuals grow over time"
+	
 	numberOfStatements := anInteger
 ]
 
@@ -385,6 +411,7 @@ SGAEngine >> profilerForPackagesMatching [
 { #category : #updating }
 SGAEngine >> profilerForTargetClass [
 	| packageSpy cls classSpy |
+	
 	cls := Smalltalk at: targetClassName.
 	Transcript show: 'profiling...'; cr.
 	typeInfoProfiler := self aSTypeCollectorClass new.
@@ -400,6 +427,7 @@ SGAEngine >> profilerForTargetClass [
 { #category : #actions }
 SGAEngine >> run [
   | counter bestFitness stopFlag |
+
   totalExecutionGA := Time millisecondClockValue.
   counter := 0.
   stopFlag := false.
@@ -425,8 +453,8 @@ SGAEngine >> scalarsKeysOfTypeInfo [
 
 { #category : #actions }
 SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
-
 	| options |
+	
 	options := (aCollection asOrderedCollection select: #notEmpty) removeAllSuchThat: [ :e | excludingColl includes: e ]; yourself.
    options := self order: options.
    ^ options first: (2 min: options size).
@@ -434,6 +462,7 @@ SGAEngine >> selectTwoBestOf: aCollection excludingAll: excludingColl [
 
 { #category : #accessing }
 SGAEngine >> selectionStrategy: aSelectionStrategy [
+
 	selectionStrategy := aSelectionStrategy 
 ]
 
@@ -497,6 +526,7 @@ SGAEngine >> totalExecutionGA [
 
 { #category : #accessing }
 SGAEngine >> typeInfo [
+
 	^ typeInfo
 ]
 
@@ -515,6 +545,7 @@ SGAEngine >> typeInfoProfilerAsTypeInfo [
 
 { #category : #updating }
 SGAEngine >> uninstall [
+
 	typeInfoProfiler afterProfiling;
 		uninstall.
 	Transcript show: 'ended...'; cr.
@@ -537,6 +568,7 @@ SGAEngine >> updateHierarchyData: parents of: testCase [
 
 { #category : #updating }
 SGAEngine >> updateTypeInfoWith: aPopulation [
+
    fitness profiler uninstallClass: targetClassName.
    self profilerForTargetClass.
    aPopulation do: [:aTestCase | aTestCase runWithoutAssertionsAndLastStatement ].

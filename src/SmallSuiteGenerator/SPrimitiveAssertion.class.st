@@ -19,6 +19,7 @@ Class {
 
 { #category : #'instance creation' }
 SPrimitiveAssertion class >> for: anExecutionContext [
+
 	^ anExecutionContext associations
 		select: [ :assoc | self isPrimitive: assoc value ]
 		thenCollect: [ :assoc | 
@@ -33,5 +34,6 @@ SPrimitiveAssertion class >> for: anExecutionContext [
 
 { #category : #visitor }
 SPrimitiveAssertion >> accept: aSSVisitor [
+
 	^ aSSVisitor visitPrimitiveAssertionMessage: self.
 ]

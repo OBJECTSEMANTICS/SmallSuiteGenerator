@@ -11,13 +11,9 @@ Instance Variables
 "
 Class {
 	#name : #SGALog,
-	#superclass : #SObject,
+	#superclass : #SGAAbstractLog,
 	#instVars : [
-		'generationNumber',
-		'timeToProduceGeneration',
-		'fittestTestCase',
 		'mutationResult',
-		'lowestFit',
 		'averageFit',
 		'population',
 		'summaryTargetClass',
@@ -102,39 +98,9 @@ SGALog >> fitness [
 	
 ]
 
-{ #category : #accessing }
-SGALog >> fittestTestCase [
-	^ fittestTestCase
-]
-
-{ #category : #accessing }
-SGALog >> fittestTestCase: anTestCase [
-	fittestTestCase := anTestCase
-]
-
-{ #category : #accessing }
-SGALog >> generationNumber [
-	^ generationNumber
-]
-
-{ #category : #accessing }
-SGALog >> generationNumber: anObject [
-	generationNumber := anObject
-]
-
 { #category : #initialization }
 SGALog >> initialize [ 	
 	mutationResult := Dictionary new
-]
-
-{ #category : #accessing }
-SGALog >> lowestFit [
-	^ lowestFit
-]
-
-{ #category : #accessing }
-SGALog >> lowestFit: aNumber [
-	lowestFit := aNumber
 ]
 
 { #category : #accessing }
@@ -191,11 +157,6 @@ SGALog >> summaryTargetClass [
 { #category : #accessing }
 SGALog >> summaryTargetClass: anObject [
 	summaryTargetClass := anObject
-]
-
-{ #category : #accessing }
-SGALog >> timeToProduceGeneration: anInteger [
-	timeToProduceGeneration := anInteger
 ]
 
 { #category : #accessing }

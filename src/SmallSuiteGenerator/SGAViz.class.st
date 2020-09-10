@@ -1,6 +1,9 @@
+"
+I am a null visualization class, that is, when using this class you will not get any visualization of the GA
+"
 Class {
 	#name : #SGAViz,
-	#superclass : #SObject,
+	#superclass : #SGAAbstractViz,
 	#instVars : [
 		'aTestCaseFactory'
 	],

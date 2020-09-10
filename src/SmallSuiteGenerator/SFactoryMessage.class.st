@@ -30,6 +30,7 @@ Class {
 
 { #category : #accessing }
 SFactoryMessage class >> default: aClassName [
+
 	^ self new
 		receiver:
 			(SVariable new
@@ -43,17 +44,20 @@ SFactoryMessage class >> default: aClassName [
 
 { #category : #visitor }
 SFactoryMessage >> accept: aSSVisitor [
+
 	^ aSSVisitor visitFactoryMessage: self.
 ]
 
 { #category : #action }
 SFactoryMessage >> changeOn: aTestCase [
 	"nothing to change"
+	
 	aTestCase addAlternativeFactoryMessage: self.
 ]
 
 { #category : #action }
 SFactoryMessage >> insertOn: aTestCase [
+
 	^ aTestCase
 		addFactoryMessage: self returnType
 		usingSelector: self selector.
@@ -61,10 +65,12 @@ SFactoryMessage >> insertOn: aTestCase [
 
 { #category : #testing }
 SFactoryMessage >> isFactoryMessage [
+
 	^ true
 ]
 
 { #category : #querying }
 SFactoryMessage >> referenceTo: aClassName [
+
 	^ receiver referenceTo: aClassName
 ]

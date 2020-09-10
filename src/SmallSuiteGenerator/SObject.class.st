@@ -17,7 +17,7 @@ Class {
 SObject class >> new [
 	"Answer a newly created and initialized instance."
 
-	^super new initialize
+	^ super new initialize
 ]
 
 { #category : #initialization }
@@ -26,16 +26,19 @@ SObject >> initialize [
 
 { #category : #random }
 SObject >> next [
-  ^ self random next
+
+	^ self random next
 ]
 
 { #category : #random }
 SObject >> random [
-  ^ SPlatform randomGenerator
+
+	^ SPlatform randomGenerator
 ]
 
 { #category : #'error handling' }
 SObject >> serror: aString [
 	"It throws an error signal with the string passed as argument, it is important to distinguish parsing error with others"
+	
 	^ SError signal: aString
 ]

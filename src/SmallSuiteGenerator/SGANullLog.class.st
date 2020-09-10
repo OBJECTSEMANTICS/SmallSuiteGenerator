@@ -1,6 +1,9 @@
+"
+SGANullLog saves only the data that is important for the genetic evolution algorithm to work, that is: generationNumber, fittestTestCase, timeToProduceGeneration and lowestFit.
+"
 Class {
 	#name : #SGANullLog,
-	#superclass : #SGALog,
+	#superclass : #SGAAbstractLog,
 	#category : #'SmallSuiteGenerator-Strategies'
 }
 

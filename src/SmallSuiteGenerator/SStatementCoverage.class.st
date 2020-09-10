@@ -11,10 +11,12 @@ Class {
 
 { #category : #actions }
 SStatementCoverage >> fitnessByClass [
+
 	^ profiler statementCoverage1.
 ]
 
 { #category : #accesing }
 SStatementCoverage >> functionName [
+
 	^ 'block-coverage'
 ]

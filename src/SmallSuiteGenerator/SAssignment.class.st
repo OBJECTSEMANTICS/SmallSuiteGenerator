@@ -26,6 +26,7 @@ Class {
 
 { #category : #'instance creation' }
 SAssignment class >> name: aVariable value: anExpression [
+
 	^ self new
 		variable:  aVariable;
 		value: anExpression;
@@ -35,6 +36,7 @@ SAssignment class >> name: aVariable value: anExpression [
 
 { #category : #comparing }
 SAssignment >> = other [
+
 	^ (super = other) 
 		and: [ (variable = other variable) 
 			and: [ (value = other value) ] ]
@@ -42,22 +44,26 @@ SAssignment >> = other [
 
 { #category : #visitor }
 SAssignment >> accept: aSSVisitor [
+
 	^ aSSVisitor visitAssignment: self.
 ]
 
 { #category : #actions }
 SAssignment >> changeOn: aTestCase [
+
 	^ self value changeOn: aTestCase.
 ]
 
 { #category : #querying }
 SAssignment >> containsVariable: aVariable [
+
 	^ self value containsVariable: aVariable.
 ]
 
 { #category : #copying }
 SAssignment >> copy [ 
 	|copy|
+	
 	copy := super copy.
 	copy variable: variable copy;
 	value: value copy.
@@ -66,6 +72,7 @@ SAssignment >> copy [
 
 { #category : #actions }
 SAssignment >> fixWith: anObject in: aTestCase [
+
 	value fixWith: anObject in: aTestCase.
 	returnType := value returnType.
 	variable returnType: value returnType.
@@ -73,55 +80,66 @@ SAssignment >> fixWith: anObject in: aTestCase [
 
 { #category : #comparing }
 SAssignment >> hash [
+
 	^ super hash bitXor: (variable hash bitXor: value hash)
 ]
 
 { #category : #accessing }
 SAssignment >> id [ 		
+	
 	^ variable id
 ]
 
 { #category : #initialization }
-SAssignment >> initialize [ 	
+SAssignment >> initialize [ 
+
 	super initialize.
 ]
 
 { #category : #actions }
 SAssignment >> insertOn: aTestCase [
+
 	^ value insertOn: aTestCase
 ]
 
 { #category : #querying }
 SAssignment >> isThereEnoughArgumentsToBuild: aTestCase [
+
 	^ self value isThereEnoughArgumentsToBuild: aTestCase
 ]
 
 { #category : #querying }
 SAssignment >> reference [ 
+
 	^ variable
 ]
 
 { #category : #querying }
 SAssignment >> referenceTo: aClassName [
+
 	^ value referenceTo: aClassName
 ]
 
 { #category : #evaluating }
 SAssignment >> value [ 
+
 	^ value
 ]
 
 { #category : #accessing }
 SAssignment >> value: anObject [
+
 	value := anObject
 ]
 
 { #category : #accessing }
 SAssignment >> variable [
+
 	^ variable
 ]
 
 { #category : #accessing }
 SAssignment >> variable: anObject [
+
 	variable := anObject
 ]
