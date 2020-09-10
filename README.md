@@ -148,6 +148,7 @@ GASSTeacherTest
 ``` Smalltalk
 GASSTeacherTest fitness: #statement
 ```
+
 * `stopIterations`: It is the number of iterations that is limited to expect the best fitness to improve, if not, the iterations are stopped.
 ``` Smalltalk
 GASSTeacherTest stopIterations: 5
