@@ -113,6 +113,7 @@ STypeClassInfo >> allMethods [
 
 { #category : #converting }
 STypeClassInfo >> asClassInfo: aSpyClass [
+
 	| aTypeClass instanceMethods classMethods |
 	aTypeClass := self class newFrom: aSpyClass typeName.
 	instanceMethods := self instanceMethodsFor: aSpyClass.

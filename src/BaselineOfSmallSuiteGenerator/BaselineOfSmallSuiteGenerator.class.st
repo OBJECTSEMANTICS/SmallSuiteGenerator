@@ -11,7 +11,7 @@ BaselineOfSmallSuiteGenerator >> baseline: spec [
 		for: #common
 		do: [ spec
 				baseline: 'SpyLite'
-				with: [ spec repository: 'github://lin777/SpyLite:master/src' ].
+				with: [ spec repository: 'github://daniapq/SpyLite:master/src' ].
 				spec
     			baseline: 'RoelTyper'
     			with: [ spec repository: 'github://RMODINRIA/RoelTyper:v1.x.x/src' ].

@@ -145,9 +145,11 @@ GASSTeacherTest
 ```
 
 * `fitness`: Metric with which the coverage of the generated tests will be measured, there are 3 options: #statement, #method and #multi. STATEMENT measures the number of statements that the tests cover, METHOD measures the number of methods that are executed in the tests and finally MULTI is a unified statement and method metric.
+
 ``` Smalltalk
 GASSTeacherTest fitness: #statement
 ```
+
 * `stopIterations`: It is the number of iterations that is limited to expect the best fitness to improve, if not, the iterations are stopped.
 ``` Smalltalk
 GASSTeacherTest stopIterations: 5

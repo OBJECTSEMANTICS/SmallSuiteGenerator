@@ -56,7 +56,8 @@ STypeInfo >> accessMessagesFrom: aClassName [
 
 { #category : #adding }
 STypeInfo >> addClassInfo: aTypeClassInfo [
-
+	"Adding class information and scalars"
+	
 	types
 		at: aTypeClassInfo typeName
 		ifPresent: [ :aTypeClass | aTypeClass joinWith: aTypeClassInfo ]
@@ -80,6 +81,8 @@ STypeInfo >> allParentClassesInfoFrom: aClassName [
 
 { #category : #converting }
 STypeInfo >> asTypeInfo: aTypeCollector [
+	"Transform a type collector as type information"
+	
 	|aBlackList|
 	
 	aBlackList := self blackList.
