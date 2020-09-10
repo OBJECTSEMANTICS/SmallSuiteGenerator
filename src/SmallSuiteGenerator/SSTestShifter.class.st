@@ -33,25 +33,21 @@ Class {
 
 { #category : #settings }
 SSTestShifter class >> defaultInterpreterClass [
-
 	^ SSMetaInterpreter
 ]
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-
 	^ SSNullMethods
 ]
 
 { #category : #settings }
 SSTestShifter class >> defaultPrinterClass [
-
 	^ SSStandardPrinter
 ]
 
 { #category : #settings }
 SSTestShifter class >> limitToWait [
-
 	^ 1000
 ]
 

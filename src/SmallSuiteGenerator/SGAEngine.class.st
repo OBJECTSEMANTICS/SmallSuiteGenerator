@@ -124,6 +124,7 @@ SGAEngine >> collectNameOfAllSubclassesOf: type includesOn: scalar [
 
 { #category : #actions }
 SGAEngine >> computeFitness [
+	"compute fitness of all population"
 
 	fitness compute: population.
 ]
@@ -206,6 +207,7 @@ SGAEngine >> doSelection [
 
 { #category : #actions }
 SGAEngine >> eliteOfCurrentPopulation [
+	"select the best testCases according elitismRate"
 	| endIndex index popSize |
 	
 	popSize := population size.
@@ -298,12 +300,14 @@ SGAEngine >> initializeProfiler [
 
 { #category : #actions }
 SGAEngine >> lastBestFitness [
+	"returns the testCase that had the best fitness of the previous generation"
 
 	^ logs last fittestTestCase fitnessFor: fitness functionName
 ]
 
 { #category : #actions }
 SGAEngine >> lastGenerationNumber [
+	"returns the ID of the previous generation"
 
 	^ logs last generationNumber
 ]
@@ -323,8 +327,9 @@ SGAEngine >> logClass [
 
 { #category : #actions }
 SGAEngine >> logInGeneration: iteration withTime: t [
+	"returns a log for each iteration"
 
-  ^ self logClass logOf: self inGeneration: iteration inTime: t
+	^ self logClass logOf: self inGeneration: iteration inTime: t
 ]
 
 { #category : #accessing }
