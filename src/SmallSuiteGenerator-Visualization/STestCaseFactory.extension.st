@@ -7,6 +7,11 @@ STestCaseFactory >> generateViews [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
+STestCaseFactory >> generationEvolutionCanvas [
+	^ (self class vizClass on: self) generationEvolutionCanvas
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
 STestCaseFactory >> gtInspectorCanvasIn: composite [
 	<gtInspectorPresentationOrder: -5>
 	self class vizClass gtInspectorCanvasIn: composite for: self

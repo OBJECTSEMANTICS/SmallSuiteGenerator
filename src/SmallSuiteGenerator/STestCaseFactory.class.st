@@ -359,6 +359,7 @@ STestCaseFactory >> setUp [
 { #category : #running }
 STestCaseFactory >> setUpEngine [
   engine
+	  selectionStrategy: self generatedClass selectionStrategy new;
      fitness: self fitness;
      numberOfGenerations: numberOfIterations;
      typeInfo: self typeInfo;
@@ -369,8 +370,7 @@ STestCaseFactory >> setUpEngine [
 	  populationSize: self generatedClass populationSize;
 	  stopIterations: self generatedClass stopIterations;
 	  numberOfGenerations: self generatedClass numberOfGenerations;
-	  selectionStrategy: self generatedClass selectionStrategy;
-	  selectionStrategyTestCase: self generatedClass selectionStrategyTestCase;
+	  selectionStrategyTestCase: self generatedClass selectionStrategyTestCase new;
 	  crossoverStrategy: self generatedClass crossoverStrategy;
 	  crossoverOperator: self generatedClass crossoverOperator
 ]

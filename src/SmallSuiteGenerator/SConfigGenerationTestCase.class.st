@@ -318,25 +318,25 @@ SConfigGenerationTestCase class >> printerClass: aClass [
 { #category : #settings }
 SConfigGenerationTestCase class >> selectionStrategy [
 
-	^ SGARandomSelection new
+	^ SGARandomSelection
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> selectionStrategy: aClass [
 
-	self compileMethod: #selectionStrategy withReturn: aClass storeString
+	self compileMethod: #selectionStrategy withReturn: aClass printString
 ]
 
 { #category : #settings }
 SConfigGenerationTestCase class >> selectionStrategyTestCase [
 
-	^ SGARouletteSelection new
+	^ SGARouletteSelection
 ]
 
 { #category : #setter }
 SConfigGenerationTestCase class >> selectionStrategyTestCase: aClass [
 
-	self compileMethod: #selectionStrategyTestCase withReturn: aClass storeString
+	self compileMethod: #selectionStrategyTestCase withReturn: aClass printString
 ]
 
 { #category : #settings }
