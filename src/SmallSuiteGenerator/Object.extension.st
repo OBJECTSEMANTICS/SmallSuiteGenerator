@@ -93,7 +93,7 @@ Object >> storeOn: aStream [
 				nextPutAll: '(' , self class name , ' new: ';
 				store: self basicSize;
 				nextPutAll: ') ' ]
-		ifFalse: [ aStream nextPutAll: self class name , ' new' ].
+		ifFalse: [ aStream nextPutAll: self class name , ' basicNew' ].
 	SPlatform levelToPrint < 0
 		ifFalse: [ 1 to: self class instSize do: [ :i | 
 				aStream

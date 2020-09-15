@@ -55,7 +55,6 @@ Class {
 
 { #category : #'API-accessing' }
 SGAEngine class >> logClass [
-
 	^ SGALog
 ]
 
