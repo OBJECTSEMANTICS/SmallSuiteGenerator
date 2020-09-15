@@ -90,7 +90,7 @@ Object >> storeOn: aStream [
 	aStream nextPut: $(.
 	self class isVariable
 		ifTrue: [ aStream
-				nextPutAll: '(' , self class name , ' new: ';
+				nextPutAll: '(' , self class name , ' basicNew: ';
 				store: self basicSize;
 				nextPutAll: ') ' ]
 		ifFalse: [ aStream nextPutAll: self class name , ' basicNew' ].

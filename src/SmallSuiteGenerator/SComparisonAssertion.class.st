@@ -67,6 +67,6 @@ SComparisonAssertion class >> for: anExecutionContext [
 
 { #category : #visitor }
 SComparisonAssertion >> accept: aSSVisitor [
-
+	
 	^ aSSVisitor visitComparisonAssertionMessage: self.
 ]
