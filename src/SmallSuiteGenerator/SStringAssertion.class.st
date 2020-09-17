@@ -50,8 +50,7 @@ SStringAssertion class >> stringAssertionsOf: assoc [
 						with: (SLiteral new value: fieldValue));
 				yourself ]
 				on: Error
-				do: [ Transcript
-						show: aValue class name , ' cant answer printString without error' ] ]
+				do: [ nil ] ]
 		ifNone: [ nil ]
 ]
 

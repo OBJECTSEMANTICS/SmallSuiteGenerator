@@ -969,13 +969,15 @@ SSTestShifter >> runStatements: aStatementCollection [
 	semaphore := Semaphore new.
   
 	process := [
-			[interpreter visitStatements: aStatementCollection; clean.
+		[
+			interpreter visitStatements: aStatementCollection; clean.
 			hasErrors := false.
 			result := interpreter context.
-			semaphore signal.]
-				on:Error do:[ :e|
-					result := Dictionary new.
-					semaphore signal.]] fork.
+			semaphore signal.
+		] on: Error 
+		do: [ :e|
+			result := Dictionary new.
+			semaphore signal. ] ] fork.
 	timeOut := semaphore waitTimeoutMSecs: 1000.
 	timeOut ifTrue:[
 		process terminate.

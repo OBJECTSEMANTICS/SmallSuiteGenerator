@@ -10,18 +10,23 @@ Class {
 	#category : #'SmallSuiteGenerator-Strategies'
 }
 
-{ #category : #'gt-inspector-extension' }
+{ #category : #'instance creation' }
 SGAViz class >> gtInspectorCanvasIn: composite for: testCaseFactory [
 	composite roassal3
 		title: 'GenerationEvolution';
 		initializeCanvas: [ self new aTestCaseFactory: testCaseFactory; generationEvolutionCanvas ]
 ]
 
-{ #category : #'gt-inspector-extension' }
+{ #category : #'instance creation' }
 SGAViz class >> gtInspectorViewIn: composite for: testCaseFactory [
 	composite roassal3
 		title: 'Evolution';
 		initializeCanvas: [ self new aTestCaseFactory: testCaseFactory; visualizeEvolutionFitness ]
+]
+
+{ #category : #'instance creation' }
+SGAViz class >> on: testCaseFactory [
+	^ self new aTestCaseFactory: testCaseFactory
 ]
 
 { #category : #accessing }
