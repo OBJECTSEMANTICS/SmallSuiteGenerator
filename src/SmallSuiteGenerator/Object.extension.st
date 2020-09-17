@@ -45,20 +45,6 @@ Object >> mutateToChange [
 ]
 
 { #category : #'*SmallSuiteGenerator' }
-Object >> smallStoreString [
-	| string |
-	SPlatform initLevelToPrint.
-	string := String
-		streamContents: [ :s | 
-			self storeOn: s.
-			SPlatform levelToPrint < 0
-				ifTrue:
-					[ "^ s nextPutAll: '(' , self class name , ' new ) '" SError signal: 'error in storeString' ].
-			SPlatform initLevelToPrint ].
-	^ string
-]
-
-{ #category : #'*SmallSuiteGenerator' }
 Object >> storeContainsOn: aStream [
 	"Append to the argument aStream a sequence of characters that is an 
 	expression whose evaluation creates an object similar to the receiver."
