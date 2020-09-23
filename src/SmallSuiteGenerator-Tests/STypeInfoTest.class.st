@@ -51,7 +51,7 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
-	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty classNameByteString classNameSmallInteger classNameSStudent elementArray |
+	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty 	classNameByteString classNameSmallInteger classNameSStudent elementArray |
 	classNameSEvent := SEvent nameAsSymbol.
 	classNameSConference := SConference nameAsSymbol.
 	classNameSParty := SParty nameAsSymbol.
@@ -97,13 +97,8 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		assertCollection: methodInfo allReceivers
 		hasSameElements: (Array with: classNameSConference).
 	elementArray := OrderedCollection new
-		add: ((SUndefinedObject basicNew) class nameAsSymbol);
-		add: classNameSStudent;
 		add: classNameSmallInteger;
-		add: False nameAsSymbol;
-		add: classNameByteString;
 		add: 2.3 class nameAsSymbol;
-		"add: classNameSConference;"
 		yourself.
 	self
 		assertCollection: typeInfo scalars keys
@@ -175,12 +170,9 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 		assertCollection: typeInfo scalars keys
 		hasSameElements:
 			(Array
-				with: classNameOrderedCollection
-				with: classNameDictionary
 				with: classNameByteString
 				with: classNameSmallInteger
-				with: classNameSmallFloat64
-				"with: classNameSFoo")
+				with: classNameSmallFloat64)
 ]
 
 { #category : #tests }
