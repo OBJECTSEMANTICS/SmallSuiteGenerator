@@ -254,7 +254,7 @@ STypeInfo >> factoryMessagesFrom: aClassName [
 	^ types
 		flatCollect: [ :aClassType | 
 			aClassType factoryMessages
-				select: [ :aMessage | aMessage receiver types includes: aClassName ] ]
+				select: [ :aMessage | aMessage returnType types includes: aClassName ] ]
 ]
 
 { #category : #initialization }
