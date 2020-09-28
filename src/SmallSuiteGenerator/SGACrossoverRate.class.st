@@ -25,6 +25,6 @@ SGACrossoverRate >> initialize [
 SGACrossoverRate >> shouldCrossOver: testCaseA with: testCaseB [
 	
 	^ (self next < crossoverRate) 
-		and: [ testCaseA validReferences not 
-			and: [ testCaseB validReferences not ] ]
+		and: [ testCaseA validReferences 
+			and: [ testCaseB validReferences ] ]
 ]
