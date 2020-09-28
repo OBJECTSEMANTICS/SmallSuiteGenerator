@@ -607,8 +607,8 @@ SSTestShifter >> generateStatements [
 SSTestShifter >> generateStatements: anInteger [
 
 	self maxNumberOfStatements: anInteger.
+	self runWithoutAssertionsAndLastStatement.
 	self generateStatements.
-	
 ]
 
 { #category : #accessing }
@@ -1103,7 +1103,7 @@ SSTestShifter >> validReferences [
 			variables := (SSVariablesWithIdCollector new visit: stm) variablesWithId asSet.
 			references add: stm reference.
 			(references includesAll: variables)
-				ifFalse: [self halt. true ]
+				ifFalse: [ true ]
 				ifTrue: [ references addAll: variables.
 					false ] ]
 		ifFound: [ false ]

@@ -23,6 +23,8 @@ SGACrossoverRate >> initialize [
 
 { #category : #initialization }
 SGACrossoverRate >> shouldCrossOver: testCaseA with: testCaseB [
-
-	^ self next < crossoverRate
+	
+	^ (self next < crossoverRate) 
+		and: [ testCaseA validReferences 
+			and: [ testCaseB validReferences ] ]
 ]
