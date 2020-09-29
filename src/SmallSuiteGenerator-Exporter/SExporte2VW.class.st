@@ -48,6 +48,11 @@ SExporte2VW >> blackListSClassInfoTest [
 	SClassInfoTest >> #testFromString}
 ]
 
+{ #category : #'bl-scenario' }
+SExporte2VW >> blackListSConfigGenerationTestCase [
+	^ {SConfigGenerationTestCase >> #fitnessDictionary }
+]
+
 { #category : #'bl-core' }
 SExporte2VW >> blackListSError [
 	^ {SError >> #signal:}
