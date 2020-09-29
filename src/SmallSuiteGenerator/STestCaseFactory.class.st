@@ -62,7 +62,7 @@ STestCaseFactory class >> resetToDefaults [
 	{ #vizClass -> SGANullViz } 
 		do: [ :val |
 			STestCaseFactory class compile: 
-			('' join: { val key asString . String cr . '	^ ' . val value printString }	) ]
+			( val key asString , String cr , '	^ ' , val value printString	) ]
 ]
 
 { #category : #settings }

@@ -240,6 +240,11 @@ SExporte2VW >> blackListSSelectionParameterization [
 ]
 
 { #category : #'bl-scenario' }
+SExporte2VW >> blackListSSimpleFitnessFunction [
+	^ {SSimpleFitnessFunction >> #updateSuperclasses }
+]
+
+{ #category : #'bl-scenario' }
 SExporte2VW >> blackListSStack [
 	^ {"SStack >> #+."
 "SStack >> #addFirst:."

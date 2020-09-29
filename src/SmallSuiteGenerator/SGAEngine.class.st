@@ -65,7 +65,7 @@ SGAEngine class >> resetToDefaults [
 	{ #logClass -> SGANullLog } 
 		do: [ :val |
 			self class compile: 
-			('' join: { val key asString . String cr . '	^ ' . val value printString}) ]
+			( val key asString , String cr , '	^ ' , val value printString) ]
 ]
 
 { #category : #updating }
