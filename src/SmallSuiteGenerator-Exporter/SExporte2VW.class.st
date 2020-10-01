@@ -28,15 +28,6 @@ SExporte2VW >> blackList [
 ]
 
 { #category : #'bl-tests' }
-SExporte2VW >> blackListSAssertionTest [
-	"Black list of SAssertionTest class"
-	
-	^ { SAssertionTest >> #testAssertString.
-			SAssertionTest >> #testAssertComparison2.
-			SAssertionTest >> #testAssertComparison }
-]
-
-{ #category : #'bl-tests' }
 SExporte2VW >> blackListSChangeTest [
 	"Black list of SChangeTest class"	
 
@@ -55,7 +46,7 @@ SExporte2VW >> blackListSClassInfoTest [
 SExporte2VW >> blackListSConfigGenerationTestCase [
 	"Black list of SConfigGenerationTestCase class"
 	
-	^ {SConfigGenerationTestCase >> #fitnessDictionary }
+	^ { SConfigGenerationTestCase class >> #fitnessDictionary }
 ]
 
 { #category : #'bl-core' }
