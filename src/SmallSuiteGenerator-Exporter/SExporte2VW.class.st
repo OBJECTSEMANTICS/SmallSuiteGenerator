@@ -11,343 +11,283 @@ Class {
 
 { #category : #public }
 SExporte2VW class >> export [
+
 	^ self new export
 ]
 
 { #category : #'black-list' }
 SExporte2VW >> blackList [
+	"List of methods that cannot be called directly in VW"
+
 	| result |
 	result := OrderedCollection new.
-	SExporte2VW selectors do: [ :sel | 
+	self class selectors do: [ :sel | 
 		(('blackList*' match: sel asString ) and: [ (sel = #blackList) not ])
 			 ifTrue: [ result addAll: (self perform: sel) ]  ].
 	^ result 
 ]
 
 { #category : #'bl-tests' }
-SExporte2VW >> blackListSAssertionTest [
-	^ {SAssertionTest >> #testAssertString.
-	SAssertionTest >> #testAssertComparison2.
-	SAssertionTest >> #testAssertComparison}
-]
-
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSAssignment [
-	^ {"SAssignment >> #mutantColor .
-	SAssignment >> #stmColor" }
-]
-
-{ #category : #'bl-tests' }
 SExporte2VW >> blackListSChangeTest [
-	^ {SChangeTest >> #testSelectorChange}
+	"Black list of SChangeTest class"	
+
+	^ { SChangeTest >> #testSelectorChange }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSClassInfoTest [
-	^ {SClassInfoTest >> #testToString .
-	SClassInfoTest >> #testFromString}
+	"Black list of SClassInfoTest class"
+
+	^ { SClassInfoTest >> #testToString .
+			SClassInfoTest >> #testFromString }
 ]
 
 { #category : #'bl-scenario' }
 SExporte2VW >> blackListSConfigGenerationTestCase [
-	^ {SConfigGenerationTestCase >> #fitnessDictionary }
+	"Black list of SConfigGenerationTestCase class"
+	
+	^ { SConfigGenerationTestCase class >> #fitnessDictionary }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSError [
-	^ {SError >> #signal:}
-]
+	"Black list of SError class"
 
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSExpression [
-	^ {"SExpression >> #mutantColor .
-	SExpression >> #stmColor" }
-]
-
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSFactoryMessage [
-	^ {"SFactoryMessage >> #stmColor" }
-]
-
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSFieldAccessMessage [
-	^ {"SFieldAccessMessage >> #stmColor" }
+	^ { SError >> #signal: }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSFitnessFunction [
-	^ {SFitnessFunction >> #aClass }
+	"Black list of SFitnessFunction class"
+
+	^ { SFitnessFunction >> #aClass }
 ]
 
 { #category : #'bl-ga' }
 SExporte2VW >> blackListSGAEngine [
-	^ {SGAEngine >> #updateTypeInfoWith:. "<------ review if is important use Pharo version"}
+	"Black list of SGAEngine class. Review if SGAEngine>>#updateTypeInfoWith: is important use Pharo version"
+
+	^ { SGAEngine >> #updateTypeInfoWith: }
 ]
 
 { #category : #'bl-examples' }
 SExporte2VW >> blackListSGAEngineExample [
-	^ {SGAEngineExample >> #runOnClass:withBlock:andFitness: .
-	SGAEngineExample >> #runOnPackagesMatching:withBlock:andFitness:}
+	"Black list of SGAEngineExample class"
+
+	^ { SGAEngineExample >> #runOnClass:withBlock:andFitness: .
+			SGAEngineExample >> #runOnPackagesMatching:withBlock:andFitness: }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSGAEngineTest [
-	^ {SGAEngineTest >> #profilerOf:.
-SGAEngineTest >> #tearDown}
-]
+	"Black list of SGAEngineTest class"
 
-{ #category : #'bl-ga' }
-SExporte2VW >> blackListSGAViz [
-	^ {
-"SGAViz >> #addDescriptiveTextOn:ofColor:and: .
-SGAViz >> #addHighlightMethodEvent:on:ofColor:.
-SGAViz >> #addHighlightTestCaseEvent:on:ofColor:.
-SGAViz >> #addLegend:on:withFontColor:and:.
-SGAViz >> #addLegendOn:with:.
-SGAViz >> #addSurvivorTestCase:on:using:and:.
-SGAViz >> #addTickX:withScale:color:y:and: .
-SGAViz >> #addTickY:withScale:xMax:ofColor:andPositions: .
-SGAViz >> #borderOfSize:andColor: .
-SGAViz >> #contributionShapeOfHeight:color:and:.
-SGAViz >> #createRSLabelWith:and:.
-SGAViz >> #createTopCenterRSLocationOn:with:.
-SGAViz >> #createTopCenterRSLocationWith:.
-SGAViz >> #createTopLeftRSLocation.
-SGAViz >> #createTopRightRSLocationWith:.
-SGAViz >> #evolutionPoints:withScale: .
-SGAViz >> #evolutionShapeWith:ofColor:size: .
-SGAViz >> #fitnessOf: .
-SGAViz >> #fitnessResultAsDictionary.
-SGAViz >> #generationDictionaryWith:.
-SGAViz >> #generationEvolutionCanvas.
-SGAViz >> #generationVisualization:ofColor: .
-SGAViz >> #infoMethodShapesOn:ofColor:highlight: .
-SGAViz >> #isCoverage:ofSummaryMethod:in:newOrHigher: .
-SGAViz >> #methodColorDictionary: .
-SGAViz >> #methodShape:withGradientFrom:to: .
-SGAViz >> #methodShapeGroup:with:highlight:scale: .
-SGAViz >> #progressBarFrom:to:ofColor:.
-SGAViz >> #rsBorderWithColorBox:.
-SGAViz >> #rshighlightableWith:.
-SGAViz >> #rsLabelWith:.
-SGAViz >> #scaleColorBlock:.
-SGAViz >> #setPositions:using: .
-SGAViz >> #sparkCircleGroupOfColor:andSize:.
-SGAViz >> #stringTargetClassInPackage.
-SGAViz >> #summaryMethodsOfTargetClass:.
-SGAViz >> #testCaseShape:ofColor:with:highlight:scale:.
-SGAViz >> #generationDictionaryWith: .
-SGAViz >> #visualizeEvolutionFitness.
-SGAViz class >> #darkColors.
-SGAViz class >> #lightColors."}
+	^ { SGAEngineTest >> #profilerOf:.
+			SGAEngineTest >> #tearDown }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSInsertTest [
-	^ {SInsertTest >> #testCopyWithANewMethodCallToAnArgumentOfTheTargetClass.
-	SInsertTest >> #testCopyWithANewMethodCallToAnyValue}
+	"Black list of SInsertTest class"
+
+	^ { SInsertTest >> #testCopyWithANewMethodCallToAnArgumentOfTheTargetClass.
+		SInsertTest >> #testCopyWithANewMethodCallToAnyValue }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSInspectorAssertion [
-	^ {SInspectorAssertion class >> #inspectorAssertionOf:}
-]
+	"Black list of SInspectorAssertion class"
 
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSLiteral [
-	^ {"SLiteral >> #stmColor" }
-]
-
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSMessage [
-	^ {"SMessage >> #stmColor" }
+	^ { SInspectorAssertion class >> #inspectorAssertionOf: }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSMethodInfoTest [
-	^ {SMethodInfoTest >> #testToString.
-	SMethodInfoTest >> #testFromSton}
+	"Black list of SMethodInfoTest class"
+
+	^ { SMethodInfoTest >> #testToString.
+			SMethodInfoTest >> #testFromSton }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSMultiTypeInfoTest [
-	^ {SMultiTypeInfoTest >> #testToString.
-	SMultiTypeInfoTest >> #testFromSton}
+	"Black list of SMultiTypeInfoTest class"
+	
+	^ { SMultiTypeInfoTest >> #testToString.
+	SMultiTypeInfoTest >> #testFromSton }
 ]
 
 { #category : #'bl-initialization' }
 SExporte2VW >> blackListSNumericParameterization [
-	^ {SNumericParameterization >> #newInstancesM:}
+	"Black list of SNumericParameterization class"
+
+	^ { SNumericParameterization >> #newInstancesM: }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSObject [
+	"Black list of SObject class"
+
 	^ {}
 ]
 
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSPlatformPharo [
-	^ {SPlatformPharo class >> #classLogger.
-	SPlatformPharo class >> #implementationType .
-	SPlatformPharo class >> #rbParserClass .
-	SPlatformPharo class >> #testCaseClass }
-]
-
-{ #category : #'bl-builder' }
-SExporte2VW >> blackListSPlatformVisualWorks [
-	^ {"SPlatformVisualWorks class >> #classConfigurationName."
-"SPlatformVisualWorks class >> #createTestCaseClass:inPackage:."
-"SPlatformVisualWorks class >> #implementationType."
-"SPlatformVisualWorks class >> #rbParserClass."
-"SPlatformVisualWorks class >> #testCaseClass"}
+	"Black list of SPlatformPharo class"
+	
+	^ { SPlatformPharo class >> #classLogger.
+			SPlatformPharo class >> #implementationType .
+			SPlatformPharo class >> #rbParserClass .
+			SPlatformPharo class >> #testCaseClass }
 ]
 
 { #category : #'bl-utility' }
 SExporte2VW >> blackListSReport [
-	^ {SReport class >> #exportData:onCSV:usingFilter:}
+	"Black list of SReport class"
+
+	^ { SReport class >> #exportData:onCSV:usingFilter: }
 ]
 
 { #category : #'bl-utility' }
 SExporte2VW >> blackListSReportSGALog [
-	^ {SReportSGALog class >> #exportResumeOf:onCSV: .
-	SReportSGALog >> #generateReportForDifferencesBtwGenerations}
+	"Black list of SReportSGALog class"
+	
+	^ { SReportSGALog class >> #exportResumeOf:onCSV: .
+			SReportSGALog >> #generateReportForDifferencesBtwGenerations }
 ]
 
 { #category : #'bl-utility' }
 SExporte2VW >> blackListSReportTypeInfo [
-	^ {SReportTypeInfo class >> #writeReport:ofCaseStudy: .
-	SReportTypeInfo class >> #writeReport:ofFrequency:}
+	"Black list of SReportTypeInfo class"
+	
+	^ { SReportTypeInfo class >> #writeReport:ofCaseStudy: .
+			SReportTypeInfo class >> #writeReport:ofFrequency: }
 ]
 
 { #category : #'bl-strategies' }
 SExporte2VW >> blackListSSAbstractSettingMethods [
-	^ { SSAbstractSettingMethods >> #exportMethod:  }
+	"Black list of SSAbstractSettingMethods class"
+
+	^ { SSAbstractSettingMethods >> #exportMethod: }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSSGParser [
-	^ {SSGParser  >> #visitAssignmentNode:.
-	SSGParser  >> #visitCascadeNode:.
-	SSGParser  >> #visitLiteralNode:.
-	SSGParser  >> #visitMessageNode:.
-	SSGParser  >> #visitSequenceNode:.
-	SSGParser  >> #visitVariableNode:}
-]
-
-{ #category : #'bl-strategies' }
-SExporte2VW >> blackListSSMetaInterpreter [
-	^ { "SSMetaInterpreter >> #visitMessageNode: " }
+	"Black list of SSGParser class"
+	
+	^ { SSGParser  >> #visitAssignmentNode:.
+			SSGParser  >> #visitCascadeNode:.
+			SSGParser  >> #visitLiteralNode:.
+			SSGParser  >> #visitMessageNode:.
+			SSGParser  >> #visitSequenceNode:.
+			SSGParser  >> #visitVariableNode: }
 ]
 
 { #category : #'bl-initialization' }
 SExporte2VW >> blackListSSelectionParameterization [
-	^ {SSelectionParameterization class >> #setting:}
+	"Black list of SSelectionParameterization class"
+
+	^ { SSelectionParameterization class >> #setting: }
 ]
 
 { #category : #'bl-scenario' }
 SExporte2VW >> blackListSSimpleFitnessFunction [
-	^ {SSimpleFitnessFunction >> #updateSuperclasses }
-]
+	"Black list of SSimpleFitnessFunction class"
 
-{ #category : #'bl-scenario' }
-SExporte2VW >> blackListSStack [
-	^ {"SStack >> #+."
-"SStack >> #addFirst:."
-"SStack >> #addLast:."
-"SStack >> #hasEqualElements:."
-"SStack >> #removeFirst."
-"SStack >> #removeLast"}
-]
-
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSTestCase [
-	^ {"SSTestCase >> #setUp .
-SSTestCase >> #tearDown"}
+	^ { SSimpleFitnessFunction >> #updateSuperclasses }
 ]
 
 { #category : #'bl-builder' }
 SExporte2VW >> blackListSTestCaseFactory [
-	^ {"STestCaseFactory >> #exportTests .
-STestCaseFactory >> #gtInspectorCanvasIn: .
-STestCaseFactory >> #gtInspectorViewIn: .
-STestCaseFactory >> #classesForRegex:"
-STestCaseFactory >> #generatedClass .
-STestCaseFactory >> #openOnGeneratedClass .
-STestCaseFactory >> #tearDown}
+	"Black list of STestCaseFactory class"
+
+	^ { STestCaseFactory >> #generatedClass .
+			STestCaseFactory >> #openOnGeneratedClass .
+			STestCaseFactory >> #tearDown }
 ]
 
 { #category : #'bl-examples' }
 SExporte2VW >> blackListSTestCaseFactoryExample [
-	^ {STestCaseFactoryExample >> #clean .
-STestCaseFactoryExample >> #exampleEmptyBlockOnPackages .
-STestCaseFactoryExample >> #exampleSSTeacherOnClass .
-STestCaseFactoryExample >> #exampleSSTeacherOnPackages .
-STestCaseFactoryExample >> #exampleSStackOnClass .
-STestCaseFactoryExample >> #exampleSStackOnPackages .
-STestCaseFactoryExample >> #exampleSStudentOnClass .
-STestCaseFactoryExample >> #exampleWithSubclassToRun .
-STestCaseFactoryExample >> #exampleWithWrongClassToRun .
-STestCaseFactoryExample >> #exampleWithWrongRegexToRun}
-]
-
-{ #category : #'bl-builder' }
-SExporte2VW >> blackListSTestCaseFactoryVisualWorks [
-	^ {"STestCaseFactoryVisualWorks >> #cleanInstrumentation."
-"STestCaseFactoryVisualWorks >> #initializeProfiler."
-"STestCaseFactoryVisualWorks >> #uninstall"}
+	"Black list of STestCaseFactoryExample class"
+		
+	^ { STestCaseFactoryExample >> #clean .
+			STestCaseFactoryExample >> #exampleEmptyBlockOnPackages .
+			STestCaseFactoryExample >> #exampleSSTeacherOnClass .
+			STestCaseFactoryExample >> #exampleSSTeacherOnPackages .
+			STestCaseFactoryExample >> #exampleSStackOnClass .
+			STestCaseFactoryExample >> #exampleSStackOnPackages .
+			STestCaseFactoryExample >> #exampleSStudentOnClass .
+			STestCaseFactoryExample >> #exampleWithSubclassToRun .
+			STestCaseFactoryExample >> #exampleWithWrongClassToRun .
+			STestCaseFactoryExample >> #exampleWithWrongRegexToRun }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSTestCaseTest [
-	^ {SSTestCaseTest >> #typeInfo}
+	"Black list of STestCaseTest class"
+
+	^ { SSTestCaseTest >> #typeInfo }
 ]
 
 { #category : #'bl-core' }
 SExporte2VW >> blackListSTestShifter [
-	^ {SSTestShifter>> #canAddStatement.}
+	"Black list of STestShifter class"
+
+	^ { SSTestShifter>> #canAddStatement }
 ]
 
 { #category : #'bl-info' }
 SExporte2VW >> blackListSTypeClassInfo [
-	^ {STypeClassInfo >> #differenceWith:usingSelector: .
-	STypeClassInfo >> #isAbstract}
+	"Black list of STypeClassInfo class"
+
+	^ { STypeClassInfo >> #differenceWith:usingSelector: .
+			STypeClassInfo >> #isAbstract }
 ]
 
 { #category : #'bl-info' }
 SExporte2VW >> blackListSTypeInfo [
-	^ {STypeInfo >> #completeTypeInfo."
-STypeInfo >> #updateArgsOf: ."
-STypeInfo >> #deleteBlackListMethods.
-STypeInfo >> #blackList .
-STypeInfo >> #blackList: .
-STypeInfo >> #allParentClassesInfoFrom: }
+	"Black list of STypeInfo class"
+
+	^ { STypeInfo >> #completeTypeInfo.
+			STypeInfo >> #deleteBlackListMethods.
+			STypeInfo >> #blackList .
+			STypeInfo >> #blackList: .
+			STypeInfo >> #allParentClassesInfoFrom: }
 ]
 
 { #category : #'bl-tests' }
 SExporte2VW >> blackListSTypeInfoTest [
-	^ {STypeInfoTest >> #testFromString.
-STypeInfoTest >> #testToStringComplexScalar.
-STypeInfoTest >> #testToString.
-STypeInfoTest >> #testAsTypeInfoSFoo}
+	"Black list of STypeInfoTest class"
+
+	^ { STypeInfoTest >> #testFromString .
+			STypeInfoTest >> #testToStringComplexScalar .
+			STypeInfoTest >> #testToString .
+			STypeInfoTest >> #testAsTypeInfoSFoo }
 ]
 
 { #category : #'bl-utility' }
 SExporte2VW >> blackListSUtilityTypeInfo [
-	^ {SUtilityTypeInfo >> #typeInfoSFoo1.
-SUtilityTypeInfo >> #typeInfoSFoo3.
-SUtilityTypeInfo >> #typeInfoSFooOnPackage2.
-SUtilityTypeInfo >> #typeInfoSFoo100 }
+	"Black list of SUtilityTypeInfo class"
+	
+	^ { SUtilityTypeInfo >> #typeInfoSFoo1 .
+			SUtilityTypeInfo >> #typeInfoSFoo3 .
+			SUtilityTypeInfo >> #typeInfoSFooOnPackage2 .
+			SUtilityTypeInfo >> #typeInfoSFoo100 }
 ]
 
 { #category : #'bl-smallTypeColl' }
 SExporte2VW >> blackListSmallTypeCollector [
-	^ {SmallTypeCollector >> #collectTypeFrom:.
-SmallTypeCollector >> #methodInfoIn:from:.
-SmallTypeCollector >> #typeFor:}
+	"Black list of SmallTypeCollector class"
+
+	^ { SmallTypeCollector >> #collectTypeFrom: .
+			SmallTypeCollector >> #methodInfoIn:from: .
+			SmallTypeCollector >> #typeFor: }
 ]
 
 { #category : #actions }
-SExporte2VW >> export [ 
+SExporte2VW >> export [
+	"Export SmallSuiteGenerator package to st file for VW"
+	
 	Pharo2VW exporter
 	directory: FileSystem disk workingDirectory;
 	namespace: 'SmallSuiteGenerator';
@@ -358,6 +298,8 @@ SExporte2VW >> export [
 ]
 
 { #category : #accessing }
-SExporte2VW >> packages [ 
+SExporte2VW >> packages [
+	"Packages to export"
+
 	^ #('SmallSuiteGenerator' 'SmallSuiteGenerator-Scenario' 'SmallSuiteGenerator-Scenario2' 'SmallSuiteGenerator-Tests')
 ]
