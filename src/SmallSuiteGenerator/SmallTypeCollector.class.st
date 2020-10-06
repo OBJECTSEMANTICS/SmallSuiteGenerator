@@ -73,7 +73,7 @@ SmallTypeCollector >> methodInfoIn: aCompiledMethod from: tempTypes [
 			argType := SMultiTypeInfo new.
 			types := (tempTypes at: index) types.
 			((types size = 1) and:[types first = Object]) ifTrue:[ "name type"
-					argType type: (self typeFor:argName).
+					argType type: (self typeFor: argName).
 				] ifFalse:[
 					types do:[ :argClass | argClass isMeta ifFalse: [ argType type: argClass name asSymbol ] ] ].
 			#(#Object #SUndefinedObject) do: [:each | argType removeType: each ]. 
@@ -114,7 +114,5 @@ SmallTypeCollector >> typeFor: argName [
 	('.*(s|S)tring.*' asRegex matches: argName) ifTrue:[^#String].
 	('.*(s|S)ymbol.*' asRegex matches: argName) ifTrue:[^#Symbol].
 	
-	^ #nil.	
-
-
+	^ #nil.
 ]

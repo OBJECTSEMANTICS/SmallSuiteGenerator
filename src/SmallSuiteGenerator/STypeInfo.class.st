@@ -18,7 +18,8 @@ Class {
 		'noneAbstractClasses',
 		'scalars',
 		'blackList',
-		'cacheMessagesFrom'
+		'cacheMessagesFrom',
+		'smallCollector'
 	],
 	#category : #'SmallSuiteGenerator-Info'
 }
@@ -183,7 +184,7 @@ STypeInfo >> completeTypeInfo [
 				value hasProfiler: false.
 				value executions: 0.5 ] ] ].
 	self types keysDo: [:aClass | |classInfo realClassInfo|
-	classInfo := SmallTypeCollector new collectTypeFrom: aClass asClass.
+	classInfo := "SmallTypeCollector"self smallCollector new collectTypeFrom: aClass asClass.
 	realClassInfo := self types at: aClass.
 	classInfo methodTypes keysAndValuesDo: [ :key :value |
 		aBlock cull: {key . value} cull: {aClass . realClassInfo} cull: #methodTypes.].
@@ -263,6 +264,7 @@ STypeInfo >> initialize [
 	types := Dictionary new.
 	scalars := Dictionary new.
 	cacheMessagesFrom :=Dictionary new.
+	smallCollector := SmallTypeCollector.
 	self initializeBlackList
 ]
 
@@ -384,6 +386,16 @@ STypeInfo >> scalars [
 STypeInfo >> scalars: aDictionary [
 	aDictionary associationsDo: [ :assoc | 
 		self scalar: assoc key with: assoc value asOrderedCollection ]
+]
+
+{ #category : #accessing }
+STypeInfo >> smallCollector [
+	^ smallCollector
+]
+
+{ #category : #accessing }
+STypeInfo >> smallCollector: anObject [
+	smallCollector := anObject
 ]
 
 { #category : #'accessing structure variables' }

@@ -420,7 +420,7 @@ STestCaseFactory >> tearDown [
 	self exportTests.
 	SSTestShifter resetToDefaults.
 	SPlatform resetRandomGenerator.
-	SmallTypeCollector resetClassDict.
+	"SmallTypeCollector"typeInfo smallCollector resetClassDict.
 ]
 
 { #category : #'set strategies' }
