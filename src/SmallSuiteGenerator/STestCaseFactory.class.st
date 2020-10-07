@@ -18,7 +18,8 @@ Class {
 		'typeInfoSeed',
 		'typeInfoOrigin',
 		'firstExecution',
-		'generatedClass'
+		'generatedClass',
+		'average'
 	],
 	#classInstVars : [
 		'instance'
@@ -73,6 +74,31 @@ STestCaseFactory class >> vizClass [
 { #category : #'set strategies' }
 STestCaseFactory >> asDict: aBoolean [
 	self generatedClass asDict: aBoolean.
+]
+
+{ #category : #accessing }
+STestCaseFactory >> average [
+
+	^ average
+]
+
+{ #category : #accessing }
+STestCaseFactory >> average: anAverage [
+
+	average := anAverage
+]
+
+{ #category : #actions }
+STestCaseFactory >> calculateAverageOfClass [
+	
+	| summary averageTests totalPopulation |
+	summary := 0.
+	engine population
+		do: [ :test |
+			summary := summary + test fitness at: 'block-coverage' ].
+	totalPopulation := engine population size.
+	averageTests := summary / totalPopulation.
+	self average: averageTests
 ]
 
 { #category : #actions }
@@ -147,6 +173,8 @@ STestCaseFactory >> exportSettingMethods [
 
 { #category : #export }
 STestCaseFactory >> exportTests [
+	
+	self calculateAverageOfClass.
 	engine population
 		doWithIndex: [ :test :index |
 			test lastMessage: lastMessage.
@@ -211,6 +239,7 @@ STestCaseFactory >> initialize [
   numberOfIterations := 20.
   engine := self engineDefault.
   initialSeed := 100.
+  average := 0.
   lastMessage := SSGParser parseFrom: (SPlatform rbParserClass parseExpression: '')
 ]
 
