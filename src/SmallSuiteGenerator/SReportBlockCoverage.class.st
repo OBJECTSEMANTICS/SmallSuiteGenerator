@@ -31,7 +31,7 @@ SReportBlockCoverage >> generateReports [
 			 ].
 		
 			targetClass asClass class methods do: [ :cm | | m |
-				[ m := classInfo localMethodAt: cm selector.
+				[ m := classInfo metaclassSpy localMethodAt: cm selector.
 				neoCSVWriter nextPut: (OrderedCollection new add: m selector; add: 'true'; add: m compiledMethod sourceCode; add: (m blocks inject: 0 into: [ :s :e | s + e numberOfStatements ]); add: m blocks size; add: (m blocks collect: [:b | b numberOfStatements]) asArray; add: m blocks first wasExecuted; add: (m blocks collect: [:b | b wasExecuted]) asArray; yourself ) ] 
 				on: Error
 				do: [ ]
