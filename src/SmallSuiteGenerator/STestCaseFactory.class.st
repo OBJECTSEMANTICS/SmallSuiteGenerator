@@ -67,7 +67,7 @@ STestCaseFactory class >> resetToDefaults [
 
 { #category : #settings }
 STestCaseFactory class >> vizClass [
-	^ SGAViz
+	^ SGANullViz
 ]
 
 { #category : #'set strategies' }
