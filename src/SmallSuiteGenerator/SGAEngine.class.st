@@ -48,7 +48,8 @@ Class {
 		'crossoverStrategy',
 		'stopIterations',
 		'totalExecutionGA',
-		'selectionStrategyTestCase'
+		'selectionStrategyTestCase',
+		'needCompletion'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -253,6 +254,7 @@ SGAEngine >> initialize [
   stopIterations := 30.
   totalExecutionGA := 0.
   lastMessage := SSGParser parseFrom: ( SPlatform rbParserClass parseExpression: '').
+  needCompletion := true.
   self initializeMutationOperator.
   self initializeCrossoverOperator
 ]
@@ -356,6 +358,18 @@ SGAEngine >> mutateAndUpdate: aTestCase [
 SGAEngine >> mutationRate: aFloat [
 
 	mutationOperator mutationRate: aFloat
+]
+
+{ #category : #accessing }
+SGAEngine >> needCompletion [
+
+	^ needCompletion
+]
+
+{ #category : #accessing }
+SGAEngine >> needCompletion: aBoolean [
+
+	needCompletion := aBoolean
 ]
 
 { #category : #accessing }
@@ -538,7 +552,8 @@ SGAEngine >> typeInfo [
 SGAEngine >> typeInfo: aTypeInfo [
 
 	typeInfo := aTypeInfo.
-	typeInfo completeTypeInfo
+	needCompletion 
+		ifTrue: [ typeInfo completeTypeInfo ]
 ]
 
 { #category : #accessing }
