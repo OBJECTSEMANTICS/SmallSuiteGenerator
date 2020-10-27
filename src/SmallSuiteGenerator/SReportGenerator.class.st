@@ -525,7 +525,7 @@ SReportGenerator >> generateStatementTestCasesWithSeedAndCompletingInfo [
 		packageName := 'Generated_' , targetClass asString, '_seedPlusInfo'.
 		typeInfo := STypeInfo 
 			asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
-      	covArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
+      	covArray := self generateTestCaseForSeedAndInfoOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
 		self calculateAndInspectClassInformationOf: covArray.
 		self generateReportWithSeedOf: targetClass inPackage: packageName.
 ]
