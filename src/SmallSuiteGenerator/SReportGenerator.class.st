@@ -120,7 +120,6 @@ SReportGenerator >> generateBlockCoverageReportOf: aTargetClass inPackage: aPack
 	aBlock value.
 	profiler uninstall.
 	self generateReportOfBlock: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass) ofCollector: aTypeCollector.
-	(fitness computeFitness) inspect
 ]
 
 { #category : #generationOfReportWithSeed }
@@ -147,7 +146,6 @@ SReportGenerator >> generateBlockCoverageReportWithSeedAndInfoOf: aTargetClass i
 	aBlock value.
 	profiler uninstall.
 	self generateReportOfBlockWithSeedAndInfo: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass).
-	(fitness computeFitness) inspect
 ]
 
 { #category : #generationOfReportWithSeed }
@@ -174,7 +172,6 @@ SReportGenerator >> generateBlockCoverageReportWithSeedOf: aTargetClass inPackag
 	aBlock value.
 	profiler uninstall.
 	self generateReportOfBlockWithOnlySeed: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass).
-	(fitness computeFitness) inspect
 ]
 
 { #category : #accessing }
@@ -288,36 +285,6 @@ SReportGenerator >> generateReportOfBlockWithSeedAndInfo: aBlockCoverage [
 				neoCSVWriter nextPut: (OrderedCollection new add: m selector; add: 'true'; add: m compiledMethod sourceCode; add: (m blocks inject: 0 into: [ :s :e | s + e numberOfStatements ]); add: m blocks size; add: (m blocks collect: [:b | b numberOfStatements]) asArray; add: m blocks first wasExecuted; add: (m blocks collect: [:b | b wasExecuted]) asArray; yourself ) ] 
 				on: Error
 				do: [ ]
-			 ].
-			neoCSVWriter flush ]
-]
-
-{ #category : #generationOfReportWithoutSeed }
-SReportGenerator >> generateReportOfTypeInfoInTestCasesOf: aTypeInformation [
-	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_typeInfo_testCases_', aTypeInformation asString)
-		writeStreamDo: [ :stream |
-			| neoCSVWriter |
-			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut: #('method' 'classSide' 'args' 'list of detected types' 'return types').
-			classInfo := aTypeInformation classAt: targetClass.
-			instanceMethods := targetClass asClass 
-				methods sort: [ :method1 :method2 | method1 name < method2 name ].
-			instanceMethods do: [ :cm | | m types |
-				[ m := classInfo methodOf: cm selector.
-				 types := (m argTypes collect: [ :a | a types asString ]) asArray.
-				neoCSVWriter nextPut: (Array with: m selector with: 'false' with: m argTypes size with: types asString with: m returnType types asString ) ] 
-				on: Error
-				do: [ neoCSVWriter nextPut: (Array with: cm selector with: 'false' with: '' with: 'no detected' with: 'no detected')  ]
-			 ].
-			classMethods := targetClass asClass class
-				methods sort: [ :method1 :method2 | method1 name < method2 name ].
-			classMethods do: [ :cm | | m types |
-				[ m := classInfo classMethodOf: cm selector.
-				 types := (m argTypes collect: [ :a | a types asString ]) asArray.
-				neoCSVWriter nextPut: (Array with: m selector with: 'true' with: m argTypes size with: types asString with: m returnType types asString) ] 
-				on: Error
-				do: [ neoCSVWriter nextPut: (Array with: cm selector with: 'true' with: '' with: 'no detected' with: 'no detected')  ]
 			 ].
 			neoCSVWriter flush ]
 ]
@@ -540,50 +507,47 @@ SReportGenerator >> generateReportWithSeedOf: aTargetClass inPackage: aPackageNa
 
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateStatementTestCasesWithSeed [
-  | className combinations packageName covArray |
+  | combinations packageName covArray |
   combinations := self generateCombinationsForConfig.
   packageName := 'Generated_' , targetClass asString , '_onlySeed'.
-  className := targetClass asClass name.
   typeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
-  covArray := self generateTestCaseForOnlySeedOf: targetClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
+  covArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
   self calculateAndInspectClassInformationOf: covArray.
   self generateReportWithSeedAndInfoOf: targetClass inPackage: packageName
 ]
 
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateStatementTestCasesWithSeedAndCompletingInfo [
-  | aBlock className combinations packageName covArray |
+  | combinations packageName covArray |
 
   combinations := self generateCombinationsForConfig.
  
 		packageName := 'Generated_' , targetClass asString, '_seedPlusInfo'.
-		className := targetClass asClass name.
 		typeInfo := STypeInfo 
 			asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
-      	covArray := self generateTestCaseForOnlySeedOf: targetClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
+      	covArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
 		self calculateAndInspectClassInformationOf: covArray.
 		self generateReportWithSeedOf: targetClass inPackage: packageName.
 ]
 
 { #category : #generationOfReportWithoutSeed }
 SReportGenerator >> generateStatementTestCasesWithoutSeed [
-  | aBlock className combinations packageName covArray |
+  | aBlock combinations packageName covArray |
   aBlock := [  ].
   combinations := self generateCombinationsForConfig.
   self collectorTypes do: [:collectorType |  packageName := 'Generated_' , targetClass asString , '_' , collectorType asClass asString.
-        className := targetClass asClass name.
         typeInfo := (STypeInfo new smallCollector: collectorType asClass) asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
-        covArray := self generateTestCaseOf: targetClass withConfig: combinations withPackageName: packageName andBlock: aBlock.
+        covArray := self generateTestCaseOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: aBlock.
         self calculateAndInspectClassInformationOf: covArray.
         self generateReportOf: targetClass inPackage: packageName andCollector: collectorType ]
 ]
 
 { #category : #generationOfReportWithSeed }
-SReportGenerator >> generateTestCaseForOnlySeedOf: className withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
+SReportGenerator >> generateTestCaseForOnlySeedOf: aClass withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
   | coverageArray generated |
+	coverageArray := OrderedCollection new.
   combinations doWithIndex: [:c :i |  | factory |
-        coverageArray := OrderedCollection new.
-        generated := targetClass asClass createTestCaseConfigWithName: className , '_' , i asString , '_' , c first asString , '_' , c second asString , '_' , c third asString , '_' , c fourth asString , '_' , c fifth printString , '_' , aPackageName.
+        generated := aClass createTestCaseConfigWithName: aClass name , '_' , i asString , '_' , c first asString , '_' , c second asString , '_' , c third asString , '_' , c fourth asString , '_' , c fifth printString , '_' , aPackageName.
         generated
            addTypeInfo: typeInfo withKey: 'var';
            typeInfo: 'var';
@@ -604,11 +568,12 @@ SReportGenerator >> generateTestCaseForOnlySeedOf: className withConfig: combina
 ]
 
 { #category : #generationOfReportWithSeed }
-SReportGenerator >> generateTestCaseForSeedAndInfoOf: className withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
+SReportGenerator >> generateTestCaseForSeedAndInfoOf: aClass withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
   | coverageArray generated |
+	coverageArray := OrderedCollection new.
   combinations doWithIndex: [:c :i |  | factory |
-        coverageArray := OrderedCollection new.
-        generated := targetClass asClass createTestCaseConfigWithName: className , '_' , i asString , '_' , c first asString , '_' , c second asString , '_' , c third asString , '_' , c fourth asString , '_' , c fifth printString , '_' , aPackageName.
+        
+        generated := aClass createTestCaseConfigWithName: aClass name, '_' , i asString , '_' , c first asString , '_' , c second asString , '_' , c third asString , '_' , c fourth asString , '_' , c fifth printString , '_' , aPackageName.
         generated
            addTypeInfo: typeInfo withKey: 'var';
            typeInfo: 'var';
@@ -629,11 +594,12 @@ SReportGenerator >> generateTestCaseForSeedAndInfoOf: className withConfig: comb
 ]
 
 { #category : #generationOfReportWithoutSeed }
-SReportGenerator >> generateTestCaseOf: className withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
+SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
   | coverageArray generated |
+  coverageArray := OrderedCollection new.
   combinations doWithIndex: [:c :i |  | factory |
-        coverageArray := OrderedCollection new.
-        generated := targetClass asClass createTestCaseConfigWithName: className , '_' , i asString , '_' , c first asString , '_' , c second asString , '_' , c third asString , '_' , c fourth asString , '_' , c fifth printString , '_' , aPackageName.
+        
+        generated := aClass createTestCaseConfigWithName: aClass name, '_' , i asString , '_' , c first asString , '_' , c second asString , '_' , c third asString , '_' , c fourth asString , '_' , c fifth printString , '_' , aPackageName.
         generated
            addTypeInfo: typeInfo withKey: 'var';
            typeInfo: 'var';
