@@ -95,6 +95,14 @@ STestCaseFactory >> createTestCases [
 ]
 
 { #category : #actions }
+STestCaseFactory >> createTestCasesWithSeed [
+	self checkInvariants.
+	self setUpForOnlySeed.
+	self run.
+	self tearDown.
+]
+
+{ #category : #actions }
 STestCaseFactory >> crossoverOperator: aCrossoverOperator [
 	self generatedClass crossoverStrategy: aCrossoverOperator
 ]
@@ -360,6 +368,7 @@ STestCaseFactory >> setUp [
 STestCaseFactory >> setUpEngine [
   engine
 	  selectionStrategy: self generatedClass selectionStrategy new;
+	  needCompletion: true;
      fitness: self fitness;
      numberOfGenerations: numberOfIterations;
      typeInfo: self typeInfo;
@@ -373,6 +382,46 @@ STestCaseFactory >> setUpEngine [
 	  selectionStrategyTestCase: self generatedClass selectionStrategyTestCase new;
 	  crossoverStrategy: self generatedClass crossoverStrategy;
 	  crossoverOperator: self generatedClass crossoverOperator
+]
+
+{ #category : #running }
+STestCaseFactory >> setUpEngineForOnlySeed [
+  engine
+	  selectionStrategy: self generatedClass selectionStrategy new;
+	  needCompletion: false;
+     fitness: self fitness;
+     numberOfGenerations: numberOfIterations;
+     typeInfo: self typeInfo;
+     targetClassName: self targetClassName;
+     targetPackageRegex: self targetPackageRegex;
+	  elitismRate: self generatedClass elitismRate;
+	  numberOfStatements: self generatedClass numberOfStatements;
+	  populationSize: self generatedClass populationSize;
+	  stopIterations: self generatedClass stopIterations;
+	  numberOfGenerations: self generatedClass numberOfGenerations;
+	  selectionStrategyTestCase: self generatedClass selectionStrategyTestCase new;
+	  crossoverStrategy: self generatedClass crossoverStrategy;
+	  crossoverOperator: self generatedClass crossoverOperator
+]
+
+{ #category : #running }
+STestCaseFactory >> setUpForOnlySeed [
+	self initializeProfiler.
+	self firstExecution ifTrue: [ 
+		SPlatform resetRandomGenerator.
+      	self fitness
+      		profiler: profiler;
+         typeInfo: typeInfo;
+         targetClass: self targetClassName;
+         consideringNSuperclasses: self generatedClass nsuperclasses.
+      self setUpEngineForOnlySeed.
+      typeInfoSeed := (typeInfo classAt: targetClassName) deepCopy.
+		self generatedClass compilePrinterClass.
+	] ifFalse: [ 
+		profiler typeInfo: typeInfo.
+      engine fitness profiler: profiler.
+      engine numberOfGenerations: numberOfIterations.
+	]
 ]
 
 { #category : #'set strategies' }
