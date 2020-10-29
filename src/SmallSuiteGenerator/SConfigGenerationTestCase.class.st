@@ -161,6 +161,7 @@ SConfigGenerationTestCase class >> fitnessDictionary [
 	^ Dictionary new
 		at: #statement put: [SStatementCoverage new];
 		at: #method put: [SMethodCoverage new];
+		at: #branch put: [ SBranchCoverage new ];
 		at: #multi put: [ SMultiFitnessFunction methodAndStatementCoverage ];
 		yourself
 ]

@@ -551,9 +551,6 @@ SGAViz >> methodShape: summaryExecMethod withGradientFrom: darkColor to: lightCo
 									nextPutAll: sSt code] ] ];
 				shapes: (group collect: #yourself);
 				yourself.
-				
-	
-	
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
