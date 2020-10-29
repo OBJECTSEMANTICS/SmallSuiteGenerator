@@ -2,12 +2,8 @@ Class {
 	#name : #SVisitorForMetrics,
 	#superclass : #RBProgramNodeVisitor,
 	#instVars : [
-		'methodEntity',
-		'numberOfConditionals',
-		'booleanOperators',
 		'cyclomaticNumber',
-		'consideredBlocks',
-		'blockId'
+		'methodNode'
 	],
 	#category : #'SmallSuiteGenerator-Coverage'
 }
@@ -31,17 +27,12 @@ SVisitorForMetrics >> computeCyclomaticNumber: sel [
 	are taken to be	conditionals and loops."
 
 	| branches loops |
-	branches := #(#ifTrue: #ifFalse: #ifTrue:ifFalse: #ifFalse:ifTrue: #ifNil: #ifNil:ifNotNil: #ifNotNil:ifNil: #ifNotNil: #ifEmpty:ifNotEmpty: #ifNotEmpty:ifEmpty: #ifEmpty: #ifNotEmpty:  #at:ifAbsent: #at:ifAbsentPut: #detect:ifNone: #on:do: "#and: #or: #xor:").
+	branches := #(#ifTrue: #ifFalse: #ifTrue:ifFalse: #ifFalse:ifTrue: #ifNil: #ifNil:ifNotNil: #ifNotNil:ifNil: #ifNotNil: #ifEmpty:ifNotEmpty: #ifNotEmpty:ifEmpty: #ifEmpty: #ifNotEmpty:  #at:ifAbsent: #at:ifAbsentPut: #detect:ifNone: #on:do: #and: #or: #xor:).
 	loops := #(#whileTrue: #whileTrue #whileFalse #whileFalse: #timesRepeat: #to:do: #do:separatedBy: #do: #collect: #select: #reject: #inject:into: #detect: #detect:ifNone: #anySatisfy: #allSatisfy: #piecesCutWhere:).	"-- please not that #detect:ifNone: is listed twice because it is both loop and branch!!! -- akuhn"
-	(branches includes: sel) ifTrue: [ cyclomaticNumber := cyclomaticNumber + 1.
-		consideredBlocks add: blockId ].
-	(loops includes: sel) ifTrue: [ cyclomaticNumber := cyclomaticNumber + 1.
-		consideredBlocks add: blockId ].
+	(branches includes: sel) ifTrue: [ cyclomaticNumber := cyclomaticNumber + 1].
+	(loops includes: sel) ifTrue: [ cyclomaticNumber := cyclomaticNumber + 1 ].
 	"-- HERE STARTS THE OLD ERRORFUL IMPL --"
-	"(#(#or: #and: #xor: #& #|) includes: sel)
-		ifTrue: [ booleanOperators := booleanOperators + 1.
-			^ self ].
-	(#(#ifTrue: #ifFalse: #ifTrue:ifFalse: #ifFalse:ifTrue: #whileTrue #whileTrue: #whileFalse #whileFalse:) includes: sel) ifTrue: [ booleanOperators := 0 ]"
+	
 ]
 
 { #category : #initialization }
@@ -58,46 +49,26 @@ SVisitorForMetrics >> initialize [
 ]
 
 { #category : #initialization }
-SVisitorForMetrics >> methodEntity [
-	^ methodEntity
-]
-
-{ #category : #initialization }
-SVisitorForMetrics >> methodEntity: aMethodEntity [
-	methodEntity := aMethodEntity
-]
-
-{ #category : #initialization }
-SVisitorForMetrics >> numberOfConditionals [
-	
-	^numberOfConditionals
-]
-
-{ #category : #initialization }
-SVisitorForMetrics >> numberOfConditionals: anObject [
-	
-	numberOfConditionals := anObject
+SVisitorForMetrics >> methodNode: aMethod [
+	methodNode := aMethod.
+	self resetMetricValues.
 ]
 
 { #category : #initialization }
 SVisitorForMetrics >> processMethod: aMethodEntity [
-	self methodEntity: aMethodEntity.
-	(aMethodEntity methodClass parseTreeFor: aMethodEntity selector) ifNotNil: [ :parseTree | self visitMethodNode: parseTree ]
+	self methodNode: aMethodEntity.
+	"(aMethodEntity methodClass parseTreeFor: aMethodEntity selector) ifNotNil: [ :parseTree |" self visitMethodNode: aMethodEntity"parseTree" "]"
 ]
 
 { #category : #initialization }
 SVisitorForMetrics >> resetMetricValues [
-	numberOfConditionals := 0.
-	booleanOperators := 0.
 	cyclomaticNumber := 1.
-	consideredBlocks := OrderedCollection newFrom: #(1).
-	blockId := 0.
 ]
 
 { #category : #initialization }
 SVisitorForMetrics >> visitBlockNode: aBlockNode [
 	super visitBlockNode: aBlockNode.
-	blockId := blockId + 1.
+	
 ]
 
 { #category : #initialization }
