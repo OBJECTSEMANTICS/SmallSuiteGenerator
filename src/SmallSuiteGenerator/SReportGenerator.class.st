@@ -5,7 +5,8 @@ Class {
 		'targetClass',
 		'executionBlock',
 		'typeInfo',
-		'regex'
+		'regex',
+		'fitness'
 	],
 	#category : #'SmallSuiteGenerator-Utility'
 }
@@ -18,6 +19,20 @@ SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aStri
 		targetClass: aClass;
 		regex: aString;
 		executionBlock: aBlock;
+		generateStatementTestCasesWithoutSeed;
+		generateStatementTestCasesWithSeed;
+		generateStatementTestCasesWithSeedAndCompletingInfo.
+]
+
+{ #category : #generation }
+SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aString block: aBlock fitness: aSymbol [
+
+	self generateTypeInfoReportOfClass: aClass withRegex: aString andBlock: aBlock.
+	self new
+		targetClass: aClass;
+		regex: aString;
+		executionBlock: aBlock;
+		fitness: aSymbol;
 		generateStatementTestCasesWithoutSeed;
 		generateStatementTestCasesWithSeed;
 		generateStatementTestCasesWithSeedAndCompletingInfo.
@@ -94,6 +109,11 @@ SReportGenerator >> executionBlock [
 SReportGenerator >> executionBlock: aBlock [
 
 	executionBlock := aBlock
+]
+
+{ #category : #accessing }
+SReportGenerator >> fitness: anObject [
+	fitness := anObject
 ]
 
 { #category : #generationOfReportWithoutSeed }
@@ -551,7 +571,7 @@ SReportGenerator >> generateTestCaseForOnlySeedOf: aClass withConfig: combinatio
         generated
            addTypeInfo: typeInfo withKey: 'var';
            typeInfo: 'var';
-           fitness: #statement;
+           fitness: fitness;
            stopIterations: c first;
            numberOfGenerations: c second;
            numberOfStatements: c third;
@@ -577,7 +597,7 @@ SReportGenerator >> generateTestCaseForSeedAndInfoOf: aClass withConfig: combina
         generated
            addTypeInfo: typeInfo withKey: 'var';
            typeInfo: 'var';
-           fitness: #statement;
+           fitness: fitness;
            stopIterations: c first;
            numberOfGenerations: c second;
            numberOfStatements: c third;
@@ -603,7 +623,7 @@ SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPack
         generated
            addTypeInfo: typeInfo withKey: 'var';
            typeInfo: 'var';
-           fitness: #statement;
+           fitness: fitness;
            stopIterations: c first;
            numberOfGenerations: c second;
            numberOfStatements: c third;
@@ -621,7 +641,7 @@ SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPack
 
 { #category : #initialization }
 SReportGenerator >> initialize [
-
+	fitness := #statemet.
 	executionBlock := [ ]
 ]
 
