@@ -65,6 +65,6 @@ SBranchCoverageTest >> testCoverageOnClassSStack [
 	self installOn: 'SmallSuiteGenerator-Scenario'.
 	fitness targetClass: targetClass.
 	valueFitness := self computeFitnessOf: testCase.
-	self assert: (valueFitness > 0 and: [ valueFitness <= 70.00 ]).	"50= (5/10) * 100 round: 2"
+	self assert: (valueFitness > 0 and: [ valueFitness <= 70.00 ]).	"60= (6/10) * 100 round: 2"
 	self uninstall.
 ]

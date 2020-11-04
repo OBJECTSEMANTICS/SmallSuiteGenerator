@@ -12,7 +12,9 @@ SGARouletteSelection >> createRouletteWith: probability [
 	| sum roulette |
 	
 	sum := probability sum.
-	roulette := probability collect: [ :e | [e/sum] on: Error do: [ 0 ] ].
+	sum > 0 ifTrue: [
+	roulette := probability collect: [ :e | [e/sum] on: Error do: [ 0 ] ]]
+ifFalse: [ roulette := (OrderedCollection ofSize: probability size) atAllPut: 1/(probability size); yourself ].
 	2 to: probability size do: [ :i | 
 		roulette at: i put: (roulette at: (i-1)) + (roulette at: i) 
 	].
