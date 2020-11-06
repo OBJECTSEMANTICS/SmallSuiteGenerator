@@ -12,9 +12,20 @@ Class {
 }
 
 { #category : #generation }
+SReportGenerator class >> generateSeedReportOfClass: aClass withRegex: aString andBlock: aBlock [
+
+	self new
+		regex: aString;
+		targetClass: aClass;
+		executionBlock: aBlock;
+		generateSeedReports.
+]
+
+{ #category : #generation }
 SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aString block: aBlock [
 
 	self generateTypeInfoReportOfClass: aClass withRegex: aString andBlock: aBlock.
+	self generateSeedReportOfClass: aClass withRegex: aString andBlock: aBlock.
 	self new
 		targetClass: aClass;
 		regex: aString;
@@ -28,6 +39,7 @@ SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aStri
 SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aString block: aBlock fitness: aSymbol [
 
 	self generateTypeInfoReportOfClass: aClass withRegex: aString andBlock: aBlock.
+	self generateSeedReportOfClass: aClass withRegex: aString andBlock: aBlock. 
 	self new
 		targetClass: aClass;
 		regex: aString;
@@ -116,6 +128,11 @@ SReportGenerator >> fitness: anObject [
 	fitness := anObject
 ]
 
+{ #category : #accessing }
+SReportGenerator >> fitnessCoverageClasses [
+  ^#(#SStatementCoverage #SBranchCoverage)
+]
+
 { #category : #generationOfReportWithoutSeed }
 SReportGenerator >> generateBlockCoverageReportOf: aTargetClass inPackage: aPackageName andCollector: aTypeCollector [
 
@@ -192,6 +209,18 @@ SReportGenerator >> generateBlockCoverageReportWithSeedOf: aTargetClass inPackag
 	aBlock value.
 	profiler uninstall.
 	self generateReportOfBlockWithOnlySeed: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass).
+]
+
+{ #category : #generationOfSeedReport }
+SReportGenerator >> generateCSVOfSeedReportWithValues: aCollection [
+
+	(self fileReference: targetClass asString , '_seed_coverage_result')
+		writeStreamDo: [ :stream | 
+			| neoCSVWriter |
+			neoCSVWriter := (NeoCSVWriter on: stream)
+				nextPut: #('Statement' 'Branch').
+			neoCSVWriter nextPut: aCollection.
+			neoCSVWriter flush ]
 ]
 
 { #category : #accessing }
@@ -525,6 +554,28 @@ SReportGenerator >> generateReportWithSeedOf: aTargetClass inPackage: aPackageNa
 	self generateReportOfTypeInfoInTestCasesWithSeedOf: typeInformation
 ]
 
+{ #category : #generationOfSeedReport }
+SReportGenerator >> generateSeedReports [
+  | profiler fitnessResult typeInformation result aBlock resultsCollection |
+  aBlock := executionBlock.
+  resultsCollection := OrderedCollection new.
+  typeInformation := (STypeInfo new smallCollector: TypeCollectorWithRoelfTyper) asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
+  profiler := SLProfilerCoverage profilerForPackagesMatching: regex.
+  self fitnessCoverageClasses do: [:coverage |  fitnessResult := coverage asClass new.
+        fitnessResult
+           profiler: profiler;
+           typeInfo: typeInformation;
+           targetClass: targetClass.
+        profiler uninstall.
+        profiler beforeProfiling.
+        profiler cleanBlocksOfMethods.
+        aBlock value.
+        result := fitnessResult computeFitness.
+        profiler uninstall.
+        resultsCollection add: (result at: 1) ].
+  self generateCSVOfSeedReportWithValues: resultsCollection
+]
+
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateStatementTestCasesWithSeed [
   | combinations packageName covArray |
@@ -641,7 +692,7 @@ SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPack
 
 { #category : #initialization }
 SReportGenerator >> initialize [
-	fitness := #statemet.
+	fitness := #statement.
 	executionBlock := [ ]
 ]
 
