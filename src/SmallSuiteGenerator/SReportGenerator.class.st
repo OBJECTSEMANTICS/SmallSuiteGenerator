@@ -6,10 +6,19 @@ Class {
 		'executionBlock',
 		'typeInfo',
 		'regex',
-		'fitness'
+		'fitness',
+		'resultCollector',
+		'collectorTypeString'
 	],
 	#category : #'SmallSuiteGenerator-Utility'
 }
+
+{ #category : #generation }
+SReportGenerator class >> generateBranchAndStatementTestCasesOf: aClass withRegex: aString block: aBlock [
+
+	self generateTestCasesAndReportsOf: aClass withRegex: aString block: aBlock fitness: #statement.
+	self generateTestCasesAndReportsOf: aClass withRegex: aString block: aBlock fitness: #branch.
+]
 
 { #category : #generation }
 SReportGenerator class >> generateSeedReportOfClass: aClass withRegex: aString andBlock: aBlock [
@@ -30,9 +39,9 @@ SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aStri
 		targetClass: aClass;
 		regex: aString;
 		executionBlock: aBlock;
-		generateStatementTestCasesWithoutSeed;
-		generateStatementTestCasesWithSeed;
-		generateStatementTestCasesWithSeedAndCompletingInfo.
+		generateTestCasesWithoutSeed;
+		generateTestCasesWithSeed;
+		generateTestCasesWithSeedAndCompletingInfo
 ]
 
 { #category : #generation }
@@ -45,9 +54,53 @@ SReportGenerator class >> generateTestCasesAndReportsOf: aClass withRegex: aStri
 		regex: aString;
 		executionBlock: aBlock;
 		fitness: aSymbol;
-		generateStatementTestCasesWithoutSeed;
-		generateStatementTestCasesWithSeed;
-		generateStatementTestCasesWithSeedAndCompletingInfo.
+		generateTestCasesWithoutSeed;
+		generateTestCasesWithSeed;
+		generateTestCasesWithSeedAndCompletingInfo.
+]
+
+{ #category : #generation }
+SReportGenerator class >> generateTestCasesWithSeedOf: aClass withRegex: aString block: aBlock [
+
+	self new
+		targetClass: aClass;
+		regex: aString;
+		executionBlock: aBlock;
+		generateTestCasesWithSeed;
+		generateTestCasesWithSeedAndCompletingInfo
+]
+
+{ #category : #generation }
+SReportGenerator class >> generateTestCasesWithSeedOf: aClass withRegex: aString block: aBlock fitness: aSymbol [
+
+	self new
+		targetClass: aClass;
+		regex: aString;
+		executionBlock: aBlock;
+		fitness: aSymbol;
+		generateTestCasesWithSeed;
+		generateTestCasesWithSeedAndCompletingInfo
+]
+
+{ #category : #generation }
+SReportGenerator class >> generateTestCasesWithoutSeedOf: aClass withRegex: aString block: aBlock [
+
+	self new
+		targetClass: aClass;
+		regex: aString;
+		executionBlock: aBlock;
+		generateTestCasesWithoutSeed
+]
+
+{ #category : #generation }
+SReportGenerator class >> generateTestCasesWithoutSeedOf: aClass withRegex: aString block: aBlock fitness: aSymbol [
+
+	self new
+		targetClass: aClass;
+		regex: aString;
+		executionBlock: aBlock;
+		fitness: aSymbol;
+		generateTestCasesWithoutSeed
 ]
 
 { #category : #generation }
@@ -78,46 +131,42 @@ SReportGenerator class >> generateTypeInfoReportWithoutSeedOfClass: aClass withR
 ]
 
 { #category : #accessing }
-SReportGenerator >> calculateAndInspectClassInformationOf: covArray [
-  | dictionaryInformation |
-  dictionaryInformation := Dictionary new.
-  dictionaryInformation at: 'avg' put: (covArray collect: [:e |  e first at: 'block-coverage' ]) average.
-  dictionaryInformation at: 'median' put: (covArray collect: [:e |  e first at: 'block-coverage' ]) median.
-  dictionaryInformation at: 'max' put: (covArray collect: [:e |  e first at: 'block-coverage' ]) max.
-  dictionaryInformation inspect
+SReportGenerator >> calculateAndInspectClassInformationOf: anArray [
+
+  ^ (anArray collect: [:e |  e first at: 'block-coverage' ])
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SReportGenerator >> collectorTypes [
-	
+
 	^ #(TypeCollectorWithRoelfTyper TypeCollectorWithLightWeight SmallTypeCollector)
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SReportGenerator >> configuration [
 	
 	"stopIterations numberOfGenerations numberOfStatements populationSize selectionStrategy"
 	
 	^ Array with: #(30) with: #(50) with: #(30) with: #(20) with: {SGARandomSelection . 
-        SGARankSelection . 
+        "SGARankSelection . 
         SGARouletteSelection . 
         SGATournamentSelection . 
-        SGATruncatedSelection}.
+        SGATruncatedSelection"}.
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SReportGenerator >> defaultBlock [
 
 	^ [  ]
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SReportGenerator >> executionBlock [
 
 	^ executionBlock
 ]
 
-{ #category : #initialization }
+{ #category : #accessing }
 SReportGenerator >> executionBlock: aBlock [
 
 	executionBlock := aBlock
@@ -136,7 +185,7 @@ SReportGenerator >> fitnessCoverageClasses [
 { #category : #generationOfReportWithoutSeed }
 SReportGenerator >> generateBlockCoverageReportOf: aTargetClass inPackage: aPackageName andCollector: aTypeCollector [
 
-	| aBlock typeInformation profiler fitness |
+	| aBlock typeInformation profiler fitnessResult |
 
 	aBlock := [ | exec |
 		exec := ClyRunTestsFromClassesCommand new.
@@ -147,8 +196,8 @@ SReportGenerator >> generateBlockCoverageReportOf: aTargetClass inPackage: aPack
 		asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
 
 	profiler := SLProfilerCoverage profilerForPackagesMatching: regex.
-	fitness := SStatementCoverage new.
-	fitness profiler: profiler;
+	fitnessResult := self obtainCoverageOption.
+	fitnessResult profiler: profiler;
     	typeInfo: typeInformation;
     	targetClass: aTargetClass.
 	profiler uninstall.
@@ -159,10 +208,10 @@ SReportGenerator >> generateBlockCoverageReportOf: aTargetClass inPackage: aPack
 	self generateReportOfBlock: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass) ofCollector: aTypeCollector.
 ]
 
-{ #category : #generationOfReportWithSeed }
+{ #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateBlockCoverageReportWithSeedAndInfoOf: aTargetClass inPackage: aPackageName [
 
-	| aBlock typeInformation profiler fitness |
+	| aBlock typeInformation profiler fitnessResult |
 
 	aBlock := [ | exec |
 		exec := ClyRunTestsFromClassesCommand new.
@@ -173,8 +222,8 @@ SReportGenerator >> generateBlockCoverageReportWithSeedAndInfoOf: aTargetClass i
 		asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
 
 	profiler := SLProfilerCoverage profilerForPackagesMatching: regex.
-	fitness := SStatementCoverage new.
-	fitness profiler: profiler;
+	fitnessResult := self obtainCoverageOption.
+	fitnessResult profiler: profiler;
     	typeInfo: typeInformation;
     	targetClass: aTargetClass.
 	profiler uninstall.
@@ -187,28 +236,23 @@ SReportGenerator >> generateBlockCoverageReportWithSeedAndInfoOf: aTargetClass i
 
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateBlockCoverageReportWithSeedOf: aTargetClass inPackage: aPackageName [
-
-	| aBlock typeInformation profiler fitness |
-
-	aBlock := [ | exec |
-		exec := ClyRunTestsFromClassesCommand new.
-			(RPackage organizer packageNamed: aPackageName) classes do: [ :cls |
-    			exec runTestCase: cls ] ].
-
-	typeInformation := STypeInfo 
-		asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
-
-	profiler := SLProfilerCoverage profilerForPackagesMatching: regex.
-	fitness := SStatementCoverage new.
-	fitness profiler: profiler;
-    	typeInfo: typeInformation;
-    	targetClass: aTargetClass.
-	profiler uninstall.
-	profiler beforeProfiling.
-	profiler cleanBlocksOfMethods.
-	aBlock value.
-	profiler uninstall.
-	self generateReportOfBlockWithOnlySeed: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass).
+  | aBlock typeInformation profiler fitnessResult |
+  aBlock := [ | exec |
+  exec := ClyRunTestsFromClassesCommand new.
+  (RPackage organizer packageNamed: aPackageName) classes do: [:cls |  exec runTestCase: cls ] ].
+  typeInformation := STypeInfo asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
+  profiler := SLProfilerCoverage profilerForPackagesMatching: regex.
+  fitnessResult := self obtainCoverageOption.
+  fitnessResult
+     profiler: profiler;
+     typeInfo: typeInformation;
+     targetClass: aTargetClass.
+  profiler uninstall.
+  profiler beforeProfiling.
+  profiler cleanBlocksOfMethods.
+  aBlock value.
+  profiler uninstall.
+  self generateReportOfBlockWithOnlySeed: (SReportBlockCoverage profiler: profiler targetClass: aTargetClass)
 ]
 
 { #category : #generationOfSeedReport }
@@ -232,6 +276,16 @@ SReportGenerator >> generateCombinationsForConfig [
 	^ combinations
 ]
 
+{ #category : #packageName }
+SReportGenerator >> generatePackageNameForSeedAndInfo [
+  ^'Generated_' , fitness asString , '_' , targetClass asString , '_seedPlusInfo'
+]
+
+{ #category : #packageName }
+SReportGenerator >> generatePackageNameWithCollector: collectorType [
+  ^ 'Generated_' , fitness asString , '_' , targetClass asString , '_' , collectorType asClass asString
+]
+
 { #category : #generationOfReportWithoutSeed }
 SReportGenerator >> generateReportOf: aTargetClass inPackage: aPackageName andCollector: aTypeCollector [
 
@@ -245,14 +299,15 @@ SReportGenerator >> generateReportOf: aTargetClass inPackage: aPackageName andCo
 	typeInformation := (STypeInfo new smallCollector: (aTypeCollector asClass)) 
 		asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
 	 self generateBlockCoverageReportOf: aTargetClass inPackage: aPackageName andCollector: aTypeCollector.
-	self generateReportOfTypeInfoInTestCasesOf: typeInformation andCollector: aTypeCollector
+	self generateReportOfTypeInfoInTestCasesOf: typeInformation andCollector: aTypeCollector.
+	self generateReportOfResults.
 ]
 
 { #category : #generationOfReportWithoutSeed }
 SReportGenerator >> generateReportOfBlock: aBlockCoverage ofCollector: aTypeCollector [
 		
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_report_coverage_', aTypeCollector asString)
+	(self fileReference: targetClass asString , '_' , fitness asString , '_report_coverage_', aTypeCollector asString)
 		writeStreamDo: [ :stream | 
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -282,7 +337,7 @@ SReportGenerator >> generateReportOfBlock: aBlockCoverage ofCollector: aTypeColl
 SReportGenerator >> generateReportOfBlockWithOnlySeed: aBlockCoverage [
 		
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_report_coverage_with_only_seed')
+	(self fileReference: targetClass asString , '_' , fitness asString , '_report_coverage_with_only_seed')
 		writeStreamDo: [ :stream | 
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -308,11 +363,11 @@ SReportGenerator >> generateReportOfBlockWithOnlySeed: aBlockCoverage [
 			neoCSVWriter flush ]
 ]
 
-{ #category : #generationOfReportWithSeed }
+{ #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateReportOfBlockWithSeedAndInfo: aBlockCoverage [
 		
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_report_coverage_with_seed_and_completing_info')
+	(self fileReference: targetClass asString , '_' , fitness asString , '_report_coverage_with_seed_and_completing_info')
 		writeStreamDo: [ :stream | 
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -336,12 +391,35 @@ SReportGenerator >> generateReportOfBlockWithSeedAndInfo: aBlockCoverage [
 				do: [ ]
 			 ].
 			neoCSVWriter flush ]
+]
+
+{ #category : #generationOfResume }
+SReportGenerator >> generateReportOfResults [
+
+	| type |
+	(self fileReference: targetClass asString , '_', fitness asString, '_resume_results')
+		writeStreamDo: [ :stream | 
+			| neoCSVWriter average median best |
+			neoCSVWriter := (NeoCSVWriter on: stream)
+				nextPut: #('type' 'median' 'avg' 'best').
+			resultCollector do: [ :row |
+				type := row at: 1.
+				average := (row at: 2)  average.
+				median := (row at: 2)  median.
+				best := (row at: 2)  max.
+				neoCSVWriter nextPut: (OrderedCollection new 
+					add: type;
+					add: median; 
+					add: average; 
+					add: best;
+					yourself) ].
+			neoCSVWriter flush ].
 ]
 
 { #category : #generationOfReportWithoutSeed }
 SReportGenerator >> generateReportOfTypeInfoInTestCasesOf: aTypeInformation andCollector: aTypeCollector [
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_typeInfo_testCases_', aTypeCollector asString)
+	(self fileReference: targetClass asString , '_' , fitness asString , '_typeInfo_testCases_', aTypeCollector asString)
 		writeStreamDo: [ :stream |
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -368,10 +446,10 @@ SReportGenerator >> generateReportOfTypeInfoInTestCasesOf: aTypeInformation andC
 			neoCSVWriter flush ]
 ]
 
-{ #category : #generationOfReportWithSeed }
+{ #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateReportOfTypeInfoInTestCasesWithSeedAndInfoOf: aTypeInformation [
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_typeInfo_result_with_seed_and_completing_info')
+	(self fileReference: targetClass asString , '_' , fitness asString , '_typeInfo_result_with_seed_and_completing_info')
 		writeStreamDo: [ :stream |
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -401,7 +479,7 @@ SReportGenerator >> generateReportOfTypeInfoInTestCasesWithSeedAndInfoOf: aTypeI
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateReportOfTypeInfoInTestCasesWithSeedOf: aTypeInformation [
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_typeInfo_result_withOnlySeed')
+	(self fileReference: targetClass asString , '_' , fitness asString , '_typeInfo_result_with_only_Seed')
 		writeStreamDo: [ :stream |
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -431,7 +509,7 @@ SReportGenerator >> generateReportOfTypeInfoInTestCasesWithSeedOf: aTypeInformat
 { #category : #generateOnlyTypeInformation }
 SReportGenerator >> generateReportOfTypeInfoOf: aTypeCollector [
 	| classInfo instanceMethods classMethods |
-	(self fileReference: targetClass asString , '_typeInfo_', aTypeCollector name)
+	(self fileReference: targetClass asString ,'_', fitness asString , '_typeInfo_', aTypeCollector name)
 		writeStreamDo: [ :stream |
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -465,7 +543,7 @@ SReportGenerator >> generateReportOfTypeInfoWithOption: aBoolean [
 	aBoolean
 		ifTrue: [ infoName := 'seed_with_CompleteInfo' ]
 		ifFalse: [ infoName := 'only_Seed' ].
-	(self fileReference: targetClass asString , '_typeInfo_', infoName)
+	(self fileReference: targetClass asString  ,'_', fitness asString , '_typeInfo_', infoName)
 		writeStreamDo: [ :stream |
 			| neoCSVWriter |
 			neoCSVWriter := (NeoCSVWriter on: stream)
@@ -522,7 +600,7 @@ SReportGenerator >> generateReportOfTypeInformationWithoutSeed [
 			self generateReportOfTypeInfoOf: (collectorType asClass) ]
 ]
 
-{ #category : #generationOfReportWithSeed }
+{ #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateReportWithSeedAndInfoOf: aTargetClass inPackage: aPackageName [
 
 	| aBlock typeInformation |
@@ -535,7 +613,8 @@ SReportGenerator >> generateReportWithSeedAndInfoOf: aTargetClass inPackage: aPa
 	typeInformation := STypeInfo 
 		asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
 	 self generateBlockCoverageReportWithSeedAndInfoOf: aTargetClass inPackage: aPackageName.
-	self generateReportOfTypeInfoInTestCasesWithSeedAndInfoOf: typeInformation
+	self generateReportOfTypeInfoInTestCasesWithSeedAndInfoOf: typeInformation.
+	self generateReportOfResults.
 ]
 
 { #category : #generationOfReportWithSeed }
@@ -550,8 +629,9 @@ SReportGenerator >> generateReportWithSeedOf: aTargetClass inPackage: aPackageNa
 
 	typeInformation := STypeInfo 
 		asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
-	 self generateBlockCoverageReportWithSeedOf: aTargetClass inPackage: aPackageName.
-	self generateReportOfTypeInfoInTestCasesWithSeedOf: typeInformation
+	self generateBlockCoverageReportWithSeedOf: aTargetClass inPackage: aPackageName.
+	self generateReportOfTypeInfoInTestCasesWithSeedOf: typeInformation.
+	self generateReportOfResults.
 ]
 
 { #category : #generationOfSeedReport }
@@ -574,43 +654,6 @@ SReportGenerator >> generateSeedReports [
         profiler uninstall.
         resultsCollection add: (result at: 1) ].
   self generateCSVOfSeedReportWithValues: resultsCollection
-]
-
-{ #category : #generationOfReportWithSeed }
-SReportGenerator >> generateStatementTestCasesWithSeed [
-  | combinations packageName covArray |
-  combinations := self generateCombinationsForConfig.
-  packageName := 'Generated_' , targetClass asString , '_onlySeed'.
-  typeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
-  covArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
-  self calculateAndInspectClassInformationOf: covArray.
-  self generateReportWithSeedAndInfoOf: targetClass inPackage: packageName
-]
-
-{ #category : #generationOfReportWithSeed }
-SReportGenerator >> generateStatementTestCasesWithSeedAndCompletingInfo [
-  | combinations packageName covArray |
-
-  combinations := self generateCombinationsForConfig.
- 
-		packageName := 'Generated_' , targetClass asString, '_seedPlusInfo'.
-		typeInfo := STypeInfo 
-			asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
-      	covArray := self generateTestCaseForSeedAndInfoOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
-		self calculateAndInspectClassInformationOf: covArray.
-		self generateReportWithSeedOf: targetClass inPackage: packageName.
-]
-
-{ #category : #generationOfReportWithoutSeed }
-SReportGenerator >> generateStatementTestCasesWithoutSeed [
-  | aBlock combinations packageName covArray |
-  aBlock := [  ].
-  combinations := self generateCombinationsForConfig.
-  self collectorTypes do: [:collectorType |  packageName := 'Generated_' , targetClass asString , '_' , collectorType asClass asString.
-        typeInfo := (STypeInfo new smallCollector: collectorType asClass) asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex).
-        covArray := self generateTestCaseOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: aBlock.
-        self calculateAndInspectClassInformationOf: covArray.
-        self generateReportOf: targetClass inPackage: packageName andCollector: collectorType ]
 ]
 
 { #category : #generationOfReportWithSeed }
@@ -638,7 +681,7 @@ SReportGenerator >> generateTestCaseForOnlySeedOf: aClass withConfig: combinatio
 		^ coverageArray
 ]
 
-{ #category : #generationOfReportWithSeed }
+{ #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateTestCaseForSeedAndInfoOf: aClass withConfig: combinations withPackageName: aPackageName andBlock: aBlock [
   | coverageArray generated |
 	coverageArray := OrderedCollection new.
@@ -690,10 +733,57 @@ SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPack
 		^ coverageArray
 ]
 
+{ #category : #generationOfReportWithSeed }
+SReportGenerator >> generateTestCasesWithSeed [
+  | combinations packageName resultArray resultResume |
+  combinations := self generateCombinationsForConfig.
+  packageName := 'Generated_' , targetClass asString , '_onlySeed'.
+  typeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
+  resultArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
+  resultResume := self calculateAndInspectClassInformationOf: resultArray.
+  resultCollector add: (Array with: 'seed' with: resultResume).
+  self generateReportWithSeedOf: targetClass inPackage: packageName
+]
+
+{ #category : #generationOfReportWithSeedAndInfo }
+SReportGenerator >> generateTestCasesWithSeedAndCompletingInfo [
+  | combinations packageName resultArray resultResume |
+  combinations := self generateCombinationsForConfig.
+  packageName := self generatePackageNameForSeedAndInfo.
+  typeInfo := self typeInformationWithoutCollector.
+  resultArray := self generateTestCaseForSeedAndInfoOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
+  resultResume := self calculateAndInspectClassInformationOf: resultArray.
+  resultCollector add: (Array with: 'seed + nevena + roelf' with: resultResume).
+  self generateReportWithSeedAndInfoOf: targetClass inPackage: packageName
+]
+
+{ #category : #generationOfReportWithoutSeed }
+SReportGenerator >> generateTestCasesWithoutSeed [
+  | aBlock combinations packageName resultArray resultResume |
+  aBlock := [  ].
+  combinations := self generateCombinationsForConfig.
+  self collectorTypes do: [:collectorType |  
+		packageName := self generatePackageNameWithCollector: collectorType.
+		typeInfo := self typeInfoOfCollector: collectorType withBlock: aBlock.
+      resultArray := self generateTestCaseOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: aBlock.
+		resultResume := self calculateAndInspectClassInformationOf: resultArray.
+		resultCollector add: (Array with: collectorType asString with: resultResume).
+		self generateReportOf: targetClass inPackage: packageName andCollector: collectorType ]
+]
+
 { #category : #initialization }
 SReportGenerator >> initialize [
 	fitness := #statement.
-	executionBlock := [ ]
+	executionBlock := [ ].
+	resultCollector := OrderedCollection new.
+	collectorTypeString := ''
+]
+
+{ #category : #accessing }
+SReportGenerator >> obtainCoverageOption [
+  ^ (fitness = #statement)
+		ifTrue: [ SStatementCoverage new ]
+		ifFalse: [ SBranchCoverage new ]
 ]
 
 { #category : #accessing }
@@ -719,4 +809,14 @@ SReportGenerator >> typeInfo [
 { #category : #accessing }
 SReportGenerator >> typeInfo: anObject [
 	typeInfo := anObject
+]
+
+{ #category : #typeInformation }
+SReportGenerator >> typeInfoOfCollector: collectorType withBlock: aBlock [
+  ^(STypeInfo new smallCollector: collectorType asClass) asTypeInfo: (SSTypeCollector profile: aBlock onPackagesMatching: regex)
+]
+
+{ #category : #typeInformation }
+SReportGenerator >> typeInformationWithoutCollector [
+  ^STypeInfo asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex)
 ]
