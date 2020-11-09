@@ -8,7 +8,9 @@ Class {
 		'regex',
 		'fitness',
 		'resultCollector',
-		'collectorTypeString'
+		'collectorTypeString',
+		'summarySeed',
+		'profiler'
 	],
 	#category : #'SmallSuiteGenerator-Utility'
 }
@@ -132,8 +134,7 @@ SReportGenerator class >> generateTypeInfoReportWithoutSeedOfClass: aClass withR
 
 { #category : #accessing }
 SReportGenerator >> calculateAndInspectClassInformationOf: anArray [
-
-  ^ (anArray collect: [:e |  e first at: 'block-coverage' ])
+  ^ (anArray collect: #third)
 ]
 
 { #category : #accessing }
@@ -148,16 +149,30 @@ SReportGenerator >> configuration [
 	"stopIterations numberOfGenerations numberOfStatements populationSize selectionStrategy"
 	
 	^ Array with: #(30) with: #(50) with: #(30) with: #(20) with: {SGARandomSelection . 
-        "SGARankSelection . 
+        SGARankSelection . 
         SGARouletteSelection . 
         SGATournamentSelection . 
-        SGATruncatedSelection"}.
+        SGATruncatedSelection}.
 ]
 
 { #category : #accessing }
 SReportGenerator >> defaultBlock [
 
 	^ [  ]
+]
+
+{ #category : #accessing }
+SReportGenerator >> differenceFunction [ 
+	fitness = #statement ifTrue: [ ^ #(#summaryBlocks #countStatementsOf: #percentageStatementsOf:) ].
+	fitness = #branch ifTrue: [ ^ #(#summaryBranches #countBranchesOf: #percentageBranchesOf:) ].
+	^ #(#summaryBlocks #countStatementsOf: #percentageStatementsOf:)
+]
+
+{ #category : #actions }
+SReportGenerator >> execute: aBlock [
+	self profiler cleanBlocksOfMethods.
+	aBlock value.
+	^ self profiler simpleSummaryMethodsOf: targetClass
 ]
 
 { #category : #accessing }
@@ -180,6 +195,14 @@ SReportGenerator >> fitness: anObject [
 { #category : #accessing }
 SReportGenerator >> fitnessCoverageClasses [
   ^#(#SStatementCoverage #SBranchCoverage)
+]
+
+{ #category : #accessing }
+SReportGenerator >> functionName [ 
+	fitness = #statement ifTrue: [ ^ 'block-coverage' ].
+	fitness = #branch ifTrue: [ ^ 'branch-coverage' ].
+	fitness = #method ifTrue: [ ^ 'method-coverage' ].
+	^ 'block-coverage'
 ]
 
 { #category : #generationOfReportWithoutSeed }
@@ -401,18 +424,41 @@ SReportGenerator >> generateReportOfResults [
 		writeStreamDo: [ :stream | 
 			| neoCSVWriter average median best |
 			neoCSVWriter := (NeoCSVWriter on: stream)
-				nextPut: #('type' 'median' 'avg' 'best').
-			resultCollector do: [ :row |
+				nextPut: #('type' 'median' 'avg' 'best' 
+				'Median - New covered' 'Avg - New covered' 'Best - New covered'
+				'Median - No covered' 'Avg - No covered' 'Best - No covered').
+			resultCollector do: [ :row | | allFitness|
 				type := row at: 1.
-				average := (row at: 2)  average.
-				median := (row at: 2)  median.
-				best := (row at: 2)  max.
+				allFitness := (row at: 2) collect: [ :e | e fitness at: self functionName ].
+				average := allFitness  average.
+				median := allFitness  median.
+				best := allFitness  max.
+				
+				('seed*' match: type) ifTrue: [ 
+					| newCov noCov |
+		newCov := (row at: 3) collect: #first.
+		noCov := (row at: 3) collect: #second.
 				neoCSVWriter nextPut: (OrderedCollection new 
 					add: type;
 					add: median; 
 					add: average; 
 					add: best;
-					yourself) ].
+					add: newCov median;
+					add: newCov average;
+					add: newCov first;
+					add: noCov median;
+					add: noCov average;
+					add: noCov first;
+					yourself)]
+				ifFalse: [ 
+					neoCSVWriter nextPut: (OrderedCollection new 
+					add: type;
+					add: median; 
+					add: average; 
+					add: best;
+					addAll: #(0 0 0 0 0 0);
+					yourself)
+					 ] ].
 			neoCSVWriter flush ].
 ]
 
@@ -677,7 +723,10 @@ SReportGenerator >> generateTestCaseForOnlySeedOf: aClass withConfig: combinatio
            seedBlock: aBlock;
            createTestCasesWithSeed;
            yourself.
-        coverageArray add: (Array with: factory engine logs last fittestTestCase fitness with: factory engine logs last fittestTestCase fitnessByClass) ].
+        coverageArray add: (Array 
+			with: factory engine logs last fittestTestCase fitness 
+			with: factory engine logs last fittestTestCase fitnessByClass
+			with: factory engine logs last fittestTestCase) ].
 		^ coverageArray
 ]
 
@@ -703,7 +752,11 @@ SReportGenerator >> generateTestCaseForSeedAndInfoOf: aClass withConfig: combina
            seedBlock: aBlock;
            createTestCases;
            yourself.
-        coverageArray add: (Array with: factory engine logs last fittestTestCase fitness with: factory engine logs last fittestTestCase fitnessByClass) ].
+        coverageArray add: 
+		(Array 
+			with: factory engine logs last fittestTestCase fitness 
+			with: factory engine logs last fittestTestCase fitnessByClass
+			with: factory engine logs last fittestTestCase ) ].
 		^ coverageArray
 ]
 
@@ -729,31 +782,57 @@ SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPack
            seedBlock: aBlock;
            createTestCases;
            yourself.
-        coverageArray add: (Array with: factory engine logs last fittestTestCase fitness with: factory engine logs last fittestTestCase fitnessByClass) ].
+        coverageArray add: 
+			(Array 
+				with: factory engine logs last fittestTestCase fitness 
+				with: factory engine logs last fittestTestCase fitnessByClass
+				with: factory engine logs last fittestTestCase) ].
 		^ coverageArray
 ]
 
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateTestCasesWithSeed [
-  | combinations packageName resultArray resultResume |
+  | combinations packageName resultArray resultResume orderedTests differences methodsSymbol |
+methodsSymbol := self differenceFunction.
   combinations := self generateCombinationsForConfig.
   packageName := 'Generated_' , targetClass asString , '_onlySeed'.
   typeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
   resultArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
   resultResume := self calculateAndInspectClassInformationOf: resultArray.
-  resultCollector add: (Array with: 'seed' with: resultResume).
+
+					orderedTests := resultResume sort: [ :stm1 :stm2 | 
+		stm1 isBetterThan: stm2 using: self functionName ].
+					differences := orderedTests collect: [ :aTestCase | | summary |
+			summary := self execute: [aTestCase runWithoutAssertions].
+			self perform: methodsSymbol third with: (self summarySeed with: summary collect: [ :first :second | 
+				(first difference: second on: methodsSymbol first) collect: [:e | first perform: methodsSymbol second with: e ] ]) ].
+self profiler uninstall.
+self profiler: nil.
+  resultCollector add: (Array with: 'seed' with: resultResume with: differences).
   self generateReportWithSeedOf: targetClass inPackage: packageName
 ]
 
 { #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateTestCasesWithSeedAndCompletingInfo [
-  | combinations packageName resultArray resultResume |
+  | combinations packageName resultArray resultResume orderedTests differences methodsSymbol |
+methodsSymbol := self differenceFunction.
   combinations := self generateCombinationsForConfig.
   packageName := self generatePackageNameForSeedAndInfo.
   typeInfo := self typeInformationWithoutCollector.
   resultArray := self generateTestCaseForSeedAndInfoOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
   resultResume := self calculateAndInspectClassInformationOf: resultArray.
-  resultCollector add: (Array with: 'seed + nevena + roelf' with: resultResume).
+
+orderedTests := resultResume sort: [ :stm1 :stm2 | 
+		stm1 isBetterThan: stm2 using: self functionName ].
+					differences := orderedTests collect: [ :aTestCase | | summary |
+			summary := self execute: [aTestCase runWithoutAssertions].
+			
+			self perform: methodsSymbol third with: (self summarySeed with: summary collect: [ :first :second | 
+				(first difference: second on: methodsSymbol first) collect: [:e | first perform: methodsSymbol second with: e ] ]) ].
+self profiler uninstall.
+self profiler: nil.
+
+  resultCollector add: (Array with: 'seed + nevena + roelf' with: resultResume with: differences).
   self generateReportWithSeedAndInfoOf: targetClass inPackage: packageName
 ]
 
@@ -779,11 +858,52 @@ SReportGenerator >> initialize [
 	collectorTypeString := ''
 ]
 
+{ #category : #initialization }
+SReportGenerator >> initializeProfiler [
+	profiler := SLProfilerCoverage profilerForClass: targetClass.
+	profiler uninstall.
+	profiler beforeProfiling.
+	
+]
+
+{ #category : #initialization }
+SReportGenerator >> initializeSummarySeed [
+	summarySeed := self execute: executionBlock
+]
+
 { #category : #accessing }
 SReportGenerator >> obtainCoverageOption [
   ^ (fitness = #statement)
 		ifTrue: [ SStatementCoverage new ]
 		ifFalse: [ SBranchCoverage new ]
+]
+
+{ #category : #actions }
+SReportGenerator >> percentageBranchesOf: anArray [
+	| allBranches |
+	allBranches := ((self profiler classAt: targetClass) allMethods collect: #cyclomaticNumber) sum .
+	^ Array with: (anArray collect: #first) sum / allBranches 
+		with: (anArray collect: #second) sum / allBranches 
+]
+
+{ #category : #actions }
+SReportGenerator >> percentageStatementsOf: anArray [
+	| allStatements |
+	allStatements := ((self profiler classAt: targetClass) allMethods collect:
+		[ :e | (e blocks collect: [ :b | b numberOfStatements ]) sum ]) sum.
+	^ Array with: (anArray collect: #first) sum / allStatements 
+		with: (anArray collect: #second) sum / allStatements 
+]
+
+{ #category : #accessing }
+SReportGenerator >> profiler [
+	profiler ifNil: [ self initializeProfiler ].
+	^ profiler
+]
+
+{ #category : #accessing }
+SReportGenerator >> profiler: anObject [
+	profiler := anObject
 ]
 
 { #category : #accessing }
@@ -794,6 +914,17 @@ SReportGenerator >> regex [
 { #category : #accessing }
 SReportGenerator >> regex: aString [
 	regex := aString
+]
+
+{ #category : #accessing }
+SReportGenerator >> summarySeed [
+	summarySeed ifNil: [self initializeSummarySeed ].
+	^ summarySeed 
+]
+
+{ #category : #accessing }
+SReportGenerator >> summarySeed: anObject [
+	summarySeed := anObject
 ]
 
 { #category : #accessing }

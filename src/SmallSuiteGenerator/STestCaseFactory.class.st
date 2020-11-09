@@ -36,7 +36,7 @@ STestCaseFactory class >> from: configClass [
 	
 	^ (self new) 
 		generatedClass: configClass;
-		fitness: configClass; 
+		fitness: configClass fitness; 
 		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
 		setUpMethod: configClass setUpMethod; 
