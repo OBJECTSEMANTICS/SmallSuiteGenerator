@@ -429,7 +429,7 @@ SReportGenerator >> generateReportOfResults [
 				'Median - No covered' 'Avg - No covered' 'Best - No covered').
 			resultCollector do: [ :row | | allFitness|
 				type := row at: 1.
-				allFitness := (row at: 2) collect: [ :e | e fitness at: self functionName ].
+				allFitness := (row at: 2).
 				average := allFitness  average.
 				median := allFitness  median.
 				best := allFitness  max.
@@ -792,47 +792,30 @@ SReportGenerator >> generateTestCaseOf: aClass withConfig: combinations withPack
 
 { #category : #generationOfReportWithSeed }
 SReportGenerator >> generateTestCasesWithSeed [
-  | combinations packageName resultArray resultResume orderedTests differences methodsSymbol |
-methodsSymbol := self differenceFunction.
+  | combinations packageName resultArray resultResume differences |
   combinations := self generateCombinationsForConfig.
   packageName := 'Generated_' , targetClass asString , '_onlySeed'.
   typeInfo := STypeInfo asTypeInfo: (SSTypeCollector profile: executionBlock onPackagesMatching: regex).
   resultArray := self generateTestCaseForOnlySeedOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
   resultResume := self calculateAndInspectClassInformationOf: resultArray.
-
-					orderedTests := resultResume sort: [ :stm1 :stm2 | 
-		stm1 isBetterThan: stm2 using: self functionName ].
-					differences := orderedTests collect: [ :aTestCase | | summary |
-			summary := self execute: [aTestCase runWithoutAssertions].
-			self perform: methodsSymbol third with: (self summarySeed with: summary collect: [ :first :second | 
-				(first difference: second on: methodsSymbol first) collect: [:e | first perform: methodsSymbol second with: e ] ]) ].
-self profiler uninstall.
-self profiler: nil.
-  resultCollector add: (Array with: 'seed' with: resultResume with: differences).
+  differences := self measureDifferencesOf: resultResume.
+  resultCollector add: (Array 
+	with: 'seed' 
+	with: (resultResume collect: [ :e | e fitness at: self functionName ]) 
+	with: differences).
   self generateReportWithSeedOf: targetClass inPackage: packageName
 ]
 
 { #category : #generationOfReportWithSeedAndInfo }
 SReportGenerator >> generateTestCasesWithSeedAndCompletingInfo [
-  | combinations packageName resultArray resultResume orderedTests differences methodsSymbol |
-methodsSymbol := self differenceFunction.
+  | combinations packageName resultArray resultResume differences |
   combinations := self generateCombinationsForConfig.
   packageName := self generatePackageNameForSeedAndInfo.
   typeInfo := self typeInformationWithoutCollector.
   resultArray := self generateTestCaseForSeedAndInfoOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: executionBlock.
   resultResume := self calculateAndInspectClassInformationOf: resultArray.
-
-orderedTests := resultResume sort: [ :stm1 :stm2 | 
-		stm1 isBetterThan: stm2 using: self functionName ].
-					differences := orderedTests collect: [ :aTestCase | | summary |
-			summary := self execute: [aTestCase runWithoutAssertions].
-			
-			self perform: methodsSymbol third with: (self summarySeed with: summary collect: [ :first :second | 
-				(first difference: second on: methodsSymbol first) collect: [:e | first perform: methodsSymbol second with: e ] ]) ].
-self profiler uninstall.
-self profiler: nil.
-
-  resultCollector add: (Array with: 'seed + nevena + roelf' with: resultResume with: differences).
+  differences := self measureDifferencesOf: resultResume.
+  resultCollector add: (Array with: 'seed + nevena + roelf' with: (resultResume collect: [ :e | e fitness at: self functionName ])  with: differences).
   self generateReportWithSeedAndInfoOf: targetClass inPackage: packageName
 ]
 
@@ -846,7 +829,7 @@ SReportGenerator >> generateTestCasesWithoutSeed [
 		typeInfo := self typeInfoOfCollector: collectorType withBlock: aBlock.
       resultArray := self generateTestCaseOf: targetClass asClass withConfig: combinations withPackageName: packageName andBlock: aBlock.
 		resultResume := self calculateAndInspectClassInformationOf: resultArray.
-		resultCollector add: (Array with: collectorType asString with: resultResume).
+		resultCollector add: (Array with: collectorType asString with: (resultResume collect: [ :e | e fitness at: self functionName ]) ).
 		self generateReportOf: targetClass inPackage: packageName andCollector: collectorType ]
 ]
 
@@ -869,6 +852,22 @@ SReportGenerator >> initializeProfiler [
 { #category : #initialization }
 SReportGenerator >> initializeSummarySeed [
 	summarySeed := self execute: executionBlock
+]
+
+{ #category : #'as yet unclassified' }
+SReportGenerator >> measureDifferencesOf: testCases [
+	| orderedTests differences methodsSymbol |
+	methodsSymbol := self differenceFunction.
+	orderedTests := testCases sort: [ :stm1 :stm2 | 
+		stm1 isBetterThan: stm2 using: self functionName ].
+	differences := orderedTests collect: [ :aTestCase | | summary |
+			summary := self execute: [aTestCase runWithoutAssertions].
+			self perform: methodsSymbol third with: 
+				(self summarySeed with: summary collect: [ :first :second | 
+					(first difference: second on: methodsSymbol first) collect: [:e | first perform: methodsSymbol second with: e ] ]) ].
+	self profiler uninstall.
+	self profiler: nil.
+	^ differences
 ]
 
 { #category : #accessing }

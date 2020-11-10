@@ -160,7 +160,7 @@ STestCaseFactory >> exportTests [
 			test lastMessage: lastMessage.
 			self export: test with: ('test', index asString) ].
 	self exportSettingMethods.
-	self openOnGeneratedClass
+	"self openOnGeneratedClass"
 ]
 
 { #category : #accessing }
