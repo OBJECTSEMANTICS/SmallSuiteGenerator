@@ -68,7 +68,7 @@ SGAViz >> addLegend: associations on: container withFontColor: color and: blockL
         colorBox isArray ifFalse: [ legend text: assoc key withBoxColor: colorBox ] ifTrue: [ colorBox first isColor ifTrue: [ legend text: assoc key withShape: (legend defaultBox
                              border: (self rsBorderWithColorBox: colorBox);
                              paint: colorBox first) ] ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ].
-  legend leyendDo: [:l |  l
+  legend legendDo: [:l |  l
            padding: 5;
            scaleBy: 2.5 ].
   blockLocation value: legend.
@@ -762,7 +762,7 @@ SGAViz >> visualizeEvolutionFitness [
 	g addDecoration: (RSYLabelDecoration new title: 'Fitness'; offset: -15; vertical).
 	g build.
 	canvas add: group asShape.
-	legend leyendDo: [ :l |
+	legend legendDo: [ :l |
 		l
 			draggable;
 			withBorder;
