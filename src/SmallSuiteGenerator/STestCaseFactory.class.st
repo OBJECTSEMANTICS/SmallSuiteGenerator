@@ -200,6 +200,14 @@ STestCaseFactory >> generatedClass: anObject [
 	generatedClass := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+STestCaseFactory >> gtInspectorContentsIn: mainComposite [
+  < gtInspectorPresentationOrder: -1>
+  ^ mainComposite roassal3
+     title: [ 'TypeInfo Evolution' ];
+     initializeCanvas: [self class vizClass infoTypeEvolution: self ]
+]
+
 { #category : #accessing }
 STestCaseFactory >> initialSeed [
 	^ initialSeed 
