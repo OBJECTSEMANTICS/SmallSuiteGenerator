@@ -51,13 +51,15 @@ STypeInfoTest >> testAsTypeInfoSConferenceOnPackagesMatching [
 
 { #category : #tests }
 STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
-	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty 	classNameByteString classNameSmallInteger classNameSStudent elementArray |
+	| typeInfo messages methodInfo classNameSEvent classNameSConference classNameSParty 	classNameByteString classNameSmallInteger classNameSStudent elementArray classNameBoolean classNameUndefined |
 	classNameSEvent := SEvent nameAsSymbol.
 	classNameSConference := SConference nameAsSymbol.
 	classNameSParty := SParty nameAsSymbol.
+	classNameBoolean := false class nameAsSymbol.
 	classNameByteString := ByteString nameAsSymbol.
 	classNameSmallInteger := SmallInteger nameAsSymbol.
 	classNameSStudent := SStudent nameAsSymbol.
+	classNameUndefined := SUndefinedObject nameAsSymbol.
 	typeInfo := STypeInfo asTypeInfo: (self aSTypeCollectorClass
 		profile: [ | aConference aPerson |
 			aConference := SConference new offerPrice: 95.
@@ -89,7 +91,7 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 		detect: [ :aMessage | aMessage selector = #canRegister: ].
 	self
 		assertCollection: methodInfo returnType types
-		hasSameElements: (Array with: False nameAsSymbol).
+		hasSameElements: (Array with: false class nameAsSymbol).
 	self
 		assertCollection: methodInfo allArgTypes
 		hasSameElements: (Array with: classNameSStudent).
@@ -99,6 +101,10 @@ STypeInfoTest >> testAsTypeInfoSEventOnPackagesMatching [
 	elementArray := OrderedCollection new
 		add: classNameSmallInteger;
 		add: 2.3 class nameAsSymbol;
+		add: classNameSStudent;
+		add: classNameByteString;
+		add: classNameBoolean;
+		add: classNameUndefined;
 		yourself.
 	self
 		assertCollection: typeInfo scalars keys
@@ -172,7 +178,9 @@ STypeInfoTest >> testAsTypeInfoSFoo [
 			(Array
 				with: classNameByteString
 				with: classNameSmallInteger
-				with: classNameSmallFloat64)
+				with: classNameSmallFloat64
+				with: classNameDictionary
+				with: classNameOrderedCollection)
 ]
 
 { #category : #tests }
