@@ -63,13 +63,6 @@ SExporte2VW >> blackListSFitnessFunction [
 	^ { SFitnessFunction >> #aClass }
 ]
 
-{ #category : #'bl-ga' }
-SExporte2VW >> blackListSGAEngine [
-	"Black list of SGAEngine class. Review if SGAEngine>>#updateTypeInfoWith: is important use Pharo version"
-
-	^ { SGAEngine >> #updateTypeInfoWith: }
-]
-
 { #category : #'bl-examples' }
 SExporte2VW >> blackListSGAEngineExample [
 	"Black list of SGAEngineExample class"
@@ -122,13 +115,6 @@ SExporte2VW >> blackListSNumericParameterization [
 	"Black list of SNumericParameterization class"
 
 	^ { SNumericParameterization >> #newInstancesM: }
-]
-
-{ #category : #'bl-core' }
-SExporte2VW >> blackListSObject [
-	"Black list of SObject class"
-
-	^ {}
 ]
 
 { #category : #'bl-builder' }
@@ -188,13 +174,6 @@ SExporte2VW >> blackListSSelectionParameterization [
 	"Black list of SSelectionParameterization class"
 
 	^ { SSelectionParameterization class >> #setting: }
-]
-
-{ #category : #'bl-scenario' }
-SExporte2VW >> blackListSSimpleFitnessFunction [
-	"Black list of SSimpleFitnessFunction class"
-
-	^ { SSimpleFitnessFunction >> #updateSuperclasses }
 ]
 
 { #category : #'bl-builder' }
