@@ -19,7 +19,7 @@ Once you have the files on your computer run the following command:
 
 ```Smalltalk
 |pathParcel|
-pathParcel := 'Path\Of\FuzzyInstaller.pcl'
+pathParcel := 'Path\Of\FuzzyInstaller.pcl'.
 Parcel loadParcelFrom: pathParcel.
 VWFuzzyTester install.
 ```
