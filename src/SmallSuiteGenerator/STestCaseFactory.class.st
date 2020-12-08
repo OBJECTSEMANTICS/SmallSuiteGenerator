@@ -246,6 +246,11 @@ STestCaseFactory >> logClass: aClass [
 		'logClass', String cr,'	^ ', aClass printString
 ]
 
+{ #category : #actions }
+STestCaseFactory >> mutationRate: aFloat [ 	
+	engine mutationRate: aFloat
+]
+
 { #category : #initialization }
 STestCaseFactory >> nsuperclasses: aNumber [
 	self generatedClass nsuperclasses: aNumber.
