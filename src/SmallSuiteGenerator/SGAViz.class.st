@@ -64,6 +64,18 @@ SGAViz >> aTestCaseFactory: anObject [
 ]
 
 { #category : #'as yet unclassified' }
+SGAViz >> calledSelectors: aClassName by: testCase [
+	| dict selectors |
+	selectors := OrderedCollection new.
+	dict := ((testCase statements collect: #value) reject: #isLiteralExpression) 
+		groupedBy: [ :expr | expr class name ].
+	selectors addAll: ((dict at: #SFactoryMessage ifAbsent: [#()]) select: [ :fM | fM returnType = aClassName ] thenCollect: [ :fM | fM selector ]).
+	selectors addAll: ((dict at: #SMessage ifAbsent: [#()]) select: [ :m | m receiver returnType = aClassName ] thenCollect: [:m | m selector ]).
+	selectors addAll: ((dict at: #SFieldMessage ifAbsent: [#()]) select: [ :m | m receiver returnType = aClassName ] thenCollect: [:m | m selector ]).
+	^ selectors
+]
+
+{ #category : #'as yet unclassified' }
 SGAViz >> discoveredMethodEvolutionUsing: dictColor [
 | canvas composite scale points axis spaceStick xMax yMax size yPositions step totalExecutedMethods |
    canvas := RSCanvas new.
@@ -217,6 +229,38 @@ SGAViz >> groupTestCases: testCases with: dictColor and: canvas [
 ]
 
 { #category : #'as yet unclassified' }
+SGAViz >> groupTestCases: testCases with: testIds ofColor: dictColor and: size [	
+	| group index |
+	group := RSGroup new.
+	index := 0.
+	group addAll: (testCases collect: [:tC | 
+		index := index + 1.
+		RSComposite new 
+			addShape: (RSEllipse new 
+				size: (size/12)@(size/12); 
+				color: (((testIds at: tC generationNumber ifAbsent: [#()]) includes: tC idPopulation) ifTrue: [ dictColor at: 'markedTestCaseNode' ] ifFalse: [ 'testcaseNode' ] )"(dictColor at: 'testcaseNode')";
+				draggable;
+				yourself);
+			addShape: (RSLabel new 
+				text: 't', index asString;
+				color: (dictColor at: 'testcaseFontColor');
+				fontSize: (size/25);
+				bold;
+				position: 0@0);
+			model: tC;
+			adjustToChildren;
+			yourself.
+		 ]).
+	RSCircleLayout new radius: size / 2; on: group.
+	^ RSComposite new
+		shapes: (group collect: #yourself);
+		"paint: Color blue;"
+		model: testCases;
+		draggable
+	
+]
+
+{ #category : #'as yet unclassified' }
 SGAViz >> infoDiscoveredMethods: yPositions withScale: scale and: values [
 	| points |
 	points := OrderedCollection new add: 0@0; yourself.
@@ -281,6 +325,19 @@ SGAViz >> jaccarIndexOf: testCase1 and: testCase2 [
 		 ].
 	group1 := block value: testCase1.
 	group2 := block value: testCase2.
+	intersect := (group1 intersection: group2) size.
+	union := (group1 union: group2) size.
+	^ (intersect == 0 and: [ union == 0 ]) 
+		ifTrue: [ 1 ] 
+		ifFalse: [ [intersect / union] on: ZeroDivide do: [ 0 ]]
+]
+
+{ #category : #'as yet unclassified' }
+SGAViz >> jaccarIndexStaticOf: testCase1 and: testCase2 [
+	| targetClass group1 group2 intersect union |
+	targetClass := self engine targetClassName.
+	group1 := self calledSelectors: targetClass by: testCase1.
+	group2 := self calledSelectors: targetClass by: testCase2.
 	intersect := (group1 intersection: group2) size.
 	union := (group1 union: group2) size.
 	^ (intersect == 0 and: [ union == 0 ]) 

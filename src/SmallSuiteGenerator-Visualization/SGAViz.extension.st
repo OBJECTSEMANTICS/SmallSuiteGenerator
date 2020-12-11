@@ -440,7 +440,7 @@ SGAViz >> generationEvolutionCanvas [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> generationVisualizationWithColor: dictColor [
-	| canvas contributionShape infoMethodShape evolutionShape highlightTestCase highlightMethod ys border widthShape barGroup height similarityShape lines posBorder posLegend xs |
+	| canvas contributionShape infoMethodShape evolutionShape highlightTestCase highlightMethod ys border widthShape barGroup height similarityCoverageShape similarityShape lines posBorder posLegend xs testIds |
 	canvas := RSCanvas new 
 		color: (dictColor at: 'background').
 	highlightTestCase := RSHighlightable new 
@@ -450,21 +450,33 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 		highlightColor: (dictColor at: 'highlightMethod');
 		yourself.
 	infoMethodShape := self infoMethodShapesOn: canvas ofColor: dictColor highlight: (Array with: highlightTestCase with: highlightMethod).
+	testIds := infoMethodShape at: 4.
 	ys := infoMethodShape at: 3.
 	barGroup := infoMethodShape at: 2.
 	infoMethodShape := infoMethodShape at: 1.
 	height := infoMethodShape height.
 	contributionShape := self contributionShapeOfHeight: height color: dictColor and: (ys collect: #key).
-	similarityShape := self similarityShape: canvas withHeight: height color: dictColor and: (ys collect: [:ass | ass key + (ass value / 2)]).
-	"ys := ys collect: #key."
+	similarityCoverageShape := self similarityCoverageShape: canvas withHeight: height testIds: testIds color: dictColor and: (ys collect: [:ass | ass key + (ass value / 2)]).
+	
+	"similarity of static methods"
+	similarityShape := self similarityShape: canvas withHeight: height testIds: testIds color: dictColor and: (ys collect: [:ass | ass key + (ass value / 2)]).
 	lines := similarityShape second.
 	similarityShape := similarityShape first.
+	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (similarityCoverageShape first encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ similarityShape  position y.
+	canvas addShape: similarityShape.
+	lines := (lines flatCollect: #yourself) asGroup.
+	canvas addAll: lines.
+	lines pushBack.
+	
+	"ys := ys collect: #key."
+	lines := similarityCoverageShape second.
+	similarityCoverageShape := similarityCoverageShape first.
 	barGroup := RSComposite new shapes: (self setPositions: barGroup using: (ys collect: #key)).
 	"align the contribution element"
 	contributionShape translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.
 	
-	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ similarityShape  position y.
-	canvas addShape: similarityShape.
+	similarityCoverageShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityCoverageShape encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ similarityCoverageShape  position y.
+	canvas addShape: similarityCoverageShape.
 	lines := (lines flatCollect: #yourself) asGroup.
 	canvas addAll: lines.
 	lines pushBack.
@@ -482,13 +494,13 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	self addHighlightMethodEvent: highlightMethod on: canvas ofColor: (dictColor at: 'highlightMethod').
 	widthShape := 800.
 	evolutionShape := self evolutionShapeWith: (ys collect: #key) ofColor: dictColor size: widthShape @height negated.
-	height := (Array with: contributionShape height with: height with: evolutionShape height with: similarityShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine logs size)  ] ] thenCollect: #height) max).
+	height := (Array with: contributionShape height with: height with: evolutionShape height with: similarityCoverageShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine logs size)  ] ] thenCollect: #height) max).
 	posLegend := SharedQueue new.
 	xs := SharedQueue new.
 	"addition of similarityShape border"
-	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityShape encompassingRectangle width).
-	border := self borderOfSize: similarityShape width @ (height + 20) andColor: (dictColor at: 'border').
-	border translateTo: posBorder @ contributionShape position y.
+	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityCoverageShape encompassingRectangle width).
+	border := self borderOfSize: similarityCoverageShape width @ (height + 20) andColor: (dictColor at: 'border').
+	border translateTo: posBorder @ infoMethodShape position y.
 	posLegend nextPut: posBorder @ (height + 30).
 	xs nextPut: posBorder.
 	canvas addShape: border.
@@ -496,7 +508,7 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	"addition of contributionShape border"
 	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width).
 	border := self borderOfSize: contributionShape width @ (height + 20) andColor: (dictColor at: 'border').
-	border translateTo: posBorder @ contributionShape position y.
+	border translateTo: posBorder @ infoMethodShape position y.
 	posLegend nextPut: posBorder @ height + 30.
 	xs nextPut: posBorder + 100.
 	canvas addShape: border.
@@ -530,10 +542,11 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
-	| generationGroup filteredList memo scaleColorBlock set barGroup shapes ys |
+	| generationGroup filteredList memo scaleColorBlock set barGroup shapes ys testIds |
 	generationGroup := RSGroup new.
 	barGroup := RSGroup new.
 	filteredList := OrderedCollection new.
+	testIds := Dictionary new.
 	set := Set new.
 	ys := OrderedCollection new.
 	self logs first population do: [ :tC | self addSurvivorTestCase: tC on: filteredList using: set and: self logs size ].
@@ -545,6 +558,9 @@ SGAViz >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
 			| group generationNumber |
 			group := RSGroup new.
 			group addAll: (testCases collect: [ :testCase | 
+				testIds at: testCase generationNumber 
+					ifPresent: [ :col | col add: testCase idPopulation ]
+					ifAbsentPut: [ OrderedCollection new add: testCase idPopulation; yourself ].
 				(self testCaseShape: testCase 
 					ofColor: dictColor 
 					with: memo
@@ -566,7 +582,7 @@ SGAViz >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
 		width: 5;
 		color: (dictColor at: 'edge');
 		connectFromAll: [ :testCase | testCase parents ].
-	^ Array with: shapes with: barGroup with: ys
+	^ Array with: shapes with: barGroup with: ys with: testIds
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -614,6 +630,7 @@ SGAViz class >> lightColors [
 			(#('83142C' 'AF0404' 'BB1542' 'ED3833' 'EB5F5D' 'F3826F' 'FFBA92' 'F0DAB1' 'FFF8CD' 'F7FF56' 'DCFFCC' 'DDF796' 'C3F584' 'A3F7BF' '6bffb8' '42E6A4' '4DD599' '71A95A' '007944' '00818A' '216583' '366ED8' '64C4ED' '5EDFFF' 'B2FCFF' 'FFEDFF' 'C6CBEF' '8186D5' '494CA2' '560764' '930077' 'D527B7' 'FF78AE' 'FFA0D2' ) collect: [:c | Color fromHexString: c ]);
 		at: 'edgeSimilarity' put: (Color r: 0.12903225806451613 g: 0.39589442815249265 b: 0.5141739980449658);
 		at: 'testcaseNode' put: (Color transparent);
+		at: 'markedTestCaseNode' put: (Color r: 0 g: 1 b: 0.67);
 		at: 'testcaseFontColor' put: (Color black);
 		yourself.
 ]
@@ -649,7 +666,7 @@ SGAViz >> methodShape: summaryExecMethod withGradientFrom: darkColor to: lightCo
 	gradient start: -50@0; stop: 50@0.
 	group := RSGroup new.
 	RSVerticalLineLayout new on: group; gapSize: 0.
-	^ RSComposite new size: 50;
+	^ RSBox new size: 50;
 				color: gradient; 
 				border: RSBorder new;
 				model: summaryExecMethod;
@@ -661,7 +678,33 @@ SGAViz >> methodShape: summaryExecMethod withGradientFrom: darkColor to: lightCo
 								select: #executed 
 								thenDo: [:sSt | stream nextPut: Character cr;
 									nextPutAll: sSt code] ] ];
-				shapes: (group collect: #yourself);
+				"shapes: (group collect: #yourself);"
+				yourself.
+				
+	
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> methodShape: summaryExecMethod withGradientFrom: darkColor to: lightColor andShape: shape [
+	| gradient group |
+	gradient := LinearGradientPaint fromArray: (Array with: 0->darkColor with: 1->lightColor).
+	gradient start: -50@0; stop: 50@0.
+	group := RSGroup new.
+	RSVerticalLineLayout new on: group; gapSize: 0.
+	^ shape size: 50;
+				color: gradient; 
+				border: RSBorder new;
+				model: summaryExecMethod;
+				popupText: [ :summary |  String streamContents: [ :stream | 
+							stream nextPutAll: summary executorClass;
+							nextPutAll: '->';
+							nextPutAll: summary selector.
+							summaryExecMethod summaryStatements 
+								select: #executed 
+								thenDo: [:sSt | stream nextPut: Character cr;
+									nextPutAll: sSt code] ] ];
+				"shapes: (group collect: #yourself);"
 				yourself.
 				
 	
@@ -670,8 +713,9 @@ SGAViz >> methodShape: summaryExecMethod withGradientFrom: darkColor to: lightCo
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> methodShapeGroup: testCase with: memo highlight: highlight scale: scaleColorBlock [
-	| group |
+	| group calledSelectors |
 	group := RSGroup new.
+	calledSelectors := self calledSelectors: self engine targetClassName by: testCase.
 	group addAll: ((self summaryMethodsOfTargetClass: testCase summaryExecutionMethods)
 		select: [:summary |
 			| coverage |
@@ -681,7 +725,7 @@ SGAViz >> methodShapeGroup: testCase with: memo highlight: highlight scale: scal
 		thenCollect: [:summary | 
 			| scaleColor |
 			scaleColor := scaleColorBlock value: summary executorClass -> summary selector.
-			(self methodShape: summary withGradientFrom: (scaleColor scale: (self fitnessOf: summary)) to: (scaleColor scale: 100)) @ highlight; yourself.
+			(self methodShape: summary withGradientFrom: (scaleColor scale: (self fitnessOf: summary)) to: (scaleColor scale: 100) andShape: ((calledSelectors includes: summary selector) ifTrue: [ RSEllipse new ] ifFalse: [ RSBox new ])) @ highlight; yourself.
 		]).
 	RSGridLayout on: group.
 	^ group
@@ -746,21 +790,21 @@ SGAViz >> setPositions: barGroup using: ys [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityGroupOfColor: dictColor size: size on: canvas [
+SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on: canvas [
 	^ self engine logs collect: [ :log | 
-		self similarityShape: log population ofColor: dictColor size: size on: canvas.
+		self similarityCoverageShape: log population with: testIds ofColor: dictColor size: size on: canvas.
 	]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityShape: population ofColor: dictColor size: size on: canvas [
-  	| similarityShape jacIndexes lines factor |
-	similarityShape := self groupTestCases: population ofColor: dictColor and: size.
-	factor := 1.
+SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor size: size on: canvas [
+  	| similarityShape lines |
+	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
+	"factor := 1.
 	jacIndexes := (population flatCollect: [ :tC1 |
 			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
 						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
-				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet.
+				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
 	lines := OrderedCollection new.
 	similarityShape shapes do: [:from |
 					lines addAll: (similarityShape shapes select: [ :to | 
@@ -774,8 +818,8 @@ SGAViz >> similarityShape: population ofColor: dictColor size: size on: canvas [
 					to: to;
 					yourself ] ) ].
 		RSNormalizer new
-		from: jacIndexes min * factor;
-		to: jacIndexes max * factor;
+		from: "jacIndexes min * factor" 0;
+		to: "jacIndexes max * factor" 2;
 		shapes: lines;
 		executeBlock: [ :shape :val | shape width: val ];
 		normalize: [ :assoc | self jaccarIndexOf: assoc key and: assoc value ].
@@ -785,16 +829,75 @@ SGAViz >> similarityShape: population ofColor: dictColor size: size on: canvas [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityShape: canvas withHeight: height color: dictColor and: ys [
-  	| groupSimilarity element scale x lines extent |
+SGAViz >> similarityCoverageShape: canvas withHeight: height testIds: testIds color: dictColor and: ys [
+  	| groupSimilarity element scale x lines |
 	scale := NSScale linear
 		domain: (Array with: 0 with: ys size);
 		range: (Array with: 0 with: height).
-	groupSimilarity := self similarityGroupOfColor: dictColor size: (scale scale: 0.8) on: canvas.
+	groupSimilarity := self similarityCoverageGroupOfColor: dictColor with: testIds size: (scale scale: 0.8) on: canvas.
 	lines := (groupSimilarity collect: #second) asGroup.
 	groupSimilarity := (groupSimilarity collect: #first) asGroup.
 	x := groupSimilarity first width / 2.0.
-	extent := groupSimilarity first nodes first extent / 2.
+	"extent := groupSimilarity first nodes first extent / 2."
+	groupSimilarity with: (ys collect: [:y | x @ y ]) do: [ :shape :position | 
+		shape translateTo: position "x @ ((extent y - position y) abs)".
+		 ].
+	element := RSComposite new 
+		shapes: groupSimilarity;
+		yourself.
+	^ Array with: element with: lines
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> similarityGroup: testIds ofColor: dictColor size: size on: canvas [
+	^ self engine logs collect: [ :log | 
+		self similarityShape: log population with: testIds ofColor: dictColor size: size on: canvas.
+	]
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: size on: canvas [
+  	| similarityShape lines |
+	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
+	"factor := 1.
+	jacIndexes := (population flatCollect: [ :tC1 |
+			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
+						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
+				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
+	lines := OrderedCollection new.
+	similarityShape shapes do: [:from |
+					lines addAll: (similarityShape shapes select: [ :to | 
+						(from model generationNumber ~= to model generationNumber 
+						or: [ from model idPopulation ~= to model idPopulation ]) ]
+					thenCollect: [ :to | 
+					RSLine new 
+					model: from model -> to model;
+					from: from;
+					color: (dictColor at: 'edgeSimilarity');
+					to: to;
+					yourself ] ) ].
+		RSNormalizer new
+		from: "jacIndexes min * factor" 0;
+		to: "jacIndexes max * factor" 2;
+		shapes: lines;
+		executeBlock: [ :shape :val | shape width: val ];
+		normalize: [ :assoc | self jaccarIndexStaticOf: assoc key and: assoc value ].
+		"canvas addAll: lines asGroup."
+		^ Array with: similarityShape with: lines asGroup
+	
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> similarityShape: canvas withHeight: height testIds: testIds color: dictColor and: ys [
+  	| groupSimilarity element scale x lines |
+	scale := NSScale linear
+		domain: (Array with: 0 with: ys size);
+		range: (Array with: 0 with: height).
+	groupSimilarity := self similarityGroup: testIds ofColor: dictColor size: (scale scale: 0.8) on: canvas.
+	lines := (groupSimilarity collect: #second) asGroup.
+	groupSimilarity := (groupSimilarity collect: #first) asGroup.
+	x := groupSimilarity first width / 2.0.
+	"extent := groupSimilarity first nodes first extent / 2."
 	groupSimilarity with: (ys collect: [:y | x @ y ]) do: [ :shape :position | 
 		shape translateTo: position "x @ ((extent y - position y) abs)".
 		 ].

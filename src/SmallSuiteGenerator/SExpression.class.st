@@ -133,6 +133,12 @@ SExpression >> isFactoryMessage [
 ]
 
 { #category : #testing }
+SExpression >> isLiteralExpression [
+
+	^ false
+]
+
+{ #category : #testing }
 SExpression >> isMessage [
 
 	^ false.

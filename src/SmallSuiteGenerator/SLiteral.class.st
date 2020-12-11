@@ -80,6 +80,11 @@ SLiteral >> insertOn: aTestCase [
 	^ aTestCase addLiteral: self returnType.
 ]
 
+{ #category : #testing }
+SLiteral >> isLiteralExpression [ 
+	^ true
+]
+
 { #category : #querying }
 SLiteral >> referenceTo: aClassName [
 
