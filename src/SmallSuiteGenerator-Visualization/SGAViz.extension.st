@@ -1,15 +1,18 @@
 Extension { #name : #SGAViz }
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> addDescriptiveTextOn: canvas ofColor: color and: offsets [
+SGAViz >> addDescriptiveTextOn: canvas ofColor: color and: array [
 	"Add descriptive text on canvas with color and offsets"
 	
-  | blockText text dictionary label |
+  | blockText text label y xs texts |
   blockText := [:string |  self createRSLabelWith: string and: color ].
-  dictionary := self generationDictionaryWith: offsets.
-  dictionary associationsDo: [:association |
-        label := blockText value: association key.
-        association value move: label on: canvas shapes.
+  texts := #('Similarity' 'Generation contribution' 'Evolution of Genetic Algorithm' 'Evolution Coverage %').
+  y := array first.
+  xs := array second.
+  texts do: [:txt  |
+        label := blockText value: txt.
+		  label translateTo: ((xs nextOrNil)@ (y * -0.2)).
+        "association value move: label on: canvas shapes."
         canvas addShape: label ].
   text := blockText value: self stringTargetClassInPackage.
   self createTopCenterRSLocationOn: canvas with: text.
@@ -76,21 +79,73 @@ SGAViz >> addLegend: associations on: container withFontColor: color and: blockL
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> addLegendOn: canvas with: dictColor [
+SGAViz >> addLegend: associations on: container withFontColor: color key: string and: blockLocation [
+  | legend stack |
+  legend := RSLegend new
+     container: container;
+     defaultLabel: (self rsLabelWith: color);
+     yourself.
+	stack := Stack new push: 2; push: 4; yourself.
+  associations do: [:assoc |  | colorBox |
+        colorBox := assoc value.
+        colorBox isArray 
+			ifFalse: [ string = 'similarity' 
+							ifTrue: [ 
+								legend text: assoc key withShape: 
+								(RSLine new color: assoc value; width: stack pop; yourself; startPoint: 30@0; endPoint: 0@0; yourself) ] 
+							ifFalse: [ legend text: assoc key withBoxColor: colorBox ] ] 
+			ifTrue: [ colorBox first isColor 
+							ifTrue: [ legend text: assoc key withShape: (legend defaultBox
+                             border: (self rsBorderWithColorBox: colorBox);
+                             paint: colorBox first) ] 
+							ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ].
+  legend legendDo: [:l |  l
+           padding: 5;
+           scaleBy: 2.5 ].
+  blockLocation value: legend.
+  legend build
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> addLegendOn: canvas locations: locations with: dictColor [
 	| colors |
+	self addLegend: (Array with: 'More-similar' -> (dictColor at: 'edgeSimilarity')
+		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (300@0) ].
+		
 	self addLegend: (Array with: 'Class coverage' -> (dictColor at: 'classCoverage')
 		with: 'Method coverage' -> (dictColor at: 'methodCoverage')
-		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below left offset: (500@0) ].
+		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (750@100 negated) ].
 		
 	colors := dictColor at: 'rangeMethodColor'.
 	self addLegend: (Array  
 			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
 			with: 'TC with higher coverage than parents' -> (Array with: (dictColor at: 'backgroundTestCase') with: (dictColor at: 'borderTestCase'))
-			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') and: [ :legend | legend location below center offset: -100@150 negated ].
+			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') key: 'range' and: [ :legend | legend location below center "legend translateTo: locations nextOrNil " offset: 0@150 negated ].
 			
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
-		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') and: [:legend | legend location below right offset: -700@150 negated ].
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below right " legend translateTo: locations nextOrNil "offset: -700@150 negated ]
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> addLegendOn: canvas with: dictColor [
+	| colors |
+	self addLegend: (Array with: 'More-similar' -> (dictColor at: 'edgeSimilarity')
+		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (450@0) ].
+		
+	self addLegend: (Array with: 'Class coverage' -> (dictColor at: 'classCoverage')
+		with: 'Method coverage' -> (dictColor at: 'methodCoverage')
+		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left offset: (850@100 negated) ].
+		
+	colors := dictColor at: 'rangeMethodColor'.
+	self addLegend: (Array  
+			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
+			with: 'TC with higher coverage than parents' -> (Array with: (dictColor at: 'backgroundTestCase') with: (dictColor at: 'borderTestCase'))
+			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') key: 'range' and: [ :legend | legend location below center offset: -100@150 negated ].
+			
+	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
+		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))
+		with: ('Fittest-Fitness' -> (dictColor at: 'fittestCoverage'))) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below right offset: -700@150 negated ]
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
@@ -225,21 +280,28 @@ SGAViz >> createTopCenterRSLocationOn: canvas with: text [
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> createTopCenterRSLocationWith: offsets [
   ^ RSLocation new top center
-     offset: offsets first @ 0;
+     offset: offsets first @ 10 negated;
+     yourself
+]
+
+{ #category : #'*SmallSuiteGenerator-Visualization' }
+SGAViz >> createTopLeftNextRSLocation [
+  ^ RSLocation new top left
+     offset: 420 @ 100 negated;
      yourself
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> createTopLeftRSLocation [
   ^ RSLocation new top left
-     offset: 100 negated @ 110 negated;
+     "offset: 0 @ 50 negated;"
      yourself
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> createTopRightRSLocationWith: offsets [
   ^RSLocation new top right
-     offset: offsets second @ 0;
+     offset: offsets second @ 200 negated;
      yourself
 ]
 
@@ -371,15 +433,6 @@ SGAViz >> fitnessResultAsDictionary [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> generationDictionaryWith: offsets [
-  ^Dictionary new
-     at: 'Generation contribution' put: self createTopLeftRSLocation;
-     at: 'Evolution of Genetic Algorithm' put: (self createTopCenterRSLocationWith: offsets);
-     at: 'Evolution Coverage %' put: (self createTopRightRSLocationWith: offsets);
-     yourself
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> generationEvolutionCanvas [
 	^ self 
 		generationVisualizationWithColor: self class lightColors 
@@ -387,7 +440,7 @@ SGAViz >> generationEvolutionCanvas [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> generationVisualizationWithColor: dictColor [
-	| canvas contributionShape infoMethodShape evolutionShape highlightTestCase highlightMethod ys border widthShape barGroup height similarityShape lines ysCopy |
+	| canvas contributionShape infoMethodShape evolutionShape highlightTestCase highlightMethod ys border widthShape barGroup height similarityShape lines posBorder posLegend xs |
 	canvas := RSCanvas new 
 		color: (dictColor at: 'background').
 	highlightTestCase := RSHighlightable new 
@@ -401,18 +454,16 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	barGroup := infoMethodShape at: 2.
 	infoMethodShape := infoMethodShape at: 1.
 	height := infoMethodShape height.
-	contributionShape := self contributionShapeOfHeight: height color: dictColor and: ys.
-	ysCopy := ys copy.
-	ysCopy := ysCopy with: (contributionShape nodes) collect: [ :y :node | y + (node extent y / 2) ].
-	"ysCopy at: 1 put: contributionShape nodes first extent y / 2."
-	similarityShape := self similarityShape: canvas withHeight: height color: dictColor and: ysCopy.
+	contributionShape := self contributionShapeOfHeight: height color: dictColor and: (ys collect: #key).
+	similarityShape := self similarityShape: canvas withHeight: height color: dictColor and: (ys collect: [:ass | ass key + (ass value / 2)]).
+	"ys := ys collect: #key."
 	lines := similarityShape second.
 	similarityShape := similarityShape first.
-	barGroup := RSComposite new shapes: (self setPositions: barGroup using: ys).
+	barGroup := RSComposite new shapes: (self setPositions: barGroup using: (ys collect: #key)).
 	"align the contribution element"
 	contributionShape translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.
 	
-	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ contributionShape  position y.
+	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ similarityShape  position y.
 	canvas addShape: similarityShape.
 	lines := (lines flatCollect: #yourself) asGroup.
 	canvas addAll: lines.
@@ -423,37 +474,55 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	"add infoMethodShapeGroup on canvas"
 	canvas addAll: infoMethodShape.
 	"add barGroup on canvas"
-	RSLocation new right offset: ((barGroup width * 1.2)@0); move: barGroup on: canvas shapes.
+	"RSLocation new right offset: ((barGroup width * 1.2)@0); move: barGroup on: canvas shapes."
+	barGroup translateTo: (infoMethodShape encompassingRectangle topRight x + (barGroup width * 1.2)) @ infoMethodShape position y.
 	canvas addShape: barGroup.
 	"addition of highlight"
 	self addHighlightTestCaseEvent: highlightTestCase on: canvas ofColor: (dictColor at: 'highlightTestCase').
 	self addHighlightMethodEvent: highlightMethod on: canvas ofColor: (dictColor at: 'highlightMethod').
 	widthShape := 800.
-	evolutionShape := self evolutionShapeWith: ys ofColor: dictColor size: widthShape @height negated.
-	height := (Array with: contributionShape height with: height with: evolutionShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine logs size)  ] ] thenCollect: #height) max).
+	evolutionShape := self evolutionShapeWith: (ys collect: #key) ofColor: dictColor size: widthShape @height negated.
+	height := (Array with: contributionShape height with: height with: evolutionShape height with: similarityShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine logs size)  ] ] thenCollect: #height) max).
+	posLegend := SharedQueue new.
+	xs := SharedQueue new.
 	"addition of similarityShape border"
+	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityShape encompassingRectangle width).
 	border := self borderOfSize: similarityShape width @ (height + 20) andColor: (dictColor at: 'border').
-	border translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityShape encompassingRectangle width) @ contributionShape position y.
+	border translateTo: posBorder @ contributionShape position y.
+	posLegend nextPut: posBorder @ (height + 30).
+	xs nextPut: posBorder.
 	canvas addShape: border.
 	
 	"addition of contributionShape border"
+	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width).
 	border := self borderOfSize: contributionShape width @ (height + 20) andColor: (dictColor at: 'border').
-	border translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.
+	border translateTo: posBorder @ contributionShape position y.
+	posLegend nextPut: posBorder @ height + 30.
+	xs nextPut: posBorder + 100.
 	canvas addShape: border.
+	
+	posBorder := infoMethodShape encompassingRectangle center x + border encompassingRectangle corner x + border width.
 	"addition of infoMethodShape border"
-	border := self borderOfSize: (infoMethodShape width + (barGroup width * 1.3)) @ (height+20) andColor: (dictColor at: 'border').
-	RSLocation new middle offset: ("contributionShape width +" similarityShape width)@0; move: border on: canvas shapes. 
+	border := self borderOfSize: (infoMethodShape width + (barGroup width * 2)) @ (height+20) andColor: (dictColor at: 'border').
+	"RSLocation new middle offset: (similarityShape width)@0; move: border on: canvas shapes. "
+	border translateTo: posBorder @ infoMethodShape position y.
+	posLegend nextPut: posBorder @ height + 30.
+	xs nextPut: posBorder.
 	canvas addShape: border.
 	"add evolutionShape on canvas"
-	evolutionShape translateTo: (barGroup encompassingRectangle topRight x + 500) @ (contributionShape position y + 25).
+	evolutionShape translateTo: (barGroup encompassingRectangle topRight x + 550) @ (contributionShape position y + 25).
 	canvas addShape: evolutionShape.
 	"border of evolutionShape"
+	posBorder := infoMethodShape encompassingRectangle topRight x + evolutionShape width + (evolutionShape width * 0.09).
 	border := self borderOfSize: ((widthShape * 1.1) @ (height + 20)) andColor: (dictColor at: 'border').
-	RSLocation new top right offset: 0@5 negated; move: border on: canvas shapes.
+	"RSLocation new top right offset: 0@5 negated; move: border on: canvas shapes."
+	border translateTo: posBorder @ infoMethodShape position y.
+	posLegend nextPut: posBorder @ height + 30.
+	xs nextPut: posBorder.
 	canvas addShape: border.
 	"add descriptive text on canvas"
-	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: ((infoMethodShape width / 10) negated ) with: -200).
-	self addLegendOn: canvas with: dictColor.
+	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: infoMethodShape position y with: xs) "(Array with: ((infoMethodShape width / 10) negated ) with: -200)".
+	self addLegendOn: canvas locations: posLegend with: dictColor.
 	canvas @ RSCanvasController.
 	^ canvas
 	
@@ -487,10 +556,10 @@ SGAViz >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
 			barGroup add: (self progressBarFrom: testCases size value to: (self logs at: generationNumber) population size ofColor: dictColor).
 			group
 	]).
-	RSVerticalLineLayout new gapSize: 100;  on: generationGroup.
+	RSVerticalLineLayout new gapSize: 200;  on: generationGroup.
 	shapes := generationGroup flatCollect: #yourself.
-	shapes collect: [ :s | s encompassingRectangle origin y ] 
-		thenDo: [:y | (ys anySatisfy: [:each | each asInteger = y asInteger]) ifFalse: [ys add: y]].
+	ys := (shapes groupedBy: [ :s | s encompassingRectangle origin y ]) associations 
+		collect: [:assoc | assoc key -> (assoc value collect: [:comp | comp extent y ]) max ].
 	RSEdgeBuilder verticalBezier  
 		shapes: shapes;
 		canvas: canvas;
@@ -543,8 +612,8 @@ SGAViz class >> lightColors [
 		at: 'font' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
 		at: 'rangeMethodColor' put:
 			(#('83142C' 'AF0404' 'BB1542' 'ED3833' 'EB5F5D' 'F3826F' 'FFBA92' 'F0DAB1' 'FFF8CD' 'F7FF56' 'DCFFCC' 'DDF796' 'C3F584' 'A3F7BF' '6bffb8' '42E6A4' '4DD599' '71A95A' '007944' '00818A' '216583' '366ED8' '64C4ED' '5EDFFF' 'B2FCFF' 'FFEDFF' 'C6CBEF' '8186D5' '494CA2' '560764' '930077' 'D527B7' 'FF78AE' 'FFA0D2' ) collect: [:c | Color fromHexString: c ]);
-		at: 'edgeSimilarity' put: (Color gray);
-		at: 'testcaseNode' put: (Color gray lighter lighter);
+		at: 'edgeSimilarity' put: (Color r: 0.12903225806451613 g: 0.39589442815249265 b: 0.5141739980449658);
+		at: 'testcaseNode' put: (Color transparent);
 		at: 'testcaseFontColor' put: (Color black);
 		yourself.
 ]
@@ -725,9 +794,9 @@ SGAViz >> similarityShape: canvas withHeight: height color: dictColor and: ys [
 	lines := (groupSimilarity collect: #second) asGroup.
 	groupSimilarity := (groupSimilarity collect: #first) asGroup.
 	x := groupSimilarity first width / 2.0.
-	extent := groupSimilarity first nodes first extent.
+	extent := groupSimilarity first nodes first extent / 2.
 	groupSimilarity with: (ys collect: [:y | x @ y ]) do: [ :shape :position | 
-		shape translateTo: position + (extent / 2 *  (0 @ 1)).
+		shape translateTo: position "x @ ((extent y - position y) abs)".
 		 ].
 	element := RSComposite new 
 		shapes: groupSimilarity;

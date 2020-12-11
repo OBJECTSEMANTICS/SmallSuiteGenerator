@@ -171,6 +171,7 @@ SGAViz >> groupTestCases: testCases ofColor: dictColor and: size [
 				text: 't', index asString;
 				color: (dictColor at: 'testcaseFontColor');
 				fontSize: (size/25);
+				bold;
 				position: 0@0);
 			model: tC;
 			adjustToChildren;
