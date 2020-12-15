@@ -816,13 +816,14 @@ SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on:
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor size: size on: canvas [
-  	| similarityShape lines |
+  	| similarityShape lines scale |
 	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
 	"factor := 1.
 	jacIndexes := (population flatCollect: [ :tC1 |
 			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
 						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
 				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
+	scale := NSScale linear domain: #(0 1); range: #(0 2).
 	lines := OrderedCollection new.
 	similarityShape shapes do: [:from |
 					lines addAll: (similarityShape shapes select: [ :to | 
@@ -834,14 +835,15 @@ SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor s
 					from: from;
 					color: (dictColor at: 'edgeSimilarity');
 					to: to;
+					width: (scale scale: (self jaccarIndexOf: from model and: to model));
 					yourself ] ) ].
-		RSNormalizer new
-		"from: jacIndexes min * factor 0;
-		to: jacIndexes max * factor 2;"
+		
+		"RSNormalizer new
+		""from: jacIndexes min * factor 0;
+		to: jacIndexes max * factor 1;""
 		shapes: lines;
 		executeBlock: [ :shape :val | shape width: val ];
-		normalize: [ :assoc | self jaccarIndexOf: assoc key and: assoc value ].
-		"canvas addAll: lines asGroup."
+		normalize: [ :assoc | self jaccarIndexOf: assoc key and: assoc value ]."
 		^ Array with: similarityShape with: lines asGroup
 	
 ]
@@ -875,13 +877,14 @@ SGAViz >> similarityGroup: testIds ofColor: dictColor size: size on: canvas [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: size on: canvas [
-  	| similarityShape lines |
+  	| similarityShape lines scale |
 	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
 	"factor := 1.
 	jacIndexes := (population flatCollect: [ :tC1 |
 			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
 						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
 				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
+	scale := NSScale linear range: #(0 2); domain: #(0 1).
 	lines := OrderedCollection new.
 	similarityShape shapes do: [:from |
 					lines addAll: (similarityShape shapes select: [ :to | 
@@ -893,14 +896,12 @@ SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: siz
 					from: from;
 					color: (dictColor at: 'edgeSimilarity');
 					to: to;
+					width: (scale scale: (self jaccarIndexStaticOf: from model and: to model));
 					yourself ] ) ].
-		RSNormalizer new
-		"from: jacIndexes min * factor 0;
-		to: jacIndexes max * factor 2;"
+		"RSNormalizer new
 		shapes: lines;
 		executeBlock: [ :shape :val | shape width: val ];
-		normalize: [ :assoc | self jaccarIndexStaticOf: assoc key and: assoc value ].
-		"canvas addAll: lines asGroup."
+		normalize: [ :assoc | self jaccarIndexStaticOf: assoc key and: assoc value ]."
 		^ Array with: similarityShape with: lines asGroup
 	
 ]

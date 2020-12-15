@@ -298,7 +298,7 @@ SGAViz >> jaccarIndexOf: testCase1 and: testCase2 [
 	union := (group1 union: group2) size.
 	^ (intersect == 0 and: [ union == 0 ]) 
 		ifTrue: [ 1 ] 
-		ifFalse: [ [intersect / union] on: ZeroDivide do: [ 0 ]]
+		ifFalse: [ [intersect / union] on: ZeroDivide do: [ 0 ] ]
 ]
 
 { #category : #'as yet unclassified' }
