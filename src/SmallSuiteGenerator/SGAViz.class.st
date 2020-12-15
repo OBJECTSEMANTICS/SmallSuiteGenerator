@@ -66,12 +66,12 @@ SGAViz >> aTestCaseFactory: anObject [
 { #category : #'as yet unclassified' }
 SGAViz >> calledSelectors: aClassName by: testCase [
 	| dict selectors |
-	selectors := OrderedCollection new.
+	selectors := Set new.
 	dict := ((testCase statements collect: #value) reject: #isLiteralExpression) 
 		groupedBy: [ :expr | expr class name ].
-	selectors addAll: ((dict at: #SFactoryMessage ifAbsent: [#()]) select: [ :fM | fM returnType = aClassName ] thenCollect: [ :fM | fM selector ]).
-	selectors addAll: ((dict at: #SMessage ifAbsent: [#()]) select: [ :m | m receiver returnType = aClassName ] thenCollect: [:m | m selector ]).
-	selectors addAll: ((dict at: #SFieldMessage ifAbsent: [#()]) select: [ :m | m receiver returnType = aClassName ] thenCollect: [:m | m selector ]).
+	selectors addAll: ((dict at: #SFactoryMessage ifAbsent: [#()]) select: [ :fM | fM returnType = aClassName ] thenCollect: [ :fM | ((fM selector == #new) ifTrue: [ fM receiver returnType ] ifFalse: [ fM receiver returnType, ' class' ]) -> fM selector ]).
+	selectors addAll: ((dict at: #SMessage ifAbsent: [#()]) select: [ :m | m receiver returnType = aClassName ] thenCollect: [:m | m receiver returnType -> m selector ]).
+	selectors addAll: ((dict at: #SFieldAccessMessage ifAbsent: [#()]) select: [ :m | m receiver returnType = aClassName ] thenCollect: [:m | m receiver returnType -> m selector ]).
 	^ selectors
 ]
 
@@ -167,38 +167,6 @@ SGAViz >> executedMethodsByGeneration [
 ]
 
 { #category : #'as yet unclassified' }
-SGAViz >> groupTestCases: testCases ofColor: dictColor and: size [	
-	| group index |
-	group := RSGroup new.
-	index := 0.
-	group addAll: (testCases collect: [:tC | 
-		index := index + 1.
-		RSComposite new 
-			addShape: (RSEllipse new 
-				size: (size/12)@(size/12); 
-				color: (dictColor at: 'testcaseNode');
-				draggable;
-				yourself);
-			addShape: (RSLabel new 
-				text: 't', index asString;
-				color: (dictColor at: 'testcaseFontColor');
-				fontSize: (size/25);
-				bold;
-				position: 0@0);
-			model: tC;
-			adjustToChildren;
-			yourself.
-		 ]).
-	RSCircleLayout new radius: size / 2; on: group.
-	^ RSComposite new
-		shapes: (group collect: #yourself);
-		"paint: Color blue;"
-		model: testCases;
-		draggable
-	
-]
-
-{ #category : #'as yet unclassified' }
 SGAViz >> groupTestCases: testCases with: dictColor and: canvas [	
 	| group index |
 	group := RSGroup new.
@@ -238,7 +206,8 @@ SGAViz >> groupTestCases: testCases with: testIds ofColor: dictColor and: size [
 		RSComposite new 
 			addShape: (RSEllipse new 
 				size: (size/12)@(size/12); 
-				color: (((testIds at: tC generationNumber ifAbsent: [#()]) includes: tC idPopulation) ifTrue: [ dictColor at: 'markedTestCaseNode' ] ifFalse: [ 'testcaseNode' ] )"(dictColor at: 'testcaseNode')";
+				color: (((testIds at: tC generationNumber ifAbsent: [#()]) includes: tC idPopulation) ifTrue: [ dictColor at: 'markedTestCaseNode' ] ifFalse: [ 'testcaseNode' ] );
+				model: tC;
 				draggable;
 				yourself);
 			addShape: (RSLabel new 

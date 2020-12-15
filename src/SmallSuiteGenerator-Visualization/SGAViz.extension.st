@@ -4,16 +4,24 @@ Extension { #name : #SGAViz }
 SGAViz >> addDescriptiveTextOn: canvas ofColor: color and: array [
 	"Add descriptive text on canvas with color and offsets"
 	
-  | blockText text label y xs texts |
+  | blockText text y xs texts |
   blockText := [:string |  self createRSLabelWith: string and: color ].
-  texts := #('Similarity' 'Generation contribution' 'Evolution of Genetic Algorithm' 'Evolution Coverage %').
+  texts := #('Static similarity' 'Coverage similarity' 'Generation contribution' 'Evolution of Genetic Algorithm' 'Evolution coverage %').
   y := array first.
   xs := array second.
-  texts do: [:txt  |
-        label := blockText value: txt.
-		  label translateTo: ((xs nextOrNil)@ (y * -0.2)).
-        "association value move: label on: canvas shapes."
-        canvas addShape: label ].
+  texts doWithIndex: [:txt :idx | | label x |
+		  x := xs nextOrNil.
+		  idx == 3 ifTrue: [ 
+				(txt splitOn: ' ') with: #(-0.2 -0.15 ) do: [ :t :p | 
+					label := blockText value: t.
+					label translateTo: x @ (y * p).
+					canvas addShape: label
+					 ]
+		  ] ifFalse: [ 
+				label := blockText value: txt.
+				label translateTo: (x @ (y * -0.2)).
+         		"association value move: label on: canvas shapes."
+        		canvas addShape: label ] ].
   text := blockText value: self stringTargetClassInPackage.
   self createTopCenterRSLocationOn: canvas with: text.
   canvas addShape: text
@@ -110,11 +118,11 @@ SGAViz >> addLegend: associations on: container withFontColor: color key: string
 SGAViz >> addLegendOn: canvas locations: locations with: dictColor [
 	| colors |
 	self addLegend: (Array with: 'More-similar' -> (dictColor at: 'edgeSimilarity')
-		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (300@0) ].
+		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (500@0) ].
 		
 	self addLegend: (Array with: 'Class coverage' -> (dictColor at: 'classCoverage')
 		with: 'Method coverage' -> (dictColor at: 'methodCoverage')
-		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (750@100 negated) ].
+		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (1250@100 negated) ].
 		
 	colors := dictColor at: 'rangeMethodColor'.
 	self addLegend: (Array  
@@ -462,7 +470,7 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	similarityShape := self similarityShape: canvas withHeight: height testIds: testIds color: dictColor and: (ys collect: [:ass | ass key + (ass value / 2)]).
 	lines := similarityShape second.
 	similarityShape := similarityShape first.
-	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (similarityCoverageShape first encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ similarityShape  position y.
+	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (similarityCoverageShape first encompassingRectangle width) - (contributionShape encompassingRectangle width) - 100) @ similarityShape  position y.
 	canvas addShape: similarityShape.
 	lines := (lines flatCollect: #yourself) asGroup.
 	canvas addAll: lines.
@@ -475,13 +483,14 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	"align the contribution element"
 	contributionShape translateTo: infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width) @ contributionShape position y.
 	
-	similarityCoverageShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityCoverageShape encompassingRectangle width) - (contributionShape encompassingRectangle width)) @ similarityCoverageShape  position y.
+	similarityCoverageShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityCoverageShape encompassingRectangle width) - (contributionShape encompassingRectangle width) - 50) @ similarityCoverageShape  position y.
 	canvas addShape: similarityCoverageShape.
 	lines := (lines flatCollect: #yourself) asGroup.
 	canvas addAll: lines.
 	lines pushBack.
 	
 	"add contributionShape on canvas"
+	contributionShape translateTo: (infoMethodShape encompassingRectangle topLeft x - contributionShape width - 50) @ infoMethodShape position y.
 	canvas addShape: contributionShape.
 	"add infoMethodShapeGroup on canvas"
 	canvas addAll: infoMethodShape.
@@ -497,8 +506,17 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	height := (Array with: contributionShape height with: height with: evolutionShape height with: similarityCoverageShape height) max + ((infoMethodShape select: [:e | (e model isKindOf: SSTestCase) and: [ e model generationNumber == (self engine logs size)  ] ] thenCollect: #height) max).
 	posLegend := SharedQueue new.
 	xs := SharedQueue new.
+	
 	"addition of similarityShape border"
-	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityCoverageShape encompassingRectangle width).
+	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityShape encompassingRectangle width + similarityCoverageShape encompassingRectangle width + 100).
+	border := self borderOfSize: similarityShape width @ (height + 20) andColor: (dictColor at: 'border').
+	border translateTo: posBorder @ infoMethodShape position y.
+	posLegend nextPut: posBorder @ (height + 30).
+	xs nextPut: posBorder.
+	canvas addShape: border.
+	
+	"addition of similarityCoverageShape border"
+	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityCoverageShape encompassingRectangle width + 50).
 	border := self borderOfSize: similarityCoverageShape width @ (height + 20) andColor: (dictColor at: 'border').
 	border translateTo: posBorder @ infoMethodShape position y.
 	posLegend nextPut: posBorder @ (height + 30).
@@ -506,16 +524,16 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	canvas addShape: border.
 	
 	"addition of contributionShape border"
-	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width).
+	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + 40).
 	border := self borderOfSize: contributionShape width @ (height + 20) andColor: (dictColor at: 'border').
 	border translateTo: posBorder @ infoMethodShape position y.
 	posLegend nextPut: posBorder @ height + 30.
-	xs nextPut: posBorder + 100.
+	xs nextPut: posBorder + 40.
 	canvas addShape: border.
 	
-	posBorder := infoMethodShape encompassingRectangle center x + border encompassingRectangle corner x + border width.
+	posBorder := infoMethodShape encompassingRectangle center x + 165 "+ (border width* 0.47)". "infoMethodShape encompassingRectangle center x + border encompassingRectangle corner x + border width."
 	"addition of infoMethodShape border"
-	border := self borderOfSize: (infoMethodShape width + (barGroup width * 2)) @ (height+20) andColor: (dictColor at: 'border').
+	border := self borderOfSize: (infoMethodShape width + (barGroup width * 2) + (border width/3)) @ (height+20) andColor: (dictColor at: 'border').
 	"RSLocation new middle offset: (similarityShape width)@0; move: border on: canvas shapes. "
 	border translateTo: posBorder @ infoMethodShape position y.
 	posLegend nextPut: posBorder @ height + 30.
@@ -525,7 +543,7 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	evolutionShape translateTo: (barGroup encompassingRectangle topRight x + 550) @ (contributionShape position y + 25).
 	canvas addShape: evolutionShape.
 	"border of evolutionShape"
-	posBorder := infoMethodShape encompassingRectangle topRight x + evolutionShape width + (evolutionShape width * 0.09).
+	posBorder := infoMethodShape encompassingRectangle topRight x + evolutionShape width + (evolutionShape width * 0.07).
 	border := self borderOfSize: ((widthShape * 1.1) @ (height + 20)) andColor: (dictColor at: 'border').
 	"RSLocation new top right offset: 0@5 negated; move: border on: canvas shapes."
 	border translateTo: posBorder @ infoMethodShape position y.
@@ -725,7 +743,7 @@ SGAViz >> methodShapeGroup: testCase with: memo highlight: highlight scale: scal
 		thenCollect: [:summary | 
 			| scaleColor |
 			scaleColor := scaleColorBlock value: summary executorClass -> summary selector.
-			(self methodShape: summary withGradientFrom: (scaleColor scale: (self fitnessOf: summary)) to: (scaleColor scale: 100) andShape: ((calledSelectors includes: summary selector) ifTrue: [ RSEllipse new ] ifFalse: [ RSBox new ])) @ highlight; yourself.
+			(self methodShape: summary withGradientFrom: (scaleColor scale: (self fitnessOf: summary)) to: (scaleColor scale: 100) andShape: ((calledSelectors includes: summary executorClass -> summary selector) ifTrue: [ RSEllipse new ] ifFalse: [ RSBox new ])) @ highlight; yourself.
 		]).
 	RSGridLayout on: group.
 	^ group
@@ -818,8 +836,8 @@ SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor s
 					to: to;
 					yourself ] ) ].
 		RSNormalizer new
-		from: "jacIndexes min * factor" 0;
-		to: "jacIndexes max * factor" 2;
+		"from: jacIndexes min * factor 0;
+		to: jacIndexes max * factor 2;"
 		shapes: lines;
 		executeBlock: [ :shape :val | shape width: val ];
 		normalize: [ :assoc | self jaccarIndexOf: assoc key and: assoc value ].
@@ -877,8 +895,8 @@ SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: siz
 					to: to;
 					yourself ] ) ].
 		RSNormalizer new
-		from: "jacIndexes min * factor" 0;
-		to: "jacIndexes max * factor" 2;
+		"from: jacIndexes min * factor 0;
+		to: jacIndexes max * factor 2;"
 		shapes: lines;
 		executeBlock: [ :shape :val | shape width: val ];
 		normalize: [ :assoc | self jaccarIndexStaticOf: assoc key and: assoc value ].
