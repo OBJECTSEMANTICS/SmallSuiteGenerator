@@ -63,6 +63,13 @@ SGAViz >> aTestCaseFactory: anObject [
 	aTestCaseFactory := anObject
 ]
 
+{ #category : #adding }
+SGAViz >> addRowsOn: dataFrame of: dictionary [
+	dictionary associationsDo: [ :assoc | | k |
+		k := assoc key.
+		dataFrame row: k key asString, 't', (k value asString) put: ((assoc value sort) collect: #value) asDataSeries ]
+]
+
 { #category : #'as yet unclassified' }
 SGAViz >> calledSelectors: aClassName by: testCase [
 	| dict selectors |
@@ -167,6 +174,18 @@ SGAViz >> executedMethodsByGeneration [
 ]
 
 { #category : #'as yet unclassified' }
+SGAViz >> fileNameToExport [
+	^ String streamContents: [ :stream | 
+		stream nextPutAll: self engine targetClassName;
+		nextPut: $G;
+		nextPutAll: self engine numberOfGenerations asString;
+		nextPut: $P;
+		nextPutAll: self engine populationSize asString;
+		nextPut: $S;
+		nextPutAll: self engine numberOfStatements asString ]
+]
+
+{ #category : #'as yet unclassified' }
 SGAViz >> groupTestCases: testCases with: dictColor and: canvas [	
 	| group index |
 	group := RSGroup new.
@@ -198,11 +217,9 @@ SGAViz >> groupTestCases: testCases with: dictColor and: canvas [
 
 { #category : #'as yet unclassified' }
 SGAViz >> groupTestCases: testCases with: testIds ofColor: dictColor and: size [	
-	| group index |
+	| group |
 	group := RSGroup new.
-	index := 0.
 	group addAll: (testCases collect: [:tC | 
-		index := index + 1.
 		RSComposite new 
 			addShape: (RSEllipse new 
 				size: (size/12)@(size/12); 
@@ -211,7 +228,7 @@ SGAViz >> groupTestCases: testCases with: testIds ofColor: dictColor and: size [
 				draggable;
 				yourself);
 			addShape: (RSLabel new 
-				text: 't', index asString;
+				text: 't', tC idPopulation asString;
 				color: (dictColor at: 'testcaseFontColor');
 				fontSize: (size/25);
 				bold;
@@ -298,7 +315,7 @@ SGAViz >> jaccarIndexOf: testCase1 and: testCase2 [
 	union := (group1 union: group2) size.
 	^ (intersect == 0 and: [ union == 0 ]) 
 		ifTrue: [ 1 ] 
-		ifFalse: [ [intersect / union] on: ZeroDivide do: [ 0 ] ]
+		ifFalse: [ [(intersect / union) asFloat round: 2 ] on: ZeroDivide do: [ 0 ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -311,7 +328,7 @@ SGAViz >> jaccarIndexStaticOf: testCase1 and: testCase2 [
 	union := (group1 union: group2) size.
 	^ (intersect == 0 and: [ union == 0 ]) 
 		ifTrue: [ 1 ] 
-		ifFalse: [ [intersect / union] on: ZeroDivide do: [ 0 ]]
+		ifFalse: [ [(intersect / union) asFloat round: 2 ] on: ZeroDivide do: [ 0 ]]
 ]
 
 { #category : #'as yet unclassified' }

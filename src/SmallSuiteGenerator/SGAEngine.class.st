@@ -372,6 +372,11 @@ SGAEngine >> numberOfGenerations: anInteger [
 ]
 
 { #category : #accessing }
+SGAEngine >> numberOfStatements [
+	^ numberOfStatements 
+]
+
+{ #category : #accessing }
 SGAEngine >> numberOfStatements: anInteger [
 	"Set the number of statements the initial population should have.
 	Ideally, a small number, such as 3, is convenient. The evolution makes the individuals grow over time"
@@ -395,6 +400,12 @@ SGAEngine >> packageRegex: aString [
 SGAEngine >> population [
 
 	^ population
+]
+
+{ #category : #accessing }
+SGAEngine >> populationSize [ 
+	^ populationSize
+	
 ]
 
 { #category : #accessing }

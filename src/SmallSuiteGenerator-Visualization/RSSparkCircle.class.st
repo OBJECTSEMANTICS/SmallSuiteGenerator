@@ -67,7 +67,7 @@ RSSparkCircle >> shapeFor: anObject index: index [
 	| slice value externalRadius width |
 	slice := self defaultSliceShape copy.
 	value := values at: index.
-	externalRadius := (Array with: 1 with: (value <= 1 ifTrue: [ value * 100 ] ifFalse: [ value ])) max.
+	externalRadius := (Array with: 1 with: (value * 10 ) "(value < 1 ifTrue: [ value * 100 ] ifFalse: [ value ])") max.
 	width := (values min * slice innerRadius) max: 0.2.
 	slice
 		model: value * 100;
