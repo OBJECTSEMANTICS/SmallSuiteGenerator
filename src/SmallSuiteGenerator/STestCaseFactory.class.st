@@ -39,8 +39,6 @@ STestCaseFactory class >> from: configClass [
 		fitness: configClass; 
 		targetClassName: configClass aClass nameAsSymbol;
 		numberOfGenerations: configClass numberOfGenerations; 
-		setUpMethod: configClass setUpMethod; 
-		tearDownMethod: configClass tearDownMethod; 
 		limitToWait: configClass limitToWait;
 		lastMessage: parser; 
 		typeInfo: aTypeInfo;
