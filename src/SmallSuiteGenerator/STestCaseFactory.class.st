@@ -370,7 +370,7 @@ STestCaseFactory >> setUpEngine [
 STestCaseFactory >> setUpMethod: aString [
 	aString ifNil: [ ^ self ].
 	self generatedClass compile: aString.
-	"self settingMethodClass: self generatedClass."
+	self settingMethodClass: self generatedClass.
 ]
 
 { #category : #'set strategies' }
@@ -409,6 +409,7 @@ STestCaseFactory >> targetPackageRegex: anObject [
 STestCaseFactory >> tearDown [
 	self uninstall.
 	self exportTests.
+	self settingMethodClass: SConfigGenerationTestCase.
 	SSTestShifter resetToDefaults.
 	SPlatform resetRandomGenerator.
 	SmallTypeCollector resetClassDict.
@@ -418,7 +419,7 @@ STestCaseFactory >> tearDown [
 STestCaseFactory >> tearDownMethod: aString [
 	aString ifNil: [ ^ self ].
 	self generatedClass compile: aString.
-	"self settingMethodClass: self generatedClass."
+	self settingMethodClass: self generatedClass.
 ]
 
 { #category : #accessing }
@@ -457,5 +458,5 @@ STestCaseFactory >> vizClass: aClass [
 STestCaseFactory >> waitThreadMethod: aString [
 	aString ifNil: [ ^ self ].
 	self generatedClass compile: aString.
-	"self settingMethodClass: self generatedClass."
+	self settingMethodClass: self generatedClass.
 ]
