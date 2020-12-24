@@ -38,7 +38,7 @@ SSTestShifter class >> defaultInterpreterClass [
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-	^ SSNullMethods
+	^ GASFooTest
 ]
 
 { #category : #settings }
@@ -54,8 +54,7 @@ SSTestShifter class >> limitToWait [
 { #category : #settings }
 SSTestShifter class >> resetToDefaults [
 
-	{ #defaultInterpreterClass -> SSMetaInterpreter . 
-	#defaultMethodsClass -> SSNullMethods . 
+	{ #defaultInterpreterClass -> SSMetaInterpreter .  
 	#defaultPrinterClass -> SSStandardPrinter .
 	#limitToWait -> 1000 } do: [ :val |
 		self class compile: val key asString, String cr, '	^ ', val value printString ]
@@ -970,7 +969,12 @@ SSTestShifter >> runStatements: aStatementCollection [
   
 	process := [
 		[
-			interpreter visitStatements: aStatementCollection; clean.
+			interpreter 
+				setUp;
+				visitStatements: aStatementCollection;
+				waitThread;
+				tearDown; 
+				clean.
 			hasErrors := false.
 			result := interpreter context.
 			semaphore signal.
@@ -982,7 +986,7 @@ SSTestShifter >> runStatements: aStatementCollection [
 	timeOut ifTrue:[
 		process terminate.
 		result := Dictionary new.
-		self halt.].
+		"self halt."].
 	^ result.
 	
 	

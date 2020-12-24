@@ -67,7 +67,7 @@ STestCaseFactory class >> resetToDefaults [
 
 { #category : #settings }
 STestCaseFactory class >> vizClass [
-	^ SGAViz
+	^ SGANullViz
 ]
 
 { #category : #'set strategies' }
@@ -141,17 +141,11 @@ STestCaseFactory >> export: aTestCase with: aSelector [
 ]
 
 { #category : #export }
-STestCaseFactory >> exportSettingMethods [
-	SSTestShifter defaultMethodsClass exportMethodsFor: self
-]
-
-{ #category : #export }
 STestCaseFactory >> exportTests [
 	engine population
 		doWithIndex: [ :test :index |
 			test lastMessage: lastMessage.
 			self export: test with: ('test', index asString) ].
-	self exportSettingMethods.
 	self openOnGeneratedClass
 ]
 
@@ -289,7 +283,6 @@ STestCaseFactory >> reportClass [
 STestCaseFactory >> resetToDefaults [
   super initialize.
   SPlatform resetRandomGenerator.
-  SSCustomMethods removeMethods.
   self class resetToDefaults.
   SSTestShifter resetToDefaults.
   SGAEngine resetToDefaults
@@ -378,8 +371,8 @@ STestCaseFactory >> setUpEngine [
 { #category : #'set strategies' }
 STestCaseFactory >> setUpMethod: aString [
 	aString ifNil: [ ^ self ].
-	SSCustomMethods compile: aString.
-	self settingMethodClass: SSCustomMethods.
+	self generatedClass compile: aString.
+	self settingMethodClass: self generatedClass.
 ]
 
 { #category : #'set strategies' }
@@ -426,8 +419,8 @@ STestCaseFactory >> tearDown [
 { #category : #'set strategies' }
 STestCaseFactory >> tearDownMethod: aString [
 	aString ifNil: [ ^ self ].
-	SSCustomMethods compile: aString.
-	self settingMethodClass: SSCustomMethods.
+	self generatedClass compile: aString.
+	self settingMethodClass: self generatedClass.
 ]
 
 { #category : #accessing }
@@ -460,4 +453,11 @@ STestCaseFactory >> uninstall [
 STestCaseFactory >> vizClass: aClass [
 	STestCaseFactory class compile: 
 		'vizClass', String cr,'	^ ', aClass printString
+]
+
+{ #category : #'set strategies' }
+STestCaseFactory >> waitThreadMethod: aString [
+	aString ifNil: [ ^ self ].
+	self generatedClass compile: aString.
+	self settingMethodClass: self generatedClass.
 ]
