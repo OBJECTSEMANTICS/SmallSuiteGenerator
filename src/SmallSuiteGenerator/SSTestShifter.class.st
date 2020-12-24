@@ -38,7 +38,7 @@ SSTestShifter class >> defaultInterpreterClass [
 
 { #category : #settings }
 SSTestShifter class >> defaultMethodsClass [
-	^ GASFooTest
+	^ SConfigGenerationTestCase
 ]
 
 { #category : #settings }
