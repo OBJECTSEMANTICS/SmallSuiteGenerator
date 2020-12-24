@@ -1,6 +1,10 @@
 Class {
 	#name : #SConfigGenerationTestCase,
 	#superclass : #TestCase,
+	#instVars : [
+		'executionBlock',
+		'executedCase'
+	],
 	#classVars : [
 		'defaultTypeInfo',
 		'typeInfos'
@@ -229,18 +233,6 @@ SConfigGenerationTestCase class >> logs: aBoolean [
 ]
 
 { #category : #settings }
-SConfigGenerationTestCase class >> methodClass [
-
-	^ SSNullMethods
-]
-
-{ #category : #setter }
-SConfigGenerationTestCase class >> methodClass: aClass [
-
-	self compileMethod: #methodClass withReturn: aClass printString
-]
-
-{ #category : #settings }
 SConfigGenerationTestCase class >> nsuperclasses [
 
 	^ 0
@@ -275,6 +267,15 @@ SConfigGenerationTestCase class >> numberOfStatements: aNumber [
 
 	self compileMethod: #numberOfStatements withReturn: aNumber printString
 	
+]
+
+{ #category : #execution }
+SConfigGenerationTestCase class >> on: aTestCase execute: aBlock [
+
+	^ self new
+		executedCase: aTestCase;
+		executeBlock: aBlock;
+		runContext
 ]
 
 { #category : #settings }
@@ -340,18 +341,6 @@ SConfigGenerationTestCase class >> selectionStrategyTestCase: aClass [
 ]
 
 { #category : #settings }
-SConfigGenerationTestCase class >> setUpMethod [
-
-	^ nil
-]
-
-{ #category : #setter }
-SConfigGenerationTestCase class >> setUpMethod: aString [
-
-	self compileMethod: #setUpMethod withReturn: aString storeString
-]
-
-{ #category : #settings }
 SConfigGenerationTestCase class >> stopIterations [
 
 	^ 10
@@ -373,18 +362,6 @@ SConfigGenerationTestCase class >> targetPackageRegex [
 SConfigGenerationTestCase class >> targetPackageRegex: aString [
 
 	self compileMethod: #targetPackageRegex withReturn: aString storeString
-]
-
-{ #category : #settings }
-SConfigGenerationTestCase class >> tearDownMethod [
-
-	^ nil
-]
-
-{ #category : #setter }
-SConfigGenerationTestCase class >> tearDownMethod: aString [
-
-	self compileMethod: #tearDownMethod withReturn: aString storeString
 ]
 
 { #category : #settings }
@@ -420,14 +397,35 @@ SConfigGenerationTestCase class >> typeInfos [
 	^ typeInfos 
 ]
 
-{ #category : #settings }
-SConfigGenerationTestCase class >> vizClass [
-
-	^ SGANullViz 
-]
-
 { #category : #setter }
 SConfigGenerationTestCase class >> vizClass: aClass [
 
 	self compileMethod: #vizClass withReturn: aClass printString
+]
+
+{ #category : #actions }
+SConfigGenerationTestCase >> executeBlock: aBlock [ 
+	
+	executionBlock := aBlock
+]
+
+{ #category : #actions }
+SConfigGenerationTestCase >> executedCase: aTestCase [ 
+
+	executedCase := aTestCase
+]
+
+{ #category : #actions }
+SConfigGenerationTestCase >> runContext [
+
+	| context |
+	self setUp.
+	context := executionBlock value: executedCase.
+	self waitThread.
+	self tearDown.
+	^ context
+]
+
+{ #category : #running }
+SConfigGenerationTestCase >> waitThread [
 ]

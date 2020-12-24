@@ -44,6 +44,18 @@ SSMetaInterpreter >> initialize [
 	context at:'self' put: SPlatform testCaseClass new.
 ]
 
+{ #category : #accessing }
+SSMetaInterpreter >> setUp [
+
+	(context at: 'self') setUp
+]
+
+{ #category : #accessing }
+SSMetaInterpreter >> tearDown [
+
+	(context at: 'self') tearDown
+]
+
 { #category : #initialization }
 SSMetaInterpreter >> visitAbstractMessage: aMessage [
 	| object objArgs result|
@@ -106,4 +118,10 @@ SSMetaInterpreter >> visitVariable: aVariable [
 	^ aVariable id 
 		ifNil: [ Smalltalk at: aVariable varName ]
 		ifNotNil: [ context at: aVariable fullName ].
+]
+
+{ #category : #accessing }
+SSMetaInterpreter >> waitThread [
+
+	(context at: 'self') waitThread
 ]
