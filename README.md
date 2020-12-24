@@ -137,7 +137,7 @@ GASSTeacherTest populationSize: 25
 * `setUpMethod and tearDownMethod`: In case the class from which you want to generate tests needs some necessary configuration before and after executing each test, it is necessary that you define these methods.
 
 ``` Smalltalk
-GASSTeacherTest 
+(STestCaseFactoryPharo from: GASSTeacherTest) 
     setUpMethod: 'setUp
 	^ self';
     tearDownMethod: 'tearDown
@@ -213,15 +213,15 @@ generated addTypeInfo: typeInfo withKey: 'sfoo';
 	populationSize: 20;
 	stopIterations: 5;
 	targetPackageRegex: 'SmallSuiteGenerator-Scenario';
-	outputPackageName: 'Generated';
-	setUpMethod: 'setUp
-	^ self';
-	tearDownMethod: 'tearDown
-	^ self'.
+	outputPackageName: 'Generated'.
 	
 (STestCaseFactoryPharo from: SSFooTestGenerated )
 	generateViews;
 	seedBlock: aBlock;
+	setUpMethod: 'setUp
+	^ self';
+	tearDownMethod: 'tearDown
+	^ self';
     createTestCases;
     yourself.
 ```
