@@ -397,16 +397,16 @@ SConfigGenerationTestCase class >> typeInfos [
 	^ typeInfos 
 ]
 
-{ #category : #setter }
-SConfigGenerationTestCase class >> vizClass: aClass [
-
-	self compileMethod: #vizClass withReturn: aClass printString
-]
-
 { #category : #settings }
 SConfigGenerationTestCase class >> vizClass [
 
 	^ SGANullViz 
+]
+
+{ #category : #setter }
+SConfigGenerationTestCase class >> vizClass: aClass [
+
+	self compileMethod: #vizClass withReturn: aClass printString
 ]
 
 { #category : #actions }

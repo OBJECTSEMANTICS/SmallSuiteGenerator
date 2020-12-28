@@ -1121,3 +1121,12 @@ SSTestShifter >> variablesWithReturnType: type [
 		select: [:stm | stm returnType = type ] 
 		thenCollect: [:stm |  stm variable ]
 ]
+
+{ #category : #accessing }
+SSTestShifter >> waitThreadStatement [
+
+	^ [ Array with: (SSGParser
+		parseFrom: (SPlatform rbParserClass parseExpression: 'self waitThread')) ]
+		on: Error
+		do: [ #() ]
+]

@@ -233,7 +233,7 @@ SSTestCase >> printStringWithAssertions [
 	^ String streamContents: [ :stream | 
 		self printerClass printTempVariables: self on: stream.
 		(self printerClass on: stream) 
-			visitStatements: self statements, self lastStatements,self assertions.
+			visitStatements: self statements, self waitThreadStatement, self lastStatements,self assertions.
 		].
 ]
 
