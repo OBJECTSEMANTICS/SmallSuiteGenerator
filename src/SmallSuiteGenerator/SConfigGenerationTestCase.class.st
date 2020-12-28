@@ -403,6 +403,12 @@ SConfigGenerationTestCase class >> vizClass: aClass [
 	self compileMethod: #vizClass withReturn: aClass printString
 ]
 
+{ #category : #settings }
+SConfigGenerationTestCase class >> vizClass [
+
+	^ SGANullViz 
+]
+
 { #category : #actions }
 SConfigGenerationTestCase >> executeBlock: aBlock [ 
 	
