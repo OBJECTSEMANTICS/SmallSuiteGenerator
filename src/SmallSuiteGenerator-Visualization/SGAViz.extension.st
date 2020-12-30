@@ -827,7 +827,7 @@ SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on:
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor size: size on: canvas and: dataFrame [
-  	| similarityShape lines scale dict stack |
+  	| similarityShape lines scale dict stack colorScale |
 	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
 	dict := Dictionary new.
 	stack := Stack new.
@@ -836,7 +836,10 @@ SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor s
 			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
 						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
 				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
-	scale := (NSScale pow exponent:2) "NSScale linear" domain: #(0 1); range: #(0 5).
+	scale := (NSScale pow exponent:3) domain: #(0.99 1); range: #(0 5).
+	colorScale := NSScale linear 
+		range: (Array with: Color transparent with: (dictColor at: 'edgeSimilarity'));
+		domain: #(0 1).
 	lines := OrderedCollection new.
 	similarityShape shapes do: [:from | 
 		lines addAll: (similarityShape shapes 
@@ -849,13 +852,14 @@ SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor s
 						or: [" from model idPopulation ~= to model idPopulation "]".
 				selected ifTrue: [ stack push: jacIndex ].
 				selected ]
-			thenCollect: [ :to | 
+			thenCollect: [ :to | | v |
+				v := stack pop.
 				RSLine new 
 					model: from model -> to model;
 					from: from;
-					color: (dictColor at: 'edgeSimilarity');
+					color: (colorScale scale: v);
 					to: to;
-					width: (scale scale: stack pop);
+					width: (scale scale: v);
 					yourself ] ) ].
 		self addRowsOn: dataFrame of: dict.
 		
@@ -908,7 +912,7 @@ SGAViz >> similarityGroup: testIds ofColor: dictColor size: size on: canvas and:
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: size on: canvas and: dataFrame [
-  	| similarityShape lines scale dict stack |
+  	| similarityShape lines scale dict stack colorScale |
 	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
 	dict := Dictionary new.
 	stack := Stack new.
@@ -917,7 +921,10 @@ SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: siz
 			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
 						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
 				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
-	scale := "NSScale linear" (NSScale pow exponent: 2) range: #(0 5); domain: #(0 1).
+	scale := (NSScale pow exponent: 3) range: #(0 5); domain: #(0.99 1).
+	colorScale := NSScale linear 
+		range: (Array with: Color transparent with: (dictColor at: 'edgeSimilarity'));
+		domain: #(0 1).
 	lines := OrderedCollection new.
 	similarityShape shapes do: [:from | 
 		lines addAll: (similarityShape shapes 
@@ -930,13 +937,14 @@ SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: siz
 						or: [" from model idPopulation ~= to model idPopulation "]".
 				selected ifTrue: [ stack push: jacIndex ].
 				selected ]
-			thenCollect: [ :to |
+			thenCollect: [ :to | | v |
+				v := stack pop.
 				RSLine new 
 					model: from model -> to model;
 					from: from;
-					color: (dictColor at: 'edgeSimilarity');
+					color: (colorScale scale: v);
 					to: to;
-					width: (scale scale: stack pop);
+					width: (scale scale: v);
 					yourself ] ) ].
 		self addRowsOn: dataFrame of: dict.
 		"RSNormalizer new
