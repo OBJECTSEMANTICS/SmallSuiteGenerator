@@ -382,7 +382,7 @@ STestCaseFactory >> setUpEngine [
 	  numberOfStatements: self generatedClass numberOfStatements;
 	  populationSize: self generatedClass populationSize;
 	  stopIterations: self generatedClass stopIterations;
-	  numberOfGenerations: self generatedClass numberOfGenerations;
+	  "numberOfGenerations: self generatedClass numberOfGenerations;"
 	  selectionStrategyTestCase: self generatedClass selectionStrategyTestCase new;
 	  crossoverStrategy: self generatedClass crossoverStrategy;
 	  crossoverOperator: self generatedClass crossoverOperator

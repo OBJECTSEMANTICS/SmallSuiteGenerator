@@ -254,7 +254,6 @@ SConfigGenerationTestCase class >> nsuperclasses: aNumber [
 
 { #category : #settings }
 SConfigGenerationTestCase class >> numberOfGenerations [
-
 	^ 5
 ]
 

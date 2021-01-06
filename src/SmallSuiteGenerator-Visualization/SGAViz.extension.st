@@ -809,8 +809,8 @@ SGAViz >> setPositions: barGroup using: ys [
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on: canvas and: fileName [
-	| dF names shapes file rowNames |
-	file := (fileName, '.csv') asFileReference.
+	| dF names shapes "file" rowNames |
+	"file := (fileName, '.csv') asFileReference."
 	names := (1 to: self engine populationSize) collect: [ :n | 't', (n asString) ].
 	rowNames := OrderedCollection new.
 	1 to: self engine numberOfGenerations + 1
@@ -821,7 +821,7 @@ SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on:
 		"dF addRow: ((Array new: names size) at: 1 put: (i asString, ' Generation'); yourself) asDataSeries."
 		self similarityCoverageShape: log population with: testIds ofColor: dictColor size: size on: canvas and: dF
 	].
-	dF writeToCsv: file.
+	"dF writeToCsv: file."
 	^ shapes
 ]
 
@@ -906,7 +906,7 @@ SGAViz >> similarityGroup: testIds ofColor: dictColor size: size on: canvas and:
 		"dF addRow: ((Array new: names size) at: 1 put: (i asString, ' Generation'); yourself) asDataSeries."
 		self similarityShape: log population with: testIds ofColor: dictColor size: size on: canvas and: dF
 	].
-	dF writeToCsv: (fileName, '.csv') asFileReference.
+	"dF writeToCsv: (fileName, '.csv') asFileReference."
 	^ shapes
 ]
 
