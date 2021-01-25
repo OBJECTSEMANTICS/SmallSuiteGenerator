@@ -202,10 +202,10 @@ STestCaseFactory >> generatedClass: anObject [
 
 { #category : #'as yet unclassified' }
 STestCaseFactory >> gtInspectorContentsIn: mainComposite [
-  < gtInspectorPresentationOrder: -1>
+  "< gtInspectorPresentationOrder: -1>
   ^ mainComposite roassal3
      title: [ 'TypeInfo Evolution' ];
-     initializeCanvas: [self class vizClass infoTypeEvolution: self ]
+     initializeCanvas: [self class vizClass infoTypeEvolution: self ]"
 ]
 
 { #category : #accessing }

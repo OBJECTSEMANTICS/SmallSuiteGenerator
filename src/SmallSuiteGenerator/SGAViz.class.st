@@ -31,9 +31,9 @@ SGAViz class >> gtInspectorCanvasIn: composite for: testCaseFactory [
 
 { #category : #'instance creation' }
 SGAViz class >> gtInspectorViewIn: composite for: testCaseFactory [
-	composite roassal3
+	"composite roassal3
 		title: 'Evolution';
-		initializeCanvas: [ self new aTestCaseFactory: testCaseFactory; visualizeEvolutionFitness ]
+		initializeCanvas: [ self new aTestCaseFactory: testCaseFactory; visualizeEvolutionFitness ]"
 ]
 
 { #category : #'as yet unclassified' }
