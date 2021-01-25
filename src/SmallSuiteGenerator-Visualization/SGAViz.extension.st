@@ -118,11 +118,11 @@ SGAViz >> addLegend: associations on: container withFontColor: color key: string
 SGAViz >> addLegendOn: canvas locations: locations with: dictColor [
 	| colors |
 	self addLegend: (Array with: 'More-similar' -> (dictColor at: 'edgeSimilarity')
-		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (500@0) ].
+		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (1000@0) ].
 		
 	self addLegend: (Array with: 'Class coverage' -> (dictColor at: 'classCoverage')
 		with: 'Method coverage' -> (dictColor at: 'methodCoverage')
-		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (1250@100 negated) ].
+		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (1750@100 negated) ].
 		
 	colors := dictColor at: 'rangeMethodColor'.
 	self addLegend: (Array  
@@ -464,10 +464,10 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	infoMethodShape := infoMethodShape at: 1.
 	height := infoMethodShape height.
 	contributionShape := self contributionShapeOfHeight: height color: dictColor and: (ys collect: #key).
-	similarityCoverageShape := self similarityCoverageShape: canvas withHeight: height testIds: testIds color: dictColor ys: (ys collect: [:ass | ass key + (ass value / 2)]) and: self fileNameToExport.
+	similarityCoverageShape := self similarityCoverageShape: canvas withHeight: height testIds: testIds color: dictColor ys: (ys collect: [:ass | ass key + (ass value / 2)]).
 	
 	"similarity of static methods"
-	similarityShape := self similarityShape: canvas withHeight: height testIds: testIds color: dictColor ys: (ys collect: [:ass | ass key + (ass value / 2)]) and: self fileNameToExport.
+	similarityShape := self similarityShape: canvas withHeight: height testIds: testIds color: dictColor ys: (ys collect: [:ass | ass key + (ass value / 2)]).
 	lines := similarityShape second.
 	similarityShape := similarityShape first.
 	similarityShape translateTo: (infoMethodShape encompassingRectangle topLeft x - (similarityShape encompassingRectangle width) - (similarityCoverageShape first encompassingRectangle width) - (contributionShape encompassingRectangle width) - 100) @ similarityShape  position y.
@@ -519,7 +519,7 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	posBorder := infoMethodShape encompassingRectangle topLeft x - (contributionShape encompassingRectangle width + similarityCoverageShape encompassingRectangle width + 50).
 	border := self borderOfSize: similarityCoverageShape width @ (height + 20) andColor: (dictColor at: 'border').
 	border translateTo: posBorder @ infoMethodShape position y.
-	posLegend nextPut: posBorder @ (height + 30).
+	"posLegend nextPut: posBorder @ (height + 30)."
 	xs nextPut: posBorder.
 	canvas addShape: border.
 	
@@ -551,7 +551,7 @@ SGAViz >> generationVisualizationWithColor: dictColor [
 	xs nextPut: posBorder.
 	canvas addShape: border.
 	"add descriptive text on canvas"
-	"self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: infoMethodShape position y with: xs)." "(Array with: ((infoMethodShape width / 10) negated ) with: -200)"
+	self addDescriptiveTextOn: canvas ofColor: (dictColor at: 'font') and: (Array with: infoMethodShape position y with: xs). "(Array with: ((infoMethodShape width / 10) negated ) with: -200)"
 	self addLegendOn: canvas locations: posLegend with: dictColor.
 	canvas @ RSCanvasController.
 	^ canvas
@@ -590,7 +590,7 @@ SGAViz >> infoMethodShapesOn: canvas ofColor: dictColor highlight: highlights [
 			barGroup add: (self progressBarFrom: testCases size value to: (self logs at: generationNumber) population size ofColor: dictColor).
 			group
 	]).
-	RSVerticalLineLayout new gapSize: 200;  on: generationGroup.
+	RSVerticalLineLayout new gapSize: 300;  on: generationGroup.
 	shapes := generationGroup flatCollect: #yourself.
 	ys := (shapes groupedBy: [ :s | s encompassingRectangle origin y ]) associations 
 		collect: [:assoc | assoc key -> (assoc value collect: [:comp | comp extent y ]) max ].
@@ -637,7 +637,7 @@ SGAViz class >> lightColors [
 		at: 'highlightMethod' put: Color cyan"(Color r: 111/255 g: 1 b: 233/255)";
 		"at: 'fontMethodBox' put: Color white;"
 		at: 'fontMethodBox' put: Color black;
-		at: 'border' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
+		at: 'border' put: Color transparent "(Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882)";
 		at: 'axis' put: (Color r: 0.12549019607843137 g: 0.1803921568627451 b: 0.23529411764705882);
 		at: 'fittestCoverage' put: (Color r: 0 g: 1 b: 0.67);
 		at: 'averageCoverage' put: (Color r: 0.5063538611925709 g: 0.5259042033235581 b: 0.8357771260997068);
@@ -808,25 +808,16 @@ SGAViz >> setPositions: barGroup using: ys [
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on: canvas and: fileName [
-	| dF names shapes "file" rowNames |
-	"file := (fileName, '.csv') asFileReference."
-	names := (1 to: self engine populationSize) collect: [ :n | 't', (n asString) ].
-	rowNames := OrderedCollection new.
-	1 to: self engine numberOfGenerations + 1
-			do: [ :n | rowNames add: (n asString, ' Generation');
-				addAll: (names collect: [:str | n asString, str ]) ].
-	dF := DataFrame withRowNames: rowNames columnNames: names.
+SGAViz >> similarityCoverageGroupOfColor: dictColor with: testIds size: size on: canvas [
+	| shapes |
 	shapes := self engine logs collectWithIndex: [ :log :i |
-		"dF addRow: ((Array new: names size) at: 1 put: (i asString, ' Generation'); yourself) asDataSeries."
-		self similarityCoverageShape: log population with: testIds ofColor: dictColor size: size on: canvas and: dF
+		self similarityCoverageShape: log population with: testIds ofColor: dictColor size: size on: canvas
 	].
-	"dF writeToCsv: file."
 	^ shapes
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor size: size on: canvas and: dataFrame [
+SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor size: size on: canvas [
   	| similarityShape lines scale dict stack colorScale |
 	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
 	dict := Dictionary new.
@@ -861,7 +852,6 @@ SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor s
 					to: to;
 					width: (scale scale: v);
 					yourself ] ) ].
-		self addRowsOn: dataFrame of: dict.
 		
 		"RSNormalizer new
 		""from: jacIndexes min * factor 0;
@@ -874,12 +864,12 @@ SGAViz >> similarityCoverageShape: population with: testIds ofColor: dictColor s
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityCoverageShape: canvas withHeight: height testIds: testIds color: dictColor ys: ys and: fileName [
+SGAViz >> similarityCoverageShape: canvas withHeight: height testIds: testIds color: dictColor ys: ys [
   	| groupSimilarity element scale x lines |
 	scale := NSScale linear
 		domain: (Array with: 0 with: ys size);
 		range: (Array with: 0 with: height).
-	groupSimilarity := self similarityCoverageGroupOfColor: dictColor with: testIds size: (scale scale: 0.8) on: canvas and: (fileName, 'CoverageSimilarity').
+	groupSimilarity := self similarityCoverageGroupOfColor: dictColor with: testIds size: (scale scale: 0.9) on: canvas.
 	lines := (groupSimilarity collect: #second) asGroup.
 	groupSimilarity := (groupSimilarity collect: #first) asGroup.
 	x := groupSimilarity first width / 2.0.
@@ -894,74 +884,21 @@ SGAViz >> similarityCoverageShape: canvas withHeight: height testIds: testIds co
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityGroup: testIds ofColor: dictColor size: size on: canvas and: fileName [
-	| dF names shapes rowNames |
-	names := (1 to: self engine populationSize) collect: [ :n | 't', (n asString) ].
-	rowNames := OrderedCollection new.
-	1 to: self engine numberOfGenerations + 1
-			do: [ :n | rowNames add: (n asString, ' Generation');
-				addAll: (names collect: [:str | n asString, str ]) ].
-	dF := DataFrame withRowNames: rowNames columnNames: names.
+SGAViz >> similarityGroup: testIds ofColor: dictColor size: size on: canvas [
+	| shapes |
 	shapes := self engine logs collectWithIndex: [ :log :i |
-		"dF addRow: ((Array new: names size) at: 1 put: (i asString, ' Generation'); yourself) asDataSeries."
-		self similarityShape: log population with: testIds ofColor: dictColor size: size on: canvas and: dF
+		self similarityShape: log population with: testIds ofColor: dictColor size: size on: canvas
 	].
-	"dF writeToCsv: (fileName, '.csv') asFileReference."
 	^ shapes
 ]
 
 { #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: size on: canvas and: dataFrame [
-  	| similarityShape lines scale dict stack colorScale |
-	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
-	dict := Dictionary new.
-	stack := Stack new.
-	"factor := 1.
-	jacIndexes := (population flatCollect: [ :tC1 |
-			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
-						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
-				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
-	scale := (NSScale pow exponent: 3) range: #(0 5); domain: #(0.99 1).
-	colorScale := NSScale linear 
-		range: (Array with: Color transparent with: (dictColor at: 'edgeSimilarity'));
-		domain: #(0 1).
-	lines := OrderedCollection new.
-	similarityShape shapes do: [:from | 
-		lines addAll: (similarityShape shapes 
-			select: [ :to | | selected jacIndex |
-				jacIndex := self jaccarIndexStaticOf: from model and: to model.
-				dict at: (from model generationNumber -> from model idPopulation)
-					ifPresent: [ :col | col add: to model idPopulation -> jacIndex ] 					
-					ifAbsentPut: [ OrderedCollection new add: to model idPopulation -> jacIndex; yourself ].
-				selected := "from model generationNumber ~= to model generationNumber 
-						or: [" from model idPopulation ~= to model idPopulation "]".
-				selected ifTrue: [ stack push: jacIndex ].
-				selected ]
-			thenCollect: [ :to | | v |
-				v := stack pop.
-				RSLine new 
-					model: from model -> to model;
-					from: from;
-					color: (colorScale scale: v);
-					to: to;
-					width: (scale scale: v);
-					yourself ] ) ].
-		self addRowsOn: dataFrame of: dict.
-		"RSNormalizer new
-		shapes: lines;
-		executeBlock: [ :shape :val | shape width: val ];
-		normalize: [ :assoc | self jaccarIndexStaticOf: assoc key and: assoc value ]."
-		^ Array with: similarityShape with: lines asGroup
-	
-]
-
-{ #category : #'*SmallSuiteGenerator-Visualization' }
-SGAViz >> similarityShape: canvas withHeight: height testIds: testIds color: dictColor ys: ys and: fileName [
+SGAViz >> similarityShape: canvas withHeight: height testIds: testIds color: dictColor ys: ys [
   	| groupSimilarity element scale x lines |
 	scale := NSScale linear
 		domain: (Array with: 0 with: ys size);
 		range: (Array with: 0 with: height).
-	groupSimilarity := self similarityGroup: testIds ofColor: dictColor size: (scale scale: 0.8) on: canvas and: (fileName, 'Similarity').
+	groupSimilarity := self similarityGroup: testIds ofColor: dictColor size: (scale scale: 0.9) on: canvas.
 	lines := (groupSimilarity collect: #second) asGroup.
 	groupSimilarity := (groupSimilarity collect: #first) asGroup.
 	x := groupSimilarity first width / 2.0.

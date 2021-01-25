@@ -378,3 +378,47 @@ SGAViz >> similarityByGeneration: dictColor [
 	^ canvas
 	
 ]
+
+{ #category : #'as yet unclassified' }
+SGAViz >> similarityShape: population with: testIds ofColor: dictColor size: size on: canvas [
+  	| similarityShape lines scale dict stack colorScale |
+	similarityShape := self groupTestCases: population with: testIds ofColor: dictColor and: size.
+	dict := Dictionary new.
+	stack := Stack new.
+	"factor := 1.
+	jacIndexes := (population flatCollect: [ :tC1 |
+			population select: [ :tC2 | tC2 generationNumber ~= tC1 generationNumber 
+						or: [ tC2 idPopulation ~= tC1 idPopulation ] ]
+				thenCollect: [ :tC2 | self jaccarIndexOf: tC1 and: tC2 ] ]) asSet."
+	scale := (NSScale pow exponent: 3) range: #(0 5); domain: #(0.99 1).
+	colorScale := NSScale linear 
+		range: (Array with: Color transparent with: (dictColor at: 'edgeSimilarity'));
+		domain: #(0 1).
+	lines := OrderedCollection new.
+	similarityShape shapes do: [:from | 
+		lines addAll: (similarityShape shapes 
+			select: [ :to | | selected jacIndex |
+				jacIndex := self jaccarIndexStaticOf: from model and: to model.
+				dict at: (from model generationNumber -> from model idPopulation)
+					ifPresent: [ :col | col add: to model idPopulation -> jacIndex ] 					
+					ifAbsentPut: [ OrderedCollection new add: to model idPopulation -> jacIndex; yourself ].
+				selected := "from model generationNumber ~= to model generationNumber 
+						or: [" from model idPopulation ~= to model idPopulation "]".
+				selected ifTrue: [ stack push: jacIndex ].
+				selected ]
+			thenCollect: [ :to | | v |
+				v := stack pop.
+				RSLine new 
+					model: from model -> to model;
+					from: from;
+					color: (colorScale scale: v);
+					to: to;
+					width: (scale scale: v);
+					yourself ] ) ].
+		"RSNormalizer new
+		shapes: lines;
+		executeBlock: [ :shape :val | shape width: val ];
+		normalize: [ :assoc | self jaccarIndexStaticOf: assoc key and: assoc value ]."
+		^ Array with: similarityShape with: lines asGroup
+	
+]
