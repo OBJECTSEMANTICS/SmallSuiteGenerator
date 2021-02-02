@@ -217,7 +217,10 @@ SSTestCase >> printDescriptiveComment [
 
 { #category : #printing }
 SSTestCase >> printOn: aStream [
-
+	aStream 
+		nextPut: $t;
+		nextPutAll: idPopulation asString;
+		nextPutAll: String cr.
 	self accept: (self printerClass on: aStream).
 ]
 
