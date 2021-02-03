@@ -94,19 +94,24 @@ SGAViz >> addLegend: associations on: container withFontColor: color key: string
      defaultLabel: (self rsLabelWith: color);
      yourself.
 	stack := Stack new push: 2; push: 4; yourself.
-  associations do: [:assoc |  | colorBox |
+  associations doWithIndex: [:assoc :index |  | colorBox |
         colorBox := assoc value.
         colorBox isArray 
 			ifFalse: [ string = 'similarity' 
 							ifTrue: [ 
 								legend text: assoc key withShape: 
 								(RSLine new color: assoc value; width: stack pop; yourself; startPoint: 30@0; endPoint: 0@0; yourself) ] 
-							ifFalse: [ legend text: assoc key withBoxColor: colorBox ] ] 
-			ifTrue: [ colorBox first isColor 
-							ifTrue: [ legend text: assoc key withShape: (legend defaultBox
+							ifFalse: [  
+								legend text: assoc key withBoxColor: colorBox ] ]
+			ifTrue: [ string = 'method' 
+				ifTrue: [ index == 1 
+					ifTrue: [ legend text: assoc key withShape: (RSEllipse new color: ((LinearGradientPaint fromArray: colorBox) start: -20@0; stop: 20@0); extent: 20 asPoint; yourself) ] 
+					ifFalse: [ legend text: assoc key withShape: (RSBox new size: 20; paint: ((LinearGradientPaint fromArray: colorBox) start: -20@0; stop: 20@0); yourself) ] ] 
+				ifFalse: [ colorBox first isColor 
+					ifTrue: [ legend text: assoc key withShape: (legend defaultBox
                              border: (self rsBorderWithColorBox: colorBox);
                              paint: colorBox first) ] 
-							ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ].
+					ifFalse: [ legend text: assoc key withFadingRamp: colorBox ] ] ] ].
   legend legendDo: [:l |  l
            padding: 5;
            scaleBy: 2.5 ].
@@ -117,18 +122,22 @@ SGAViz >> addLegend: associations on: container withFontColor: color key: string
 { #category : #'*SmallSuiteGenerator-Visualization' }
 SGAViz >> addLegendOn: canvas locations: locations with: dictColor [
 	| colors |
-	self addLegend: (Array with: 'More-similar' -> (dictColor at: 'edgeSimilarity')
-		with: ('Less-similar' -> (dictColor at: 'edgeSimilarity'))) on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (1000@0) ].
+	self addLegend: (Array with: 'Similar' -> (dictColor at: 'edgeSimilarity')
+		"with: ('Not-very-similar' -> (Color white))") on: canvas withFontColor: (dictColor at: 'font') key: 'similarity' and: [ :legend | legend location below left offset: (1000@0) ].
 		
 	self addLegend: (Array with: 'Class coverage' -> (dictColor at: 'classCoverage')
 		with: 'Method coverage' -> (dictColor at: 'methodCoverage')
-		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (1750@100 negated) ].
+		with: 'Branch coverage' -> (dictColor at: 'statementCoverage')) on: canvas withFontColor: (dictColor at: 'font') key: 'coverage' and: [:legend | legend location below left "legend translateTo: locations nextOrNil" offset: (1750@150 negated) ].
 		
 	colors := dictColor at: 'rangeMethodColor'.
 	self addLegend: (Array  
 			with: 'Testcase (TC)' -> (dictColor at: 'backgroundTestCase') 
 			with: 'TC with higher coverage than parents' -> (Array with: (dictColor at: 'backgroundTestCase') with: (dictColor at: 'borderTestCase'))
 			with: 'Executed methods' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') key: 'range' and: [ :legend | legend location below center "legend translateTo: locations nextOrNil " offset: 0@150 negated ].
+			
+	self addLegend: (Array  
+			with: 'Methods called directly' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))
+			with: 'Methods called indirectly' -> (Array with: 0 -> colors first with: 1 -> (colors at: 19))) on: canvas  withFontColor: (dictColor at: 'font') key: 'method' and: [ :legend | legend location below right offset: -1600@150 negated ].
 			
 	self addLegend: (Array with: 'Lowest-Fitness' -> (dictColor at: 'lowestCoverage')
 		with: ('Average-Fitness' -> (dictColor at: 'averageCoverage'))

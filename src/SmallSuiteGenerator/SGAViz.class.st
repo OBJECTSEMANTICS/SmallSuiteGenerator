@@ -225,7 +225,6 @@ SGAViz >> groupTestCases: testCases with: testIds ofColor: dictColor and: size [
 				size: (size/12)@(size/12); 
 				color: (((testIds at: tC generationNumber ifAbsent: [#()]) includes: tC idPopulation) ifTrue: [ dictColor at: 'markedTestCaseNode' ] ifFalse: [ 'testcaseNode' ] );
 				model: tC;
-				draggable;
 				yourself);
 			addShape: (RSLabel new 
 				text: 't', tC idPopulation asString;
@@ -241,8 +240,7 @@ SGAViz >> groupTestCases: testCases with: testIds ofColor: dictColor and: size [
 	^ RSComposite new
 		shapes: (group collect: #yourself);
 		"paint: Color blue;"
-		model: testCases;
-		draggable
+		model: testCases
 	
 ]
 
