@@ -248,7 +248,7 @@ STestCaseFactory >> logClass: aClass [
 
 { #category : #actions }
 STestCaseFactory >> mutationRate: aFloat [ 	
-	self assert: [ aFloat > 0 and: [ aFloat <= 1 ] ] description: [ 'Mutation rate must be greater than 0 and less or equal than 1' ].
+	self assert: [ aFloat isNumber and: [ aFloat > 0 and: [ aFloat <= 1 ] ] ] description: [ 'Mutation rate must be greater than 0 and less or equal than 1' ].
 	engine mutationRate: aFloat
 ]
 
@@ -264,14 +264,14 @@ STestCaseFactory >> numberOfGenerations [
 
 { #category : #initialization }
 STestCaseFactory >> numberOfGenerations: aNumber [
-	self assert: [ aNumber > 1 ] description: [ 'Number of generations should be greater than 1' ].
+	self assert: [ aNumber isInteger and: [ aNumber > 1 ] ] description: [ 'Number of generations must be integer and greater than 1' ].
 	engine numberOfGenerations: aNumber.
 	numberOfIterations := aNumber.
 ]
 
 { #category : #configuration }
 STestCaseFactory >> numberOfStatements: anInteger [
-	self assert: [ anInteger > 1 ] description: [ 'Number must be greater than 1' ].
+	self assert: [ anInteger isInteger and: [ anInteger > 1 ] ] description: [ 'Number must be integer and greater than 1' ].
 	self generatedClass numberOfStatements: anInteger
 ]
 
@@ -292,7 +292,7 @@ STestCaseFactory >> outputPackageName: anObject [
 
 { #category : #configuration }
 STestCaseFactory >> populationSize: anInteger [
-	self assert: [ anInteger > 1 ] description: [ 'Population size must be greater than 1' ].
+	self assert: [ anInteger isInteger and: [ anInteger > 1 ] ] description: [ 'Population size must be integer and greater than 1' ].
 	self generatedClass populationSize: anInteger.
 ]
 
@@ -326,7 +326,7 @@ STestCaseFactory >> run: aNumber [
 
 { #category : #'instance creation' }
 STestCaseFactory >> seed: aNumber [ 
-	self assert: [ aNumber > 0 ] description: [ 'The seed must be positive and greater than 0' ].
+	self assert: [ aNumber isInteger and: [ aNumber > 0 ] ] description: [ 'The seed must be positive and greater than 0' ].
 	initialSeed := aNumber.
 	SPlatform seed: aNumber
 ]
