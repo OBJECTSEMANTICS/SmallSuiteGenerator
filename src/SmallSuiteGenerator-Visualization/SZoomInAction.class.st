@@ -8,7 +8,7 @@ Class {
 SZoomInAction >> execute [
 	| canvas keyNavigation |
 	canvas := self roassalCanvas.
-	keyNavigation := canvas controllerInteraction interactions at: RSKeyNavigationCanvas.
+	keyNavigation := canvas controllerInteraction interactions at: RSKeyNavigationCanvasInteraction.
 	keyNavigation zoomIn: canvas
 ]
 
