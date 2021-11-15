@@ -14,13 +14,13 @@ Class {
 }
 
 { #category : #'instance creation' }
-SMultiFitnessFunction class >> methodAndStatementCoverage [
-	| inst |
-	
-	inst := self new.
-	inst add: SMethodCoverage new weight: 0.6.
-	inst add: SStatementCoverage new weight: 0.4.
-	^ inst
+SMultiFitnessFunction class >> multiCoverage [
+  | inst |
+  inst := self new.
+  inst add: SBranchCoverage new weight: 0.2.
+  inst add: SMethodCoverage new weight: 0.5.
+  inst add: SStatementCoverage new weight: 0.3.
+  ^inst
 ]
 
 { #category : #accessing }

@@ -20,6 +20,11 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #accessing }
+SSimpleFitnessFunction class >> profiler: aProfiler [
+	^ self new profiler: aProfiler 
+]
+
 { #category : #actions }
 SSimpleFitnessFunction >> computeCoverageWith: assoc [
 	| sum |
@@ -48,6 +53,11 @@ SSimpleFitnessFunction >> consideringNSuperclasses: anInteger [
 	self updateSuperclasses.
 ]
 
+{ #category : #'as yet unclassified' }
+SSimpleFitnessFunction >> coverageCriteria: className [
+  ^self subclassResponsibility
+]
+
 { #category : #actions }
 SSimpleFitnessFunction >> fitnessByClass [
 
@@ -57,10 +67,9 @@ SSimpleFitnessFunction >> fitnessByClass [
 { #category : #actions }
 SSimpleFitnessFunction >> fitnessOf: testCase [
 	| fitness |
-	
-	fitness := self computeFitness.
-	testCase fitness at: self functionName put: fitness first.
-	testCase fitnessByClass at: self functionName put: fitness second.
+  fitness := self computeFitness.
+  testCase fitness at: self functionName put: fitness first.
+  testCase fitnessByClass at: self functionName put: fitness second
 ]
 
 { #category : #initialization }
@@ -73,17 +82,21 @@ SSimpleFitnessFunction >> initialize [
 ]
 
 { #category : #actions }
-SSimpleFitnessFunction >> run: testCaseCollection [
+SSimpleFitnessFunction >> multiFitnessByClassOf: testCase [
+  SSimpleFitnessFunction subclasses do: [:subClass |  | instance |
+        instance := subClass profiler: profiler.
+        testCase multiFitnessByClass at: instance functionName put: (instance coverageCriteria: testCase targetClassesName) ].
+	testCase multiFitnessByClass ifEmpty: [ self halt ]
+]
 
-	testCaseCollection
-		do: [ :testCase | 
-			testCase length > 0 ifTrue: [
-				profiler cleanBlocksOfMethods.
-				testCase runWithoutAssertionsAndLastStatement.
-				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
-				self fitnessOf: testCase. ]
-			ifFalse: [ testCase fitness at: self functionName put: 0 ] ]
-	
+{ #category : #actions }
+SSimpleFitnessFunction >> run: testCaseCollection [
+  testCaseCollection do: [:testCase |  testCase length > 0 ifTrue: [ profiler cleanBlocksOfMethods.
+              testCase runWithoutAssertionsAndLastStatement.
+              SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
+              self fitnessOf: testCase.
+				  self multiFitnessByClassOf: testCase
+					 ] ifFalse: [ testCase fitness at: self functionName put: 0 ] ]
 ]
 
 { #category : #accessing }

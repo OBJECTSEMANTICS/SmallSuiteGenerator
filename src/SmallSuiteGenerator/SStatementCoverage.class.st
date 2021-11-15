@@ -9,6 +9,11 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #'as yet unclassified' }
+SStatementCoverage >> coverageCriteria: className [
+  ^profiler statementCoverageCriteriaOf: className
+]
+
 { #category : #actions }
 SStatementCoverage >> fitnessByClass [
 
@@ -17,6 +22,5 @@ SStatementCoverage >> fitnessByClass [
 
 { #category : #accesing }
 SStatementCoverage >> functionName [
-
-	^ 'block-coverage'
+  ^'statement-coverage'
 ]

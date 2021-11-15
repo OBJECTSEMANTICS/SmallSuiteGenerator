@@ -314,8 +314,9 @@ STestCaseFactory >> resetToDefaults [
 
 { #category : #actions }
 STestCaseFactory >> run [
-	engine run.
-	
+  engine run;
+	generatedClass: self generatedClass;
+   saveSummaryLog
 ]
 
 { #category : #running }

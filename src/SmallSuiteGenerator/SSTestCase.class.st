@@ -14,7 +14,8 @@ Class {
 		'selectionStrategy',
 		'parents',
 		'children',
-		'properties'
+		'properties',
+		'multiFitnessByClass'
 	],
 	#category : #'SmallSuiteGenerator-Core'
 }
@@ -171,18 +172,18 @@ SSTestCase >> idPopulation: anObject [
 
 { #category : #initialization }
 SSTestCase >> initialize [
-
-   super initialize.
-   generationNumber := 1.
-   idPopulation := 1.
-	parents := OrderedCollection new.
-  	children := OrderedCollection new.
-   summaryExecutionMethods := OrderedCollection new.
-	hasErrors := false.
-	fitness := Dictionary new.
-	fitnessByClass := Dictionary new.
-	selectionStrategy := SGARouletteSelection new.
-	properties := Dictionary new.
+  super initialize.
+  generationNumber := 1.
+  idPopulation := 1.
+  parents := OrderedCollection new.
+  children := OrderedCollection new.
+  summaryExecutionMethods := OrderedCollection new.
+  hasErrors := false.
+  fitness := Dictionary new.
+  fitnessByClass := Dictionary new.
+	multiFitnessByClass := Dictionary new.
+  selectionStrategy := SGARouletteSelection new.
+  properties := Dictionary new
 ]
 
 { #category : #util }
@@ -200,6 +201,11 @@ SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
         [self length = testCase2 length and:[ self idPopulation > testCase2 idPopulation]])
                 ifTrue:[^ true]. 
     ^ false
+]
+
+{ #category : #accessing }
+SSTestCase >> multiFitnessByClass [
+	^ multiFitnessByClass	
 ]
 
 { #category : #accessing }

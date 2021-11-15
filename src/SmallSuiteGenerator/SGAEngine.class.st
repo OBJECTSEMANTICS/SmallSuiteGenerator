@@ -48,7 +48,8 @@ Class {
 		'crossoverStrategy',
 		'stopIterations',
 		'totalExecutionGA',
-		'selectionStrategyTestCase'
+		'selectionStrategyTestCase',
+		'generatedClass'
 	],
 	#category : #'SmallSuiteGenerator-GA'
 }
@@ -66,6 +67,103 @@ SGAEngine class >> resetToDefaults [
 		do: [ :val |
 			self class compile: 
 			( val key asString , String cr , '	^ ' , val value printString) ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> addResultEvolutionToLog: stream [
+  | assocs dictFitness lastLog |
+  assocs := OrderedCollection new
+     add: 'LINE' -> 'statement-coverage';
+     add: 'BRANCH' -> 'branch-coverage';
+     add: 'OUTPUT' -> 'output-coverage';
+     add: 'METHOD' -> 'method-coverage';
+     yourself.
+  lastLog := logs last.
+  dictFitness := lastLog fittestTestCase multiFitnessByClass.
+  stream
+     nextPutAll: 'Minimizing test suite';
+     nextPut: Character cr;
+     nextPutAll: 'Coing to analyze the coverage criteria';
+     nextPut: Character cr.
+  dictFitness 
+	ifEmpty: [ self halt ]
+ifNotEmpty: [ assocs do: [:assoc |  | array |
+              array := dictFitness at: assoc value.
+              stream
+                 nextPutAll: 'Coverage analysis for criterion ';
+                 nextPutAll: assoc key;
+                 nextPut: Character cr;
+                 nextPutAll: 'Coverage of criterion ';
+                 nextPutAll: assoc key;
+                 nextPutAll: ': ';
+                 nextPutAll: array third asString;
+                 nextPut: $%;
+                 nextPut: Character cr;
+                 nextPutAll: 'Total number of goals: ';
+                 nextPutAll: array first asString;
+                 nextPut: Character cr;
+                 nextPutAll: 'Number of covered goals: ';
+                 nextPutAll: array second asString;
+                 nextPut: Character cr ] ].
+  stream
+     nextPutAll: 'Generated ';
+     nextPutAll: generatedClass methods size asString;
+     nextPutAll: ' tests';
+     nextPut: Character cr.
+  dictFitness ifNotEmpty: [ stream
+           nextPutAll: 'Resulting test suites coverage: ';
+           nextPutAll: ((dictFitness values collect: #third) sum / (dictFitness size * 100) * 100 asFloat round: 3) asString;
+           nextPutAll: '% (average coverage for all fitness functiones)';
+           nextPut: Character cr ].
+  stream
+     nextPutAll: 'Writing test case ';
+     nextPutAll: generatedClass name
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> addSelectionAlgorithmToLog: stream [
+  stream
+     nextPutAll: 'Setting up search algorithm for whole suite generation: ';
+     nextPutAll: selectionStrategy class name;
+     nextPut: Character cr
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> addTestCriteriaToLog: stream [
+  stream
+     nextPutAll: '* Test criteria:';
+     nextPut: Character cr;
+     nextPutAll: '    - Line coverage';
+     nextPut: Character cr;
+     nextPutAll: '    - Branch coverage';
+     "nextPut: Character cr;
+     nextPutAll: '    - Exception';
+     nextPut: Character cr;
+     nextPutAll: '    - Mutation testing';"
+     nextPut: Character cr;
+     nextPutAll: '    - Method-Output Coverage';
+     nextPut: Character cr;
+     nextPutAll: '    - Top-Level Method Coverage';
+     "nextPut: Character cr;
+     nextPutAll: '    - No-Exception Top-Level Method Coverage';
+     nextPut: Character cr;
+     nextPutAll: '    - Context Branch Coverage';"
+     nextPut: Character cr
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> addTestGoalsToLog: stream [
+  stream
+     nextPutAll: 'Search finished after ';
+     nextPutAll: (totalExecutionGA / 1000) asFloat asString;
+     nextPut: $s;
+     nextPutAll: ' and ';
+     nextPutAll: numberOfGenerations asString;
+     nextPutAll: ' generations, ';
+     nextPutAll: 'best individual has fitness: ';
+     nextPutAll: logs last fittestTestCase fitness values first asString;
+	  nextPut: $%;
+     nextPut: Character cr
 ]
 
 { #category : #updating }
@@ -170,9 +268,8 @@ SGAEngine >> createNewPopulation [
 
 { #category : #creating }
 SGAEngine >> createRandomPopulation [
-
-	^ (1 to: populationSize) collect: [:idPop |  | value test |
-        value := self next * numberOfStatements + 1.
+  ^(1 to: populationSize) collect: [:idPop |  | value test |
+        value := (self next * numberOfStatements + 1) asInteger.
         test := SSTestCase with: typeInfo.
         test
            targetClassName: targetClassName;
@@ -180,8 +277,8 @@ SGAEngine >> createRandomPopulation [
            generateStatements: value;
            lastMessage: lastMessage;
            idPopulation: idPop;
-			  clean.
-		  selectionStrategyTestCase ifNotNil: [ test selectionStrategy: selectionStrategyTestCase ].
+           clean.
+        selectionStrategyTestCase ifNotNil: [ test selectionStrategy: selectionStrategyTestCase ].
         test ]
 ]
 
@@ -239,6 +336,11 @@ SGAEngine >> fitness: aFitness [
 	selectionStrategy fitness: aFitness
 ]
 
+{ #category : #accessing }
+SGAEngine >> generatedClass: aClass [ 
+	generatedClass := aClass
+]
+
 { #category : #initialization }
 SGAEngine >> initialize [
 
@@ -272,18 +374,15 @@ SGAEngine >> initializeMutationOperator [
 
 { #category : #initialization }
 SGAEngine >> initializePopulation [
-	| t |
-	
-	t := Time now asSeconds.
-	population ifNil: [
-	   population := self createRandomPopulation.
- 	   SExpression resetId.
-  		self computeFitness.
-   		population := self order: population.
-   		initialPopulation := population.
-		self updateTypeInfoWith: population.
-		logs add: (self logClass logOf: self inGeneration: 0 inTime: t).
-	]
+  | t |
+  t := Time now asSeconds.
+  population ifNil: [ population := self createRandomPopulation.
+        SExpression resetId.
+        self computeFitness.
+        population := self order: population.
+        initialPopulation := population.
+        self updateTypeInfoWith: population.
+        logs add: (self logClass logOf: self inGeneration: 0 inTime: t) ]
 ]
 
 { #category : #initialization }
@@ -458,6 +557,27 @@ SGAEngine >> run [
                     counter > stopIterations ifTrue: [ stopFlag := true ] ] ifFalse: [ counter := 0.
                     bestFitness := lastBestFitness ].
               totalExecutionGA := totalExecutionGA + Time millisecondClockValue - t ] ] displayingProgress: [:iteration |  'Evolving - Iteration', iteration printString ]
+]
+
+{ #category : #'as yet unclassified' }
+SGAEngine >> saveSummaryLog [
+  | stream logName |
+	logName := targetClassName , 'Log.log'.
+  logName asFileReference ensureDelete.
+  stream := logName asFileReference writeStream.
+  [ stream
+     nextPutAll: 'TestEvoViz';
+     nextPut: Character cr;
+     nextPutAll: '* Generating tests cases for class: ';
+     nextPutAll: targetClassName;
+     nextPut: Character cr.
+  self addTestCriteriaToLog: stream.
+  self addSelectionAlgorithmToLog: stream.
+  self addTestGoalsToLog: stream.
+  self addResultEvolutionToLog: stream.
+  stream
+     nextPut: Character cr;
+     nextPutAll: 'Done !' ] ensure: [ stream close ]
 ]
 
 { #category : #accessing }

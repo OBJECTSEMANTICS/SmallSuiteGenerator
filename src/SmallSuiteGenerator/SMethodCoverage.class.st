@@ -7,6 +7,11 @@ Class {
 	#category : #'SmallSuiteGenerator-GA'
 }
 
+{ #category : #'as yet unclassified' }
+SMethodCoverage >> coverageCriteria: className [
+  ^profiler methodCoverageCriteriaOf: className
+]
+
 { #category : #actions }
 SMethodCoverage >> fitnessByClass [
 
