@@ -146,7 +146,7 @@ SConfigGenerationTestCase class >> factory [
 { #category : #settings }
 SConfigGenerationTestCase class >> fitness [
 
-	^ #statement
+	^ #branch
 ]
 
 { #category : #setter }
@@ -158,7 +158,7 @@ SConfigGenerationTestCase class >> fitness: aSymbol [
 { #category : #settings }
 SConfigGenerationTestCase class >> fitnessDictionary [
   ^Dictionary new
-	  at: 'branch' put: [ SBranchCoverage new ];
+	  at: #branch put: [ SBranchCoverage new ];
      at: #statement put: [ SStatementCoverage new ];
      at: #method put: [ SMethodCoverage new ];
      at: #multi put: [ SMultiFitnessFunction multiCoverage ];
@@ -171,7 +171,7 @@ SConfigGenerationTestCase class >> fitnessValue [
 	
 	^ (self fitnessDictionary 
 		at: self fitness 
-		ifAbsent: [ self fitnessDictionary at: #statement ]) value
+		ifAbsent: [ self fitnessDictionary at: #branch ]) value
 ]
 
 { #category : #settings }

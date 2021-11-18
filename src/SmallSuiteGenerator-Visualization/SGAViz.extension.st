@@ -237,7 +237,7 @@ SGAViz >> addTickY: composite withScale: xScale xMax: xMax ofColor: color andPos
 			yourself.
 		composite addShape: tick.
 		lbl := RSLabel new 	
-			fontSize: 30;
+			fontSize: xScale range second * 0.1;
 			color: color;
 			text: index.
 		RSLocation new outer left move: lbl on: tick.
@@ -386,7 +386,7 @@ SGAViz >> evolutionShapeWith: yPositions ofColor: dictColor size: size [
 	| composite scale points axis spaceStick xMax yMax |
 	composite := RSComposite new 
 		color: Color transparent.
-	xMax := self logs last fittestTestCase fitnessByClass values first at: self targetClassName.
+	xMax := self logs last fittestTestCase fitnessByClass values first at: self targetClassName ifAbsent: [ 0 ].
 	scale := NSScale linear 
 		domain: (Array with: 0 with: xMax);
 		range: (Array with: 0 with: size x).
@@ -993,7 +993,7 @@ SGAViz >> targetPackageRegex [
 SGAViz >> testCaseShape: testCase ofColor: dictColor with: memo highlight: highlight scale: scaleColorBlock [
 
 	| group higher block progressValue methodGroup contribute |
-	block := [ :tC | [ tC fitnessByClass values first at: self targetClassName ifAbsent: 0 ] on: SubscriptOutOfBounds do: [ 0 ] ].
+	block := [ :tC | [ tC fitnessByClass values first at: self targetClassName ifAbsent: [ 0 ] ] on: SubscriptOutOfBounds do: [ 0 ] ].
 	progressValue := block value: testCase.
 	higher := testCase parents ifEmpty: [ false ] 
 		ifNotEmpty: [ testCase parents allSatisfy: [ :tC | (block value: tC) < progressValue ] ].

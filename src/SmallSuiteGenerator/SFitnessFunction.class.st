@@ -73,7 +73,7 @@ SFitnessFunction >> run: testCaseCollection [
 				profiler cleanBlocksOfMethods.
 				testCase runWithoutAssertionsAndLastStatement.
 				SGAEngine logClass summaryExecutionMethodsOf: testCase with: profiler.
-				self fitnessOf: testCase. ]
+				self fitnessOf: testCase ]
 			ifFalse: [ testCase fitness at: self functionName put: 0 ] ]
 ]
 

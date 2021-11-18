@@ -119,6 +119,7 @@ SSTestCase >> deepCopy [
 	copy generationNumber: self generationNumber.
 	copy summaryExecutionMethods: self summaryExecutionMethods.
 	copy hasErrors: self hasErrors.
+	copy multiFitnessByClass: self multiFitnessByClass.
 	^ copy
 ]
 
@@ -206,6 +207,11 @@ SSTestCase >> isBetterThan: testCase2 using: fitnessStrategy [
 { #category : #accessing }
 SSTestCase >> multiFitnessByClass [
 	^ multiFitnessByClass	
+]
+
+{ #category : #accessing }
+SSTestCase >> multiFitnessByClass: dictionary [ 
+	multiFitnessByClass := dictionary 
 ]
 
 { #category : #accessing }
